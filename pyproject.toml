@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "tower-service-catalog"
+version = "0.1.0"
+description = "Service catalog on top of Ansible Tower"
+authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Django = "^3.1.7"
+djangorestframework = "^3.12.2"
+Markdown = "^3.3.4"
+mysqlclient = "^2.0.3"
+PyYAML = "^5.4.1"
+fontawesome-free = "^5.15.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

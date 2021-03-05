@@ -1,0 +1,90 @@
+{% load static %}
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'home'%}" class="brand-link">
+        <img src="{% static '/img/hpe_logo.png' %}" alt="HPE Logo" class="brand-image elevation-3"
+             style="opacity: .8">
+        <span class="brand-text text-teal">HPE</span>
+
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="info">
+                <a href="#" class="d-block">{{ user.get_username }}</a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link {% if 'requests' in request.path %}active{%  endif %}">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>Requests</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>Services
+                            {#                            <span class="right badge badge-danger">New</span>#}
+                        </p>
+                    </a>
+                </li>
+                {# Admin side panel #}
+                {% if user.is_superuser %}
+                    <li class="nav-header">Admin</li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>Requests
+
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Services
+
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header">Settings</li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>Service catalog
+
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-check"></i>
+                            <p>Approvals
+
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'tower'%}" class="nav-link {% if 'tower' in request.path %}active{% endif %}">
+                            <i class="nav-icon fab fa-adn"></i>
+                            <p>Tower
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

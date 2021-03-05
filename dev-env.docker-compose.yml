@@ -1,0 +1,40 @@
+# docker-compose -f dev-env.docker-compose.yml up
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_DATABASE: tower_service_catalog_db
+      MYSQL_USER: tower_service_catalog_user
+      MYSQL_PASSWORD: tower_service_catalog_password
+      MYSQL_ROOT_PASSWORD: p@ssw0rd
+    volumes:
+      - db_data:/var/lib/mysql
+      - "${PWD}/docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: p@ssw0rd
+    ports:
+      - "8082:80"
+  broker:
+    image: "rabbitmq:3-management"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "tower_service_catalog"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  db_data: {}
+  rabbitmq_data: {}

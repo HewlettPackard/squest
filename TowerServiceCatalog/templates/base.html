@@ -1,0 +1,28 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static '/bootstrap-4.6.0/css/bootstrap.min.css' %}">
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="{% static '/adminlte/css/adminlte.css' %}">
+    <title>TCS</title>
+</head>
+<body>
+{%  if 'login' not in request.path  %}
+    {% include 'navbar.html' %}
+    {% include 'sidebar.html' %}
+{% endif %}
+{% block content %}{% endblock %}
+<!-- Bootstrap -->
+<script src="{% static '/jquery/jquery-3.5.1.slim.min.js' %}"></script>
+<script src="{% static '/bootstrap-4.6.0/js/bootstrap.bundle.min.js' %}" ></script>
+<script src="{% static '/adminlte/js/adminlte.min.js' %}"></script>
+<!-- Font Awesome Free -->
+<script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+</body>
+</html>
