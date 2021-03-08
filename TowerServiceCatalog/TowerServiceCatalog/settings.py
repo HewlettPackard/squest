@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,6 +25,7 @@ SECRET_KEY = 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TESTING = sys.argv[1:2] == ['test']
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fontawesome-free',
+    'django_celery_results',
     'service_catalog'
 ]
 
@@ -133,3 +136,19 @@ STATICFILES_DIRS = (
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# -----------------------------------------
+# BROKER CONFIG
+# -----------------------------------------
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://rabbitmq:rabbitmq@localhost:5672/tower_service_catalog')
+# Add a five-minutes timeout to all Celery tasks.
+CELERYD_TASK_SOFT_TIME_LIMIT = 300
+CELERY_TASK_ALWAYS_EAGER = TESTING
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+CELERYD_HIJACK_ROOT_LOGGER = False
+
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'django-db'

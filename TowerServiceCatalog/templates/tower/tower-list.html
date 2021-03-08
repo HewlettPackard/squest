@@ -16,11 +16,55 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                test
-            </div><!-- /.container-fluid -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Tower servers</h3>
+                        <div class="card-tools">
+                            <a class="btn btn-success bg-sm" href="{% url 'add_tower' %}">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="tower_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Host</th>
+                                <th>Job templates</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for tower_server in tower_servers %}
+                                <tr>
+                                    <td>{{ tower_server.name }}</td>
+                                    <td><a href="{% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.url }}">
+                                        {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
+                                    </a></td>
+                                    <td>12</td>
+                                    <td>
+                                        <a onclick="sync_tower({{ tower_server.id }})" class="btn btn-default bg-sm">
+                                            <i class="fas fa-sync"></i>
+                                        </a>
+                                        <a class="btn btn-primary bg-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a class="btn btn-danger bg-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
         </div>
-        <!-- /.content -->
     </div>
-
-
 {% endblock %}

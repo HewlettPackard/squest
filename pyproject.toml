@@ -13,6 +13,10 @@ Markdown = "^3.3.4"
 mysqlclient = "^2.0.3"
 PyYAML = "^5.4.1"
 fontawesome-free = "^5.15.2"
+towerlib = "^3.6.2"
+celery = "^5.0.5"
+django-celery-results = "^2.0.1"
+jsonfield = "^3.1.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Tower</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Tower</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal" action="{% url 'add_tower' %}" method="post">{% csrf_token %}
+
+                            {% for field in form %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    <label for="{{field.name}}" class="col-sm-2 control-label">
+                                        {{ field.label }}
+                                    </label>
+                                    <div class="col-sm-4">
+                                        {{ field }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <!-- validate button -->
+                                    <button class="btn btn-success" type="submit">
+                                        <i class="fas fa-plus"></i>
+                                        Add tower
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

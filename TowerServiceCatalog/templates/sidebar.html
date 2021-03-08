@@ -23,8 +23,16 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item menu-open">
-                    <a href="#" class="nav-link {% if 'requests' in request.path %}active{%  endif %}">
+                <li class="nav-item">
+                    <a href="#" class="nav-link {% if 'catalog' in request.path %}active{% endif %}">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p>Catalog
+
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link {% if 'requests' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-list"></i>
                         <p>Requests</p>
                     </a>
@@ -32,9 +40,7 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
-                        <p>Services
-                            {#                            <span class="right badge badge-danger">New</span>#}
-                        </p>
+                        <p>Services</p>
                     </a>
                 </li>
                 {# Admin side panel #}

@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{% static '/bootstrap-4.6.0/css/bootstrap.min.css' %}">
     <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="{% static '/adminlte/css/adminlte.css' %}">
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" type="text/css" href="{%  static '/datatables/css/jquery.dataTables.css' %}">
+    <!-- Tower Service Catalog -->
+    <link rel="stylesheet" type="text/css" href="{%  static '/tower_service_catalog/css/tower_service_catalog.css' %}">
     <title>TCS</title>
 </head>
 <body>
@@ -17,12 +21,19 @@
     {% include 'navbar.html' %}
     {% include 'sidebar.html' %}
 {% endif %}
+
 {% block content %}{% endblock %}
+<!-- Jquery -->
+<script src="{% static '/jquery/jquery-3.5.1.min.js' %}"></script>
 <!-- Bootstrap -->
-<script src="{% static '/jquery/jquery-3.5.1.slim.min.js' %}"></script>
 <script src="{% static '/bootstrap-4.6.0/js/bootstrap.bundle.min.js' %}" ></script>
+<!-- adminlte -->
 <script src="{% static '/adminlte/js/adminlte.min.js' %}"></script>
+<!-- Datatables -->
+<script src="{% static '/datatables/js/jquery.dataTables.min.js' %}"></script>
 <!-- Font Awesome Free -->
 <script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+<!-- Tower Service Catalog -->
+<script src="{% static 'tower_service_catalog/js/tower_service_catalog.js' %}"></script>
 </body>
 </html>
