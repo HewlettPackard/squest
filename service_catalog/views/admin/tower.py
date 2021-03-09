@@ -3,10 +3,10 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django_celery_results.models import TaskResult
 
-from . import tasks
-from .forms import TowerServerForm
-from .models import TowerServer, JobTemplate
-from .serializers import TaskResultSerializer
+from service_catalog import tasks
+from service_catalog.forms import TowerServerForm
+from service_catalog.models import TowerServer, JobTemplate
+from service_catalog.serializers import TaskResultSerializer
 
 
 @login_required
@@ -46,7 +46,6 @@ def sync_tower(request, tower_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def get_task_result(request, task_id):
-    
     task_result = TaskResult.objects.get(id=task_id)
     serialized_task = TaskResultSerializer(task_result)
     return JsonResponse(serialized_task.data, status=202)
