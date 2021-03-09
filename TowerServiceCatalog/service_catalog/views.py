@@ -2,10 +2,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django_celery_results.models import TaskResult
-from rest_framework import status
-from rest_framework.decorators import renderer_classes
-from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
-from rest_framework.response import Response
 
 from . import tasks
 from .forms import TowerServerForm
@@ -52,7 +48,5 @@ def sync_tower(request, tower_id):
 def get_task_result(request, task_id):
     
     task_result = TaskResult.objects.get(id=task_id)
-    # return JsonResponse({"task": task_result}, status=202)
-
     serialized_task = TaskResultSerializer(task_result)
     return JsonResponse(serialized_task.data, status=202)

@@ -1,8 +1,6 @@
 from django.db import models
 from towerlib import Tower
 
-from .job_templates import JobTemplate as JobTemplateLocal
-
 
 class TowerServer(models.Model):
     name = models.CharField(max_length=100)
@@ -16,12 +14,14 @@ class TowerServer(models.Model):
         Sync all job templates
         :return:
         """
+        from .job_templates import JobTemplate as JobTemplateLocal
         tower = Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)
-        test_survey = {
-            "key": "value"
-        }
+
         for job_template in tower.job_templates:
             try:
                 JobTemplateLocal.objects.get(tower_id=job_template.id)
             except JobTemplateLocal.DoesNotExist:
-                JobTemplateLocal.objects.create(name=job_template.name, tower_id=job_template.id, survey=test_survey)
+                JobTemplateLocal.objects.create(name=job_template.name,
+                                                tower_id=job_template.id,
+                                                survey=job_template.survey_spec,
+                                                tower_server=self)

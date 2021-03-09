@@ -19,24 +19,25 @@ function getCookie(name) {
 }
 const csrf_token = getCookie('csrftoken');
 
-function sync_tower(id){
+function sync_tower(tower_id){
+    const sync_button_id = "tower_" + tower_id;
     $.ajax({
-        url: '/tower/' + id + '/sync_tower/',
+        url: '/tower/' + tower_id + '/sync_tower/',
         method: 'POST',
         data: {
             csrfmiddlewaretoken: csrf_token
         },
     }).done((res) => {
-        // getStatus(res.task_id);
         $(document).Toasts('create', {
             title: 'Tower sync',
             body: 'Started',
             autohide: true,
             delay: 3000,
             class: 'bg-info'
-        })
-        console.log(res.task_id);
-        getStatus(res.task_id);
+        });
+        // disable sync button
+        document.getElementById(sync_button_id).classList.add('disabled');
+        getStatus(res.task_id, tower_id);
 
     }).fail((err) => {
         alert_error("Error during API call");
@@ -46,55 +47,59 @@ function sync_tower(id){
             autohide: true,
             delay: 3000,
             class: 'bg-danger'
-        })
+        });
         console.log(err);
     });
 }
 
-function getStatus(taskID) {
+function getStatus(taskID, tower_id) {
+    const sync_button_id = "tower_" + tower_id;
     $.ajax({
         url: `/tasks/${taskID}/`,
         method: 'GET',
         data: {
             csrfmiddlewaretoken: csrf_token
         },
-    })
-        .done((res) => {
-            console.log(res);
-            const taskStatus = res.status;
-
-            if (taskStatus === 'SUCCESS'){
-                $(document).Toasts('create', {
-                    title: 'Tower sync',
-                    body: 'Complete',
-                    autohide: true,
-                    delay: 3000,
-                    class: 'bg-success'
-                })
-                return true;
-            }
-            if (taskStatus === 'FAILURE'){
-                $(document).Toasts('create', {
-                    title: 'Tower sync',
-                    body: 'Failed',
-                    autohide: true,
-                    delay: 3000,
-                    class: 'bg-danger'
-                })
-                return false;
-            }
-            setTimeout(function() {
-                getStatus(taskID);
-            }, 1000);
-        })
-        .fail((err) => {
-            console.log(err);
+    }).done((res) => {
+        // console.log(res);
+        const taskStatus = res.status;
+        if (taskStatus === 'SUCCESS'){
+            $(document).Toasts('create', {
+                title: 'Tower sync',
+                body: 'Complete',
+                autohide: true,
+                delay: 3000,
+                class: 'bg-success'
+            });
+            // enable back sync button
+            document.getElementById(sync_button_id).classList.remove('disabled');
+            return true;
+        }
+        if (taskStatus === 'FAILURE'){
             $(document).Toasts('create', {
                 title: 'Tower sync',
                 body: 'Failed',
                 autohide: true,
                 delay: 3000,
                 class: 'bg-danger'
-            })
+            });
+            // enable back sync button
+            document.getElementById(sync_button_id).classList.remove('disabled');
+            return false;
+        }
+        setTimeout(function() {
+            getStatus(taskID, tower_id);
+        }, 1000);
+    }).fail((err) => {
+        console.log(err);
+        $(document).Toasts('create', {
+            title: 'Tower sync',
+            body: 'Failed',
+            autohide: true,
+            delay: 3000,
+            class: 'bg-danger'
         });
+        // enable back sync button
+        document.getElementById(sync_button_id).classList.remove('disabled');
+    });
 }

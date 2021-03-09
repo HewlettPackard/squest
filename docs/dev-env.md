@@ -55,3 +55,15 @@ Run django dev server
 ```
 python manage.py runserver
 ```
+
+Run Celery process for async tasks
+```
+celery -A restapi worker -l info
+```
+
+## Commands
+
+To clean all Celery pending tasks
+```
+celery -A restapi purge
+```

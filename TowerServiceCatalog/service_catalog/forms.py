@@ -47,7 +47,7 @@ class TowerServerForm(ModelForm):
             except requests.exceptions.SSLError:
                 raise ValidationError({"ssl_verify": "Certificate verify failed"})
             except requests.exceptions.ConnectionError:
-                raise ValidationError({"url": "Unable to connect to {}".format(url)})
+                raise ValidationError({"host": "Unable to connect to {}".format(host)})
 
     class Meta:
         model = TowerServer

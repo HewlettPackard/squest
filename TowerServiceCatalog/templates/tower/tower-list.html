@@ -43,9 +43,9 @@
                                     <td><a href="{% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.url }}">
                                         {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
                                     </a></td>
-                                    <td>12</td>
+                                    <td>{{ tower_server.jobtemplate_set.all | length }}</td>
                                     <td>
-                                        <a onclick="sync_tower({{ tower_server.id }})" class="btn btn-default bg-sm">
+                                        <a id="tower_{{ tower_server.id }}" onclick="sync_tower({{ tower_server.id }})" role="button" class="btn btn-default bg-sm">
                                             <i class="fas fa-sync"></i>
                                         </a>
                                         <a class="btn btn-primary bg-sm">
