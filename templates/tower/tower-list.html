@@ -51,7 +51,7 @@
                                         <a id="tower_{{ tower_server.id }}" onclick="sync_tower({{ tower_server.id }})" role="button" class="btn btn-default bg-sm">
                                             <i class="fas fa-sync"></i>
                                         </a>
-                                        <a class="btn btn-primary bg-sm">
+                                        <a href="{% url 'update_tower' tower_server.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <a href="{% url 'delete_tower' tower_server.id %}" class="btn btn-danger bg-sm">

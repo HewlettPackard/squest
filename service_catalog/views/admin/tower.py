@@ -78,3 +78,13 @@ def delete_job_template(request, tower_id, job_template_id):
     obj = get_object_or_404(JobTemplate, id=job_template_id)
     obj.delete()
     return redirect('tower_job_templates', tower_id=tower_id)
+
+
+def update_tower(request, tower_id):
+    tower_server = get_object_or_404(TowerServer, id=tower_id)
+    form = TowerServerForm(request.POST or None, instance=tower_server)
+    if form.is_valid():
+        form.save()
+        return redirect('tower')
+
+    return render(request, 'tower/update_tower.html', {'form': form, 'tower_server': tower_server})
