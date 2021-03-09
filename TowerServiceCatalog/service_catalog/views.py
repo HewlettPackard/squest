@@ -5,7 +5,7 @@ from django_celery_results.models import TaskResult
 
 from . import tasks
 from .forms import TowerServerForm
-from .models import TowerServer
+from .models import TowerServer, JobTemplate
 from .serializers import TaskResultSerializer
 
 
@@ -62,3 +62,20 @@ def delete_tower(request, tower_id):
         "object": obj
     }
     return render(request, "tower/confirm_delete_tower.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def tower_job_templates(request, tower_id):
+    tower_server = get_object_or_404(TowerServer, id=tower_id)
+    job_templates = JobTemplate.objects.filter(tower_server=tower_server)
+    context = {
+        "job_templates": job_templates
+    }
+    return render(request, "tower/tower_job_templates.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_job_template(request, tower_id, job_template_id):
+    obj = get_object_or_404(JobTemplate, id=job_template_id)
+    obj.delete()
+    return redirect('tower_job_templates', tower_id=tower_id)

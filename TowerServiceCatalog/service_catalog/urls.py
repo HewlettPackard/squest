@@ -9,4 +9,7 @@ urlpatterns = [
     path('tower/add_tower/', views.add_tower, name='add_tower'),
     path('tower/<int:tower_id>/sync_tower/', views.sync_tower, name='sync_tower'),
     path('tower/<int:tower_id>/delete_tower/', views.delete_tower, name='delete_tower'),
+    path('tower/<int:tower_id>/job_templates/', views.tower_job_templates, name='tower_job_templates'),
+    path('tower/<int:tower_id>/job_templates/<int:job_template_id>/delete_job_template', views.delete_job_template,
+         name='delete_job_template'),
 ]

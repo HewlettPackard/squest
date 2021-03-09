@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Tower</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Tower job templates deletion</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="job_template_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for job_template in job_templates %}
+                                <tr>
+                                    <td>{{ job_template.name }}</td>
+                                    <td>
+                                        <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}" class="btn btn-default bg-sm">
+                                            <i class="fas fa-external-link-square-alt"></i>
+                                        </a>
+                                        <a href="{% url 'delete_job_template' tower_id=job_template.tower_server.id job_template_id=job_template.id %}" class="btn btn-danger bg-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

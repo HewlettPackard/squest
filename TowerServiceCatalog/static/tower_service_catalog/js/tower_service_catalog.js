@@ -1,5 +1,6 @@
 $(document).ready( function () {
     $('#tower_list').DataTable();
+    $('#job_template_list').DataTable();
 } );
 
 function getCookie(name) {
