@@ -56,7 +56,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'TowerServiceCatalog.urls'
 
 TEMPLATES_DIR = str(BASE_DIR) + os.sep + 'templates'
-print(TEMPLATES_DIR)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

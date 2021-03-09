@@ -9,3 +9,6 @@ class JobTemplate(models.Model):
     tower_id = models.IntegerField()
     survey = JSONField()
     tower_server = models.ForeignKey(TowerServer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name

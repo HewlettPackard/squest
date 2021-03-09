@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from towerlib import Tower
 
-from .models import TowerServer
+from .models import TowerServer, Service, JobTemplate
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -52,3 +52,21 @@ class TowerServerForm(ModelForm):
     class Meta:
         model = TowerServer
         fields = ["name", "host", "token", "secure", "ssl_verify"]
+
+
+class ServiceForm(ModelForm):
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    description = forms.CharField(label="Description",
+                                  required=False,
+                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
+                                          to_field_name="name",
+                                          widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Service
+        fields = ["name", "description"]

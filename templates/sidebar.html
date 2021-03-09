@@ -24,11 +24,9 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link {% if 'catalog' in request.path %}active{% endif %}">
+                    <a href="#" class="nav-link {% if 'service-catalog' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-shopping-cart"></i>
-                        <p>Catalog
-
-                        </p>
+                        <p>Catalog</p>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -65,7 +63,7 @@
 
                     <li class="nav-header">Settings</li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'settings_catalog'%}" class="nav-link {% if 'settings/catalog' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>Service catalog
 
