@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from towerlib import Tower
 
-from .models import TowerServer, Service, JobTemplate
+from .models import TowerServer, Service, JobTemplate, Operation
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -70,3 +70,31 @@ class ServiceForm(ModelForm):
     class Meta:
         model = Service
         fields = ["name", "description"]
+
+
+class AddServiceOperationForm(ModelForm):
+    choice_type = [('UPDATE', 'Update'),
+                   ('DELETE', 'Delete')]
+
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    description = forms.CharField(label="Description",
+                                  required=False,
+                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
+                                          required=True,
+                                          to_field_name="name",
+                                          widget=forms.Select(attrs={'class': 'form-control'}))
+
+    type = forms.ChoiceField(label="Type",
+                             choices=choice_type,
+                             required=True,
+                             error_messages={'required': 'At least you must select one type'},
+                             widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Operation
+        fields = ["name", "description", "job_template", "type"]

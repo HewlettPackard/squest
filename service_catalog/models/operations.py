@@ -13,6 +13,7 @@ class Operation(models.Model):
         DELETE = 'DELETE', _('Delete')
 
     name = models.CharField(max_length=100)
+    description = models.CharField(max_length=500, blank=True, null=True)
     type = models.CharField(
         max_length=10,
         choices=OperationType.choices,

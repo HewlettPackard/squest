@@ -18,4 +18,5 @@ urlpatterns = [
     path('settings/catalog/add_service/', views.add_service, name='settings_catalog_add_service'),
     path('settings/catalog/<int:service_id>/operations/', views.service_operations, name='service_operations'),
     path('settings/catalog/<int:service_id>/delete/', views.delete_service, name='delete_service'),
+    path('settings/catalog/<int:service_id>/operations/add/', views.add_service_operation, name='add_service_operation'),
 ]

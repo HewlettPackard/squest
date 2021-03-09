@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
-from service_catalog.forms import ServiceForm
+from service_catalog.forms import ServiceForm, AddServiceOperationForm
 from service_catalog.models import Service, Operation
 
 
@@ -50,3 +50,21 @@ def delete_service(request, service_id):
         "object": target_service
     }
     return render(request, "catalog/confirm_delete_service.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_service_operation(request, service_id):
+    target_service = get_object_or_404(Service, id=service_id)
+    if request.method == 'POST':
+        form = AddServiceOperationForm(request.POST)
+        if form.is_valid():
+            form.service_id = target_service.id
+            new_operation = form.save(commit=False)
+            new_operation.service = target_service
+            new_operation.save()
+            return redirect('service_operations', service_id=target_service.id)
+    else:
+        form = AddServiceOperationForm()
+
+    return render(request, 'catalog/add_service_operation.html', {'form': form,
+                                                                  'service': target_service})
