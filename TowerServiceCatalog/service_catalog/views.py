@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django_celery_results.models import TaskResult
 
 from . import tasks
@@ -50,3 +50,15 @@ def get_task_result(request, task_id):
     task_result = TaskResult.objects.get(id=task_id)
     serialized_task = TaskResultSerializer(task_result)
     return JsonResponse(serialized_task.data, status=202)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_tower(request, tower_id):
+    obj = get_object_or_404(TowerServer, id=tower_id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect(tower)
+    context = {
+        "object": obj
+    }
+    return render(request, "tower/confirm_delete_tower.html", context)

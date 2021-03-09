@@ -16,7 +16,6 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Tower servers</h3>
@@ -51,7 +50,7 @@
                                         <a class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a class="btn btn-danger bg-sm">
+                                        <a href="{% url 'delete_tower' tower_server.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>

@@ -8,4 +8,5 @@ urlpatterns = [
     path('tower/', views.tower, name='tower'),
     path('tower/add_tower/', views.add_tower, name='add_tower'),
     path('tower/<int:tower_id>/sync_tower/', views.sync_tower, name='sync_tower'),
+    path('tower/<int:tower_id>/delete_tower/', views.delete_tower, name='delete_tower'),
 ]
