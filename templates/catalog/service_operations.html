@@ -53,7 +53,7 @@
                                     <td>{{ operation.job_template.name }}</td>
                                     <td>
                                         {% if  operation.type != "CREATE" %}
-                                            <a href="" class="btn btn-danger bg-sm">
+                                            <a href="{% url 'delete_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-danger bg-sm">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         {% else %}

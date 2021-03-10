@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 
 from service_catalog.forms import ServiceForm, AddServiceOperationForm
@@ -68,3 +69,20 @@ def add_service_operation(request, service_id):
 
     return render(request, 'catalog/add_service_operation.html', {'form': form,
                                                                   'service': target_service})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_service_operation(request, service_id, operation_id):
+    target_service = get_object_or_404(Service, id=service_id)
+    target_operation = get_object_or_404(Operation, id=operation_id)
+    if target_operation.type == "CREATE":
+        # cannot delete a create type operation
+        raise PermissionDenied
+    if request.method == "POST":
+        target_operation.delete()
+        return redirect('service_operations', service_id=target_service.id)
+
+    context = {
+        "object": target_operation
+    }
+    return render(request, "catalog/confirm_delete_service_operation.html", context)
