@@ -371,7 +371,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "towerlib"
-version = "3.6.2"
+version = "3.7.0"
 description = "A python library to interface with ansible tower's (awx) api."
 category = "main"
 optional = false
@@ -415,7 +415,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6a73061c83117ebed7c1d7c7947f27c581a65d4c620ca5c179b0e5511299ca4b"
+content-hash = "15fd20fc82bc3d87527110d96eba8d8b3ec9d9c91fbd06731191875893f73a6c"
 
 [metadata.files]
 amqp = [
@@ -560,9 +560,9 @@ sqlparse = [
     {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
 ]
 towerlib = [
-    {file = "towerlib-3.6.2-py2.py3-none-any.whl", hash = "sha256:1299da9ad89c12c30097426bcaab7b58992d068fa259726ed4c844741841afe6"},
-    {file = "towerlib-3.6.2-py3.7.egg", hash = "sha256:e5920a7811ebfc1bddc816d633876681b28bfe46a11808957b0c9c60bf543d22"},
-    {file = "towerlib-3.6.2.tar.gz", hash = "sha256:8469915f7b616baa45761558a90a257b627fee71db10489c1a35e1ae150a4910"},
+    {file = "towerlib-3.7.0-py2.py3-none-any.whl", hash = "sha256:821afd8cb97c25b736ac6814cd03370e7b6f43a2a981f74abe051efac56fb928"},
+    {file = "towerlib-3.7.0-py3.7.egg", hash = "sha256:96a69c2a731dd3e0ce99911b2b98cc6a2ed54343f1de65c11932e7c49b135e7a"},
+    {file = "towerlib-3.7.0.tar.gz", hash = "sha256:a44eb6690f8aa27840cb32f6c9a8b59943b2083144c98aa21d2f481d7bfa746e"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.3-py2.py3-none-any.whl", hash = "sha256:1b465e494e3e0d8939b50680403e3aedaa2bc434b7d5af64dfd3c958d7f5ae80"},
