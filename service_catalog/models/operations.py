@@ -5,12 +5,13 @@ from service_catalog.models import JobTemplate
 from service_catalog.models import Service
 
 
-class Operation(models.Model):
+class OperationType(models.TextChoices):
+    CREATE = 'CREATE', _('Create')
+    UPDATE = 'UPDATE', _('Update')
+    DELETE = 'DELETE', _('Delete')
 
-    class OperationType(models.TextChoices):
-        CREATE = 'CREATE', _('Create')
-        UPDATE = 'UPDATE', _('Update')
-        DELETE = 'DELETE', _('Delete')
+
+class Operation(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True, null=True)
