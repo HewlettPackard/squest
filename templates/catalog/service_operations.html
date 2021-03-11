@@ -32,6 +32,7 @@
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Job template</th>
+                                <th>Survey</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -51,6 +52,11 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ operation.job_template.name }}</td>
+                                    <td>
+                                        <a href="{% url 'service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" class="btn btn-primary bg-sm">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </a>
+                                    </td>
                                     <td>
                                         {% if  operation.type != "CREATE" %}
                                             <a href="{% url 'delete_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-danger bg-sm">

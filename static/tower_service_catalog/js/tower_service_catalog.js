@@ -4,6 +4,7 @@ $(document).ready( function () {
     $('#service_list').DataTable();
 } );
 
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -24,7 +25,7 @@ const csrf_token = getCookie('csrftoken');
 function sync_tower(tower_id){
     const sync_button_id = "tower_" + tower_id;
     $.ajax({
-        url: '/tower/' + tower_id + '/sync_tower/',
+        url: '/settings/tower/' + tower_id + '/sync/',
         method: 'POST',
         data: {
             csrfmiddlewaretoken: csrf_token

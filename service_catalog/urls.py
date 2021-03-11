@@ -23,4 +23,9 @@ urlpatterns = [
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/delete/',
          views.delete_service_operation,
          name='delete_service_operation'),
+    path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/survey/',
+         views.service_operation_edit_survey,
+         name='service_operation_edit_survey'),
+
+
 ]

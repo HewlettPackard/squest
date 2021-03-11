@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 
-from service_catalog.forms import ServiceForm, AddServiceOperationForm
+from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm
 from service_catalog.models import Service, Operation
 
 
@@ -86,3 +86,23 @@ def delete_service_operation(request, service_id, operation_id):
         "object": target_operation
     }
     return render(request, "catalog/confirm_delete_service_operation.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def service_operation_edit_survey(request, service_id, operation_id):
+    target_service = get_object_or_404(Service, id=service_id)
+    target_operation = get_object_or_404(Operation, id=operation_id)
+    parameters = {
+        'operation_id': operation_id
+    }
+    if request.method == 'POST':
+        form = SurveySelectorForm(request.POST, **parameters)
+        if form.is_valid():
+            form.save()
+            return redirect('service_operations', service_id=target_service.id)
+    else:
+        form = SurveySelectorForm(**parameters)
+
+    return render(request, 'catalog/service_operation_edit_survey.html', {'form': form,
+                                                                          'service': target_service,
+                                                                          'operation': target_operation})
