@@ -67,9 +67,13 @@ class ServiceForm(ModelForm):
                                           to_field_name="name",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
+    image = forms.ImageField(label="Choose a file",
+                             required=False,
+                             widget=forms.FileInput())
+
     class Meta:
         model = Service
-        fields = ["name", "description"]
+        fields = ["name", "description", "job_template", "image"]
 
 
 class AddServiceOperationForm(ModelForm):

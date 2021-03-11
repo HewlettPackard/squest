@@ -133,6 +133,10 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "project-static"),
 )
 
+# TO be set when prod
+# MEDIA_ROOT = 'media'
+# MEDIA_URL = '/media/'
+
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 

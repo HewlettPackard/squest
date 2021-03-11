@@ -1,5 +1,5 @@
 users:
   - username: admin
     email: admin@tcs.domain
-    password: tcs-admin
+    password: tsc-admin
     is_admin: true

@@ -30,7 +30,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'settings_catalog_add_service' %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'settings_catalog_add_service' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
@@ -43,12 +43,13 @@
                                 </div>
                             {% endfor %}
 
+
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <!-- validate button -->
                                     <button class="btn btn-success" type="submit">
                                         <i class="fas fa-plus"></i>
-                                        Add tower
+                                        Add service
                                     </button>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ def service(request):
 @user_passes_test(lambda u: u.is_superuser)
 def add_service(request):
     if request.method == 'POST':
-        form = ServiceForm(request.POST)
+        form = ServiceForm(request.POST, request.FILES)
         if form.is_valid():
             new_instance = form.save()
             # create the first operation of type create that link this service to a job template
