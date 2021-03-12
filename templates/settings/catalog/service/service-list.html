@@ -41,7 +41,7 @@
                                     <td>{{ service.name }}</td>
                                     <td>{{ service.description }}</td>
                                     <td>
-                                        <a href="{% url 'service_operations' service.id %}">
+                                        <a href="{% url 'service_operations' service.id %}" class="btn btn-default bg-sm">
                                             {{ service.operation_set.all | length }}
                                         </a>
                                     </td>
