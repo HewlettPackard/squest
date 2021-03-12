@@ -1,5 +1,7 @@
 from django.urls import path
+from django.conf.urls.static import static
 
+import settings
 from . import views
 
 urlpatterns = [
@@ -27,5 +29,5 @@ urlpatterns = [
          views.service_operation_edit_survey,
          name='service_operation_edit_survey'),
 
-
-]
+    path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

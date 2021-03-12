@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Available services</h1>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <div class="content">
+        <div class="row">
+            {% for service in services %}
+                <div class="col-lg-4 col-sm-6 mb-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="{{ service.image.url }}" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                {{ service.name }}
+                            </h5>
+                            <p class="card-text">{{ service.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="btn btn-primary">Order</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div><!-- end main card-body -->
+    </div>
+    </div>
+{% endblock %}
