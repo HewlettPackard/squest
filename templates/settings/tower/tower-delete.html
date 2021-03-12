@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Catalog</h1>
+                        <h1 class="m-0">Tower</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -21,10 +21,10 @@
                         <h3 class="card-title">Confirm deletion</h3>
                     </div>
                     <div class="card-body">
-                        <form action='.' method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the service "{{ object.name }}"?</p>
+                        <form action='' method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the server "{{ object.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'settings_catalog' %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'tower' %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

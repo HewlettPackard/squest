@@ -18,7 +18,7 @@ def home(request):
 def tower(request):
     tower_servers = TowerServer.objects.all()
 
-    return render(request, 'tower/tower-list.html', {'tower_servers': tower_servers})
+    return render(request, 'settings/tower/tower-list.html', {'tower_servers': tower_servers})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -31,7 +31,7 @@ def add_tower(request):
     else:
         form = TowerServerForm()
 
-    return render(request, 'tower/add_tower.html', {'form': form})
+    return render(request, 'settings/tower/tower-create.html', {'form': form})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -60,7 +60,7 @@ def delete_tower(request, tower_id):
     context = {
         "object": obj
     }
-    return render(request, "tower/confirm_delete_tower.html", context)
+    return render(request, "settings/tower/tower-delete.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -70,7 +70,7 @@ def tower_job_templates(request, tower_id):
     context = {
         "job_templates": job_templates
     }
-    return render(request, "tower/tower_job_templates.html", context)
+    return render(request, "settings/tower/job_templates/job-templates-list.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -87,4 +87,4 @@ def update_tower(request, tower_id):
         form.save()
         return redirect('tower')
 
-    return render(request, 'tower/update_tower.html', {'form': form, 'tower_server': tower_server})
+    return render(request, 'settings/tower/tower-edit.html', {'form': form, 'tower_server': tower_server})

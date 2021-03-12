@@ -9,7 +9,7 @@ from service_catalog.models import Service, Operation
 @user_passes_test(lambda u: u.is_superuser)
 def service(request):
     services = Service.objects.all()
-    return render(request, 'catalog/service-list.html', {'services': services})
+    return render(request, 'settings/catalog/service/service-list.html', {'services': services})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -27,7 +27,7 @@ def add_service(request):
     else:
         form = ServiceForm()
 
-    return render(request, 'catalog/add_service.html', {'form': form})
+    return render(request, 'settings/catalog/service/service-create.html', {'form': form})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -38,7 +38,7 @@ def service_operations(request, service_id):
         "operations": operations,
         "service": target_service
     }
-    return render(request, "catalog/service_operations.html", context)
+    return render(request, "settings/catalog/service/operation/operation-list.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -50,7 +50,7 @@ def delete_service(request, service_id):
     context = {
         "object": target_service
     }
-    return render(request, "catalog/confirm_delete_service.html", context)
+    return render(request, "settings/catalog/service/service-delete.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -67,8 +67,8 @@ def add_service_operation(request, service_id):
     else:
         form = AddServiceOperationForm()
 
-    return render(request, 'catalog/add_service_operation.html', {'form': form,
-                                                                  'service': target_service})
+    return render(request, 'settings/catalog/service/operation/operation-create.html', {'form': form,
+                                                                                        'service': target_service})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -85,7 +85,7 @@ def delete_service_operation(request, service_id, operation_id):
     context = {
         "object": target_operation
     }
-    return render(request, "catalog/confirm_delete_service_operation.html", context)
+    return render(request, "settings/catalog/service/operation/operation-delete.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -103,6 +103,6 @@ def service_operation_edit_survey(request, service_id, operation_id):
     else:
         form = SurveySelectorForm(**parameters)
 
-    return render(request, 'catalog/service_operation_edit_survey.html', {'form': form,
-                                                                          'service': target_service,
-                                                                          'operation': target_operation})
+    return render(request, 'settings/catalog/service/operation/operation-edit.html', {'form': form,
+                                                                                      'service': target_service,
+                                                                                      'operation': target_operation})
