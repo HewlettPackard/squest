@@ -30,4 +30,6 @@ urlpatterns = [
          name='service_operation_edit_survey'),
 
     path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),
+    path('customer/catalog/service/<int:service_id>/request/', views.customer_service_request,
+         name='customer_service_request'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

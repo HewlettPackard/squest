@@ -1,3 +1,5 @@
+import copy
+
 import requests
 import towerlib
 from django import forms
@@ -8,6 +10,9 @@ from towerlib import Tower
 from .models import TowerServer, Service, JobTemplate, Operation
 
 import urllib3
+
+from .models.operations import OperationType
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -122,3 +127,38 @@ class SurveySelectorForm(forms.Form):
         for field, value in self.cleaned_data.items():
             self.operation.survey[field] = value
         self.operation.save()
+
+
+class ServiceRequestForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
+        service_id = kwargs.get('service_id')
+        self.service = Service.objects.get(id=service_id)
+        # get the create operation of this service
+        self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
+
+        # get all field that are not disabled by the admin
+        purged_survey = self._get_available_fields(job_template_survey=self.create_operation.job_template.survey,
+                                                   operation_survey=self.create_operation.survey)
+        for survey_filed in purged_survey["spec"]:
+            # todo: change form field type and widget depending on the survey field 'type'
+            self.fields[survey_filed['variable']] = forms.CharField(label=survey_filed['question_name'],
+                                                                    required=True,
+                                                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    @staticmethod
+    def _get_available_fields(job_template_survey, operation_survey):
+        """
+        Return survey fields from the job template that are active in the operation
+        :return: survey dict
+        :rtype dict
+        """
+        # copy the dict
+        returned_dict = copy.copy(job_template_survey)
+        # cleanup the list
+        returned_dict["spec"] = list()
+        # loop the original survey
+        for survey_filed in job_template_survey["spec"]:
+            if operation_survey[survey_filed["variable"]]:
+                returned_dict["spec"].append(survey_filed)
+        return returned_dict

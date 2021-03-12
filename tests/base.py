@@ -64,6 +64,11 @@ class BaseTest(TestCase):
         self.create_operation_test = Operation.objects.create(name="create test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test)
+        self.create_operation_test.survey = {
+            'text_variable': True,
+            'multiplechoice_variable': False
+        }
+        self.create_operation_test.save()
         self.update_operation_test = Operation.objects.create(name="create test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
