@@ -115,7 +115,7 @@ class SurveySelectorForm(forms.Form):
         operation_id = kwargs.get('operation_id')
         self.operation = Operation.objects.get(id=operation_id)
         # create each field from the survey
-        for field_name, is_checked in self.operation.survey.items():
+        for field_name, is_checked in self.operation.enabled_survey_fields.items():
             attributes = {'class': 'custom-control-input',
                           'id': field_name,
                           'checked': is_checked}
@@ -125,7 +125,7 @@ class SurveySelectorForm(forms.Form):
     def save(self):
         # update the end user survey
         for field, value in self.cleaned_data.items():
-            self.operation.survey[field] = value
+            self.operation.enabled_survey_fields[field] = value
         self.operation.save()
 
 
@@ -138,8 +138,8 @@ class ServiceRequestForm(forms.Form):
         self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
 
         # get all field that are not disabled by the admin
-        purged_survey = self._get_available_fields(job_template_survey=self.create_operation.job_template.survey,
-                                                   operation_survey=self.create_operation.survey)
+        purged_survey = self._get_available_fields(job_template_survey=self.create_operation.job_template.enabled_survey_fields,
+                                                   operation_survey=self.create_operation.enabled_survey_fields)
         for survey_filed in purged_survey["spec"]:
             # todo: change form field type and widget depending on the survey field 'type'
             self.fields[survey_filed['variable']] = forms.CharField(label=survey_filed['question_name'],

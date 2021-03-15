@@ -15,13 +15,22 @@ class TowerServer(models.Model):
         :return:
         """
         from .job_templates import JobTemplate as JobTemplateLocal
-        tower = Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)
+        tower = self._get_tower_instance()
 
         for job_template in tower.job_templates:
             try:
-                JobTemplateLocal.objects.get(tower_id=job_template.id)
+                updated_job_template = JobTemplateLocal.objects.get(tower_id=job_template.id)
+                # update the survey
+                updated_job_template.survey = job_template.survey_spec
+                updated_job_template.save()
             except JobTemplateLocal.DoesNotExist:
-                JobTemplateLocal.objects.create(name=job_template.name,
-                                                tower_id=job_template.id,
-                                                survey=job_template.survey_spec,
-                                                tower_server=self)
+                updated_job_template = JobTemplateLocal.objects.create(name=job_template.name,
+                                                                       tower_id=job_template.id,
+                                                                       survey=job_template.survey_spec,
+                                                                       tower_server=self)
+            # update all operation that uses this template
+            from service_catalog.models import Operation
+            Operation.update_survey_after_job_template_update(updated_job_template)
+
+    def _get_tower_instance(self):
+        return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)

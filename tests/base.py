@@ -24,7 +24,7 @@ class BaseTest(TestCase):
         # Tower
         # ------------------------------
         self.tower_server_test = TowerServer.objects.create(name="tower-server-test", host="localhost", token="xxx")
-        survey = {
+        self.testing_survey = {
             "name": "test-survey",
             "description": "test-survey-description",
             "spec": [
@@ -55,7 +55,7 @@ class BaseTest(TestCase):
             ]
         }
         self.job_template_test = JobTemplate.objects.create(name="job-template-test",
-                                                            survey=survey,
+                                                            survey=self.testing_survey,
                                                             tower_id=1,
                                                             tower_server=self.tower_server_test)
 
@@ -64,7 +64,7 @@ class BaseTest(TestCase):
         self.create_operation_test = Operation.objects.create(name="create test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test)
-        self.create_operation_test.survey = {
+        self.create_operation_test.enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': False
         }

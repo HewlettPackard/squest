@@ -12,4 +12,4 @@ class CatalogViewTestCase(BaseTest):
             "multiplechoice_variable": True
         }
 
-        self.assertEquals(self.create_operation_test.survey, expected_result)
+        self.assertEquals(self.create_operation_test.enabled_survey_fields, expected_result)

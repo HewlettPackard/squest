@@ -1,3 +1,5 @@
+import copy
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
@@ -22,9 +24,21 @@ class Operation(models.Model):
         choices=OperationType.choices,
         default=OperationType.CREATE,
     )
-    survey = JSONField(blank=True, null=True)
+    enabled_survey_fields = JSONField(blank=True, null=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
+
+    def update_survey(self):
+        new_end_user_survey = dict()
+        old_enabled_survey_fields = copy.copy(self.enabled_survey_fields)
+        for survey_field in self.job_template.survey["spec"]:
+            field_id = survey_field["variable"]
+            if field_id not in old_enabled_survey_fields:
+                new_end_user_survey[field_id] = True
+            else:
+                new_end_user_survey[field_id] = old_enabled_survey_fields[field_id]
+        self.enabled_survey_fields = new_end_user_survey
+        self.save()
 
     @classmethod
     def add_job_template_survey_as_default_survey(cls, sender, instance, created, *args, **kwargs):
@@ -34,8 +48,15 @@ class Operation(models.Model):
             end_user_survey = dict()
             for survey_field in default_survey["spec"]:
                 end_user_survey[survey_field["variable"]] = True
-            instance.survey = end_user_survey
+            instance.enabled_survey_fields = end_user_survey
             instance.save()
+
+    @classmethod
+    def update_survey_after_job_template_update(cls, job_template):
+        # get all operation that use the target job template
+        operations = Operation.objects.filter(job_template=job_template)
+        for operation in operations:
+            operation.update_survey()
 
 
 post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Operation)

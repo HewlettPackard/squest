@@ -135,7 +135,6 @@ STATICFILES_DIRS = (
 
 # TO be set when prod
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-print(MEDIA_ROOT)
 MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'home'
