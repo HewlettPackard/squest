@@ -206,6 +206,17 @@ python-versions = "*"
 celery = ">=4.4,<6.0"
 
 [[package]]
+name = "django-guardian"
+version = "2.3.0"
+description = "Implementation of per object permissions for Django."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
 name = "djangorestframework"
 version = "3.12.2"
 description = "Web APIs for Django, made easy."
@@ -423,7 +434,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "08a5813f29b2abe7e7f4d0e2d27bc1efff121bf4c6406c5288a7bb88f4384189"
+content-hash = "0ce839de8038052f90f27e3e1c300450236b2827813163a197bb9c73eaf5d325"
 
 [metadata.files]
 amqp = [
@@ -485,6 +496,10 @@ django = [
 django-celery-results = [
     {file = "django_celery_results-2.0.1-py2.py3-none-any.whl", hash = "sha256:a2f7d172f7f57dd972538acc6e80a5bf50c673fb4d82fe027189c8659c60dfce"},
     {file = "django_celery_results-2.0.1.tar.gz", hash = "sha256:d625e324138e5b2ef46ffa9e89fa353c16d619420066ac8b240ef9247b293a84"},
+]
+django-guardian = [
+    {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},
+    {file = "django_guardian-2.3.0-py3-none-any.whl", hash = "sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.12.2-py3-none-any.whl", hash = "sha256:0209bafcb7b5010fdfec784034f059d512256424de2a0f084cb82b096d6dd6a7"},

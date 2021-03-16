@@ -4,21 +4,24 @@
 
     <!-- Main content -->
     <div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Request a service: {{ service.name }}</h1>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
-    <div class="content">
-        <div class="container-fluid">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Request a service: {{ service.name }}</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
                         {% if form.errors %}
                             <div class="alert alert-danger" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
                                 {% for field in form %}
                                     {% if field.errors %}
                                         <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
@@ -53,6 +56,6 @@
 
                 </div><!-- end container fluid -->
             </div>
-    </div>
+        </div>
     </div>
 {% endblock %}

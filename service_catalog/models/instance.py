@@ -6,7 +6,6 @@ from . import Service
 
 
 class Instance(models.Model):
-    name = models.CharField(max_length=100)
     spec = JSONField()
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
