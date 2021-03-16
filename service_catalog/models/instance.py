@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Permission
 from django.db import models
+from django_fsm import FSMField, transition
 from jsonfield import JSONField
 
 from . import Service
@@ -8,6 +9,43 @@ from . import Service
 class Instance(models.Model):
     spec = JSONField()
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    state = FSMField(default='PENDING')
+
+    @transition(field=state, source=['PENDING', 'PROVISION_FAILED'], target='PROVISIONING')
+    def provisioning(self):
+        pass
+
+    @transition(field=state, source=['PROVISIONING', 'UPDATING'], target='AVAILABLE')
+    def available(self):
+        pass
+
+    @transition(field=state, source='AVAILABLE', target='UPDATING')
+    def update(self):
+        pass
+
+    @transition(field=state, source='UPDATING', target='UPDATE_FAILED')
+    def update_has_failed(self):
+        pass
+
+    @transition(field=state, source='UPDATE_FAILED', target='UPDATING')
+    def retry_update(self):
+        pass
+
+    @transition(field=state, source=['AVAILABLE', 'DELETE_FAILED'], target='DELETING')
+    def deleting(self):
+        pass
+
+    @transition(field=state, source='DELETING', target='DELETE_FAILED')
+    def delete_has_failed(self):
+        pass
+
+    @transition(field=state, source='DELETING', target='DELETED')
+    def deleted(self):
+        pass
+
+    @transition(field=state, source='DELETED', target='ARCHIVED')
+    def archive(self):
+        pass
 
 
 class UserPermissionOnInstance(models.Model):

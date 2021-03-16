@@ -23,9 +23,9 @@ def customer_service_request(request, service_id):
         if form.is_valid():
             form.save()
             # todo redirect to request
-            return redirect(customer_list_service)
+            return redirect('customer_request_list')
     else:
-        form = ServiceRequestForm(request.user, request.POST, **parameters)
+        form = ServiceRequestForm(request.user, **parameters)
 
     return render(request, 'customer/catalog/service/service-request.html', {'form': form,
                                                                              'service': target_service})

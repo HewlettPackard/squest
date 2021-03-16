@@ -32,6 +32,8 @@
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Job template</th>
+                                <th>Auto accept</th>
+                                <th>Auto process</th>
                                 <th>Survey</th>
                                 <th>Actions</th>
                             </tr>
@@ -52,6 +54,20 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ operation.job_template.name }}</td>
+                                    <td>
+                                        {%  if operation.auto_accept %}
+                                            <i class="fas fa-circle text-success"></i>
+                                        {%  else %}
+                                            <i class="fas fa-circle text-secondary"></i>
+                                        {%  endif %}
+                                    </td>
+                                    <td>
+                                        {%  if operation.auto_process %}
+                                            <i class="fas fa-circle text-success"></i>
+                                        {%  else %}
+                                            <i class="fas fa-circle text-secondary"></i>
+                                        {%  endif %}
+                                    </td>
                                     <td>
                                         <a href="{% url 'service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-clipboard-list"></i>

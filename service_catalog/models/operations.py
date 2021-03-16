@@ -27,6 +27,8 @@ class Operation(models.Model):
     enabled_survey_fields = JSONField(blank=True, null=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
+    auto_accept = models.BooleanField(default=False)
+    auto_process = models.BooleanField(default=False)
 
     def update_survey(self):
         new_end_user_survey = dict()

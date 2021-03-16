@@ -1,5 +1,5 @@
 from django.db import models
-from django_fsm import FSMField
+from django_fsm import FSMField, transition
 from jsonfield import JSONField
 
 from . import Operation
@@ -11,3 +11,35 @@ class Request(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     state = FSMField(default='SUBMITTED')
+
+    @transition(field=state, source='SUBMITTED', target='NEED_INFO')
+    def need_info(self):
+        pass
+
+    @transition(field=state, source='NEED_INFO', target='SUBMITTED')
+    def re_submit(self):
+        pass
+
+    @transition(field=state, source=['SUBMITTED', 'NEED_INFO', 'REJECTED', 'ACCEPTED'], target='CANCELED')
+    def cancel(self):
+        pass
+
+    @transition(field=state, source=['SUBMITTED', 'ACCEPTED'], target='REJECTED')
+    def reject(self):
+        pass
+
+    @transition(field=state, source='SUBMITTED', target='ACCEPTED')
+    def accept(self):
+        pass
+
+    @transition(field=state, source='ACCEPTED', target='PROCESSING')
+    def process(self):
+        pass
+
+    @transition(field=state, source='PROCESSING', target='FAILED')
+    def has_failed(self):
+        pass
+
+    @transition(field=state, source='PROCESSING', target='COMPLETE')
+    def complete(self):
+        pass

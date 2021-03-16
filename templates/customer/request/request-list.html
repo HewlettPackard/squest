@@ -32,14 +32,14 @@
                                 <tr>
                                     <td>{{ request.instance.service.name }}</td>
                                     <td>
-                                        <a href="" class="btn btn-primary bg-sm">
+                                        <a href="" class="btn btn-default bg-sm">
                                             <i class="fas fa-link"></i>
                                         </a>
                                     </td>
-                                    <td><h4><span class="badge bg-info">{{ request.operation.type }}</span></h4></td>
-                                    <td><h4><span class="badge bg-primary">{{ request.state }}</span></h4></td>
+                                    <td><h4><span class="badge {{ request.operation.type |map_badge_operation_type }}">{{ request.operation.type }}</span></h4></td>
+                                    <td><h4><span class="badge {{ request.state |map_badge_request_state }}">{{ request.state }}</span></h4></td>
                                     <td>
-                                        <a href="" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'customer_request_cancel'  request.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-ban"></i>
                                         </a>
                                     </td>

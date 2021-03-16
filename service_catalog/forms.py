@@ -1,5 +1,4 @@
 import copy
-from dataclasses import field
 
 import requests
 import towerlib
@@ -74,13 +73,21 @@ class ServiceForm(ModelForm):
                                           to_field_name="name",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
+    auto_accept = forms.BooleanField(label="Auto accept",
+                                     required=False,
+                                     widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+
+    auto_process = forms.BooleanField(label="Auto process",
+                                      required=False,
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+
     image = forms.ImageField(label="Choose a file",
                              required=False,
                              widget=forms.FileInput())
 
     class Meta:
         model = Service
-        fields = ["name", "description", "job_template", "image"]
+        fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image"]
 
 
 class AddServiceOperationForm(ModelForm):
@@ -133,9 +140,11 @@ class SurveySelectorForm(forms.Form):
 
 class ServiceRequestForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
-        super().__init__(*args)
+        # get arguments from instance
         self.user = user
-        service_id = kwargs.get('service_id')
+        service_id = kwargs.pop('service_id', None)
+        super(ServiceRequestForm, self).__init__(*args, **kwargs)
+
         self.service = Service.objects.get(id=service_id)
         # get the create operation of this service
         self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
@@ -150,6 +159,7 @@ class ServiceRequestForm(forms.Form):
                                                                         widget=forms.TextInput(attrs={'class': 'form-control'}))
             if survey_filed["type"] == "multiplechoice":
                 self.fields[survey_filed['variable']] = forms.ChoiceField(label="Type",
+                                                                          required=survey_filed['required'],
                                                                           choices=self._get_choices_from_string(survey_filed["choices"]),
                                                                           error_messages={'required': 'At least you must select one choice'},
                                                                           widget=forms.Select(attrs={'class': 'form-control'}))
@@ -166,8 +176,12 @@ class ServiceRequestForm(forms.Form):
         # create the request
         new_request = Request.objects.create(instance=new_instance, operation=self.create_operation)
         UserObjectPermission.objects.assign_perm('view_request', self.user, obj=new_request)
+        UserObjectPermission.objects.assign_perm('delete_request', self.user, obj=new_request)
         # TODO: send notification to admins
         return new_request
+
+    def clean(self):
+        super(ServiceRequestForm, self).clean()
 
     @staticmethod
     def _get_available_fields(job_template_survey, operation_survey):
@@ -193,8 +207,3 @@ class ServiceRequestForm(forms.Form):
         for line in split_lines:
             returned_list.append((line, line))
         return returned_list
-
-# /home/nico/Documents/tower-service-catalog
-# docker-compose -f dev-env.docker-compose.yml up
-# poetry run celery -A service_catalog worker -l info
-# poetry shell

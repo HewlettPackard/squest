@@ -33,4 +33,5 @@ urlpatterns = [
     path('customer/catalog/service/<int:service_id>/request/', views.customer_service_request,
          name='customer_service_request'),
     path('customer/request/', views.customer_request_list, name='customer_request_list'),
+    path('customer/request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

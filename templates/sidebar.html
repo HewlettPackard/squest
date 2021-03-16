@@ -24,13 +24,13 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{% url 'customer_service_list'%}" class="nav-link {% if 'customer/catalog' in request.path %}active{% endif %}">
+                    <a href="{% url 'customer_service_list'%}" class="nav-link {% if 'customer/catalog/service' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>Catalog</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'customer_request_list'%}" class="nav-link {% if 'request' in request.path %}active{% endif %}">
+                    <a href="{% url 'customer_request_list'%}" class="nav-link {% if 'customer/request' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-list"></i>
                         <p>Requests</p>
                     </a>
@@ -70,14 +70,14 @@
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-check"></i>
-                            <p>Approvals
-
-                            </p>
-                        </a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a href="#" class="nav-link">#}
+{#                            <i class="nav-icon fas fa-check"></i>#}
+{#                            <p>Approvals#}
+{##}
+{#                            </p>#}
+{#                        </a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a href="{% url 'tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
                             <i class="nav-icon fab fa-adn"></i>
