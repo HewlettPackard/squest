@@ -1,4 +1,5 @@
 from django.db import models
+from django_fsm import FSMField
 from jsonfield import JSONField
 
 from . import Operation
@@ -9,3 +10,4 @@ class Request(models.Model):
     fill_in_survey = JSONField()
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
+    state = FSMField(default='SUBMITTED')

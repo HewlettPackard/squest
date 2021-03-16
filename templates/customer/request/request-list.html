@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>My requests</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+
+                    <div class="card-body">
+                        <table id="customer_request_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Instance</th>
+                                <th>Operation</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for request in requests %}
+                                <tr>
+                                    <td>{{ request.instance.service.name }}</td>
+                                    <td>
+                                        <a href="" class="btn btn-primary bg-sm">
+                                            <i class="fas fa-link"></i>
+                                        </a>
+                                    </td>
+                                    <td><h4><span class="badge bg-info">{{ request.operation.type }}</span></h4></td>
+                                    <td><h4><span class="badge bg-primary">{{ request.state }}</span></h4></td>
+                                    <td>
+                                        <a href="" class="btn btn-danger bg-sm">
+                                            <i class="fas fa-ban"></i>
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

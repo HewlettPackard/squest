@@ -206,6 +206,14 @@ python-versions = "*"
 celery = ">=4.4,<6.0"
 
 [[package]]
+name = "django-fsm"
+version = "2.7.1"
+description = "Django friendly finite state machine support."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "django-guardian"
 version = "2.3.0"
 description = "Implementation of per object permissions for Django."
@@ -434,7 +442,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "0ce839de8038052f90f27e3e1c300450236b2827813163a197bb9c73eaf5d325"
+content-hash = "5219c70ad4ab27df8339521e8ecae0420fdbcaaabc3582931cfec22ab4d8354f"
 
 [metadata.files]
 amqp = [
@@ -496,6 +504,10 @@ django = [
 django-celery-results = [
     {file = "django_celery_results-2.0.1-py2.py3-none-any.whl", hash = "sha256:a2f7d172f7f57dd972538acc6e80a5bf50c673fb4d82fe027189c8659c60dfce"},
     {file = "django_celery_results-2.0.1.tar.gz", hash = "sha256:d625e324138e5b2ef46ffa9e89fa353c16d619420066ac8b240ef9247b293a84"},
+]
+django-fsm = [
+    {file = "django-fsm-2.7.1.tar.gz", hash = "sha256:219b204777a932720d8583cb1f34713bd08b4713e1beb39ab2e674810e21d5e9"},
+    {file = "django_fsm-2.7.1-py2.py3-none-any.whl", hash = "sha256:c96a844853de0f5dc67791b64beb367b5d56f992dff7c00f9b88c483e09f15ec"},
 ]
 django-guardian = [
     {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},

@@ -158,7 +158,6 @@ class ServiceRequestForm(forms.Form):
         fill_in_survey = dict()
         for field_key, value in self.cleaned_data.items():
             fill_in_survey[field_key] = value
-        print(fill_in_survey)
         # create the instance
         new_instance = Instance.objects.create(service=self.service)
         # give user perm on this instance

@@ -2,6 +2,7 @@ $(document).ready( function () {
     $('#tower_list').DataTable();
     $('#job_template_list').DataTable();
     $('#service_list').DataTable();
+    $('#customer_request_list').DataTable();
 } );
 
 
