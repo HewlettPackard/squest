@@ -142,8 +142,13 @@ class MessageOnRequestForm(forms.Form):
 
         self.target_request = Request.objects.get(id=request_id)
 
+        help_text = ""
+        if not message_required:
+            help_text = "Optional message"
+
         self.fields['message'] = forms.CharField(label="Message",
                                                  required=message_required,
+                                                 help_text=help_text,
                                                  widget=forms.Textarea(attrs={'class': 'form-control'}))
 
     def save(self):
