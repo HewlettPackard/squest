@@ -19,6 +19,7 @@ class BaseTest(TestCase):
         self.client.login(username=self.superuser.username, password=self.common_password)
         # standard user
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)
+        self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
 
         # ------------------------------
         # Tower

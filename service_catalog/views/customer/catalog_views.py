@@ -22,7 +22,6 @@ def customer_service_request(request, service_id):
         form = ServiceRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
-            # todo redirect to request
             return redirect('customer_request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
