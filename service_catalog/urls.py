@@ -41,5 +41,9 @@ urlpatterns = [
 
     path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
 
+    # admin views URLs
+    path('admin/request/', views.admin_request_list, name='admin_request_list'),
+    path('admin/request/<int:request_id>/cancel/', views.admin_request_cancel, name='admin_request_cancel'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>My requests</h1>
+                        <h1>All requests</h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -36,14 +36,24 @@
                                         </a>
                                     </td>
                                     <td>{{ request.instance.service.name }}</td>
-                                    <td><h4><span class="badge bg-{{ request.operation.type |map_operation_type }}">{{ request.operation.type }}</span></h4></td>
+                                    <td>
+                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm" data-toggle="popover" data-content="{{ request.operation.job_template.name }}">
+                                            {{ request.operation.type }}
+                                        </a>
+                                    </td>
                                     <td><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
                                     <td>
-                                        {% if request.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
-                                            <a href="{% url 'customer_request_cancel'  request.id %}" class="btn btn-danger bg-sm" title="Cancel request">
-                                                <i class="fas fa-ban"></i>
-                                            </a>
-                                        {% endif %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"cancel" }}" href="{% url 'admin_request_cancel' request.id %}">Cancel</a>
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"need_info" }}" href="#">Ask more info</a>
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"reject" }}" href="#">Reject</a>
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"accept" }}" href="#">Accept</a>
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"process" }}" href="#">Process</a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             {%  endfor %}

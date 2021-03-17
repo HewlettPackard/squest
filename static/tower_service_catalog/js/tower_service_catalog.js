@@ -5,6 +5,12 @@ $(document).ready( function () {
     $('#customer_request_list').DataTable();
 } );
 
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover({
+        placement : 'top',
+        trigger: 'hover'
+    });
+});
 
 function getCookie(name) {
     let cookieValue = null;
