@@ -32,8 +32,8 @@
                                 <tr>
                                     <td>{{ request.instance.service.name }}</td>
                                     <td>
-                                        <a href="" class="btn btn-default bg-sm">
-                                            <i class="fas fa-link"></i>
+                                        <a href="">
+                                            {{ request.instance.name }}
                                         </a>
                                     </td>
                                     <td><h4><span class="badge {{ request.operation.type |map_badge_operation_type }}">{{ request.operation.type }}</span></h4></td>
