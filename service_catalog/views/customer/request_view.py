@@ -22,9 +22,6 @@ def customer_request_cancel(request, request_id):
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         target_request.cancel()
-        # delete the related instance (we should have only one)
-        instance = Instance.objects.get(request=target_request)
-        instance.delete()
         # now delete the request
         target_request.delete()
         return redirect(customer_request_list)

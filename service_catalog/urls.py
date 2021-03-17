@@ -44,6 +44,7 @@ urlpatterns = [
     # admin views URLs
     path('admin/request/', views.admin_request_list, name='admin_request_list'),
     path('admin/request/<int:request_id>/cancel/', views.admin_request_cancel, name='admin_request_cancel'),
+    path('admin/request/<int:request_id>/need-info/', views.admin_request_need_info, name='admin_request_need_info'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
