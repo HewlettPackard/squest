@@ -47,6 +47,7 @@
                                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"re_submit" }}" href="{% url 'admin_request_re_submit' request.id %}">Reset to submitted</a>
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"cancel" }}" href="{% url 'admin_request_cancel' request.id %}">Cancel</a>
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"need_info" }}" href="{% url 'admin_request_need_info' request.id %}">Ask more info</a>
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"reject" }}" href="#">Reject</a>

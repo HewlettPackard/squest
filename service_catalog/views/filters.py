@@ -26,7 +26,7 @@ def map_request_state(value):
     map_dict = {
         "ACCEPTED": "primary",
         "NEED_INFO": "warning",
-        "SUBMITTED": "secondary",
+        "SUBMITTED": "info",
         "REJECTED": "dark",
         "PROCESSING": "primary",
         "COMPLETE": "success",
@@ -63,6 +63,9 @@ def is_action_dropdown_disabled(request_id, target_action):
             return "disabled"
     if target_action == "process":
         if not can_proceed(target_request.process):
+            return "disabled"
+    if target_action == "re_submit":
+        if not can_proceed(target_request.re_submit):
             return "disabled"
 
 

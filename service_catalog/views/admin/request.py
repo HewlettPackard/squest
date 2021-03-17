@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
 
-from service_catalog.forms import NeedInfoForm
+from service_catalog.forms import MessageOnRequestForm
 from service_catalog.models import Request
 
 
@@ -35,10 +35,11 @@ def admin_request_cancel(request, request_id):
 def admin_request_need_info(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
     parameters = {
-        'request_id': target_request.id
+        'request_id': target_request.id,
+        'message_required': True
     }
     if request.method == "POST":
-        form = NeedInfoForm(request.user, request.POST, **parameters)
+        form = MessageOnRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
@@ -49,10 +50,37 @@ def admin_request_need_info(request, request_id):
             # TODO: notify user
             return redirect(admin_request_list)
     else:
-        form = NeedInfoForm(request.user, **parameters)
+        form = MessageOnRequestForm(request.user, **parameters)
 
     context = {
         "form": form,
         "target_request": target_request
     }
     return render(request, "admin/request/request-need-info.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_re_submit(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    parameters = {
+        'request_id': target_request.id,
+        'message_required': False
+    }
+    if request.method == "POST":
+        form = MessageOnRequestForm(request.user, request.POST, **parameters)
+        if form.is_valid():
+            if not can_proceed(target_request.re_submit):
+                raise PermissionDenied
+            form.save()
+            target_request.re_submit()
+            target_request.save()
+            # TODO: notify user
+            return redirect(admin_request_list)
+    else:
+        form = MessageOnRequestForm(request.user, **parameters)
+
+    context = {
+        "form": form,
+        "target_request": target_request
+    }
+    return render(request, "admin/request/request-re-submit.html", context)

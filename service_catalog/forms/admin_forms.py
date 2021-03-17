@@ -132,20 +132,20 @@ class SurveySelectorForm(forms.Form):
         self.operation.save()
 
 
-class NeedInfoForm(forms.Form):
-
-    message = forms.CharField(label="Message",
-                              required=True,
-                              widget=forms.Textarea(attrs={'class': 'form-control'}))
+class MessageOnRequestForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
         request_id = kwargs.pop('request_id', None)
-        super(NeedInfoForm, self).__init__(*args, **kwargs)
+        message_required = kwargs.pop('message_required', False)
+        super(MessageOnRequestForm, self).__init__(*args, **kwargs)
 
         self.target_request = Request.objects.get(id=request_id)
+
+        self.fields['message'] = forms.CharField(label="Message",
+                                                 required=message_required,
+                                                 widget=forms.Textarea(attrs={'class': 'form-control'}))
 
     def save(self):
         message_content = self.cleaned_data["message"]
         Message.objects.create(sender=self.user, content=message_content, request=self.target_request)
-

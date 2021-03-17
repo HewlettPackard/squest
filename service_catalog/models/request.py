@@ -26,7 +26,7 @@ class Request(models.Model):
         instance = Instance.objects.get(request=self)
         instance.delete()
 
-    @transition(field=state, source=['SUBMITTED', 'ACCEPTED'], target='REJECTED')
+    @transition(field=state, source=['SUBMITTED', 'ACCEPTED', 'NEED_INFO'], target='REJECTED')
     def reject(self):
         pass
 
