@@ -23,7 +23,9 @@
                     <div class="card-body">
                         <form action='' method='POST'>{% csrf_token %}
                             <p>Do you want to cancel the request?</p>
-                            <button type="submit" class="btn btn-danger">Cancel request</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-window-close"></i> Cancel request
+                            </button>
                             <a class="btn btn-default" href="{% url 'admin_request_list' %}">Return</a>
                         </form>
                     </div>

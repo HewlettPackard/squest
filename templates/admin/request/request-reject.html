@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Reset request to SUBMITTED state</h1>
+                        <h1>Reject request</h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -29,7 +29,7 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'admin_request_re_submit' target_request.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'admin_request_reject' target_request.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
@@ -49,7 +49,7 @@
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <!-- validate button -->
                                     <button class="btn btn-success" type="submit">
-                                        <i class="fas fa-redo"></i> Reset to SUBMITTED
+                                        <i class="fas fa-ban"></i> Reject request
                                     </button>
                                     <a class="btn btn-default" href="{% url 'admin_request_list' %}">Return</a>
                                 </div>

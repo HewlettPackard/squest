@@ -84,3 +84,30 @@ def admin_request_re_submit(request, request_id):
         "target_request": target_request
     }
     return render(request, "admin/request/request-re-submit.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_reject(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    parameters = {
+        'request_id': target_request.id,
+        'message_required': True
+    }
+    if request.method == "POST":
+        form = MessageOnRequestForm(request.user, request.POST, **parameters)
+        if form.is_valid():
+            if not can_proceed(target_request.reject):
+                raise PermissionDenied
+            form.save()
+            target_request.reject()
+            target_request.save()
+            # TODO: notify user
+            return redirect(admin_request_list)
+    else:
+        form = MessageOnRequestForm(request.user, **parameters)
+
+    context = {
+        "form": form,
+        "target_request": target_request
+    }
+    return render(request, "admin/request/request-reject.html", context)
