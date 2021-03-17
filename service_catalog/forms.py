@@ -139,6 +139,12 @@ class SurveySelectorForm(forms.Form):
 
 
 class ServiceRequestForm(forms.Form):
+
+    instance_name = forms.CharField(label="Instance name",
+                                    required=True,
+                                    help_text="Help to identify the requested service in the 'Instances' view",
+                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
         self.user = user
@@ -169,7 +175,8 @@ class ServiceRequestForm(forms.Form):
         for field_key, value in self.cleaned_data.items():
             fill_in_survey[field_key] = value
         # create the instance
-        new_instance = Instance.objects.create(service=self.service)
+        instance_name = self.cleaned_data["instance_name"]
+        new_instance = Instance.objects.create(service=self.service, name=instance_name)
         # give user perm on this instance
         UserObjectPermission.objects.assign_perm('change_instance', self.user, obj=new_instance)
         UserObjectPermission.objects.assign_perm('view_instance', self.user, obj=new_instance)

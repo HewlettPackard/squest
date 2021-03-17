@@ -8,7 +8,7 @@ class BaseTestRequest(BaseTest):
 
     def setUp(self):
         super(BaseTestRequest, self).setUp()
-        form_data = {'text_variable': 'my_var'}
+        form_data = {'instance_name': 'test instance', 'text_variable': 'my_var'}
         form = ServiceRequestForm(user=self.standard_user,
                                   service_id=self.service_test.id,
                                   data=form_data)

@@ -36,7 +36,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'customer_instance_list'%}" class="nav-link {% if 'customer/instance' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>Instances</p>
                     </a>

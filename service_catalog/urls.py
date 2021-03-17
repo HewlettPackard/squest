@@ -5,8 +5,11 @@ from TowerServiceCatalog import settings
 from . import views
 
 urlpatterns = [
+    # common URLs
     path('', views.home, name='home'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
+
+    # settings URLs
     path('settings/tower/', views.tower, name='tower'),
     path('settings/tower/add/', views.add_tower, name='add_tower'),
     path('settings/tower/<int:tower_id>/sync/', views.sync_tower, name='sync_tower'),
@@ -29,9 +32,14 @@ urlpatterns = [
          views.service_operation_edit_survey,
          name='service_operation_edit_survey'),
 
+    # customer views URLs
     path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),
     path('customer/catalog/service/<int:service_id>/request/', views.customer_service_request,
          name='customer_service_request'),
     path('customer/request/', views.customer_request_list, name='customer_request_list'),
     path('customer/request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
+
+    path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
