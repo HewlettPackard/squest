@@ -68,5 +68,28 @@ def is_action_dropdown_disabled(request_id, target_action):
         if not can_proceed(target_request.re_submit):
             return "disabled"
 
+    return ""
 
+
+@register.filter(name='get_action_text_class')
+def get_action_text_class(request_id, target_action):
+    target_request = Request.objects.get(id=request_id)
+    if target_action == "cancel":
+        if can_proceed(target_request.cancel):
+            return "text-dark"
+    if target_action == "need_info":
+        if can_proceed(target_request.need_info):
+            return "text-warning"
+    if target_action == "reject":
+        if can_proceed(target_request.reject):
+            return "text-danger"
+    if target_action == "accept":
+        if can_proceed(target_request.accept):
+            return "text-primary"
+    if target_action == "process":
+        if can_proceed(target_request.process):
+            return "text-success"
+    if target_action == "re_submit":
+        if can_proceed(target_request.re_submit):
+            return "text-info"
     return ""
