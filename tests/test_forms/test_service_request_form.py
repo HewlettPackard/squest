@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from service_catalog.forms import ServiceRequestForm

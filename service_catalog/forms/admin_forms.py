@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from towerlib import Tower
 
+from service_catalog.forms.utils import get_choices_from_string
 from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, Message
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -154,3 +155,47 @@ class MessageOnRequestForm(forms.Form):
     def save(self):
         message_content = self.cleaned_data["message"]
         Message.objects.create(sender=self.user, content=message_content, request=self.target_request)
+
+
+class AcceptRequestForm(forms.Form):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        request_id = kwargs.pop('request_id', None)
+        super(AcceptRequestForm, self).__init__(*args, **kwargs)
+        self.target_request = Request.objects.get(id=request_id)
+
+        # load user provided fields and add admin field if exist
+        for survey_definition in self.target_request.operation.job_template.survey["spec"]:
+            if survey_definition["type"] == "text":
+                new_field = forms.CharField(label=survey_definition['question_name'],
+                                            required=survey_definition['required'],
+                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+                new_field.group = self._get_field_group(field_name=survey_definition['variable'],
+                                                        enabled_field=self.target_request.operation.enabled_survey_fields)
+                self.fields[survey_definition['variable']] = new_field
+
+            if survey_definition["type"] == "multiplechoice":
+                new_field = forms. \
+                    ChoiceField(label=survey_definition['question_name'],
+                                required=survey_definition['required'],
+                                choices=get_choices_from_string(survey_definition["choices"]),
+                                error_messages={'required': 'At least you must select one choice'},
+                                widget=forms.Select(attrs={'class': 'form-control'}))
+                new_field.group = self._get_field_group(field_name=survey_definition['variable'],
+                                                        enabled_field=self.target_request.operation.enabled_survey_fields)
+                self.fields[survey_definition['variable']] = new_field
+
+    @staticmethod
+    def _get_field_group(field_name, enabled_field):
+        if enabled_field[field_name]:
+            return "User"
+        return "Admin"
+
+    def save(self):
+        user_provided_survey_fields = dict()
+        for field_key, value in self.cleaned_data.items():
+            user_provided_survey_fields[field_key] = value
+        # update the request
+        self.target_request.fill_in_survey = user_provided_survey_fields
+        self.target_request.accept()
+        self.target_request.save()

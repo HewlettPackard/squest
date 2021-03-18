@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
 
-from service_catalog.forms import MessageOnRequestForm
+from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.models import Request
 
 
@@ -111,3 +111,24 @@ def admin_request_reject(request, request_id):
         "target_request": target_request
     }
     return render(request, "admin/request/request-reject.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_accept(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    parameters = {
+        'request_id': request_id
+    }
+    if request.method == 'POST':
+        form = AcceptRequestForm(request.user, request.POST, **parameters)
+        if form.is_valid():
+            form.save()
+            return redirect(admin_request_list)
+    else:
+        form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
+
+    context = {
+        "form": form,
+        "target_request": target_request
+    }
+    return render(request, 'admin/request/request-accept.html', context=context)

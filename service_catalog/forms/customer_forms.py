@@ -4,9 +4,9 @@ import urllib3
 from django import forms
 from guardian.models import UserObjectPermission
 
+from service_catalog.forms.utils import get_choices_from_string
 from service_catalog.models import Service, Operation, Instance, Request
 from service_catalog.models.operations import OperationType
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -39,9 +39,9 @@ class ServiceRequestForm(forms.Form):
 
             if survey_filed["type"] == "multiplechoice":
                 self.fields[survey_filed['variable']] = forms. \
-                    ChoiceField(label="Type",
+                    ChoiceField(label=survey_filed['question_name'],
                                 required=survey_filed['required'],
-                                choices=self._get_choices_from_string(survey_filed["choices"]),
+                                choices=get_choices_from_string(survey_filed["choices"]),
                                 error_messages={'required': 'At least you must select one choice'},
                                 widget=forms.Select(attrs={'class': 'form-control'}))
 
@@ -83,11 +83,3 @@ class ServiceRequestForm(forms.Form):
             if operation_survey[survey_filed["variable"]]:
                 returned_dict["spec"].append(survey_filed)
         return returned_dict
-
-    @staticmethod
-    def _get_choices_from_string(string_with_anti_slash_n):
-        split_lines = string_with_anti_slash_n.splitlines()
-        returned_list = list()
-        for line in split_lines:
-            returned_list.append((line, line))
-        return returned_list
