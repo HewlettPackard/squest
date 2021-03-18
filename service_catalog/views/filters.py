@@ -28,7 +28,7 @@ def map_request_state(value):
         "NEED_INFO": "warning",
         "SUBMITTED": "info",
         "REJECTED": "dark",
-        "PROCESSING": "primary",
+        "PROCESSING": "orange",
         "COMPLETE": "success",
         "FAILED": "danger",
         "CANCELED": "light"
@@ -37,7 +37,7 @@ def map_request_state(value):
 
 
 @register.filter(name='map_operation_type')
-def map_badge_operation_type(value):
+def map_operation_type(value):
     map_dict = {
         "CREATE": "success",
         "UPDATE": "primary",

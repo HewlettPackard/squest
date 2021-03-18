@@ -35,6 +35,7 @@ class Request(models.Model):
 
     @transition(field=state, source='ACCEPTED', target='PROCESSING')
     def process(self):
+        # TODO: celery task call tower
         pass
 
     @transition(field=state, source='PROCESSING', target='FAILED')

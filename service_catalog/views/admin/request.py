@@ -132,3 +132,20 @@ def admin_request_accept(request, request_id):
         "target_request": target_request
     }
     return render(request, 'admin/request/request-accept.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_process(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    if request.method == "POST":
+        # check that we can delete the request
+        if not can_proceed(target_request.process):
+            raise PermissionDenied
+        target_request.process()
+        target_request.save()
+        # TODO: notify user
+        return redirect(admin_request_list)
+    context = {
+        "target_request": target_request
+    }
+    return render(request, "admin/request/request-process.html", context)

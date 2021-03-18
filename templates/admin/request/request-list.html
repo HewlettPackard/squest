@@ -52,7 +52,7 @@
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"need_info" }}" href="{% url 'admin_request_need_info' request.id %}"><span class="{{ request.id |get_action_text_class:"need_info" }} fas fa-info-circle"></span> Ask more info</a>
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"reject" }}" href="{% url 'admin_request_reject' request.id %}"><span class="{{ request.id |get_action_text_class:"reject" }} fas fa-ban"></span> Reject</a>
                                                 <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"accept" }}" href="{% url 'admin_request_accept' request.id %}"><span class="{{ request.id |get_action_text_class:"accept" }} fas fa-thumbs-up"></span> Accept</a>
-                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"process" }}" href="#"><span class="{{ request.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
+                                                <a class="dropdown-item {{ request.id |is_action_dropdown_disabled:"process" }}" href="{% url 'admin_request_process' request.id %}"><span class="{{ request.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
                                             </div>
                                         </div>
                                     </td>
