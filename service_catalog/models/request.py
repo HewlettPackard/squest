@@ -1,13 +1,12 @@
 from django.db import models
 from django_fsm import FSMField, transition
-from jsonfield import JSONField
 
 from . import Operation
 from .instance import Instance
 
 
 class Request(models.Model):
-    fill_in_survey = JSONField()
+    fill_in_survey = models.JSONField(default=dict)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     state = FSMField(default='SUBMITTED')

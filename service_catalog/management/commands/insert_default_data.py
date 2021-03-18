@@ -18,6 +18,7 @@ class Command(BaseCommand):
         with open("default_data.yml", 'r') as stream_default_data:
             self.default_data = yaml.load(stream_default_data, Loader=yaml.BaseLoader)
             self.create_users()
+            print("[insert_default_data] End")
 
     def create_users(self):
         if "users" in self.default_data:

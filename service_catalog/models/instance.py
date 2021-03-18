@@ -1,14 +1,13 @@
 from django.contrib.auth.models import User, Permission
 from django.db import models
 from django_fsm import FSMField, transition
-from jsonfield import JSONField
 
 from . import Service
 
 
 class Instance(models.Model):
     name = models.CharField(max_length=100)
-    spec = JSONField()
+    spec = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     state = FSMField(default='PENDING')
 

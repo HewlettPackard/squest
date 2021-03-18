@@ -3,7 +3,6 @@ import copy
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
-from jsonfield import JSONField
 
 from service_catalog.models import JobTemplate
 from service_catalog.models import Service
@@ -24,7 +23,7 @@ class Operation(models.Model):
         choices=OperationType.choices,
         default=OperationType.CREATE,
     )
-    enabled_survey_fields = JSONField(blank=True, null=True)
+    enabled_survey_fields = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     auto_accept = models.BooleanField(default=False)

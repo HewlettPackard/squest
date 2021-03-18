@@ -32,20 +32,23 @@ class ServiceRequestForm(forms.Form):
                                                    operation_survey=self.create_operation.enabled_survey_fields)
         for survey_filed in purged_survey["spec"]:
             if survey_filed["type"] == "text":
-                self.fields[survey_filed['variable']] = forms.CharField(label=survey_filed['question_name'],
-                                                                        required=survey_filed['required'],
-                                                                        widget=forms.TextInput(attrs={'class': 'form-control'}))
+                self.fields[survey_filed['variable']] = forms. \
+                    CharField(label=survey_filed['question_name'],
+                              required=survey_filed['required'],
+                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+
             if survey_filed["type"] == "multiplechoice":
-                self.fields[survey_filed['variable']] = forms.ChoiceField(label="Type",
-                                                                          required=survey_filed['required'],
-                                                                          choices=self._get_choices_from_string(survey_filed["choices"]),
-                                                                          error_messages={'required': 'At least you must select one choice'},
-                                                                          widget=forms.Select(attrs={'class': 'form-control'}))
+                self.fields[survey_filed['variable']] = forms. \
+                    ChoiceField(label="Type",
+                                required=survey_filed['required'],
+                                choices=self._get_choices_from_string(survey_filed["choices"]),
+                                error_messages={'required': 'At least you must select one choice'},
+                                widget=forms.Select(attrs={'class': 'form-control'}))
 
     def save(self):
-        fill_in_survey = dict()
+        user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            fill_in_survey[field_key] = value
+            user_provided_survey_fields[field_key] = value
         # create the instance
         instance_name = self.cleaned_data["instance_name"]
         new_instance = Instance.objects.create(service=self.service, name=instance_name)
@@ -53,7 +56,9 @@ class ServiceRequestForm(forms.Form):
         UserObjectPermission.objects.assign_perm('change_instance', self.user, obj=new_instance)
         UserObjectPermission.objects.assign_perm('view_instance', self.user, obj=new_instance)
         # create the request
-        new_request = Request.objects.create(instance=new_instance, operation=self.create_operation, fill_in_survey=fill_in_survey)
+        new_request = Request.objects.create(instance=new_instance,
+                                             operation=self.create_operation,
+                                             fill_in_survey=user_provided_survey_fields)
         UserObjectPermission.objects.assign_perm('view_request', self.user, obj=new_request)
         UserObjectPermission.objects.assign_perm('delete_request', self.user, obj=new_request)
         # TODO: send notification to admins
