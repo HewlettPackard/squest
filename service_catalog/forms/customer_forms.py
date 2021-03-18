@@ -53,7 +53,7 @@ class ServiceRequestForm(forms.Form):
         UserObjectPermission.objects.assign_perm('change_instance', self.user, obj=new_instance)
         UserObjectPermission.objects.assign_perm('view_instance', self.user, obj=new_instance)
         # create the request
-        new_request = Request.objects.create(instance=new_instance, operation=self.create_operation)
+        new_request = Request.objects.create(instance=new_instance, operation=self.create_operation, fill_in_survey=fill_in_survey)
         UserObjectPermission.objects.assign_perm('view_request', self.user, obj=new_request)
         UserObjectPermission.objects.assign_perm('delete_request', self.user, obj=new_request)
         # TODO: send notification to admins

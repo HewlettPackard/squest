@@ -9,11 +9,6 @@ from service_catalog.models import TowerServer, JobTemplate
 from service_catalog.serializers import TaskResultSerializer
 
 
-@login_required
-def home(request):
-    return render(request, 'home.html')
-
-
 @user_passes_test(lambda u: u.is_superuser)
 def tower(request):
     tower_servers = TowerServer.objects.all()

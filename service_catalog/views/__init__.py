@@ -1,3 +1,4 @@
+from .common import *
 from .admin.tower import *
 from .admin.catalog import *
 from .admin.request import *

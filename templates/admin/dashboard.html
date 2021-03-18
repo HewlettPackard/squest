@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <!-- small card -->
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ total_request }}</h3>
+                                <p>New Request</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">
+                                More info <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <!-- small card -->
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>{{ total_instance }}</h3>
+                                <p>Instances</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-th"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">
+                                More info <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <!-- small card -->
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ total_user }}</h3>
+                                <p>Users</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">
+                                More info <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div><!-- row -->
+
+            </div><!-- /.container-fluid -->
+        </div>
+    </div>
+{% endblock %}

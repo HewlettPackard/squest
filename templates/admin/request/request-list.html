@@ -37,7 +37,7 @@
                                     </td>
                                     <td class="align-middle">{{ request.instance.service.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm" data-toggle="popover" data-content="{{ request.operation.job_template.name }}">
+                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm" data-toggle="popover" title="{{ request.operation.job_template.name }}" data-content="{{ request.fill_in_survey | pprint }}">
                                             {{ request.operation.type }}
                                         </a>
                                     </td>
