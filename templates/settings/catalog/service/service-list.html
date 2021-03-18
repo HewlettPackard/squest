@@ -38,14 +38,14 @@
                             <tbody>
                             {%  for service in services %}
                                 <tr>
-                                    <td>{{ service.name }}</td>
-                                    <td>{{ service.description }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ service.name }}</td>
+                                    <td class="align-middle">{{ service.description }}</td>
+                                    <td class="align-middle">
                                         <a href="{% url 'service_operations' service.id %}" class="btn btn-default bg-sm">
                                             {{ service.operation_set.all | length }}
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{% url 'delete_service' service.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>

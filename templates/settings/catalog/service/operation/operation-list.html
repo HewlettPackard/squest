@@ -41,8 +41,8 @@
                             <tbody>
                             {%  for operation in operations %}
                                 <tr>
-                                    <td>{{ operation.name }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ operation.name }}</td>
+                                    <td class="align-middle">
                                         {% if  operation.type == "DELETE" %}
                                             <span class="badge bg-danger">{{ operation.type }}</span>
                                         {% endif %}
@@ -53,27 +53,27 @@
                                             <span class="badge bg-info">{{ operation.type }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ operation.job_template.name }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ operation.job_template.name }}</td>
+                                    <td class="align-middle">
                                         {%  if operation.auto_accept %}
                                             <i class="fas fa-circle text-success"></i>
                                         {%  else %}
                                             <i class="fas fa-circle text-secondary"></i>
                                         {%  endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {%  if operation.auto_process %}
                                             <i class="fas fa-circle text-success"></i>
                                         {%  else %}
                                             <i class="fas fa-circle text-secondary"></i>
                                         {%  endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="{% url 'service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-clipboard-list"></i>
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if  operation.type != "CREATE" %}
                                             <a href="{% url 'delete_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-danger bg-sm">
                                                 <i class="fas fa-trash"></i>

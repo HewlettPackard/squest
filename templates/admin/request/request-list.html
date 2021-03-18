@@ -30,19 +30,19 @@
                             <tbody>
                             {%  for request in requests %}
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="">
                                             {{ request.instance.name }}
                                         </a>
                                     </td>
-                                    <td>{{ request.instance.service.name }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ request.instance.service.name }}</td>
+                                    <td class="align-middle">
                                         <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm" data-toggle="popover" data-content="{{ request.operation.job_template.name }}">
                                             {{ request.operation.type }}
                                         </a>
                                     </td>
-                                    <td><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
-                                    <td>
+                                    <td class="align-middle"><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
+                                    <td class="align-middle">
                                         <div class="dropdown">
                                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             </button>

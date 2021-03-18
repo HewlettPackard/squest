@@ -31,8 +31,8 @@
                             <tbody>
                             {%  for job_template in job_templates %}
                                 <tr>
-                                    <td>{{ job_template.name }}</td>
-                                    <td>
+                                    <td class="align-middle">{{ job_template.name }}</td>
+                                    <td class="align-middle">
                                         <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}" class="btn btn-default bg-sm">
                                             <i class="fas fa-external-link-square-alt"></i>
                                         </a>

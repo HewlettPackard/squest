@@ -30,15 +30,15 @@
                             <tbody>
                             {%  for request in requests %}
                                 <tr>
-                                    <td>
+                                    <td class="align-middle">
                                         <a href="">
                                             {{ request.instance.name }}
                                         </a>
                                     </td>
-                                    <td>{{ request.instance.service.name }}</td>
-                                    <td><h4><span class="badge bg-{{ request.operation.type |map_operation_type }}">{{ request.operation.type }}</span></h4></td>
-                                    <td><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
-                                    <td>
+                                    <td class="align-middle">{{ request.instance.service.name }}</td>
+                                    <td class="align-middle"><h4><span class="badge bg-{{ request.operation.type |map_operation_type }}">{{ request.operation.type }}</span></h4></td>
+                                    <td class="align-middle"><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
+                                    <td class="align-middle">
                                         {% if request.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
                                             <a href="{% url 'customer_request_cancel'  request.id %}" class="btn btn-danger bg-sm" title="Cancel request">
                                                 <i class="fas fa-ban"></i>
