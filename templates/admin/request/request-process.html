@@ -21,6 +21,11 @@
                         <h3 class="card-title">Confirm process request</h3>
                     </div>
                     <div class="card-body">
+                        {% if error_message %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i><strong> {{ error_message }}</strong>
+                            </div>
+                        {% endif %}
                         <div class="row">
                             <div class="col-12 col-sm-4">
                                 <div class="info-box bg-light">
@@ -74,8 +79,8 @@
                             <!-- /.card-body -->
                         </div>
 
-                        <form action='' method='POST'>{% csrf_token %}
-                            <button type="submit" class="btn btn-success">
+                        <form id="form_process_request" action='' method='POST'>{% csrf_token %}
+                            <button onclick="showLoaderOnClick();" type="submit" class="btn btn-success">
                                 <i class="fas fa-play"></i> Process request
                             </button>
                             <a class="btn btn-default" href="{% url 'admin_request_list' %}">Return</a>

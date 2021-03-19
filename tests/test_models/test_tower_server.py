@@ -9,7 +9,7 @@ class TestTowerServer(BaseTest):
     def setUp(self):
         super(TestTowerServer, self).setUp()
 
-    @patch('service_catalog.models.tower_server.TowerServer._get_tower_instance')
+    @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_same_survey(self, mock_tower_instance):
         # test sync with same job template
         mock_tower_instance.return_value = MagicMock(job_templates=[MagicMock(id=1,
@@ -19,7 +19,7 @@ class TestTowerServer(BaseTest):
         # assert that the survey is the same
         self.assertDictEqual(self.testing_survey, self.job_template_test.survey)
 
-    @patch('service_catalog.models.tower_server.TowerServer._get_tower_instance')
+    @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_survey_changed(self, mock_tower_instance):
         # test sync with a new job template
         new_survey = {

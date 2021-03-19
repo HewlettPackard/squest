@@ -3,9 +3,7 @@ $(document).ready( function () {
     $('#job_template_list').DataTable();
     $('#service_list').DataTable();
     $('#customer_request_list').DataTable();
-} );
 
-$(document).ready(function(){
     $('[data-toggle="popover"]').popover({
         placement : 'top',
         trigger: 'hover'
@@ -43,7 +41,7 @@ function sync_tower(tower_id){
             body: 'Started',
             autohide: true,
             delay: 3000,
-            class: 'bg-info'
+            class: 'bg-info mr-3 my-3'
         });
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
@@ -56,7 +54,7 @@ function sync_tower(tower_id){
             body: 'Error',
             autohide: true,
             delay: 3000,
-            class: 'bg-danger'
+            class: 'bg-danger mr-3 my-3'
         });
         console.log(err);
     });
@@ -79,7 +77,7 @@ function getStatus(taskID, tower_id) {
                 body: 'Complete',
                 autohide: true,
                 delay: 3000,
-                class: 'bg-success'
+                class: 'bg-success mr-3 my-3'
             });
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
@@ -91,7 +89,7 @@ function getStatus(taskID, tower_id) {
                 body: 'Failed',
                 autohide: true,
                 delay: 3000,
-                class: 'bg-danger'
+                class: 'bg-danger mr-3 my-3'
             });
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
@@ -107,9 +105,20 @@ function getStatus(taskID, tower_id) {
             body: 'Failed',
             autohide: true,
             delay: 3000,
-            class: 'bg-danger'
+            class: 'bg-danger mr-3 my-3',
         });
         // enable back sync button
         document.getElementById(sync_button_id).classList.remove('disabled');
+    });
+}
+
+function showLoaderOnClick() {
+    $(document).Toasts('create', {
+        icon: 'fas fa-chess-rook',
+        title: 'Tower',
+        body: 'Starting job template. Please wait...',
+        autohide: true,
+        delay: 5000,
+        class: 'bg-info mr-3 my-3'
     });
 }

@@ -15,7 +15,7 @@ class TowerServer(models.Model):
         :return:
         """
         from .job_templates import JobTemplate as JobTemplateLocal
-        tower = self._get_tower_instance()
+        tower = self.get_tower_instance()
 
         for job_template in tower.job_templates:
             try:
@@ -32,5 +32,5 @@ class TowerServer(models.Model):
             from service_catalog.models import Operation
             Operation.update_survey_after_job_template_update(updated_job_template)
 
-    def _get_tower_instance(self):
+    def get_tower_instance(self):
         return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)

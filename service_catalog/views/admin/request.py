@@ -1,3 +1,7 @@
+import logging
+from builtins import print
+
+import requests
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
@@ -5,6 +9,8 @@ from django_fsm import can_proceed
 
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.models import Request
+
+logger = logging.getLogger(__name__)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -137,15 +143,36 @@ def admin_request_accept(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_process(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
+    error = False
+    error_message = ""
     if request.method == "POST":
-        # check that we can delete the request
         if not can_proceed(target_request.process):
             raise PermissionDenied
-        target_request.process()
-        target_request.save()
-        # TODO: notify user
-        return redirect(admin_request_list)
+        import towerlib
+        try:
+            target_request.process()
+        except towerlib.towerlibexceptions.AuthFailed:
+            error = True
+            logger.error("[admin_request_process] Fail to authenticate with provided token when trying "
+                         "to process request id '{}'".format(target_request.id))
+            error_message = "Fail to authenticate with provided token"
+        except requests.exceptions.SSLError:
+            error = True
+            error_message = "Certificate verify failed"
+            logger.error("[admin_request_process] Certificate verify failed when trying "
+                         "to process request id '{}'".format(target_request.id))
+        except requests.exceptions.ConnectionError:
+            error = True
+            error_message = "Unable to connect to remote server"
+            logger.error("[admin_request_process] Unable to connect to remote server when trying "
+                         "to process request id '{}'".format(target_request.id))
+        if not error:
+            target_request.save()
+            # TODO: notify user
+            return redirect(admin_request_list)
+
     context = {
-        "target_request": target_request
+        "target_request": target_request,
+        "error_message": error_message
     }
     return render(request, "admin/request/request-process.html", context)

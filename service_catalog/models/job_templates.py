@@ -11,3 +11,9 @@ class JobTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+    def execute(self, extra_vars):
+        tower = self.tower_server.get_tower_instance()
+        tower_job_template = tower.get_job_template_by_id(self.tower_id)
+        tower_job_run = tower_job_template.launch(extra_vars=extra_vars)
+        return tower_job_run.id
