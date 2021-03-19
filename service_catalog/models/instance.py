@@ -15,6 +15,10 @@ class Instance(models.Model):
     def provisioning(self):
         pass
 
+    @transition(field=state, source='PROVISIONING', target='PROVISION_FAILED')
+    def provisioning_has_failed(self):
+        pass
+
     @transition(field=state, source=['PROVISIONING', 'UPDATING'], target='AVAILABLE')
     def available(self):
         pass
