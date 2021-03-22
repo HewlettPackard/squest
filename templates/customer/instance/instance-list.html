@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>My instances</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+
+                    <div class="card-body">
+                        <table id="customer_request_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>State</th>
+                                <th>Requests</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for instance in instances %}
+                                <tr>
+                                    <td class="align-middle">{{ instance.name }}</td>
+                                    <td class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }}">{{ instance.state }}</span></h4></td>
+                                    <td class="align-middle">
+                                        <a href="" class="btn btn-default bg-sm">
+                                            {{ instance.request_set.all | length }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="" class="btn btn-info bg-sm">
+                                            <i class="fas fa-info"></i>
+                                        </a>
+                                        <a href="" class="btn btn-primary bg-sm">
+                                            <i class="fas fa-wrench"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
