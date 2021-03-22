@@ -61,6 +61,11 @@ Run Celery process for async tasks
 celery -A restapi worker -l info
 ```
 
+Run Celery beat for periodic tasks
+```
+celery -A service_catalog worker --beat --scheduler django -l info
+```
+
 ## Commands
 
 To clean all Celery pending tasks

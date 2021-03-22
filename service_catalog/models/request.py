@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 from django.utils.translation import gettext_lazy as _
@@ -69,7 +70,13 @@ class Request(models.Model):
     def process(self):
         logger.info("[Request][process] trying to start processing request '{}'".format(self.id))
         # run Tower job
-        tower_job_id = self.operation.job_template.execute(extra_vars=self.fill_in_survey)
+        tower_extra_vars = copy.copy(self.fill_in_survey)
+        # add the current instance to extra vars
+        from ..serializers.instance_serializer import InstanceSerializer
+        tower_extra_vars["tsc"] = {
+            "instance": InstanceSerializer(self.instance).data
+        }
+        tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars)
         self.tower_job_id = tower_job_id
         logger.info("[Request][process] process started on request '{}'. "
                     "Tower job id: {}".format(self.id, tower_job_id))

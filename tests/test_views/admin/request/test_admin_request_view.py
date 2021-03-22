@@ -1,3 +1,4 @@
+import copy
 from unittest import mock
 
 import django
@@ -105,9 +106,24 @@ class CustomerRequestViewTest(BaseTestRequest):
             self.assertEquals(302, response.status_code)
             self.test_request.refresh_from_db()
             self.assertEquals(self.test_request.state, RequestState.PROCESSING)
+            expected_parameters = {
+                'instance_name': 'test instance',
+                'text_variable': 'my_var',
+                'tsc': {
+                    'instance': {
+                        'id': self.test_instance.id,
+                        'name': 'test_instance_1',
+                        'spec': {},
+                        'state': copy.copy(self.test_instance.state),
+                        'service': self.test_instance.service.id
+                    }
+                }
+            }
             self.test_instance.refresh_from_db()
             self.assertEquals(self.test_instance.state, instance_state)
             self.assertIsNotNone(self.test_request.periodic_task)
+
+            mock_job_execute.assert_called_with(extra_vars=expected_parameters)
 
     def test_admin_request_process_new_instance(self):
         self.test_request.state = RequestState.ACCEPTED
