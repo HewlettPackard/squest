@@ -70,7 +70,11 @@ class BaseTest(TestCase):
             'multiplechoice_variable': False
         }
         self.create_operation_test.save()
-        self.update_operation_test = Operation.objects.create(name="create test",
+        self.update_operation_test = Operation.objects.create(name="update test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               type=OperationType.UPDATE)
+        self.delete_operation_test = Operation.objects.create(name="delete test",
+                                                              service=self.service_test,
+                                                              job_template=self.job_template_test,
+                                                              type=OperationType.DELETE)

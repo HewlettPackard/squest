@@ -2,6 +2,7 @@ from django.template.defaulttags import register
 from django_fsm import can_proceed
 
 from service_catalog.models import Request
+from service_catalog.models.request import RequestState
 
 
 @register.filter(name='map_instance_state')
@@ -26,7 +27,7 @@ def map_request_state(value):
     map_dict = {
         "ACCEPTED": "primary",
         "NEED_INFO": "warning",
-        "SUBMITTED": "info",
+        RequestState.SUBMITTED: "info",
         "REJECTED": "dark",
         "PROCESSING": "orange",
         "COMPLETE": "success",

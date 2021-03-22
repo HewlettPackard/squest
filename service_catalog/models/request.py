@@ -1,14 +1,27 @@
 import json
 import logging
+from django.utils.translation import gettext_lazy as _
 
 from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition
 
 from . import Operation
-from .instance import Instance
+from .instance import Instance, InstanceState
+from .operations import OperationType
 
 logger = logging.getLogger(__name__)
+
+
+class RequestState(models.TextChoices):
+    SUBMITTED = 'SUBMITTED', _('SUBMITTED')
+    NEED_INFO = 'NEED_INFO', _('NEED_INFO')
+    REJECTED = 'REJECTED', _('REJECTED')
+    ACCEPTED = 'ACCEPTED', _('ACCEPTED')
+    CANCELED = 'CANCELED', _('CANCELED')
+    PROCESSING = 'PROCESSING', _('PROCESSING')
+    COMPLETE = 'COMPLETE', _('COMPLETE')
+    FAILED = 'FAILED', _('FAILED')
 
 
 class Request(models.Model):
@@ -16,32 +29,43 @@ class Request(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     tower_job_id = models.IntegerField(blank=True, null=True)
-    state = FSMField(default='SUBMITTED')
+    state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
     periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
 
-    @transition(field=state, source='SUBMITTED', target='NEED_INFO')
+    def instance_is_available_or_pending(self):
+        if self.instance.state == InstanceState.AVAILABLE or self.instance.state == InstanceState.PENDING:
+            return True
+        logger.debug("Request][process] instance {} is not available or pending".format(self.id))
+        return False
+
+    @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
     def need_info(self):
         pass
 
-    @transition(field=state, source='NEED_INFO', target='SUBMITTED')
+    @transition(field=state, source=RequestState.NEED_INFO, target=RequestState.SUBMITTED)
     def re_submit(self):
         pass
 
-    @transition(field=state, source=['SUBMITTED', 'NEED_INFO', 'REJECTED', 'ACCEPTED'], target='CANCELED')
+    @transition(field=state, source=[RequestState.SUBMITTED,
+                                     RequestState.NEED_INFO,
+                                     RequestState.REJECTED,
+                                     RequestState.ACCEPTED], target=RequestState.CANCELED)
     def cancel(self):
         # delete the related instance (we should have only one)
         instance = Instance.objects.get(request=self)
         instance.delete()
 
-    @transition(field=state, source=['SUBMITTED', 'ACCEPTED', 'NEED_INFO'], target='REJECTED')
+    @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
+                target=RequestState.REJECTED)
     def reject(self):
         pass
 
-    @transition(field=state, source='SUBMITTED', target='ACCEPTED')
+    @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.ACCEPTED)
     def accept(self):
         pass
 
-    @transition(field=state, source='ACCEPTED', target='PROCESSING')
+    @transition(field=state, source=RequestState.ACCEPTED, target=RequestState.PROCESSING,
+                conditions=[instance_is_available_or_pending])
     def process(self):
         logger.info("[Request][process] trying to start processing request '{}'".format(self.id))
         # run Tower job
@@ -50,11 +74,11 @@ class Request(models.Model):
         logger.info("[Request][process] process started on request '{}'. "
                     "Tower job id: {}".format(self.id, tower_job_id))
         # the instance now switch depending of the operation type
-        if self.operation.type == "CREATE":
+        if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
-        if self.operation.type == "UPDATE":
+        if self.operation.type == OperationType.UPDATE:
             self.instance.update()
-        if self.operation.type == "DELETE":
+        if self.operation.type == OperationType.DELETE:
             self.instance.deleting()
         self.instance.save()
         # create a periodic task to check the status until job is complete
@@ -67,11 +91,11 @@ class Request(models.Model):
             args=json.dumps([self.id]))
         self.save()
 
-    @transition(field=state, source='PROCESSING', target='FAILED')
+    @transition(field=state, source=RequestState.PROCESSING, target=RequestState.FAILED)
     def has_failed(self):
         pass
 
-    @transition(field=state, source='PROCESSING', target='COMPLETE')
+    @transition(field=state, source=RequestState.PROCESSING, target=RequestState.COMPLETE)
     def complete(self):
         pass
 
@@ -94,10 +118,10 @@ class Request(models.Model):
             self.complete()
             self.save()
             self.periodic_task.delete()
-            if self.operation.type in ["CREATE", "UPDATE"]:
+            if self.operation.type in [OperationType.CREATE, OperationType.UPDATE]:
                 self.instance.available()
                 self.instance.save()
-            if self.operation.type == "DELETE":
+            if self.operation.type == OperationType.DELETE:
                 self.instance.deleted()
                 self.instance.save()
 
@@ -112,9 +136,9 @@ class Request(models.Model):
             self.has_failed()
             self.save()
             self.periodic_task.delete()
-            if self.operation.type == "CREATE":
+            if self.operation.type == OperationType.CREATE:
                 self.instance.provisioning_has_failed()
-            if self.operation.type == "UPDATE":
+            if self.operation.type == OperationType.UPDATE:
                 self.instance.update_has_failed()
-            if self.operation.type == "DELETE":
+            if self.operation.type == OperationType.DELETE:
                 self.instance.delete_has_failed()

@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _
+
 from django.contrib.auth.models import User, Permission
 from django.db import models
 from django_fsm import FSMField, transition
@@ -5,49 +7,65 @@ from django_fsm import FSMField, transition
 from . import Service
 
 
+class InstanceState(models.TextChoices):
+    PENDING = 'PENDING', _('PENDING')
+    PROVISION_FAILED = 'PROVISION_FAILED', _('PROVISION_FAILED')
+    PROVISIONING = 'PROVISIONING', _('PROVISIONING')
+    UPDATING = 'UPDATING', _('UPDATING')
+    UPDATE_FAILED = 'UPDATE_FAILED', _('UPDATE_FAILED')
+    DELETING = 'DELETING', _('DELETING')
+    DELETED = 'DELETED', _('DELETED')
+    DELETE_FAILED = 'DELETE_FAILED', _('DELETE_FAILED')
+    ARCHIVED = 'ARCHIVED', _('ARCHIVED')
+    AVAILABLE = 'AVAILABLE', _('AVAILABLE')
+
+
 class Instance(models.Model):
     name = models.CharField(max_length=100)
     spec = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    state = FSMField(default='PENDING')
+    state = FSMField(default=InstanceState.PENDING)
 
-    @transition(field=state, source=['PENDING', 'PROVISION_FAILED'], target='PROVISIONING')
+    @transition(field=state, source=[InstanceState.PENDING, InstanceState.PROVISION_FAILED],
+                target=InstanceState.PROVISIONING)
     def provisioning(self):
         pass
 
-    @transition(field=state, source='PROVISIONING', target='PROVISION_FAILED')
+    @transition(field=state, source=InstanceState.PROVISIONING, target=InstanceState.PROVISION_FAILED)
     def provisioning_has_failed(self):
         pass
 
-    @transition(field=state, source=['PROVISIONING', 'UPDATING'], target='AVAILABLE')
+    @transition(field=state, source=[InstanceState.PROVISIONING, InstanceState.UPDATING],
+                target=InstanceState.AVAILABLE)
     def available(self):
         pass
 
-    @transition(field=state, source='AVAILABLE', target='UPDATING')
+    @transition(field=state, source=InstanceState.AVAILABLE, target=InstanceState.UPDATING)
     def update(self):
         pass
 
-    @transition(field=state, source='UPDATING', target='UPDATE_FAILED')
+    @transition(field=state, source=InstanceState.UPDATING, target=InstanceState.UPDATE_FAILED)
     def update_has_failed(self):
         pass
 
-    @transition(field=state, source='UPDATE_FAILED', target='UPDATING')
+    @transition(field=state, source=InstanceState.UPDATE_FAILED, target=InstanceState.UPDATING)
     def retry_update(self):
         pass
 
-    @transition(field=state, source=['AVAILABLE', 'DELETE_FAILED'], target='DELETING')
+    @transition(field=state, source=[InstanceState.AVAILABLE, InstanceState.DELETE_FAILED],
+                target=InstanceState.DELETING)
     def deleting(self):
         pass
 
-    @transition(field=state, source='DELETING', target='DELETE_FAILED')
+    @transition(field=state, source=InstanceState.DELETING, target=InstanceState.DELETE_FAILED)
     def delete_has_failed(self):
         pass
 
-    @transition(field=state, source='DELETING', target='DELETED')
+    @transition(field=state, source=InstanceState.DELETING, target=InstanceState.DELETED)
     def deleted(self):
         pass
 
-    @transition(field=state, source='DELETED', target='ARCHIVED')
+    @transition(field=state, source=InstanceState.DELETED, target=InstanceState.ARCHIVED)
     def archive(self):
         pass
 
