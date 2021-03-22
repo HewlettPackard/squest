@@ -1,5 +1,4 @@
 import logging
-from builtins import print
 
 import requests
 from django.contrib.auth.decorators import user_passes_test
@@ -15,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_list(request):
-    requests = Request.objects.all()
-    return render(request, 'admin/request/request-list.html', {'requests': requests})
+    target_request = Request.objects.all()
+    return render(request, 'admin/request/request-list.html', {'requests': target_request})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -26,7 +25,6 @@ def admin_request_cancel(request, request_id):
         # check that we can delete the request
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
-        target_request.cancel()
         # now delete the request
         target_request.delete()
         # TODO: notify user

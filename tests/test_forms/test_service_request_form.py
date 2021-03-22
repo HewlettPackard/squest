@@ -35,11 +35,6 @@ class TestServiceRequestForm(BaseTest):
                           ServiceRequestForm._get_available_fields(job_template_survey=self.job_template_test.survey,
                                                                    operation_survey=self.create_operation_test.enabled_survey_fields))
 
-    def test_get_choices_from_string(self):
-        test_string = "choice1\nchoice2\nchoice3"
-        expected_value = [("choice1", "choice1"), ("choice2", "choice2"), ("choice3", "choice3")]
-        self.assertEquals(expected_value, ServiceRequestForm._get_choices_from_string(test_string))
-
     def test_create_request(self):
         url_args = {
             'service_id': self.service_test.id,
