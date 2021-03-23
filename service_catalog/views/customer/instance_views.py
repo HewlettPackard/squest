@@ -1,12 +1,14 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.forms import OperationRequestForm
 from service_catalog.models import Instance, Operation
+from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
 
 
@@ -35,13 +37,14 @@ def customer_instance_details(request, instance_id):
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def customer_instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
+    if instance.state not in [InstanceState.AVAILABLE, InstanceState.UPDATING]:
+        raise PermissionDenied
     operation = get_object_or_404(Operation, id=operation_id)
-
     allowed_operations = Operation.objects.filter(service=instance.service,
                                                   type__in=[OperationType.UPDATE, OperationType.DELETE])
 
     if operation not in allowed_operations:
-        raise PermissionError
+        raise PermissionDenied
 
     parameters = {
         'operation_id': operation_id,

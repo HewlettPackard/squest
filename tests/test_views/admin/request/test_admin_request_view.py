@@ -74,7 +74,6 @@ class CustomerRequestViewTest(BaseTestRequest):
                 }
 
         url = reverse('admin_request_accept', kwargs=args)
-        print(self.test_request.state)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()

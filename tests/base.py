@@ -60,6 +60,9 @@ class BaseTest(TestCase):
                                                             tower_id=1,
                                                             tower_server=self.tower_server_test)
 
+        # ---------------------------------------------------
+        # Servcie test 1
+        # ---------------------------------------------------
         self.service_test = Service.objects.create(name="service-test", description="description-of-service-test")
 
         self.create_operation_test = Operation.objects.create(name="create test",
@@ -74,7 +77,39 @@ class BaseTest(TestCase):
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               type=OperationType.UPDATE)
+        self.update_operation_test.enabled_survey_fields = {
+            'text_variable': True,
+            'multiplechoice_variable': False
+        }
+        self.update_operation_test.save()
         self.delete_operation_test = Operation.objects.create(name="delete test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               type=OperationType.DELETE)
+
+        # ---------------------------------------------------
+        # Servcie test 2
+        # ---------------------------------------------------
+        self.service_test_2 = Service.objects.create(name="service-test-2", description="description-of-service-test-2")
+
+        self.create_operation_test_2 = Operation.objects.create(name="create test",
+                                                                service=self.service_test_2,
+                                                                job_template=self.job_template_test)
+        self.create_operation_test_2.enabled_survey_fields = {
+            'text_variable': True,
+            'multiplechoice_variable': False
+        }
+        self.create_operation_test_2.save()
+        self.update_operation_test_2 = Operation.objects.create(name="update test",
+                                                                service=self.service_test_2,
+                                                                job_template=self.job_template_test,
+                                                                type=OperationType.UPDATE)
+        self.update_operation_test_2.enabled_survey_fields = {
+            'text_variable': True,
+            'multiplechoice_variable': False
+        }
+        self.update_operation_test_2.save()
+        self.delete_operation_test_2 = Operation.objects.create(name="delete test",
+                                                                service=self.service_test_2,
+                                                                job_template=self.job_template_test,
+                                                                type=OperationType.DELETE)
