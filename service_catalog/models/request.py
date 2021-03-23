@@ -1,6 +1,9 @@
 import copy
 import json
 import logging
+from datetime import datetime
+
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
 from django.db import models
@@ -27,8 +30,11 @@ class RequestState(models.TextChoices):
 
 class Request(models.Model):
     fill_in_survey = models.JSONField(default=dict)
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
+    instance = models.ForeignKey(Instance, on_delete=models.DO_NOTHING)
+    operation = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    date_submitted = models.DateField(auto_now=True, blank=True, null=True)
+    date_complete = models.DateField(auto_now=False, blank=True, null=True)
     tower_job_id = models.IntegerField(blank=True, null=True)
     state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
     periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
@@ -52,9 +58,10 @@ class Request(models.Model):
                                      RequestState.REJECTED,
                                      RequestState.ACCEPTED], target=RequestState.CANCELED)
     def cancel(self):
-        # delete the related instance (we should have only one)
+        # delete the related instance if the state was pending (we should have only one)
         instance = Instance.objects.get(request=self)
-        instance.delete()
+        if instance.state == InstanceState.PENDING:
+            instance.delete()
 
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
@@ -84,7 +91,7 @@ class Request(models.Model):
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
         if self.operation.type == OperationType.UPDATE:
-            self.instance.update()
+            self.instance.updating()
         if self.operation.type == OperationType.DELETE:
             self.instance.deleting()
         self.instance.save()
@@ -104,7 +111,7 @@ class Request(models.Model):
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.COMPLETE)
     def complete(self):
-        pass
+        self.date_complete = datetime.now()
 
     def delete(self, *args, **kwargs):
         if self.periodic_task is not None:

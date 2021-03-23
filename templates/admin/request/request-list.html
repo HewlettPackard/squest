@@ -21,6 +21,9 @@
                             <thead>
                             <tr>
                                 <th>Instance</th>
+                                <th>User</th>
+                                <th>Date submitted</th>
+                                <th>Date complete</th>
                                 <th>Service</th>
                                 <th>Operation</th>
                                 <th>State</th>
@@ -34,6 +37,15 @@
                                         <a href="">
                                             {{ request.instance.name }}
                                         </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ request.user.username }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ request.date_submitted }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ request.date_complete }}
                                     </td>
                                     <td class="align-middle">{{ request.instance.service.name }}</td>
                                     <td class="align-middle">

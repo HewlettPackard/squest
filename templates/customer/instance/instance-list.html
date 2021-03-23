@@ -37,8 +37,8 @@
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="{% url 'customer_instance_details' instance.id %}" class="btn btn-info bg-sm">
-                                            <i class="fas fa-wrench"></i>
+                                        <a href="{% url 'customer_instance_details' instance.id %}" class="btn btn-info bg-sm {{ instance.id |map_instance_available }}">
+                                            <i class="fas fa-wrench"></i> Manage
                                         </a>
                                     </td>
                                 </tr>

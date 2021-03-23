@@ -23,7 +23,7 @@ class InstanceState(models.TextChoices):
 class Instance(models.Model):
     name = models.CharField(max_length=100)
     spec = models.JSONField(default=dict)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
     state = FSMField(default=InstanceState.PENDING)
 
     @transition(field=state, source=[InstanceState.PENDING, InstanceState.PROVISION_FAILED],
@@ -41,7 +41,7 @@ class Instance(models.Model):
         pass
 
     @transition(field=state, source=InstanceState.AVAILABLE, target=InstanceState.UPDATING)
-    def update(self):
+    def updating(self):
         pass
 
     @transition(field=state, source=InstanceState.UPDATING, target=InstanceState.UPDATE_FAILED)

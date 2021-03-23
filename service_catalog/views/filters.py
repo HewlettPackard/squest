@@ -2,7 +2,7 @@ from django.template.defaulttags import register
 from django_fsm import can_proceed
 
 from service_catalog.models import Request
-from service_catalog.models.instance import InstanceState
+from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 
@@ -96,3 +96,11 @@ def get_action_text_class(request_id, target_action):
         if can_proceed(target_request.re_submit):
             return "text-info"
     return ""
+
+
+@register.filter(name='map_instance_available')
+def map_instance_available(instance_id):
+    instance = Instance.objects.get(id=instance_id)
+    if instance.state == InstanceState.AVAILABLE:
+        return ""
+    return "disabled"
