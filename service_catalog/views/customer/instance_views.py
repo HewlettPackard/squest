@@ -5,7 +5,8 @@ from django.shortcuts import render, get_object_or_404
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
-from service_catalog.models import Instance
+from service_catalog.models import Instance, Operation
+from service_catalog.models.operations import OperationType
 
 
 @login_required
@@ -20,5 +21,12 @@ def customer_instance_details(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
     spec_json_pretty = json.dumps(instance.spec)
     print(spec_json_pretty)
-    return render(request, 'customer/instance/instance-details.html', {'instance': instance,
-                                                                       'spec_json_pretty': spec_json_pretty})
+
+    operations = Operation.objects.filter(type__in=[OperationType.UPDATE, OperationType.DELETE])
+    context = {'instance': instance,
+               'spec_json_pretty': spec_json_pretty,
+               'operations': operations}
+
+    return render(request, 'customer/instance/instance-details.html', context=context)
+
+

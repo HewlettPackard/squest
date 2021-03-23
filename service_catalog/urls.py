@@ -41,6 +41,8 @@ urlpatterns = [
 
     path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
     path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),
+    # path('customer/instance/<int:instance_id>/operations/', views.customer_instance_operation_list,
+    #      name='customer_instance_operation_list'),
 
     # admin views URLs
     path('admin/request/', views.admin_request_list, name='admin_request_list'),

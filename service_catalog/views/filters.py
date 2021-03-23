@@ -2,22 +2,24 @@ from django.template.defaulttags import register
 from django_fsm import can_proceed
 
 from service_catalog.models import Request
+from service_catalog.models.instance import InstanceState
+from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 
 
 @register.filter(name='map_instance_state')
 def map_instance_state(value):
     map_dict = {
-        "PENDING": "secondary",
-        "PROVISIONING": "primary",
-        "PROVISION_FAILED": "warning",
-        "AVAILABLE": "success",
-        "DELETE_FAILED": "warning",
-        "DELETING": "primary",
-        "UPDATING": "primary",
-        "UPDATE_FAILED": "warning",
-        "DELETED": "danger",
-        "ARCHIVED": "dark",
+        InstanceState.PENDING: "secondary",
+        InstanceState.PROVISIONING: "primary",
+        InstanceState.PROVISION_FAILED: "warning",
+        InstanceState.AVAILABLE: "success",
+        InstanceState.DELETE_FAILED: "warning",
+        InstanceState.DELETING: "primary",
+        InstanceState.UPDATING: "primary",
+        InstanceState.UPDATE_FAILED: "warning",
+        InstanceState.DELETED: "danger",
+        InstanceState.ARCHIVED: "dark",
     }
     return map_dict[value]
 
@@ -25,14 +27,14 @@ def map_instance_state(value):
 @register.filter(name='map_request_state')
 def map_request_state(value):
     map_dict = {
-        "ACCEPTED": "primary",
-        "NEED_INFO": "warning",
+        RequestState.ACCEPTED: "primary",
+        RequestState.NEED_INFO: "warning",
         RequestState.SUBMITTED: "info",
-        "REJECTED": "dark",
-        "PROCESSING": "orange",
-        "COMPLETE": "success",
-        "FAILED": "danger",
-        "CANCELED": "light"
+        RequestState.REJECTED: "dark",
+        RequestState.PROCESSING: "orange",
+        RequestState.COMPLETE: "success",
+        RequestState.FAILED: "danger",
+        RequestState.CANCELED: "light"
     }
     return map_dict[value]
 
@@ -40,9 +42,9 @@ def map_request_state(value):
 @register.filter(name='map_operation_type')
 def map_operation_type(value):
     map_dict = {
-        "CREATE": "success",
-        "UPDATE": "primary",
-        "DELETE": "danger",
+        OperationType.CREATE: "success",
+        OperationType.UPDATE: "primary",
+        OperationType.DELETE: "danger",
     }
     return map_dict[value]
 
