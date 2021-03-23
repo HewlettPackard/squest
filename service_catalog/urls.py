@@ -40,6 +40,7 @@ urlpatterns = [
     path('customer/request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
 
     path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
+    path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),
 
     # admin views URLs
     path('admin/request/', views.admin_request_list, name='admin_request_list'),
