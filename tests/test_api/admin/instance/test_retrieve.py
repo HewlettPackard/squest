@@ -15,14 +15,12 @@ class TestInstanceRetrieve(BaseTestRequest):
     def test_get_details(self):
         response = self.client.get(self.url, format='json')
 
-        expected_response = OrderedDict([('id', 1),
-                                         ('name', 'test_instance_1'),
-                                         ('spec', {}),
-                                         ('state', 'PENDING'),
-                                         ('service', 1)])
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(expected_response, response.json())
+        self.assertTrue("id" in response.json())
+        self.assertTrue("name" in response.json())
+        self.assertTrue("spec" in response.json())
+        self.assertTrue("state" in response.json())
+        self.assertTrue("service" in response.json())
 
     def test_standard_user_cannot_get_details(self):
         self.client.login(username=self.standard_user, password=self.common_password)

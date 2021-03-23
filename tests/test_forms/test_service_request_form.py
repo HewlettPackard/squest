@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.urls import reverse
 
-from service_catalog.forms import ServiceRequestForm
+from service_catalog.forms import ServiceRequestForm, FormUtils
 from tests.base import BaseTest
 
 
@@ -32,8 +32,8 @@ class TestServiceRequestForm(BaseTest):
         }
 
         self.assertEquals(expected_result,
-                          ServiceRequestForm._get_available_fields(job_template_survey=self.job_template_test.survey,
-                                                                   operation_survey=self.create_operation_test.enabled_survey_fields))
+                          FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
+                                                         operation_survey=self.create_operation_test.enabled_survey_fields))
 
     def test_create_request(self):
         url_args = {

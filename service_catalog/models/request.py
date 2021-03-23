@@ -30,8 +30,8 @@ class RequestState(models.TextChoices):
 
 class Request(models.Model):
     fill_in_survey = models.JSONField(default=dict)
-    instance = models.ForeignKey(Instance, on_delete=models.DO_NOTHING)
-    operation = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
+    operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     date_submitted = models.DateField(auto_now=True, blank=True, null=True)
     date_complete = models.DateField(auto_now=False, blank=True, null=True)
