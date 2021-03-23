@@ -30,7 +30,7 @@
                             {%  for instance in instances %}
                                 <tr>
                                     <td class="align-middle">{{ instance.name }}</td>
-                                    <td class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }}">{{ instance.state }}</span></h4></td>
+                                    <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }} btn-block">{{ instance.state }}</span></h4></td>
                                     <td class="align-middle">
                                         <a href="" class="btn btn-default bg-sm">
                                             {{ instance.request_set.all | length }}

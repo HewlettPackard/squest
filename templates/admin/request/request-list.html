@@ -25,7 +25,8 @@
                                 <th>Date submitted</th>
                                 <th>Date complete</th>
                                 <th>Service</th>
-                                <th>Operation</th>
+                                <th>Operation name</th>
+                                <th>Operation type</th>
                                 <th>State</th>
                                 <th>Actions</th>
                             </tr>
@@ -48,12 +49,13 @@
                                         {{ request.date_complete }}
                                     </td>
                                     <td class="align-middle">{{ request.instance.service.name }}</td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm" data-toggle="popover" title="{{ request.operation.job_template.name }}" data-content="{{ request.fill_in_survey | pprint }}">
+                                    <td class="align-middle">{{ request.operation.name }}</td>
+                                    <td style="width: 10%" class="align-middle">
+                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm btn-block" data-toggle="popover" title="{{ request.operation.job_template.name }}" data-content="{{ request.fill_in_survey | pprint }}">
                                             {{ request.operation.type }}
                                         </a>
                                     </td>
-                                    <td class="align-middle"><h4><span class="badge bg-{{ request.state |map_request_state }}">{{ request.state }}</span></h4></td>
+                                    <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ request.state |map_request_state }} btn-block">{{ request.state }}</span></h4></td>
                                     <td class="align-middle">
                                         <div class="dropdown">
                                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
