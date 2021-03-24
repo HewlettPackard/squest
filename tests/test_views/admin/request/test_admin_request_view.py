@@ -1,14 +1,11 @@
-import copy
 from unittest import mock
 
-import django
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from service_catalog.models import Request, Message
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
-from tests.test_views.base_test_request import BaseTestRequest
+from tests.base_test_request import BaseTestRequest
 
 
 class CustomerRequestViewTest(BaseTestRequest):
@@ -94,7 +91,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         self.assertEquals(self.test_request.state, RequestState.ACCEPTED)
         self.assertEquals(self.test_request.fill_in_survey, data)
 
-    def _process_with_expected_instance_state(self, instance_state):
+    def _process_with_expected_instance_state(self, expected_instance_state):
         args = {
             'request_id': self.test_request.id
         }
@@ -113,13 +110,13 @@ class CustomerRequestViewTest(BaseTestRequest):
                         'id': self.test_instance.id,
                         'name': 'test_instance_1',
                         'spec': {},
-                        'state': copy.copy(self.test_instance.state),
+                        'state': expected_instance_state,
                         'service': self.test_instance.service.id
                     }
                 }
             }
             self.test_instance.refresh_from_db()
-            self.assertEquals(self.test_instance.state, instance_state)
+            self.assertEquals(self.test_instance.state, expected_instance_state)
             self.assertIsNotNone(self.test_request.periodic_task)
 
             mock_job_execute.assert_called_with(extra_vars=expected_parameters)

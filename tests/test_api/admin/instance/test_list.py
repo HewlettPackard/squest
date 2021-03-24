@@ -3,7 +3,7 @@ from collections import OrderedDict
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_views.base_test_request import BaseTestRequest
+from tests.base_test_request import BaseTestRequest
 
 
 class TestInstanceList(BaseTestRequest):

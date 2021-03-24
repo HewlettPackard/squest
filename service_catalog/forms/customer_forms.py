@@ -80,8 +80,6 @@ class ServiceRequestForm(forms.Form):
                                              operation=self.create_operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
-        UserObjectPermission.objects.assign_perm('view_request', self.user, obj=new_request)
-        UserObjectPermission.objects.assign_perm('delete_request', self.user, obj=new_request)
         # TODO: send notification to admins
         return new_request
 
@@ -128,8 +126,6 @@ class OperationRequestForm(forms.Form):
                                              operation=self.operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
-        UserObjectPermission.objects.assign_perm('view_request', self.user, obj=new_request)
-        UserObjectPermission.objects.assign_perm('delete_request', self.user, obj=new_request)
         # TODO: send notification to admins
         return new_request
 

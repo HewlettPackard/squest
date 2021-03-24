@@ -3,12 +3,16 @@ import json
 import logging
 from datetime import datetime
 
+import requests
+import towerlib
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
 
 from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition
+from guardian.models import UserObjectPermission
 
 from . import Operation
 from .instance import Instance, InstanceState
@@ -76,17 +80,6 @@ class Request(models.Model):
                 conditions=[instance_is_available_or_pending])
     def process(self):
         logger.info("[Request][process] trying to start processing request '{}'".format(self.id))
-        # run Tower job
-        tower_extra_vars = copy.copy(self.fill_in_survey)
-        # add the current instance to extra vars
-        from ..serializers.instance_serializer import InstanceSerializer
-        tower_extra_vars["tsc"] = {
-            "instance": InstanceSerializer(self.instance).data
-        }
-        tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars)
-        self.tower_job_id = tower_job_id
-        logger.info("[Request][process] process started on request '{}'. "
-                    "Tower job id: {}".format(self.id, tower_job_id))
         # the instance now switch depending of the operation type
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
@@ -95,19 +88,49 @@ class Request(models.Model):
         if self.operation.type == OperationType.DELETE:
             self.instance.deleting()
         self.instance.save()
-        # create a periodic task to check the status until job is complete
-        schedule, created = IntervalSchedule.objects.get_or_create(every=10,
-                                                                   period=IntervalSchedule.SECONDS)
-        self.periodic_task = PeriodicTask.objects.create(
-            interval=schedule,
-            name='job_status_check_request_{}'.format(self.id),
-            task='service_catalog.tasks.check_tower_job_status_task',
-            args=json.dumps([self.id]))
-        self.save()
+
+    @transition(field=state, source=RequestState.PROCESSING)
+    def perform_processing(self):
+        # run Tower job
+        tower_extra_vars = copy.copy(self.fill_in_survey)
+        # add the current instance to extra vars
+        from ..serializers.instance_serializer import InstanceSerializer
+        tower_extra_vars["tsc"] = {
+            "instance": InstanceSerializer(self.instance).data
+        }
+        tower_job_id = None
+        try:
+            tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars)
+        except towerlib.towerlibexceptions.AuthFailed:
+            self.has_failed()
+        except requests.exceptions.SSLError:
+            self.has_failed()
+        except requests.exceptions.ConnectionError:
+            self.has_failed()
+
+        if tower_job_id is not None:
+            self.tower_job_id = tower_job_id
+            logger.info("[Request][process] process started on request '{}'. "
+                        "Tower job id: {}".format(self.id, tower_job_id))
+
+            # create a periodic task to check the status until job is complete
+            schedule, created = IntervalSchedule.objects.get_or_create(every=10,
+                                                                       period=IntervalSchedule.SECONDS)
+            self.periodic_task = PeriodicTask.objects.create(
+                interval=schedule,
+                name='job_status_check_request_{}'.format(self.id),
+                task='service_catalog.tasks.check_tower_job_status_task',
+                args=json.dumps([self.id]))
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.FAILED)
     def has_failed(self):
-        pass
+        if self.operation.type == OperationType.CREATE:
+            self.instance.provisioning_has_failed()
+        if self.operation.type == OperationType.UPDATE:
+            self.instance.update_has_failed()
+        if self.operation.type == OperationType.DELETE:
+            self.instance.delete_has_failed()
+        self.instance.save()
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.COMPLETE)
     def complete(self):
@@ -156,3 +179,15 @@ class Request(models.Model):
                 self.instance.update_has_failed()
             if self.operation.type == OperationType.DELETE:
                 self.instance.delete_has_failed()
+
+    @classmethod
+    def add_user_permission(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            if instance.user is not None:
+                logger.info("[Request][add_user_permission] add user permission on request "
+                            "id {} for user {}".format(instance.id, instance.user.username))
+                UserObjectPermission.objects.assign_perm('view_request', instance.user, obj=instance)
+                UserObjectPermission.objects.assign_perm('delete_request', instance.user, obj=instance)
+
+
+post_save.connect(Request.add_user_permission, sender=Request)

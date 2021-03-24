@@ -148,7 +148,11 @@ def admin_request_process(request, request_id):
             raise PermissionDenied
         import towerlib
         try:
+            # switch the state to processing before trying to execute the process
             target_request.process()
+            target_request.save()
+            target_request.perform_processing()
+            target_request.save()
         except towerlib.towerlibexceptions.AuthFailed:
             error = True
             logger.error("[admin_request_process] Fail to authenticate with provided token when trying "

@@ -1,9 +1,8 @@
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from service_catalog.models import Request
 from service_catalog.models.instance import InstanceState
-from tests.test_views.base_test_request import BaseTestRequest
+from tests.base_test_request import BaseTestRequest
 
 
 class TestCustomerInstanceRequestOperation(BaseTestRequest):
