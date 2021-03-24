@@ -5,7 +5,7 @@ import requests
 from django_celery_beat.models import PeriodicTask
 
 from service_catalog.models.instance import InstanceState
-from service_catalog.models.request import RequestState
+from service_catalog.models.request import RequestState, Request
 from tests.base_test_request import BaseTestRequest
 
 
@@ -72,6 +72,7 @@ class TestRequest(BaseTestRequest):
             self.test_instance.refresh_from_db()
             self.assertEquals(self.test_instance.state, expected_instance_state)
             self.assertEquals(self.test_request.state, RequestState.FAILED)
+            mock_job_execute.assert_called()
 
     def test_failure_when_provisioning(self):
         expected_instance_state = InstanceState.PROVISION_FAILED
@@ -92,3 +93,33 @@ class TestRequest(BaseTestRequest):
         self.test_request.save()
         expected_instance_state = InstanceState.DELETE_FAILED
         self._process_with_job_template_execution_failure(expected_instance_state)
+
+    def _check_request_after_create(self, expected_state, check_execution_called):
+        form_data = {'instance_name': 'test instance', 'text_variable': 'my_var'}
+
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10
+            new_request = Request.objects.create(fill_in_survey=form_data,
+                                                 instance=self.test_instance,
+                                                 operation=self.create_operation_test,
+                                                 user=self.standard_user)
+            self.assertEquals(new_request.state, expected_state)
+            if check_execution_called:
+                mock_job_execute.assert_called()
+
+    def test_request_accepted_automatically(self):
+        self.create_operation_test.auto_accept = True
+        self.create_operation_test.save()
+        self._check_request_after_create(RequestState.ACCEPTED, check_execution_called=False)
+
+    def test_request_processing_automatically(self):
+        self.create_operation_test.auto_accept = True
+        self.create_operation_test.auto_process = True
+        self.create_operation_test.save()
+        self._check_request_after_create(RequestState.PROCESSING, check_execution_called=True)
+
+    def test_request_not_processing_automatically_if_auto_accept_false(self):
+        self.create_operation_test.auto_accept = False
+        self.create_operation_test.auto_process = True
+        self.create_operation_test.save()
+        self._check_request_after_create(RequestState.SUBMITTED, check_execution_called=False)

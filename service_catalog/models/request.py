@@ -189,5 +189,36 @@ class Request(models.Model):
                 UserObjectPermission.objects.assign_perm('view_request', instance.user, obj=instance)
                 UserObjectPermission.objects.assign_perm('delete_request', instance.user, obj=instance)
 
+    @classmethod
+    def accept_if_auto_accept_on_operation(cls, sender, instance, created, *args, **kwargs):
+        """
+        Switch state to accept automatically if target operation auto_accept is true
+        when creating the Request
+        :param instance: the current Request
+        :type instance: Request
+        """
+        if created:
+            if instance.operation.auto_accept:
+                instance.accept()
+                instance.save()
+
+    @classmethod
+    def process_if_auto_auto_process_on_operation(cls, sender, instance, created, *args, **kwargs):
+        """
+        Switch state to processing automatically if target operation auto_process is true
+        when creating the Request
+        :param instance: the current Request
+        :type instance: Request
+        """
+        if created:
+            if instance.state == RequestState.ACCEPTED:
+                if instance.operation.auto_process:
+                    instance.process()
+                    instance.save()
+                    instance.perform_processing()
+                    instance.save()
+
 
 post_save.connect(Request.add_user_permission, sender=Request)
+post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
+post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
