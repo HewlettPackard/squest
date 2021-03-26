@@ -38,6 +38,7 @@ urlpatterns = [
          name='customer_service_request'),
     path('customer/request/', views.customer_request_list, name='customer_request_list'),
     path('customer/request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
+    path('customer/request/<int:request_id>/comment/', views.customer_request_comment, name='customer_request_comment'),
 
     path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
     path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),

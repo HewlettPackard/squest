@@ -9,6 +9,8 @@ $(document).ready( function () {
         placement : 'top',
         trigger: 'hover'
     });
+    // adapt side bar height to the current page
+    $('.main-sidebar').height($(document).outerHeight());
 });
 
 function getCookie(name) {

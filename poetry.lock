@@ -346,6 +346,14 @@ python-versions = ">=3.6.1"
 wcwidth = "*"
 
 [[package]]
+name = "pygments"
+version = "2.8.1"
+description = "Pygments is a syntax highlighting package written in Python."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "python-crontab"
 version = "2.5.1"
 description = "Python Crontab API"
@@ -475,7 +483,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6173d33d7dbdc0f2bfb4946cb73d64776882e039928a03e511c2beae3b3aa442"
+content-hash = "b1da5b7ebe79d688a5ae1e8b8aa98cd0cc502df70be047d9d02ff2c02b63ec9d"
 
 [metadata.files]
 amqp = [
@@ -618,6 +626,10 @@ pillow = [
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.16-py3-none-any.whl", hash = "sha256:62c811e46bd09130fb11ab759012a4ae385ce4fb2073442d1898867a824183bd"},
     {file = "prompt_toolkit-3.0.16.tar.gz", hash = "sha256:0fa02fa80363844a4ab4b8d6891f62dd0645ba672723130423ca4037b80c1974"},
+]
+pygments = [
+    {file = "Pygments-2.8.1-py3-none-any.whl", hash = "sha256:534ef71d539ae97d4c3a4cf7d6f110f214b0e687e92f9cb9d2a3b0d3101289c8"},
+    {file = "Pygments-2.8.1.tar.gz", hash = "sha256:2656e1a6edcdabf4275f9a3640db59fd5de107d88e8663c5d4e9a0fa62f77f94"},
 ]
 python-crontab = [
     {file = "python-crontab-2.5.1.tar.gz", hash = "sha256:4bbe7e720753a132ca4ca9d4094915f40e9d9dc8a807a4564007651018ce8c31"},

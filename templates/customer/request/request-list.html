@@ -41,8 +41,11 @@
                                     <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ request.operation.type |map_operation_type }} btn-block">{{ request.operation.type }}</span></h4></td>
                                     <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ request.state |map_request_state }} btn-block">{{ request.state }}</span></h4></td>
                                     <td style="width: 10%" class="align-middle">
+                                        <a href="{% url 'customer_request_comment' request.id %}" class="btn btn-primary bg-sm" title="Comments">
+                                            <i class="fas fa-comments"></i>
+                                        </a>
                                         {% if request.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
-                                            <a href="{% url 'customer_request_cancel'  request.id %}" class="btn btn-danger bg-sm" title="Cancel request">
+                                            <a href="{% url 'customer_request_cancel' request.id %}" class="btn btn-danger bg-sm" title="Cancel request">
                                                 <i class="fas fa-ban"></i>
                                             </a>
                                         {% endif %}

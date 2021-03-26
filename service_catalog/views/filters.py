@@ -1,10 +1,16 @@
+from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
+from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django_fsm import can_proceed
+from markdown.extensions.toc import TocExtension
 
 from service_catalog.models import Request
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
+
+import markdown as md
 
 
 @register.filter(name='map_instance_state')
@@ -104,3 +110,17 @@ def map_instance_available(instance_id):
     if instance.state == InstanceState.AVAILABLE:
         return ""
     return "disabled"
+
+
+@register.filter()
+@stringfilter
+def markdown(content):
+    # return md.markdown(value, extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
+    md_instance = md.Markdown(extensions=[
+        'markdown.extensions.extra',
+        'markdown.extensions.codehilite',  # Indicates code highlighting
+        TocExtension(slugify=slugify),
+    ])
+    md_content = md_instance.convert(content)
+    md_content = md_content.replace('<table>', '<table class="table table-bordered">')
+    return mark_safe(md_content)

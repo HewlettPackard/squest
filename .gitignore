@@ -1,5 +1,6 @@
 # project level
 media/service_image
+static/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

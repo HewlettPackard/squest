@@ -20,6 +20,7 @@ Pillow = "^8.1.2"
 django-guardian = "^2.3.0"
 django-fsm = "^2.7.1"
 django-celery-beat = "^2.2.0"
+Pygments = "^2.8.1"
 
 [tool.poetry.dev-dependencies]
 
