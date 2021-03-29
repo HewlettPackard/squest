@@ -47,8 +47,9 @@ class Operation(models.Model):
             # copy the default survey and add a flag 'is_visible'
             default_survey = instance.job_template.survey
             end_user_survey = dict()
-            for survey_field in default_survey["spec"]:
-                end_user_survey[survey_field["variable"]] = True
+            if "spec" in default_survey:
+                for survey_field in default_survey["spec"]:
+                    end_user_survey[survey_field["variable"]] = True
             instance.enabled_survey_fields = end_user_survey
             instance.save()
 

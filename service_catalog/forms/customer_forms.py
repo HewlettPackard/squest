@@ -24,9 +24,10 @@ class FormUtils:
         # cleanup the list
         returned_dict["spec"] = list()
         # loop the original survey
-        for survey_filed in job_template_survey["spec"]:
-            if operation_survey[survey_filed["variable"]]:
-                returned_dict["spec"].append(survey_filed)
+        if "spec" in job_template_survey:
+            for survey_filed in job_template_survey["spec"]:
+                if operation_survey[survey_filed["variable"]]:
+                    returned_dict["spec"].append(survey_filed)
         return returned_dict
 
 
