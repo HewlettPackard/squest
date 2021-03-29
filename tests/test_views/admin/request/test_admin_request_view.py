@@ -62,7 +62,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         self.assertEquals(self.test_request.state, RequestState.REJECTED)
         self.assertEquals(1, Message.objects.filter(request=self.test_request.id).count())
 
-    def test_admin_request_accept(self):
+    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state):
         args = {
             'request_id': self.test_request.id
         }
@@ -74,22 +74,37 @@ class CustomerRequestViewTest(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
-        self.assertEquals(self.test_request.state, RequestState.ACCEPTED)
+        self.assertEquals(self.test_request.state, expected_request_state)
+        self.test_instance.refresh_from_db()
+        self.assertEquals(self.test_instance.state, expected_instance_state)
 
-    def test_admin_request_accept_with_field_update(self):
-        args = {
-            'request_id': self.test_request.id
-        }
-        data = {'text_variable': 'updated_var',
-                'multiplechoice_variable': 'choice1'
-                }
+    def test_admin_request_accept_pending_instance(self):
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.PENDING)
 
-        url = reverse('admin_request_accept', kwargs=args)
-        response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.test_request.refresh_from_db()
-        self.assertEquals(self.test_request.state, RequestState.ACCEPTED)
-        self.assertEquals(self.test_request.fill_in_survey, data)
+    def test_admin_request_accept_failed_update(self):
+        self.test_instance.state = InstanceState.UPDATE_FAILED
+        self.test_instance.save()
+        self.test_request.state = RequestState.FAILED
+        self.test_request.save()
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.AVAILABLE)
+
+    def test_admin_request_accept_failed_provisioning(self):
+        self.test_instance.state = InstanceState.PROVISION_FAILED
+        self.test_instance.save()
+        self.test_request.state = RequestState.FAILED
+        self.test_request.save()
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.PENDING)
+
+    def test_admin_request_accept_failed_delete(self):
+        self.test_instance.state = InstanceState.DELETE_FAILED
+        self.test_instance.save()
+        self.test_request.state = RequestState.FAILED
+        self.test_request.save()
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.AVAILABLE)
 
     def _process_with_expected_instance_state(self, expected_instance_state):
         args = {

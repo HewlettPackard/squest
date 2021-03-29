@@ -6,12 +6,10 @@ from datetime import datetime, timedelta
 import requests
 import towerlib
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_delete, pre_save
-from django.dispatch import receiver
+from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition
 from guardian.models import UserObjectPermission
@@ -76,7 +74,7 @@ class Request(models.Model):
     def reject(self):
         pass
 
-    @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.ACCEPTED)
+    @transition(field=state, source=[RequestState.SUBMITTED, RequestState.FAILED], target=RequestState.ACCEPTED)
     def accept(self):
         pass
 

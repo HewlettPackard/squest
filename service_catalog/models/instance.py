@@ -69,6 +69,12 @@ class Instance(models.Model):
     def archive(self):
         pass
 
+    def reset_to_last_stable_state(self):
+        if self.state == InstanceState.PROVISION_FAILED:
+            self.state = InstanceState.PENDING
+        if self.state in [InstanceState.UPDATE_FAILED, InstanceState.DELETE_FAILED]:
+            self.state = InstanceState.AVAILABLE
+
 
 class UserPermissionOnInstance(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)

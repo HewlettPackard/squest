@@ -205,3 +205,6 @@ class AcceptRequestForm(forms.Form):
         self.target_request.fill_in_survey = user_provided_survey_fields
         self.target_request.accept()
         self.target_request.save()
+        # reset the instance state if it was failed (in case of resetting the state)
+        self.target_request.instance.reset_to_last_stable_state()
+        self.target_request.instance.save()
