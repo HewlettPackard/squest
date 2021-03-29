@@ -43,16 +43,60 @@
                 {# Admin side panel #}
                 {% if user.is_superuser %}
                     <li class="nav-header">Admin</li>
-                    <li class="nav-item">
+                    <li class="nav-item menu-is-opening menu-open">
                         <a href="{% url 'admin_request_list' %}" class="nav-link {% if 'admin/request' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Requests</p>
                         </a>
+                        <ul class="nav nav-treeview" style="display: block;">
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list' %}" class="nav-link {% if 'admin/request/' in request.path and not request.GET.state %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>All</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=SUBMITTED" class="nav-link {% if request.GET.state == 'SUBMITTED' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-info"></i>
+                                    <p>Submitted</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=ACCEPTED" class="nav-link {% if request.GET.state == 'ACCEPTED' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-primary"></i>
+                                    <p>Accepted</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=NEED_INFO" class="nav-link {% if request.GET.state == 'NEED_INFO' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-warning"></i>
+                                    <p>Need info</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=COMPLETE" class="nav-link {% if request.GET.state == 'COMPLETE' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>Complete</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=FAILED" class="nav-link {% if request.GET.state == 'FAILED' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-danger"></i>
+                                    <p>Failed</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin_request_list'%}?state=REJECTED" class="nav-link {% if request.GET.state == 'REJECTED' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon text-muted"></i>
+                                    <p>Rejected</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
-                            <p>Services</p>
+                            <p>Instances</p>
                         </a>
                     </li>
 
@@ -65,14 +109,14 @@
                             </p>
                         </a>
                     </li>
-{#                    <li class="nav-item">#}
-{#                        <a href="#" class="nav-link">#}
-{#                            <i class="nav-icon fas fa-check"></i>#}
-{#                            <p>Approvals#}
-{##}
-{#                            </p>#}
-{#                        </a>#}
-{#                    </li>#}
+                    {#                    <li class="nav-item">#}
+                    {#                        <a href="#" class="nav-link">#}
+                    {#                            <i class="nav-icon fas fa-check"></i>#}
+                    {#                            <p>Approvals#}
+                    {##}
+                    {#                            </p>#}
+                    {#                        </a>#}
+                    {#                    </li>#}
                     <li class="nav-item">
                         <a href="{% url 'tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
                             <i class="nav-icon fab fa-adn"></i>

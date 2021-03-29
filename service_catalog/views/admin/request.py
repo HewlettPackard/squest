@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
 
+from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.models import Request
 
@@ -14,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_list(request):
-    target_request = Request.objects.all()
-    return render(request, 'admin/request/request-list.html', {'requests': target_request})
+    f = RequestFilter(request.GET, queryset=Request.objects.all())
+    return render(request, 'admin/request/request-list.html', {'filter': f})
 
 
 @user_passes_test(lambda u: u.is_superuser)
