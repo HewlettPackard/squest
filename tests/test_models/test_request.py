@@ -1,8 +1,11 @@
+import json
+from datetime import timedelta
 from unittest import mock
 from unittest.mock import Mock
 
 import requests
-from django_celery_beat.models import PeriodicTask
+from django.utils import timezone
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState, Request
@@ -123,3 +126,47 @@ class TestRequest(BaseTestRequest):
         self.create_operation_test.auto_process = True
         self.create_operation_test.save()
         self._check_request_after_create(RequestState.SUBMITTED, check_execution_called=False)
+
+    def _process_timeout_with_expected_state(self, expected_instance_state):
+        self.test_request.state = RequestState.PROCESSING
+        self.test_request.tower_job_id = 10
+        date_in_the_past = timezone.now() - timedelta(seconds=45)
+        self.test_request.periodic_task_date_expire = date_in_the_past
+        schedule, created = IntervalSchedule.objects.get_or_create(every=10,
+                                                                   period=IntervalSchedule.SECONDS)
+        self.test_request.periodic_task = PeriodicTask.objects.create(
+            interval=schedule,
+            name='job_status_check_request_{}'.format(self.test_request.id),
+            task='service_catalog.tasks.check_tower_job_status_task',
+            args=json.dumps([self.test_request.id]))
+        self.test_request.save()
+
+        with mock.patch("django_celery_beat.models.PeriodicTask.delete") as mock_periodic_task_delete:
+            self.test_request.check_job_status()
+            self.test_instance.refresh_from_db()
+            self.test_request.refresh_from_db()
+            self.assertEquals(self.test_instance.state, expected_instance_state)
+            self.assertEquals(self.test_request.state, RequestState.FAILED)
+            mock_periodic_task_delete.assert_called()
+
+    def test_process_timeout_when_provisioning(self):
+        self.test_instance.state = InstanceState.PROVISIONING
+        self.test_instance.save()
+        expected_instance_state = InstanceState.PROVISION_FAILED
+        self._process_timeout_with_expected_state(expected_instance_state)
+
+    def test_process_timeout_when_updating(self):
+        self.test_instance.state = InstanceState.UPDATING
+        self.test_instance.save()
+        self.test_request.operation = self.update_operation_test
+        self.test_request.save()
+        expected_instance_state = InstanceState.UPDATE_FAILED
+        self._process_timeout_with_expected_state(expected_instance_state)
+
+    def test_process_timeout_when_deleting(self):
+        self.test_instance.state = InstanceState.DELETING
+        self.test_instance.save()
+        self.test_request.operation = self.delete_operation_test
+        self.test_request.save()
+        expected_instance_state = InstanceState.DELETE_FAILED
+        self._process_timeout_with_expected_state(expected_instance_state)

@@ -67,7 +67,9 @@ class BaseTest(TestCase):
 
         self.create_operation_test = Operation.objects.create(name="create test",
                                                               service=self.service_test,
-                                                              job_template=self.job_template_test)
+                                                              job_template=self.job_template_test,
+                                                              process_timeout_second=20)
+
         self.create_operation_test.enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': False
