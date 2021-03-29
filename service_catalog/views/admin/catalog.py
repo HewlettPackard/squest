@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm
 from service_catalog.models import Service, Operation
+from service_catalog.models.operations import OperationType
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -75,7 +76,7 @@ def add_service_operation(request, service_id):
 def delete_service_operation(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
-    if target_operation.type == "CREATE":
+    if target_operation.type == OperationType.CREATE:
         # cannot delete a create type operation
         raise PermissionDenied
     if request.method == "POST":
@@ -83,7 +84,8 @@ def delete_service_operation(request, service_id, operation_id):
         return redirect('service_operations', service_id=target_service.id)
 
     context = {
-        "object": target_operation
+        "operation": target_operation,
+        "service": target_service
     }
     return render(request, "settings/catalog/service/operation/operation-delete.html", context)
 

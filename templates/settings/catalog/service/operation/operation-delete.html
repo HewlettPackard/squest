@@ -21,8 +21,8 @@
                         <h3 class="card-title">Confirm deletion</h3>
                     </div>
                     <div class="card-body">
-                        <form action='../..' method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the service operation "{{ object.name }}"?</p>
+                        <form action='{% url 'delete_service_operation' service_id=service.id operation_id=operation.id %}' method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the service operation "{{ operation.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'settings_catalog' %}">Cancel</a>
                         </form>

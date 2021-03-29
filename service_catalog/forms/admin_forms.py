@@ -108,9 +108,14 @@ class AddServiceOperationForm(ModelForm):
                              error_messages={'required': 'At least you must select one type'},
                              widget=forms.Select(attrs={'class': 'form-control'}))
 
+    process_timeout_second = forms.IntegerField(required=True,
+                                                initial=60,
+                                                label="Process timeout (second)",
+                                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Operation
-        fields = ["name", "description", "job_template", "type"]
+        fields = ["name", "description", "job_template", "type", "process_timeout_second"]
 
 
 class SurveySelectorForm(forms.Form):
@@ -165,25 +170,26 @@ class AcceptRequestForm(forms.Form):
         self.target_request = Request.objects.get(id=request_id)
 
         # load user provided fields and add admin field if exist
-        for survey_definition in self.target_request.operation.job_template.survey["spec"]:
-            if survey_definition["type"] == "text":
-                new_field = forms.CharField(label=survey_definition['question_name'],
-                                            required=survey_definition['required'],
-                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-                new_field.group = self._get_field_group(field_name=survey_definition['variable'],
-                                                        enabled_field=self.target_request.operation.enabled_survey_fields)
-                self.fields[survey_definition['variable']] = new_field
+        if "spec" in self.target_request.operation.job_template.survey:
+            for survey_definition in self.target_request.operation.job_template.survey["spec"]:
+                if survey_definition["type"] == "text":
+                    new_field = forms.CharField(label=survey_definition['question_name'],
+                                                required=survey_definition['required'],
+                                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+                    new_field.group = self._get_field_group(field_name=survey_definition['variable'],
+                                                            enabled_field=self.target_request.operation.enabled_survey_fields)
+                    self.fields[survey_definition['variable']] = new_field
 
-            if survey_definition["type"] == "multiplechoice":
-                new_field = forms. \
-                    ChoiceField(label=survey_definition['question_name'],
-                                required=survey_definition['required'],
-                                choices=get_choices_from_string(survey_definition["choices"]),
-                                error_messages={'required': 'At least you must select one choice'},
-                                widget=forms.Select(attrs={'class': 'form-control'}))
-                new_field.group = self._get_field_group(field_name=survey_definition['variable'],
-                                                        enabled_field=self.target_request.operation.enabled_survey_fields)
-                self.fields[survey_definition['variable']] = new_field
+                if survey_definition["type"] == "multiplechoice":
+                    new_field = forms. \
+                        ChoiceField(label=survey_definition['question_name'],
+                                    required=survey_definition['required'],
+                                    choices=get_choices_from_string(survey_definition["choices"]),
+                                    error_messages={'required': 'At least you must select one choice'},
+                                    widget=forms.Select(attrs={'class': 'form-control'}))
+                    new_field.group = self._get_field_group(field_name=survey_definition['variable'],
+                                                            enabled_field=self.target_request.operation.enabled_survey_fields)
+                    self.fields[survey_definition['variable']] = new_field
 
     @staticmethod
     def _get_field_group(field_name, enabled_field):

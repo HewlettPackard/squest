@@ -19,5 +19,3 @@ def check_tower_job_status_task(request_id):
     logger.info("[check_tower_job_status_task] check Tower job status for request id: {}".format(request_id))
     target_request = Request.objects.get(id=request_id)
     target_request.check_job_status()
-
-

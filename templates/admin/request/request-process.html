@@ -53,6 +53,7 @@
                             </div>
                         </div>
 
+                        {% if target_request.fill_in_survey %}
                         <div class="card card-secondary">
                             <div class="card-header">
                                 <h3 class="card-title">Job template configuration</h3>
@@ -78,7 +79,7 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
-
+                        {% endif %}
                         <form id="form_process_request" action='' method='POST'>{% csrf_token %}
                             <button onclick="showLoaderOnClick();" type="submit" class="btn btn-success">
                                 <i class="fas fa-play"></i> Process request

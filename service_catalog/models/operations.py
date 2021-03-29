@@ -28,6 +28,7 @@ class Operation(models.Model):
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     auto_accept = models.BooleanField(default=False)
     auto_process = models.BooleanField(default=False)
+    process_timeout_second = models.IntegerField(default=60)
 
     def update_survey(self):
         new_end_user_survey = dict()

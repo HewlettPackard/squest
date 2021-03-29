@@ -51,7 +51,7 @@
                                     <td class="align-middle">{{ request.instance.service.name }}</td>
                                     <td class="align-middle">{{ request.operation.name }}</td>
                                     <td style="width: 10%" class="align-middle">
-                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm btn-block" data-toggle="popover" title="{{ request.operation.job_template.name }}" data-content="{{ request.fill_in_survey | pprint }}">
+                                        <a href="{% url 'service_operations' request.instance.service.id %}" class="btn btn-{{ request.operation.type |map_operation_type }} btn-sm btn-block" {%  if request.fill_in_survey %}data-toggle="popover" title="{{ request.operation.job_template.name }}" data-content="{{ request.fill_in_survey }}{% endif %}">
                                             {{ request.operation.type }}
                                         </a>
                                     </td>
