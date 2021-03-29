@@ -55,5 +55,6 @@ urlpatterns = [
     path('admin/request/<int:request_id>/accept/', views.admin_request_accept, name='admin_request_accept'),
     path('admin/request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
 
+    path('admin/instance/', views.admin_instance_list, name='admin_instance_list'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

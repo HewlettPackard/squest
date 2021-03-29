@@ -5,14 +5,15 @@ from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
+from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.forms.common_forms import RequestMessageForm
 from service_catalog.models import Request, Instance, Message
 
 
 @login_required
 def customer_request_list(request):
-    requests = get_objects_for_user(request.user, 'service_catalog.view_request')
-    return render(request, 'customer/request/request-list.html', {'requests': requests})
+    f = RequestFilter(request.GET, queryset=get_objects_for_user(request.user, 'service_catalog.view_request'))
+    return render(request, 'customer/request/request-list.html', {'filter': f})
 
 
 @permission_required_or_403('service_catalog.delete_request', (Request, 'id', 'request_id'))
