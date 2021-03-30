@@ -20,13 +20,13 @@
                         <!-- small card -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>150</h3>
-                                <p>My pending request</p>
+                                <h3>{{ total_request }}</h3>
+                                <p>Pending request</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <a href="#" class="small-box-footer">
+                            <a href="{% url 'customer_request_list' %}" class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -35,13 +35,13 @@
                         <!-- small card -->
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>44</h3>
-                                <p>Instances</p>
+                                <h3>{{ total_instance }}</h3>
+                                <p>Available instances</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-th"></i>
                             </div>
-                            <a href="#" class="small-box-footer">
+                            <a href="{% url 'customer_instance_list' %}" class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
                         </div>

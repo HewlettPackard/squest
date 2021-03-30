@@ -8,6 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.forms.common_forms import RequestMessageForm
 from service_catalog.models import Request, Instance, Message
+from service_catalog.views import request_comment
 
 
 @login_required
@@ -35,22 +36,5 @@ def customer_request_cancel(request, request_id):
 
 @permission_required_or_403('service_catalog.view_request', (Request, 'id', 'request_id'))
 def customer_request_comment(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
-    messages = Message.objects.filter(request=target_request)
-    if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            new_message = form.save()
-            new_message.request = target_request
-            new_message.sender = request.user
-            new_message.save()
-            return redirect(customer_request_comment, target_request.id)
-    else:
-        form = RequestMessageForm()
+    return request_comment(request, request_id, customer_request_comment)
 
-    context = {
-        "form": form,
-        "target_request": target_request,
-        "messages": messages
-    }
-    return render(request, "customer/request/request-comment.html", context)

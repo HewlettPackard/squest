@@ -7,8 +7,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
 
 from service_catalog.filters.request_filter import RequestFilter
-from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
+from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm, Message
+from service_catalog.forms.common_forms import RequestMessageForm
 from service_catalog.models import Request
+from service_catalog.views import request_comment
 
 logger = logging.getLogger(__name__)
 
@@ -179,3 +181,9 @@ def admin_request_process(request, request_id):
         "error_message": error_message
     }
     return render(request, "admin/request/request-process.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_comment(request, request_id):
+    return request_comment(request, request_id, admin_request_comment)
+

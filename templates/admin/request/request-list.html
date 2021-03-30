@@ -62,7 +62,7 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 {% if o_request.state == "NEED_INFO" %}
-                                                <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"re_submit" }}" href="{% url 'admin_request_re_submit' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"re_submit" }} fas fa-redo"></span> Reset to submitted</a>
+                                                    <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"re_submit" }}" href="{% url 'admin_request_re_submit' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"re_submit" }} fas fa-redo"></span> Reset to submitted</a>
                                                 {% endif %}
                                                 <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"cancel" }}" href="{% url 'admin_request_cancel' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"cancel" }} fas fa-window-close"></span> Cancel</a>
                                                 <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"need_info" }}" href="{% url 'admin_request_need_info' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"need_info" }} fas fa-info-circle"></span> Ask more info</a>
@@ -70,6 +70,9 @@
                                                 <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"accept" }}" href="{% url 'admin_request_accept' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"accept" }} fas fa-thumbs-up"></span> Accept</a>
                                                 <a class="dropdown-item {{ o_request.id |is_action_dropdown_disabled:"process" }}" href="{% url 'admin_request_process' o_request.id %}"><span class="{{ o_request.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
                                             </div>
+                                            <a href="{% url 'admin_request_comment' o_request.id %}" class="btn btn-primary bg-sm" title="Comments">
+                                                <i class="fas fa-comments"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

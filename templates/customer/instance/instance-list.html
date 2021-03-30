@@ -21,6 +21,7 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Type</th>
                                 <th>State</th>
                                 <th>Requests</th>
                                 <th>Info/Operations</th>
@@ -31,6 +32,7 @@
                                 {% if instance.state != "ARCHIVED" %}
                                     <tr>
                                         <td class="align-middle">{{ instance.name }}</td>
+                                        <td class="align-middle">{{ instance.service.name }}</td>
                                         <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }} btn-block">{{ instance.state }}</span></h4></td>
                                         <td class="align-middle">
                                             <a href="{%  url 'customer_request_list' %}?instance={{ instance.name }}" class="btn btn-default bg-sm">
