@@ -19,7 +19,7 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
@@ -43,12 +43,12 @@
                 {# Admin side panel #}
                 {% if user.is_superuser %}
                     <li class="nav-header">Admin</li>
-                    <li class="nav-item menu-is-opening menu-open">
+                    <li class="nav-item menu-open">
                         <a href="{% url 'admin_request_list' %}" class="nav-link {% if 'admin/request' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Requests</p>
                         </a>
-                        <ul class="nav nav-treeview" style="display: block;">
+                        <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{% url 'admin_request_list' %}" class="nav-link {% if 'admin/request/' in request.path and not request.GET.state %}active{% endif %}">
                                     <i class="far fa-circle nav-icon"></i>

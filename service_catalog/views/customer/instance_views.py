@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
+from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
@@ -61,3 +62,19 @@ def customer_instance_request_new_operation(request, instance_id, operation_id):
     return render(request, 'customer/instance/instance-request-operation.html', {'form': form,
                                                                                  'operation': operation,
                                                                                  'instance': instance})
+
+
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def customer_instance_archive(request, instance_id):
+    target_instance = get_object_or_404(Instance, id=instance_id)
+    if request.method == "POST":
+        if not can_proceed(target_instance.archive):
+            raise PermissionDenied
+        target_instance.archive()
+        target_instance.save()
+
+        return redirect(customer_instance_list)
+    context = {
+        "instance": target_instance
+    }
+    return render(request, "customer/instance/instance-archive.html", context)

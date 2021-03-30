@@ -42,6 +42,8 @@ urlpatterns = [
 
     path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
     path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),
+    path('customer/instance/<int:instance_id>/archive/', views.customer_instance_archive,
+         name='customer_instance_archive'),
     path('customer/instance/<int:instance_id>/operation/<int:operation_id>/',
          views.customer_instance_request_new_operation,
          name='customer_instance_request_new_operation'),
