@@ -159,7 +159,8 @@ class MessageOnRequestForm(forms.Form):
 
     def save(self):
         message_content = self.cleaned_data["message"]
-        Message.objects.create(sender=self.user, content=message_content, request=self.target_request)
+        if message_content is not None and message_content != "":
+            Message.objects.create(sender=self.user, content=message_content, request=self.target_request)
 
 
 class AcceptRequestForm(forms.Form):
