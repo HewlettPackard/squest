@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 
-from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm
+from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm, JobTemplate
 from service_catalog.models import Service, Operation
 from service_catalog.models.operations import OperationType
 
@@ -91,6 +91,25 @@ def delete_service_operation(request, service_id, operation_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+def edit_service_operation(request, service_id, operation_id):
+    target_service = get_object_or_404(Service, id=service_id)
+    target_operation = get_object_or_404(Operation, id=operation_id)
+
+    # if request.method == 'POST':
+    form = AddServiceOperationForm(request.POST or None, instance=target_operation,
+                                   initial={'job_template': target_operation.job_template.name})
+    if form.is_valid():
+        form.save()
+        return redirect('service_operations', service_id=target_service.id)
+    # else:
+    #     form = AddServiceOperationForm(instance=target_operation)
+
+    return render(request, 'settings/catalog/service/operation/operation-edit.html', {'form': form,
+                                                                                      'service': target_service,
+                                                                                      'operation': target_operation})
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def service_operation_edit_survey(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
@@ -105,6 +124,6 @@ def service_operation_edit_survey(request, service_id, operation_id):
     else:
         form = SurveySelectorForm(**parameters)
 
-    return render(request, 'settings/catalog/service/operation/operation-edit.html', {'form': form,
-                                                                                      'service': target_service,
-                                                                                      'operation': target_operation})
+    return render(request, 'settings/catalog/service/operation/operation-edit-survey.html', {'form': form,
+                                                                                             'service': target_service,
+                                                                                             'operation': target_operation})

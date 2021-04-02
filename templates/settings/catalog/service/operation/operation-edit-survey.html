@@ -18,7 +18,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Edit operation <strong>{{ operation.name }}</strong> for service <strong>{{ service.name }}</strong></h3>
+                        <h3 class="card-title">Survey of operation <strong>{{ operation.name }}</strong> for service <strong>{{ service.name }}</strong></h3>
                     </div>
                     <div class="card-body">
                         {% if form.errors %}
@@ -30,15 +30,13 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'edit_service_operation' service_id=service.id operation_id=operation.id%}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
-                                        {{ field.label }}
-                                    </label>
-                                    <div class="col-sm-4">
+                                    <div class="custom-control custom-switch">
                                         {{ field }}
+                                        <label for="{{field.name}}" class="custom-control-label" for="customSwitch1">{{ field.label }}</label>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -48,7 +46,7 @@
                                     <!-- validate button -->
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fas fa-plus"></i>
-                                        Edit operation
+                                        Update survey
                                     </button>
                                 </div>
                             </div>

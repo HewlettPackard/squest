@@ -113,9 +113,20 @@ class AddServiceOperationForm(ModelForm):
                                                 label="Process timeout (second)",
                                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+    auto_accept = forms.BooleanField(label="Auto accept",
+                                     initial=False,
+                                     required=False,
+                                     widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+
+    auto_process = forms.BooleanField(label="Auto process",
+                                      initial=False,
+                                      required=False,
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Operation
-        fields = ["name", "description", "job_template", "type", "process_timeout_second"]
+        fields = ["name", "description", "job_template", "type", "process_timeout_second",
+                  "auto_accept", "auto_process"]
 
 
 class SurveySelectorForm(forms.Form):
