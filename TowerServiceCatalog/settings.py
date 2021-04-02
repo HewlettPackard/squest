@@ -137,9 +137,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = str(BASE_DIR) + '/static'
+STATIC_ROOT = str(BASE_DIR) + '/static'
 STATICFILES_DIRS = (
-    BASE_DIR / "static",
+    # BASE_DIR / "static",
     os.path.join(BASE_DIR, "project-static"),
 )
 
@@ -181,7 +181,7 @@ LOGGING = {
 }
 
 # -----------------------------------------
-# BROKER CONFIG
+# CELERY CONFIG
 # -----------------------------------------
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://rabbitmq:rabbitmq@localhost:5672/tower_service_catalog')
 # Add a five-minutes timeout to all Celery tasks.

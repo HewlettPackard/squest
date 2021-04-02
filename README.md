@@ -1,1 +1,21 @@
-tower-service-catalog
+# Squest - A service request portal based on Ansible Tower
+
+Squest is a Web portal that allow to expose Tower based automation as a service.
+
+Retrieve a [POC demo video here](https://terre.gre.hpecorp.net/videos/request_portal_demo.mp4)
+
+## Deploy a testing environment
+
+Pre-requisites:
+
+- Docker
+- Docker-compose
+
+To test the application, run the full env docker compose file
+```bash
+docker-compose -f dev-env.docker-compose.yml -f full-env.docker-compose.yml up
+```
+
+## Documentation
+
+- [Setup a development environment](docs/dev-env.md)

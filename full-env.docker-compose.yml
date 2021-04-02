@@ -1,0 +1,45 @@
+# docker-compose -f dev-env.docker-compose.yml -f full-env.docker-compose.yml up
+version: '3.7'
+
+services:
+  django: &django
+    image: squest
+    build:
+      context: .
+      dockerfile: docker/squest.Dockerfile
+    environment:
+      MYSQL_SERVICE_HOST: db
+      WAIT_HOSTS: db:3306, rabbitmq:5672
+      CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/tower_service_catalog
+    volumes:
+      - django_static:/app/static
+    depends_on:
+      - db
+      - rabbitmq
+      - celery-worker
+      - celery-beat
+    ports:
+      - "8000:8000"
+
+  celery-worker:
+    <<: *django
+    depends_on:
+      - db
+      - rabbitmq
+    ports: []
+    command: >
+      bash -c "/wait &&
+      celery -A service_catalog worker -l info"
+
+  celery-beat:
+    <<: *django
+    depends_on:
+      - db
+      - rabbitmq
+    ports: []
+    command: >
+      bash -c "/wait &&
+      celery -A service_catalog worker --beat --scheduler django -l info"
+
+volumes:
+  django_static: {}

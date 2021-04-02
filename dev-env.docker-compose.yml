@@ -23,7 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD: p@ssw0rd
     ports:
       - "8082:80"
-  broker:
+  rabbitmq:
     image: "rabbitmq:3-management"
     ports:
       - "15672:15672"
