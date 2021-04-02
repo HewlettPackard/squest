@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 
-from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm, JobTemplate
+from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm, JobTemplate, EditServiceForm
 from service_catalog.models import Service, Operation
 from service_catalog.models.operations import OperationType
 
@@ -52,6 +52,19 @@ def delete_service(request, service_id):
         "object": target_service
     }
     return render(request, "settings/catalog/service/service-delete.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_service(request, service_id):
+    target_service = get_object_or_404(Service, id=service_id)
+
+    form = EditServiceForm(request.POST or None, request.FILES or None, instance=target_service)
+    if form.is_valid():
+        form.save()
+        return redirect(service)
+
+    return render(request, 'settings/catalog/service/service-edit.html', {'form': form,
+                                                                          'service': target_service})
 
 
 @user_passes_test(lambda u: u.is_superuser)

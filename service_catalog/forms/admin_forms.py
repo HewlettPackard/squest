@@ -85,6 +85,24 @@ class ServiceForm(ModelForm):
         fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image"]
 
 
+class EditServiceForm(ModelForm):
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    description = forms.CharField(label="Description",
+                                  required=False,
+                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    image = forms.ImageField(label="Choose a file",
+                             required=False,
+                             widget=forms.FileInput())
+
+    class Meta:
+        model = Service
+        fields = ["name", "description", "image"]
+
+
 class AddServiceOperationForm(ModelForm):
     choice_type = [('UPDATE', 'Update'),
                    ('DELETE', 'Delete')]

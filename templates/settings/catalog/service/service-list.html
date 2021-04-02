@@ -46,6 +46,9 @@
                                         </a>
                                     </td>
                                     <td class="align-middle">
+                                        <a href="{% url 'edit_service' service.id %}" class="btn btn-default bg-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <a href="{% url 'delete_service' service.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>

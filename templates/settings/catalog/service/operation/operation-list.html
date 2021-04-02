@@ -78,6 +78,9 @@
                                         </a>
                                     </td>
                                     <td class="align-middle">
+                                        <a href="{% url 'edit_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-default bg-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         {% if  operation.type != "CREATE" %}
                                             <a href="{% url 'delete_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-danger bg-sm">
                                                 <i class="fas fa-trash"></i>
@@ -87,9 +90,7 @@
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         {% endif %}
-                                            <a href="{% url 'edit_service_operation' service_id=service.id operation_id=operation.id %}" class="btn btn-default bg-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+
                                     </td>
                                 </tr>
                             {%  endfor %}
