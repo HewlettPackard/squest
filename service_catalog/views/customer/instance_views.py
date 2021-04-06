@@ -7,7 +7,7 @@ from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
-from service_catalog.forms import OperationRequestForm
+from service_catalog.forms import OperationRequestForm, SupportRequestForm, Support
 from service_catalog.models import Instance, Operation
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
@@ -24,13 +24,15 @@ def customer_instance_details(request, instance_id):
 
     instance = get_object_or_404(Instance, id=instance_id)
     spec_json_pretty = json.dumps(instance.spec)
-    print(spec_json_pretty)
 
     operations = Operation.objects.filter(service=instance.service,
                                           type__in=[OperationType.UPDATE, OperationType.DELETE])
+
+    supports = Support.objects.filter(instance=instance)
     context = {'instance': instance,
                'spec_json_pretty': spec_json_pretty,
-               'operations': operations}
+               'operations': operations,
+               'supports': supports}
 
     return render(request, 'customer/instance/instance-details.html', context=context)
 
@@ -78,3 +80,21 @@ def customer_instance_archive(request, instance_id):
         "instance": target_instance
     }
     return render(request, "customer/instance/instance-archive.html", context)
+
+
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def customer_instance_new_support(request, instance_id):
+    target_instance = get_object_or_404(Instance, id=instance_id)
+    parameters = {
+        'instance_id': instance_id
+    }
+    if request.method == 'POST':
+        form = SupportRequestForm(request.user, request.POST, **parameters)
+        if form.is_valid():
+            form.save()
+            return redirect('customer_instance_details', target_instance.id)
+    else:
+        form = SupportRequestForm(request.user, **parameters)
+
+    return render(request, 'customer/instance/support/support-create.html', {'form': form,
+                                                                             'instance': target_instance})

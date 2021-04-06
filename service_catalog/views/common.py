@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.forms.common_forms import RequestMessageForm
-from service_catalog.models import Request, Instance, Message
+from service_catalog.models import Request, Instance, Message, RequestMessage
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
@@ -28,7 +28,7 @@ def home(request):
 
 def request_comment(request, request_id, redirect_to_view):
     target_request = get_object_or_404(Request, id=request_id)
-    messages = Message.objects.filter(request=target_request)
+    messages = RequestMessage.objects.filter(request=target_request)
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None)
         if form.is_valid():

@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
-from service_catalog.models import Message, Request
+
+from service_catalog.models import RequestMessage
 
 
 class RequestMessageForm(ModelForm):
@@ -10,5 +11,5 @@ class RequestMessageForm(ModelForm):
                               widget=forms.Textarea(attrs={'class': 'form-control'}))
 
     class Meta:
-        model = Message
+        model = RequestMessage
         fields = ["content"]

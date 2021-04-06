@@ -5,4 +5,5 @@ from .operations import Operation
 from .request import Request
 from .services import Service
 from .instance import Instance, UserPermissionOnInstance
-from .message import Message
+from .message import Message, RequestMessage, SupportMessage
+from .support import Support

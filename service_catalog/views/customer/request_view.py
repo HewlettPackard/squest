@@ -6,8 +6,7 @@ from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.filters.request_filter import RequestFilter
-from service_catalog.forms.common_forms import RequestMessageForm
-from service_catalog.models import Request, Instance, Message
+from service_catalog.models import Request
 from service_catalog.views import request_comment
 
 

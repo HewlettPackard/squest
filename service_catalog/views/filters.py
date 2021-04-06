@@ -12,6 +12,8 @@ from service_catalog.models.request import RequestState
 
 import markdown as md
 
+from service_catalog.models.support import SupportState
+
 
 @register.filter(name='map_instance_state')
 def map_instance_state(value):
@@ -124,3 +126,12 @@ def markdown(content):
     md_content = md_instance.convert(content)
     md_content = md_content.replace('<table>', '<table class="table table-bordered">')
     return mark_safe(md_content)
+
+
+@register.filter(name='map_support_state')
+def map_support_state(value):
+    map_dict = {
+        SupportState.OPENED: "success",
+        SupportState.CLOSED: "danger"
+    }
+    return map_dict[value]

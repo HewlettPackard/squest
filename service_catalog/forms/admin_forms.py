@@ -7,7 +7,7 @@ from django.forms import ModelForm
 from towerlib import Tower
 
 from service_catalog.forms.utils import get_choices_from_string
-from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, Message
+from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -189,7 +189,7 @@ class MessageOnRequestForm(forms.Form):
     def save(self):
         message_content = self.cleaned_data["message"]
         if message_content is not None and message_content != "":
-            Message.objects.create(sender=self.user, content=message_content, request=self.target_request)
+            RequestMessage.objects.create(sender=self.user, content=message_content, request=self.target_request)
 
 
 class AcceptRequestForm(forms.Form):
