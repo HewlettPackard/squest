@@ -48,6 +48,8 @@ urlpatterns = [
     path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),
     path('customer/instance/<int:instance_id>/new-support/', views.customer_instance_new_support,
          name='customer_instance_new_support'),
+    path('customer/instance/<int:instance_id>/support/<int:support_id>', views.customer_instance_support_details,
+         name='customer_instance_support_details'),
     path('customer/instance/<int:instance_id>/archive/', views.customer_instance_archive,
          name='customer_instance_archive'),
     path('customer/instance/<int:instance_id>/operation/<int:operation_id>/',

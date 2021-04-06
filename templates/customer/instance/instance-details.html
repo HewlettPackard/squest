@@ -64,7 +64,7 @@
                         </div>
 
                     </div>
-                    <div class="col-sm">
+                    <div class="col-sm-8">
                         <div class="card"><!-- card json spec -->
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-medkit"></i> Support</h3>
@@ -88,7 +88,7 @@
                                     <tbody>
                                     {%  for support in supports %}
                                         <tr>
-                                            <td class="align-middle"><a href="">{{ support.title }}</a></td>
+                                            <td class="align-middle"><a href="{% url 'customer_instance_support_details' instance_id=support.instance.id support_id=support.id %}">{{ support.title }}</a></td>
                                             <td class="align-middle">{{ support.date_opened }}</td>
                                             <td class="align-middle">{{ support.date_closed }}</td>
                                             <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ support.state |map_support_state }} btn-block">{{ support.state }}</span></h4></td>
