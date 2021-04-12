@@ -7,7 +7,7 @@ from django.forms import ModelForm
 from towerlib import Tower
 
 from service_catalog.forms.utils import get_choices_from_string
-from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage
+from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -238,3 +238,18 @@ class AcceptRequestForm(forms.Form):
         # reset the instance state if it was failed (in case of resetting the state)
         self.target_request.instance.reset_to_last_stable_state()
         self.target_request.instance.save()
+
+
+class InstanceForm(ModelForm):
+
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    spec = forms.JSONField(label="JSON Spec",
+                           required=False,
+                           widget=forms.Textarea(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Instance
+        fields = ["name", "spec"]

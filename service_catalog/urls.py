@@ -72,5 +72,7 @@ urlpatterns = [
          name='admin_instance_new_support'),
     path('admin/instance/<int:instance_id>/support/<int:support_id>', views.admin_instance_support_details,
          name='admin_instance_support_details'),
+    path('admin/instance/<int:instance_id>/edit/', views.admin_instance_edit,
+         name='admin_instance_edit'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

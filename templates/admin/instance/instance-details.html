@@ -55,7 +55,12 @@
                     <div class="col-sm">
                         <div class="card"><!-- card json spec -->
                             <div class="card-header">
-                                <h3 class="card-title"><i class="fas fa-code"></i> Instance current spec</h3>
+                                <h3 class="card-title"><i class="fas fa-code"></i> Instance spec</h3>
+                                <div class="card-tools">
+                                    <a href="{% url 'admin_instance_edit' instance.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-wrench"></i> Edit
+                                    </a>
+                                </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">

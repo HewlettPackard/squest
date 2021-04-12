@@ -7,9 +7,8 @@ from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
-from service_catalog.forms import OperationRequestForm, SupportRequestForm, Support
-from service_catalog.forms.common_forms import SupportMessageForm
-from service_catalog.models import Instance, Operation, SupportMessage
+from service_catalog.forms import OperationRequestForm, Support
+from service_catalog.models import Instance, Operation
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
 from service_catalog.views import instance_new_support, instance_support_details
