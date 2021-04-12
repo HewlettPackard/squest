@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
-from service_catalog.models import Request, Message
+from service_catalog.models import Request, Message, RequestMessage
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from tests.base_test_request import BaseTestRequest
@@ -34,7 +34,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEquals(self.test_request.state, RequestState.NEED_INFO)
-        self.assertEquals(1, Message.objects.filter(request=self.test_request.id).count())
+        self.assertEquals(1, RequestMessage.objects.filter(request=self.test_request.id).count())
 
     def test_admin_request_re_submit(self):
         self.test_request.state = RequestState.NEED_INFO
@@ -60,7 +60,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEquals(self.test_request.state, RequestState.REJECTED)
-        self.assertEquals(1, Message.objects.filter(request=self.test_request.id).count())
+        self.assertEquals(1, RequestMessage.objects.filter(request=self.test_request.id).count())
 
     def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state):
         args = {
