@@ -22,6 +22,7 @@ django-fsm = "^2.7.1"
 django-celery-beat = "^2.2.0"
 Pygments = "^2.8.1"
 django-filter = "^2.4.0"
+coverage = "^5.5"
 
 [tool.poetry.dev-dependencies]
 

@@ -89,3 +89,16 @@ To clean all Celery pending tasks
 poetry shell
 celery -A restapi purge
 ```
+
+## Tests
+
+Run unit tests
+```
+service_catalog.models.
+```
+
+Run code coverage
+```
+coverage run --source='.' manage.py test
+coverage report
+```
