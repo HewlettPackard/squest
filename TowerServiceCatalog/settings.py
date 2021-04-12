@@ -112,12 +112,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Authentication
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
-)
+# LDAP
+LDAP_ENABLED = os.environ.get('LDAP_ENABLED', False)
+if LDAP_ENABLED:
+    from ldap_config import *
 
+# Authentication
+# do not use LDAP auth when testing
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    'guardian.backends.ObjectPermissionBackend',
+]
+if LDAP_ENABLED and not TESTING:
+    AUTHENTICATION_BACKENDS = (
+        'django_auth_ldap.backend.LDAPBackend',
+        'django.contrib.auth.backends.ModelBackend',
+        'guardian.backends.ObjectPermissionBackend',
+    )
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

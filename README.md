@@ -22,3 +22,4 @@ The default admin account is `admin // admin`
 ## Documentation
 
 - [Setup a development environment](docs/dev-env.md)
+- [Settings](docs/settings.md)
