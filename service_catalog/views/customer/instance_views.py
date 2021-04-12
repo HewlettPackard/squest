@@ -12,6 +12,7 @@ from service_catalog.forms.common_forms import SupportMessageForm
 from service_catalog.models import Instance, Operation, SupportMessage
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
+from service_catalog.views import instance_new_support, instance_support_details
 
 
 @login_required
@@ -85,53 +86,9 @@ def customer_instance_archive(request, instance_id):
 
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def customer_instance_new_support(request, instance_id):
-    target_instance = get_object_or_404(Instance, id=instance_id)
-    parameters = {
-        'instance_id': instance_id
-    }
-    if request.method == 'POST':
-        form = SupportRequestForm(request.user, request.POST, **parameters)
-        if form.is_valid():
-            form.save()
-            return redirect('customer_instance_details', target_instance.id)
-    else:
-        form = SupportRequestForm(request.user, **parameters)
-
-    return render(request, 'customer/instance/support/support-create.html', {'form': form,
-                                                                             'instance': target_instance})
+    return instance_new_support(request, instance_id)
 
 
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def customer_instance_support_details(request, instance_id, support_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    support = get_object_or_404(Support, id=support_id)
-    messages = SupportMessage.objects.filter(support=support)
-    if request.method == "POST":
-        form = SupportMessageForm(request.POST or None)
-        if "btn_close" in request.POST:
-            if not can_proceed(support.do_close):
-                raise PermissionDenied
-            support.do_close()
-            support.save()
-        if "btn_re_open" in request.POST:
-            if not can_proceed(support.do_open):
-                raise PermissionDenied
-            support.do_open()
-            support.save()
-        if form.is_valid():
-            if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
-                new_message = form.save()
-                new_message.support = support
-                new_message.sender = request.user
-                new_message.save()
-            return redirect('customer_instance_support_details', instance.id, support.id)
-    else:
-        form = SupportMessageForm()
-
-    context = {
-        "form": form,
-        "instance": instance,
-        "messages": messages,
-        "support": support
-    }
-    return render(request, "common/instance-support-details.html", context)
+    return instance_support_details(request, instance_id, support_id)

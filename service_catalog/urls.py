@@ -67,5 +67,10 @@ urlpatterns = [
     path('admin/request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
 
     path('admin/instance/', views.admin_instance_list, name='admin_instance_list'),
+    path('admin/instance/<int:instance_id>/', views.admin_instance_details, name='admin_instance_details'),
+    path('admin/instance/<int:instance_id>/new-support/', views.admin_instance_new_support,
+         name='admin_instance_new_support'),
+    path('admin/instance/<int:instance_id>/support/<int:support_id>', views.admin_instance_support_details,
+         name='admin_instance_support_details'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
