@@ -81,7 +81,6 @@ class ServiceRequestForm(forms.Form):
                                              operation=self.create_operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
-        # TODO: send notification to admins
         return new_request
 
     def clean(self):

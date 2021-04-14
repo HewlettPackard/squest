@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<br lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request update</title>
+</head>
+<h2>Request state update: #{{ request.id }}</h2>
+
+<li>New request state: <b>{{ request.state }}</b></li>
+<li>Applied by: <b>{{ user_applied_state.username }}</b></li>
+
+Request details:<br>
+<li>Requester: <b>{{ request.user.username }}</b></li>
+<li>Service: <b>{{ request.operation.service.name }}</b></li>
+<li>Instance: <b>{{ request.instance.name }}</b></li>
+<li>Operation type: <b>{{ request.operation.type }}</b></li>
+<li>Operation name: <b>{{ request.operation.name }}</b></li>
+<br>
+
+Retrieve this request on <a href="http://{{ current_site }}">Squest portal</a>.
+</body>
+</html>

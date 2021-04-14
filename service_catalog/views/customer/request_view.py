@@ -6,6 +6,7 @@ from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.filters.request_filter import RequestFilter
+from service_catalog.mail_utils import send_email_request_canceled
 from service_catalog.models import Request
 from service_catalog.views import request_comment
 
@@ -24,6 +25,7 @@ def customer_request_cancel(request, request_id):
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         target_request.cancel()
+        send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
         # now delete the request
         target_request.delete()
         return redirect(customer_request_list)

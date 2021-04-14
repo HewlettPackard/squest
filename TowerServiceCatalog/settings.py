@@ -14,6 +14,8 @@ import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from service_catalog.utils import str_to_bool
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -113,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # LDAP
-LDAP_ENABLED = os.environ.get('LDAP_ENABLED', False)
+LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 if LDAP_ENABLED:
     from ldap_config import *
 
@@ -125,9 +127,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 if LDAP_ENABLED and not TESTING:
     AUTHENTICATION_BACKENDS = (
-        'django_auth_ldap.backend.LDAPBackend',
         'django.contrib.auth.backends.ModelBackend',
         'guardian.backends.ObjectPermissionBackend',
+        'django_auth_ldap.backend.LDAPBackend',
     )
 
 # Internationalization
@@ -208,3 +210,15 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_RESULT_BACKEND = 'django-db'
+
+# -----------------------------------------
+# EMAIL CONFIG
+# -----------------------------------------
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = 25
+
+# -----------------------------------------
+# Squest CONFIG
+# -----------------------------------------
+SQUEST_HOST = "host.domain.example"
+SQUEST_EMAIL_NOTIFICATION_ENABLED = True

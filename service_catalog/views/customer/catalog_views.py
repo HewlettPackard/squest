@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
 from service_catalog.forms import ServiceRequestForm
+from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Service
 
 
@@ -21,7 +22,8 @@ def customer_service_request(request, service_id):
     if request.method == 'POST':
         form = ServiceRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
-            form.save()
+            new_request = form.save()
+            send_mail_request_update(target_request=new_request, from_email=request.user.email)
             return redirect('customer_request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
