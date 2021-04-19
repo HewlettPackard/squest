@@ -9,6 +9,7 @@ Pre-requisites:
 - Python 3.8
 - Python virtualenv
 - [Poetry](https://python-poetry.org/)
+- npm
 
 ### System packages
 
@@ -42,6 +43,13 @@ python manage.py migrate
 Insert default data
 ```
 python manage.py insert_default_data
+```
+
+### Javascript libraries
+
+Install JS libs (npm need to be installed)
+```
+npm install
 ```
 
 ## Start a development environment

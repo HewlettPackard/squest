@@ -24,6 +24,7 @@ Pygments = "^2.8.1"
 django-filter = "^2.4.0"
 coverage = "^5.5"
 django-auth-ldap = "^2.4.0"
+django-node-assets = "^0.9.8"
 
 [tool.poetry.dev-dependencies]
 

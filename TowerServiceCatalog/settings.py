@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
     'guardian',
+    'django_node_assets',
     'django_filters',
     'service_catalog'
 ]
@@ -145,25 +146,34 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-        os.path.join(BASE_DIR, "project-static"),
-    ]
-else:
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static/'),  # retrieve from collect static command
+    os.path.join(BASE_DIR, 'project-static/')  # project statics
+]
+if not DEBUG:
+    # useless during development, it's only required for deployment
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # TO be set when prod
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+# https://github.com/whitespy/django-node-assets
+STATICFILES_FINDERS = [
+    'django_node_assets.finders.NodeModulesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+NODE_PACKAGE_JSON = os.path.join(BASE_DIR, 'package.json')
+NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
 
 # -----------------------------------------
 # LOGGING CONFIG

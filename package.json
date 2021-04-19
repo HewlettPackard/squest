@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "admin-lte": "^3.1.0",
+    "bootstrap": "^4.6.0",
+    "datatables.net": "^1.10.24",
+    "datatables.net-jqui": "^1.10.24"
+  }
+}

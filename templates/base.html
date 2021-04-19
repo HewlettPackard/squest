@@ -7,14 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static '/bootstrap-4.6.0/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
     <!-- AdminLTE CSS -->
-    <link rel="stylesheet" href="{% static '/adminlte/css/adminlte.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-lte/dist/css/adminlte.css' %}">
     <!-- Datatable CSS -->
-    <link rel="stylesheet" type="text/css" href="{%  static '/datatables/css/jquery.dataTables.css' %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'datatables.net-jqui/css/dataTables.jqueryui.min.css' %}">
     <!-- Tower Service Catalog -->
-    <link rel="stylesheet" type="text/css" href="{%  static '/tower_service_catalog/css/tower_service_catalog.css' %}">
-    <link rel="stylesheet" type="text/css" href="{%  static '/tower_service_catalog/css/pygments.css' %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'tower_service_catalog/css/tower_service_catalog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'tower_service_catalog/css/pygments.css' %}">
     <title>TSC</title>
 </head>
 <body>
@@ -25,15 +25,15 @@
 
 {% block content %}{% endblock %}
 <!-- Jquery -->
-<script src="{% static '/jquery/jquery-3.5.1.min.js' %}"></script>
+<script src="{% static 'jquery/dist/jquery.js' %}"></script>
 <!-- Bootstrap -->
-<script src="{% static '/bootstrap-4.6.0/js/bootstrap.bundle.min.js' %}" ></script>
+<script src="{% static 'bootstrap/dist/js/bootstrap.bundle.js' %}" ></script>
 <!-- adminlte -->
-<script src="{% static '/adminlte/js/adminlte.min.js' %}"></script>
+<script src="{% static 'admin-lte/dist/js/adminlte.js' %}"></script>
 <!-- Datatables -->
-<script src="{% static '/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'datatables.net/js/jquery.dataTables.min.js' %}"></script>
 <!-- Font Awesome Free -->
-<script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+<script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}"></script>
 <!-- Tower Service Catalog -->
 <script src="{% static 'tower_service_catalog/js/tower_service_catalog.js' %}"></script>
 </body>
