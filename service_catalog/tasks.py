@@ -1,8 +1,8 @@
 import logging
 
 from celery import shared_task
+from django.core.mail import EmailMultiAlternatives
 
-from .mail_utils import django_send_email
 from .models import TowerServer, Request
 
 logger = logging.getLogger(__name__)
@@ -27,4 +27,6 @@ def send_email(subject, plain_text, html_template, from_email, receivers, reply_
     """
     Pass-through method so we use Celery async
     """
-    django_send_email(subject, plain_text, html_template, from_email, receivers, reply_to)
+    msg = EmailMultiAlternatives(subject, plain_text, from_email, receivers, reply_to=reply_to)
+    msg.attach_alternative(html_template, "text/html")
+    msg.send()

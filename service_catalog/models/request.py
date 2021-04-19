@@ -149,6 +149,7 @@ class Request(models.Model):
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def check_job_status(self):
+        from ..mail_utils import send_mail_request_update, send_email_request_error
         if self.tower_job_id is None:
             logger.warning("[Request][check_job_status] no tower job id for request id {}. "
                            "Check job status skipped".format(self.id))
@@ -177,24 +178,27 @@ class Request(models.Model):
             if self.operation.type == OperationType.DELETE:
                 self.instance.deleted()
                 self.instance.save()
+            # notify owner and admins that the request is complete
+            send_mail_request_update(target_request=self)
 
         if job_object.status == "canceled":
-            self.has_failed("Tower job '{}' status is 'canceled'".format(self.tower_job_id))
+            error_message = "Tower job '{}' status is 'canceled'".format(self.tower_job_id)
+            self.has_failed(error_message)
             self.save()
+            # as the process has been cancelled, set back the instance to available
             self.instance.available()
             self.instance.save()
             self.periodic_task.delete()
+            send_email_request_error(target_request=self,
+                                     error_message=error_message)
 
         if job_object.status == "failed":
-            self.has_failed("Tower job '{}' status is 'failed'".format(self.tower_job_id))
+            error_message = "Tower job '{}' status is 'failed'".format(self.tower_job_id)
+            self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()
-            if self.operation.type == OperationType.CREATE:
-                self.instance.provisioning_has_failed()
-            if self.operation.type == OperationType.UPDATE:
-                self.instance.update_has_failed()
-            if self.operation.type == OperationType.DELETE:
-                self.instance.delete_has_failed()
+            send_email_request_error(target_request=self,
+                                     error_message=error_message)
 
     @classmethod
     def add_user_permission(cls, sender, instance, created, *args, **kwargs):

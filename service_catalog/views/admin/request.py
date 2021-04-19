@@ -8,7 +8,7 @@ from django_fsm import can_proceed
 
 from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
-from service_catalog.mail_utils import send_email_request_canceled
+from service_catalog.mail_utils import send_email_request_canceled, send_mail_request_update
 from service_catalog.models import Request
 from service_catalog.views import request_comment
 
@@ -29,7 +29,8 @@ def admin_request_cancel(request, request_id):
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
-        # now delete the request
+        # now delete the request and the pending instance
+        target_request.instance.delete()
         target_request.delete()
         return redirect(admin_request_list)
     context = {
@@ -51,10 +52,10 @@ def admin_request_need_info(request, request_id):
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
                 raise PermissionDenied
-            form.save()
             target_request.need_info()
             target_request.save()
-            # TODO: notify user
+            message = form.cleaned_data['message']
+            send_mail_request_update(target_request, from_email=request.user.email, message=message)
             return redirect(admin_request_list)
     else:
         form = MessageOnRequestForm(request.user, **parameters)
@@ -81,7 +82,7 @@ def admin_request_re_submit(request, request_id):
             form.save()
             target_request.re_submit()
             target_request.save()
-            # TODO: notify user
+            send_mail_request_update(target_request, from_email=request.user.email)
             return redirect(admin_request_list)
     else:
         form = MessageOnRequestForm(request.user, **parameters)
@@ -108,7 +109,8 @@ def admin_request_reject(request, request_id):
             form.save()
             target_request.reject()
             target_request.save()
-            # TODO: notify user
+            message = form.cleaned_data['message']
+            send_mail_request_update(target_request, from_email=request.user.email, message=message)
             return redirect(admin_request_list)
     else:
         form = MessageOnRequestForm(request.user, **parameters)
@@ -130,6 +132,8 @@ def admin_request_accept(request, request_id):
         form = AcceptRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
+            target_request.refresh_from_db()
+            send_mail_request_update(target_request, from_email=request.user.email)
             return redirect(admin_request_list)
     else:
         form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
@@ -173,7 +177,7 @@ def admin_request_process(request, request_id):
                          "to process request id '{}'".format(target_request.id))
         if not error:
             target_request.save()
-            # TODO: notify user
+            send_mail_request_update(target_request, from_email=request.user.email)
             return redirect(admin_request_list)
 
     context = {

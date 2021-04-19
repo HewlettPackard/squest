@@ -35,7 +35,9 @@ class Instance(models.Model):
     def provisioning_has_failed(self):
         pass
 
-    @transition(field=state, source=[InstanceState.PROVISIONING, InstanceState.UPDATING],
+    @transition(field=state, source=[InstanceState.PROVISION_FAILED, InstanceState.DELETE_FAILED,
+                                     InstanceState.UPDATE_FAILED,
+                                     InstanceState.PROVISIONING, InstanceState.UPDATING],
                 target=InstanceState.AVAILABLE)
     def available(self):
         pass

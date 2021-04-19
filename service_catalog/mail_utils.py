@@ -1,18 +1,11 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 
 from service_catalog import tasks
 from service_catalog.models.request import RequestState
 
 DEFAULT_FROM_EMAIL = "squest@{}".format(settings.SQUEST_HOST)
-
-
-def django_send_email(subject, plain_text, html_template, from_email, to, reply_to=None):
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, to, reply_to=reply_to)
-    msg.attach_alternative(html_template, "text/html")
-    msg.send()
 
 
 def _get_admin_emails():
@@ -28,9 +21,10 @@ def _get_admin_emails():
     return email_admins
 
 
-def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL):
+def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL, message=None):
     """
     Notify users that a request has been updated
+    :param message: A message to add to the email
     :param from_email: string email of the user who send the notification
     :param target_request:
     :type target_request: service_catalog.models.request.Request
@@ -39,7 +33,8 @@ def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
 
-    subject = "Request #{request_id} - {request_state} " \
+    subject = "Request #{request_id} " \
+              "- {request_state} " \
               "- {operation_type} " \
               "- {operation_name} " \
               "- {instance_name}".format(request_id=target_request.id,
@@ -50,7 +45,7 @@ def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL):
 
     if target_request.state == RequestState.SUBMITTED:
         template_name = "mails/request_submitted.html"
-        plain_text = "New request for service: {}".format(target_request.operation.service.name)
+        plain_text = "Request update for service: {}".format(target_request.instance.name)
         context = {'request': target_request,
                    'current_site': settings.SQUEST_HOST}
     else:
@@ -58,7 +53,8 @@ def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL):
         plain_text = "Request state update: {}".format(target_request.state)
         context = {'request': target_request,
                    'user_applied_state': from_email,
-                   'current_site': settings.SQUEST_HOST}
+                   'current_site': settings.SQUEST_HOST,
+                   'message': message}
 
     html_template = get_template(template_name)
     html_content = html_template.render(context)
@@ -82,5 +78,23 @@ def send_email_request_canceled(request_id, owner_email, from_email=DEFAULT_FROM
     receiver_email_list = _get_admin_emails()  # email sent to all admins
     receiver_email_list.append(owner_email)  # email sent to the requester
     tasks.send_email.delay(subject, plain_text, html_content, from_email,
+                           receivers=receiver_email_list,
+                           reply_to=receiver_email_list)
+
+
+def send_email_request_error(target_request, error_message):
+    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
+        return
+    subject = "Request #{request_id} - ERROR".format(request_id=target_request.id)
+    template_name = "mails/request_error.html"
+    plain_text = "Request #{request_id} - CANCELLED".format(request_id=target_request.id)
+    context = {'request': target_request,
+               'user_applied_state': DEFAULT_FROM_EMAIL,
+               'error_message': error_message}
+
+    html_template = get_template(template_name)
+    html_content = html_template.render(context)
+    receiver_email_list = _get_admin_emails()  # email sent to all admins
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            receivers=receiver_email_list,
                            reply_to=receiver_email_list)

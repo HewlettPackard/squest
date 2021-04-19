@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<br lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Request update</title>
+    <title>New request</title>
 </head>
-<h2>Request state update: #{{ request.id }}</h2>
-
-<li>New request state: <b>{{ request.state }}</b></li>
-<li>Applied by: <b>{{ user_applied_state }}</b></li>
-{% if message is not None %}
-<li>Message: <b>{{ message }}</b></li>
-{%  endif %}
+<h2>Error on request: #{{ request.id }}</h2><br>
+<li>Reason: <b>{{ error_message }}</b></li>
 <br>
 <br>
 Request details:<br>
@@ -21,6 +16,7 @@ Request details:<br>
 <li>Operation name: <b>{{ request.operation.name }}</b></li>
 <br>
 <br>
+
 Retrieve this request on <a href="http://{{ current_site }}">Squest portal</a>.
 </body>
 </html>

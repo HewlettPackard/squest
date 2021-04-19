@@ -27,6 +27,7 @@ def customer_request_cancel(request, request_id):
         target_request.cancel()
         send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
         # now delete the request
+        target_request.instance.delete()
         target_request.delete()
         return redirect(customer_request_list)
     context = {
