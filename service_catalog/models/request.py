@@ -97,7 +97,7 @@ class Request(models.Model):
         tower_extra_vars = copy.copy(self.fill_in_survey)
         # add the current instance to extra vars
         from ..serializers.instance_serializer import InstanceSerializer
-        tower_extra_vars["tsc"] = {
+        tower_extra_vars["squest"] = {
             "instance": InstanceSerializer(self.instance).data
         }
         tower_job_id = None

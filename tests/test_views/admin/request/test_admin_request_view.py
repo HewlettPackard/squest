@@ -120,7 +120,7 @@ class CustomerRequestViewTest(BaseTestRequest):
             expected_parameters = {
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
-                'tsc': {
+                'squest': {
                     'instance': {
                         'id': self.test_instance.id,
                         'name': 'test_instance_1',

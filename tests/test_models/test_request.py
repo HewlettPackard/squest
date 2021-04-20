@@ -32,7 +32,7 @@ class TestRequest(BaseTestRequest):
             expected_extra_vars = {
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
-                'tsc': {
+                'squest': {
                     'instance': {
                         'id': self.test_instance.id,
                         'name': 'test_instance_1',
