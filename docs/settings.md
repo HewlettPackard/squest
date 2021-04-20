@@ -1,8 +1,10 @@
 # Configure settings
 
+Settings are placed into the `squest/settings/development.py` file which is a standard [Django core settings file](https://docs.djangoproject.com/en/3.1/ref/settings/)
+
 ## LDAP backend
 
-LDAP can be activated by setting the environment vairable `LDAP_ENABLED` to `True` or directly in the settings.py file:
+LDAP can be activated by setting the environment vairable `LDAP_ENABLED` to `True` or directly in the `settings.py` file:
 
 ```python
 LDAP_ENABLED= True
@@ -41,4 +43,13 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "last_name": "sn",
     "email": "uid"
 }
+```
+
+
+## Email
+
+Email settings are based on the [django settings](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host)
+```python
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = 25
 ```

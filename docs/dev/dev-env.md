@@ -1,18 +1,5 @@
 # Setup a development environment
 
-- [Setup a development environment](#setup-a-development-environment)
-  - [Pre requisites](#pre-requisites)
-    - [Tools](#tools)
-    - [System packages](#system-packages)
-  - [Start a development environment](#start-a-development-environment)
-    - [Docker compose](#docker-compose)
-    - [Python environment](#python-environment)
-    - [Javascript libraries](#javascript-libraries)
-    - [Celery worker and periodic task scheduler](#celery-worker-and-periodic-task-scheduler)
-    - [Django integrated web server](#django-integrated-web-server)
-  - [Commands](#commands)
-  - [Execute tests](#execute-tests)
-
 ## Pre requisites
 
 ### Tools

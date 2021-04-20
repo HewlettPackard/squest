@@ -1,0 +1,31 @@
+site_name: Squest
+repo_name: HewlettPackard/squest
+repo_url: https://github.com/HewlettPackard/squest
+
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: green
+    accent: blue
+  logo: images/ansible_tower_logo.svg
+
+extra_javascript:
+    - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.9.2/mermaid.min.js
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+nav:
+  - Home: index.md
+  - Deployment: deployment.md
+  - Configuration: settings.md
+  - Devevlopment doc:
+    - Setup a dev env: dev/dev-env.md
+    - Request state machine: dev/request-state-machine.md
+    - Instance state machine: dev/instance-state-machine.md
