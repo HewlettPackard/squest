@@ -30,9 +30,7 @@ TESTING = sys.argv[1:2] == ['test']
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -115,12 +113,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# -----------------------------------------
 # LDAP
+# -----------------------------------------
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 if LDAP_ENABLED:
     from ldap_config import *
 
+# -----------------------------------------
 # Authentication
+# -----------------------------------------
 # do not use LDAP auth when testing
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -137,23 +139,19 @@ if LDAP_ENABLED and not TESTING:
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+# -----------------------------------------
+# Static files https://docs.djangoproject.com/en/3.1/howto/static-files/
+# -----------------------------------------
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/'),  # retrieve from collect static command
     os.path.join(BASE_DIR, 'project-static/')  # project statics
@@ -161,11 +159,9 @@ STATICFILES_DIRS = [
 if not DEBUG:
     # useless during development, it's only required for deployment
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 # TO be set when prod
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
 # https://github.com/whitespy/django-node-assets
 STATICFILES_FINDERS = [
     'django_node_assets.finders.NodeModulesFinder',
@@ -214,21 +210,15 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 300
 CELERY_TASK_ALWAYS_EAGER = TESTING
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERYD_HIJACK_ROOT_LOGGER = False
-
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
 CELERY_RESULT_BACKEND = 'django-db'
-
-# -----------------------------------------
-# EMAIL CONFIG
-# -----------------------------------------
-EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
-EMAIL_PORT = 25
 
 # -----------------------------------------
 # Squest CONFIG
 # -----------------------------------------
 SQUEST_HOST = "host.domain.example"
-SQUEST_EMAIL_NOTIFICATION_ENABLED = True
+SQUEST_EMAIL_NOTIFICATION_ENABLED = False
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = 25
