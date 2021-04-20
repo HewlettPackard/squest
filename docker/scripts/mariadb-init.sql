@@ -1,1 +1,1 @@
-GRANT ALL PRIVILEGES ON `test\_tower\_service\_catalog\_db` .  * TO 'tower_service_catalog_user'@'%';
+GRANT ALL PRIVILEGES ON `test\_squest\_db` .  * TO 'squest_user'@'%';

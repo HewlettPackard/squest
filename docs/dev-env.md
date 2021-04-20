@@ -27,7 +27,7 @@ sudo yum install mysql-devel
 
 Initialising and installing python libraries with Poetry
 ```
-poetry init
+poetry install
 ```
 
 Go into the python virtual env

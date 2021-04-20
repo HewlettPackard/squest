@@ -10,7 +10,7 @@ services:
     environment:
       MYSQL_SERVICE_HOST: db
       WAIT_HOSTS: db:3306, rabbitmq:5672
-      CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/tower_service_catalog
+      CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest
     volumes:
       - django_static:/app/static
     depends_on:

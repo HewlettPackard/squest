@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static
 
-from TowerServiceCatalog import settings
+from Squest import settings
 from . import views
 
 urlpatterns = [

@@ -5,9 +5,9 @@ services:
   db:
     image: mariadb:latest
     environment:
-      MYSQL_DATABASE: tower_service_catalog_db
-      MYSQL_USER: tower_service_catalog_user
-      MYSQL_PASSWORD: tower_service_catalog_password
+      MYSQL_DATABASE: squest_db
+      MYSQL_USER: squest_user
+      MYSQL_PASSWORD: squest_password
       MYSQL_ROOT_PASSWORD: p@ssw0rd
     volumes:
       - db_data:/var/lib/mysql
@@ -31,7 +31,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "tower_service_catalog"
+      RABBITMQ_DEFAULT_VHOST: "squest"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 

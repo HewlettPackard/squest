@@ -30,7 +30,7 @@
                                 {% for message in messages %}
                                     <div class="post">
                                         <div class="user-block">
-                                            <img class="img-circle img-bordered-sm" src="{% if message.sender.is_superuser %}{% static '/tower_service_catalog/img/admin.png' %}{% else %}{% static '/tower_service_catalog/img/user.png' %}{% endif %}" alt="user image">
+                                            <img class="img-circle img-bordered-sm" src="{% if message.sender.is_superuser %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
                                             <span class="username">
                                       <a href="#">{{ message.sender.username }}</a>
                                     </span>

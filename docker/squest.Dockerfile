@@ -13,7 +13,7 @@ FROM python:3.8-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
-ENV DJANGO_SETTINGS_MODULE=TowerServiceCatalog.settings
+ENV DJANGO_SETTINGS_MODULE=Squest.settings
 ENV POETRY_VERSION=1.1.5
 
 # Create a group and user to run our app

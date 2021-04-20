@@ -8,7 +8,7 @@ LDAP can be activated by setting the environment vairable `LDAP_ENABLED` to `Tru
 LDAP_ENABLED= True
 ```
 
-The configuration file need then to be created in `TowerServiceCatalog/ldap_config.py`.
+The configuration file need then to be created in `Squest/ldap_config.py`.
 
 The configuration is based on the Django plugin `django-auth-ldap`. 
 You can follow the [official documentation](https://django-auth-ldap.readthedocs.io/en/latest/authentication.html#)
