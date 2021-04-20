@@ -163,7 +163,7 @@ else:
         os.path.join(BASE_DIR, '../static'),  # retrieve from collect static command
         os.path.join(BASE_DIR, '../project-static')  # project statics
     ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 MEDIA_URL = '/media/'
 # https://github.com/whitespy/django-node-assets
 STATICFILES_FINDERS = [
