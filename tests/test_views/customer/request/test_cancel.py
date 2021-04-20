@@ -42,3 +42,12 @@ class CustomerRequestViewTest(BaseTestRequest):
         for state in ["ACCEPTED", "FAILED", "COMPLETE", "PROCESSING"]:
             self.test_request.state = state
             self._assert_cannot_cancel()
+
+    def test_admin_can_cancel_from_admin_view(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('admin_request_cancel', kwargs=args)
+        response = self.client.post(url)
+        self.assertEquals(302, response.status_code)
+        self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())

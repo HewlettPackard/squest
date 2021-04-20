@@ -30,7 +30,6 @@ def admin_request_cancel(request, request_id):
             raise PermissionDenied
         send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
         # now delete the request and the pending instance
-        target_request.instance.delete()
         target_request.delete()
         return redirect(admin_request_list)
     context = {
@@ -52,6 +51,7 @@ def admin_request_need_info(request, request_id):
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
                 raise PermissionDenied
+            form.save()
             target_request.need_info()
             target_request.save()
             message = form.cleaned_data['message']
