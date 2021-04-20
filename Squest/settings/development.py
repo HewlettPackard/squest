@@ -23,12 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 TESTING = sys.argv[1:2] == ['test']
-
+COLLECTING_STATIC = sys.argv[1:2] == ['collectstatic']
 ALLOWED_HOSTS = ['*']
+print("DEBUG: {}".format(DEBUG))
+print("TESTING: {}".format(TESTING))
+print("COLLECTING_STATIC: {}".format(COLLECTING_STATIC))
 
 # Application definition
 INSTALLED_APPS = [
@@ -60,7 +61,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Squest.urls'
 
-TEMPLATES_DIR = str(BASE_DIR) + os.sep + 'templates'
+TEMPLATES_DIR = str(BASE_DIR) + os.sep + '../templates'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -152,14 +153,16 @@ LOGOUT_REDIRECT_URL = 'home'
 # -----------------------------------------
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),  # retrieve from collect static command
-    os.path.join(BASE_DIR, 'project-static/')  # project statics
-]
-if not DEBUG:
-    # useless during development, it's only required for deployment
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# TO be set when prod
+if COLLECTING_STATIC:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, '../project-static')  # project statics
+    ]
+    STATIC_ROOT = os.path.join(BASE_DIR, '../static')
+else:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, '../static'),  # retrieve from collect static command
+        os.path.join(BASE_DIR, '../project-static')  # project statics
+    ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 # https://github.com/whitespy/django-node-assets
@@ -168,8 +171,8 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
-NODE_PACKAGE_JSON = os.path.join(BASE_DIR, 'package.json')
-NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
+NODE_PACKAGE_JSON = os.path.join(BASE_DIR, '../package.json')
+NODE_MODULES_ROOT = os.path.join(BASE_DIR, '../node_modules')
 
 # -----------------------------------------
 # LOGGING CONFIG

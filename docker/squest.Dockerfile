@@ -25,6 +25,8 @@ RUN set -ex \
     && RUN_DEPS=" \
     default-libmysqlclient-dev \
     gcc \
+    npm \
+    libldap2-dev libsasl2-dev \
     " \
     && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
     && rm -rf /var/lib/apt/lists/*
@@ -48,6 +50,7 @@ RUN mkdir /app/static && chown ${APP_USER}:${APP_USER} /app/static
 
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install
+RUN cd /app && npm install
 
 # Integrated web server port
 EXPOSE 8000
