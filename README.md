@@ -9,4 +9,5 @@ If you want an idea of what you can do with Squest, click on the image below
 
 ## Links
 
+- [Documentation](https://hewlettpackard.github.io/squest/)
 - [Chat on Gitter](https://gitter.im/HewlettPackard/squest)
