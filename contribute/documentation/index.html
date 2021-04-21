@@ -15,7 +15,7 @@
     
     
       
-        <title>Instance state machine - Squest</title>
+        <title>Documentation - Squest</title>
       
     
     
@@ -58,7 +58,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#instance-state-machine" class="md-skip">
+        <a href="#contributing-to-the-documentation" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +85,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Instance state machine
+              Documentation
             
           </span>
         </div>
@@ -218,12 +218,10 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
     
     <label class="md-nav__link" for="nav-4">
       Devevlopment doc
@@ -247,7 +245,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../dev-env/" title="Setup a dev env" class="md-nav__link">
+    <a href="../../dev/dev-env/" title="Setup a dev env" class="md-nav__link">
       Setup a dev env
     </a>
   </li>
@@ -259,7 +257,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../request-state-machine/" title="Request state machine" class="md-nav__link">
+    <a href="../../dev/request-state-machine/" title="Request state machine" class="md-nav__link">
       Request state machine
     </a>
   </li>
@@ -269,20 +267,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-    <a href="./" title="Instance state machine" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../../dev/instance-state-machine/" title="Instance state machine" class="md-nav__link">
       Instance state machine
     </a>
-    
   </li>
 
         
@@ -292,7 +281,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../db-erd/" title="Database ERD" class="md-nav__link">
+    <a href="../../dev/db-erd/" title="Database ERD" class="md-nav__link">
       Database ERD
     </a>
   </li>
@@ -307,10 +296,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
     
     <label class="md-nav__link" for="nav-5">
       Contribute
@@ -332,11 +323,20 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../../contribute/documentation/" title="Documentation" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Documentation" class="md-nav__link md-nav__link--active">
       Documentation
     </a>
+    
   </li>
 
         
@@ -372,7 +372,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/HewlettPackard/squest/edit/master/docs/dev/instance-state-machine.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/HewlettPackard/squest/edit/master/docs/contribute/documentation.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -380,41 +380,16 @@
                   
                 
                 
-                <h1 id="instance-state-machine">Instance state machine</h1>
-<div class="mermaid">graph TB
-    start((Start))
-    start --&gt; pending
-    pending[PENDING]
-    provisioning[PROVISIONING]
-    provision_failed[PROVISION_FAILED]
-    available[AVAILABLE]
-    updating[UPDATING]
-    update_failed[UPDATE_FAILED]
-    deleting[DELETING]
-    delete_failed[DELETE_FAILED]
-    deleted[DELETED]
-    archived[ARCHIVED]
-    pending --&gt; provisioning
-    provision_ok{provision ok?}
-    style provision_ok fill:#80CBC4
-    provisioning --&gt; provision_ok
-    provision_ok --&gt; |No| provision_failed
-    provision_ok --&gt; |Yes| available
-    provision_failed --&gt; |retry| provisioning
-    available --&gt; |update| updating
-    update_ok{update ok?}
-    style update_ok fill:#80CBC4
-    updating --&gt; update_ok
-    update_ok --&gt; |No| update_failed
-    update_ok --&gt; |Yes| available
-    available --&gt; |Delete| deleting
-    deletion_ok{deletion ok?}
-    style deletion_ok fill:#80CBC4
-    deleting --&gt; deletion_ok
-    deletion_ok --&gt; |No| delete_failed
-    deletion_ok --&gt; |Yes| deleted
-    deleted --&gt; |archive| archived
-    delete_failed --&gt; |Retry| deleting</div>
+                <h1 id="contributing-to-the-documentation">Contributing to the documentation</h1>
+<p>The documentation is written in markdown and then generated with <a href="https://www.mkdocs.org/">mkdocs</a>.
+Required libraries are installed if you've followed the <a href="../../dev/dev-env/">development environment documentation</a> of the project.</p>
+<p>Graphs and diagrams are generated by the <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid library</a>.</p>
+<p>Update the documentation in the <code>docs</code> folder placed in the root of the project.</p>
+<p>Run dev server locally to check the result
+<div class="highlight"><pre><span></span><code>mkdocs serve
+</code></pre></div></p>
+<p>The page is available on <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
+<p>Send a pull request then to propose your changes to the project.</p>
                 
               
               
@@ -433,7 +408,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../request-state-machine/" title="Request state machine" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../../dev/db-erd/" title="Database ERD" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -442,25 +417,11 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Request state machine
-              </div>
-            </div>
-          </a>
-        
-        
-          <a href="../db-erd/" title="Database ERD" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-footer-nav__title">
-              <div class="md-ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
                 Database ERD
               </div>
             </div>
-            <div class="md-footer-nav__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-            </div>
           </a>
+        
         
       </nav>
     </div>
