@@ -1,0 +1,55 @@
+name: Squest
+
+on: [pull_request]  # set to this value when pushing in prod
+#on: [push] # set this one for dev the ci/cd
+
+env:
+  DJANGO_SETTINGS_MODULE: Squest.settings
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        poetry-version: [1.1.6]
+        include:
+          - db: mysql
+            db_port: 3306
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "p@ssw0rd"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install system dependencies
+        run: |
+          sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: |
+          poetry install
+      - name: Run Tests
+        env:
+          MYSQL_USER: "root"
+          MYSQL_PASSWORD: "p@ssw0rd"
+        run: |
+          poetry run coverage run --source='.' manage.py test
+      - name: Run coverage report
+        run: |
+          poetry run coverage report
