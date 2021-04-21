@@ -286,6 +286,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../db-erd/" title="Database ERD" class="md-nav__link">
+      Database ERD
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -327,7 +339,62 @@
                 
                 
                 <h1 id="request-state-machine">Request state machine</h1>
-<p><img alt="instance" src="../../images/request_state_machine.png" /></p>
+<div class="mermaid">graph TB
+
+    start((Start))
+    submitted[SUBMITTED]
+    start --&gt; submitted
+    auto_accept{auto accept?}
+    style auto_accept fill:#80CBC4
+    instance_pending([instance pending])
+    submitted --&gt; instance_pending
+    instance_pending --&gt; auto_accept
+    accepted[ACCEPTED]
+    auto_accept --&gt;|Yes| accepted
+    admin_action_1{admin action}
+    style admin_action_1 fill:#80DEEA
+    auto_accept --&gt;|No| admin_action_1
+    need_info[NEED_INFO]
+    admin_action_1 --&gt;|need_info| need_info
+    admin_action_1 --&gt;|accept| accepted
+    rejected[REJECTED]
+    need_info --&gt;|reject| rejected
+    need_info --&gt;|Submit| submitted
+    canceled[CANCELED]
+    need_info --&gt; |cancel|canceled
+    rejected --&gt; |cancel|canceled
+    submitted --&gt; |cancel|canceled
+    canceled --&gt; |delete| deleted
+    deleted((Deleted))
+    auto_pocess{auto process?}
+    style auto_pocess fill:#80CBC4
+    accepted --&gt; auto_pocess
+    auto_pocess --&gt; |Yes| operation_type
+    admin_action_2{admin action}
+    auto_pocess --&gt; |No| admin_action_2
+    admin_action_2 --&gt; |process| operation_type
+    style admin_action_2 fill:#80DEEA
+    operation_type{Operation type?}
+    style operation_type fill:#80CBC4
+    instance_creating([instance_creating])
+    instance_updating([instance_updating])
+    instance_deleting([instance_deleting])
+    operation_type --&gt; |CREATE| instance_creating
+    operation_type --&gt; |UPDATE| instance_updating
+    operation_type --&gt; |DELETE| instance_deleting
+    processing[PROCESSING]   
+    instance_creating --&gt; processing
+    instance_updating --&gt; processing
+    instance_deleting --&gt; processing
+    processing_ok{processing ok?}
+    style processing_ok fill:#80CBC4
+    processing --&gt; processing_ok
+    complete[COMPLETE] 
+    failed[FAILED] 
+    processing_ok --&gt; |Yes| complete
+    processing_ok --&gt; |No| failed
+    failed --&gt; |retry| processing
+    failed --&gt; |cancel| accepted</div>
                 
               
               

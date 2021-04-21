@@ -286,6 +286,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../db-erd/" title="Database ERD" class="md-nav__link">
+      Database ERD
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -327,7 +339,40 @@
                 
                 
                 <h1 id="instance-state-machine">Instance state machine</h1>
-<p><img alt="instance" src="../../images/instance_state_machine.png" /></p>
+<div class="mermaid">graph TB
+    start((Start))
+    start --&gt; pending
+    pending[PENDING]
+    provisioning[PROVISIONING]
+    provision_failed[PROVISION_FAILED]
+    available[AVAILABLE]
+    updating[UPDATING]
+    update_failed[UPDATE_FAILED]
+    deleting[DELETING]
+    delete_failed[DELETE_FAILED]
+    deleted[DELETED]
+    archived[ARCHIVED]
+    pending --&gt; provisioning
+    provision_ok{provision ok?}
+    style provision_ok fill:#80CBC4
+    provisioning --&gt; provision_ok
+    provision_ok --&gt; |No| provision_failed
+    provision_ok --&gt; |Yes| available
+    provision_failed --&gt; |retry| provisioning
+    available --&gt; |update| updating
+    update_ok{update ok?}
+    style update_ok fill:#80CBC4
+    updating --&gt; update_ok
+    update_ok --&gt; |No| update_failed
+    update_ok --&gt; |Yes| available
+    available --&gt; |Delete| deleting
+    deletion_ok{deletion ok?}
+    style deletion_ok fill:#80CBC4
+    deleting --&gt; deletion_ok
+    deletion_ok --&gt; |No| delete_failed
+    deletion_ok --&gt; |Yes| deleted
+    deleted --&gt; |archive| archived
+    delete_failed --&gt; |Retry| deleting</div>
                 
               
               
@@ -360,6 +405,20 @@
             </div>
           </a>
         
+        
+          <a href="../db-erd/" title="Database ERD" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Database ERD
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
         
       </nav>
     </div>
