@@ -29,3 +29,4 @@ nav:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
+    - Database ERD: dev/db-erd.md
