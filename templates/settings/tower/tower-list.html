@@ -43,7 +43,7 @@
                                         {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
                                     </a></td>
                                     <td class="align-middle">
-                                        <a href="{% url 'tower_job_templates' tower_server.id %}" class="btn btn-default bg-sm">
+                                        <a href="{% url 'tower_job_templates_list' tower_server.id %}" class="btn btn-default bg-sm">
                                             {{ tower_server.jobtemplate_set.all | length }}
                                         </a>
                                     </td>
