@@ -4,10 +4,10 @@ from django.urls import reverse
 from tests.base import BaseTest
 
 
-class CatalogViewTestCase(BaseTest):
+class OperationDeleteTestCase(BaseTest):
 
     def setUp(self):
-        super(CatalogViewTestCase, self).setUp()
+        super(OperationDeleteTestCase, self).setUp()
 
     def test_delete_service_operation(self):
         # delete a "CREATE" type operation
