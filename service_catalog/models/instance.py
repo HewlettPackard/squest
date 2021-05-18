@@ -1,10 +1,12 @@
-from django.utils.translation import gettext_lazy as _
+import logging
 
-from django.contrib.auth.models import User, Permission
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
 
 from . import Service
+
+logger = logging.getLogger(__name__)
 
 
 class InstanceState(models.TextChoices):
@@ -76,13 +78,3 @@ class Instance(models.Model):
             self.state = InstanceState.PENDING
         if self.state in [InstanceState.UPDATE_FAILED, InstanceState.DELETE_FAILED]:
             self.state = InstanceState.AVAILABLE
-
-
-class UserPermissionOnInstance(models.Model):
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'user_permission_on_instance'
-        unique_together = ('instance', 'user')
