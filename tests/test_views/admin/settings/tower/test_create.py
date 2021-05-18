@@ -1,13 +1,11 @@
 from unittest import mock
-from unittest.mock import patch, Mock
 
 import requests
 import towerlib
 from django.urls import reverse
-from towerlib import Tower
 
 from service_catalog.models import TowerServer
-from tests.test_views.admin.tower.base_test_tower import BaseTestTower
+from tests.test_views.admin.settings.tower.base_test_tower import BaseTestTower
 
 
 class AdminTowerCreateViewsTest(BaseTestTower):
