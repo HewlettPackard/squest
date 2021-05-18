@@ -1,12 +1,8 @@
-
-
-
-import json
 from unittest import mock
 
 from django.urls import reverse
 
-from tests.test_views.admin.tower.base_test_tower import BaseTestTower
+from tests.test_views.admin.settings.tower.base_test_tower import BaseTestTower
 
 
 class AdminTowerUpdateViewsTest(BaseTestTower):
