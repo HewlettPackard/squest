@@ -5,10 +5,10 @@ from service_catalog.models import Request
 from tests.base_test_request import BaseTestRequest
 
 
-class CustomerRequestViewTest(BaseTestRequest):
+class TestCustomerRequestViewTest(BaseTestRequest):
 
     def setUp(self):
-        super(CustomerRequestViewTest, self).setUp()
+        super(TestCustomerRequestViewTest, self).setUp()
 
     def _assert_can_cancel(self):
         args = {
