@@ -1,3 +1,4 @@
+import tempfile
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -61,9 +62,11 @@ class BaseTest(TestCase):
                                                             tower_server=self.tower_server_test)
 
         # ---------------------------------------------------
-        # Servcie test 1
+        # Service test 1
         # ---------------------------------------------------
         self.service_test = Service.objects.create(name="service-test", description="description-of-service-test")
+        self.service_test.image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        self.service_test.save()
 
         self.create_operation_test = Operation.objects.create(name="create test",
                                                               service=self.service_test,
@@ -90,9 +93,11 @@ class BaseTest(TestCase):
                                                               type=OperationType.DELETE)
 
         # ---------------------------------------------------
-        # Servcie test 2
+        # Service test 2
         # ---------------------------------------------------
         self.service_test_2 = Service.objects.create(name="service-test-2", description="description-of-service-test-2")
+        self.service_test_2.image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        self.service_test_2.save()
 
         self.create_operation_test_2 = Operation.objects.create(name="create test",
                                                                 service=self.service_test_2,

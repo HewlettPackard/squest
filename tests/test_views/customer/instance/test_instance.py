@@ -1,7 +1,7 @@
 from django.urls import reverse
 
-from service_catalog.models import Support, Message, SupportMessage
-from service_catalog.models.instance import InstanceState
+from service_catalog.models import Support, SupportMessage
+from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.support import SupportState
 from tests.base_test_request import BaseTestRequest
 
@@ -156,3 +156,15 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.assertEquals(403, response.status_code)
         self.test_instance.refresh_from_db()
         self.assertEquals(self.test_instance.state, InstanceState.PENDING)
+
+    def test_delete_support_instance_still_present(self):
+        """
+        Check that deleting a support will not delete the instance
+        """
+        self.support_test.delete()
+        self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())
+
+    def test_delete_instance_do_delete_related_supports(self):
+        instance_id = self.test_instance.id
+        self.test_instance.delete()
+        self.assertFalse(Support.objects.filter(instance=instance_id).exists())

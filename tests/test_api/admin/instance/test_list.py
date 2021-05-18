@@ -3,6 +3,8 @@ from collections import OrderedDict
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from service_catalog.models import Instance
+from service_catalog.serializers.instance_serializer import InstanceSerializer
 from tests.base_test_request import BaseTestRequest
 
 
@@ -14,14 +16,11 @@ class TestInstanceList(BaseTestRequest):
 
     def test_list_instance(self):
         response = self.client.get(self.url, format='json')
-
-        expected = [OrderedDict([('id', 1),
-                                 ('name', 'test_instance_1'),
-                                 ('spec', {}),
-                                 ('state', 'PENDING'),
-                                 ('service', 1)])]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(expected, response.data)
+        self.assertEqual(Instance.objects.all().count(), len(response.data))
+        all_instances = Instance.objects.all()
+        serializer = InstanceSerializer(all_instances, many=True)
+        self.assertEqual(response.data, serializer.data)
 
     def test_standard_user_cannot_list_instances(self):
         self.client.login(username=self.standard_user, password=self.common_password)
