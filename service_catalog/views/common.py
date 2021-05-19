@@ -7,7 +7,7 @@ from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.forms import SupportRequestForm
 from service_catalog.forms.common_forms import RequestMessageForm, SupportMessageForm
-from service_catalog.models import Request, Instance, Message, RequestMessage, Support, SupportMessage
+from service_catalog.models import Request, Instance, RequestMessage, Support, SupportMessage
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
