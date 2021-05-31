@@ -670,7 +670,7 @@ python-versions = ">= 3.5"
 
 [[package]]
 name = "towerlib"
-version = "3.7.0"
+version = "3.7.2"
 description = "A python library to interface with ansible tower's (awx) api."
 category = "main"
 optional = false
@@ -1203,9 +1203,9 @@ tornado = [
     {file = "tornado-6.1.tar.gz", hash = "sha256:33c6e81d7bd55b468d2e793517c909b139960b6c790a60b7991b9b6b76fb9791"},
 ]
 towerlib = [
-    {file = "towerlib-3.7.0-py2.py3-none-any.whl", hash = "sha256:821afd8cb97c25b736ac6814cd03370e7b6f43a2a981f74abe051efac56fb928"},
-    {file = "towerlib-3.7.0-py3.7.egg", hash = "sha256:96a69c2a731dd3e0ce99911b2b98cc6a2ed54343f1de65c11932e7c49b135e7a"},
-    {file = "towerlib-3.7.0.tar.gz", hash = "sha256:a44eb6690f8aa27840cb32f6c9a8b59943b2083144c98aa21d2f481d7bfa746e"},
+    {file = "towerlib-3.7.2-py2.py3-none-any.whl", hash = "sha256:02ae916bdf2f30ad1f99745d1d2aaf2bc5942e08db52881a35295ac51269e883"},
+    {file = "towerlib-3.7.2-py3.7.egg", hash = "sha256:5a2c3942c0b3788adf2eeb540601187f030a8e206924b9fe169e789a3c91f4cb"},
+    {file = "towerlib-3.7.2.tar.gz", hash = "sha256:1417a6227a1c4c891443d248cbaa6ae1e80835882f9f0802d4546ef27bff10be"},
 ]
 tqdm = [
     {file = "tqdm-4.60.0-py2.py3-none-any.whl", hash = "sha256:daec693491c52e9498632dfbe9ccfc4882a557f5fa08982db1b4d3adbe0887c3"},
