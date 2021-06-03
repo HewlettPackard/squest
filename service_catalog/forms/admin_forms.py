@@ -26,10 +26,12 @@ class TowerServerForm(ModelForm):
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     secure = forms.BooleanField(label="Is secure",
+                                initial=True,
                                 required=False,
-                                widget=forms.CheckboxInput(attrs={'class': 'form-control', 'checked': 'true'}))
+                                widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
     ssl_verify = forms.BooleanField(label="SSL verify",
+                                    initial=False,
                                     required=False,
                                     widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
@@ -39,7 +41,6 @@ class TowerServerForm(ModelForm):
         token = cleaned_data.get("token")
         secure = cleaned_data.get("secure")
         ssl_verify = cleaned_data.get("ssl_verify")
-
         if host and token:
             try:
                 Tower(host, None, None, secure=secure, ssl_verify=ssl_verify, token=token)
