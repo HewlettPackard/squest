@@ -23,6 +23,14 @@ class AdminTowerGetViewsTest(BaseTestTower):
             mock_sync.assert_called()
             self.assertTrue("task_id" in data)
 
+    def test_user_cannot_sync_tower(self):
+        with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
+            self.client.login(username=self.standard_user, password=self.common_password)
+            url = reverse('sync_tower', kwargs=self.args)
+            response = self.client.post(url)
+            self.assertEquals(302, response.status_code)
+            mock_sync.assert_not_called()
+
     def test_get_task_result(self):
         args = {
             'task_id': self.test_task_result.id
