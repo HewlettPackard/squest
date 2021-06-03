@@ -19,6 +19,13 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.assertEquals(302, response.status_code)
         self.assertFalse(TowerServer.objects.filter(id=id_to_delete).exists())
 
+    def test_user_cannot_delete_tower_server(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        id_to_delete = self.tower_server_test.id
+        response = self.client.post(self.url)
+        self.assertEquals(302, response.status_code)
+        self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
+
     def test_admin_can_delete_job_template(self):
         args = {
             'tower_id': self.tower_server_test.id,
@@ -29,3 +36,15 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(JobTemplate.objects.filter(id=id_to_delete).exists())
+
+    def test_user_cannot_delete_job_template(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        args = {
+            'tower_id': self.tower_server_test.id,
+            'job_template_id': self.job_template_test.id
+        }
+        url = reverse('delete_job_template', kwargs=args)
+        id_to_delete = self.job_template_test.id
+        response = self.client.post(url)
+        self.assertEquals(302, response.status_code)
+        self.assertTrue(JobTemplate.objects.filter(id=id_to_delete).exists())
