@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'guardian',
     'django_node_assets',
     'django_filters',
+    'drf_yasg',
     'service_catalog'
 ]
 
