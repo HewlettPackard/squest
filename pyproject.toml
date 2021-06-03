@@ -28,6 +28,7 @@ django-node-assets = "^0.9.8"
 mkdocs = "^1.1.2"
 mkdocs-material = "^7.1.2"
 pymdown-extensions = "^8.1.1"
+drf-yasg = "^1.20.0"
 
 [tool.poetry.dev-dependencies]
 
