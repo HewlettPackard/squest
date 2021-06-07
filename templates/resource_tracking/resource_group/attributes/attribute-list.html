@@ -38,7 +38,7 @@
                                         <a href="{% url 'resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="#" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>
