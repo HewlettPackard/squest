@@ -29,9 +29,10 @@ class Command(BaseCommand):
         # server2 = server_group.create_resource(name="server2")
         # server2.set_attribute('CPU', 100)
 
-        vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
-        vcenter_pool.add_attribute_definition(name='vCPU')
+        # vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        # vcenter_pool.add_attribute_definition(name='vCPU')
+        #
+        # ocp_pool = ResourcePool.objects.create(name="openshift")
+        # ocp_pool.add_attribute_definition(name='vCPU')
 
-        ocp_pool = ResourcePool.objects.create(name="openshift")
-        ocp_pool.add_attribute_definition(name='vCPU')
 
