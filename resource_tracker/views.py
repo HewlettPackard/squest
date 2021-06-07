@@ -60,3 +60,16 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     return render(request, 'resource_tracking/resource_group/attributes/attribute-edit.html',
                   {'form': form, 'attribute': attribute, 'resource_group': resource_group})
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_group_attribute_delete(request, resource_group_id, attribute_id):
+    resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
+    attribute = get_object_or_404(ResourceGroupAttributeDefinition, id=attribute_id)
+    if request.method == "POST":
+        attribute.delete()
+        return redirect(resource_group_attribute_list, attribute.resource_group_definition.id)
+    context = {
+        "resource_group": resource_group,
+        "attribute": attribute
+    }
+    return render(request, "resource_tracking/resource_group/attributes/attribute-delete.html", context)
