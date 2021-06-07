@@ -7,11 +7,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Tower</h1>
+                        <h1>Resource group {{ resource_group.name }}</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'add_tower' %}">
-                            <i class="fas fa-plus"></i> Add
+                        <a class="btn btn-success float-sm-right" href="{% url 'resource_group_attribute_create' resource_group.id %}">
+                            <i class="fas fa-plus"></i> Add attribute
                         </a>
                     </div>
                 </div>
@@ -27,31 +27,18 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Host</th>
-                                <th>Job templates</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for tower_server in tower_servers %}
+                            {%  for attribute in resource_group.attribute_definitions.all %}
                                 <tr>
-                                    <td class="align-middle">{{ tower_server.name }}</td>
-                                    <td class="align-middle"><a href="{% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.url }}">
-                                        {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
-                                    </a></td>
+                                    <td class="align-middle">{{ attribute.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'tower_job_templates_list' tower_server.id %}" class="btn btn-default bg-sm">
-                                            {{ tower_server.jobtemplate_set.all | length }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a id="tower_{{ tower_server.id }}" onclick="sync_tower({{ tower_server.id }})" role="button" class="btn btn-default bg-sm">
-                                            <i class="fas fa-sync"></i> Sync job templates
-                                        </a>
-                                        <a href="{% url 'update_tower' tower_server.id %}" class="btn btn-primary bg-sm">
+                                        <a href="{% url 'resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'delete_tower' tower_server.id %}" class="btn btn-danger bg-sm">
+                                        <a href="#" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>

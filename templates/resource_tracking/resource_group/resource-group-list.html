@@ -1,57 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Catalog</h1>
+                        <h1>Resource groups</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'settings_catalog_add_service' %}">
+                        <a class="btn btn-success float-sm-right" href="{% url 'resource_group_create' %}">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
-        <!-- Main content -->
+        </section>
         <div class="content">
             <div class="container-fluid">
                 <div class="card">
+
                     <div class="card-body">
-                        <table id="service_list" class="table">
+                        <table id="resource_group_list" class="table">
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Description</th>
-                                <th>Operations</th>
+                                <th>Attributes</th>
+                                <th>Resources</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for service in services %}
+                            {%  for resource_group in resource_groups %}
                                 <tr>
-                                    <td class="align-middle">{{ service.name }}</td>
-                                    <td class="align-middle">{{ service.description }}</td>
+                                    <td class="align-middle">{{ resource_group.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'service_operations' service.id %}" class="btn btn-default bg-sm">
-                                            {{ service.operation_set.all | length }}
+                                        <a href="{% url 'resource_group_attribute_list' resource_group.id %}" class="btn btn-default bg-sm">
+                                            {{ resource_group.attribute_definitions.all | length }}
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="{% url 'edit_service' service.id %}" class="btn btn-default bg-sm">
+                                        <a href="#" class="btn btn-default bg-sm">
+                                            {{ resource_group.resources.all | length }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'delete_service' service.id %}" class="btn btn-danger bg-sm">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </a>
                                     </td>
-
                                 </tr>
+
                             {%  endfor %}
                             </tbody>
                         </table>
