@@ -35,6 +35,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('service_catalog.urls')),
+    path('resource_tracker/', include('resource_tracker.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/', include('service_catalog.api.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

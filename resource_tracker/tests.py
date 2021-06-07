@@ -14,17 +14,17 @@ class TestCalculation(TestCase):
 
         attribute = r'CPU'
         server_group.add_attribute_definition(name=attribute)
-        self.assertEqual(attribute, server_group.attributes_definition.get(name=attribute).name)
-        self.assertIsInstance(server_group.attributes_definition.get(name=attribute), ResourceGroupAttributeDefinition)
+        self.assertEqual(attribute, server_group.attribute_definitions.get(name=attribute).name)
+        self.assertIsInstance(server_group.attribute_definitions.get(name=attribute), ResourceGroupAttributeDefinition)
 
     def test_ResourceGroupAddSameAttribute(self):
         server_group = ResourceGroup.objects.create(name="serverGroup1")
         server_group.add_attribute_definition(name='CPU')
         server_group.add_attribute_definition(name='CPU')
         server_group.add_attribute_definition(name='CPU')
-        self.assertEqual(1, server_group.attributes_definition.count())
+        self.assertEqual(1, server_group.attribute_definitions.count())
         server_group.add_attribute_definition(name='RAM')
-        self.assertEqual(2, server_group.attributes_definition.count())
+        self.assertEqual(2, server_group.attribute_definitions.count())
 
     def _create_vcenter_pool_with_one_server(self):
         self.server_group = ResourceGroup.objects.create(name="vcenter-pool")
@@ -99,7 +99,7 @@ class TestCalculation(TestCase):
 
         # Link
         vcenter_pool.attributes_definition.get(name='vCPU')\
-            .add_producers(self.server_group.attributes_definition.get(name='CPU'))
+            .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
 
         self.assertEqual(sum(self.cpu_list), vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
 
@@ -112,7 +112,7 @@ class TestCalculation(TestCase):
         openshift_pool.add_attribute_definition(name='vCPU')
         # Transfer server-group1.CPU to openshift_pool
         openshift_pool.attributes_definition.get(name='vCPU')\
-            .add_producers(self.server_group.attributes_definition.get(name='CPU'))
+            .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
         # No more resources in vcenterPool.vCPU
         self.assertEqual(0, vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
         # All CPU in openshift.vCPU
