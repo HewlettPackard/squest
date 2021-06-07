@@ -11,7 +11,7 @@ class ResourceGroup(models.Model):
         obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
 
         if len(obj) == 0:
-            self.attributes_definition.create(name=name)
+            self.attribute_definitions.create(name=name)
         elif len(obj) == 1:
             pass
         else:
@@ -20,7 +20,7 @@ class ResourceGroup(models.Model):
 
     def create_resource(self, name) -> 'Resource':
         resource, _ = self.resources.get_or_create(name=name)
-        for attribute in self.attributes_definition.all():
+        for attribute in self.attribute_definitions.all():
             resource.add_attribute(attribute.name)
         return resource
 
@@ -70,7 +70,7 @@ class ResourceGroupAttributeDefinition(models.Model):
                             unique=True)
     resource_group_definition = models.ForeignKey(ResourceGroup,
                                                   on_delete=models.PROTECT,
-                                                  related_name='attributes_definition',
+                                                  related_name='attribute_definitions',
                                                   related_query_name='attribute_definition',
                                                   null=True)
     consume_from = models.ForeignKey('ResourcePoolAttributeDefinition',
@@ -103,6 +103,9 @@ class ResourcePoolAttributeDefinition(models.Model):
                                       related_name='attributes_definition',
                                       related_query_name='attribute_definition',
                                       null=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.resource_pool.name, self.name)
 
     def add_producers(self, resource: ResourceGroupAttributeDefinition):
         resource.produce_for = self
