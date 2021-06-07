@@ -43,7 +43,7 @@
                 {# Admin side panel #}
                 {% if user.is_superuser %}
                     <li class="nav-header">Admin</li>
-                    <li class="nav-item menu-open">
+                    <li class="nav-item menu-close">
                         <a href="{% url 'admin_request_list' %}" class="nav-link {% if 'admin/request' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Requests</p>
@@ -107,19 +107,25 @@
                             <p>Service catalog</p>
                         </a>
                     </li>
-                    {#                    <li class="nav-item">#}
-                    {#                        <a href="#" class="nav-link">#}
-                    {#                            <i class="nav-icon fas fa-check"></i>#}
-                    {#                            <p>Approvals#}
-                    {##}
-                    {#                            </p>#}
-                    {#                        </a>#}
-                    {#                    </li>#}
                     <li class="nav-item">
                         <a href="{% url 'list_tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
-                            <i class="nav-icon fab fa-adn"></i>
+                            <i class="nav-icon fas fa-chess-rook"></i>
                             <p>Tower
                             </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header">Resource tracking</li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-poll"></i>
+                            <p>Resource pools</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'resource_group_list'%}" class="nav-link {% if 'resource_tracker/resource_group' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-object-group"></i>
+                            <p>Resource groups</p>
                         </a>
                     </li>
                 {% endif %}
