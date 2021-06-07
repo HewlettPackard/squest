@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Resource groups</h1>
+                        <h1>Resources in resource group {{ resource_group.name }}</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'resource_group_create' %}">
+                        <a class="btn btn-success float-sm-right" href="">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
@@ -20,38 +20,33 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="card">
-
                     <div class="card-body">
                         <table id="resource_group_list" class="table">
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Attributes</th>
-                                <th>Resources</th>
-                                <th>Actions</th>
+                                {% for attribute_name in list_attribute_name %}
+                                    <th>{{ attribute_name }}</th>
+                                {%  endfor %}
+                                <th>Operations</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for resource_group in resource_groups %}
+                            {%  for resource in resource_group.resources.all %}
                                 <tr>
-                                    <td class="align-middle">{{ resource_group.name }}</td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_group_attribute_list' resource_group.id %}" class="btn btn-default bg-sm">
-                                            {{ resource_group.attribute_definitions.all | length }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_group_resource_list' resource_group.id %}" class="btn btn-default bg-sm">
-                                            {{ resource_group.resources.all | length }}
-                                        </a>
-                                    </td>
+                                    <td class="align-middle">{{ resource.name }}</td>
+                                    {% for attribute_name in list_attribute_name %}
+                                        <td class="align-middle">{{ resource.id | get_attribute_value_from_name:attribute_name }}</td>
+                                    {%  endfor %}
                                     <td class="align-middle">
                                         <a href="" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
+                                        <a href="" class="btn btn-danger bg-sm">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
                                     </td>
                                 </tr>
-
                             {%  endfor %}
                             </tbody>
                         </table>
