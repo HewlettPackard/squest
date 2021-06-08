@@ -20,4 +20,13 @@ urlpatterns = [
     path('resource_group/resource_group/<int:resource_group_id>/resources',
          views.resource_group_resource_list,
          name='resource_group_resource_list'),
+    path('resource_group/resource_group/<int:resource_group_id>/resources/create',
+         views.resource_group_resource_create,
+         name='resource_group_resource_create'),
+    path('resource_group/resource_group/<int:resource_group_id>/resources/<int:resource_id>/delete',
+         views.resource_group_resource_delete,
+         name='resource_group_resource_delete'),
+    path('resource_group/resource_group/<int:resource_group_id>/resources/<int:resource_id>/edit',
+         views.resource_group_resource_edit,
+         name='resource_group_resource_edit'),
 ]
