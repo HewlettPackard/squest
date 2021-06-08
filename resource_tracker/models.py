@@ -33,7 +33,7 @@ class Resource(models.Model):
                             blank=False,
                             unique=True)
     resource_group = models.ForeignKey(ResourceGroup,
-                                       on_delete=models.PROTECT,
+                                       on_delete=models.SET_NULL,
                                        related_name='resources',
                                        related_query_name='resource',
                                        null=True)
@@ -58,10 +58,13 @@ class ResourceAttribute(models.Model):
     value = models.PositiveIntegerField(default=0)
 
     resource = models.ForeignKey(Resource,
-                                 on_delete=models.PROTECT,
+                                 on_delete=models.CASCADE,
                                  related_name='attributes',
                                  related_query_name='attribute',
                                  null=True)
+
+    def __str__(self):
+        return str(self.value)
 
 
 class ResourceGroupAttributeDefinition(models.Model):
