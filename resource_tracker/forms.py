@@ -44,6 +44,7 @@ class ResourceForm(ModelForm):
         resource_group_id = kwargs.pop('resource_group_id', None)
         self.resource_group = ResourceGroup.objects.get(id=resource_group_id)
         super(ResourceForm, self).__init__(*args, **kwargs)
+        self._newly_created = kwargs.get('instance') is None
 
         for attribute in self.resource_group.attribute_definitions.all():
             initial_value = None
@@ -62,18 +63,19 @@ class ResourceForm(ModelForm):
 
     def save(self, **kwargs):
         resource_name = self.cleaned_data["name"]
-        if self.instance is not None:
-            resource = self.instance
-            resource.name = resource_name
-            resource.save()
+        if self._newly_created:
+            self.instance = Resource.objects.create(name=resource_name, resource_group=self.resource_group)
         else:
-            resource = Resource.objects.create(name=resource_name, resource_group=self.resource_group)
+            self.instance.name = resource_name
+            self.instance.save()
+
         # get all attribute
         for attribute_name, value in self.cleaned_data.items():
             if attribute_name is not "name" and value is not None and value != "":
-                resource.add_attribute(attribute_name)
-                resource.set_attribute(attribute_name, value)
-        return resource
+                self.instance.add_attribute(attribute_name)
+                self.instance.set_attribute(attribute_name, value)
+
+        return self.instance
 
     class Meta:
         model = Resource
