@@ -79,16 +79,3 @@ class ResourceForm(ModelForm):
         model = Resource
         fields = ["name"]
 
-
-class ResourceEditForm(ModelForm):
-    name = forms.CharField(label="Name",
-                           required=True,
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    def __init__(self, *args, **kwargs):
-        resource_group_id = kwargs.pop('resource_group_id', None)
-        resource_id = kwargs.pop('resource_id', None)
-        self.resource_group = ResourceGroup.objects.get(id=resource_group_id)
-        self.resource = Resource.objects.get(id=resource_id)
-        super(ResourceEditForm, self).__init__(*args, **kwargs)
-
