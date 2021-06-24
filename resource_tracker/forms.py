@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
-    Resource, ResourceAttribute
+    Resource, ResourceAttribute, ResourcePool
 
 
 class ResourceGroupForm(ModelForm):
@@ -92,3 +92,12 @@ class ResourceForm(ModelForm):
         model = Resource
         fields = ["name"]
 
+
+class ResourcePoolForm(ModelForm):
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = ResourcePool
+        fields = ["name"]
