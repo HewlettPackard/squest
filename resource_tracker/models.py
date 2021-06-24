@@ -69,8 +69,7 @@ class ResourceAttribute(models.Model):
 
 class ResourceGroupAttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
-                            blank=False,
-                            unique=True)
+                            blank=False)
     resource_group_definition = models.ForeignKey(ResourceGroup,
                                                   on_delete=models.PROTECT,
                                                   related_name='attribute_definitions',
@@ -86,6 +85,9 @@ class ResourceGroupAttributeDefinition(models.Model):
                                     related_name='producers',
                                     related_query_name='producer',
                                     null=True)
+
+    class Meta:
+        unique_together = ('name', 'resource_group_definition',)
 
 
 class ResourcePool(models.Model):
@@ -135,3 +137,11 @@ class ResourcePoolAttributeDefinition(models.Model):
             for resource in consumer.resource_group_definition.resources.all():
                 total_consumed += resource.attributes.get(name=attribute_name).value
         return total_consumed
+
+    def get_percent_consumed(self):
+        percent_consumed = 0
+        try:
+            percent_consumed = (self.get_total_consumed() * 100) / self.get_total_produced()
+        except ZeroDivisionError:
+            pass
+        return round(percent_consumed)

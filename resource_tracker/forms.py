@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
@@ -29,6 +30,16 @@ class ResourceGroupAttributeDefinitionForm(ModelForm):
                                          to_field_name="id",
                                          required=False,
                                          widget=forms.Select(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if hasattr(self, 'resource_group'):
+            if ResourceGroupAttributeDefinition.objects.filter(name=cleaned_data['name'],
+                                                               resource_group_definition=self.resource_group).exists():
+                raise ValidationError({'name': ["Attribute with this name already exists for this resource", ]})
+
+        # Always return cleaned_data
+        return cleaned_data
 
     class Meta:
         model = ResourceGroupAttributeDefinition
