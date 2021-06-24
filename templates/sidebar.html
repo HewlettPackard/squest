@@ -117,7 +117,7 @@
 
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'resource_pool_list'%}" class="nav-link {% if 'resource_tracker/resource_pool' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-poll"></i>
                             <p>Resource pools</p>
                         </a>
