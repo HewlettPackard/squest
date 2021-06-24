@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from resource_tracker.forms import ResourcePoolForm
 from resource_tracker.models import ResourcePool
 
 
@@ -15,3 +16,15 @@ def resource_pool_list(request):
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
                   {'resource_pools': resource_pools,
                    'list_attribute_name': list_attribute_name})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_create(request):
+    if request.method == 'POST':
+        form = ResourcePoolForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(resource_pool_list)
+    else:
+        form = ResourcePoolForm()
+    return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', {'form': form})
