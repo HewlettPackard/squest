@@ -35,4 +35,5 @@ urlpatterns = [
          name='resource_group_resource_edit'),
 
     path('resource_pool/', views.resource_pool_list, name='resource_pool_list'),
+    path('resource_pool/create/', views.resource_pool_create, name='resource_pool_create'),
 ]
