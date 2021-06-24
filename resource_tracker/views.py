@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
 from resource_tracker.forms import ResourceGroupForm, ResourceGroupAttributeDefinitionForm, ResourceForm
-from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource
+from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourcePool
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -63,6 +63,7 @@ def resource_group_attribute_create(request, resource_group_id):
     resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
     if request.method == 'POST':
         form = ResourceGroupAttributeDefinitionForm(request.POST)
+        form.resource_group = resource_group  # give the resource_group so the form can validate the unique together
         if form.is_valid():
             new_attribute = form.save()
             new_attribute.resource_group_definition = resource_group
@@ -148,6 +149,7 @@ def resource_group_resource_create(request, resource_group_id):
                   {'resource_group': resource_group, 'form': form})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def resource_group_resource_edit(request, resource_group_id, resource_id):
     resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
     resource = get_object_or_404(Resource, id=resource_id)
@@ -163,3 +165,16 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
         form = ResourceForm(instance=resource, **parameters)
     return render(request, 'resource_tracking/resource_group/resources/resource-edit.html',
                   {'resource_group': resource_group, 'resource': resource, 'form': form})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_list(request):
+    resource_pools = ResourcePool.objects.all()
+    list_attribute_name = list()
+    for resource_pool in resource_pools.all():
+        for attribute in resource_pool.attributes_definition.all():
+            if attribute.name not in list_attribute_name:
+                list_attribute_name.append(attribute.name)
+    return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
+                  {'resource_pools': resource_pools,
+                   'list_attribute_name': list_attribute_name})
