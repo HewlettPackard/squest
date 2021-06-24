@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load resource_filters %}
 
 {% block content %}
     <!-- Main content -->
@@ -10,7 +11,7 @@
                         <h1>Resource pools</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="">
+                        <a class="btn btn-success float-sm-right" href="{% url 'resource_pool_create' %}">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
@@ -38,15 +39,21 @@
                                 <tr>
                                     <td class="align-middle">{{ resource_pool.name }}</td>
                                     {% for attribute_name in list_attribute_name %}
-                                        <td class="align-middle">
-                                            <div class="progress">
-                                                <div class="progress-bar {{ resource_pool.id | get_progress_bar_color:attribute_name }}" role="progressbar" aria-valuenow="{{ resource_pool.id | get_percent_consumption:attribute_name }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ resource_pool.id | get_percent_consumption:attribute_name }}%">
-                                                </div>
-                                            </div>
-                                            <small>{{ resource_pool.id | get_percent_consumption:attribute_name }}%</small><br>
-                                            <small>Produced: {{ resource_pool.id | get_total_produced:attribute_name }}</small><br>
-                                            <small>Consumed: {{ resource_pool.id | get_total_consumed:attribute_name }}</small>
-                                        </td>
+                                        {% with it_has_attribute=resource_pool.id|has_attribute:attribute_name %}
+                                            {% if it_has_attribute %}
+                                                <td class="align-middle">
+                                                    <div class="progress">
+                                                        <div class="progress-bar {{ resource_pool.id | get_progress_bar_color:attribute_name }}" role="progressbar" aria-valuenow="{{ resource_pool.id | get_percent_consumption:attribute_name }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ resource_pool.id | get_percent_consumption:attribute_name }}%">
+                                                        </div>
+                                                    </div>
+                                                    <small>{{ resource_pool.id | get_percent_consumption:attribute_name }}%</small><br>
+                                                    <small>Produced: {{ resource_pool.id | get_total_produced:attribute_name }}</small><br>
+                                                    <small>Consumed: {{ resource_pool.id | get_total_consumed:attribute_name }}</small>
+                                                </td>
+                                            {%  else %}
+                                                <td class="table-secondary align-middle"></td>
+                                            {% endif %}
+                                        {% endwith %}
                                     {%  endfor %}
 
                                     <td class="align-middle text-right">
