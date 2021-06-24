@@ -92,7 +92,8 @@ class ResourceGroupAttributeDefinition(models.Model):
 
 class ResourcePool(models.Model):
     name = models.CharField(max_length=100,
-                            blank=False)
+                            blank=False,
+                            unique=True)
 
     def add_attribute_definition(self, name):
         self.attributes_definition.create(name=name)
