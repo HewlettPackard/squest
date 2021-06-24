@@ -18,7 +18,7 @@ def get_percent_consumption(resource_pool_id, attribute_name):
         resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
                                                                               name=attribute_name)
         return resource_pool_attribute.get_percent_consumed()
-    except ResourceAttribute.DoesNotExist:
+    except ResourcePoolAttributeDefinition.DoesNotExist:
         return 0
 
 
@@ -28,7 +28,7 @@ def get_total_produced(resource_pool_id, attribute_name):
         resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
                                                                               name=attribute_name)
         return resource_pool_attribute.get_total_produced()
-    except ResourceAttribute.DoesNotExist:
+    except ResourcePoolAttributeDefinition.DoesNotExist:
         return 0
 
 
@@ -38,7 +38,7 @@ def get_total_consumed(resource_pool_id, attribute_name):
         resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
                                                                               name=attribute_name)
         return resource_pool_attribute.get_total_consumed()
-    except ResourceAttribute.DoesNotExist:
+    except ResourcePoolAttributeDefinition.DoesNotExist:
         return 0
 
 
@@ -50,3 +50,9 @@ def get_progress_bar_color(resource_pool_id, attribute_name):
     if 80 < total_consumed < 90:
         return "bg-yellow"
     return "bg-red"
+
+
+@register.filter(name='has_attribute')
+def has_attribute(resource_pool_id, attribute_name):
+    return ResourcePoolAttributeDefinition.objects.filter(resource_pool_id=resource_pool_id,
+                                                          name=attribute_name).exists()
