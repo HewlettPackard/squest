@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Resource pools</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-success float-sm-right" href="">
+                            <i class="fas fa-plus"></i> Add
+                        </a>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+
+                <div class="card">
+
+                    <div class="card-body">
+                        <table id="resource_group_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                {% for attribute_name in list_attribute_name %}
+                                    <th>{{ attribute_name }}</th>
+                                {%  endfor %}
+                                <th class="text-right">Operations</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for resource_pool in resource_pools %}
+                                <tr>
+                                    <td class="align-middle">{{ resource_pool.name }}</td>
+                                    {% for attribute_name in list_attribute_name %}
+                                        <td class="align-middle">
+                                            <div class="progress">
+                                                <div class="progress-bar {{ resource_pool.id | get_progress_bar_color:attribute_name }}" role="progressbar" aria-valuenow="{{ resource_pool.id | get_percent_consumption:attribute_name }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ resource_pool.id | get_percent_consumption:attribute_name }}%">
+                                                </div>
+                                            </div>
+                                            <small>{{ resource_pool.id | get_percent_consumption:attribute_name }}%</small><br>
+                                            <small>Produced: {{ resource_pool.id | get_total_produced:attribute_name }}</small><br>
+                                            <small>Consumed: {{ resource_pool.id | get_total_consumed:attribute_name }}</small>
+                                        </td>
+                                    {%  endfor %}
+
+                                    <td class="align-middle text-right">
+                                        <a class="btn btn-primary btn-sm" href="#">
+                                            <i class="fas fa-chart-pie">
+                                            </i>
+                                            View
+                                        </a>
+                                        <a class="btn btn-info btn-sm" href="#">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                        <a class="btn btn-danger btn-sm" href="#">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!-- end container fluid -->
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

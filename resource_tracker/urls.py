@@ -33,4 +33,6 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/edit/',
          views.resource_group_resource_edit,
          name='resource_group_resource_edit'),
+
+    path('resource_pool/', views.resource_pool_list, name='resource_pool_list'),
 ]
