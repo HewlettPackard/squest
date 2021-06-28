@@ -101,3 +101,23 @@ class ResourcePoolForm(ModelForm):
     class Meta:
         model = ResourcePool
         fields = ["name"]
+
+
+class ResourcePoolAttributeDefinitionForm(ModelForm):
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if hasattr(self, 'resource_pool'):
+            if ResourcePoolAttributeDefinition.objects.filter(name=cleaned_data['name'],
+                                                              resource_pool=self.resource_pool).exists():
+                raise ValidationError({'name': ["Attribute with this name already exists for this resource pool", ]})
+
+        # Always return cleaned_data
+        return cleaned_data
+
+    class Meta:
+        model = ResourcePoolAttributeDefinition
+        fields = ["name"]
