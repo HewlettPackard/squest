@@ -110,6 +110,9 @@ class ResourcePoolAttributeDefinition(models.Model):
                                       related_query_name='attribute_definition',
                                       null=True)
 
+    class Meta:
+        unique_together = ('name', 'resource_pool',)
+
     def __str__(self):
         return "{} - {}".format(self.resource_pool.name, self.name)
 

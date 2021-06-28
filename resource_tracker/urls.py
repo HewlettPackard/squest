@@ -36,4 +36,16 @@ urlpatterns = [
 
     path('resource_pool/', views.resource_pool_list, name='resource_pool_list'),
     path('resource_pool/create/', views.resource_pool_create, name='resource_pool_create'),
+    path('resource_pool/<int:resource_pool_id>/edit/', views.resource_pool_edit,
+         name='resource_pool_edit'),
+    path('resource_pool/<int:resource_pool_id>/delete/', views.resource_pool_delete,
+         name='resource_pool_delete'),
+    path('resource_pool/<int:resource_pool_id>/attributes/create/', views.resource_pool_attribute_create,
+         name='resource_pool_attribute_create'),
+    path('resource_pool/<int:resource_pool_id>/attributes/<int:attribute_id>/delete/',
+         views.resource_pool_attribute_delete,
+         name='resource_pool_attribute_delete'),
+    path('resource_pool/<int:resource_pool_id>/resources/<int:attribute_id>/edit/',
+         views.resource_pool_attribute_edit,
+         name='resource_pool_attribute_edit'),
 ]
