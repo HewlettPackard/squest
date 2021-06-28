@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
-from resource_tracker.forms import ResourcePoolForm
-from resource_tracker.models import ResourcePool
+from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
+from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinition
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -28,3 +28,72 @@ def resource_pool_create(request):
     else:
         form = ResourcePoolForm()
     return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', {'form': form})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_edit(request, resource_pool_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    form = ResourcePoolForm(request.POST or None, instance=resource_pool)
+    if form.is_valid():
+        form.save()
+        return redirect(resource_pool_list)
+    return render(request,
+                  'resource_tracking/resource_pool/resource-pool-edit.html', {'form': form,
+                                                                              'resource_pool': resource_pool})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_delete(request, resource_pool_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    if request.method == 'POST':
+        resource_pool.attributes_definition.all().delete()
+        resource_pool.delete()
+        return redirect(resource_pool_list)
+
+    return render(request,
+                  'resource_tracking/resource_pool/resource-pool-delete.html', {'resource_pool': resource_pool})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_attribute_create(request, resource_pool_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    if request.method == 'POST':
+        form = ResourcePoolAttributeDefinitionForm(request.POST)
+        form.resource_pool = resource_pool  # give the resource_pool so the form can validate the unique together
+        if form.is_valid():
+            new_attribute = form.save()
+            new_attribute.resource_pool = resource_pool
+            new_attribute.save()
+            return redirect(resource_pool_edit, resource_pool.id)
+    else:
+        form = ResourcePoolAttributeDefinitionForm()
+
+    return render(request,
+                  'resource_tracking/resource_pool/attributes/attribute-create.html',
+                  {'form': form, 'resource_pool': resource_pool})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_attribute_delete(request, resource_pool_id, attribute_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
+    if request.method == "POST":
+        attribute.delete()
+        return redirect(resource_pool_edit, resource_pool.id)
+    context = {
+        "resource_pool": resource_pool,
+        "attribute": attribute
+    }
+    return render(request, "resource_tracking/resource_pool/attributes/attribute-delete.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
+    form = ResourcePoolAttributeDefinitionForm(request.POST or None, instance=attribute)
+    if form.is_valid():
+        form.save()
+        return redirect(resource_pool_edit, resource_pool.id)
+    return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html',
+                  {'form': form, 'attribute': attribute, 'resource_pool': resource_pool})

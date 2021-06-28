@@ -60,12 +60,12 @@
 
                             </div>
                             <div class="card-footer">
-                                <a class="btn btn-info btn-sm" href="#">
+                                <a class="btn btn-info btn-sm" href="{% url 'resource_pool_edit' resource_pool.id %}">
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Edit
                                 </a>
-                                <a class="btn btn-danger btn-sm" href="#">
+                                <a class="btn btn-danger btn-sm" href="{% url 'resource_pool_delete' resource_pool.id %}">
                                     <i class="fas fa-trash">
                                     </i>
                                     Delete
