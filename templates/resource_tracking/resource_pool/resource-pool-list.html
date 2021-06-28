@@ -19,71 +19,63 @@
             </div><!-- /.container-fluid -->
         </section>
         <div class="content">
-            <div class="container-fluid">
-
-                <div class="card">
-
-                    <div class="card-body">
-                        <table id="resource_group_list" class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                {% for attribute_name in list_attribute_name %}
-                                    <th>{{ attribute_name }}</th>
-                                {%  endfor %}
-                                <th class="text-right">Operations</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {%  for resource_pool in resource_pools %}
-                                <tr>
-                                    <td class="align-middle">{{ resource_pool.name }}</td>
-                                    {% for attribute_name in list_attribute_name %}
-                                        {% with it_has_attribute=resource_pool.id|has_attribute:attribute_name %}
-                                            {% if it_has_attribute %}
-                                                <td class="align-middle">
-                                                    <div class="progress">
-                                                        <div class="progress-bar {{ resource_pool.id | get_progress_bar_color:attribute_name }}" role="progressbar" aria-valuenow="{{ resource_pool.id | get_percent_consumption:attribute_name }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ resource_pool.id | get_percent_consumption:attribute_name }}%">
-                                                        </div>
+            <div class="row">
+                {% for resource_pool in resource_pools %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th>Attribute</th>
+                                        <th>Utilization</th>
+                                        <th>Produced</th>
+                                        <th>Consumed</th>
+                                        <th>Available</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for attribute in resource_pool.attributes_definition.all %}
+                                        {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
+                                        <tr>
+                                            <td class="align-middle">{{ attribute.name }}</td>
+                                            <td class="align-middle">
+                                                <div class="progress text_center">
+                                                    <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
+                                                    {{ progress_value }}%
                                                     </div>
-                                                    <small>{{ resource_pool.id | get_percent_consumption:attribute_name }}%</small><br>
-                                                    <small>Produced: {{ resource_pool.id | get_total_produced:attribute_name }}</small><br>
-                                                    <small>Consumed: {{ resource_pool.id | get_total_consumed:attribute_name }}</small>
-                                                </td>
-                                            {%  else %}
-                                                <td class="table-secondary align-middle"></td>
-                                            {% endif %}
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">{{ total_produced }}</td>
+                                            <td class="align-middle">{{ total_consumed }}</td>
+                                            <td class="align-middle">{{ total_produced|subtract:total_consumed }}</td>
+                                        </tr>
                                         {% endwith %}
-                                    {%  endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
 
-                                    <td class="align-middle text-right">
-                                        <a class="btn btn-primary btn-sm" href="#">
-                                            <i class="fas fa-chart-pie">
-                                            </i>
-                                            View
-                                        </a>
-                                        <a class="btn btn-info btn-sm" href="#">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Edit
-                                        </a>
-                                        <a class="btn btn-danger btn-sm" href="#">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                            Delete
-                                        </a>
-                                    </td>
-                                </tr>
-
-                            {%  endfor %}
-                            </tbody>
-                        </table>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-info btn-sm" href="#">
+                                    <i class="fas fa-pencil-alt">
+                                    </i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="#">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
                     </div>
-
-                </div><!-- end container fluid -->
-
-
-            </div>
+                {% endfor %}
+            </div><!-- end main card-body -->
         </div>
+    </div>
     </div>
 {% endblock %}
