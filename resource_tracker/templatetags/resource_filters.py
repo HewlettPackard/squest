@@ -43,11 +43,10 @@ def get_total_consumed(resource_pool_id, attribute_name):
 
 
 @register.filter(name='get_progress_bar_color')
-def get_progress_bar_color(resource_pool_id, attribute_name):
-    total_consumed = get_percent_consumption(resource_pool_id, attribute_name)
-    if total_consumed < 80:
+def get_progress_bar_color(progress_value):
+    if progress_value < 80:
         return "bg-green"
-    if 80 < total_consumed < 90:
+    if 80 < progress_value < 90:
         return "bg-yellow"
     return "bg-red"
 
@@ -56,3 +55,7 @@ def get_progress_bar_color(resource_pool_id, attribute_name):
 def has_attribute(resource_pool_id, attribute_name):
     return ResourcePoolAttributeDefinition.objects.filter(resource_pool_id=resource_pool_id,
                                                           name=attribute_name).exists()
+
+@register.filter(name='subtract')
+def subtract(value, arg):
+    return value - arg
