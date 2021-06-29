@@ -167,3 +167,13 @@ class ResourcePoolAttributeDefinition(models.Model):
             # For all resource in the resource group, get the good attribute
             total_consumed += resource.attributes.get(name=attribute_name).value
         return total_consumed
+
+    def remove_all_producer(self):
+        for producer in self.producers.all():
+            producer.produce_for = None
+            producer.save()
+
+    def remove_all_consumer(self):
+        for consumer in self.consumers.all():
+            consumer.consume_from = None
+            consumer.save()
