@@ -6,6 +6,30 @@ from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinit
 
 class TestCalculation(TestCase):
 
+    def _create_simple_testing_stack(self):
+        # create a group of server that produce into the vcenter pool
+        self.server_group = ResourceGroup.objects.create(name="server-group")
+        self.server_group.add_attribute_definition(name='CPU')
+        server = self.server_group.create_resource(name=f"server-group1")
+        server.set_attribute('CPU', 100)
+
+        self.vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        self.vcenter_pool.add_attribute_definition(name='vCPU')
+        self.vcenter_pool.attributes_definition.get(name='vCPU') \
+            .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
+        self.assertEqual(100, self.vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
+
+        # create VM group that consume
+        self.vm_group = ResourceGroup.objects.create(name="vm-group")
+        self.vm_group.add_attribute_definition(name='vCPU')
+        self.vcenter_pool.attributes_definition.get(name='vCPU') \
+            .add_consumers(self.vm_group.attribute_definitions.get(name='vCPU'))
+        vm1 = self.vm_group.create_resource(name=f"vm1")
+        vm1.set_attribute('vCPU', 25)
+        vm2 = self.vm_group.create_resource(name=f"vm2")
+        vm2.set_attribute('vCPU', 25)
+        self.assertEqual(50, self.vcenter_pool.attributes_definition.get(name='vCPU').get_total_consumed())
+
     def test_ResourceGroup(self):
         name = r'serverGroup1'
         server_group = ResourceGroup.objects.create(name=name)
@@ -118,3 +142,27 @@ class TestCalculation(TestCase):
         # All CPU in openshift.vCPU
         self.assertEqual(sum(self.cpu_list)+100,
                          openshift_pool.attributes_definition.get(name='vCPU').get_total_produced())
+
+    def test_get_percent_consumed(self):
+        self._create_simple_testing_stack()
+        self.assertEqual(50, self.vcenter_pool.attributes_definition.get(name='vCPU').get_percent_consumed())
+
+    def test_get_total_produced_by(self):
+        self._create_simple_testing_stack()
+        # add another producer into the vcenter pool
+        server_group_2 = ResourceGroup.objects.create(name="server-group-2")
+        server_group_2.add_attribute_definition(name='CPU')
+        self.vcenter_pool.attributes_definition.get(name='vCPU') \
+            .add_producers(server_group_2.attribute_definitions.get(name='CPU'))
+        server = server_group_2.create_resource(name=f"server-group2")
+        server.set_attribute('CPU', 150)
+
+        self.assertEqual(250,
+                         self.vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
+
+        self.assertEqual(100,
+                         self.vcenter_pool.attributes_definition.get(name='vCPU').
+                         get_total_produced_by(self.server_group.attribute_definitions.get(name="CPU")))
+        self.assertEqual(150,
+                         self.vcenter_pool.attributes_definition.get(name='vCPU').
+                         get_total_produced_by(server_group_2.attribute_definitions.get(name="CPU")))

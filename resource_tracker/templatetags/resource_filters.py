@@ -56,6 +56,17 @@ def has_attribute(resource_pool_id, attribute_name):
     return ResourcePoolAttributeDefinition.objects.filter(resource_pool_id=resource_pool_id,
                                                           name=attribute_name).exists()
 
+
 @register.filter(name='subtract')
 def subtract(value, arg):
     return value - arg
+
+
+@register.filter(name='get_total_produced_by')
+def get_total_produced_by(resource_poll_attribute, producer):
+    return resource_poll_attribute.get_total_produced_by(producer)
+
+
+@register.filter(name='get_total_consumed_by')
+def get_total_consumed_by(resource_poll_attribute, consumer):
+    return resource_poll_attribute.get_total_consumed_by(consumer)

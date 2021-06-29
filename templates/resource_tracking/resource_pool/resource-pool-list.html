@@ -40,19 +40,31 @@
                                     <tbody>
                                     {% for attribute in resource_pool.attributes_definition.all %}
                                         {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
-                                        <tr>
-                                            <td class="align-middle">{{ attribute.name }}</td>
-                                            <td class="align-middle">
-                                                <div class="progress text_center">
-                                                    <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
-                                                    {{ progress_value }}%
+                                            <tr>
+                                                <td class="align-middle">{{ attribute.name }}</td>
+                                                <td class="align-middle">
+                                                    <div class="progress text_center">
+                                                        <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
+                                                            {{ progress_value }}%
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle">{{ total_produced }}</td>
-                                            <td class="align-middle">{{ total_consumed }}</td>
-                                            <td class="align-middle">{{ total_produced|subtract:total_consumed }}</td>
-                                        </tr>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <a href="{% url 'resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                        {{ total_produced }}
+                                                    </a>
+
+                                                </td>
+                                                <td class="align-middle">
+                                                    <a href="{% url 'resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                        {{ total_consumed }}
+                                                    </a>
+
+                                                </td>
+                                                <td class="align-middle">
+                                                    <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed }}</span>
+                                                </td>
+                                            </tr>
                                         {% endwith %}
                                     {% endfor %}
                                     </tbody>
