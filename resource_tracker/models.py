@@ -149,3 +149,21 @@ class ResourcePoolAttributeDefinition(models.Model):
         except ZeroDivisionError:
             pass
         return round(percent_consumed)
+
+    @staticmethod
+    def get_total_produced_by(producer):
+        attribute_name = producer.name
+        total_produced = 0
+        for resource in producer.resource_group_definition.resources.all():
+            # For all resource in the resource group, get the good attribute
+            total_produced += resource.attributes.get(name=attribute_name).value
+        return total_produced
+
+    @staticmethod
+    def get_total_consumed_by(consumer):
+        attribute_name = consumer.name
+        total_consumed = 0
+        for resource in consumer.resource_group_definition.resources.all():
+            # For all resource in the resource group, get the good attribute
+            total_consumed += resource.attributes.get(name=attribute_name).value
+        return total_consumed
