@@ -97,3 +97,21 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
         return redirect(resource_pool_edit, resource_pool.id)
     return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html',
                   {'form': form, 'attribute': attribute, 'resource_pool': resource_pool})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_attribute_producer_list(request, resource_pool_id, attribute_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
+
+    return render(request, 'resource_tracking/resource_pool/attributes/producer-list.html',
+                  {'attribute': attribute, 'resource_pool': resource_pool})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_attribute_consumer_list(request, resource_pool_id, attribute_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
+
+    return render(request, 'resource_tracking/resource_pool/attributes/consumer-list.html',
+                  {'attribute': attribute, 'resource_pool': resource_pool})

@@ -48,4 +48,11 @@ urlpatterns = [
     path('resource_pool/<int:resource_pool_id>/resources/<int:attribute_id>/edit/',
          views.resource_pool_attribute_edit,
          name='resource_pool_attribute_edit'),
+    path('resource_pool/<int:resource_pool_id>/attributes/<int:attribute_id>/producers/',
+         views.resource_pool_attribute_producer_list,
+         name='resource_pool_attribute_producer_list'),
+    path('resource_pool/<int:resource_pool_id>/attributes/<int:attribute_id>/consumers/',
+         views.resource_pool_attribute_consumer_list,
+         name='resource_pool_attribute_consumer_list'),
+
 ]

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Resource pools {{ resource_pool.name }}</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><strong>Consumers</strong></h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="tower_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Resource group</th>
+                                <th>Resource</th>
+                                <th>Consume</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for consumer in attribute.consumers.all %}
+                                <tr>
+                                    <td class="align-middle">
+                                        <a href="{% url 'resource_group_attribute_edit' resource_group_id=consumer.resource_group_definition.id attribute_id=consumer.id %}">
+                                            {{ consumer.name }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="{% url 'resource_group_edit' resource_group_id=consumer.resource_group_definition.id %}">
+                                            {{ consumer.resource_group_definition.name }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="{% url 'resource_group_resource_list' resource_group_id=consumer.resource_group_definition.id %}">
+                                            {{ consumer.resource_group_definition.resources.all | length }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">{{ attribute|get_total_consumed_by:consumer }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
