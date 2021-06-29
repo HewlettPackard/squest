@@ -46,6 +46,11 @@ def resource_pool_edit(request, resource_pool_id):
 def resource_pool_delete(request, resource_pool_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
     if request.method == 'POST':
+        # need to update all resource group that use this pool to set producer/consumer to None
+        for pool_attribute in resource_pool.attributes_definition.all():
+            pool_attribute.remove_all_producer()
+            pool_attribute.remove_all_consumer()
+        # now delete all attribute and then the pool itself
         resource_pool.attributes_definition.all().delete()
         resource_pool.delete()
         return redirect(resource_pool_list)
