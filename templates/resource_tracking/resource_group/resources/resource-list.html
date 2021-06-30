@@ -36,7 +36,7 @@
                                 <tr>
                                     <td class="align-middle">{{ resource.name }}</td>
                                     {% for attribute_name in list_attribute_name %}
-                                        <td class="align-middle">{{ resource.id | get_attribute_value_from_name:attribute_name }}</td>
+                                        <td class="align-middle">{{ resource | get_attribute_value_from_name:attribute_name }}</td>
                                     {%  endfor %}
                                     <td class="align-middle">
                                         <a href="{% url 'resource_group_resource_edit' resource_group_id=resource_group.id resource_id=resource.id %}" class="btn btn-primary bg-sm">
