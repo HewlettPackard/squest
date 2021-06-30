@@ -1,12 +1,15 @@
 from django.template.defaulttags import register
 
-from resource_tracker.models import ResourceAttribute, ResourcePoolAttributeDefinition
+from resource_tracker.models import ResourceAttribute, ResourcePoolAttributeDefinition, ResourceGroupAttributeDefinition
 
 
 @register.filter(name='get_attribute_value_from_name')
-def get_attribute_value_from_name(resource_id, attribute_name):
+def get_attribute_value_from_name(resource, attribute_name):
     try:
-        attribute = ResourceAttribute.objects.get(resource_id=resource_id, name=attribute_name)
+        attribute = ResourceAttribute.objects.get(resource=resource,
+                                                  attribute_type=ResourceGroupAttributeDefinition.objects.
+                                                  get(name=attribute_name,
+                                                      resource_group_definition=resource.resource_group))
         return attribute.value
     except ResourceAttribute.DoesNotExist:
         return ""
