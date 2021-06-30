@@ -27,49 +27,58 @@
                                 <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
                             </div>
                             <div class="card-body">
-                                <table class="table table-sm">
-                                    <thead>
-                                    <tr>
-                                        <th>Attribute</th>
-                                        <th>Utilization</th>
-                                        <th>Produced</th>
-                                        <th>Consumed</th>
-                                        <th>Available</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for attribute in resource_pool.attributes_definition.all %}
-                                        {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
-                                            <tr>
-                                                <td class="align-middle">{{ attribute.name }}</td>
-                                                <td class="align-middle">
-                                                    <div class="progress text_center">
-                                                        <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
-                                                            {{ progress_value }}%
+                                {% if resource_pool.attributes_definition.all|length == 0 %}
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <a class="btn btn-lg btn-success text-center" href="{% url 'resource_pool_attribute_create' resource_pool.id %}">
+                                                <i class="fas fa-plus"></i> Add attribute
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <table class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>Attribute</th>
+                                            <th>Utilization</th>
+                                            <th>Produced</th>
+                                            <th>Consumed</th>
+                                            <th>Available</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for attribute in resource_pool.attributes_definition.all %}
+                                            {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
+                                                <tr>
+                                                    <td class="align-middle">{{ attribute.name }}</td>
+                                                    <td class="align-middle">
+                                                        <div class="progress text_center">
+                                                            <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
+                                                                {{ progress_value }}%
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <a href="{% url 'resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                        {{ total_produced }}
-                                                    </a>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <a href="{% url 'resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                            {{ total_produced }}
+                                                        </a>
 
-                                                </td>
-                                                <td class="align-middle">
-                                                    <a href="{% url 'resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                        {{ total_consumed }}
-                                                    </a>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <a href="{% url 'resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                            {{ total_consumed }}
+                                                        </a>
 
-                                                </td>
-                                                <td class="align-middle">
-                                                    <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed }}</span>
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed }}</span>
+                                                    </td>
+                                                </tr>
+                                            {% endwith %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
                             </div>
                             <div class="card-footer">
                                 <a class="btn btn-info btn-sm" href="{% url 'resource_pool_edit' resource_pool.id %}">

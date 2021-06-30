@@ -11,7 +11,7 @@ class ResourceGroup(models.Model):
         obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
 
         if len(obj) == 0:
-            self.attribute_definitions.create(name=name)
+            return self.attribute_definitions.create(name=name)
         elif len(obj) == 1:
             pass
         else:
@@ -21,11 +21,11 @@ class ResourceGroup(models.Model):
     def create_resource(self, name) -> 'Resource':
         resource, _ = self.resources.get_or_create(name=name)
         for attribute in self.attribute_definitions.all():
-            resource.add_attribute(attribute.name)
+            resource.add_attribute(attribute_type=attribute)
         return resource
 
-    def get_attribute(self, name):
-        return sum([resource.attributes.get(name=name).value for resource in self.resources.all()])
+    def get_attribute(self, attribute_type):
+        return sum([resource.attributes.get(attribute_type=attribute_type).value for resource in self.resources.all()])
 
 
 class Resource(models.Model):
@@ -39,32 +39,16 @@ class Resource(models.Model):
                                        null=True)
 
     def __str__(self):
-        return f"{self.name}["+",".join([f"{attribute.name}: {attribute.value}"
+        return f"{self.name}["+",".join([f"{attribute.attribute_type.name}: {attribute.value}"
                                          for attribute in self.attributes.all()]) + "]"
 
-    def add_attribute(self, attribute):
-        self.attributes.get_or_create(name=attribute)
+    def add_attribute(self, attribute_type):
+        self.attributes.get_or_create(attribute_type=attribute_type)
 
-    def set_attribute(self, attribute, value):
-        attribute = self.attributes.get(name=attribute)
+    def set_attribute(self, attribute_type, value):
+        attribute = self.attributes.get(attribute_type=attribute_type)
         attribute.value = value
         attribute.save()
-
-
-class ResourceAttribute(models.Model):
-    name = models.CharField(max_length=100,
-                            blank=False)
-
-    value = models.PositiveIntegerField(default=0)
-
-    resource = models.ForeignKey(Resource,
-                                 on_delete=models.CASCADE,
-                                 related_name='attributes',
-                                 related_query_name='attribute',
-                                 null=True)
-
-    def __str__(self):
-        return str(self.value)
 
 
 class ResourceGroupAttributeDefinition(models.Model):
@@ -90,7 +74,7 @@ class ResourceGroupAttributeDefinition(models.Model):
         total_produced = 0
         for resource in self.resource_group_definition.resources.all():
             try:
-                total_produced += resource.attributes.get(name=self.name).value
+                total_produced += resource.attributes.get(attribute_type=self).value
             except ResourceAttribute.DoesNotExist:
                 pass
         return total_produced
@@ -106,6 +90,25 @@ class ResourcePool(models.Model):
 
     def add_attribute_definition(self, name):
         self.attributes_definition.create(name=name)
+
+
+class ResourceAttribute(models.Model):
+    value = models.PositiveIntegerField(default=0)
+
+    resource = models.ForeignKey(Resource,
+                                 on_delete=models.CASCADE,
+                                 related_name='attributes',
+                                 related_query_name='attribute',
+                                 null=True)
+
+    attribute_type = models.ForeignKey(ResourceGroupAttributeDefinition,
+                                       on_delete=models.CASCADE,
+                                       related_name='attribute_types',
+                                       related_query_name='attribute_type',
+                                       null=True)
+
+    def __str__(self):
+        return str(self.value)
 
 
 class ResourcePoolAttributeDefinition(models.Model):
@@ -135,24 +138,22 @@ class ResourcePoolAttributeDefinition(models.Model):
 
     def get_total_produced(self):
         total_produced = 0
-        for producer in self.producers.all():
+        for producer in self.producers.all():  # producer == ResourceGroupAttributeDefinition
             # For all ResourceGroup that produce for my attribute
-            attribute_name = producer.name
             for resource in producer.resource_group_definition.resources.all():
                 # For all resource in the resource group, get the good attribute
                 try:
-                    total_produced += resource.attributes.get(name=attribute_name).value
+                    total_produced += resource.attributes.get(attribute_type=producer).value
                 except ResourceAttribute.DoesNotExist:
                     pass
         return total_produced
 
     def get_total_consumed(self):
         total_consumed = 0
-        for consumer in self.consumers.all():
-            attribute_name = consumer.name
+        for consumer in self.consumers.all(): # consumer == ResourceGroupAttributeDefinition
             for resource in consumer.resource_group_definition.resources.all():
                 try:
-                    total_consumed += resource.attributes.get(name=attribute_name).value
+                    total_consumed += resource.attributes.get(attribute_type=consumer).value
                 except ResourceAttribute.DoesNotExist:
                     pass
         return total_consumed
@@ -167,22 +168,20 @@ class ResourcePoolAttributeDefinition(models.Model):
 
     @staticmethod
     def get_total_produced_by(producer):
-        attribute_name = producer.name
         total_produced = 0
         for resource in producer.resource_group_definition.resources.all():
             try:
-                total_produced += resource.attributes.get(name=attribute_name).value
+                total_produced += resource.attributes.get(attribute_type=producer).value
             except ResourceAttribute.DoesNotExist:
                 pass
         return total_produced
 
     @staticmethod
     def get_total_consumed_by(consumer):
-        attribute_name = consumer.name
         total_consumed = 0
         for resource in consumer.resource_group_definition.resources.all():
             try:
-                total_consumed += resource.attributes.get(name=attribute_name).value
+                total_consumed += resource.attributes.get(attribute_type=consumer).value
             except ResourceAttribute.DoesNotExist:
                 pass
         return total_consumed
