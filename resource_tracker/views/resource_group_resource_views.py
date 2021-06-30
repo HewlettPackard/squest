@@ -12,8 +12,8 @@ def resource_group_resource_list(request, resource_group_id):
     list_attribute_name = list()
     for resource in resource_group.resources.all():
         for attribute in resource.attributes.all():
-            if attribute.name not in list_attribute_name:
-                list_attribute_name.append(attribute.name)
+            if attribute.attribute_type.name not in list_attribute_name:
+                list_attribute_name.append(attribute.attribute_type.name)
 
     return render(request, 'resource_tracking/resource_group/resources/resource-list.html',
                   {'resource_group': resource_group,

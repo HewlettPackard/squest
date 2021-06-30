@@ -62,7 +62,7 @@ class ResourceForm(ModelForm):
             if self.instance is not None:
                 try:
                     initial_value = ResourceAttribute.objects.get(resource=self.instance,
-                                                                  name=attribute.name)
+                                                                  attribute_type=attribute)
                 except ResourceAttribute.DoesNotExist:
                     pass
             new_field = forms.CharField(label=attribute.name,
@@ -83,8 +83,12 @@ class ResourceForm(ModelForm):
         # get all attribute
         for attribute_name, value in self.cleaned_data.items():
             if attribute_name is not "name" and value is not None and value != "":
-                self.instance.add_attribute(attribute_name)
-                self.instance.set_attribute(attribute_name, value)
+                self.instance.add_attribute(ResourceGroupAttributeDefinition.objects.
+                                            get(name=attribute_name,
+                                                resource_group_definition=self.resource_group))
+                self.instance.set_attribute(ResourceGroupAttributeDefinition.objects.
+                                            get(name=attribute_name,
+                                                resource_group_definition=self.resource_group), value)
 
         return self.instance
 
