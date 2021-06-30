@@ -10,8 +10,6 @@ urlpatterns = [
          name='resource_group_edit'),
     path('resource_group/<int:resource_group_id>/delete/', views.resource_group_delete,
          name='resource_group_delete'),
-    path('resource_group/<int:resource_group_id>/attributes/', views.resource_group_attribute_list,
-         name='resource_group_attribute_list'),
     path('resource_group/<int:resource_group_id>/attributes/create/',
          views.resource_group_attribute_create,
          name='resource_group_attribute_create'),
