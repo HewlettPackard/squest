@@ -70,3 +70,8 @@ def get_total_produced_by(resource_poll_attribute, producer):
 @register.filter(name='get_total_consumed_by')
 def get_total_consumed_by(resource_poll_attribute, consumer):
     return resource_poll_attribute.get_total_consumed_by(consumer)
+
+
+@register.filter(name='get_total_resource')
+def get_total_resource(attribute):
+    return attribute.get_total_resource()

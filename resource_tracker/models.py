@@ -86,6 +86,15 @@ class ResourceGroupAttributeDefinition(models.Model):
                                     related_query_name='producer',
                                     null=True)
 
+    def get_total_resource(self):
+        total_produced = 0
+        for resource in self.resource_group_definition.resources.all():
+            try:
+                total_produced += resource.attributes.get(name=self.name).value
+            except ResourceAttribute.DoesNotExist:
+                pass
+        return total_produced
+
     class Meta:
         unique_together = ('name', 'resource_group_definition',)
 
@@ -131,7 +140,10 @@ class ResourcePoolAttributeDefinition(models.Model):
             attribute_name = producer.name
             for resource in producer.resource_group_definition.resources.all():
                 # For all resource in the resource group, get the good attribute
-                total_produced += resource.attributes.get(name=attribute_name).value
+                try:
+                    total_produced += resource.attributes.get(name=attribute_name).value
+                except ResourceAttribute.DoesNotExist:
+                    pass
         return total_produced
 
     def get_total_consumed(self):
@@ -139,7 +151,10 @@ class ResourcePoolAttributeDefinition(models.Model):
         for consumer in self.consumers.all():
             attribute_name = consumer.name
             for resource in consumer.resource_group_definition.resources.all():
-                total_consumed += resource.attributes.get(name=attribute_name).value
+                try:
+                    total_consumed += resource.attributes.get(name=attribute_name).value
+                except ResourceAttribute.DoesNotExist:
+                    pass
         return total_consumed
 
     def get_percent_consumed(self):
@@ -155,8 +170,10 @@ class ResourcePoolAttributeDefinition(models.Model):
         attribute_name = producer.name
         total_produced = 0
         for resource in producer.resource_group_definition.resources.all():
-            # For all resource in the resource group, get the good attribute
-            total_produced += resource.attributes.get(name=attribute_name).value
+            try:
+                total_produced += resource.attributes.get(name=attribute_name).value
+            except ResourceAttribute.DoesNotExist:
+                pass
         return total_produced
 
     @staticmethod
@@ -164,8 +181,10 @@ class ResourcePoolAttributeDefinition(models.Model):
         attribute_name = consumer.name
         total_consumed = 0
         for resource in consumer.resource_group_definition.resources.all():
-            # For all resource in the resource group, get the good attribute
-            total_consumed += resource.attributes.get(name=attribute_name).value
+            try:
+                total_consumed += resource.attributes.get(name=attribute_name).value
+            except ResourceAttribute.DoesNotExist:
+                pass
         return total_consumed
 
     def remove_all_producer(self):
