@@ -25,6 +25,17 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
+                                <div class="card-tools">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                                <a class="dropdown-item text-primary" href="{% url 'resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
+                                                <a class="dropdown-item text-danger" href="{% url 'resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
                             </div>
                             <div class="card-body">
                                 {% if resource_pool.attributes_definition.all|length == 0 %}
@@ -79,18 +90,6 @@
                                         </tbody>
                                     </table>
                                 {% endif %}
-                            </div>
-                            <div class="card-footer">
-                                <a class="btn btn-info btn-sm" href="{% url 'resource_pool_edit' resource_pool.id %}">
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    Edit
-                                </a>
-                                <a class="btn btn-danger btn-sm" href="{% url 'resource_pool_delete' resource_pool.id %}">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                    Delete
-                                </a>
                             </div>
                         </div>
                     </div>
