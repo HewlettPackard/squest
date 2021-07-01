@@ -42,11 +42,14 @@
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
+
+                                        <a class="btn btn-default bg-sm" href="{% url 'resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
                                             {{ producer.resource_group_definition.resources.all | length }}
                                         </a>
                                     </td>
-                                    <td class="align-middle">{{ attribute|get_total_produced_by:producer }}</td>
+                                    <td class="align-middle">
+                                        <h3><span class="badge badge-success"><i class="fas fa-arrow-up"></i> {{ attribute|get_total_produced_by:producer }}</span></h3>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
