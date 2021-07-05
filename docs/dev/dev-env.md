@@ -41,6 +41,13 @@ Run the Docker dev env to bring up database, message broker and other required s
 docker-compose -f dev-env.docker-compose.yml up
 ```
 
+### Javascript libraries
+
+Install JS libs (npm need to be installed)
+```bash
+npm install
+```
+
 ### Python environment
 
 Initializing and installing python libraries with Poetry
@@ -66,13 +73,6 @@ python manage.py collectstatic --noinput
 Insert default data
 ```bash
 python manage.py insert_default_data
-```
-
-### Javascript libraries
-
-Install JS libs (npm need to be installed)
-```bash
-npm install
 ```
 
 ### Celery worker and periodic task scheduler
