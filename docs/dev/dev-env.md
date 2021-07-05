@@ -120,3 +120,12 @@ Run code coverage
 coverage run --source='.' manage.py test
 coverage report
 ```
+
+
+## phpMyAdmin
+
+phpMyAdmin is exposed on localhost:8082.
+
+- server : db
+- user : root
+- password : p@ssw0rd
