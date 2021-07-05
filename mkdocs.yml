@@ -25,7 +25,7 @@ nav:
   - Home: index.md
   - Deployment: deployment.md
   - Configuration: settings.md
-  - Devevlopment doc:
+  - Development doc:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
