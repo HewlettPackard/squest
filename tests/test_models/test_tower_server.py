@@ -56,7 +56,8 @@ class TestTowerServer(BaseTest):
                                                                               survey_spec=new_survey)])
         self.tower_server_test.sync()
         # assert that the survey has been updated
-        updated_template = JobTemplate.objects.get(id=self.job_template_test.id)
+        updated_template = JobTemplate.objects.get(id=self.job_template_test.id,
+                                                   tower_server=self.tower_server_test)
         self.assertDictEqual(new_survey, updated_template.survey)
         # check that the operation enabled_survey_fields has been updated
         expected_dict = {

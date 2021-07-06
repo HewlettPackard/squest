@@ -19,7 +19,8 @@ class TowerServer(models.Model):
 
         for job_template in tower.job_templates:
             try:
-                updated_job_template = JobTemplateLocal.objects.get(tower_id=job_template.id)
+                updated_job_template = JobTemplateLocal.objects.get(tower_id=job_template.id,
+                                                                    tower_server=self)
                 # update the survey
                 updated_job_template.survey = job_template.survey_spec
                 updated_job_template.save()
