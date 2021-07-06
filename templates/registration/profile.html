@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">User details</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#details" data-toggle="tab">Details</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="details">
+                                <dl class="row">
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Username</dt>
+                                        <dd class="col-sm-8">{{ user.get_username }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Email</dt>
+                                        <dd class="col-sm-8">{{ user.email }}</dd>
+                                    </div>
+                                </dl>
+                                <dl class="row">
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">First name</dt>
+                                        <dd class="col-sm-8">{{ user.get_short_name }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Last Name</dt>
+                                        <dd class="col-sm-8">{{ user.last_name }}</dd>
+                                    </div>
+                                </dl>
+                                <dl class="row">
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Last login</dt>
+                                        <dd class="col-sm-8">{{ user.last_login }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Created</dt>
+                                        <dd class="col-sm-8">{{ user.date_joined }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
