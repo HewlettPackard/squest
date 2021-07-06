@@ -29,6 +29,11 @@ def home(request):
         return render(request, 'customer/dashboard.html', context=context)
 
 
+@login_required
+def profile(request):
+    return render(request, 'registration/profile.html')
+
+
 def request_comment(request, request_id, redirect_to_view):
     target_request = get_object_or_404(Request, id=request_id)
     messages = RequestMessage.objects.filter(request=target_request)
