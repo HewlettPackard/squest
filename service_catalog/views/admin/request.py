@@ -189,5 +189,4 @@ def admin_request_process(request, request_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_comment(request, request_id):
-    return request_comment(request, request_id, admin_request_comment)
-
+    return request_comment(request, request_id, 'service_catalog:admin_request_comment')
