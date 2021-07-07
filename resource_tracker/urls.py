@@ -2,6 +2,8 @@ from django.urls import path
 
 from resource_tracker import views
 
+app_name = 'resource_tracker'
+
 urlpatterns = [
 
     path('resource_group/', views.resource_group_list, name='resource_group_list'),

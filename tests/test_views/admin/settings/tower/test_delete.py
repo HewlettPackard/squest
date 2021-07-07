@@ -11,7 +11,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.args = {
             'tower_id': self.tower_server_test.id,
         }
-        self.url = reverse('delete_tower', kwargs=self.args)
+        self.url = reverse('service_catalog:delete_tower', kwargs=self.args)
 
     def test_admin_can_delete_tower_server(self):
         id_to_delete = self.tower_server_test.id
@@ -31,7 +31,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
             'tower_id': self.tower_server_test.id,
             'job_template_id': self.job_template_test.id
         }
-        url = reverse('delete_job_template', kwargs=args)
+        url = reverse('service_catalog:delete_job_template', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
@@ -43,7 +43,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
             'tower_id': self.tower_server_test.id,
             'job_template_id': self.job_template_test.id
         }
-        url = reverse('delete_job_template', kwargs=args)
+        url = reverse('service_catalog:delete_job_template', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)

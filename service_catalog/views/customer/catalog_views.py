@@ -9,7 +9,7 @@ from service_catalog.models import Service
 @login_required
 def customer_list_service(request):
     services = Service.objects.all()
-    return render(request, 'customer/catalog/service/service-list.html', {'services': services})
+    return render(request, 'service_catalog/customer/catalog/service/service-list.html', {'services': services})
 
 
 @login_required
@@ -24,9 +24,9 @@ def customer_service_request(request, service_id):
         if form.is_valid():
             new_request = form.save()
             send_mail_request_update(target_request=new_request, from_email=request.user.email)
-            return redirect('customer_request_list')
+            return redirect('service_catalog:customer_request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
 
-    return render(request, 'customer/catalog/service/service-request.html', {'form': form,
+    return render(request, 'service_catalog/customer/catalog/service/service-request.html', {'form': form,
                                                                              'service': target_service})

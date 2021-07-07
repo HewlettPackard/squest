@@ -10,7 +10,7 @@ from service_catalog.models.operations import OperationType
 @user_passes_test(lambda u: u.is_superuser)
 def service(request):
     services = Service.objects.all()
-    return render(request, 'settings/catalog/service/service-list.html', {'services': services})
+    return render(request, 'service_catalog/settings/catalog/service/service-list.html', {'services': services})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -24,11 +24,11 @@ def add_service(request):
             Operation.objects.create(name=new_service.name,
                                      service=new_service,
                                      job_template=job_template)
-            return redirect('settings_catalog')
+            return redirect('service_catalog:service_list')
     else:
         form = ServiceForm()
 
-    return render(request, 'settings/catalog/service/service-create.html', {'form': form})
+    return render(request, 'service_catalog/settings/catalog/service/service-create.html', {'form': form})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -39,7 +39,7 @@ def service_operations(request, service_id):
         "operations": operations,
         "service": target_service
     }
-    return render(request, "settings/catalog/service/operation/operation-list.html", context)
+    return render(request, "service_catalog/settings/catalog/service/operation/operation-list.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -47,11 +47,11 @@ def delete_service(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
     if request.method == "POST":
         target_service.delete()
-        return redirect(service)
+        return redirect('service_catalog:service_list')
     context = {
         "object": target_service
     }
-    return render(request, "settings/catalog/service/service-delete.html", context)
+    return render(request, "service_catalog/settings/catalog/service/service-delete.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -61,9 +61,9 @@ def edit_service(request, service_id):
     form = EditServiceForm(request.POST or None, request.FILES or None, instance=target_service)
     if form.is_valid():
         form.save()
-        return redirect(service)
+        return redirect('service_catalog:service_list')
 
-    return render(request, 'settings/catalog/service/service-edit.html', {'form': form,
+    return render(request, 'service_catalog/settings/catalog/service/service-edit.html', {'form': form,
                                                                           'service': target_service})
 
 
@@ -77,11 +77,11 @@ def add_service_operation(request, service_id):
             new_operation = form.save(commit=False)
             new_operation.service = target_service
             new_operation.save()
-            return redirect('service_operations', service_id=target_service.id)
+            return redirect('service_catalog:service_operations', service_id=target_service.id)
     else:
         form = AddServiceOperationForm()
 
-    return render(request, 'settings/catalog/service/operation/operation-create.html', {'form': form,
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-create.html', {'form': form,
                                                                                         'service': target_service})
 
 
@@ -94,13 +94,13 @@ def delete_service_operation(request, service_id, operation_id):
         raise PermissionDenied
     if request.method == "POST":
         target_operation.delete()
-        return redirect('service_operations', service_id=target_service.id)
+        return redirect('service_catalog:service_operations', service_id=target_service.id)
 
     context = {
         "operation": target_operation,
         "service": target_service
     }
-    return render(request, "settings/catalog/service/operation/operation-delete.html", context)
+    return render(request, "service_catalog/settings/catalog/service/operation/operation-delete.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -112,9 +112,9 @@ def edit_service_operation(request, service_id, operation_id):
                                    initial={'job_template': target_operation.job_template.name})
     if form.is_valid():
         form.save()
-        return redirect('service_operations', service_id=target_service.id)
+        return redirect('service_catalog:service_operations', service_id=target_service.id)
 
-    return render(request, 'settings/catalog/service/operation/operation-edit.html', {'form': form,
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit.html', {'form': form,
                                                                                       'service': target_service,
                                                                                       'operation': target_operation})
 
@@ -130,11 +130,11 @@ def service_operation_edit_survey(request, service_id, operation_id):
         form = SurveySelectorForm(request.POST, **parameters)
         if form.is_valid():
             form.save()
-            return redirect('service_operations', service_id=target_service.id)
+            return redirect('service_catalog:service_operations', service_id=target_service.id)
     else:
         form = SurveySelectorForm(**parameters)
 
     context = {'form': form,
                'service': target_service,
                'operation': target_operation}
-    return render(request, 'settings/catalog/service/operation/operation-edit-survey.html', context=context)
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit-survey.html', context=context)

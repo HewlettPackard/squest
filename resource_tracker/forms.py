@@ -4,6 +4,7 @@ from django.forms import ModelForm
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
     Resource, ResourceAttribute, ResourcePool
+from service_catalog.models import Instance
 
 
 class ResourceGroupForm(ModelForm):
@@ -51,6 +52,11 @@ class ResourceForm(ModelForm):
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+    service_catalog_instance = forms.ModelChoiceField(queryset=Instance.objects.all(),
+                                                      label="Service catalog instance",
+                                                      required=False,
+                                                      widget=forms.Select(attrs={'class': 'form-control'}))
+
     def __init__(self, *args, **kwargs):
         resource_group_id = kwargs.pop('resource_group_id', None)
         self.resource_group = ResourceGroup.objects.get(id=resource_group_id)
@@ -75,14 +81,17 @@ class ResourceForm(ModelForm):
     def save(self, **kwargs):
         resource_name = self.cleaned_data["name"]
         if self._newly_created:
-            self.instance = Resource.objects.create(name=resource_name, resource_group=self.resource_group)
+            self.instance = super(ResourceForm, self).save()
+            self.instance.resource_group = self.resource_group
         else:
             self.instance.name = resource_name
-            self.instance.save()
+
+        self.instance.save()
 
         # get all attribute
+        list_attribute_to_skip = ["name", "service_catalog_instance"]
         for attribute_name, value in self.cleaned_data.items():
-            if attribute_name is not "name" and value is not None and value != "":
+            if attribute_name not in list_attribute_to_skip and value is not None and value != "":
                 self.instance.add_attribute(ResourceGroupAttributeDefinition.objects.
                                             get(name=attribute_name,
                                                 resource_group_definition=self.resource_group))
@@ -94,7 +103,7 @@ class ResourceForm(ModelForm):
 
     class Meta:
         model = Resource
-        fields = ["name"]
+        fields = ["name", "service_catalog_instance"]
 
 
 class ResourcePoolForm(ModelForm):

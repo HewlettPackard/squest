@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>My instances</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-cube"></i>
+                            {{ instance.name }}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">Name</span>
+                                        <span class="info-box-number text-center text-muted mb-0">{{ instance.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">State</span>
+                                        <span class="info-box-number text-center text-{{ instance.state|map_instance_state}} mb-0">{{ instance.state }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">Service</span>
+                                        <span class="info-box-number text-center text-muted mb-0">{{ instance.service.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end card body -->
+                </div>
+
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="card"><!-- card json spec -->
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-code"></i> Instance current spec</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                {{ spec_json_pretty|safe }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="card"><!-- card json spec -->
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-medkit"></i> Support</h3>
+                                <div class="card-tools">
+                                    <a href="{% url 'service_catalog:customer_instance_new_support' instance.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus"></i> New support case
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="customer_support_on_instance_list" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Opened</th>
+                                        <th>Closed</th>
+                                        <th>State</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {%  for support in supports %}
+                                        <tr>
+                                            <td class="align-middle"><a href="{% url 'service_catalog:customer_instance_support_details' instance_id=support.instance.id support_id=support.id %}">{{ support.title }}</a></td>
+                                            <td class="align-middle">{{ support.date_opened }}</td>
+                                            <td class="align-middle">{{ support.date_closed }}</td>
+                                            <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ support.state |map_support_state }} btn-block">{{ support.state }}</span></h4></td>
+                                        </tr>
+                                    {%  endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card"><!-- card operations -->
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-wrench"></i> Operations</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="customer_request_operation_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Request</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for operation in operations %}
+                                <tr>
+                                    <td class="align-middle">{{ operation.name }}</td>
+                                    <td class="align-middle">{{ operation.description }}</td>
+                                    <td class="align-middle"><h4><span class="badge bg-{{ operation.type|map_operation_type }}">{{ operation.type }}</span></h4></td>
+                                    <td class="align-middle">
+                                        <a href="{% url 'service_catalog:customer_instance_request_new_operation' instance_id=instance.id operation_id=operation.id %}" class="btn btn-info bg-sm">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- end container fluid -->
+        </div>
+    </div>
+{% endblock %}
