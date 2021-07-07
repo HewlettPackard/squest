@@ -9,19 +9,19 @@
       
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.2">
     
     
       
-        <title>Documentation - Squest</title>
+        <title>Tower - Squest</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6f955dcd.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f955dcd.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
         
           
           
@@ -55,7 +55,7 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="blue">
   
     
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing-to-the-documentation" class="md-skip">
+        <a href="#tower-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -74,9 +74,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Squest" class="md-header__button md-logo" aria-label="Squest" data-md-component="logo">
+    <a href=".." title="Squest" class="md-header__button md-logo" aria-label="Squest" data-md-component="logo">
       
-  <img src="../../images/ansible_tower_logo.svg" alt="logo">
+  <img src="../images/ansible_tower_logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -92,7 +92,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Documentation
+              Tower
             
           </span>
         </div>
@@ -166,9 +166,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Squest" class="md-nav__button md-logo" aria-label="Squest" data-md-component="logo">
+    <a href=".." title="Squest" class="md-nav__button md-logo" aria-label="Squest" data-md-component="logo">
       
-  <img src="../../images/ansible_tower_logo.svg" alt="logo">
+  <img src="../images/ansible_tower_logo.svg" alt="logo">
 
     </a>
     Squest
@@ -197,7 +197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Home
       </a>
     </li>
@@ -212,7 +212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deployment/" class="md-nav__link">
+      <a href="../deployment/" class="md-nav__link">
         Deployment
       </a>
     </li>
@@ -225,12 +225,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
       
       <label class="md-nav__link" for="__nav_3">
         Configuration
@@ -248,7 +250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../squest_settings/" class="md-nav__link">
+      <a href="../squest_settings/" class="md-nav__link">
         Squest
       </a>
     </li>
@@ -258,11 +260,58 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../tower_settings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Tower
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Tower
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-an-application-on-your-towerawx-instance" class="md-nav__link">
+    Create an application on your Tower/AWX instance
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-token-for-squest-application" class="md-nav__link">
+    Create a token for Squest application
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -281,7 +330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lifecycle_management/" class="md-nav__link">
+      <a href="../lifecycle_management/" class="md-nav__link">
         Lifecycle management
       </a>
     </li>
@@ -317,7 +366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/dev-env/" class="md-nav__link">
+      <a href="../dev/dev-env/" class="md-nav__link">
         Setup a dev env
       </a>
     </li>
@@ -329,7 +378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/request-state-machine/" class="md-nav__link">
+      <a href="../dev/request-state-machine/" class="md-nav__link">
         Request state machine
       </a>
     </li>
@@ -341,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/instance-state-machine/" class="md-nav__link">
+      <a href="../dev/instance-state-machine/" class="md-nav__link">
         Instance state machine
       </a>
     </li>
@@ -353,7 +402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/db-erd/" class="md-nav__link">
+      <a href="../dev/db-erd/" class="md-nav__link">
         Database ERD
       </a>
     </li>
@@ -372,14 +421,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
       
       <label class="md-nav__link" for="__nav_6">
         Contribute
@@ -395,44 +442,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Documentation
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../contribute/documentation/" class="md-nav__link">
         Documentation
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -468,6 +482,20 @@
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
+        <li class="md-nav__item">
+  <a href="#create-an-application-on-your-towerawx-instance" class="md-nav__link">
+    Create an application on your Tower/AWX instance
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-token-for-squest-application" class="md-nav__link">
+    Create a token for Squest application
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -480,21 +508,31 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/HewlettPackard/squest/edit/master/docs/contribute/documentation.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/HewlettPackard/squest/edit/master/docs/tower_settings.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="contributing-to-the-documentation">Contributing to the documentation</h1>
-<p>The documentation is written in markdown and then generated with <a href="https://www.mkdocs.org/">mkdocs</a>.
-Required libraries are installed if you've followed the <a href="../../dev/dev-env/">development environment documentation</a> of the project.</p>
-<p>Graphs and diagrams are generated by the <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid library</a>.</p>
-<p>Update the documentation in the <code>docs</code> folder placed in the root of the project.</p>
-<p>Run dev server locally to check the result
-<div class="highlight"><pre><span></span><code>mkdocs serve
-</code></pre></div></p>
-<p>The page is available on <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
-<p>Send a pull request then to propose your changes to the project.</p>
+                <h1 id="tower-configuration">Tower configuration</h1>
+<p>Squest will need a token in order to communicate with your Tower instance.</p>
+<h2 id="create-an-application-on-your-towerawx-instance">Create an application on your Tower/AWX instance</h2>
+<p>On Tower, go in Application menu and create a new app with the following configuration:</p>
+<ul>
+<li><strong>name:</strong> squest</li>
+<li><strong>Organization:</strong> Default  </li>
+<li><strong>Authorization grant type:</strong> Resource owner password based</li>
+<li><strong>Client type:</strong> Confidential</li>
+</ul>
+<h2 id="create-a-token-for-squest-application">Create a token for Squest application</h2>
+<p>On Tower/AWX:</p>
+<ul>
+<li>Go in your <strong>User Details</strong> page (top right corner), go into the tokens section</li>
+<li>Click add button</li>
+<li>Search for the "squest" application created previously and select it</li>
+<li>Give a scope "write"</li>
+<li>Save</li>
+<li>Copy the generated token. This will be the token to give to Squest when creating a new Tower server instance.</li>
+</ul>
                 
               
               
@@ -513,7 +551,7 @@ Required libraries are installed if you've followed the <a href="../../dev/dev-e
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../../dev/db-erd/" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="../squest_settings/" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -522,11 +560,25 @@ Required libraries are installed if you've followed the <a href="../../dev/dev-e
               <span class="md-footer__direction">
                 Previous
               </span>
-              Database ERD
+              Squest
             </div>
           </div>
         </a>
       
+      
+        <a href="../lifecycle_management/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Lifecycle management
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
       
     </nav>
   
@@ -549,10 +601,10 @@ Required libraries are installed if you've followed the <a href="../../dev/dev-e
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4ea5477f.min.js"></script>
+      <script src="../assets/javascripts/bundle.4ea5477f.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.9.2/mermaid.min.js"></script>
       
