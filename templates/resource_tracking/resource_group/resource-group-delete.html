@@ -32,7 +32,7 @@
                         {% endif %}
 
 
-                        <form class="form-horizontal" action="{% url 'resource_group_delete' resource_group.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_group_delete' resource_group.id %}" method="post">{% csrf_token %}
                             <!-- validate button -->
                             <button class="btn btn-danger" type="submit">
                                 <i class="fas fa-trash"></i>

@@ -11,7 +11,7 @@
                         <h1>Resource pools</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'resource_pool_create' %}">
+                        <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_pool_create' %}">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
@@ -31,8 +31,8 @@
                                                 <i class="fas fa-wrench"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                                <a class="dropdown-item text-primary" href="{% url 'resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
-                                                <a class="dropdown-item text-danger" href="{% url 'resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
+                                                <a class="dropdown-item text-primary" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
+                                                <a class="dropdown-item text-danger" href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
                                             </div>
                                         </div>
                                     </div>
@@ -41,7 +41,7 @@
                                 {% if resource_pool.attributes_definition.all|length == 0 %}
                                     <div class="row">
                                         <div class="col text-center">
-                                            <a class="btn btn-lg btn-success text-center" href="{% url 'resource_pool_attribute_create' resource_pool.id %}">
+                                            <a class="btn btn-lg btn-success text-center" href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}">
                                                 <i class="fas fa-plus"></i> Add attribute
                                             </a>
                                         </div>
@@ -70,13 +70,13 @@
                                                         </div>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <a href="{% url 'resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                        <a href="{% url 'resource_tracker:resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
                                                             {{ total_produced }}
                                                         </a>
 
                                                     </td>
                                                     <td class="align-middle">
-                                                        <a href="{% url 'resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                        <a href="{% url 'resource_tracker:resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
                                                             {{ total_consumed }}
                                                         </a>
 
