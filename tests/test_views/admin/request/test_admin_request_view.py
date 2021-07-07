@@ -17,7 +17,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_cancel', kwargs=args)
+        url = reverse('service_catalog:admin_request_cancel', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())
@@ -26,7 +26,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_need_info', kwargs=args)
+        url = reverse('service_catalog:admin_request_need_info', kwargs=args)
         data = {
             "message": "admin message"
         }
@@ -42,7 +42,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_re_submit', kwargs=args)
+        url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
@@ -52,7 +52,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_reject', kwargs=args)
+        url = reverse('service_catalog:admin_request_reject', kwargs=args)
         data = {
             "message": "admin message"
         }
@@ -70,7 +70,7 @@ class CustomerRequestViewTest(BaseTestRequest):
                 'multiplechoice_variable': 'choice1'
                 }
 
-        url = reverse('admin_request_accept', kwargs=args)
+        url = reverse('service_catalog:admin_request_accept', kwargs=args)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
@@ -110,7 +110,7 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_process', kwargs=args)
+        url = reverse('service_catalog:admin_request_process', kwargs=args)
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             mock_job_execute.return_value = 10
             response = self.client.post(url)
@@ -173,6 +173,6 @@ class CustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': request_update.id
         }
-        url = reverse('admin_request_process', kwargs=args)
+        url = reverse('service_catalog:admin_request_process', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(403, response.status_code)

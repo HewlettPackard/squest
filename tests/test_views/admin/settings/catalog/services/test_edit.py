@@ -11,7 +11,7 @@ class ServiceDeleteTestCase(BaseTest):
         args = {
             "service_id": self.service_test.id
         }
-        self.url = reverse('edit_service', kwargs=args)
+        self.url = reverse('service_catalog:edit_service', kwargs=args)
         self.data = {
             "name": "service-test-updated",
             "description": "description-of-service-test-updated"

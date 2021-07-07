@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>My requests</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+
+                    <div class="card-body">
+                        <table id="customer_request_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Instance</th>
+                                <th>Service</th>
+                                <th>Operation name</th>
+                                <th>Operation type</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for o_request in filter.qs %}
+                                {% if o_request.instance.state != "ARCHIVED" %}
+                                <tr>
+                                    <td class="align-middle">
+                                        <a href="{% url "service_catalog:customer_instance_details" o_request.instance.id %}">
+                                            {{ o_request.instance.name }}
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">{{ o_request.instance.service.name }}</td>
+                                    <td class="align-middle">{{ o_request.operation.name }}</td>
+                                    <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ o_request.operation.type |map_operation_type }} btn-block">{{ o_request.operation.type }}</span></h4></td>
+                                    <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ o_request.state |map_request_state }} btn-block">{{ o_request.state }}</span></h4></td>
+                                    <td style="width: 10%" class="align-middle">
+                                        <a href="{% url 'service_catalog:customer_request_comment' o_request.id %}" class="btn btn-primary bg-sm" title="Comments">
+                                            <i class="fas fa-comments"></i>
+                                        </a>
+                                        {% if o_request.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
+                                            <a href="{% url 'service_catalog:customer_request_cancel' o_request.id %}" class="btn btn-danger bg-sm" title="Cancel request">
+                                                <i class="fas fa-ban"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

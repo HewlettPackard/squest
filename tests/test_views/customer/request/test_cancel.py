@@ -14,7 +14,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('customer_request_cancel', kwargs=args)
+        url = reverse('service_catalog:customer_request_cancel', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())
@@ -23,7 +23,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('customer_request_cancel', kwargs=args)
+        url = reverse('service_catalog:customer_request_cancel', kwargs=args)
         self.client.post(url)
         self.assertRaises(PermissionDenied)
 
@@ -47,7 +47,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('admin_request_cancel', kwargs=args)
+        url = reverse('service_catalog:admin_request_cancel', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())

@@ -28,6 +28,9 @@ class Instance(models.Model):
     service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
     state = FSMField(default=InstanceState.PENDING)
 
+    def __str__(self):
+        return "{}-{}".format(self.id, self.name)
+
     @transition(field=state, source=[InstanceState.PENDING, InstanceState.PROVISION_FAILED],
                 target=InstanceState.PROVISIONING)
     def provisioning(self):

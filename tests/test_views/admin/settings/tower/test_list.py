@@ -7,7 +7,7 @@ class AdminTowerListViewsTest(BaseTestTower):
 
     def setUp(self):
         super(AdminTowerListViewsTest, self).setUp()
-        self.url = reverse('list_tower')
+        self.url = reverse('service_catalog:list_tower')
 
     def test_admin_can_list_tower_server(self):
         response = self.client.get(self.url)

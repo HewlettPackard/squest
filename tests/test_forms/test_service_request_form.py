@@ -39,7 +39,7 @@ class TestServiceRequestForm(BaseTest):
         url_args = {
             'service_id': self.service_test.id,
         }
-        url = reverse('customer_service_request', kwargs=url_args)
+        url = reverse('service_catalog:customer_service_request', kwargs=url_args)
         response = self.client.post(
             url, data={"text_variable": "value"}
         )
