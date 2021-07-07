@@ -1,0 +1,43 @@
+- name: Create a file
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    squest:
+      instance:
+        id: 1
+        name: test
+        service: 1
+        spec: { }
+        state: PROVISIONING
+
+  tasks:
+    - name: Print the job tempalate survey variable
+      debug:
+        var: file_name
+
+    - name: Print info sent by Squest
+      debug:
+        var: squest
+
+    - name: Create a file wit hthe given name
+      ansible.builtin.file:
+        path: "/tmp/{{ file_name }}"
+        owner: nico
+        group: nico
+        mode: '0644'
+        state: touch
+
+    - name: Update squest with info
+      uri:
+        url: "http://192.168.58.128:8000/api/admin/instance/{{ squest['instance']['id'] }}/"
+        user: "admin"
+        password: "admin"
+        method: PATCH
+        body:
+          spec:
+            file_name: "{{ file_name }}"
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
