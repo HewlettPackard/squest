@@ -12,7 +12,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         super(TestAdminInstanceViews, self).setUp()
 
     def test_get_instance_list(self):
-        url = reverse('admin_instance_list')
+        url = reverse('service_catalog:admin_instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("filter" in response.context)
@@ -20,7 +20,7 @@ class TestAdminInstanceViews(BaseTestRequest):
 
     def test_customer_cannot_list_instance_from_admin_view(self):
         self.client.login(username=self.standard_user, password=self.common_password)
-        url = reverse('admin_instance_list')
+        url = reverse('service_catalog:admin_instance_list')
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)
         self.assertIsNone(response.context)
@@ -29,7 +29,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('admin_instance_details', kwargs=args)
+        url = reverse('service_catalog:admin_instance_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("instance" in response.context)
@@ -40,7 +40,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('admin_instance_details', kwargs=args)
+        url = reverse('service_catalog:admin_instance_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)
 
@@ -48,7 +48,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('admin_instance_new_support', kwargs=args)
+        url = reverse('service_catalog:admin_instance_new_support', kwargs=args)
         data = {
             "title": "test_support",
             "content": "test_support_content"
@@ -63,7 +63,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('admin_instance_new_support', kwargs=args)
+        url = reverse('service_catalog:admin_instance_new_support', kwargs=args)
         data = {
             "title": "test_support",
             "content": "test_support_content"
@@ -78,7 +78,7 @@ class TestAdminInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('admin_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:admin_instance_support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("support" in response.context)
@@ -90,7 +90,7 @@ class TestAdminInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('admin_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:admin_instance_support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)
         self.assertIsNone(response.context)
@@ -99,7 +99,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id,
         }
-        url = reverse('admin_instance_edit', kwargs=args)
+        url = reverse('service_catalog:admin_instance_edit', kwargs=args)
         json_spec = {
                 "key1": "val1",
                 "key2": "val2"
@@ -118,7 +118,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id,
         }
-        url = reverse('admin_instance_edit', kwargs=args)
+        url = reverse('service_catalog:admin_instance_edit', kwargs=args)
         json_spec = {
             "key1": "val1",
             "key2": "val2"

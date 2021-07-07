@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Accept a request</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if form.non_field_errors %}
+                                    {{ form.non_field_errors }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal" action="{% url 'service_catalog:admin_request_accept' target_request.id %}" method="post">{% csrf_token %}
+
+                            {% regroup form|dictsort:"field.group" by field.group as field_groups %}
+                            {% for field_group in field_groups %}
+                                <h5 class="text-primary">{{field_group.grouper}}</h5>
+                                {% for field in field_group.list %}
+                                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                        <label for="{{field.name}}" class="col-sm-2 control-label">
+                                            {{ field.label }}
+                                        </label>
+                                        <div class="col-sm-4">
+                                            {{ field }}
+                                            {% if field.help_text %}
+                                                <small id="emailHelp" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <!-- validate button -->
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        Accept the request
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

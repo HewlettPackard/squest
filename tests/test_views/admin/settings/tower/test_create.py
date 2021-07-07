@@ -12,7 +12,7 @@ class AdminTowerCreateViewsTest(BaseTestTower):
 
     def setUp(self):
         super(AdminTowerCreateViewsTest, self).setUp()
-        self.url = reverse('add_tower')
+        self.url = reverse('service_catalog:add_tower')
         self.data = {
             "name": "tower1",
             "host": "https://tower.domain.local",

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_list(request):
     f = RequestFilter(request.GET, queryset=Request.objects.all())
-    return render(request, 'admin/request/request-list.html', {'filter': f})
+    return render(request, 'service_catalog/admin/request/request-list.html', {'filter': f})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -31,11 +31,11 @@ def admin_request_cancel(request, request_id):
         send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
         # now delete the request and the pending instance
         target_request.delete()
-        return redirect(admin_request_list)
+        return redirect('service_catalog:admin_request_list')
     context = {
         "object": target_request
     }
-    return render(request, "admin/request/request-cancel.html", context)
+    return render(request, "service_catalog/admin/request/request-cancel.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -56,7 +56,7 @@ def admin_request_need_info(request, request_id):
             target_request.save()
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, from_email=request.user.email, message=message)
-            return redirect(admin_request_list)
+            return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
 
@@ -64,7 +64,7 @@ def admin_request_need_info(request, request_id):
         "form": form,
         "target_request": target_request
     }
-    return render(request, "admin/request/request-need-info.html", context)
+    return render(request, "service_catalog/admin/request/request-need-info.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -83,7 +83,7 @@ def admin_request_re_submit(request, request_id):
             target_request.re_submit()
             target_request.save()
             send_mail_request_update(target_request, from_email=request.user.email)
-            return redirect(admin_request_list)
+            return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
 
@@ -91,7 +91,7 @@ def admin_request_re_submit(request, request_id):
         "form": form,
         "target_request": target_request
     }
-    return render(request, "admin/request/request-re-submit.html", context)
+    return render(request, "service_catalog/admin/request/request-re-submit.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -111,7 +111,7 @@ def admin_request_reject(request, request_id):
             target_request.save()
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, from_email=request.user.email, message=message)
-            return redirect(admin_request_list)
+            return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
 
@@ -119,7 +119,7 @@ def admin_request_reject(request, request_id):
         "form": form,
         "target_request": target_request
     }
-    return render(request, "admin/request/request-reject.html", context)
+    return render(request, "service_catalog/admin/request/request-reject.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -134,7 +134,7 @@ def admin_request_accept(request, request_id):
             form.save()
             target_request.refresh_from_db()
             send_mail_request_update(target_request, from_email=request.user.email)
-            return redirect(admin_request_list)
+            return redirect('service_catalog:admin_request_list')
     else:
         form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
 
@@ -142,7 +142,7 @@ def admin_request_accept(request, request_id):
         "form": form,
         "target_request": target_request
     }
-    return render(request, 'admin/request/request-accept.html', context=context)
+    return render(request, 'service_catalog/admin/request/request-accept.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -178,13 +178,13 @@ def admin_request_process(request, request_id):
         if not error:
             target_request.save()
             send_mail_request_update(target_request, from_email=request.user.email)
-            return redirect(admin_request_list)
+            return redirect('service_catalog:admin_request_list')
 
     context = {
         "target_request": target_request,
         "error_message": error_message
     }
-    return render(request, "admin/request/request-process.html", context)
+    return render(request, "service_catalog/admin/request/request-process.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

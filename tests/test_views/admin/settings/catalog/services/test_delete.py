@@ -11,7 +11,7 @@ class ServiceDeleteTestCase(BaseTest):
         args = {
             "service_id": self.service_test.id
         }
-        self.url = reverse('delete_service', kwargs=args)
+        self.url = reverse('service_catalog:delete_service', kwargs=args)
 
     def test_delete_service(self):
         number_service_before = Service.objects.all().count()

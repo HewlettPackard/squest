@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Catalog</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Confirm deletion</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action='{% url 'service_catalog:delete_service_operation' service_id=service.id operation_id=operation.id %}' method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the service operation "{{ operation.name }}"?</p>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a class="btn btn-default" href="{% url 'service_catalog:settings_catalog' %}">Cancel</a>
+                        </form>
+                    </div>
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
