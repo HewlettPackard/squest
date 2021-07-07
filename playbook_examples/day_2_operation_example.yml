@@ -1,0 +1,29 @@
+- name: Update content of a file
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    squest:
+      instance:
+        id: 1
+        name: test
+        service: 1
+        spec:
+          file_name: foo.conf
+        state: UPDATING
+
+  tasks:
+    - name: Print the job tempalate survey variable
+      debug:
+        var: string_to_place_in_file
+
+    - name: Print info sent by Squest
+      debug:
+        var: squest
+
+    - name: Add content into the file_name given by squest instance spec
+      ansible.builtin.lineinfile :
+        path: "/tmp/{{ squest['instance']['spec']['file_name'] }}"
+        line: "{{ string_to_place_in_file }}"
+        create: yes
