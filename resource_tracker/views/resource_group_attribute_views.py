@@ -16,7 +16,7 @@ def resource_group_attribute_create(request, resource_group_id):
             new_attribute.resource_group_definition = resource_group
             new_attribute.save()
             from resource_tracker.views import resource_group_edit
-            return redirect(resource_group_edit, resource_group.id)
+            return redirect("resource_tracker:resource_group_edit", resource_group.id)
     else:
         form = ResourceGroupAttributeDefinitionForm()
 
@@ -33,7 +33,7 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     if form.is_valid():
         form.save()
         from resource_tracker.views import resource_group_edit
-        return redirect(resource_group_edit, resource_group.id)
+        return redirect("resource_tracker:resource_group_edit", resource_group.id)
     return render(request, 'resource_tracking/resource_group/attributes/attribute-edit.html',
                   {'form': form, 'attribute': attribute, 'resource_group': resource_group})
 
@@ -45,7 +45,7 @@ def resource_group_attribute_delete(request, resource_group_id, attribute_id):
     if request.method == "POST":
         attribute.delete()
         from resource_tracker.views import resource_group_edit
-        return redirect(resource_group_edit, resource_group.id)
+        return redirect("resource_tracker:resource_group_edit", resource_group.id)
     context = {
         "resource_group": resource_group,
         "attribute": attribute

@@ -24,7 +24,7 @@ def resource_pool_create(request):
         form = ResourcePoolForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(resource_pool_list)
+            return redirect("resource_tracker:resource_pool_list")
     else:
         form = ResourcePoolForm()
     return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', {'form': form})
@@ -36,7 +36,7 @@ def resource_pool_edit(request, resource_pool_id):
     form = ResourcePoolForm(request.POST or None, instance=resource_pool)
     if form.is_valid():
         form.save()
-        return redirect(resource_pool_list)
+        return redirect("resource_tracker:resource_pool_list")
     return render(request,
                   'resource_tracking/resource_pool/resource-pool-edit.html', {'form': form,
                                                                               'resource_pool': resource_pool})
@@ -53,7 +53,7 @@ def resource_pool_delete(request, resource_pool_id):
         # now delete all attribute and then the pool itself
         resource_pool.attributes_definition.all().delete()
         resource_pool.delete()
-        return redirect(resource_pool_list)
+        return redirect("resource_tracker:resource_pool_list")
 
     return render(request,
                   'resource_tracking/resource_pool/resource-pool-delete.html', {'resource_pool': resource_pool})
@@ -69,7 +69,7 @@ def resource_pool_attribute_create(request, resource_pool_id):
             new_attribute = form.save()
             new_attribute.resource_pool = resource_pool
             new_attribute.save()
-            return redirect(resource_pool_edit, resource_pool.id)
+            return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
     else:
         form = ResourcePoolAttributeDefinitionForm()
 
@@ -84,7 +84,7 @@ def resource_pool_attribute_delete(request, resource_pool_id, attribute_id):
     attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
     if request.method == "POST":
         attribute.delete()
-        return redirect(resource_pool_edit, resource_pool.id)
+        return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
     context = {
         "resource_pool": resource_pool,
         "attribute": attribute
@@ -99,7 +99,7 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
     form = ResourcePoolAttributeDefinitionForm(request.POST or None, instance=attribute)
     if form.is_valid():
         form.save()
-        return redirect(resource_pool_edit, resource_pool.id)
+        return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
     return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html',
                   {'form': form, 'attribute': attribute, 'resource_pool': resource_pool})
 
