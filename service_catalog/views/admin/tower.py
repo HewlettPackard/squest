@@ -12,7 +12,7 @@ from service_catalog.serializers import TaskResultSerializer
 @permission_required('service_catalog.view_towerserver')
 def list_tower(request):
     tower_servers = TowerServer.objects.all()
-    return render(request, 'settings/tower/tower-list.html', {'tower_servers': tower_servers})
+    return render(request, 'service_catalog/settings/tower/tower-list.html', {'tower_servers': tower_servers})
 
 
 @permission_required('service_catalog.add_towerserver')
@@ -21,10 +21,10 @@ def add_tower(request):
         form = TowerServerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(list_tower)
+            return redirect('service_catalog:list_tower')
     else:
         form = TowerServerForm()
-    return render(request, 'settings/tower/tower-create.html', {'form': form})
+    return render(request, 'service_catalog/settings/tower/tower-create.html', {'form': form})
 
 
 @permission_required('service_catalog.change_towerserver')
@@ -50,7 +50,7 @@ def tower_job_templates_list(request, tower_id):
     context = {
         "job_templates": job_templates
     }
-    return render(request, "settings/tower/job_templates/job-templates-list.html", context)
+    return render(request, "service_catalog/settings/tower/job_templates/job-templates-list.html", context)
 
 
 @permission_required('service_catalog.delete_towerserver')
@@ -58,18 +58,18 @@ def delete_tower(request, tower_id):
     obj = get_object_or_404(TowerServer, id=tower_id)
     if request.method == "POST":
         obj.delete()
-        return redirect(list_tower)
+        return redirect('service_catalog:list_tower')
     context = {
         "object": obj
     }
-    return render(request, "settings/tower/tower-delete.html", context)
+    return render(request, "service_catalog/settings/tower/tower-delete.html", context)
 
 
 @permission_required('service_catalog.delete_jobtemplate')
 def delete_job_template(request, tower_id, job_template_id):
     obj = get_object_or_404(JobTemplate, id=job_template_id)
     obj.delete()
-    return redirect('tower_job_templates_list', tower_id=tower_id)
+    return redirect('service_catalog:tower_job_templates_list', tower_id=tower_id)
 
 
 @permission_required('service_catalog.change_towerserver')
@@ -78,5 +78,5 @@ def update_tower(request, tower_id):
     form = TowerServerForm(request.POST or None, instance=tower_server)
     if form.is_valid():
         form.save()
-        return redirect(list_tower)
-    return render(request, 'settings/tower/tower-edit.html', {'form': form, 'tower_server': tower_server})
+        return redirect('service_catalog:list_tower')
+    return render(request, 'service_catalog/settings/tower/tower-edit.html', {'form': form, 'tower_server': tower_server})

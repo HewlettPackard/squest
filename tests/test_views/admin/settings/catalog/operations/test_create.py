@@ -11,7 +11,7 @@ class OperationCreateTestCase(BaseTest):
         args = {
             'service_id': self.service_test.id,
         }
-        self.url = reverse('add_service_operation', kwargs=args)
+        self.url = reverse('service_catalog:add_service_operation', kwargs=args)
 
     def test_create_service_operation(self):
         data = {

@@ -21,10 +21,10 @@
                         <h3 class="card-title">Confirm deletion</h3>
                     </div>
                     <div class="card-body">
-                        <form action='{% url 'resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}' method='POST'>{% csrf_token %}
+                        <form action='{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}' method='POST'>{% csrf_token %}
                             <p>Do you want to delete the attribute definition "{{ attribute.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'resource_pool_edit' resource_pool.id %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

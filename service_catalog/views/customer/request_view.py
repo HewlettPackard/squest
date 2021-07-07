@@ -14,7 +14,7 @@ from service_catalog.views import request_comment
 @login_required
 def customer_request_list(request):
     f = RequestFilter(request.GET, queryset=get_objects_for_user(request.user, 'service_catalog.view_request'))
-    return render(request, 'customer/request/request-list.html', {'filter': f})
+    return render(request, 'service_catalog/customer/request/request-list.html', {'filter': f})
 
 
 @permission_required_or_403('service_catalog.delete_request', (Request, 'id', 'request_id'))
@@ -28,14 +28,14 @@ def customer_request_cancel(request, request_id):
         send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
         # now delete the request
         target_request.delete()
-        return redirect(customer_request_list)
+        return redirect('service_catalog:customer_request_list')
     context = {
         "object": target_request
     }
-    return render(request, "customer/request/request-cancel.html", context)
+    return render(request, "service_catalog/customer/request/request-cancel.html", context)
 
 
 @permission_required_or_403('service_catalog.view_request', (Request, 'id', 'request_id'))
 def customer_request_comment(request, request_id):
-    return request_comment(request, request_id, customer_request_comment)
+    return request_comment(request, request_id, 'service_catalog:customer_request_comment')
 

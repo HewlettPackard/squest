@@ -17,7 +17,7 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
             "host": "https://tower-updated.domain.local",
             "token": "xxxx-updated"
         }
-        self.url = reverse('update_tower', kwargs=self.args)
+        self.url = reverse('service_catalog:update_tower', kwargs=self.args)
 
     def test_update_tower(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:

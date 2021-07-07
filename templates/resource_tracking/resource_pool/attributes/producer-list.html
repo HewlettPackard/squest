@@ -32,18 +32,18 @@
                             {% for producer in attribute.producers.all %}
                                 <tr>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_group_attribute_edit' resource_group_id=producer.resource_group_definition.id attribute_id=producer.id %}">
+                                        <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=producer.resource_group_definition.id attribute_id=producer.id %}">
                                             {{ producer.name }}
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_group_edit' resource_group_id=producer.resource_group_definition.id %}">
+                                        <a href="{% url 'resource_tracker:resource_group_edit' resource_group_id=producer.resource_group_definition.id %}">
                                             {{ producer.resource_group_definition.name }}
                                         </a>
                                     </td>
                                     <td class="align-middle">
 
-                                        <a class="btn btn-default bg-sm" href="{% url 'resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
+                                        <a class="btn btn-default bg-sm" href="{% url 'resource_tracker:resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
                                             {{ producer.resource_group_definition.resources.all | length }}
                                         </a>
                                     </td>

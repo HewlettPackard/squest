@@ -20,13 +20,13 @@ def home(request):
             "total_instance": Instance.objects.filter(state="AVAILABLE").count(),
             "total_user": User.objects.all().count()
         }
-        return render(request, 'admin/dashboard.html', context=context)
+        return render(request, 'service_catalog/admin/dashboard.html', context=context)
     else:
         context = {
             "total_request": get_objects_for_user(request.user, 'service_catalog.view_request').filter(state=RequestState.SUBMITTED).count(),
             "total_instance": get_objects_for_user(request.user, 'service_catalog.view_instance').filter(state=InstanceState.AVAILABLE).count(),
         }
-        return render(request, 'customer/dashboard.html', context=context)
+        return render(request, 'service_catalog/customer/dashboard.html', context=context)
 
 
 @login_required
@@ -53,7 +53,7 @@ def request_comment(request, request_id, redirect_to_view):
         "target_request": target_request,
         "messages": messages
     }
-    return render(request, "common/request-comment.html", context)
+    return render(request, "service_catalog/common/request-comment.html", context)
 
 
 def instance_new_support(request, instance_id):
@@ -66,13 +66,13 @@ def instance_new_support(request, instance_id):
         if form.is_valid():
             form.save()
             if request.user.is_superuser:
-                return redirect('admin_instance_details', target_instance.id)
+                return redirect('service_catalog:admin_instance_details', target_instance.id)
             else:
-                return redirect('customer_instance_details', target_instance.id)
+                return redirect('service_catalog:customer_instance_details', target_instance.id)
     else:
         form = SupportRequestForm(request.user, **parameters)
 
-    return render(request, 'common/support-create.html', {'form': form,
+    return render(request, 'service_catalog/common/support-create.html', {'form': form,
                                                           'instance': target_instance})
 
 
@@ -99,9 +99,9 @@ def instance_support_details(request, instance_id, support_id):
                 new_message.sender = request.user
                 new_message.save()
             if request.user.is_superuser:
-                return redirect('admin_instance_support_details', instance.id, support.id)
+                return redirect('service_catalog:admin_instance_support_details', instance.id, support.id)
             else:
-                return redirect('customer_instance_support_details', instance.id, support.id)
+                return redirect('service_catalog:customer_instance_support_details', instance.id, support.id)
     else:
         form = SupportMessageForm()
 
@@ -111,4 +111,4 @@ def instance_support_details(request, instance_id, support_id):
         "messages": messages,
         "support": support
     }
-    return render(request, "common/instance-support-details.html", context)
+    return render(request, "service_catalog/common/instance-support-details.html", context)

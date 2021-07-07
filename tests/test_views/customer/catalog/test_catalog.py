@@ -11,7 +11,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
     def test_customer_list_service(self):
-        url = reverse('customer_service_list')
+        url = reverse('service_catalog:customer_service_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("services" in response.context)
@@ -21,7 +21,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         args = {
             "service_id": self.service_test.id
         }
-        url = reverse('customer_service_request', kwargs=args)
+        url = reverse('service_catalog:customer_service_request', kwargs=args)
 
         data = {
             "instance_name": "instance_1",

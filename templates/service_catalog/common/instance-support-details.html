@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>My instances</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-9 h-100">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                <h3 class="card-title">
+                                    <i class="fas fa-comments"></i>
+                                    Comments
+                                </h3>
+                                <div class="card-tools">
+                                  <span title="state" class="badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.state }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                {% for message in messages %}
+                                    <div class="post">
+                                        <div class="user-block">
+                                            <img class="img-circle img-bordered-sm" src="{% if message.sender.is_superuser %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
+                                            <span class="username">
+                                      <a href="#">{{ message.sender.username }}</a>
+                                    </span>
+                                            <span class="description">{{ message.date_message }}</span>
+                                        </div>
+                                        <!-- /.user-block -->
+                                        <p>
+                                            {{ message.content|markdown }}
+                                        </p>
+                                    </div>
+                                {%  endfor %}
+                            </div>
+                            <div class="card-footer">
+                                <form action="{% url 'service_catalog:customer_instance_support_details' instance_id=instance.id support_id=support.id %}" method="post" _lpchecked="1">{% csrf_token %}
+                                    {{  form.as_p }}
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <!-- validate button -->
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fas fa-comment"></i> Comment
+                                            </button>
+                                            {% if support.state == "OPENED" %}
+                                            <button class="btn btn-danger" type="submit" name="btn_close">
+                                                <i class="fas fa-times-circle"></i> Close
+                                            </button>
+                                            {% endif %}
+                                            {% if support.state == "CLOSED" %}
+                                            <button class="btn btn-success" type="submit" name="btn_re_open">
+                                                <i class="fas fa-undo"></i> Re-open
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+
+        </div>
+    </div>
+{% endblock %}
