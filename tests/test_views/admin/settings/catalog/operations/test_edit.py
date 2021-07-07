@@ -11,7 +11,7 @@ class OperationEditTestCase(BaseTest):
             'service_id': self.service_test.id,
             'operation_id': self.update_operation_test.id,
         }
-        self.url = reverse('edit_service_operation', kwargs=args)
+        self.url = reverse('service_catalog:edit_service_operation', kwargs=args)
 
     def test_edit_operation(self):
         data = {
@@ -32,7 +32,7 @@ class OperationEditTestCase(BaseTest):
             'service_id': self.service_test.id,
             'operation_id': self.update_operation_test.id,
         }
-        url = reverse('service_operation_edit_survey', kwargs=args)
+        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
         data = {
             'text_variable': True,
             'multiplechoice_variable': True
@@ -50,7 +50,7 @@ class OperationEditTestCase(BaseTest):
             'service_id': self.service_test.id,
             'operation_id': self.update_operation_test.id,
         }
-        url = reverse('service_operation_edit_survey', kwargs=args)
+        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
         data = {
             'text_variable': True,
         }
@@ -65,7 +65,7 @@ class OperationEditTestCase(BaseTest):
             'service_id': self.service_test.id,
             'operation_id': self.update_operation_test.id,
         }
-        url = reverse('service_operation_edit_survey', kwargs=args)
+        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
         data = {
             'non_existing': True,
             'non_existing_2': True

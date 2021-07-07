@@ -30,7 +30,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'resource_group_edit' resource_group.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_group_edit' resource_group.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
@@ -59,7 +59,7 @@
                     <div class="card-header">
                         <h3 class="card-title"><strong>Attributes</strong></h3>
                         <div class="card-tools">
-                            <a href="{% url 'resource_group_attribute_create' resource_group.id %}" class="btn btn-success btn-sm">
+                            <a href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}" class="btn btn-success btn-sm">
                                 <i class="fas fa-plus"></i> Add attribute
                             </a>
                         </div>
@@ -81,10 +81,10 @@
                                     <td class="align-middle">{{ attribute.consume_from }}</td>
                                     <td class="align-middle">{{ attribute.produce_for }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-primary bg-sm">
+                                        <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>

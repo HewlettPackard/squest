@@ -1,5 +1,7 @@
 from django.db import models
 
+from service_catalog.models import Instance
+
 
 class ResourceGroup(models.Model):
     name = models.CharField(max_length=100,
@@ -37,6 +39,12 @@ class Resource(models.Model):
                                        related_name='resources',
                                        related_query_name='resource',
                                        null=True)
+
+    service_catalog_instance = models.ForeignKey(Instance,
+                                                 on_delete=models.SET_NULL,
+                                                 related_name='service_catalog_instances',
+                                                 related_query_name='service_catalog_instance',
+                                                 null=True)
 
     def __str__(self):
         return f"{self.name}["+",".join([f"{attribute.attribute_type.name}: {attribute.value}"

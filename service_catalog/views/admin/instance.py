@@ -12,7 +12,7 @@ from service_catalog.views import instance_new_support, instance_support_details
 @user_passes_test(lambda u: u.is_superuser)
 def admin_instance_list(request):
     f = InstanceFilter(request.GET, queryset=Instance.objects.all())
-    return render(request, 'admin/instance/instance-list.html', {'filter': f})
+    return render(request, 'service_catalog/admin/instance/instance-list.html', {'filter': f})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -25,7 +25,7 @@ def admin_instance_details(request, instance_id):
                'spec_json_pretty': spec_json_pretty,
                'supports': supports}
 
-    return render(request, 'admin/instance/instance-details.html', context=context)
+    return render(request, 'service_catalog/admin/instance/instance-details.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -45,8 +45,8 @@ def admin_instance_edit(request, instance_id):
     form = InstanceForm(request.POST or None, request.FILES or None, instance=instance)
     if form.is_valid():
         form.save()
-        return redirect('admin_instance_details', instance.id)
+        return redirect('service_catalog:admin_instance_details', instance.id)
 
-    return render(request, 'admin/instance/instance-edit.html', {'form': form,
-                                                                 'instance': instance})
+    return render(request, 'service_catalog/admin/instance/instance-edit.html', {'form': form,
+                                                                                 'instance': instance})
 

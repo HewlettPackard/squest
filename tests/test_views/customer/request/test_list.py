@@ -10,7 +10,7 @@ class TestCustomerRequestList(BaseTestRequest):
 
     def test_user_can_list_his_requests(self):
         # fist user has one request
-        url = reverse('customer_request_list')
+        url = reverse('service_catalog:customer_request_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("filter" in response.context)

@@ -13,7 +13,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
     def test_get_instance_list(self):
-        url = reverse('customer_instance_list')
+        url = reverse('service_catalog:customer_instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertEquals(len(response.context["instances"]), 1)
@@ -22,7 +22,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("instance" in response.context)
@@ -33,7 +33,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(403, response.status_code)
 
@@ -41,7 +41,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_new_support', kwargs=args)
+        url = reverse('service_catalog:customer_instance_new_support', kwargs=args)
         data = {
             "title": "test_support",
             "content": "test_support_content"
@@ -56,7 +56,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_new_support', kwargs=args)
+        url = reverse('service_catalog:customer_instance_new_support', kwargs=args)
         data = {
             "title": "test_support",
             "content": "test_support_content"
@@ -69,7 +69,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('customer_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("support" in response.context)
@@ -80,7 +80,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('customer_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_support_details', kwargs=args)
         data = {
             "btn_close": True
         }
@@ -96,7 +96,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('customer_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_support_details', kwargs=args)
         data = {
             "btn_re_open": True
         }
@@ -110,7 +110,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('customer_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_support_details', kwargs=args)
         data = {
             "btn_re_open": True
         }
@@ -124,7 +124,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
             "instance_id": self.test_instance.id,
             "support_id": self.support_test.id
         }
-        url = reverse('customer_instance_support_details', kwargs=args)
+        url = reverse('service_catalog:customer_instance_support_details', kwargs=args)
         data = {
             "content": "new message"
         }
@@ -140,7 +140,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_archive', kwargs=args)
+        url = reverse('service_catalog:customer_instance_archive', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.test_instance.refresh_from_db()
@@ -151,7 +151,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         args = {
             "instance_id": self.test_instance.id
         }
-        url = reverse('customer_instance_archive', kwargs=args)
+        url = reverse('service_catalog:customer_instance_archive', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(403, response.status_code)
         self.test_instance.refresh_from_db()
