@@ -18,7 +18,7 @@ def resource_group_edit(request, resource_group_id):
     form = ResourceGroupForm(request.POST or None, instance=resource_group)
     if form.is_valid():
         form.save()
-        return redirect(resource_group_list)
+        return redirect("resource_tracker:resource_group_list")
     return render(request,
                   'resource_tracking/resource_group/resource-group-edit.html', {'form': form,
                                                                                 'resource_group': resource_group})
@@ -30,7 +30,7 @@ def resource_group_create(request):
         form = ResourceGroupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(resource_group_list)
+            return redirect("resource_tracker:resource_group_list")
     else:
         form = ResourceGroupForm()
     return render(request, 'resource_tracking/resource_group/resource-group-create.html', {'form': form})
@@ -45,7 +45,7 @@ def resource_group_delete(request, resource_group_id):
         resource_group.attribute_definitions.all().delete()
         resource_group.delete()
         # delete all resources
-        return redirect(resource_group_list)
+        return redirect("resource_tracker:resource_group_list")
 
     return render(request,
                   'resource_tracking/resource_group/resource-group-delete.html', {'resource_group': resource_group})
