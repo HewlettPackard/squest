@@ -26,7 +26,7 @@ def resource_group_resource_delete(request, resource_group_id, resource_id):
     resource = get_object_or_404(Resource, id=resource_id)
     if request.method == "POST":
         resource.delete()
-        return redirect(resource_group_resource_list, resource_group_id)
+        return redirect("resource_tracker:resource_group_resource_list", resource_group_id)
     context = {
         "resource_group": resource_group,
         "resource": resource
@@ -44,7 +44,7 @@ def resource_group_resource_create(request, resource_group_id):
         form = ResourceForm(request.POST,  **parameters)
         if form.is_valid():
             form.save()
-            return redirect(resource_group_resource_list, resource_group.id)
+            return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
     else:
         form = ResourceForm(**parameters)
     return render(request, 'resource_tracking/resource_group/resources/resource-create.html',
@@ -62,7 +62,7 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
         form = ResourceForm(request.POST, instance=resource, **parameters)
         if form.is_valid():
             form.save()
-            return redirect(resource_group_resource_list, resource_group.id)
+            return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
     else:
         form = ResourceForm(instance=resource, **parameters)
     return render(request, 'resource_tracking/resource_group/resources/resource-edit.html',
