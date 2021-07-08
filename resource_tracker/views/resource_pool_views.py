@@ -83,8 +83,11 @@ def resource_pool_attribute_delete(request, resource_pool_id, attribute_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
     attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
     if request.method == "POST":
+        attribute.remove_all_consumer()
+        attribute.remove_all_producer()
         attribute.delete()
         return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
+
     context = {
         "resource_pool": resource_pool,
         "attribute": attribute
