@@ -51,7 +51,7 @@ class Resource(models.Model):
                                          for attribute in self.attributes.all()]) + "]"
 
     def add_attribute(self, attribute_type):
-        self.attributes.get_or_create(attribute_type=attribute_type)
+        return self.attributes.get_or_create(attribute_type=attribute_type)
 
     def set_attribute(self, attribute_type, value):
         attribute = self.attributes.get(attribute_type=attribute_type)
@@ -97,7 +97,7 @@ class ResourcePool(models.Model):
                             unique=True)
 
     def add_attribute_definition(self, name):
-        self.attributes_definition.create(name=name)
+        return self.attributes_definition.create(name=name)
 
 
 class ResourceAttribute(models.Model):
