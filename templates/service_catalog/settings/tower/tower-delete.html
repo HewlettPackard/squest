@@ -24,7 +24,7 @@
                         <form action='' method='POST'>{% csrf_token %}
                             <p>Do you want to delete the server "{{ object.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'service_catalog:tower' %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'service_catalog:list_tower' %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->
