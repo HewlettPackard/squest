@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
     <!-- Main content -->
@@ -18,7 +18,11 @@
             {% for service in services %}
                 <div class="col-lg-4 col-sm-6 mb-4">
                     <div class="card h-100">
+                        {% if service.image %}
                         <img class="card-img-top" src="{{ service.image.url }}" alt="">
+                        {% else %}
+                        <img class="card-img-top" src="{%  static 'squest/no_image.png' %}" alt="">
+                        {% endif %}
                         <div class="card-body">
                             <h5 class="card-title text-primary">
                                 {{ service.name }}
