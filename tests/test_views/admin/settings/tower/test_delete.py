@@ -48,3 +48,11 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertTrue(JobTemplate.objects.filter(id=id_to_delete).exists())
+
+    def test_can_reach_delete_job_template_page(self):
+        args = {
+            'tower_id': self.tower_server_test.id,
+        }
+        url = reverse('service_catalog:delete_tower', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
