@@ -9,7 +9,7 @@ app_name = 'service_catalog'
 urlpatterns = [
     # common URLs
     path('', views.home, name='home'),
-    path('profile', views.profile, name='profile'),
+    path('profile/', views.profile, name='profile'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
 
     # settings URLs
