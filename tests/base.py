@@ -52,8 +52,112 @@ class BaseTest(TestCase):
                     "required": True,
                     "type": "multiplechoice",
                     "variable": "multiplechoice_variable"
+                },
+                {
+                    "question_name": "multiselect",
+                    "question_description": "multiselect_des",
+                    "required": True,
+                    "type": "multiselect",
+                    "variable": "multiselect_var",
+                    "min": 0,
+                    "max": 1024,
+                    "formattedChoices": [
+                        {
+                            "choice": "multiselect_1",
+                            "isDefault": False,
+                            "id": 0
+                        },
+                        {
+                            "choice": "multiselect_2",
+                            "isDefault": True,
+                            "id": 1
+                        },
+                        {
+                            "choice": "multiselect_3",
+                            "isDefault": True,
+                            "id": 2
+                        }
+                    ],
+                    "new_question": False,
+                    "default": "multiselect_2\nmultiselect_3",
+                    "choices": "multiselect_1\nmultiselect_2\nmultiselect_3"
+                },
+                {
+                    "question_name": "textarea",
+                    "question_description": "textarea_des",
+                    "required": True,
+                    "type": "textarea",
+                    "variable": "textarea_var",
+                    "min": 0,
+                    "max": 1024,
+                    "default": "textarea_val",
+                    "choices": "",
+                    "formattedChoices": [
+                        {
+                            "choice": "",
+                            "isDefault": False,
+                            "id": 0
+                        }
+                    ],
+                    "new_question": False
+                },
+                {
+                    "question_name": "password",
+                    "question_description": "password_des",
+                    "required": True,
+                    "type": "password",
+                    "variable": "password_var",
+                    "min": 0,
+                    "max": 1024,
+                    "default": "password_val",
+                    "choices": "",
+                    "formattedChoices": [
+                        {
+                            "choice": "",
+                            "isDefault": False,
+                            "id": 0
+                        }
+                    ],
+                    "new_question": False
+                },
+                {
+                    "question_name": "integer",
+                    "question_description": "integer_des",
+                    "required": True,
+                    "type": "integer",
+                    "variable": "integer_var",
+                    "min": 0,
+                    "max": 1024,
+                    "default": 1,
+                    "choices": "",
+                    "formattedChoices": [
+                        {
+                            "choice": "",
+                            "isDefault": False,
+                            "id": 0
+                        }
+                    ],
+                    "new_question": False
+                },
+                {
+                    "question_name": "float",
+                    "question_description": "float_des",
+                    "required": True,
+                    "type": "float",
+                    "variable": "float_var",
+                    "min": 0,
+                    "max": 1024,
+                    "default": 1.5,
+                    "choices": "",
+                    "formattedChoices": [
+                        {
+                            "choice": "",
+                            "isDefault": False,
+                            "id": 0
+                        }
+                    ],
+                    "new_question": False
                 }
-
             ]
         }
         self.job_template_test = JobTemplate.objects.create(name="job-template-test",
@@ -75,7 +179,12 @@ class BaseTest(TestCase):
 
         self.create_operation_test.enabled_survey_fields = {
             'text_variable': True,
-            'multiplechoice_variable': False
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
         }
         self.create_operation_test.save()
         self.update_operation_test = Operation.objects.create(name="update test",
@@ -84,7 +193,12 @@ class BaseTest(TestCase):
                                                               type=OperationType.UPDATE)
         self.update_operation_test.enabled_survey_fields = {
             'text_variable': True,
-            'multiplechoice_variable': False
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
         }
         self.update_operation_test.save()
         self.delete_operation_test = Operation.objects.create(name="delete test",
@@ -104,7 +218,12 @@ class BaseTest(TestCase):
                                                                 job_template=self.job_template_test)
         self.create_operation_test_2.enabled_survey_fields = {
             'text_variable': True,
-            'multiplechoice_variable': False
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
         }
         self.create_operation_test_2.save()
         self.update_operation_test_2 = Operation.objects.create(name="update test",
@@ -113,7 +232,12 @@ class BaseTest(TestCase):
                                                                 type=OperationType.UPDATE)
         self.update_operation_test_2.enabled_survey_fields = {
             'text_variable': True,
-            'multiplechoice_variable': False
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
         }
         self.update_operation_test_2.save()
         self.delete_operation_test_2 = Operation.objects.create(name="delete test",
