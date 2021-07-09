@@ -4,7 +4,7 @@ import urllib3
 from django import forms
 from guardian.models import UserObjectPermission
 
-from service_catalog.forms.utils import get_choices_from_string
+from service_catalog.forms.utils import get_choices_from_string, get_fields_from_survey
 from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage
 from service_catalog.models.operations import OperationType
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -51,20 +51,7 @@ class ServiceRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
                                                        operation_survey=self.create_operation.enabled_survey_fields)
-        for survey_filed in purged_survey["spec"]:
-            if survey_filed["type"] == "text":
-                self.fields[survey_filed['variable']] = forms. \
-                    CharField(label=survey_filed['question_name'],
-                              required=survey_filed['required'],
-                              widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-            if survey_filed["type"] == "multiplechoice":
-                self.fields[survey_filed['variable']] = forms. \
-                    ChoiceField(label=survey_filed['question_name'],
-                                required=survey_filed['required'],
-                                choices=get_choices_from_string(survey_filed["choices"]),
-                                error_messages={'required': 'At least you must select one choice'},
-                                widget=forms.Select(attrs={'class': 'form-control'}))
+        self.fields.update(get_fields_from_survey(purged_survey))
 
     def save(self):
         user_provided_survey_fields = dict()
