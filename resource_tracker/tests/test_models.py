@@ -120,7 +120,7 @@ class TestCalculation(TestCase):
         vcenter_cpu_attribute = vcenter_pool.add_attribute_definition(name='vCPU')
 
         # Link
-        vcenter_pool.attributes_definition.get(name='vCPU')\
+        vcenter_pool.attributes_definition.get(name='vCPU') \
             .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
 
         self.assertEqual(sum(self.cpu_list), vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
@@ -133,7 +133,7 @@ class TestCalculation(TestCase):
         openshift_pool = ResourcePool.objects.create(name="OpenShift-Pool")
         ocp_vcpu_attribute = openshift_pool.add_attribute_definition(name='vCPU')
         # Transfer server-group1.CPU to openshift_pool
-        openshift_pool.attributes_definition.get(name='vCPU')\
+        openshift_pool.attributes_definition.get(name='vCPU') \
             .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
         # No more resources in vcenterPool.vCPU
         self.assertEqual(0, vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
@@ -164,3 +164,12 @@ class TestCalculation(TestCase):
         self.assertEqual(150,
                          self.vcenter_pool.attributes_definition.get(name='vCPU').
                          get_total_produced_by(server_group_2.attribute_definitions.get(name="CPU")))
+
+    def test_get_total_consumed_by(self):
+        self._create_simple_testing_stack()
+        self.assertEqual(100,
+                         self.vcenter_pool.attributes_definition.get(name='vCPU').get_total_produced())
+
+        self.assertEqual(50,
+                         self.vcenter_pool.attributes_definition.get(name='vCPU').
+                         get_total_consumed_by(self.vm_group.attribute_definitions.get(name="vCPU")))
