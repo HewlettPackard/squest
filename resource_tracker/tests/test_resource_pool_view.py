@@ -125,3 +125,13 @@ class TestResourcePoolViews(BaseTestResourceTracker):
 
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
+
+    def test_resource_pool_attribute_consumer_list(self):
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+            'attribute_id': self.rp_vcenter_vcpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_consumer_list', kwargs=args)
+
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
