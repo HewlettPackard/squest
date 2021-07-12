@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
-from resource_tracker.forms import ResourceGroupAttributeDefinitionForm, ResourceForm
-from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource
+from resource_tracker.forms import ResourceForm
+from resource_tracker.models import ResourceGroup, Resource
 
 
 @user_passes_test(lambda u: u.is_superuser)
