@@ -32,6 +32,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install system dependencies
         run: |
+          sudo apt update
+          sudo apt install -y libuv1-dev
           sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
