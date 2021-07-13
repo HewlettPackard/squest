@@ -7,7 +7,7 @@ from django.template.loader import get_template
 from resource_tracker.models import ResourceGroup, ResourcePool
 from django.urls import reverse
 
-COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#6ddbbb', 'resource_group': '#7fb4d3',
+COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
           'available': '#ffc107'}
 COLORS["bg-green"] = "#28a745"
 COLORS["bg-yellow"] = "#ffc107"
