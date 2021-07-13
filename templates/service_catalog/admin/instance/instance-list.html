@@ -35,7 +35,9 @@
                                         {{ instance.name }}
                                     </td>
                                     <td class="align-middle">
-                                        {{ instance.service.name }}
+                                        <a href="{% url 'service_catalog:edit_service' instance.id %}?instance={{ instance.name }}">
+                                            {{ instance.service.name }}
+                                        </a>
                                     </td>
                                     <td class="align-middle">
                                         <a href="{% url 'service_catalog:admin_request_list'%}?instance={{ instance.name }}" class="btn btn-default bg-sm">
