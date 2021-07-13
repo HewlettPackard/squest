@@ -6,7 +6,7 @@
     </TR>
     {% for attribute in attributes_list %}
     <TR>
-        <TD PORT="{{ attribute.key }}" COLSPAN="6" HREF="{{ attribute.href }}" TITLE="{{ attribute.tooltip }}">{{ attribute.key }}</TD>
+        <TD BGCOLOR="white" PORT="{{ attribute.key }}" COLSPAN="6" HREF="{{ attribute.href }}" TITLE="{{ attribute.tooltip }}">{{ attribute.key }}</TD>
         <TD COLSPAN="6" HREF="{{ attribute.href }}" TITLE="{{ attribute.tooltip }}">{{ attribute.value }}</TD>
     </TR>
     {% endfor %}
