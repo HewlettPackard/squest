@@ -7,6 +7,8 @@ class ResourceGroup(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
+    def __str__(self):
+        return self.name
 
     def add_attribute_definition(self, name):
 
@@ -78,6 +80,9 @@ class ResourceGroupAttributeDefinition(models.Model):
                                     related_query_name='producer',
                                     null=True)
 
+    def __str__(self):
+        return f"{self.resource_group_definition} - {self.name}"
+
     def get_total_resource(self):
         total_produced = 0
         for resource in self.resource_group_definition.resources.all():
@@ -95,7 +100,8 @@ class ResourcePool(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
-
+    def __str__(self):
+        return self.name
     def add_attribute_definition(self, name):
         return self.attributes_definition.create(name=name)
 
