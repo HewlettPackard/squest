@@ -48,8 +48,8 @@
                                     <td class="align-middle">
                                         {{ o_request.date_complete }}
                                     </td>
-                                    <td class="align-middle">{{ o_request.instance.service.name }}</td>
-                                    <td class="align-middle">{{ o_request.operation.name }}</td>
+                                    <td class="align-middle"><a href="{% url 'service_catalog:edit_service' o_request.instance.service.id %}">{{ o_request.instance.service.name }}</a></td>
+                                    <td class="align-middle"><a href="{% url 'service_catalog:edit_service_operation' service_id=o_request.instance.service.id operation_id=o_request.operation.id %}">{{ o_request.operation.name }}</a></td>
                                     <td style="width: 10%" class="align-middle">
                                         <a href="{% url 'service_catalog:service_operations' o_request.instance.service.id %}" class="btn btn-{{ o_request.operation.type |map_operation_type }} btn-sm btn-block" {%  if o_request.fill_in_survey %}data-toggle="popover" title="{{ o_request.operation.job_template.name }}" data-content="{{ o_request.fill_in_survey }}{% endif %}">
                                             {{ o_request.operation.type }}
