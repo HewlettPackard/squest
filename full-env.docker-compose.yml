@@ -13,6 +13,7 @@ services:
       CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest
     volumes:
       - django_static:/app/static
+      - django_media:/app/media
     depends_on:
       - db
       - rabbitmq
@@ -43,3 +44,4 @@ services:
 
 volumes:
   django_static: {}
+  django_media: {}
