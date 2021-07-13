@@ -1,0 +1,15 @@
+<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+    <TR>
+        <TD BGCOLOR="{{ color }}" COLSPAN="6" HREF="{{ name.href }}" TITLE="{{ name.tooltip }}">{{ name.display }}</TD>
+        <TD COLSPAN="6" HREF="{{ count.href }}" TITLE="{{ count.tooltip }}">{{ count.display }}</TD>
+    </TR>
+    {% for attribute in attributes_list %}
+    <TR>
+        <TD PORT="{{ attribute.key }}" COLSPAN="6" HREF="{{ attribute.href }}" TITLE="{{ attribute.tooltip }}">{{ attribute.key }}</TD>
+        <TD COLSPAN="6" HREF="{{ attribute.href }}" TITLE="{{ attribute.tooltip }}">{{ attribute.value }}</TD>
+    </TR>
+    {% endfor %}
+
+</TABLE>
+>
