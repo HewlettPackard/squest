@@ -54,5 +54,6 @@ urlpatterns = [
     path('resource_pool/<int:resource_pool_id>/attributes/<int:attribute_id>/consumers/',
          views.resource_pool_attribute_consumer_list,
          name='resource_pool_attribute_consumer_list'),
+    path('resource_tracker_graph/', views.resource_tracker_graph, name='resource_tracker_graph'),
 
 ]
