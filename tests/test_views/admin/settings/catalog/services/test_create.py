@@ -14,7 +14,7 @@ class ServiceCreateTestCase(BaseTest):
         data = {
             "name": "new_service",
             "description": "a new service",
-            "job_template": self.job_template_test.name,
+            "job_template": self.job_template_test.id,
         }
         number_service_before = Service.objects.all().count()
         response = self.client.post(self.url, data=data)
