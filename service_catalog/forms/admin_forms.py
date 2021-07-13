@@ -66,7 +66,6 @@ class ServiceForm(ModelForm):
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          to_field_name="name",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     auto_accept = forms.BooleanField(label="Auto accept",
