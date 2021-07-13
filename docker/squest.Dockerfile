@@ -45,8 +45,11 @@ WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
 # Copy the full project
 COPY . /app/
-# Create a static folder
-RUN mkdir /app/static && chown ${APP_USER}:${APP_USER} /app/static
+# Create a static and media folders
+RUN mkdir /app/static && \
+    mkdir /app/media && \
+    chown ${APP_USER}:${APP_USER} /app/static && \
+    chown ${APP_USER}:${APP_USER} /app/media
 
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install
