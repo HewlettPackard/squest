@@ -4,7 +4,7 @@
       <TD BGCOLOR="{{ color }}" COLSPAN="12" HREF="{{ name.href }}" TITLE="{{ name.tooltip }}">{{ name.display }}</TD>
   </TR>
   <TR>
-    <TD COLSPAN="3">name</TD>
+    <TD COLSPAN="3">Name</TD>
     <TD COLSPAN="3">Produced</TD>
     <TD COLSPAN="3">Consumed</TD>
     <TD COLSPAN="3">Available</TD>
@@ -14,7 +14,7 @@
     <TD PORT="{{attribute.name.display}}" COLSPAN="3" HREF="{{attribute.name.href}}" TITLE="{{attribute.name.tooltip}}">{{ attribute.name.display }}</TD>
     <TD COLSPAN="3" HREF="{{attribute.produced.href}}" TITLE="{{attribute.produced.tooltip}}">{{ attribute.produced.display }}</TD>
     <TD COLSPAN="3" HREF="{{attribute.consumed.href}}" TITLE="{{attribute.consumed.tooltip}}">{{ attribute.consumed.display }}</TD>
-    <TD BGCOLOR="{{ attribute.available.color }}" COLSPAN="3" TITLE="{{ attribute.available.display }}">{{ attribute.available.display }}</TD>
+    <TD BGCOLOR="{{ attribute.available.color }}" COLSPAN="3" TITLE="{{ attribute.available.display }}"><font color="white">{{ attribute.available.display }}</font></TD>
     </TR>
 {% endfor %}
 </TABLE>
