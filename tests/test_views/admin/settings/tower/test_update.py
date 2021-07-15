@@ -26,5 +26,5 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
             self.assertEquals(302, response.status_code)
             self.tower_server_test.refresh_from_db()
             self.assertEquals(self.tower_server_test.name, "tower-server-test-updated")
-            self.assertEquals(self.tower_server_test.host, "https://tower-updated.domain.local")
+            self.assertEquals(self.tower_server_test.host, "tower-updated.domain.local")
             self.assertEquals(self.tower_server_test.token, "xxxx-updated")

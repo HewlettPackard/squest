@@ -1,3 +1,5 @@
+import re
+
 import requests
 import towerlib
 import urllib3
@@ -17,15 +19,16 @@ class TowerServerForm(ModelForm):
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    host = forms.CharField(label="host",
+    host = forms.CharField(label="Host",
                            required=True,
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput(attrs={'class': 'form-control',
+                                                         'placeholder': "awx.mydomain.net:8043"}))
 
     token = forms.CharField(label="Token",
                             required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    secure = forms.BooleanField(label="Is secure",
+    secure = forms.BooleanField(label="Is secure (https)",
                                 initial=True,
                                 required=False,
                                 widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
@@ -51,6 +54,21 @@ class TowerServerForm(ModelForm):
             except requests.exceptions.ConnectionError:
                 raise ValidationError({"host": f"Unable to connect to {host}"})
 
+    def save(self, commit=True):
+        instance = super(TowerServerForm, self).save(commit=False)
+        regex = r"^(http[s]?://)?(?P<hostname>[A-Za-z0-9\-\.]+)(?P<port>:[0-9]+)?(?P<path>.*)$"
+        matches = re.search(regex, instance.host)
+        if matches.group("hostname") is not None:
+            instance.host = matches.group("hostname")
+        if matches.group("port") is not None:
+            instance.host = instance.host + matches.group("port")
+        if matches.group("path") is not None:
+            instance.host = instance.host + matches.group("path")
+        if instance.host[-1] == "/":  # remove trailing slash
+            instance.host = instance.host[:-1]
+        if commit:
+            instance.save()
+        return instance
     class Meta:
         model = TowerServer
         fields = ["name", "host", "token", "secure", "ssl_verify"]
