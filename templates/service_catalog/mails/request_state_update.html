@@ -7,7 +7,7 @@
 <h2>Request state update: #{{ request.id }}</h2>
 
 <li>New request state: <b>{{ request.state }}</b></li>
-<li>Applied by: <b>{{ user_applied_state }}</b></li>
+{% if user_applied_state is not none %}<li>Applied by: <b>{{ user_applied_state.username }}</b></li>{% endif %}
 {% if message is not None %}
 <li>Message: <b>{{ message }}</b></li>
 {%  endif %}
