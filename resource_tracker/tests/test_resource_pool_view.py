@@ -64,7 +64,7 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         }
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
-        self.assertTrue(self.rp_vcenter.attributes_definition.get(name='new_attribute'))
+        self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
 
     def test_cannot_create_existing_attribute(self):
         args = {

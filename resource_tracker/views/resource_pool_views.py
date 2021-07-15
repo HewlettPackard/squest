@@ -10,7 +10,7 @@ def resource_pool_list(request):
     resource_pools = ResourcePool.objects.all()
     list_attribute_name = list()
     for resource_pool in resource_pools.all():
-        for attribute in resource_pool.attributes_definition.all():
+        for attribute in resource_pool.attribute_definitions.all():
             if attribute.name not in list_attribute_name:
                 list_attribute_name.append(attribute.name)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
@@ -47,11 +47,11 @@ def resource_pool_delete(request, resource_pool_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
     if request.method == 'POST':
         # need to update all resource group that use this pool to set producer/consumer to None
-        for pool_attribute in resource_pool.attributes_definition.all():
+        for pool_attribute in resource_pool.attribute_definitions.all():
             pool_attribute.remove_all_producer()
             pool_attribute.remove_all_consumer()
         # now delete all attribute and then the pool itself
-        resource_pool.attributes_definition.all().delete()
+        resource_pool.attribute_definitions.all().delete()
         resource_pool.delete()
         return redirect("resource_tracker:resource_pool_list")
 
