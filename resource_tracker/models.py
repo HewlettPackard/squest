@@ -7,6 +7,7 @@ class ResourceGroup(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
+
     def __str__(self):
         return self.name
 
@@ -100,8 +101,10 @@ class ResourcePool(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
+
     def __str__(self):
         return self.name
+
     def add_attribute_definition(self, name):
         return self.attributes_definition.create(name=name)
 
@@ -164,7 +167,7 @@ class ResourcePoolAttributeDefinition(models.Model):
 
     def get_total_consumed(self):
         total_consumed = 0
-        for consumer in self.consumers.all(): # consumer == ResourceGroupAttributeDefinition
+        for consumer in self.consumers.all():  # consumer == ResourceGroupAttributeDefinition
             for resource in consumer.resource_group_definition.resources.all():
                 try:
                     total_consumed += resource.attributes.get(attribute_type=consumer).value
