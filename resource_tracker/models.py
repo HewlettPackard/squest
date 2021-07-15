@@ -29,7 +29,7 @@ class ResourceGroup(models.Model):
             resource.add_attribute(attribute_type=attribute)
         return resource
 
-    def get_attribute(self, attribute_type):
+    def get_sum_value_by_attribute(self, attribute_type):
         return sum([resource.attributes.get(attribute_type=attribute_type).value for resource in self.resources.all()])
 
 
@@ -85,13 +85,13 @@ class ResourceGroupAttributeDefinition(models.Model):
         return f"{self.resource_group_definition} - {self.name}"
 
     def get_total_resource(self):
-        total_produced = 0
+        total = 0
         for resource in self.resource_group_definition.resources.all():
             try:
-                total_produced += resource.attributes.get(attribute_type=self).value
+                total += resource.attributes.get(attribute_type=self).value
             except ResourceAttribute.DoesNotExist:
                 pass
-        return total_produced
+        return total
 
     class Meta:
         unique_together = ('name', 'resource_group_definition',)
@@ -106,7 +106,7 @@ class ResourcePool(models.Model):
         return self.name
 
     def add_attribute_definition(self, name):
-        return self.attributes_definition.create(name=name)
+        return self.attribute_definitions.create(name=name)
 
 
 class ResourceAttribute(models.Model):
@@ -135,7 +135,7 @@ class ResourcePoolAttributeDefinition(models.Model):
                             blank=False)
     resource_pool = models.ForeignKey(ResourcePool,
                                       on_delete=models.PROTECT,
-                                      related_name='attributes_definition',
+                                      related_name='attribute_definitions',
                                       related_query_name='attribute_definition',
                                       null=True)
 
@@ -143,7 +143,7 @@ class ResourcePoolAttributeDefinition(models.Model):
         unique_together = ('name', 'resource_pool',)
 
     def __str__(self):
-        return "{} - {}".format(self.resource_pool.name, self.name)
+        return f"{self.resource_pool.name} - {self.name}"
 
     def add_producers(self, resource: ResourceGroupAttributeDefinition):
         resource.produce_for = self

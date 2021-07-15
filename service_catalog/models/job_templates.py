@@ -10,7 +10,7 @@ class JobTemplate(models.Model):
     tower_server = models.ForeignKey(TowerServer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.tower_server.name)
+        return f"{self.name} ({self.tower_server.name})"
 
     def execute(self, extra_vars):
         tower = self.tower_server.get_tower_instance()

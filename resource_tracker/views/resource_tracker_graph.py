@@ -75,7 +75,7 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                            f"({100 - attribute.get_percent_consumed()}%)",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }
-        for attribute in resource_pool.attributes_definition.filter()]
+        for attribute in resource_pool.attribute_definitions.filter()]
     context['color'] = COLORS['resource_pool']
     context['color_available'] = COLORS['available']
 

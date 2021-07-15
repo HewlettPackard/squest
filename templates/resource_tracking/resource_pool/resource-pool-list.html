@@ -38,7 +38,7 @@
                                     </div>
                             </div>
                             <div class="card-body">
-                                {% if resource_pool.attributes_definition.all|length == 0 %}
+                                {% if resource_pool.attribute_definitions.all|length == 0 %}
                                     <div class="row">
                                         <div class="col text-center">
                                             <a class="btn btn-lg btn-success text-center" href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}">
@@ -58,7 +58,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% for attribute in resource_pool.attributes_definition.all %}
+                                        {% for attribute in resource_pool.attribute_definitions.all %}
                                             {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
                                                 <tr>
                                                     <td class="align-middle">{{ attribute.name }}</td>
