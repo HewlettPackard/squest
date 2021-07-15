@@ -20,7 +20,8 @@ def add_tower(request):
     if request.method == 'POST':
         form = TowerServerForm(request.POST)
         if form.is_valid():
-            form.save()
+            new_tower = form.save()
+            new_tower.sync()
             return redirect('service_catalog:list_tower')
     else:
         form = TowerServerForm()

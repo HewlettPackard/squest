@@ -23,10 +23,12 @@ class AdminTowerCreateViewsTest(BaseTestTower):
 
     def test_admin_can_create_tower_server(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
-            mock_tower_lib.return_value = None
-            response = self.client.post(self.url, data=self.data)
-            self.assertEquals(302, response.status_code)
-            self.assertEquals(self.number_tower_before + 1, TowerServer.objects.all().count())
+            with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_tower_sync:
+                mock_tower_lib.return_value = None
+                response = self.client.post(self.url, data=self.data)
+                self.assertEquals(302, response.status_code)
+                self.assertEquals(self.number_tower_before + 1, TowerServer.objects.all().count())
+                mock_tower_sync.assert_called()
 
     def test_connection_error_on_create(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
