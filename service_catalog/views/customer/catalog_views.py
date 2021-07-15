@@ -23,10 +23,10 @@ def customer_service_request(request, service_id):
         form = ServiceRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             new_request = form.save()
-            send_mail_request_update(target_request=new_request, from_email=request.user.email)
+            send_mail_request_update(target_request=new_request, user_applied_state=request.user)
             return redirect('service_catalog:customer_request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
 
     return render(request, 'service_catalog/customer/catalog/service/service-request.html', {'form': form,
-                                                                             'service': target_service})
+                                                                                             'service': target_service})
