@@ -17,21 +17,16 @@ class TowerServer(models.Model):
         from .job_templates import JobTemplate as JobTemplateLocal
         tower = self.get_tower_instance()
 
-        for job_template in tower.job_templates:
-            try:
-                updated_job_template = JobTemplateLocal.objects.get(tower_id=job_template.id,
-                                                                    tower_server=self)
-                # update the survey
-                updated_job_template.survey = job_template.survey_spec
-                updated_job_template.save()
-            except JobTemplateLocal.DoesNotExist:
-                updated_job_template = JobTemplateLocal.objects.create(name=job_template.name,
-                                                                       tower_id=job_template.id,
-                                                                       survey=job_template.survey_spec,
-                                                                       tower_server=self)
+        for job_template_from_tower in tower.job_templates:
+            job_template, _ = JobTemplateLocal.objects.get_or_create(tower_id=job_template_from_tower.id,
+                                                                     tower_server=self,
+                                                                     defaults={'name': job_template_from_tower.name})
+            # update the survey
+            job_template.survey = job_template_from_tower.survey_spec
+            job_template.save()
             # update all operation that uses this template
             from service_catalog.models import Operation
-            Operation.update_survey_after_job_template_update(updated_job_template)
+            Operation.update_survey_after_job_template_update(job_template)
 
     def get_tower_instance(self):
         return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)

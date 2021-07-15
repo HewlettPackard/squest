@@ -9,6 +9,9 @@ class JobTemplate(models.Model):
     survey = models.JSONField(default=dict)
     tower_server = models.ForeignKey(TowerServer, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('tower_id', 'tower_server',)
+
     def __str__(self):
         return f"{self.name} ({self.tower_server.name})"
 
