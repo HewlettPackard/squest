@@ -1,23 +1,22 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
+from django.template import Context
+from django.template.loader import get_template
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from graphviz import Digraph
-from django.template import Template, Context
-from django.template.loader import get_template
+
 from resource_tracker.models import ResourceGroup, ResourcePool
-from django.urls import reverse
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
-          'available': '#ffc107'}
-COLORS["bg-green"] = "#28a745"
-COLORS["bg-yellow"] = "#ffc107"
-COLORS["bg-red"] = "#dc3545"
+          'available': '#ffc107', "bg-green": "#28a745", "bg-yellow": "#ffc107", "bg-red": "#dc3545",
+          'transparent': '#ffffff00'}
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_tracker_graph(request):
     dot = Digraph(comment='Graph')
-    dot.attr(bgcolor='#ffffff00')
+    dot.attr(bgcolor=COLORS["transparent"])
     dot.name = 'Resource Tracker Graph'
     dot.attr('node', shape='plaintext')
 
@@ -72,7 +71,8 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'available': {
-                'display': f"{attribute.get_total_produced() - attribute.get_total_consumed()} ({100 - attribute.get_percent_consumed()}%)",
+                'display': f"{attribute.get_total_produced() - attribute.get_total_consumed()} "
+                           f"({100 - attribute.get_percent_consumed()}%)",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }
         for attribute in resource_pool.attributes_definition.filter()]
