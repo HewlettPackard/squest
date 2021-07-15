@@ -15,7 +15,7 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/attributes/create/',
          views.resource_group_attribute_create,
          name='resource_group_attribute_create'),
-    path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/',
+    path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/edit/',
          views.resource_group_attribute_edit,
          name='resource_group_attribute_edit'),
     path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/delete/',

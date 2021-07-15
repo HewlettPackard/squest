@@ -48,7 +48,7 @@ class Request(models.Model):
     def instance_is_available_or_pending(self):
         if self.instance.state == InstanceState.AVAILABLE or self.instance.state == InstanceState.PENDING:
             return True
-        logger.debug("Request][process] instance {} is not available or pending".format(self.id))
+        logger.debug(f"Request][process] instance {self.id} is not available or pending")
         return False
 
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
@@ -81,7 +81,7 @@ class Request(models.Model):
     @transition(field=state, source=RequestState.ACCEPTED, target=RequestState.PROCESSING,
                 conditions=[instance_is_available_or_pending])
     def process(self):
-        logger.info("[Request][process] trying to start processing request '{}'".format(self.id))
+        logger.info(f"[Request][process] trying to start processing request '{self.id}'")
         # the instance now switch depending of the operation type
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
@@ -112,8 +112,7 @@ class Request(models.Model):
 
         if tower_job_id is not None:
             self.tower_job_id = tower_job_id
-            logger.info("[Request][process] process started on request '{}'. "
-                        "Tower job id: {}".format(self.id, tower_job_id))
+            logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {tower_job_id}")
 
             # create a periodic task to check the status until job is complete
             schedule, created = IntervalSchedule.objects.get_or_create(every=10,
@@ -121,11 +120,11 @@ class Request(models.Model):
             self.periodic_task_date_expire = timezone.now() + timedelta(seconds=self.operation.process_timeout_second)
             self.periodic_task = PeriodicTask.objects.create(
                 interval=schedule,
-                name='job_status_check_request_{}'.format(self.id),
+                name=f'job_status_check_request_{self.id}',
                 task='service_catalog.tasks.check_tower_job_status_task',
                 args=json.dumps([self.id]))
-            logger.info("[Request][process] request '{}': periodic task created. "
-                        "Expire in {} seconds".format(self.id, self.operation.process_timeout_second))
+            logger.info(
+                f'[Request][process] request \'{self.id}\': periodic task created. Expire in {self.operation.process_timeout_second} seconds')
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.FAILED)
     def has_failed(self, reason=None):
@@ -151,8 +150,8 @@ class Request(models.Model):
     def check_job_status(self):
         from ..mail_utils import send_mail_request_update, send_email_request_error
         if self.tower_job_id is None:
-            logger.warning("[Request][check_job_status] no tower job id for request id {}. "
-                           "Check job status skipped".format(self.id))
+            logger.warning(
+                f"[Request][check_job_status] no tower job id for request id {self.id}. Check job status skipped")
             return
 
         # if the task is expired we remove the periodic task
@@ -168,7 +167,7 @@ class Request(models.Model):
         job_object = tower.get_unified_job_by_id(self.tower_job_id)
 
         if job_object.status == "successful":
-            logger.info("[Request][check_job_status] tower job status successful for request id {}".format(self.id))
+            logger.info(f"[Request][check_job_status] tower job status successful for request id {self.id}")
             self.complete()
             self.save()
             self.periodic_task.delete()
@@ -182,7 +181,7 @@ class Request(models.Model):
             send_mail_request_update(target_request=self)
 
         if job_object.status == "canceled":
-            error_message = "Tower job '{}' status is 'canceled'".format(self.tower_job_id)
+            error_message = f"Tower job '{self.tower_job_id}' status is 'canceled'"
             self.has_failed(error_message)
             self.save()
             # as the process has been cancelled, set back the instance to available
@@ -193,7 +192,7 @@ class Request(models.Model):
                                      error_message=error_message)
 
         if job_object.status == "failed":
-            error_message = "Tower job '{}' status is 'failed'".format(self.tower_job_id)
+            error_message = f"Tower job '{self.tower_job_id}' status is 'failed'"
             self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()
@@ -204,8 +203,8 @@ class Request(models.Model):
     def add_user_permission(cls, sender, instance, created, *args, **kwargs):
         if created:
             if instance.user is not None:
-                logger.info("[Request][add_user_permission] add user permission on request "
-                            "id {} for user {}".format(instance.id, instance.user.username))
+                logger.info(
+                    f"[Request][add_user_permission] add user permission on request id {instance.id} for user {instance.user.username}")
                 UserObjectPermission.objects.assign_perm('view_request', instance.user, obj=instance)
                 UserObjectPermission.objects.assign_perm('delete_request', instance.user, obj=instance)
 

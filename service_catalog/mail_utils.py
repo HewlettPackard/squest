@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from service_catalog import tasks
 from service_catalog.models.request import RequestState
 
-DEFAULT_FROM_EMAIL = "squest@{}".format(settings.SQUEST_HOST)
+DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_HOST}"
 
 
 def _get_admin_emails():
@@ -33,24 +33,17 @@ def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL, mess
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
 
-    subject = "Request #{request_id} " \
-              "- {request_state} " \
-              "- {operation_type} " \
-              "- {operation_name} " \
-              "- {instance_name}".format(request_id=target_request.id,
-                                         request_state=target_request.state,
-                                         operation_type=target_request.operation.type,
-                                         operation_name=target_request.operation.name,
-                                         instance_name=target_request.instance.name)
+    subject = f"Request #{target_request.id} - {target_request.state} - {target_request.operation.type} " \
+              f"- {target_request.operation.name} - {target_request.instance.name}"
 
     if target_request.state == RequestState.SUBMITTED:
         template_name = "mails/request_submitted.html"
-        plain_text = "Request update for service: {}".format(target_request.instance.name)
+        plain_text = f"Request update for service: {target_request.instance.name}"
         context = {'request': target_request,
                    'current_site': settings.SQUEST_HOST}
     else:
         template_name = "mails/request_state_update.html"
-        plain_text = "Request state update: {}".format(target_request.state)
+        plain_text = f"Request state update: {target_request.state}"
         context = {'request': target_request,
                    'user_applied_state': from_email,
                    'current_site': settings.SQUEST_HOST,
@@ -68,9 +61,9 @@ def send_mail_request_update(target_request, from_email=DEFAULT_FROM_EMAIL, mess
 def send_email_request_canceled(request_id, owner_email, from_email=DEFAULT_FROM_EMAIL):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
-    subject = "Request #{request_id} - CANCELLED".format(request_id=request_id)
+    subject = f"Request #{request_id} - CANCELLED"
     template_name = "mails/request_cancelled.html"
-    plain_text = "Request #{request_id} - CANCELLED".format(request_id=request_id)
+    plain_text = f"Request #{request_id} - CANCELLED"
     context = {'request_id': request_id,
                'user_applied_state': from_email}
     html_template = get_template(template_name)
@@ -85,9 +78,9 @@ def send_email_request_canceled(request_id, owner_email, from_email=DEFAULT_FROM
 def send_email_request_error(target_request, error_message):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
-    subject = "Request #{request_id} - ERROR".format(request_id=target_request.id)
+    subject = f"Request #{target_request.id} - ERROR"
     template_name = "mails/request_error.html"
-    plain_text = "Request #{request_id} - CANCELLED".format(request_id=target_request.id)
+    plain_text = f"Request #{target_request.id} - CANCELLED"
     context = {'request': target_request,
                'user_applied_state': DEFAULT_FROM_EMAIL,
                'error_message': error_message}

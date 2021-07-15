@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 try:
                     User.objects.get(username=user["username"])
                 except User.DoesNotExist:
-                    logger.info("Create User '{}'".format(user["username"]))
+                    logger.info(f"Create User '{user['username']}'")
                     if "is_admin" in user and user["is_admin"] == "true":
                         User.objects.create_superuser(username=user["username"],
                                                       email=user["email"],

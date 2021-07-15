@@ -29,7 +29,7 @@ class Instance(models.Model):
     state = FSMField(default=InstanceState.PENDING)
 
     def __str__(self):
-        return "{}-{}".format(self.id, self.name)
+        return f"{self.id}-{self.name}"
 
     @transition(field=state, source=[InstanceState.PENDING, InstanceState.PROVISION_FAILED],
                 target=InstanceState.PROVISIONING)

@@ -162,19 +162,22 @@ def admin_request_process(request, request_id):
             target_request.save()
         except towerlib.towerlibexceptions.AuthFailed:
             error = True
-            logger.error("[admin_request_process] Fail to authenticate with provided token when trying "
-                         "to process request id '{}'".format(target_request.id))
+            logger.error(
+                f"[admin_request_process] Fail to authenticate with provided token when trying to process request "
+                f"id '{target_request.id}'")
             error_message = "Fail to authenticate with provided token"
         except requests.exceptions.SSLError:
             error = True
             error_message = "Certificate verify failed"
-            logger.error("[admin_request_process] Certificate verify failed when trying "
-                         "to process request id '{}'".format(target_request.id))
+            logger.error(
+                f"[admin_request_process] Certificate verify failed when trying to process request "
+                f"id '{target_request.id}'")
         except requests.exceptions.ConnectionError:
             error = True
             error_message = "Unable to connect to remote server"
-            logger.error("[admin_request_process] Unable to connect to remote server when trying "
-                         "to process request id '{}'".format(target_request.id))
+            logger.error(
+                f"[admin_request_process] Unable to connect to remote server when trying to process request "
+                f"id '{target_request.id}'")
         if not error:
             target_request.save()
             send_mail_request_update(target_request, from_email=request.user.email)
