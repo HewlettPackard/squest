@@ -6,7 +6,7 @@
 </head>
 <h2>New request submitted: #{{ request.id }}</h2>
 
-<li>Requester: <b>{{ request.user.username }}</b></li>
+<li>Requester: <b>{{ user_applied_state.username }}</b></li>
 <li>Service: <b>{{ request.operation.service.name }}</b></li>
 <li>Instance: <b>{{ request.instance.name }}</b></li>
 <li>Operation type: <b>{{ request.operation.type }}</b></li>

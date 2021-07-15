@@ -25,7 +25,9 @@ def customer_request_cancel(request, request_id):
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         target_request.cancel()
-        send_email_request_canceled(request_id, target_request.user.email, from_email=target_request.user.email)
+        send_email_request_canceled(request_id,
+                                    user_applied_state=target_request.user,
+                                    request_owner_user=target_request.user)
         # now delete the request
         target_request.delete()
         return redirect('service_catalog:customer_request_list')
