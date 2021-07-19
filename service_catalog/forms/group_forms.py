@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import Group, User
 
+from service_catalog.models import BillingGroup
+
 
 class AddUserForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -24,4 +26,15 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
+        fields = ["name"]
+
+
+class BillingGroupForm(forms.ModelForm):
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'})
+                           )
+
+    class Meta:
+        model = BillingGroup
         fields = ["name"]

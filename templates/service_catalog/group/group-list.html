@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Groups</h1>
+                        <h1>{{ display_title }}</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'service_catalog:group_create' %}">
+                        <a class="btn btn-success float-sm-right" href="{% url "service_catalog:"|add:group_url|add:"_create" %}">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
@@ -36,15 +36,15 @@
                                 <tr>
                                     <td class="align-middle">{{ group.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'service_catalog:user_by_group_list' group.id %}" class="btn btn-default bg-sm">
+                                        <a href="{% url "service_catalog:user_by_"|add:group_url|add:"_list" group.id %}" class="btn btn-default bg-sm">
                                             {{ group.user_set.all | length }}
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="{% url 'service_catalog:group_edit' group.id %}" class="btn btn-primary bg-sm">
+                                        <a href="{% url "service_catalog:"|add:group_url|add:"_edit" group.id %}" class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'service_catalog:group_delete' group.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url "service_catalog:"|add:group_url|add:"_delete" group.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>
