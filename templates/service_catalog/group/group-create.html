@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Groups</h1>
+                        <h1 class="m-0">{{ display_title }}</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -30,7 +30,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'service_catalog:group_create' %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url "service_catalog:"|add:group_url|add:"_create" %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
