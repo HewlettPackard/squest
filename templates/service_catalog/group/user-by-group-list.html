@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Groups</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-info float-sm-right" href="{% url 'service_catalog:user_in_group_update' group.id %}">
+                            <i class="fas fa-edit"></i> Update
+                        </a>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="tower_list" class="table">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>E-mail</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {%  for user in group.user_set.all %}
+                                <tr>
+                                    <td class="align-middle">{{ user.username }}</td>
+                                    <td class="align-middle">{{ user.email }}</td>
+                                    <td class="align-middle">
+                                        <a href="{% url 'service_catalog:user_in_group_remove' group.id user.id %}" class="btn btn-danger bg-sm">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            {%  endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

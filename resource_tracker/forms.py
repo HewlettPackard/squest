@@ -1,7 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
     Resource, ResourceAttribute, ResourcePool
 from service_catalog.models import Instance
