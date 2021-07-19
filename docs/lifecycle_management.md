@@ -84,7 +84,7 @@ The playbook will:
 
     - name: Update spec of the instance via the squest API
       uri:
-        url: "{{ squest_api_url }}admin/instance/{{ squest['instance']['id'] }}/" # do not forget the last slash
+        url: "{{ squest_api_url }}service_catalog/admin/instance/{{ squest['instance']['id'] }}/" # do not forget the last slash
         user: "admin"
         password: "admin"
         method: PATCH
