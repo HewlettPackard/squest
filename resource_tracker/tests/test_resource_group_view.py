@@ -34,7 +34,7 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         }
         url = reverse('resource_tracker:resource_group_edit', kwargs=args)
 
-        new_name = "new_group_name"
+        new_name = "new_group_url"
         data = {
             "name": new_name,
         }

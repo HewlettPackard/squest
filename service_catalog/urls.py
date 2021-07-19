@@ -21,14 +21,25 @@ urlpatterns = [
     path('group/<int:group_id>/edit/', views.group_edit, name='group_edit'),
     path('group/<int:group_id>/delete/', views.group_delete, name='group_delete'),
 
+    # billing group URLs
+    path('billing-group/<int:billing_group_id>/users/', views.user_by_billing_group_list,
+       name='user_by_billing_group_list'),
+    path('billing-group/<int:billing_group_id>/users/update/', views.user_in_billing_group_update,
+       name='user_in_billing_group_update'),
+    path('billing-group/<int:billing_group_id>/users/remove/<int:user_id>/',
+       views.user_in_billing_group_remove, name='user_in_billing_group_remove'),
+    path('billing-group/', views.billing_group_list, name='billing_group_list'),
+    path('billing-group/create/', views.billing_group_create, name='billing_group_create'),
+    path('billing-group/<int:billing_group_id>/edit/', views.billing_group_edit, name='billing_group_edit'),
+    path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
+
     # settings URLs
     path('settings/tower/', views.list_tower, name='list_tower'),
     path('settings/tower/add/', views.add_tower, name='add_tower'),
     path('settings/tower/<int:tower_id>/sync/', views.sync_tower, name='sync_tower'),
     path('settings/tower/<int:tower_id>/delete/', views.delete_tower, name='delete_tower'),
     path('settings/tower/<int:tower_id>/update/', views.update_tower, name='update_tower'),
-    path('settings/tower/<int:tower_id>/job_templates/', views.tower_job_templates_list,
-         name='tower_job_templates_list'),
+    path('settings/tower/<int:tower_id>/job_templates/', views.tower_job_templates_list, name='tower_job_templates_list'),
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
          name='delete_job_template'),
 
@@ -40,14 +51,11 @@ urlpatterns = [
     path('settings/catalog/service/<int:service_id>/operations/add/', views.add_service_operation,
          name='add_service_operation'),
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/delete/',
-         views.delete_service_operation,
-         name='delete_service_operation'),
+    views.delete_service_operation, name='delete_service_operation'),
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/edit/',
-         views.edit_service_operation,
-         name='edit_service_operation'),
+    views.edit_service_operation, name='edit_service_operation'),
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/survey/',
-         views.service_operation_edit_survey,
-         name='service_operation_edit_survey'),
+    views.service_operation_edit_survey, name='service_operation_edit_survey'),
 
     # customer views URLs
     path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),
@@ -66,8 +74,7 @@ urlpatterns = [
     path('customer/instance/<int:instance_id>/archive/', views.customer_instance_archive,
          name='customer_instance_archive'),
     path('customer/instance/<int:instance_id>/operation/<int:operation_id>/',
-         views.customer_instance_request_new_operation,
-         name='customer_instance_request_new_operation'),
+    views.customer_instance_request_new_operation, name='customer_instance_request_new_operation'),
 
     # admin views URLs
     path('admin/request/', views.admin_request_list, name='admin_request_list'),
@@ -85,7 +92,5 @@ urlpatterns = [
          name='admin_instance_new_support'),
     path('admin/instance/<int:instance_id>/support/<int:support_id>', views.admin_instance_support_details,
          name='admin_instance_support_details'),
-    path('admin/instance/<int:instance_id>/edit/', views.admin_instance_edit,
-         name='admin_instance_edit'),
-
+    path('admin/instance/<int:instance_id>/edit/', views.admin_instance_edit, name='admin_instance_edit'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
