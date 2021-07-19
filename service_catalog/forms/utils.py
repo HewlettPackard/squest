@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 
 def get_choices_from_string(string_with_anti_slash_n):
@@ -17,6 +18,7 @@ def get_fields_from_survey(survey):
                 CharField(label=survey_filed['question_name'],
                           initial=survey_filed['default'],
                           required=survey_filed['required'],
+                          help_text=survey_filed['question_description'],
                           min_length=survey_filed['min'],
                           max_length=survey_filed['max'],
                           widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -26,6 +28,7 @@ def get_fields_from_survey(survey):
                 CharField(label=survey_filed['question_name'],
                           initial=survey_filed['default'],
                           required=survey_filed['required'],
+                          help_text=survey_filed['question_description'],
                           min_length=survey_filed['min'],
                           max_length=survey_filed['max'],
                           widget=forms.Textarea(attrs={'class': 'form-control'}))
@@ -34,6 +37,7 @@ def get_fields_from_survey(survey):
             fields[survey_filed['variable']] = forms. \
                 CharField(label=survey_filed['question_name'],
                           required=survey_filed['required'],
+                          help_text=survey_filed['question_description'],
                           min_length=survey_filed['min'],
                           max_length=survey_filed['max'],
                           widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -43,6 +47,7 @@ def get_fields_from_survey(survey):
                 ChoiceField(label=survey_filed['question_name'],
                             initial=survey_filed['default'],
                             required=survey_filed['required'],
+                            help_text=survey_filed['question_description'],
                             choices=get_choices_from_string(survey_filed["choices"]),
                             error_messages={'required': 'At least you must select one choice'},
                             widget=forms.Select(attrs={'class': 'form-control'}))
@@ -52,6 +57,7 @@ def get_fields_from_survey(survey):
                 MultipleChoiceField(label=survey_filed['question_name'],
                                     initial=survey_filed['default'].split("\n"),
                                     required=survey_filed['required'],
+                                    help_text=survey_filed['question_description'],
                                     choices=get_choices_from_string(survey_filed["choices"]),
                                     widget=forms.SelectMultiple(
                                         attrs={'class': 'form-control', 'choices': 'OPTIONS_TUPPLE'}))
@@ -61,6 +67,7 @@ def get_fields_from_survey(survey):
                 IntegerField(label=survey_filed['question_name'],
                              initial=survey_filed['default'],
                              required=survey_filed['required'],
+                             help_text=survey_filed['question_description'],
                              min_value=survey_filed['min'],
                              max_value=survey_filed['max'],
                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -70,6 +77,7 @@ def get_fields_from_survey(survey):
                 FloatField(label=survey_filed['question_name'],
                            initial=survey_filed['default'],
                            required=survey_filed['required'],
+                           help_text=survey_filed['question_description'],
                            min_value=survey_filed['min'],
                            max_value=survey_filed['max'],
                            widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
