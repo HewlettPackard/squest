@@ -7,8 +7,8 @@ theme:
   palette:
     scheme: default
     primary: green
-    accent: blue
-  logo: images/ansible_tower_logo.svg
+    accent: deep orange
+  logo: images/squest_logo_white.png
 
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.9.2/mermaid.min.js
