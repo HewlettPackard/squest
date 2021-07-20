@@ -90,6 +90,7 @@ class ResourceCreateSerializer(serializers.Serializer):
         new_resource = Resource.objects.create(name=validated_data['name'], resource_group=resource_group)
         if validated_data['service_catalog_instance'] is not None:
             new_resource.service_catalog_instance = validated_data['service_catalog_instance']
+            new_resource.save()
         attributes = validated_data.pop('attributes')
         for attribute in attributes:
             attribute_type = ResourceGroupAttributeDefinition.objects.get(name=attribute.pop('name'),
