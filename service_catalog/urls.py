@@ -39,7 +39,8 @@ urlpatterns = [
     path('settings/tower/<int:tower_id>/sync/', views.sync_tower, name='sync_tower'),
     path('settings/tower/<int:tower_id>/delete/', views.delete_tower, name='delete_tower'),
     path('settings/tower/<int:tower_id>/update/', views.update_tower, name='update_tower'),
-    path('settings/tower/<int:tower_id>/job_templates/', views.tower_job_templates_list, name='tower_job_templates_list'),
+    path('settings/tower/<int:tower_id>/job_templates/', views.tower_job_templates_list,
+         name='tower_job_templates_list'),
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
          name='delete_job_template'),
 

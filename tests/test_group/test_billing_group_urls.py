@@ -49,7 +49,8 @@ class TestGroupUrls(TestGroupBase):
         }
         test_list = [
             {'url': reverse('service_catalog:billing_group_create'), 'data': {'name': 'group_test2'}},
-            {'url': reverse('service_catalog:billing_group_edit', kwargs=args_group), 'data': {'name': 'group_test_renamed'}},
+            {'url': reverse('service_catalog:billing_group_edit', kwargs=args_group),
+             'data': {'name': 'group_test_renamed'}},
             {'url': reverse('service_catalog:user_in_billing_group_update', kwargs=args_group),
              'data': {'users': [self.my_user2.id, self.my_user3.id]}}
         ]
