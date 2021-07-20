@@ -1,0 +1,44 @@
+- name: Add resource in resource group example
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    squest_api: "http://127.0.0.1:8000/api/"
+    resource_group_vm_id: 8
+    squest: # this would be the sent data from squest as extra vars
+      instance:
+        id: 8
+        name: test
+        service: 1
+        spec: { }
+        state: PROVISIONING
+    vm_name: "test-vm"
+    vm_vcpu: 4
+    vm_memory: 16
+
+  tasks:
+    - name: Print info sent by Squest
+      debug:
+        var: squest
+
+    # -----------------------
+    # PLACE HERE ALL THE MAGIC TO CREATE THE RESOURCE
+    # -----------------------
+    - name: Create a resource in squest
+      uri:
+        url: "{{ squest_api }}resource_tracker/resource_group/{{ resource_group_vm_id }}/resources/"
+        user: "admin"
+        password: "admin"
+        method: POST
+        body:
+          name: "{{ vm_name }}"
+          service_catalog_instance: "{{ squest['instance']['id'] }}"
+          attributes:
+            - name: "vCPU"
+              value: "{{ vm_vcpu }}"
+            - name: "Memory"
+              value: "{{ vm_memory }}"
+        force_basic_auth: yes
+        status_code: 201
+        body_format: json

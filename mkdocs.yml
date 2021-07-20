@@ -27,11 +27,14 @@ nav:
   - Configuration:
     - Squest: squest_settings.md
     - Tower: tower_settings.md
-  - Lifecycle management: lifecycle_management.md
+  - How to:
+    - Service catalog: how_to/service_catalog.md
+    - Resource tracking: how_to/resource_tracking.md
   - Development doc:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
     - Database ERD: dev/db-erd.md
   - Contribute:
+      - Code: contribute/code.md
       - Documentation: contribute/documentation.md
