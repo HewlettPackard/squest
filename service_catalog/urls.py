@@ -9,29 +9,7 @@ app_name = 'service_catalog'
 urlpatterns = [
     # common URLs
     path('', views.home, name='home'),
-    path('profile/', views.profile, name='profile'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
-
-    # group URLs
-    path('group/<int:group_id>/users/', views.user_by_group_list, name='user_by_group_list'),
-    path('group/<int:group_id>/users/update/', views.user_in_group_update, name='user_in_group_update'),
-    path('group/<int:group_id>/users/remove/<int:user_id>/', views.user_in_group_remove, name='user_in_group_remove'),
-    path('group/', views.group_list, name='group_list'),
-    path('group/create/', views.group_create, name='group_create'),
-    path('group/<int:group_id>/edit/', views.group_edit, name='group_edit'),
-    path('group/<int:group_id>/delete/', views.group_delete, name='group_delete'),
-
-    # billing group URLs
-    path('billing-group/<int:billing_group_id>/users/', views.user_by_billing_group_list,
-       name='user_by_billing_group_list'),
-    path('billing-group/<int:billing_group_id>/users/update/', views.user_in_billing_group_update,
-       name='user_in_billing_group_update'),
-    path('billing-group/<int:billing_group_id>/users/remove/<int:user_id>/',
-       views.user_in_billing_group_remove, name='user_in_billing_group_remove'),
-    path('billing-group/', views.billing_group_list, name='billing_group_list'),
-    path('billing-group/create/', views.billing_group_create, name='billing_group_create'),
-    path('billing-group/<int:billing_group_id>/edit/', views.billing_group_edit, name='billing_group_edit'),
-    path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
 
     # settings URLs
     path('settings/tower/', views.list_tower, name='list_tower'),
