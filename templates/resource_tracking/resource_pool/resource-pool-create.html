@@ -39,6 +39,9 @@
                                     </label>
                                     <div class="col-sm-4">
                                         {{ field }}
+                                        {% if field.help_text %}
+                                            <small id="emailHelp" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}

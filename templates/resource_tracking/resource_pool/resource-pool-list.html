@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-sm-6">
                         <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_pool_create' %}">
-                            <i class="fas fa-plus"></i> Add
+                            <i class="fas fa-plus"></i> New resource pool
                         </a>
                     </div>
                 </div>
@@ -20,22 +20,22 @@
         </section>
         <div class="content">
             <div class="row">
-                {% for resource_pool in resource_pools %}
-                    <div class="col-md-4">
+                <section class="col-lg-9 connectedSortable ui-sortable">
+                    {% for resource_pool in resource_pools.qs %}
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
                                 <div class="card-tools">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                                <i class="fas fa-wrench"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                                <a class="dropdown-item text-primary" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
-                                                <a class="dropdown-item text-danger" href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
-                                            </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                            <i class="fas fa-wrench"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                            <a class="dropdown-item text-primary" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
+                                            <a class="dropdown-item text-danger" href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
                                         </div>
                                     </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 {% if resource_pool.attribute_definitions.all|length == 0 %}
@@ -91,10 +91,27 @@
                                     </table>
                                 {% endif %}
                             </div>
+                            <div class="card-footer">
+                                <strong>Tags: </strong>{%  for tag in resource_pool.tags.all %}{{ tag }}, {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </section>
+                <section class="col-lg-3 connectedSortable ui-sortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form method="get">
+                                {{ resource_pools.form.as_p }}
+                                <button class="btn btn-primary" type="submit">Apply</button>
+                            </form>
                         </div>
                     </div>
-                {% endfor %}
-            </div><!-- end main card-body -->
+                </section>
+            </div>
         </div>
     </div>
     </div>

@@ -1,4 +1,5 @@
 from django.db import models
+from taggit.managers import TaggableManager
 
 from service_catalog.models import Instance
 
@@ -7,6 +8,8 @@ class ResourceGroup(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
+
+    tags = TaggableManager()
 
     def __str__(self):
         return self.name
@@ -48,6 +51,8 @@ class Resource(models.Model):
                                                  related_name='service_catalog_instances',
                                                  related_query_name='service_catalog_instance',
                                                  null=True)
+
+    tags = TaggableManager()
 
     def __str__(self):
         return f"{self.name}["+",".join([f"{attribute.attribute_type.name}: {attribute.value}"
@@ -101,6 +106,8 @@ class ResourcePool(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
+
+    tags = TaggableManager()
 
     def __str__(self):
         return self.name

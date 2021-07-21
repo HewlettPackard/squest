@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_node_assets',
     'django_filters',
     'drf_yasg',
+    'taggit',
     'service_catalog',
     'resource_tracker'
 ]

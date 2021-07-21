@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-from django.contrib.auth.models import Group
-from django.contrib.auth.models import User
+from taggit.forms import *
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
     Resource, ResourceAttribute, ResourcePool
 from service_catalog.models import Instance
@@ -12,10 +11,13 @@ class ResourceGroupForm(ModelForm):
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+    tags = TagField(label="Tags",
+                    required=False,
+                    widget=TagWidget(attrs={'class': 'form-control'}))
 
     class Meta:
         model = ResourceGroup
-        fields = ["name"]
+        fields = ["name", "tags"]
 
 
 class ResourceGroupAttributeDefinitionForm(ModelForm):
@@ -112,9 +114,13 @@ class ResourcePoolForm(ModelForm):
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+    tags = TagField(label="Tags",
+                    required=False,
+                    widget=TagWidget(attrs={'class': 'form-control'}))
+
     class Meta:
         model = ResourcePool
-        fields = ["name"]
+        fields = ["name", "tags"]
 
 
 class ResourcePoolAttributeDefinitionForm(ModelForm):
