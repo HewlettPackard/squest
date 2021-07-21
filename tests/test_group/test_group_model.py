@@ -12,7 +12,7 @@ class TestGroupProcessing(TestGroupBase):
         args_group = {
             'group_id': self.my_group.id
         }
-        url = reverse('service_catalog:user_in_group_update', kwargs=args_group)
+        url = reverse('profiles:user_in_group_update', kwargs=args_group)
         data_list = [
             {'users': [self.my_user.id, self.my_user2.id, self.my_user3.id, self.my_user4.id]},
             {'users': [self.my_user.id]},

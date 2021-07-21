@@ -6,7 +6,6 @@ class BillingGroup(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
                             unique=True)
-
     user_set = models.ManyToManyField(
         User,
         blank=True,

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 
-from service_catalog.models import BillingGroup
+from profiles.models import BillingGroup
 from tests.base import BaseTest
 
 

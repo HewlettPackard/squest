@@ -7,5 +7,3 @@ from .customer.catalog_views import *
 from .customer.request_view import *
 from .customer.instance_views import *
 from .filters import *
-from .group_views import *
-from .billing_group_views import *

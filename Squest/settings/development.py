@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'taggit',
     'service_catalog',
-    'resource_tracker'
+    'resource_tracker',
+    'profiles'
 ]
 
 MIDDLEWARE = [
@@ -122,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # -----------------------------------------
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 if LDAP_ENABLED:
-    from ldap_config import *
+    from Squest.ldap_config import *
 
 # -----------------------------------------
 # Authentication

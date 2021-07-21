@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import BillingGroup
+from profiles.models import BillingGroup
 from tests.test_group.test_group_base import TestGroupBase
 
 
@@ -10,7 +10,7 @@ class TestGroupModel(TestGroupBase):
         super(TestGroupModel, self).setUp()
 
     def test_create_billing_group(self):
-        url = reverse('service_catalog:billing_group_create')
+        url = reverse('profiles:billing_group_create')
         test_list = [
             {'data': {'name': 'group_test2'}, 'offset': 1},
             {'data': {'name': 'test_billing_group2'}, 'offset': 1},
@@ -26,7 +26,7 @@ class TestGroupModel(TestGroupBase):
         args_group = {
             'billing_group_id': self.my_billing_group.id
         }
-        url = reverse('service_catalog:billing_group_edit', kwargs=args_group)
+        url = reverse('profiles:billing_group_edit', kwargs=args_group)
         test_list = [
             {'data': {'name': 'a'}, 'expected': 'a'},
             {'data': {'name': ''}, 'expected': 'a'},
@@ -42,7 +42,7 @@ class TestGroupModel(TestGroupBase):
         args_group = {
             'billing_group_id': self.my_billing_group.id
         }
-        url = reverse('service_catalog:billing_group_delete', kwargs=args_group)
+        url = reverse('profiles:billing_group_delete', kwargs=args_group)
         self.client.post(url)
         self.assertFalse(BillingGroup.objects.filter(id=self.my_billing_group.id).exists())
         self.client.post(url)
@@ -52,7 +52,7 @@ class TestGroupModel(TestGroupBase):
         args_group = {
             'billing_group_id': self.my_billing_group.id
         }
-        url = reverse('service_catalog:user_in_billing_group_update', kwargs=args_group)
+        url = reverse('profiles:user_in_billing_group_update', kwargs=args_group)
         data_list = [
             {'users': [self.my_user.id, self.my_user2.id, self.my_user3.id, self.my_user4.id]},
             {'users': [self.my_user.id]},
@@ -73,7 +73,7 @@ class TestGroupModel(TestGroupBase):
         }
         init_users_len = len(self.my_billing_group.user_set.all())
         for test_data in test_list:
-            url = reverse('service_catalog:user_in_billing_group_remove',
+            url = reverse('profiles:user_in_billing_group_remove',
                           kwargs={**args_group, **test_data['args_user']})
             self.client.post(url)
             self.assertEquals(len(self.my_billing_group.user_set.all()), init_users_len - test_data['offset'])

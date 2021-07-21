@@ -28,7 +28,7 @@
                 <i class="fas fa-user-circle"></i> {{ user.get_username }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
-                <a class="dropdown-item" href="{% url 'service_catalog:profile' %}"><i class="fas fa-user"></i> User details</a>
+                <a class="dropdown-item" href="{% url 'profiles:profile' %}"><i class="fas fa-user"></i> User details</a>
                 <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </li>
