@@ -4,26 +4,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from service_catalog.forms import AddUserForm, BillingGroupForm
-from service_catalog.models import BillingGroup
+from profiles.forms import AddUserForm
+from profiles.forms.billing_group_forms import BillingGroupForm
+from profiles.models import BillingGroup
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def billing_group_list(request):
     groups = BillingGroup.objects.all()
     context = {'groups': groups, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'service_catalog/group/group-list.html', context)
+    return render(request, 'profiles/group/group-list.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def billing_group_edit(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
     form = BillingGroupForm(request.POST or None, instance=group)
-    if form.is_valid():
+    if form.is_valid() and not group.locked:
         form.save()
-        return redirect("service_catalog:billing_group_list")
+        return redirect("profiles:billing_group_list")
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'service_catalog/group/group-edit.html', context)
+    return render(request, 'profiles/group/group-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -32,11 +33,11 @@ def billing_group_create(request):
         form = BillingGroupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("service_catalog:billing_group_list")
+            return redirect("profiles:billing_group_list")
     else:
         form = BillingGroupForm()
     context = {'form': form, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'service_catalog/group/group-create.html', context)
+    return render(request, 'profiles/group/group-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -44,27 +45,27 @@ def billing_group_delete(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
     if request.method == 'POST':
         group.delete()
-        return redirect("service_catalog:billing_group_list")
+        return redirect("profiles:billing_group_list")
     args = {
         "billing_group_id": billing_group_id,
     }
     context = {
         'title_text': 'Groups',
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{group.name}</strong>?"),
-        'action_url': reverse('service_catalog:billing_group_delete', kwargs=args),
+        'action_url': reverse('profiles:billing_group_delete', kwargs=args),
         'button_text': 'Delete',
         'details': {'warning_sentence': 'Warning: some users are still present in this group, see them below:',
                     'details_list': [user.username for user in group.user_set.all()]
                     } if group.user_set.all() else None
     }
-    return render(request, 'service_catalog/group/confirm-delete-template.html', context=context)
+    return render(request, 'profiles/group/confirm-delete-template.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def user_by_billing_group_list(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
     context = {'group': group, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'service_catalog/group/user-by-group-list.html', context)
+    return render(request, 'profiles/group/user-by-group-list.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -84,7 +85,7 @@ def user_in_billing_group_update(request, billing_group_id):
                 group.user_set.add(user)
             return redirect("service_catalog:user_by_billing_group_list", billing_group_id=billing_group_id)
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'service_catalog/group/user-in-group-update.html', context)
+    return render(request, 'profiles/group/user-in-group-update.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -101,7 +102,7 @@ def user_in_billing_group_remove(request, billing_group_id, user_id):
     context = {
         'title_text': f"Users in  { group }",
         'confirm_text': mark_safe(f"Confirm to remove the user <strong>{ user.username }</strong> from { group }?"),
-        'action_url': reverse('service_catalog:user_in_billing_group_remove', kwargs=args),
+        'action_url': reverse('profiles:user_in_billing_group_remove', kwargs=args),
         'button_text': 'Delete'
     }
-    return render(request, 'service_catalog/group/confirm-delete-template.html', context=context)
+    return render(request, 'profiles/group/confirm-delete-template.html', context=context)

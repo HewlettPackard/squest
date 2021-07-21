@@ -30,7 +30,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url "service_catalog:user_in_"|add:group_url|add:"_update" group.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url "profiles:user_in_"|add:group_url|add:"_update" group.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">

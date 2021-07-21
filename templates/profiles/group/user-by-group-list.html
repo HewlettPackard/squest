@@ -7,11 +7,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ display_title }}</h1>
+                        <h1>{{ display_title }} / {{ group.name }}</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url "service_catalog:"|add:group_url|add:"_create" %}">
-                            <i class="fas fa-plus"></i> Add
+                        <a class="btn btn-info float-sm-right" href="{% url "profiles:user_in_"|add:group_url|add:"_update" group.id %}">
+                            <i class="fas fa-edit"></i> Update
                         </a>
                     </div>
                 </div>
@@ -26,25 +26,18 @@
                         <table id="tower_list" class="table">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Users</th>
-                                <th>Actions</th>
+                                <th>Username</th>
+                                <th>E-mail</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for group in groups %}
+                            {%  for user in users %}
                                 <tr>
-                                    <td class="align-middle">{{ group.name }}</td>
+                                    <td class="align-middle">{{ user.username }}</td>
+                                    <td class="align-middle">{{ user.email }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url "service_catalog:user_by_"|add:group_url|add:"_list" group.id %}" class="btn btn-default bg-sm">
-                                            {{ group.user_set.all | length }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{% url "service_catalog:"|add:group_url|add:"_edit" group.id %}" class="btn btn-primary bg-sm">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <a href="{% url "service_catalog:"|add:group_url|add:"_delete" group.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url "profiles:user_in_"|add:group_url|add:"_remove" group.id user.id %}" class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>
@@ -53,7 +46,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div><!-- end container fluid -->
             </div>
         </div>

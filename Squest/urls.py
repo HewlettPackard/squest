@@ -39,6 +39,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/service_catalog/', include('service_catalog.api.urls')),
     path('api/resource_tracker/', include('resource_tracker.api.urls')),
+    path('profiles/', include('profiles.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
