@@ -16,7 +16,23 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
+                    <section class="col-lg-9 connectedSortable ui-sortable">
                     {{ svg }}
+                    </section>
+                    <section class="col-lg-3 connectedSortable ui-sortable">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form method="get">
+                                    {{ resource_graph.form.as_p }}
+                                    <button class="btn btn-primary" type="submit">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

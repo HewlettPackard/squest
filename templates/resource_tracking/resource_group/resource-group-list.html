@@ -20,8 +20,8 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    {% for resource_group in resource_groups %}
-                        <div class="col-md-4">
+                    <section class="col-lg-9 connectedSortable ui-sortable">
+                        {% for resource_group in resource_groups.qs %}
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title"><strong>{{ resource_group.name }}</strong></h3>
@@ -67,14 +67,32 @@
                                     {% endif %}
                                 </div>
                                 <div class="card-footer text-muted">
-                                    <a class="btn btn-default btn-sm" href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
+                                    <strong>Tags: </strong>
+                                    {%  for tag in resource_group.tags.all %}
+                                        <small class="badge badge-secondary">{{ tag }}</small>
+                                    {% endfor %}
+                                    <a class="btn btn-default btn-sm float-right" href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
                                         Resources
                                         <span class="badge badge-dark">{{ resource_group.resources.all|length }}</span>
                                     </a>
                                 </div>
                             </div>
+                        {% endfor %}
+                    </section>
+                    <section class="col-lg-3 connectedSortable ui-sortable">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form method="get">
+                                    {{ resource_groups.form.as_p }}
+                                    <button class="btn btn-primary" type="submit">Apply</button>
+                                </form>
+                            </div>
                         </div>
-                    {% endfor %}
+                    </section>
                 </div>
             </div>
         </div>
