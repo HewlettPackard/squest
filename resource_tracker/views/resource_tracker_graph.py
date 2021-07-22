@@ -25,6 +25,8 @@ def resource_tracker_graph(request):
     tags = Tag.objects.all()
     resource_graph_filtered = GraphFilter(request.GET, queryset=tags)
 
+    display_graph = False
+
     if "tag" in request.GET:
         tag_list = request.GET.getlist("tag")
         resource_pool_queryset = ResourcePool.objects.filter(tags__name__in=tag_list)
@@ -35,8 +37,9 @@ def resource_tracker_graph(request):
 
     for resource_pool in resource_pool_queryset:
         dot.node(resource_pool.name, label=create_resource_pool_svg(resource_pool))
+        display_graph = True
     for resource_group in resource_group_queryset:
-
+        display_graph = True
         dot.node(resource_group.name, label=create_resource_group_svg(resource_group))
         for attribute in resource_group.attribute_definitions.filter():
             rg = f"{resource_group.name}:{attribute.name}"
@@ -52,6 +55,7 @@ def resource_tracker_graph(request):
 
     return render(request, 'resource_tracking/graph/resource-tracker-graph.html',
                   context={'svg': svg,
+                           'display_graph': display_graph,
                            'resource_graph': resource_graph_filtered})
 
 

@@ -40,56 +40,24 @@
                 </li>
                 {# Admin side panel #}
                 {% if user.is_superuser %}
-                    <li class="nav-header">Admin</li>
+                    <li class="nav-header">Service catalog</li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:list_tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-chess-rook"></i>
+                            <p>Tower/AWX</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:service_list'%}" class="nav-link {% if 'settings/catalog' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>Service catalog</p>
+                        </a>
+                    </li>
                     <li class="nav-item menu-close">
                         <a href="{% url 'service_catalog:admin_request_list' %}" class="nav-link {% if 'admin/request' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Requests</p>
                         </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list' %}" class="nav-link {% if 'admin/request/' in request.path and not request.GET.state %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>All</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=SUBMITTED" class="nav-link {% if request.GET.state == 'SUBMITTED' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-info"></i>
-                                    <p>Submitted</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=ACCEPTED" class="nav-link {% if request.GET.state == 'ACCEPTED' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-primary"></i>
-                                    <p>Accepted</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=NEED_INFO" class="nav-link {% if request.GET.state == 'NEED_INFO' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-warning"></i>
-                                    <p>Need info</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=COMPLETE" class="nav-link {% if request.GET.state == 'COMPLETE' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-success"></i>
-                                    <p>Complete</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=FAILED" class="nav-link {% if request.GET.state == 'FAILED' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-danger"></i>
-                                    <p>Failed</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:admin_request_list'%}?state=REJECTED" class="nav-link {% if request.GET.state == 'REJECTED' %}active{% endif %}">
-                                    <i class="far fa-circle nav-icon text-muted"></i>
-                                    <p>Rejected</p>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:admin_instance_list'%}" class="nav-link {% if 'admin/instance/' in request.path and not request.GET.state %}active{% endif %}">
@@ -97,33 +65,6 @@
                             <p>Instances</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:group_list'%}" class="nav-link {% if '/group/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Groups</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:billing_group_list'%}" class="nav-link {% if 'billing' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-search-dollar"></i>
-                            <p>Billing Groups</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-header">Settings</li>
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:service_list'%}" class="nav-link {% if 'settings/catalog' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-shopping-cart"></i>
-                            <p>Service catalog</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:list_tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-chess-rook"></i>
-                            <p>Tower/AWX</p>
-                        </a>
-                    </li>
-
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker:resource_pool_list'%}" class="nav-link {% if 'resource_tracker/resource_pool' in request.path %}active{% endif %}">
@@ -141,6 +82,19 @@
                         <a href="{% url 'resource_tracker:resource_tracker_graph'%}" class="nav-link {% if 'resource_tracker/resource_tracker_graph' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-project-diagram"></i>
                             <p>Graph</p>
+                        </a>
+                    </li>
+                     <li class="nav-item">
+                        <a href="{% url 'service_catalog:billing_group_list'%}" class="nav-link {% if 'billing' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-search-dollar"></i>
+                            <p>Billing Groups</p>
+                        </a>
+                    </li>
+                    <li class="nav-header">Settings</li>
+                     <li class="nav-item">
+                        <a href="{% url 'service_catalog:group_list'%}" class="nav-link {% if '/group/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Groups</p>
                         </a>
                     </li>
                 {% endif %}

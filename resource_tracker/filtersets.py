@@ -1,6 +1,5 @@
 import django_filters
 from django import forms
-from django.db.models import Count
 from taggit.models import Tag
 
 from resource_tracker.models import ResourcePool, ResourceGroup

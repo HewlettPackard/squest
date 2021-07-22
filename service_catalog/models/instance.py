@@ -31,6 +31,10 @@ class Instance(models.Model):
     def __str__(self):
         return f"{self.id}-{self.name}"
 
+    def opened_support_count(self):
+        from .support import SupportState
+        return self.supports.filter(state=SupportState.OPENED).count()
+
     @transition(field=state, source=[InstanceState.PENDING, InstanceState.PROVISION_FAILED],
                 target=InstanceState.PROVISIONING)
     def provisioning(self):
