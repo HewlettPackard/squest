@@ -9,7 +9,16 @@
                     <div class="col-sm-6">
                         <h1>Resource Tracker Graph</h1>
                     </div>
-
+                    <div class="col-sm-6">
+                        <div class="float-sm-right">
+                            <a class="btn btn-success" href="{% url 'resource_tracker:resource_pool_create' %}">
+                                <i class="fas fa-plus"></i> New resource pool
+                            </a>
+                            <a class="btn btn-success" href="{% url 'resource_tracker:resource_group_create' %}">
+                                <i class="fas fa-plus"></i> New resource group
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -17,7 +26,11 @@
             <div class="container-fluid">
                 <div class="row">
                     <section class="col-lg-9 connectedSortable ui-sortable">
-                    {{ svg }}
+                        {% if display_graph %}
+                            {{ svg }}
+                        {% else %}
+                            Nothing to display
+                        {% endif %}
                     </section>
                     <section class="col-lg-3 connectedSortable ui-sortable">
                         <div class="card">

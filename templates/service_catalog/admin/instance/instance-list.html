@@ -14,53 +14,75 @@
         </section>
         <div class="content">
             <div class="container-fluid">
-                <div class="card">
+                <div class="row">
+                    <section class="col-lg-9 connectedSortable ui-sortable">
+                        <div class="card">
 
-                    <div class="card-body">
-                        <table id="customer_request_list" class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Service type</th>
-                                <th>Requests</th>
-                                <th>Spec</th>
-                                <th>State</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {%  for instance in filter.qs %}
-                                <tr>
-                                    <td class="align-middle">
-                                        {{ instance.name }}
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'service_catalog:edit_service' instance.id %}?instance={{ instance.name }}">
-                                            {{ instance.service.name }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'service_catalog:admin_request_list'%}?instance={{ instance.name }}" class="btn btn-default bg-sm">
-                                            {{ instance.request_set.all | length }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        {{ instance.spec }}
-                                    </td>
-                                    <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }} btn-block">{{ instance.state }}</span></h4></td>
+                            <div class="card-body">
+                                <table id="customer_request_list" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Service type</th>
+                                        <th>Requests</th>
+                                        <th>State</th>
+                                        <th>Opened support</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {%  for instance in instances.qs %}
+                                        <tr>
+                                            <td class="align-middle">
+                                                {{ instance.name }}
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="{% url 'service_catalog:edit_service' instance.id %}?instance={{ instance.name }}">
+                                                    {{ instance.service.name }}
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="{% url 'service_catalog:admin_request_list'%}?instance={{ instance.name }}" class="btn btn-default bg-sm">
+                                                    {{ instance.request_set.all | length }}
+                                                </a>
+                                            </td>
+                                            <td style="width: 10%" class="align-middle">
+                                                <h4><span class="badge bg-{{ instance.state |map_instance_state }} btn-block">{{ instance.state }}</span></h4>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="" class="btn btn-default bg-sm">
+                                                    {{ instance.opened_support_count }}
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="{% url 'service_catalog:admin_instance_details' instance.id %}" class="btn btn-info bg-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {%  endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                    <td class="align-middle">
-                                        <a href="{% url 'service_catalog:admin_instance_details' instance.id %}" class="btn btn-info bg-sm">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                            {%  endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        </div><!-- end container fluid -->
+                    </section>
+                    <section class="col-lg-3 connectedSortable ui-sortable">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form method="get">
+                                    {{ instances.form.as_p }}
+                                    <button class="btn btn-primary" type="submit">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
 
-                </div><!-- end container fluid -->
             </div>
         </div>
     </div>
