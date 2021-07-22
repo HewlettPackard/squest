@@ -16,7 +16,6 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("resource_pools" in response.context)
-        self.assertTrue("list_attribute_name" in response.context)
 
     def test_resource_pool_create(self):
         url = reverse('resource_tracker:resource_pool_create')
