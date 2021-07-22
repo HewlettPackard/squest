@@ -92,7 +92,10 @@
                                 {% endif %}
                             </div>
                             <div class="card-footer">
-                                <strong>Tags: </strong>{%  for tag in resource_pool.tags.all %}{{ tag }}, {% endfor %}
+                                <strong>Tags: </strong>
+                                {%  for tag in resource_pool.tags.all %}
+                                    <small class="badge badge-secondary">{{ tag }}</small>
+                                {% endfor %}
                             </div>
                         </div>
                     {% endfor %}

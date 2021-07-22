@@ -1,15 +1,17 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
+from resource_tracker.filtersets import ResourceGroupFilter
 from resource_tracker.forms import ResourceGroupForm
 from resource_tracker.models import ResourceGroup
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_group_list(request):
-    resource_groups = ResourceGroup.objects.all()
+    resource_group_list = ResourceGroup.objects.all()
+    resource_group_filtered = ResourceGroupFilter(request.GET, queryset=resource_group_list)
     return render(request, 'resource_tracking/resource_group/resource-group-list.html',
-                  {'resource_groups': resource_groups})
+                  {'resource_groups': resource_group_filtered})
 
 
 @user_passes_test(lambda u: u.is_superuser)

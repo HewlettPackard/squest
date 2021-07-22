@@ -5,7 +5,9 @@ from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from graphviz import Digraph
+from taggit.models import Tag
 
+from resource_tracker.filtersets import GraphFilter
 from resource_tracker.models import ResourceGroup, ResourcePool
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
@@ -20,9 +22,20 @@ def resource_tracker_graph(request):
     dot.name = 'Resource Tracker Graph'
     dot.attr('node', shape='plaintext')
 
-    for resource_pool in ResourcePool.objects.filter():
+    tags = Tag.objects.all()
+    resource_graph_filtered = GraphFilter(request.GET, queryset=tags)
+
+    if "tag" in request.GET:
+        tag_list = request.GET.getlist("tag")
+        resource_pool_queryset = ResourcePool.objects.filter(tags__name__in=tag_list)
+        resource_group_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
+    else:
+        resource_pool_queryset = ResourcePool.objects.all()
+        resource_group_queryset = ResourceGroup.objects.all()
+
+    for resource_pool in resource_pool_queryset:
         dot.node(resource_pool.name, label=create_resource_pool_svg(resource_pool))
-    for resource_group in ResourceGroup.objects.filter():
+    for resource_group in resource_group_queryset:
 
         dot.node(resource_group.name, label=create_resource_group_svg(resource_group))
         for attribute in resource_group.attribute_definitions.filter():
@@ -37,7 +50,9 @@ def resource_tracker_graph(request):
     dot.format = 'svg'
     svg = mark_safe(dot.pipe().decode('utf-8'))
 
-    return render(request, 'resource_tracking/graph/resource-tracker-graph.html', context={'svg': svg})
+    return render(request, 'resource_tracking/graph/resource-tracker-graph.html',
+                  context={'svg': svg,
+                           'resource_graph': resource_graph_filtered})
 
 
 def create_resource_pool_svg(resource_pool: ResourcePool):
