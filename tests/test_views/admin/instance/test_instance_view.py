@@ -15,8 +15,8 @@ class TestAdminInstanceViews(BaseTestRequest):
         url = reverse('service_catalog:admin_instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("filter" in response.context)
-        self.assertEquals(len(response.context["filter"].qs), 2)
+        self.assertTrue("instances" in response.context)
+        self.assertEquals(len(response.context["instances"].qs), 2)
 
     def test_customer_cannot_list_instance_from_admin_view(self):
         self.client.login(username=self.standard_user, password=self.common_password)

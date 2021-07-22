@@ -11,8 +11,8 @@ from service_catalog.views import instance_new_support, instance_support_details
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_instance_list(request):
-    f = InstanceFilter(request.GET, queryset=Instance.objects.all())
-    return render(request, 'service_catalog/admin/instance/instance-list.html', {'filter': f})
+    instances_filtered = InstanceFilter(request.GET, queryset=Instance.objects.all())
+    return render(request, 'service_catalog/admin/instance/instance-list.html', {'instances': instances_filtered})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -49,4 +49,3 @@ def admin_instance_edit(request, instance_id):
 
     return render(request, 'service_catalog/admin/instance/instance-edit.html', {'form': form,
                                                                                  'instance': instance})
-
