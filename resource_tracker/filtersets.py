@@ -27,7 +27,8 @@ class TagFilter(django_filters.ModelMultipleChoiceFilter):
 
 class ResourcePoolFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
+                                                       'data-live-search': "true"}))
 
     class Meta:
         model = ResourcePool
@@ -36,7 +37,8 @@ class ResourcePoolFilter(django_filters.FilterSet):
 
 class ResourceGroupFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
+                                                       'data-live-search': "true"}))
 
     class Meta:
         model = ResourceGroup
@@ -44,4 +46,5 @@ class ResourceGroupFilter(django_filters.FilterSet):
 
 
 class GraphFilter(django_filters.FilterSet):
-    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+    tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
+                                                       'data-live-search': "true"}))
