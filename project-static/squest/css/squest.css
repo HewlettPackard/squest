@@ -3,3 +3,7 @@
     height: 10vw;
     object-fit: cover;
 }
+
+.disable_list_style, .disable_list_style li {
+    list-style-type: none;
+}

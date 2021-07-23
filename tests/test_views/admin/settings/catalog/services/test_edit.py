@@ -14,7 +14,10 @@ class ServiceDeleteTestCase(BaseTest):
         self.url = reverse('service_catalog:edit_service', kwargs=args)
         self.data = {
             "name": "service-test-updated",
-            "description": "description-of-service-test-updated"
+            "description": "description-of-service-test-updated",
+            "billing": "defined",
+            "billing_group_id": "",
+            "billing_group_is_shown": "on"
         }
 
     def test_admin_can_edit_service(self):

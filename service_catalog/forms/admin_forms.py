@@ -107,33 +107,52 @@ class ServiceForm(ModelForm):
     billing = forms.ChoiceField(
         label="Billing :",
         choices=[
-            ('none', 'No billing'),
             ('defined', 'Define billing'),
-            ('choice_restricted', 'User define billing (restricted)'),
-            ('choice', 'User define billing (all billing group)')
+            ('User define billing', (
+                ('choice_restricted', 'Restricted billing groups'),
+                ('choice', 'All billing groups')
+            ))
         ],
         initial='defined',
-        widget=forms.RadioSelect()
+        widget=forms.RadioSelect(attrs={'class': 'disable_list_style'})
     )
 
     billing_group_id = forms.ChoiceField(
         label="Billing group defined",
         choices=[(None, None)],
         initial=None,
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
-    billing_group_is_displayed = forms.BooleanField(
-        label="Display the billing",
+    billing_group_is_shown = forms.BooleanField(
+        label="Show the billing group to customer",
         initial=False,
         required=False,
         widget=forms.CheckboxInput()
     )
 
+    def save(self, commit=True):
+        service = super(ServiceForm, self).save(commit=False)
+        if not service.billing_group_id:
+            service.billing_group_id = None
+        billing = self.cleaned_data.get('billing')
+        if billing == 'defined':
+            service.billing_group_is_selectable = False
+        elif billing == 'choice_restricted':
+            service.billing_group_is_selectable = True
+            service.billing_groups_are_restricted = True
+        elif billing == 'choice':
+            service.billing_group_is_selectable = True
+            service.billing_groups_are_restricted = False
+        if commit:
+            service.save()
+        return service
+
     class Meta:
         model = Service
         fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image",
-                  "billing", "billing_group_id", "billing_group_is_displayed"]
+                  "billing", "billing_group_id", "billing_group_is_shown"]
 
 
 class EditServiceForm(ModelForm):
@@ -148,6 +167,51 @@ class EditServiceForm(ModelForm):
     image = forms.ImageField(label="Choose a file",
                              required=False,
                              widget=forms.FileInput())
+
+    billing = forms.ChoiceField(
+        label="Billing :",
+        choices=[
+            ('defined', 'Define billing'),
+            ('User define billing', (
+                ('choice_restricted', 'Restricted billing groups'),
+                ('choice', 'All billing groups')
+            ))
+        ],
+        initial='defined',
+        widget=forms.RadioSelect(attrs={'class': 'disable_list_style'})
+    )
+
+    billing_group_id = forms.ChoiceField(
+        label="Billing group defined",
+        choices=[(None, None)],
+        initial=None,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    billing_group_is_shown = forms.BooleanField(
+        label="Show the billing group to customer",
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput()
+    )
+
+    def save(self, commit=True):
+        service = super(EditServiceForm, self).save(commit=False)
+        if not service.billing_group_id:
+            service.billing_group_id = None
+        billing = self.cleaned_data.get('billing')
+        if billing == 'defined':
+            service.billing_group_is_selectable = False
+        elif billing == 'choice_restricted':
+            service.billing_group_is_selectable = True
+            service.billing_groups_are_restricted = True
+        elif billing == 'choice':
+            service.billing_group_is_selectable = True
+            service.billing_groups_are_restricted = False
+        if commit:
+            service.save()
+        return service
 
     class Meta:
         model = Service
