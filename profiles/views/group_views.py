@@ -63,7 +63,7 @@ def group_delete(request, group_id):
 @user_passes_test(lambda u: u.is_superuser)
 def user_by_group_list(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    context = {'group': group, 'users': group.user_set.all(), 'group_url': "group", 'display_title': 'Groups'}
+    context = {'group': group, 'group_url': "group", 'display_title': 'Groups'}
     return render(request, 'profiles/group/user-by-group-list.html', context)
 
 

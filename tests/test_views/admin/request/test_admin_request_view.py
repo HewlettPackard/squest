@@ -126,7 +126,8 @@ class CustomerRequestViewTest(BaseTestRequest):
                         'name': 'test_instance_1',
                         'spec': {},
                         'state': expected_instance_state,
-                        'service': self.test_instance.service.id
+                        'service': self.test_instance.service.id,
+                        'billing_group': None
                     }
                 }
             }
