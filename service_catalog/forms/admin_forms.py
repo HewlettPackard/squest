@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from towerlib import Tower
 
+from profiles.models import BillingGroup
 from service_catalog.forms.utils import get_choices_from_string
 from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance
 
@@ -69,12 +70,17 @@ class TowerServerForm(ModelForm):
         if commit:
             instance.save()
         return instance
+
     class Meta:
         model = TowerServer
         fields = ["name", "host", "token", "secure", "ssl_verify"]
 
 
 class ServiceForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ServiceForm, self).__init__(*args, **kwargs)
+        self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
+
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -98,9 +104,36 @@ class ServiceForm(ModelForm):
                              required=False,
                              widget=forms.FileInput())
 
+    billing = forms.ChoiceField(
+        label="Billing :",
+        choices=[
+            ('none', 'No billing'),
+            ('defined', 'Define billing'),
+            ('choice_restricted', 'User define billing (restricted)'),
+            ('choice', 'User define billing (all billing group)')
+        ],
+        initial='defined',
+        widget=forms.RadioSelect()
+    )
+
+    billing_group_id = forms.ChoiceField(
+        label="Billing group defined",
+        choices=[(None, None)],
+        initial=None,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    billing_group_is_displayed = forms.BooleanField(
+        label="Display the billing",
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput()
+    )
+
     class Meta:
         model = Service
-        fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image"]
+        fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image",
+                  "billing", "billing_group_id", "billing_group_is_displayed"]
 
 
 class EditServiceForm(ModelForm):
@@ -259,7 +292,6 @@ class AcceptRequestForm(forms.Form):
 
 
 class InstanceForm(ModelForm):
-
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))

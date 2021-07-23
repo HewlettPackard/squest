@@ -32,7 +32,7 @@ class FormUtils:
 
 
 class ServiceRequestForm(forms.Form):
-
+    #TODO: add billing group choice if allowed
     instance_name = forms.CharField(label="Instance name",
                                     required=True,
                                     help_text="Help to identify the requested service in the 'Instances' view",
