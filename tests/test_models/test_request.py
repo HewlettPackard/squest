@@ -38,7 +38,8 @@ class TestRequest(BaseTestRequest):
                         'name': 'test_instance_1',
                         'spec': {},
                         'state': str(expected_state),
-                        'service': self.test_request.operation.service.id
+                        'service': self.test_request.operation.service.id,
+                        'billing_group': None
                     }
                 }
             }
