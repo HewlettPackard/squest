@@ -32,7 +32,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for user in users %}
+                            {%  for user in group.user_set.all %}
                                 <tr>
                                     <td class="align-middle">{{ user.username }}</td>
                                     <td class="align-middle">{{ user.email }}</td>

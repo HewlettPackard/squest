@@ -20,7 +20,7 @@ def billing_group_list(request):
 def billing_group_edit(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
     form = BillingGroupForm(request.POST or None, instance=group)
-    if form.is_valid() and not group.locked:
+    if form.is_valid():
         form.save()
         return redirect("profiles:billing_group_list")
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'display_title': 'Billing groups'}
@@ -83,7 +83,7 @@ def user_in_billing_group_update(request, billing_group_id):
                 group.user_set.remove(user)
             for user in to_add:
                 group.user_set.add(user)
-            return redirect("service_catalog:user_by_billing_group_list", billing_group_id=billing_group_id)
+            return redirect("profiles:user_by_billing_group_list", billing_group_id=billing_group_id)
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'display_title': 'Billing groups'}
     return render(request, 'profiles/group/user-in-group-update.html', context)
 
@@ -94,7 +94,7 @@ def user_in_billing_group_remove(request, billing_group_id, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
         group.user_set.remove(user)
-        return redirect('service_catalog:user_by_billing_group_list', billing_group_id=billing_group_id)
+        return redirect('profiles:user_by_billing_group_list', billing_group_id=billing_group_id)
     args = {
         "billing_group_id": billing_group_id,
         "user_id": user_id
