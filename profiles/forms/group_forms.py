@@ -12,7 +12,7 @@ class AddUserForm(forms.Form):
     users = forms.MultipleChoiceField(label="Users",
                                       required=False,
                                       choices=[],
-                                      widget=forms.CheckboxSelectMultiple()
+                                      widget=forms.CheckboxSelectMultiple(attrs={'class': 'disable_list_style'})
                                       )
 
 

@@ -15,6 +15,9 @@ class ServiceCreateTestCase(BaseTest):
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,
+            "billing": "defined",
+            "billing_group_id": "",
+            "billing_group_is_shown": "on"
         }
         number_service_before = Service.objects.all().count()
         response = self.client.post(self.url, data=data)

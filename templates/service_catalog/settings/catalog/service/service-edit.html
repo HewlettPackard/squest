@@ -33,7 +33,7 @@
                         <form class="form-horizontal" action="{% url 'service_catalog:edit_service' service.id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
 
                             {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <div id={{ field.name }} class="form-group {% if field.errors %}has-error{% endif %}">
                                     <label for="{{field.name}}" class="col-sm-2 control-label">
                                         {{ field.label }}
                                     </label>
@@ -60,4 +60,24 @@
             </div>
         </div>
     </div>
+    <script>
+        $(function() {
+            $('#id_billing_1 label').each(
+                function(){
+                    $(this).on('click', function () {
+                        $("#id_billing_group_id").val("");
+                        $("#billing_group_id").hide();
+                        $("#id_billing_group_is_shown").prop('disabled', true);
+                        $("#id_billing_group_is_shown").prop('checked', true);
+                    })
+                }
+            )
+            $("#id_billing_0").on('click', function () {
+                $("#billing_group_id").show();
+                $("#id_billing_group_is_shown").prop('disabled', false);
+
+
+            })
+        });
+    </script>
 {% endblock %}
