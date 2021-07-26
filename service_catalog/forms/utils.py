@@ -1,6 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from service_catalog.models.request import RequestState
+
 
 def get_choices_from_string(string_with_anti_slash_n):
     split_lines = string_with_anti_slash_n.splitlines()

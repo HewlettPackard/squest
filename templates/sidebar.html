@@ -86,7 +86,7 @@
                     </li>
                      <li class="nav-item">
                         <a href="{% url 'profiles:billing_group_list'%}" class="nav-link {% if 'billing' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-search-dollar"></i>
+                            <i class="nav-icon fas fa-dollar-sign"></i>
                             <p>Billing Groups</p>
                         </a>
                     </li>
@@ -95,6 +95,12 @@
                         <a href="{% url 'profiles:group_list'%}" class="nav-link {% if '/group/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>Groups</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:global_hook_list'%}" class="nav-link {% if '/global_hook/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fab fa-hubspot"></i>
+                            <p>Global hooks</p>
                         </a>
                     </li>
                 {% endif %}
