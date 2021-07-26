@@ -5,12 +5,15 @@ import towerlib
 import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
+from django.forms import ModelForm, ChoiceField
 from towerlib import Tower
 
 from profiles.models import BillingGroup
 from service_catalog.forms.utils import get_choices_from_string
-from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance
+from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance, \
+    GlobalHook
+from service_catalog.models.instance import InstanceState
+from service_catalog.models.request import RequestState
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -371,3 +374,39 @@ def save_service(service, commit, billing):
     if commit:
         service.save()
     return service
+
+
+def get_choices():
+    return RequestState.choices + InstanceState.choices
+
+class GlobalHookForm(ModelForm):
+
+
+
+    model_choice = [('Request', 'Request'),
+                    ('Instance', 'Instance')]
+
+    name = forms.CharField(label="Name",
+                           required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    model = ChoiceField(label="Model",
+                        required=True,
+                        choices=model_choice,
+                        error_messages={'required': 'At least you must select one model'},
+                        widget=forms.Select(attrs={'class': 'form-control'}))
+
+    state = ChoiceField(label="State",
+                        required=True,
+                        choices=get_choices(),
+                        error_messages={'required': 'At least you must select one state'},
+                        widget=forms.Select(attrs={'class': 'form-control'}))
+
+    job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
+                                          required=True,
+                                          to_field_name="id",
+                                          widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = GlobalHook
+        fields = ["name", "model", "state", "job_template"]
