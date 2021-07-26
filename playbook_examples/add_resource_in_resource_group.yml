@@ -7,12 +7,13 @@
     squest_api: "http://127.0.0.1:8000/api/"
     resource_group_vm_id: 8
     squest: # this would be the sent data from squest as extra vars
-      instance:
-        id: 8
-        name: test
-        service: 1
-        spec: { }
-        state: PROVISIONING
+      request:
+        instance:
+          id: 8
+          name: test
+          service: 1
+          spec: { }
+          state: PROVISIONING
     vm_name: "test-vm"
     vm_vcpu: 4
     vm_memory: 16
@@ -33,7 +34,7 @@
         method: POST
         body:
           name: "{{ vm_name }}"
-          service_catalog_instance: "{{ squest['instance']['id'] }}"
+          service_catalog_instance: "{{ squest['request']['instance']['id'] }}"
           attributes:
             - name: "vCPU"
               value: "{{ vm_vcpu }}"

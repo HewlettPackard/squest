@@ -32,12 +32,13 @@ in addition to all extra variables which come from the survey of the job templat
 Example of extra variables sent by Squest:
 ```yaml
 squest:
-  instance:
-    id: 1
-    name: test
-    service: 1
-    spec: {}
-    state: PROVISIONING
+  request:
+    instance:
+      id: 1
+      name: test
+      service: 1
+      spec: {}
+      state: PROVISIONING
 file_name: foo.conf
 ```
 
@@ -84,7 +85,7 @@ The playbook will:
 
     - name: Update spec of the instance via the squest API
       uri:
-        url: "{{ squest_api_url }}service_catalog/admin/instance/{{ squest['instance']['id'] }}/" # do not forget the last slash
+        url: "{{ squest_api_url }}service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/" # do not forget the last slash
         user: "admin"
         password: "admin"
         method: PATCH
@@ -129,13 +130,14 @@ sequenceDiagram
 Example of extra vars sent by squest:
 ```yaml
 squest:
-  instance:
-    id: 1
-    name: test-instance
-    service: 1
-    spec: 
-      file_name: foo.conf
-    state: UPDATING
+  request:
+    instance:
+      id: 1
+      name: test-instance
+      service: 1
+      spec: 
+        file_name: foo.conf
+      state: UPDATING
 string_to_place_in_file: "this is a string"
 ```
 
@@ -158,7 +160,7 @@ The playbook receive as well all information that help to retrieve the resource 
 
     - name: Add content into the file_name given by squest instance spec
       ansible.builtin.lineinfile :
-        path: "/tmp/{{ squest['instance']['spec']['file_name'] }}"
+        path: "/tmp/{{ squest['request']['instance']['spec']['file_name'] }}"
         line: "{{ string_to_place_in_file }}"
         create: yes
 ```
