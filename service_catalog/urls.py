@@ -35,6 +35,10 @@ urlpatterns = [
     views.edit_service_operation, name='edit_service_operation'),
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/survey/',
     views.service_operation_edit_survey, name='service_operation_edit_survey'),
+    path('settings/global_hook/', views.global_hook_list, name='global_hook_list'),
+    path('settings/global_hook/create/', views.global_hook_create, name='global_hook_create'),
+    path('settings/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
+         name='ajax_load_model_state'),
 
     # customer views URLs
     path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),

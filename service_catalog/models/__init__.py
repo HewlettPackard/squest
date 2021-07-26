@@ -6,3 +6,5 @@ from service_catalog.models.request import Request
 from service_catalog.models.instance import Instance
 from service_catalog.models.message import Message, RequestMessage, SupportMessage
 from service_catalog.models.support import Support
+from service_catalog.models.billing_group import BillingGroup
+from service_catalog.models.state_hooks import ServiceStateHook, GlobalHook
