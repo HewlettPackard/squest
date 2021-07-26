@@ -121,13 +121,18 @@ class CustomerRequestViewTest(BaseTestRequest):
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
                 'squest': {
-                    'instance': {
-                        'id': self.test_instance.id,
-                        'name': 'test_instance_1',
-                        'spec': {},
-                        'state': expected_instance_state,
-                        'service': self.test_instance.service.id,
-                        'billing_group': None
+                    'request': {
+                        'id': self.test_request.id,
+                        'state': RequestState.PROCESSING,
+                        'operation': self.test_request.operation.id,
+                        'instance': {
+                            'id': self.test_instance.id,
+                            'name': 'test_instance_1',
+                            'spec': {},
+                            'state': str(expected_instance_state),
+                            'service': self.test_request.operation.service.id,
+                            'billing_group': None
+                        }    
                     }
                 }
             }

@@ -96,9 +96,9 @@ class Request(models.Model):
         # run Tower job
         tower_extra_vars = copy.copy(self.fill_in_survey)
         # add the current instance to extra vars
-        from ..serializers.instance_serializer import InstanceSerializer
+        from ..serializers.request_serializer import RequestSerializer
         tower_extra_vars["squest"] = {
-            "instance": InstanceSerializer(self.instance).data
+            "request": RequestSerializer(self).data
         }
         tower_job_id = None
         try:

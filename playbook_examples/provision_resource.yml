@@ -5,12 +5,13 @@
 
   vars:
     squest:
-      instance:
-        id: 1
-        name: test
-        service: 1
-        spec: { }
-        state: PROVISIONING
+      request:
+        instance:
+          id: 1
+          name: test
+          service: 1
+          spec: { }
+          state: PROVISIONING
 
   tasks:
     - name: Print the job tempalate survey variable
@@ -31,7 +32,7 @@
 
     - name: Update squest with info
       uri:
-        url: "http://192.168.58.128:8000/api/admin/instance/{{ squest['instance']['id'] }}/"
+        url: "http://192.168.58.128:8000/api/admin/instance/{{ squest['request']['instance']['id'] }}/"
         user: "admin"
         password: "admin"
         method: PATCH
