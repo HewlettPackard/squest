@@ -17,7 +17,7 @@ class OperationEditTestCase(BaseTest):
         data = {
             "name": "updated",
             "description": "updated description",
-            "job_template": self.job_template_test.name,
+            "job_template": self.job_template_test.id,
             "type": "DELETE",
             "process_timeout_second": 60
         }

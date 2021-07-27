@@ -64,7 +64,7 @@ def edit_service(request, service_id):
         return redirect('service_catalog:service_list')
 
     return render(request, 'service_catalog/settings/catalog/service/service-edit.html', {'form': form,
-                                                                          'service': target_service})
+                                                                                          'service': target_service})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -82,7 +82,7 @@ def add_service_operation(request, service_id):
         form = AddServiceOperationForm()
 
     return render(request, 'service_catalog/settings/catalog/service/operation/operation-create.html', {'form': form,
-                                                                                        'service': target_service})
+                                                                                                        'service': target_service})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -108,15 +108,14 @@ def edit_service_operation(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
 
-    form = AddServiceOperationForm(request.POST or None, instance=target_operation,
-                                   initial={'job_template': target_operation.job_template.name})
+    form = AddServiceOperationForm(request.POST or None, instance=target_operation)
     if form.is_valid():
         form.save()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
 
     return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit.html', {'form': form,
-                                                                                      'service': target_service,
-                                                                                      'operation': target_operation})
+                                                                                                      'service': target_service,
+                                                                                                      'operation': target_operation})
 
 
 @user_passes_test(lambda u: u.is_superuser)
