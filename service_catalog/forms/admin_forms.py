@@ -404,7 +404,8 @@ class GlobalHookForm(ModelForm):
                                           required=True,
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
-    extra_vars = forms.JSONField(label="JSON Spec",
+    extra_vars = forms.JSONField(label="Extra vars (JSON)",
+                                 initial=dict(),
                                  required=False,
                                  widget=forms.Textarea(attrs={'class': 'form-control'}))
 
