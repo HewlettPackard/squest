@@ -221,7 +221,6 @@ class AddServiceOperationForm(ModelForm):
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
                                           required=True,
-                                          to_field_name="name",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     type = forms.ChoiceField(label="Type",
@@ -403,7 +402,6 @@ class GlobalHookForm(ModelForm):
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
                                           required=True,
-                                          to_field_name="id",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     extra_vars = forms.JSONField(label="JSON Spec",
