@@ -11,12 +11,13 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
 
 from . import Operation
 from .instance import Instance, InstanceState
 from .operations import OperationType
+from .state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
 
@@ -241,3 +242,4 @@ class Request(models.Model):
 post_save.connect(Request.add_user_permission, sender=Request)
 post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
 post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
+post_transition.connect(HookManager.trigger_hook_handler, sender=Request)
