@@ -27,10 +27,11 @@ nav:
   - Configuration:
     - Squest: squest_settings.md
     - Tower: tower_settings.md
-  - How to:
-    - Service catalog: how_to/service_catalog.md
-    - Resource tracking: how_to/resource_tracking.md
-  - Development doc:
+  - Manual:
+    - Service catalog: manual/service_catalog.md
+    - Resource tracking: manual/resource_tracking.md
+    - Settings: manual/settings.md
+  - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
