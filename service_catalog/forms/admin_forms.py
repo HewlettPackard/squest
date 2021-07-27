@@ -134,21 +134,8 @@ class ServiceForm(ModelForm):
 
     def save(self, commit=True):
         service = super(ServiceForm, self).save(commit=False)
-        if not service.billing_group_id:
-            service.billing_group_id = None
         billing = self.cleaned_data.get('billing')
-        if billing == 'defined':
-            service.billing_group_is_selectable = False
-            service.billing_groups_are_restricted = True
-        elif billing == 'restricted_billing_groups':
-            service.billing_group_is_selectable = True
-            service.billing_groups_are_restricted = True
-        elif billing == 'all_billing_groups':
-            service.billing_group_is_selectable = True
-            service.billing_groups_are_restricted = False
-        if commit:
-            service.save()
-        return service
+        return save_service(service, commit, billing)
 
     class Meta:
         model = Service
@@ -166,7 +153,6 @@ class EditServiceForm(ModelForm):
             self.fields['billing'].initial = 'all_billing_groups'
         else:
             self.fields['billing'].initial = 'defined'
-
 
     name = forms.CharField(label="Name",
                            required=True,
@@ -210,21 +196,8 @@ class EditServiceForm(ModelForm):
 
     def save(self, commit=True):
         service = super(EditServiceForm, self).save(commit=False)
-        if not service.billing_group_id:
-            service.billing_group_id = None
         billing = self.cleaned_data.get('billing')
-        if billing == 'defined':
-            service.billing_group_is_selectable = False
-            service.billing_groups_are_restricted = True
-        elif billing == 'restricted_billing_groups':
-            service.billing_group_is_selectable = True
-            service.billing_groups_are_restricted = True
-        elif billing == 'all_billing_groups':
-            service.billing_group_is_selectable = True
-            service.billing_groups_are_restricted = False
-        if commit:
-            service.save()
-        return service
+        return save_service(service, commit, billing)
 
     class Meta:
         model = Service
@@ -380,3 +353,21 @@ class InstanceForm(ModelForm):
     class Meta:
         model = Instance
         fields = ["name", "spec"]
+
+
+def save_service(service, commit, billing):
+    if not service.billing_group_id:
+        service.billing_group_id = None
+
+    if billing == 'defined':
+        service.billing_group_is_selectable = False
+        service.billing_groups_are_restricted = True
+    elif billing == 'restricted_billing_groups':
+        service.billing_group_is_selectable = True
+        service.billing_groups_are_restricted = True
+    elif billing == 'all_billing_groups':
+        service.billing_group_is_selectable = True
+        service.billing_groups_are_restricted = False
+    if commit:
+        service.save()
+    return service
