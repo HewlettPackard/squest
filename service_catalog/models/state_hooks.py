@@ -1,6 +1,10 @@
+import logging
+
 from django.db import models
 
 from service_catalog.models import Service, JobTemplate
+
+logger = logging.getLogger(__name__)
 
 
 class ServiceStateHook(models.Model):
@@ -12,6 +16,7 @@ class ServiceStateHook(models.Model):
     model = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
+    extra_vars = models.JSONField(default=dict)
 
 
 class GlobalHook(models.Model):
@@ -19,3 +24,36 @@ class GlobalHook(models.Model):
     model = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
+    extra_vars = models.JSONField(default=dict)
+
+
+class HookManager(object):
+
+    @classmethod
+    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
+        """
+        Proxy method. Cannot be mocked for testing
+        """
+        cls.trigger_hook(cls, sender, instance, name, source, target, *args, **kwargs)
+
+    @classmethod
+    def trigger_hook(cls, sender, instance, name, source, target, *args, **kwargs):
+        """
+        Method called when Instance or Request change state
+        :param sender: Class that call the signal (Instance or Request)
+        :param instance: Instance object
+        :param name: name of the FSM method
+        :param source: source state
+        :param target: target state (current)
+        :return:
+        """
+        logger.debug(f"[HookManager] trigger_hook executed with "
+                     f"sender model '{sender.__name__}', "
+                     f"instance ID'{instance.id}', "
+                     f"transition name '{name}', "
+                     f"source '{source}', "
+                     f"target '{target}'")
+        # check if global hooks exist for this object sender model and state
+        global_hook_set = GlobalHook.objects.filter(model=sender.__name__, state=target)
+        for global_hook in global_hook_set.all():
+            global_hook.job_template.execute(extra_vars=global_hook.extra_vars)
