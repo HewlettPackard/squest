@@ -109,8 +109,8 @@ class ServiceForm(ModelForm):
         choices=[
             ('defined', 'Define billing'),
             ('User define billing', (
-                ('choice_restricted', 'Restricted billing groups'),
-                ('choice', 'All billing groups')
+                ('restricted_billing_groups', 'Restricted billing groups'),
+                ('all_billing_groups', 'All billing groups')
             ))
         ],
         initial='defined',
@@ -139,10 +139,10 @@ class ServiceForm(ModelForm):
         billing = self.cleaned_data.get('billing')
         if billing == 'defined':
             service.billing_group_is_selectable = False
-        elif billing == 'choice_restricted':
+        elif billing == 'restricted_billing_groups':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = True
-        elif billing == 'choice':
+        elif billing == 'all_billing_groups':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = False
         if commit:
@@ -173,8 +173,8 @@ class EditServiceForm(ModelForm):
         choices=[
             ('defined', 'Define billing'),
             ('User define billing', (
-                ('choice_restricted', 'Restricted billing groups'),
-                ('choice', 'All billing groups')
+                ('restricted_billing_group', 'Restricted billing groups'),
+                ('all_billing_groups', 'All billing groups')
             ))
         ],
         initial='defined',
@@ -203,10 +203,10 @@ class EditServiceForm(ModelForm):
         billing = self.cleaned_data.get('billing')
         if billing == 'defined':
             service.billing_group_is_selectable = False
-        elif billing == 'choice_restricted':
+        elif billing == 'restricted_billing_group':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = True
-        elif billing == 'choice':
+        elif billing == 'all_billing_groups':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = False
         if commit:
