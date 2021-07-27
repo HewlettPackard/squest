@@ -38,7 +38,11 @@
                                 <tr>
                                     <td class="align-middle">{{ global_hook.name }}</td>
                                     <td class="align-middle">{{ global_hook.model }}</td>
-                                    <td class="align-middle">{{ global_hook.state }}</td>
+                                    <td style="width: 10%" class="align-middle">
+                                        <h4>
+                                            <span class="badge bg-{{ global_hook.state |map_request_state }} btn-block">{{ global_hook.state }}</span>
+                                        </h4>
+                                    </td>
                                     <td class="align-middle">{{ global_hook.job_template }}</td>
                                     <td class="align-middle">
                                         <a href="" class="btn btn-default bg-sm">

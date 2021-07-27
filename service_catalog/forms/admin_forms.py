@@ -379,9 +379,8 @@ def save_service(service, commit, billing):
 def get_choices():
     return RequestState.choices + InstanceState.choices
 
+
 class GlobalHookForm(ModelForm):
-
-
 
     model_choice = [('Request', 'Request'),
                     ('Instance', 'Instance')]
@@ -407,6 +406,10 @@ class GlobalHookForm(ModelForm):
                                           to_field_name="id",
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
+    extra_vars = forms.JSONField(label="JSON Spec",
+                                 required=False,
+                                 widget=forms.Textarea(attrs={'class': 'form-control'}))
+
     class Meta:
         model = GlobalHook
-        fields = ["name", "model", "state", "job_template"]
+        fields = ["name", "model", "state", "job_template", "extra_vars"]

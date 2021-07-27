@@ -2,10 +2,11 @@ import logging
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, transition, post_transition
 
 from profiles.models import BillingGroup
 from . import Service
+from .state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
 
@@ -94,3 +95,6 @@ class Instance(models.Model):
             self.state = InstanceState.PENDING
         if self.state in [InstanceState.UPDATE_FAILED, InstanceState.DELETE_FAILED]:
             self.state = InstanceState.AVAILABLE
+
+
+post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
