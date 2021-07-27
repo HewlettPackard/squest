@@ -16,7 +16,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "name": "hook1",
             "model": "Instance",
             "state": "PROVISIONING",
-            "job_template": self.job_template_test.id
+            "job_template": self.job_template_test.id,
+            "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)
@@ -27,7 +28,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "name": "hook1",
             "model": "NonValidModel",
             "state": "PROVISIONING",
-            "job_template": self.job_template_test.id
+            "job_template": self.job_template_test.id,
+            "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
         self.assertEquals(200, response.status_code)
@@ -39,7 +41,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "name": "hook1",
             "model": "Instance",
             "state": "non_valid_state",
-            "job_template": self.job_template_test.id
+            "job_template": self.job_template_test.id,
+            "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
         self.assertEquals(200, response.status_code)
