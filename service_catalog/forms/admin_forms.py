@@ -139,6 +139,7 @@ class ServiceForm(ModelForm):
         billing = self.cleaned_data.get('billing')
         if billing == 'defined':
             service.billing_group_is_selectable = False
+            service.billing_groups_are_restricted = True
         elif billing == 'restricted_billing_groups':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = True
@@ -156,6 +157,17 @@ class ServiceForm(ModelForm):
 
 
 class EditServiceForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditServiceForm, self).__init__(*args, **kwargs)
+        self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
+        if self.instance.billing_groups_are_restricted:
+            self.fields['billing'].initial = 'restricted_billing_group'
+        elif self.instance.billing_group_is_selectable:
+            self.fields['billing'].initial = 'all_billing_groups'
+        else:
+            self.fields['billing'].initial = 'defined'
+
+
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -173,7 +185,7 @@ class EditServiceForm(ModelForm):
         choices=[
             ('defined', 'Define billing'),
             ('User define billing', (
-                ('restricted_billing_group', 'Restricted billing groups'),
+                ('restricted_billing_groups', 'Restricted billing groups'),
                 ('all_billing_groups', 'All billing groups')
             ))
         ],
@@ -203,7 +215,8 @@ class EditServiceForm(ModelForm):
         billing = self.cleaned_data.get('billing')
         if billing == 'defined':
             service.billing_group_is_selectable = False
-        elif billing == 'restricted_billing_group':
+            service.billing_groups_are_restricted = True
+        elif billing == 'restricted_billing_groups':
             service.billing_group_is_selectable = True
             service.billing_groups_are_restricted = True
         elif billing == 'all_billing_groups':
@@ -215,7 +228,7 @@ class EditServiceForm(ModelForm):
 
     class Meta:
         model = Service
-        fields = ["name", "description", "image"]
+        fields = ["name", "description", "image", "billing", "billing_group_id", "billing_group_is_shown"]
 
 
 class AddServiceOperationForm(ModelForm):
