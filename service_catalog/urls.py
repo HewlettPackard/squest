@@ -37,6 +37,7 @@ urlpatterns = [
     views.service_operation_edit_survey, name='service_operation_edit_survey'),
     path('settings/global_hook/', views.global_hook_list, name='global_hook_list'),
     path('settings/global_hook/create/', views.global_hook_create, name='global_hook_create'),
+    path('settings/global_hook/<int:global_hook_id>/edit/', views.global_hook_edit, name='global_hook_edit'),
     path('settings/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
 
