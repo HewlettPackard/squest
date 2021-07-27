@@ -40,6 +40,18 @@ def global_hook_edit(request, global_hook_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+def global_hook_delete(request, global_hook_id):
+    obj = get_object_or_404(GlobalHook, id=global_hook_id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect('service_catalog:global_hook_list')
+    context = {
+        "object": obj
+    }
+    return render(request, "service_catalog/settings/global_hooks/global-hook-delete.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def ajax_load_model_state(request):
     model = request.GET.get('model')
     options = [('', '----------')]
