@@ -173,8 +173,8 @@ class EditServiceForm(ModelForm):
     billing = forms.ChoiceField(
         label="Billing :",
         choices=[
-            ('defined', 'Define billing'),
-            ('User define billing', (
+            ('defined', 'Admin defined billing'),
+            ('User defined billing', (
                 ('restricted_billing_groups', 'Restricted billing groups'),
                 ('all_billing_groups', 'All billing groups')
             ))

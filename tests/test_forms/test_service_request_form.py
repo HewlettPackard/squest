@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.urls import reverse
 
-from service_catalog.forms import ServiceRequestForm, FormUtils
+from service_catalog.forms import FormUtils
 from tests.base import BaseTest
 
 

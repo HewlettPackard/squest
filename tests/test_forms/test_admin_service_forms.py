@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from profiles.models import BillingGroup
 from service_catalog.forms import ServiceForm, EditServiceForm
 from tests.base import BaseTest
