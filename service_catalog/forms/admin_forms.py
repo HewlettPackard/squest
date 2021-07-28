@@ -151,8 +151,8 @@ class EditServiceForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditServiceForm, self).__init__(*args, **kwargs)
         self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
-        if self.instance.billing_groups_are_restricted:
-            self.fields['billing'].initial = 'restricted_billing_group'
+        if self.instance.billing_groups_are_restricted and self.instance.billing_group_is_selectable:
+            self.fields['billing'].initial = 'restricted_billing_groups'
         elif self.instance.billing_group_is_selectable:
             self.fields['billing'].initial = 'all_billing_groups'
         else:
@@ -361,15 +361,16 @@ class InstanceForm(ModelForm):
 def save_service(service, commit, billing):
     if not service.billing_group_id:
         service.billing_group_id = None
-
-    if billing == 'defined':
-        service.billing_group_is_selectable = False
-        service.billing_groups_are_restricted = True
-    elif billing == 'restricted_billing_groups':
+    if billing == 'restricted_billing_groups':
+        service.billing_group_is_shown = True
         service.billing_group_is_selectable = True
         service.billing_groups_are_restricted = True
     elif billing == 'all_billing_groups':
+        service.billing_group_is_shown = True
         service.billing_group_is_selectable = True
+        service.billing_groups_are_restricted = False
+    else:
+        service.billing_group_is_selectable = False
         service.billing_groups_are_restricted = False
     if commit:
         service.save()
