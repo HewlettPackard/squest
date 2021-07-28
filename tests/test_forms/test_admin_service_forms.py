@@ -79,35 +79,36 @@ class TestServiceForm(BaseTest):
 
     @staticmethod
     def get_test_list(data, service):
+        is_selectable = data['billing'] == 'restricted_billing_groups' or data['billing'] == 'all_billing_groups'
         return [
             {
                 'name': "name",
                 'value': service.name,
-                'expected': data["name"]
+                'expected': data['name']
             },
             {
                 'name': "description",
                 'value': service.description,
-                'expected': data["description"]
+                'expected': data['description']
             },
             {
                 'name': "billing_group_id",
                 'value': service.billing_group_id,
-                'expected': data["billing_group_id"] if data["billing_group_id"] != "" else None
+                'expected': data['billing_group_id'] if data['billing_group_id'] != "" else None
             },
             {
                 'name': "billing_group_is_shown",
                 'value': service.billing_group_is_shown,
-                'expected': data["billing_group_is_shown"] == "on" if 'billing_group_is_shown' in data.keys() else False
+                'expected': data['billing_group_is_shown'] == "on" if 'billing_group_is_shown' in data.keys() else is_selectable
             },
             {
                 'name': "billing_group_is_selectable",
                 'value': service.billing_group_is_selectable,
-                'expected': data["billing"] == 'restricted_billing_groups' or data["billing"] == 'all_billing_groups'
+                'expected': is_selectable
             },
             {
                 'name': "billing_groups_are_restricted",
                 'value': service.billing_groups_are_restricted,
-                'expected': not data["billing"] == 'all_billing_groups'
+                'expected': data['billing'] == 'restricted_billing_groups'
             },
         ]
