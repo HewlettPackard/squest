@@ -29,7 +29,6 @@ def global_hook_create(request):
 def global_hook_edit(request, global_hook_id):
     target_global_hook = get_object_or_404(GlobalHook, id=global_hook_id)
     form = GlobalHookForm(request.POST or None, instance=target_global_hook)
-    form.fields['state'].initial = [("tt", "tt")]
     if form.is_valid():
         form.save()
         return redirect('service_catalog:global_hook_list')
