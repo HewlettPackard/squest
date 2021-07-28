@@ -4,9 +4,11 @@ import urllib3
 from django import forms
 from guardian.models import UserObjectPermission
 
+from profiles.models import BillingGroup
 from service_catalog.forms.utils import get_choices_from_string, get_fields_from_survey
 from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage
 from service_catalog.models.operations import OperationType
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -32,11 +34,18 @@ class FormUtils:
 
 
 class ServiceRequestForm(forms.Form):
-    #TODO: add billing group choice if allowed
     instance_name = forms.CharField(label="Instance name",
                                     required=True,
                                     help_text="Help to identify the requested service in the 'Instances' view",
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    billing_group_id = forms.ChoiceField(
+        label="Billing group",
+        choices=[(None, None)],
+        initial=None,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control', 'disabled': False})
+    )
 
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
@@ -45,6 +54,16 @@ class ServiceRequestForm(forms.Form):
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
 
         self.service = Service.objects.get(id=service_id)
+        if self.service.billing_groups_are_restricted:
+            self.fields['billing_group_id'].choices += [(g.id, g.name) for g in self.user.billing_groups.all()]
+        else:
+            self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
+        if not self.service.billing_group_is_selectable:
+            self.fields['billing_group_id'].widget.attrs['disabled'] = True
+            self.fields['billing_group_id'].initial = self.service.billing_group_id
+        if not self.service.billing_group_is_shown:
+            self.fields['billing_group_id'].label = ""
+            self.fields['billing_group_id'].widget = forms.HiddenInput()
         # get the create operation of this service
         self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
 
@@ -59,7 +78,9 @@ class ServiceRequestForm(forms.Form):
             user_provided_survey_fields[field_key] = value
         # create the instance
         instance_name = self.cleaned_data["instance_name"]
-        new_instance = Instance.objects.create(service=self.service, name=instance_name)
+        billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data["billing_group_id"] else self.service.billing_group_id
+        billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None
+        new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group)
         # give user perm on this instance
         UserObjectPermission.objects.assign_perm('change_instance', self.user, obj=new_instance)
         UserObjectPermission.objects.assign_perm('view_instance', self.user, obj=new_instance)
@@ -118,7 +139,6 @@ class OperationRequestForm(forms.Form):
 
 
 class SupportRequestForm(forms.Form):
-
     title = forms.CharField(label="Title",
                             required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))

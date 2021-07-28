@@ -29,20 +29,31 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'service_catalog:customer_service_request' service.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal"
+                              action="{% url 'service_catalog:customer_service_request' service.id %}"
+                              method="post">{% csrf_token %}
 
                             {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
-                                        {{ field.label }}
-                                    </label>
-                                    <div class="col-sm-4">
-                                        {{ field }}
-                                        {% if field.help_text %}
-                                            <small id="emailHelp" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                        {% endif %}
+                                {% if not field.is_hidden %}
+                                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                        <label for="{{ field.name }}" class="col-sm-2 control-label">
+                                            {{ field.label }}
+                                        </label>
+                                        <div class="col-sm-4">
+                                            {{ field }}
+                                            {% if field.help_text %}
+                                                <small id="emailHelp"
+                                                       class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                </div>
+
+                                {% endif %}
+                                {% if field == form.billing_group_id %}
+                                    <div class="mb-4">
+                                        <hr class="solid">
+                                    </div>
+                                {% endif %}
                             {% endfor %}
 
                             <div class="form-group">
