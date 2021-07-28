@@ -11,6 +11,9 @@ function load_state(model, default_option_value){
             if (typeof default_option_value != 'undefined') {
                 document.getElementById('id_state').value=default_option_value;
             }
+        },
+        error: function(){
+            console.log("Error during ajax call 'load_state'");
         }
     });
 }

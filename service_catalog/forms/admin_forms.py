@@ -6,6 +6,7 @@ import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, ChoiceField
+from django.utils.translation import gettext_lazy as _
 from towerlib import Tower
 
 from profiles.models import BillingGroup
@@ -408,6 +409,22 @@ class GlobalHookForm(ModelForm):
                                  initial=dict(),
                                  required=False,
                                  widget=forms.Textarea(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        cleaned_data = super(GlobalHookForm, self).clean()
+        model = cleaned_data.get('model')
+        state = cleaned_data.get('state')
+
+        choices = ""
+        if model == "Request":
+            choices = RequestState.choices
+        if model == "Instance":
+            choices = InstanceState.choices
+        if state not in (choice[0] for choice in choices):
+            raise ValidationError({
+                'state': f"'{state}' is not a valid state of model '{model}'"
+            })
+        return cleaned_data
 
     class Meta:
         model = GlobalHook
