@@ -24,7 +24,8 @@ class Operation(models.Model):
         default=OperationType.CREATE,
     )
     enabled_survey_fields = models.JSONField(default=dict)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
+                                related_query_name="operation")
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     auto_accept = models.BooleanField(default=False)
     auto_process = models.BooleanField(default=False)
@@ -33,7 +34,7 @@ class Operation(models.Model):
     def update_survey(self):
         new_end_user_survey = dict()
         old_enabled_survey_fields = copy.copy(self.enabled_survey_fields)
-        for survey_field in self.job_template.survey["spec"]:
+        for survey_field in self.job_template.survey.get("spec", []):
             field_id = survey_field["variable"]
             if field_id not in old_enabled_survey_fields:
                 new_end_user_survey[field_id] = True

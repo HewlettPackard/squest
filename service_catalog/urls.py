@@ -8,7 +8,8 @@ app_name = 'service_catalog'
 
 urlpatterns = [
     # common URLs
-    path('', views.home, name='home'),
+    path('', views.dashboards, name='home'),
+    path('dashboards/', views.dashboards, name='dashboards'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
 
     # settings URLs
