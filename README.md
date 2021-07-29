@@ -10,6 +10,8 @@ If you want an idea of what you can do with Squest, click on the image below
 
 ## Links
 
-- [Documentation](https://hewlettpackard.github.io/squest/)
+- [Documentation](https://hewlettpackard.github.io/squest/latest)
 - [Chat on Gitter](https://gitter.im/HewlettPackard/squest)
-- [Squest demo video](https://www.youtube.com/watch?v=ZfTjS1t7X74)
+- Squest demo video:
+  - [Service catalog](https://www.youtube.com/watch?v=ZfTjS1t7X74)
+  - [Resource tracking](https://www.youtube.com/watch?v=KxJbYxnR5Ug)
