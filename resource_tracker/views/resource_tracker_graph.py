@@ -83,7 +83,7 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'consumed': {
-                'display': f"{attribute.get_total_consumed()} ({attribute.get_percent_consumed()}%)",
+                'display': f"{attribute.get_total_consumed()}",
                 'tooltip': f"Go to {attribute}'s consumers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_consumer_list',
