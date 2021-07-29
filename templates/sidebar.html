@@ -90,6 +90,12 @@
                         </a>
                     </li>
                     <li class="nav-header">Settings</li>
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:user_list'%}" class="nav-link {% if 'profiles/users/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
                      <li class="nav-item">
                         <a href="{% url 'profiles:group_list'%}" class="nav-link {% if '/group/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-users"></i>

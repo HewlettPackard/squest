@@ -1,7 +1,9 @@
 import django_filters
 from django import forms
+from django.contrib.auth.models import User
 from taggit.models import Tag
 
+from profiles.models import BillingGroup
 from resource_tracker.models import ResourcePool, ResourceGroup
 
 
@@ -47,3 +49,13 @@ class ResourceGroupFilter(django_filters.FilterSet):
 class GraphFilter(django_filters.FilterSet):
     tag = TagFilter(widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
                                                        'data-live-search': "true"}))
+
+
+class UserFilter(django_filters.FilterSet):
+    billing_groups = django_filters.CharFilter(widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    class Meta:
+        model = User
+        fields = ['billing_groups']
