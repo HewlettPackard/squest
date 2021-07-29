@@ -1,64 +1,49 @@
 # Billing groups
 
-> **Note: ** Billing groups is optional feature.
+> **Note: ** Billing groups is an optional feature.
 
 Billing groups allow Squest administrator to visualize who is consuming what.
 
 ## Billing groups management
 
-The administrator can create a new billing group and manage users in a billing groups.
+From the sidebar, click on 'Billing Groups' to go on the billing groups page.
 
-From the sidebar, click on 'Billing Groups'. 
-All billing groups are listed in this page, you can see the name and the users count of each billing group.
+Administrators can:
 
-### Create a new billing group
-
-From the billing groups page, click on 'Add' button in the upper left corner then choose an unused billing group name.
-
-### Edit a billing group
-
-From the billing groups page, click on 'Edit' button of the billing group then choose an unused billing group name.
-
-### Manage users in a billing group
-
-From the billing groups page, click on user count button of the billing group then choose select users will be in the group.
-
-### Delete a billing group
-
-From the billing groups page, click on 'Delete' button of the billing group you must confirm before delete.
+- See billing groups list with name and the user count of each billing group.
+- Create a billing group.
+- Manage users in billing groups.
+- Delete billing groups.
 
 ## Define billing group in a service
 
-As an administrator, you must describe how the billing of your service will be predefined.
-Through the service form, you have several choices:
+By default Squest services are not linked to any billing group.
 
-### Admin defined billing group
-The administrator choose a fixed billing group (can be none) with a choice field. 
-The billing group chosen will be predefined foreach instance created by this service.
-The administrator can also hide the billing for user in the request form with a checkbox field.
+Administrators can describe how the billing of the service will be predefined.
+
+Through the service form, choices are:
+
+- Administrator defined billing group
+- User defined billing group from his billing group
+- User defined billing group from all billing group
+
+### Administrator defined billing group
+
+Administrators select a fixed billing group (can be none). 
+Each created instance will be linked to this billing group.
+
+Administrators can also hide the billing from the end users. 
+The billing group will not be asked neither shown in the end user form when requesting the service.
 
 ### User defined billing group
 
 #### From his billing group
 
-The administrator let user choose from his billing group (user without billing group could not use your service) when he sends an instance request
+Administrators let the end user choose from his billing group when he sends an instance request.
+
+> **Note: ** users without billing groups can not request this service.
+
 
 #### From all billing group
 
-The administrator let user choose from all billing group when he sends an instance request
-
-## Select a billing group in a request
-
-### Administrator defined a fixed billing group
-
-If administrator allow the user to see the billing group, a choice field shown the billing defined by the administrator.
-
-### Administrator let user choose the billing group
-
-#### From his billing group
-
-The users can choose the billing group from his billing groups with a choice field.
-
-#### From all billing group
-
-The users can choose the billing group from all billing groups with a choice field.
+Administrators let the end user choose from all billing group when he requests this service.
