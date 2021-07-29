@@ -37,7 +37,7 @@ def create_pie_chart_request_by_state() -> dict:
             }
 
     }
-    pie_chart_state_tmp = {}
+    pie_chart_state_tmp = dict()
     queryset = Request.objects.filter()
     for squest_request in queryset:
         pie_chart_state_tmp[squest_request.state] = pie_chart_state_tmp.get(squest_request.state, 0) + 1
@@ -67,7 +67,7 @@ def create_pie_chart_instance_by_service_type() -> dict:
             }
 
     }
-    pie_chart_service_tmp = {}
+    pie_chart_service_tmp = dict()
     queryset = Instance.objects.filter()
     for instance in queryset:
         key = instance.service
@@ -98,7 +98,7 @@ def create_pie_chart_instance_by_billing_groups() -> dict:
             }
 
     }
-    pie_chart_billing_tmp = {}
+    pie_chart_billing_tmp = dict()
     queryset = Instance.objects.filter()
     for instance in queryset:
         key = instance.billing_group
@@ -113,27 +113,7 @@ def create_pie_chart_instance_by_billing_groups() -> dict:
 
 
 def create_pie_chart_resource_pool_consumption_by_billing_groups() -> dict:
-    chart_resource_pool_tmp = {}
-    # chart_resource_pool_tmp = {
-    #     'vcenter': {
-    #         'vcpu': {
-    #             '5G': 10,
-    #             'orchestration': 30,
-    #         },
-    #     },
-    #     'ocp': {
-    #         'cpu': {
-    #             '5G': 100,
-    #             'orchestration': 300,
-    #         },
-    #         'ram': {
-    #             '5G': 10,
-    #             'orchestration': 30,
-    #         },
-    #
-    #     }
-    # }
-
+    chart_resource_pool_tmp = dict()
     for resource_pool in ResourcePool.objects.all():
         chart_resource_pool_tmp[resource_pool] = dict()
         for rp_attribute in resource_pool.attribute_definitions.all():
@@ -149,24 +129,7 @@ def create_pie_chart_resource_pool_consumption_by_billing_groups() -> dict:
                     except AttributeError:
                         bg = None
                     chart_resource_pool_tmp[resource_pool][rp_attribute][bg] += resource_attribute.value
-    chart_resource_pool = {
-        # 'pie_chart_state': {
-        #     'label': 'Request by state',
-        #     'id' : 'graph{{ resource_pool.id }}-{{ rp_attribute_object.id }}'
-        #     'data':
-        #         {
-        #             'labels': [],
-        #             'datasets':
-        #                 [
-        #                     {
-        #                         'data': [],
-        #                         'backgroundColor': [],
-        #                     }
-        #                 ]
-        #         }
-        #
-        # },
-    }
+    chart_resource_pool = dict()
     for resource_pool in chart_resource_pool_tmp:
         chart_resource_pool[resource_pool] = dict()
         for rp_attribute in chart_resource_pool_tmp[resource_pool]:
