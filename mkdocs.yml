@@ -31,7 +31,7 @@ nav:
     - Service catalog: manual/service_catalog.md
     - Resource tracking: manual/resource_tracking.md
     - Settings: manual/settings.md
-    - Billing: manual/billing_groups.md
+    - Billing groups: manual/billing_groups.md
   - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
