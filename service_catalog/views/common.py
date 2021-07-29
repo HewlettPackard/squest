@@ -149,7 +149,6 @@ def create_pie_chart_resource_pool_consumption_by_billing_groups() -> dict:
                     except AttributeError:
                         bg = None
                     chart_resource_pool_tmp[resource_pool][rp_attribute][bg] += resource_attribute.value
-
     chart_resource_pool = {
         # 'pie_chart_state': {
         #     'label': 'Request by state',
