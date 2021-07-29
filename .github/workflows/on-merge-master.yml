@@ -1,0 +1,55 @@
+name:  Publish docs on GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+
+      - name: Get current app version
+        id: vars
+        run: |
+          echo ::set-output name=version::$(grep "__version__ =" Squest/settings/__init__.py |awk '{printf $3}' | sed -e 's/^"//' -e 's/"$//')
+
+      - name: Print app version
+        run: |
+          echo ${{ steps.vars.outputs.version }}
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material mike
+
+      - name: Get current branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Publish last version
+        run: |
+          set -e
+          if ! git config --get user.name; then
+              git config --global user.name "${GITHUB_ACTOR}"
+          fi
+          if ! git config --get user.email; then
+              git config --global user.email "${GITHUB_ACTOR}@users.noreply.${GITHUB_DOMAIN:-"github.com"}"
+          fi
+          remote_repo="https://x-access-token:${GITHUB_TOKEN}@${GITHUB_DOMAIN:-"github.com"}/${GITHUB_REPOSITORY}.git"
+          git remote rm origin
+          git remote add origin "${remote_repo}"
+          git checkout --orphan gh-pages
+          git pull origin gh-pages
+          git checkout ${{ steps.extract_branch.outputs.branch }}
+          mike deploy --push --update-aliases ${{ steps.vars.outputs.version }} latest
