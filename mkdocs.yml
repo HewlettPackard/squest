@@ -13,6 +13,10 @@ theme:
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.9.2/mermaid.min.js
 
+extra:
+  version:
+    provider: mike
+
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences:
