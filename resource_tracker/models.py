@@ -48,8 +48,8 @@ class Resource(models.Model):
 
     service_catalog_instance = models.ForeignKey(Instance,
                                                  on_delete=models.SET_NULL,
-                                                 related_name='service_catalog_instances',
-                                                 related_query_name='service_catalog_instance',
+                                                 related_name='resources',
+                                                 related_query_name='resource',
                                                  null=True)
 
     tags = TaggableManager()

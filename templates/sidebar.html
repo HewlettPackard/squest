@@ -8,13 +8,6 @@
     </a>
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="info">
-                <a href="#" class="d-block">{{ user.get_username }}</a>
-            </div>
-        </div>
-
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu">
@@ -41,6 +34,12 @@
                 {# Admin side panel #}
                 {% if user.is_superuser %}
                     <li class="nav-header">Service catalog</li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:dashboards'%}" class="nav-link {% if '/dashboards/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-chart-pie"></i>
+                            <p>Dashboards</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:list_tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-chess-rook"></i>

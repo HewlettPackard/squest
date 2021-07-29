@@ -8,43 +8,21 @@ from markdown.extensions.toc import TocExtension
 from service_catalog.models import Request
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.operations import OperationType
-from service_catalog.models.request import RequestState
-
 import markdown as md
 
 from service_catalog.models.support import SupportState
 
+from .color import map_dict_request_state, map_dict_instance_state
+
 
 @register.filter(name='map_instance_state')
 def map_instance_state(value):
-    map_dict = {
-        InstanceState.PENDING: "secondary",
-        InstanceState.PROVISIONING: "primary",
-        InstanceState.PROVISION_FAILED: "warning",
-        InstanceState.AVAILABLE: "success",
-        InstanceState.DELETE_FAILED: "warning",
-        InstanceState.DELETING: "primary",
-        InstanceState.UPDATING: "primary",
-        InstanceState.UPDATE_FAILED: "warning",
-        InstanceState.DELETED: "danger",
-        InstanceState.ARCHIVED: "dark",
-    }
-    return map_dict[value]
+    return map_dict_instance_state[value]
 
 
 @register.filter(name='map_request_state')
 def map_request_state(value):
-    map_dict = {
-        RequestState.ACCEPTED: "primary",
-        RequestState.NEED_INFO: "warning",
-        RequestState.SUBMITTED: "info",
-        RequestState.REJECTED: "dark",
-        RequestState.PROCESSING: "orange",
-        RequestState.COMPLETE: "success",
-        RequestState.FAILED: "danger",
-        RequestState.CANCELED: "light"
-    }
-    return map_dict[value]
+    return map_dict_request_state[value]
 
 
 @register.filter(name='map_operation_type')
