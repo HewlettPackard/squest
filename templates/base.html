@@ -20,7 +20,7 @@
     <link rel="shortcut icon" type="image/png" href="{% static '/squest/img/squest_logo.png' %}"/>
     <title>Squest</title>
 </head>
-<body>
+<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 {%  if 'login' not in request.path  %}
     {% include 'navbar.html' %}
     {% include 'sidebar.html' %}
@@ -29,6 +29,17 @@
 <!-- Jquery -->
 <script src="{% static 'jquery/dist/jquery.js' %}"></script>
 {% block content %}{% endblock %}
+
+<footer class="main-footer fixed-bottom">
+    <div class="d-sm-inline justify-content-around">
+         <a class="text-secondary" href="https://hewlettpackard.github.io/squest/"><i class="fas fa-book"></i> Docs</a>
+        <a class="text-secondary" href="{% url 'schema-swagger-ui' %}"><i class="fas fa-laptop-code"></i> API</a>
+        <a class="text-secondary" href="https://github.com/HewlettPackard/squest"><i class="fas fa-code"></i> Code</a>
+        <a class="text-secondary" href="https://gitter.im/HewlettPackard/squest"><i class="fas fa-comments"></i> Community chat</a>
+    </div>
+    {% load version %}
+    <div class="float-right d-none d-sm-inline">v{% app_version %}</div>
+</footer>
 <!-- Bootstrap -->
 <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.js' %}" ></script>
 <!-- adminlte -->

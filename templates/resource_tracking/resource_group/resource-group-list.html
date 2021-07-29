@@ -73,7 +73,7 @@
                                     {% endfor %}
                                     <a class="btn btn-default btn-sm float-right" href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
                                         Resources
-                                        <span class="badge badge-dark">{{ resource_group.resources.all|length }}</span>
+                                        <span class="badge badge-secondary">{{ resource_group.resources.all|length }}</span>
                                     </a>
                                 </div>
                             </div>
