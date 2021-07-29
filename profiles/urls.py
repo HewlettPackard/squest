@@ -9,6 +9,7 @@ app_name = 'profiles'
 urlpatterns = [
     # common URLs
     path('profile/', views.profile, name='profile'),
+    path('users/', views.user_list, name='user_list'),
 
     # group URLs
     path('group/<int:group_id>/users/', views.user_by_group_list, name='user_by_group_list'),
