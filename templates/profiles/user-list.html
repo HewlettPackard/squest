@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Users</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="row">
+                <section class="col-lg-9 connectedSortable ui-sortable">
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="tower_list" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>e-Mail</th>
+                                        <th>Billing groups</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users.qs %}
+                                        <tr>
+                                            <td class="align-middle">{{ user.username }}</td>
+                                            <td class="align-middle">{{ user.email }}</td>
+                                            <td class="align-middle">
+                                                {% for group in user.billing_groups.all %}
+                                                    <a href="{% url "profiles:user_by_billing_group_list" group.id %}"
+                                                       class="btn btn-default bg-sm">
+                                                        {{ group.name }}
+                                                    </a>
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-3 connectedSortable ui-sortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form method="get">
+                                {{ users.form.as_p }}
+                                <button class="btn btn-primary" type="submit">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
