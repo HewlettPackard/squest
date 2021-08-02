@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Resources in resource group {{ resource_group.name }}</h1>
+                        {% include "generics/breadcrumbs.html" %}
                     </div>
                     <div class="col-sm-6">
                         <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_group_resource_create' resource_group_id=resource_group.id %}">
