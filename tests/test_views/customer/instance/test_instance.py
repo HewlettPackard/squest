@@ -19,6 +19,8 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.assertEquals(len(response.context["instances"]), 1)
 
     def test_get_instance_details(self):
+        self.test_instance.state = InstanceState.AVAILABLE
+        self.test_instance.save()
         args = {
             "instance_id": self.test_instance.id
         }

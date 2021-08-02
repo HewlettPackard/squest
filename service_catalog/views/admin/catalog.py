@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from service_catalog.forms import ServiceForm, AddServiceOperationForm, SurveySelectorForm, EditServiceForm
 from service_catalog.models import Service, Operation
@@ -8,7 +9,7 @@ from service_catalog.models.operations import OperationType
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def service(request):
+def service_list(request):
     services = Service.objects.all()
     return render(request, 'service_catalog/settings/catalog/service/service-list.html', {'services': services})
 
@@ -27,17 +28,27 @@ def add_service(request):
             return redirect('service_catalog:service_list')
     else:
         form = ServiceForm()
-
-    return render(request, 'service_catalog/settings/catalog/service/service-create.html', {'form': form})
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': 'Create a new service', 'url': ""},
+    ]
+    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/settings/catalog/service/service-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def service_operations(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
     operations = Operation.objects.filter(service=target_service)
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': ""},
+        {'text': 'Operations', 'url': ""},
+    ]
     context = {
         "operations": operations,
-        "service": target_service
+        "service": target_service,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/settings/catalog/service/operation/operation-list.html", context)
 
@@ -48,8 +59,13 @@ def delete_service(request, service_id):
     if request.method == "POST":
         target_service.delete()
         return redirect('service_catalog:service_list')
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': ""},
+    ]
     context = {
-        "object": target_service
+        'object': target_service,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/settings/catalog/service/service-delete.html", context)
 
@@ -62,9 +78,12 @@ def edit_service(request, service_id):
     if form.is_valid():
         form.save()
         return redirect('service_catalog:service_list')
-
-    return render(request, 'service_catalog/settings/catalog/service/service-edit.html', {'form': form,
-                                                                                          'service': target_service})
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': ""},
+    ]
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/settings/catalog/service/service-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -80,9 +99,13 @@ def add_service_operation(request, service_id):
             return redirect('service_catalog:service_operations', service_id=target_service.id)
     else:
         form = AddServiceOperationForm()
-
-    return render(request, 'service_catalog/settings/catalog/service/operation/operation-create.html', {'form': form,
-                                                                                                        'service': target_service})
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
+        {'text': 'Create a new operation', 'url': ""},
+    ]
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -95,10 +118,15 @@ def delete_service_operation(request, service_id, operation_id):
     if request.method == "POST":
         target_operation.delete()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
-
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
+        {'text': target_operation.name, 'url': ""},
+    ]
     context = {
-        "operation": target_operation,
-        "service": target_service
+        'operation': target_operation,
+        'service': target_service,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/settings/catalog/service/operation/operation-delete.html", context)
 
@@ -112,10 +140,17 @@ def edit_service_operation(request, service_id, operation_id):
     if form.is_valid():
         form.save()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
-
-    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit.html', {'form': form,
-                                                                                                      'service': target_service,
-                                                                                                      'operation': target_operation})
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
+        {'text': target_operation.name, 'url': ""},
+    ]
+    context = {'form': form,
+               'service': target_service,
+               'operation': target_operation,
+               'breadcrumbs': breadcrumbs
+               }
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -132,8 +167,13 @@ def service_operation_edit_survey(request, service_id, operation_id):
             return redirect('service_catalog:service_operations', service_id=target_service.id)
     else:
         form = SurveySelectorForm(**parameters)
-
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
+        {'text': target_operation.name, 'url': ""},
+    ]
     context = {'form': form,
                'service': target_service,
-               'operation': target_operation}
-    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit-survey.html', context=context)
+               'operation': target_operation,
+               'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/settings/catalog/service/operation/operation-edit-survey.html', context)
