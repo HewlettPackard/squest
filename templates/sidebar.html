@@ -8,6 +8,7 @@
     </a>
     <!-- Sidebar -->
     <div class="sidebar">
+        {% load admin_data %}
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu">
@@ -55,13 +56,19 @@
                     <li class="nav-item menu-close">
                         <a href="{% url 'service_catalog:admin_request_list' %}" class="nav-link {% if 'admin/request' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-list"></i>
-                            <p>Requests</p>
+                            <p>Requests <span class="badge badge-info right">{% submitted_request %}</span></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:admin_instance_list'%}" class="nav-link {% if 'admin/instance/' in request.path and not request.GET.state %}active{% endif %}">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Instances</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:admin_support_list'%}?state=opened" class="nav-link {% if 'admin/support/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fa fa-medkit"></i>
+                            <p>Supports <span class="badge badge-warning right">{% opened_support %}</span></p>
                         </a>
                     </li>
                     <li class="nav-header">Resource tracking</li>
@@ -98,7 +105,7 @@
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:global_hook_list'%}" class="nav-link {% if '/global_hook/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fab fa-hubspot"></i>
+                            <i class="nav-icon fas fa-file-code"></i>
                             <p>Global hooks</p>
                         </a>
                     </li>

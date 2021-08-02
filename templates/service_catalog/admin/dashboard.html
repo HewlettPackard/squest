@@ -26,7 +26,7 @@
                             <div class="icon">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <a href="{% url 'service_catalog:admin_request_list' %}?state=submitted "
+                            <a href="{% url 'service_catalog:admin_request_list' %}?state=submitted"
                                class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
@@ -50,6 +50,21 @@
                     </div>
                     <div class="col-lg col">
                         <!-- small card -->
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ total_support_opened }}</h3>
+                                <p>Opened support</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-medkit"></i>
+                            </div>
+                            <a href="{% url 'service_catalog:admin_support_list' %}?state=opened" class="small-box-footer">
+                                More info <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg col">
+                        <!-- small card -->
                         <div class="small-box bg-default">
                             <div class="inner">
                                 <h3>{{ total_user }}</h3>
@@ -65,22 +80,7 @@
                     </div>
                     <div class="col-lg col">
                         <!-- small card -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>{{ total_support_opened }}</h3>
-                                <p>Opened support</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-medkit"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-teal">
+                        <div class="small-box bg-pink">
                             <div class="inner">
                                 <h3>{{ total_user_without_billing_groups }}</h3>
                                 <p>Users without billing groups</p>
