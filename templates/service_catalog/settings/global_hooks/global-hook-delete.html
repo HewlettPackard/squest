@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Global hook: {{ global_hook.name }}</h1>
+                        {% include "generics/breadcrumbs.html" %}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -22,7 +22,7 @@
                     </div>
                     <div class="card-body">
                         <form action='' method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the global hook "{{ object.name }}"?</p>
+                            <p>Do you want to delete the global hook "{{ global_hook.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'service_catalog:global_hook_list' %}">Cancel</a>
                         </form>
