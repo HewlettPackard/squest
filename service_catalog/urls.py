@@ -23,7 +23,7 @@ urlpatterns = [
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
          name='delete_job_template'),
 
-    path('settings/catalog/service/', views.service, name='service_list'),
+    path('settings/catalog/service/', views.service_list, name='service_list'),
     path('settings/catalog/service/add_service/', views.add_service, name='create_service'),
     path('settings/catalog/service/<int:service_id>/operations/', views.service_operations, name='service_operations'),
     path('settings/catalog/service/<int:service_id>/delete/', views.delete_service, name='delete_service'),

@@ -23,7 +23,7 @@ def group_edit(request, group_id):
         return redirect("profiles:group_list")
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': group.name, 'url': "#"},
+        {'text': group.name, 'url': ""},
     ]
     context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
@@ -40,7 +40,7 @@ def group_create(request):
         form = GroupForm()
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': 'Create a new group', 'url': "#"},
+        {'text': 'Create a new group', 'url': ""},
     ]
     context = {'form': form, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
@@ -57,7 +57,7 @@ def group_delete(request, group_id):
     }
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': group.name, 'url': "#"}
+        {'text': group.name, 'url': ""}
     ]
     context = {
         'breadcrumbs': breadcrumbs,
@@ -78,7 +78,7 @@ def user_by_group_list(request, group_id):
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': ""},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-by-group-list.html', context)
@@ -103,7 +103,7 @@ def user_in_group_update(request, group_id):
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': reverse('profiles:user_by_group_list', args=[group_id])},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-in-group-update.html', context)
@@ -123,7 +123,7 @@ def user_in_group_remove(request, group_id, user_id):
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': reverse('profiles:user_by_group_list', args=[group_id])},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {
         'breadcrumbs': breadcrumbs,

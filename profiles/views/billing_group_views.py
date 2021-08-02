@@ -25,7 +25,7 @@ def billing_group_edit(request, billing_group_id):
         return redirect("profiles:billing_group_list")
     breadcrumbs = [
         {'text': 'Billing', 'url': reverse('profiles:group_list')},
-        {'text': group.name, 'url': "#"},
+        {'text': group.name, 'url': ""},
     ]
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
@@ -42,7 +42,7 @@ def billing_group_create(request):
         form = BillingGroupForm()
     breadcrumbs = [
         {'text': 'Billing', 'url': reverse('profiles:group_list')},
-        {'text': 'Create a new billing group', 'url': "#"},
+        {'text': 'Create a new billing group', 'url': ""},
     ]
     context = {'form': form, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
@@ -59,7 +59,7 @@ def billing_group_delete(request, billing_group_id):
     }
     breadcrumbs = [
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
-        {'text': group.name, 'url': "#"}
+        {'text': group.name, 'url': ""}
     ]
     context = {
         'breadcrumbs': breadcrumbs,
@@ -79,7 +79,7 @@ def user_by_billing_group_list(request, billing_group_id):
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': ""},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-by-group-list.html', context)
@@ -104,7 +104,7 @@ def user_in_billing_group_update(request, billing_group_id):
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-in-group-update.html', context)
@@ -124,7 +124,7 @@ def user_in_billing_group_remove(request, billing_group_id, user_id):
     breadcrumbs = [
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
-        {'text': "Users", 'url': "#"}
+        {'text': "Users", 'url': ""}
     ]
     context = {
         'breadcrumbs': breadcrumbs,

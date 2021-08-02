@@ -4,6 +4,7 @@ import requests
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django_fsm import can_proceed
 
 from service_catalog.filters.request_filter import RequestFilter
@@ -33,8 +34,13 @@ def admin_request_cancel(request, request_id):
         # now delete the request and the pending instance
         target_request.delete()
         return redirect('service_catalog:admin_request_list')
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "object": target_request
+        'object': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/request/request-cancel.html", context)
 
@@ -60,10 +66,14 @@ def admin_request_need_info(request, request_id):
             return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
-
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "form": form,
-        "target_request": target_request
+        'form': form,
+        'target_request': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/request/request-need-info.html", context)
 
@@ -87,10 +97,14 @@ def admin_request_re_submit(request, request_id):
             return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
-
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "form": form,
-        "target_request": target_request
+        'form': form,
+        'target_request': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/request/request-re-submit.html", context)
 
@@ -115,10 +129,14 @@ def admin_request_reject(request, request_id):
             return redirect('service_catalog:admin_request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
-
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "form": form,
-        "target_request": target_request
+        'form': form,
+        'target_request': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/request/request-reject.html", context)
 
@@ -138,10 +156,14 @@ def admin_request_accept(request, request_id):
             return redirect('service_catalog:admin_request_list')
     else:
         form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
-
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "form": form,
-        "target_request": target_request
+        'form': form,
+        'target_request': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'service_catalog/admin/request/request-accept.html', context=context)
 
@@ -183,14 +205,22 @@ def admin_request_process(request, request_id):
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:admin_request_list')
-
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "target_request": target_request,
-        "error_message": error_message
+        'target_request': target_request,
+        'error_message': error_message,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/request/request-process.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_comment(request, request_id):
-    return request_comment(request, request_id, 'service_catalog:admin_request_comment')
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
+    return request_comment(request, request_id, 'service_catalog:admin_request_comment', breadcrumbs)

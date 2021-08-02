@@ -7,10 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-left">
-                            <li class="breadcrumb-item"><a href="{% url 'service_catalog:global_hook_list'%}">Global hooks</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Create a new global hook</li>
-                        </ol>
+                        {% include "generics/breadcrumbs.html" %}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
