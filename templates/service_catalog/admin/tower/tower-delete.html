@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">{{ title_text }}</h1>
+                        {% include "generics/breadcrumbs.html" %}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -16,23 +16,15 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="card card-danger">
+                <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{ confirm_text }}</h3>
+                        <h3 class="card-title">Confirm deletion</h3>
                     </div>
                     <div class="card-body">
-                        {%  if details != None %}
-                            {{ details.warning_sentence }}
-                            {% for detail in details.details_list %}
-                                <li>{{ detail }}</li>
-                            {% endfor %}
-                        {% endif %}
-                        <form class="form-horizontal" action={{ action_url }} method="post">{% csrf_token %}
-                            <!-- validate button -->
-                            <button class="btn btn-danger" type="submit">
-                                <i class="fas fa-trash"></i>
-                                {{ button_text }}
-                            </button>
+                        <form action='' method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the server "{{ object.name }}"?</p>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a class="btn btn-default" href="{% url 'service_catalog:list_tower' %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

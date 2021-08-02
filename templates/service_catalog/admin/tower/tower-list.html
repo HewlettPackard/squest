@@ -35,7 +35,7 @@
                             <tbody>
                             {%  for tower_server in tower_servers %}
                                 <tr>
-                                    <td class="align-middle">{{ tower_server.name }}</td>
+                                    <td class="align-middle"><a href="{% url 'service_catalog:update_tower' tower_server.id %}">{{ tower_server.name }}</a></td>
                                     <td class="align-middle"><a href="{% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.url }}">
                                         {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
                                     </a></td>

@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ display_title }} / {{ group.name }}</h1>
+                        {% include "generics/breadcrumbs.html" %}
                     </div>
                     <div class="col-sm-6">
                         <a class="btn btn-info float-sm-right" href="{% url "profiles:user_in_"|add:group_url|add:"_update" group.id %}">
@@ -38,7 +38,7 @@
                                     <td class="align-middle">{{ user.email }}</td>
                                     <td class="align-middle">
                                         <a href="{% url "profiles:user_in_"|add:group_url|add:"_remove" group.id user.id %}" class="btn btn-danger bg-sm">
-                                            <i class="fas fa-trash"></i> Delete
+                                            <i class="fas fa-trash"></i> Remove
                                         </a>
                                     </td>
                                 </tr>
