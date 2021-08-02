@@ -7,7 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>My instances</h1>
+                        {%  include "generics/breadcrumbs.html" %}
+                    </div>
+                    <div class="col-sm-6">
+                          <span title="state" class="float-sm-right badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.state }}</span>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -15,17 +18,8 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-9 h-100">
+                    <div class="col-sm-12 h-100">
                         <div class="card">
-                            <div class="card-header p-2">
-                                <h3 class="card-title">
-                                    <i class="fas fa-comments"></i>
-                                    Comments
-                                </h3>
-                                <div class="card-tools">
-                                  <span title="state" class="badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.state }}</span>
-                                </div>
-                            </div>
                             <div class="card-body">
                                 {% for message in messages %}
                                     <div class="post">

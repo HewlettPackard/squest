@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django_fsm import can_proceed
 from guardian.shortcuts import get_objects_for_user
 
@@ -179,7 +180,7 @@ def dashboards(request):
     return render(request, 'service_catalog/customer/dashboard.html', context=context)
 
 
-def request_comment(request, request_id, redirect_to_view):
+def request_comment(request, request_id, redirect_to_view, breadcrumbs):
     target_request = get_object_or_404(Request, id=request_id)
     messages = RequestMessage.objects.filter(request=target_request)
     if request.method == "POST":
@@ -192,16 +193,16 @@ def request_comment(request, request_id, redirect_to_view):
             return redirect(redirect_to_view, target_request.id)
     else:
         form = RequestMessageForm()
-
     context = {
-        "form": form,
-        "target_request": target_request,
-        "messages": messages
+        'form': form,
+        'target_request': target_request,
+        'messages': messages,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/common/request-comment.html", context)
 
 
-def instance_new_support(request, instance_id):
+def instance_new_support(request, instance_id, breadcrumbs):
     target_instance = get_object_or_404(Instance, id=instance_id)
     parameters = {
         'instance_id': instance_id
@@ -216,12 +217,11 @@ def instance_new_support(request, instance_id):
                 return redirect('service_catalog:customer_instance_details', target_instance.id)
     else:
         form = SupportRequestForm(request.user, **parameters)
+    context = {'form': form, 'instance': target_instance, 'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/common/support-create.html', context)
 
-    return render(request, 'service_catalog/common/support-create.html', {'form': form,
-                                                                          'instance': target_instance})
 
-
-def instance_support_details(request, instance_id, support_id):
+def instance_support_details(request, instance_id, support_id, breadcrumbs):
     instance = get_object_or_404(Instance, id=instance_id)
     support = get_object_or_404(Support, id=support_id)
     messages = SupportMessage.objects.filter(support=support)
@@ -249,11 +249,11 @@ def instance_support_details(request, instance_id, support_id):
                 return redirect('service_catalog:customer_instance_support_details', instance.id, support.id)
     else:
         form = SupportMessageForm()
-
     context = {
         "form": form,
         "instance": instance,
         "messages": messages,
-        "support": support
+        "support": support,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/common/instance-support-details.html", context)

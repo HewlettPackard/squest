@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 
 from service_catalog.forms import ServiceRequestForm
 from service_catalog.mail_utils import send_mail_request_update
@@ -27,6 +28,9 @@ def customer_service_request(request, service_id):
             return redirect('service_catalog:customer_request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
-
-    return render(request, 'service_catalog/customer/catalog/service/service-request.html', {'form': form,
-                                                                                             'service': target_service})
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:customer_service_list')},
+        {'text': target_service.name, 'url': ""},
+    ]
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
+    return render(request, 'service_catalog/customer/catalog/service/service-request.html', context)

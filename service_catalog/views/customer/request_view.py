@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
@@ -31,13 +32,22 @@ def customer_request_cancel(request, request_id):
         # now delete the request
         target_request.delete()
         return redirect('service_catalog:customer_request_list')
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:customer_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     context = {
-        "object": target_request
+        'object': target_request,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/customer/request/request-cancel.html", context)
 
 
 @permission_required_or_403('service_catalog.view_request', (Request, 'id', 'request_id'))
 def customer_request_comment(request, request_id):
-    return request_comment(request, request_id, 'service_catalog:customer_request_comment')
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:customer_request_list')},
+        {'text': request_id, 'url': ""},
+    ]
+    return request_comment(request, request_id, 'service_catalog:customer_request_comment', breadcrumbs)
 
