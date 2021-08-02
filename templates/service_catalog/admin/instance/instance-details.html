@@ -7,49 +7,40 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>All instances</h1>
+                        <h1>{{ instance.name }}</h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
         </section>
         <div class="content">
             <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-cube"></i>
-                            {{ instance.name }}
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Name</span>
-                                        <span class="info-box-number text-center text-muted mb-0">{{ instance.name }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">State</span>
-                                        <span class="info-box-number text-center text-{{ instance.state|map_instance_state}} mb-0">{{ instance.state }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Service</span>
-                                        <span class="info-box-number text-center text-muted mb-0">{{ instance.service.name }}</span>
-                                    </div>
-                                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">Billing group</span>
+                                <span class="info-box-number text-center text-muted mb-0">{{ instance.billing_group }}</span>
                             </div>
                         </div>
-                    </div><!-- end card body -->
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">State</span>
+                                <span class="info-box-number text-center text-{{ instance.state|map_instance_state}} mb-0">{{ instance.state }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">Service</span>
+                                <span class="info-box-number text-center text-muted mb-0">{{ instance.service.name }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="row">
                     <div class="col-sm">
