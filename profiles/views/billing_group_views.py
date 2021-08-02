@@ -25,7 +25,7 @@ def billing_group_edit(request, billing_group_id):
         return redirect("profiles:billing_group_list")
     breadcrumbs = [
         {'text': 'Billing', 'url': reverse('profiles:group_list')},
-        {'text': 'Create a new billing group', 'url': "#"},
+        {'text': group.name, 'url': "#"},
     ]
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)

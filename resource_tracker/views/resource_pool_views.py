@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from resource_tracker.filtersets import ResourcePoolFilter
 from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
@@ -23,7 +24,12 @@ def resource_pool_create(request):
             return redirect("resource_tracker:resource_pool_list")
     else:
         form = ResourcePoolForm()
-    return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', {'form': form})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': 'Create a new resource pool', 'url': ""},
+    ]
+    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -33,9 +39,12 @@ def resource_pool_edit(request, resource_pool_id):
     if form.is_valid():
         form.save()
         return redirect("resource_tracker:resource_pool_list")
-    return render(request,
-                  'resource_tracking/resource_pool/resource-pool-edit.html', {'form': form,
-                                                                              'resource_pool': resource_pool})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': ""},
+    ]
+    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/resource-pool-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -50,10 +59,12 @@ def resource_pool_delete(request, resource_pool_id):
         resource_pool.attribute_definitions.all().delete()
         resource_pool.delete()
         return redirect("resource_tracker:resource_pool_list")
-
-    return render(request,
-                  'resource_tracking/resource_pool/resource-pool-delete.html', {'resource_pool': resource_pool})
-
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': ""},
+    ]
+    context = {'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/resource-pool-delete.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_attribute_create(request, resource_pool_id):
@@ -68,10 +79,13 @@ def resource_pool_attribute_create(request, resource_pool_id):
             return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
     else:
         form = ResourcePoolAttributeDefinitionForm()
-
-    return render(request,
-                  'resource_tracking/resource_pool/attributes/attribute-create.html',
-                  {'form': form, 'resource_pool': resource_pool})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
+        {'text': 'Create a new attribute', 'url': ""},
+    ]
+    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/attributes/attribute-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -83,10 +97,15 @@ def resource_pool_attribute_delete(request, resource_pool_id, attribute_id):
         attribute.remove_all_producer()
         attribute.delete()
         return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
-
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
+        {'text': attribute.name, 'url': ""},
+    ]
     context = {
         "resource_pool": resource_pool,
-        "attribute": attribute
+        "attribute": attribute,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "resource_tracking/resource_pool/attributes/attribute-delete.html", context)
 
@@ -99,23 +118,38 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
     if form.is_valid():
         form.save()
         return redirect("resource_tracker:resource_pool_edit", resource_pool.id)
-    return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html',
-                  {'form': form, 'attribute': attribute, 'resource_pool': resource_pool})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
+        {'text': 'Create a new attribute', 'url': ""},
+    ]
+    context = {'form': form, 'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_attribute_producer_list(request, resource_pool_id, attribute_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
     attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
-
-    return render(request, 'resource_tracking/resource_pool/attributes/producer-list.html',
-                  {'attribute': attribute, 'resource_pool': resource_pool})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': ""},
+        {'text': attribute.name, 'url': ""},
+        {'text': 'Producers', 'url': ""}
+    ]
+    context = {'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/attributes/producer-list.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_attribute_consumer_list(request, resource_pool_id, attribute_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
     attribute = get_object_or_404(ResourcePoolAttributeDefinition, id=attribute_id)
-
-    return render(request, 'resource_tracking/resource_pool/attributes/consumer-list.html',
-                  {'attribute': attribute, 'resource_pool': resource_pool})
+    breadcrumbs = [
+        {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
+        {'text': resource_pool.name, 'url': ""},
+        {'text': attribute.name, 'url': ""},
+        {'text': 'Consumers', 'url': ""}
+    ]
+    context = {'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_pool/attributes/consumer-list.html', context)
