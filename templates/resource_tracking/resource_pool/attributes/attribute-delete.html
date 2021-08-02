@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Resource pool {{ resource_pool.name }}</h1>
+                        {% include "generics/breadcrumbs.html" %}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -17,9 +17,6 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Confirm deletion of the attribute definition <strong>{{ attribute.name }}</strong></h3>
-                    </div>
                     <div class="card-body">
                         <form action='{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}' method='POST'>{% csrf_token %}
 

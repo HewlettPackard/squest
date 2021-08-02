@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from resource_tracker.forms import ResourceForm
 from resource_tracker.models import ResourceGroup, Resource
@@ -14,10 +15,16 @@ def resource_group_resource_list(request, resource_group_id):
         for attribute in resource.attributes.all():
             if attribute.attribute_type.name not in list_attribute_name:
                 list_attribute_name.append(attribute.attribute_type.name)
-
-    return render(request, 'resource_tracking/resource_group/resources/resource-list.html',
-                  {'resource_group': resource_group,
-                   'list_attribute_name': list_attribute_name})
+    breadcrumbs = [
+        {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+        {'text': resource_group.name, 'url': ""},
+    ]
+    context = {
+        'resource_group': resource_group,
+        'list_attribute_name': list_attribute_name,
+        'breadcrumbs': breadcrumbs
+    }
+    return render(request, 'resource_tracking/resource_group/resources/resource-list.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -27,9 +34,16 @@ def resource_group_resource_delete(request, resource_group_id, resource_id):
     if request.method == "POST":
         resource.delete()
         return redirect("resource_tracker:resource_group_resource_list", resource_group_id)
+    breadcrumbs = [
+        {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+        {'text': resource_group.name,
+         'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
+        {'text': resource.name, 'url': ""},
+    ]
     context = {
         "resource_group": resource_group,
-        "resource": resource
+        "resource": resource,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, "resource_tracking/resource_group/resources/resource-delete.html", context)
 
@@ -47,8 +61,14 @@ def resource_group_resource_create(request, resource_group_id):
             return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
     else:
         form = ResourceForm(**parameters)
-    return render(request, 'resource_tracking/resource_group/resources/resource-create.html',
-                  {'resource_group': resource_group, 'form': form})
+    breadcrumbs = [
+        {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+        {'text': resource_group.name,
+         'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
+        {'text': 'Create a new resource', 'url': ""},
+    ]
+    context = {'resource_group': resource_group, 'form': form, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_group/resources/resource-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -65,5 +85,11 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
             return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
     else:
         form = ResourceForm(instance=resource, **parameters)
-    return render(request, 'resource_tracking/resource_group/resources/resource-edit.html',
-                  {'resource_group': resource_group, 'resource': resource, 'form': form})
+    breadcrumbs = [
+        {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+        {'text': resource_group.name,
+         'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
+        {'text': resource.name, 'url': ""},
+    ]
+    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs}
+    return render(request, 'resource_tracking/resource_group/resources/resource-edit.html', context)

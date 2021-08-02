@@ -23,7 +23,7 @@ def group_edit(request, group_id):
         return redirect("profiles:group_list")
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': 'Create a new group', 'url': "#"},
+        {'text': group.name, 'url': "#"},
     ]
     context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
