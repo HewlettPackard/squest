@@ -21,7 +21,11 @@ def group_edit(request, group_id):
     if form.is_valid():
         form.save()
         return redirect("profiles:group_list")
-    context = {'form': form, 'group': group, 'group_url': "group", 'display_title': 'Groups'}
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': 'Create a new group', 'url': "#"},
+    ]
+    context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
 
 
@@ -34,7 +38,11 @@ def group_create(request):
             return redirect("profiles:group_list")
     else:
         form = GroupForm()
-    context = {'form': form, 'group_url': "group", 'display_title': 'Groups'}
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': 'Create a new group', 'url': "#"},
+    ]
+    context = {'form': form, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
 
 
@@ -47,8 +55,12 @@ def group_delete(request, group_id):
     args = {
         "group_id": group_id,
     }
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': group.name, 'url': "#"}
+    ]
     context = {
-        'title_text': 'Groups',
+        'breadcrumbs': breadcrumbs,
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{group.name}</strong>?"),
         'action_url': reverse('profiles:group_delete', kwargs=args),
         'button_text': 'Delete',
@@ -57,13 +69,18 @@ def group_delete(request, group_id):
                     } if group.user_set.all() else None,
         'group_url': "group"
     }
-    return render(request, 'profiles/group/confirm-delete-template.html', context=context)
+    return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def user_by_group_list(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    context = {'group': group, 'group_url': "group", 'display_title': 'Groups'}
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': group.name, 'url': ""},
+        {'text': "Users", 'url': "#"}
+    ]
+    context = {'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-by-group-list.html', context)
 
 
@@ -83,7 +100,12 @@ def user_in_group_update(request, group_id):
             for user in to_add:
                 group.user_set.add(user)
             return redirect("profiles:user_by_group_list", group_id=group_id)
-    context = {'form': form, 'group': group, 'group_url': "group", 'display_title': 'Groups'}
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': group.name, 'url': reverse('profiles:user_by_group_list', args=[group_id])},
+        {'text': "Users", 'url': "#"}
+    ]
+    context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-in-group-update.html', context)
 
 
@@ -98,10 +120,15 @@ def user_in_group_remove(request, group_id, user_id):
         "group_id": group_id,
         "user_id": user_id
     }
+    breadcrumbs = [
+        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': group.name, 'url': reverse('profiles:user_by_group_list', args=[group_id])},
+        {'text': "Users", 'url': "#"}
+    ]
     context = {
-        'title_text': f"Users in  { group }",
+        'breadcrumbs': breadcrumbs,
         'confirm_text': mark_safe(f"Confirm to remove the user <strong>{ user.username }</strong> from { group }?"),
         'action_url': reverse('profiles:user_in_group_remove', kwargs=args),
-        'button_text': 'Delete'
+        'button_text': 'Remove'
     }
-    return render(request, 'profiles/group/confirm-delete-template.html', context=context)
+    return render(request, 'generics/confirm-delete-template.html', context=context)

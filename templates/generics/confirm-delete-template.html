@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        {% include "generics/breadcrumbs.html" %}
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ confirm_text }}</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if details != None %}
+                            {{ details.warning_sentence }}
+                            <ul>
+                            {% for detail in details.details_list %}
+                                <li>{{ detail }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <form class="form-horizontal" action={{ action_url }} method="post">{% csrf_token %}
+                            <!-- validate button -->
+                            <button class="btn btn-danger" type="submit">
+                                <i class="fas fa-trash"></i>
+                                {{ button_text }}
+                            </button>
+                            <button class="btn btn-light" onclick=window.history.back()>
+                                <i class="fas fa-window-close"></i>
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
