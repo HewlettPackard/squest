@@ -7,6 +7,13 @@ from profiles.models import BillingGroup
 from resource_tracker.models import ResourcePool, ResourceGroup
 
 
+class BillingGroupFilter(django_filters.ModelMultipleChoiceFilter):
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('queryset', BillingGroup.objects.filter())
+        super().__init__(label='Billing groups', *args, **kwargs)
+
+
 class TagFilter(django_filters.ModelMultipleChoiceFilter):
     """
     Match on one or more assigned tags. If multiple tags are specified (e.g. ?tag=foo&tag=bar),
@@ -52,10 +59,18 @@ class GraphFilter(django_filters.FilterSet):
 
 
 class UserFilter(django_filters.FilterSet):
-    billing_groups = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
+
+    billing_groups = BillingGroupFilter(widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
+                                                                           'data-live-search': "true"}))
+
+    no_billing_groups = django_filters.BooleanFilter(method='no_billing_group', label="No billing group",
+                                                     widget=forms.CheckboxInput())
 
     class Meta:
         model = User
         fields = ['billing_groups']
+
+    def no_billing_group(self, queryset, name, value):
+        if not value:
+            return queryset
+        return User.objects.filter(billing_groups=None)
