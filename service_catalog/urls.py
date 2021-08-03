@@ -11,6 +11,9 @@ urlpatterns = [
     path('', views.dashboards, name='home'),
     path('dashboards/', views.dashboards, name='dashboards'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
+    path('requests/', views.request_list, name='request_list'),
+    path('services/', views.service_list, name='service_list'),
+    path('instances/', views.instance_list, name='instance_list'),
 
     # settings URLs
     path('settings/tower/', views.list_tower, name='list_tower'),
@@ -23,7 +26,7 @@ urlpatterns = [
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
          name='delete_job_template'),
 
-    path('settings/catalog/service/', views.service_list, name='service_list'),
+    path('settings/catalog/service/', views.manage_services, name='manage_services'),
     path('settings/catalog/service/add_service/', views.add_service, name='create_service'),
     path('settings/catalog/service/<int:service_id>/operations/', views.service_operations, name='service_operations'),
     path('settings/catalog/service/<int:service_id>/delete/', views.delete_service, name='delete_service'),
@@ -44,14 +47,10 @@ urlpatterns = [
          name='ajax_load_model_state'),
 
     # customer views URLs
-    path('customer/catalog/service/', views.customer_list_service, name='customer_service_list'),
     path('customer/catalog/service/<int:service_id>/request/', views.customer_service_request,
          name='customer_service_request'),
-    path('customer/request/', views.customer_request_list, name='customer_request_list'),
     path('customer/request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
     path('customer/request/<int:request_id>/comment/', views.customer_request_comment, name='customer_request_comment'),
-
-    path('customer/instance/', views.customer_instance_list, name='customer_instance_list'),
     path('customer/instance/<int:instance_id>/', views.customer_instance_details, name='customer_instance_details'),
     path('customer/instance/<int:instance_id>/new-support/', views.customer_instance_new_support,
          name='customer_instance_new_support'),
@@ -63,7 +62,6 @@ urlpatterns = [
     views.customer_instance_request_new_operation, name='customer_instance_request_new_operation'),
 
     # admin views URLs
-    path('admin/request/', views.admin_request_list, name='admin_request_list'),
     path('admin/request/<int:request_id>/comment/', views.admin_request_comment, name='admin_request_comment'),
     path('admin/request/<int:request_id>/cancel/', views.admin_request_cancel, name='admin_request_cancel'),
     path('admin/request/<int:request_id>/need-info/', views.admin_request_need_info, name='admin_request_need_info'),
@@ -72,7 +70,6 @@ urlpatterns = [
     path('admin/request/<int:request_id>/accept/', views.admin_request_accept, name='admin_request_accept'),
     path('admin/request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
 
-    path('admin/instance/', views.admin_instance_list, name='admin_instance_list'),
     path('admin/instance/<int:instance_id>/', views.admin_instance_details, name='admin_instance_details'),
     path('admin/instance/<int:instance_id>/new-support/', views.admin_instance_new_support,
          name='admin_instance_new_support'),

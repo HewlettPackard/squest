@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from django_fsm import can_proceed
 from guardian.shortcuts import get_objects_for_user
 
@@ -10,11 +9,12 @@ from profiles.models import BillingGroup
 from resource_tracker.models import ResourcePool
 from service_catalog.forms import SupportRequestForm
 from service_catalog.forms.common_forms import RequestMessageForm, SupportMessageForm
-from service_catalog.models import Request, Instance, RequestMessage, Support, SupportMessage
+from service_catalog.models import Request, Instance, RequestMessage, Support, SupportMessage, Service
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
-
 from .color import map_dict_request_state, random_color, map_class_to_color
+from ..filters.instance_filter import InstanceFilter
+from ..filters.request_filter import RequestFilter
 
 
 def get_color_from_string(string):
@@ -257,3 +257,29 @@ def instance_support_details(request, instance_id, support_id, breadcrumbs):
         'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/common/instance-support-details.html", context)
+
+
+@login_required
+def request_list(request):
+    if request.user.is_superuser:
+        f = RequestFilter(request.GET, queryset=Request.objects.all())
+        return render(request, 'service_catalog/admin/request/request-list.html', {'filter': f})
+    else:
+        f = RequestFilter(request.GET, queryset=get_objects_for_user(request.user, 'service_catalog.view_request'))
+        return render(request, 'service_catalog/customer/request/request-list.html', {'filter': f})
+
+
+@login_required
+def service_list(request):
+    services = Service.objects.all()
+    return render(request, 'service_catalog/common/service/service-list.html', {'services': services})
+
+
+@login_required
+def instance_list(request):
+    if request.user.is_superuser:
+        instances_filtered = InstanceFilter(request.GET, queryset=Instance.objects.all())
+        return render(request, 'service_catalog/admin/instance/instance-list.html', {'instances': instances_filtered})
+    else:
+        instances = get_objects_for_user(request.user, 'service_catalog.view_instance')
+        return render(request, 'service_catalog/customer/instance/instance-list.html', {'instances': instances})

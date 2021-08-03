@@ -17,7 +17,7 @@
                 <div class="card">
 
                     <div class="card-body">
-                        <table id="customer_request_list" class="table">
+                        <table id="request_list" class="table">
                             <thead>
                             <tr>
                                 <th>Name</th>
@@ -35,7 +35,7 @@
                                         <td class="align-middle">{{ instance.service.name }}</td>
                                         <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ instance.state |map_instance_state }} btn-block">{{ instance.state }}</span></h4></td>
                                         <td class="align-middle">
-                                            <a href="{%  url 'service_catalog:customer_request_list' %}?instance={{ instance.name }}" class="btn btn-default bg-sm">
+                                            <a href="{%  url 'service_catalog:request_list' %}?instance={{ instance.name }}" class="btn btn-default bg-sm">
                                                 {{ instance.request_set.all | length }}
                                             </a>
                                         </td>

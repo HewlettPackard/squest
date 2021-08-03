@@ -13,7 +13,7 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
     def test_get_instance_list(self):
-        url = reverse('service_catalog:customer_instance_list')
+        url = reverse('service_catalog:instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertEquals(len(response.context["instances"]), 1)

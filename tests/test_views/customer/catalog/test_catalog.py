@@ -11,7 +11,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
     def test_customer_list_service(self):
-        url = reverse('service_catalog:customer_service_list')
+        url = reverse('service_catalog:service_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("services" in response.context)

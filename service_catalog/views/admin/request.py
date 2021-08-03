@@ -17,12 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def admin_request_list(request):
-    f = RequestFilter(request.GET, queryset=Request.objects.all())
-    return render(request, 'service_catalog/admin/request/request-list.html', {'filter': f})
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def admin_request_cancel(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
     if request.method == "POST":
@@ -33,9 +27,9 @@ def admin_request_cancel(request, request_id):
                                     request_owner_user=target_request.user)
         # now delete the request and the pending instance
         target_request.delete()
-        return redirect('service_catalog:admin_request_list')
+        return redirect('service_catalog:request_list')
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -63,11 +57,11 @@ def admin_request_need_info(request, request_id):
             target_request.save()
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect('service_catalog:admin_request_list')
+            return redirect('service_catalog:request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -94,11 +88,11 @@ def admin_request_re_submit(request, request_id):
             target_request.re_submit()
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            return redirect('service_catalog:admin_request_list')
+            return redirect('service_catalog:request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -126,11 +120,11 @@ def admin_request_reject(request, request_id):
             target_request.save()
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect('service_catalog:admin_request_list')
+            return redirect('service_catalog:request_list')
     else:
         form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -153,11 +147,11 @@ def admin_request_accept(request, request_id):
             form.save()
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            return redirect('service_catalog:admin_request_list')
+            return redirect('service_catalog:request_list')
     else:
         form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -204,9 +198,9 @@ def admin_request_process(request, request_id):
         if not error:
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            return redirect('service_catalog:admin_request_list')
+            return redirect('service_catalog:request_list')
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     context = {
@@ -220,7 +214,7 @@ def admin_request_process(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_comment(request, request_id):
     breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:admin_request_list')},
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
     return request_comment(request, request_id, 'service_catalog:admin_request_comment', breadcrumbs)
