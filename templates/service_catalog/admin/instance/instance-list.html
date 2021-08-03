@@ -19,7 +19,7 @@
                         <div class="card">
 
                             <div class="card-body">
-                                <table id="customer_request_list" class="table">
+                                <table id="request_list" class="table">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -44,7 +44,7 @@
                                                 </a>
                                             </td>
                                             <td class="align-middle">
-                                                <a href="{% url 'service_catalog:admin_request_list'%}?instance={{ instance.name }}" class="btn btn-default bg-sm">
+                                                <a href="{% url 'service_catalog:request_list'%}?instance={{ instance.name }}" class="btn btn-default bg-sm">
                                                     {{ instance.request_set.all | length }}
                                                 </a>
                                             </td>

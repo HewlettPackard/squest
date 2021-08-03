@@ -8,12 +8,6 @@ from service_catalog.models import Service
 
 
 @login_required
-def customer_list_service(request):
-    services = Service.objects.all()
-    return render(request, 'service_catalog/customer/catalog/service/service-list.html', {'services': services})
-
-
-@login_required
 def customer_service_request(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
     parameters = {
@@ -25,12 +19,13 @@ def customer_service_request(request, service_id):
         if form.is_valid():
             new_request = form.save()
             send_mail_request_update(target_request=new_request, user_applied_state=request.user)
-            return redirect('service_catalog:customer_request_list')
+            return redirect('service_catalog:request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:customer_service_list')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': ""},
     ]
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
-    return render(request, 'service_catalog/customer/catalog/service/service-request.html', context)
+    return render(request,
+                  'service_catalog/common/service/service-request.html', context)

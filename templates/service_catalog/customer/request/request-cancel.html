@@ -24,7 +24,7 @@
                         <form action='' method='POST'>{% csrf_token %}
                             <p>Do you want to cancel the request?</p>
                             <button type="submit" class="btn btn-danger">Cancel request</button>
-                            <a class="btn btn-default" href="{% url 'service_catalog:customer_request_list' %}">Return</a>
+                            <a class="btn btn-default" href="{% url 'service_catalog:request_list' %}">Return</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->
