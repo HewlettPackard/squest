@@ -24,7 +24,7 @@
                         <form action='{% url 'service_catalog:customer_instance_archive' instance.id %}' method='POST'>{% csrf_token %}
                             <p>Do you want to archive the instance <strong>{{  instance.name }}</strong>?</p>
                             <button type="submit" class="btn btn-dark">Archive instance</button>
-                            <a class="btn btn-default" href="{% url 'customer_instance_list' %}">Return</a>
+                            <a class="btn btn-default" href="{% url 'instance_list' %}">Return</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

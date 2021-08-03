@@ -12,18 +12,11 @@ class TestAdminInstanceViews(BaseTestRequest):
         super(TestAdminInstanceViews, self).setUp()
 
     def test_get_instance_list(self):
-        url = reverse('service_catalog:admin_instance_list')
+        url = reverse('service_catalog:instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("instances" in response.context)
         self.assertEquals(len(response.context["instances"].qs), 2)
-
-    def test_customer_cannot_list_instance_from_admin_view(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
-        url = reverse('service_catalog:admin_instance_list')
-        response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
-        self.assertIsNone(response.context)
 
     def test_admin_can_get_details(self):
         args = {

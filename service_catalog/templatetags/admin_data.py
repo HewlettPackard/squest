@@ -1,4 +1,5 @@
 from django import template
+from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.models import Request, Support
 from service_catalog.models.request import RequestState
@@ -7,8 +8,12 @@ register = template.Library()
 
 
 @register.simple_tag
-def submitted_request():
-    return Request.objects.filter(state=RequestState.SUBMITTED).count()
+def submitted_request(user):
+    if user.is_staff:
+        return Request.objects.filter(state=RequestState.SUBMITTED).count()
+    else:
+        objects = get_objects_for_user(user, 'service_catalog.view_request')
+        return objects.filter(state=RequestState.SUBMITTED).count()
 
 
 @register.simple_tag
