@@ -513,6 +513,19 @@ optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [[package]]
+name = "martor"
+version = "1.6.4"
+description = "Django Markdown Editor"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = "*"
+Markdown = "*"
+requests = "*"
+
+[[package]]
 name = "mike"
 version = "1.0.1"
 description = "Manage multiple versions of your MkDocs-powered documentation"
@@ -892,7 +905,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a286271b2cc539453cbd9c01cbc260f3267cca94747d2ed7af2edbdde71623ac"
+content-hash = "d13e8b2d310277738d9a80b5a783d5784bfe77676caf6bfb7d572e2e555cc66a"
 
 [metadata.files]
 amqp = [
@@ -1155,6 +1168,9 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp39-cp39-win32.whl", hash = "sha256:22c178a091fc6630d0d045bdb5992d2dfe14e3259760e713c490da5323866c39"},
     {file = "MarkupSafe-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b7d644ddb4dbd407d31ffb699f1d140bc35478da613b441c582aeb7c43838dd8"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
+]
+martor = [
+    {file = "martor-1.6.4.tar.gz", hash = "sha256:046be5420cd571290847a9c4f1994c24e9d6a05e1e84acaab5fe5f697d059ac5"},
 ]
 mike = [
     {file = "mike-1.0.1-py3-none-any.whl", hash = "sha256:29b39a725510a67590db261ca8292f583dcfe06c6ea6842793c96ae631d6e2e1"},

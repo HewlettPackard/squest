@@ -21,15 +21,17 @@ from drf_yasg import openapi
 from rest_framework import permissions
 
 #  drf-yasg
+from service_catalog.views import markdown_uploader
+
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Squest API",
-      default_version='v1',
-      description="Test description",
-      license=openapi.License(name="Apache-2.0 License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Squest API",
+        default_version='v1',
+        description="Test description",
+        license=openapi.License(name="Apache-2.0 License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -43,6 +45,11 @@ urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('martor/', include('martor.urls')),
+    url(
+        r'^api/uploader/$',
+        markdown_uploader, name='markdown_uploader_page'
+    ),
 ]
 
 # if settings.DEBUG:

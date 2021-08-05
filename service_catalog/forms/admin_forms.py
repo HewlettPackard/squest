@@ -7,12 +7,15 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, ChoiceField
 from django.utils.translation import gettext_lazy as _
+from martor.fields import MartorFormField
+from martor.widgets import AdminMartorWidget
 from towerlib import Tower
 
 from profiles.models import BillingGroup
 from service_catalog.forms.utils import get_choices_from_string
 from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance, \
     GlobalHook
+from service_catalog.models.documentation import Doc
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
@@ -430,3 +433,15 @@ class GlobalHookForm(ModelForm):
     class Meta:
         model = GlobalHook
         fields = ["name", "model", "state", "job_template", "extra_vars"]
+
+
+class DocForm(ModelForm):
+    title = forms.CharField(label="Name",
+                            required=True,
+                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    content = MartorFormField(widget=AdminMartorWidget())
+
+    class Meta:
+        model = Doc
+        fields = '__all__'
