@@ -104,6 +104,12 @@
                             <p>Global hooks</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:announcement_list'%}" class="nav-link {% if '/announcement/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-bell"></i>
+                            <p>Announcements</p>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </nav>

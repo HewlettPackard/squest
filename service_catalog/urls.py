@@ -48,6 +48,11 @@ urlpatterns = [
     path('settings/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
 
+    path('settings/announcement/', views.announcement_list, name='announcement_list'),
+    path('settings/announcement/create/', views.announcement_create, name='announcement_create'),
+    path('settings/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
+    path('settings/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
+
     # customer views URLs
     path('customer/catalog/service/<int:service_id>/request/', views.customer_service_request,
          name='customer_service_request'),

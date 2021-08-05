@@ -13,6 +13,7 @@ import markdown as md
 from service_catalog.models.support import SupportState
 
 from .color import map_dict_request_state, map_dict_instance_state
+from service_catalog.models import AnnouncementType
 
 
 @register.filter(name='map_instance_state')
@@ -31,6 +32,17 @@ def map_operation_type(value):
         OperationType.CREATE: "success",
         OperationType.UPDATE: "primary",
         OperationType.DELETE: "danger",
+    }
+    return map_dict[value]
+
+
+@register.filter(name='map_color_to_icon')
+def map_color_to_icon(value):
+    map_dict = {
+        AnnouncementType.DANGER: "fas fa-ban",
+        AnnouncementType.INFO: "fas fa-info",
+        AnnouncementType.WARNING: "fas fa-exclamation-triangle",
+        AnnouncementType.SUCCESS: "fas fa-check",
     }
     return map_dict[value]
 
