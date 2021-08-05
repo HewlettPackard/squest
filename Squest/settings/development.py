@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
     'guardian',
+    'tempus_dominus',
     'django_node_assets',
     'django_filters',
     'drf_yasg',
@@ -145,7 +146,7 @@ if LDAP_ENABLED and not TESTING:
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
