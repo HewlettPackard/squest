@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- Main content -->
     <div class="content-wrapper">
         <section class="content-header">
             <div class="container-fluid">
@@ -10,7 +9,7 @@
                         {% include "generics/breadcrumbs.html" %}
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
         <div class="content">
             <div class="container-fluid">
@@ -41,10 +40,9 @@
                     </div>
                 </div>
 
-
                 <div class="row">
                     <div class="col-sm">
-                        <div class="card"><!-- card json spec -->
+                        <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-code"></i> Instance spec</h3>
                                 <div class="card-tools">
@@ -54,15 +52,14 @@
                                     </a>
                                 </div>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 {{ spec_json_pretty|safe }}
                             </div>
                         </div>
-
+                        {% include "service_catalog/common/documentation/doc-list-from-instance.html" %}
                     </div>
                     <div class="col-sm-8">
-                        <div class="card"><!-- card json spec -->
+                        <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-medkit"></i> Support</h3>
                                 <div class="card-tools">
@@ -72,7 +69,6 @@
                                     </a>
                                 </div>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="customer_support_on_instance_list" class="table">
                                     <thead>

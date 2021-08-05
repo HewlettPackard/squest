@@ -14,6 +14,8 @@ urlpatterns = [
     path('requests/', views.request_list, name='request_list'),
     path('services/', views.service_list, name='service_list'),
     path('instances/', views.instance_list, name='instance_list'),
+    path('docs/', views.doc_list, name='doc_list'),
+    path('docs/<int:doc_id>/show/', views.doc_show, name='doc_show'),
 
     # settings URLs
     path('settings/tower/', views.list_tower, name='list_tower'),
