@@ -3,6 +3,8 @@ import os
 import uuid
 
 from django.conf import settings
+from django.utils import timezone
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -27,6 +29,7 @@ from service_catalog.models.request import RequestState
 from .color import map_dict_request_state, random_color, map_class_to_color
 from ..filters.instance_filter import InstanceFilter
 from ..filters.request_filter import RequestFilter
+from ..models.announcement import Announcement
 from service_catalog.models import Doc
 
 
@@ -181,6 +184,8 @@ def dashboards(request):
         context['pie_charts']['pie_chart_service'] = create_pie_chart_instance_by_service_type()
         context['pie_charts']['pie_chart_billing'] = create_pie_chart_instance_by_billing_groups()
         context['chart_resource_pool'] = create_pie_chart_resource_pool_consumption_by_billing_groups()
+        now = timezone.now()
+        context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
         return render(request, 'service_catalog/admin/dashboard.html', context=context)
 
     else:

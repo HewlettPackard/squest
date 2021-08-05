@@ -14,7 +14,7 @@
             <label for="{{ field.id_for_label }}" class="col-sm-2 control-label">
                 {{ field.label }}
             </label>
-            <div class="col-sm-4">
+            <div class="col-sm-12">
                 {{ field }}
                 {% if field.help_text %}
                     <small class="form-text text-muted">{{ field.help_text|safe }}</small>
@@ -24,7 +24,7 @@
     {% endfor %}
 
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-2 col-sm-12">
             <!-- validate button -->
             {% if action == "edit" %}
                 <button class="btn btn-primary" type="submit">

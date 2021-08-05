@@ -8,3 +8,4 @@ from service_catalog.models.message import Message, RequestMessage, SupportMessa
 from service_catalog.models.support import Support
 from service_catalog.models.state_hooks import ServiceStateHook, GlobalHook
 from service_catalog.models.documentation import Doc
+from service_catalog.models.announcement import Announcement, AnnouncementType
