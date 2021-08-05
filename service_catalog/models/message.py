@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from service_catalog.models import Request, Instance
+from service_catalog.models import Request
 from service_catalog.models.support import Support
 
 

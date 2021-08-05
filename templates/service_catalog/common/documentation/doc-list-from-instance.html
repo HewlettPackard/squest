@@ -1,0 +1,12 @@
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="far fa-file-alt"></i> Linked docs</h3>
+    </div>
+    <div class="card-body">
+        {%  for doc in instance.service.docs.all %}
+            <ul>
+                <li><a href="{% url 'service_catalog:doc_show' doc.id %}">{{ doc.title }}</a></li>
+            </ul>
+        {%  endfor %}
+    </div>
+</div>

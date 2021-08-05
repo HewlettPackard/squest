@@ -9,3 +9,6 @@ class Service(models.Model):
     billing_group_is_shown = models.BooleanField(default=False)
     billing_group_is_selectable = models.BooleanField(default=False)
     billing_groups_are_restricted = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
