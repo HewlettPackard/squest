@@ -53,6 +53,12 @@
                         </a>
                     </li>
                 {% endif %}
+                <li class="nav-item">
+                    <a href="{% url 'service_catalog:doc_list'%}?state=opened" class="nav-link {% if 'docs/' in request.path %}active{% endif %}">
+                        <i class="nav-icon far fa-file-alt"></i>
+                        <p>Docs</p>
+                    </a>
+                </li>
                 {% if user.is_superuser %}
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
