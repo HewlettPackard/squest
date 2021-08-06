@@ -76,22 +76,22 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                                 kwargs={'resource_pool_id': resource_pool.id,
                                         'attribute_id': attribute.id})},
             'produced': {
-                'display': attribute.get_total_produced(),
+                'display': round(attribute.get_total_produced()),
                 'tooltip': f"Go to {attribute}'s producers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_producer_list',
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'consumed': {
-                'display': f"{attribute.get_total_consumed()}",
+                'display': round(attribute.get_total_consumed()),
                 'tooltip': f"Go to {attribute}'s consumers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_consumer_list',
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'available': {
-                'display': f"{attribute.get_total_produced() - attribute.get_total_consumed()} "
-                           f"({100 - attribute.get_percent_consumed()}%)",
+                'display': f"{round(attribute.get_total_produced() - attribute.get_total_consumed())} "
+                           f"({round(100 - attribute.get_percent_consumed())}%)",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }
         for attribute in resource_pool.attribute_definitions.filter()]
@@ -117,7 +117,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['attributes_list'] = [
         {
             'key': attribute.name,
-            'value': attribute.get_total_resource(),
+            'value': round(attribute.get_total_resource()),
             'tooltip': f"Go to {attribute}",
             'href': reverse('resource_tracker:resource_group_attribute_edit',
                             kwargs={'resource_group_id': resource_group.id,

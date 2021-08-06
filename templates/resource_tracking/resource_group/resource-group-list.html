@@ -10,7 +10,8 @@
                         <h1>Resource groups</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_group_create' %}">
+                        <a class="btn btn-success float-sm-right"
+                           href="{% url 'resource_tracker:resource_group_create' %}">
                             <i class="fas fa-plus"></i> New resource group
                         </a>
                     </div>
@@ -27,13 +28,12 @@
                                     <h3 class="card-title"><strong>{{ resource_group.name }}</strong></h3>
                                     <div class="card-tools">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                                <i class="fas fa-wrench"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                                <a class="dropdown-item text-primary" href="{% url 'resource_tracker:resource_group_edit' resource_group.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
-                                                <a class="dropdown-item text-danger" href="{% url 'resource_tracker:resource_group_delete' resource_group.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
-                                            </div>
+                                            <a class="dropdown-item text-primary"
+                                               href="{% url 'resource_tracker:resource_group_edit' resource_group.id %}"><span
+                                                    class="text-primary fas fa-pencil-alt"></span></a>
+                                            <a class="dropdown-item text-danger"
+                                               href="{% url 'resource_tracker:resource_group_delete' resource_group.id %}"><span
+                                                    class="text-danger fas fa-trash"></span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +42,8 @@
                                     {% if resource_group.attribute_definitions.all|length == 0 %}
                                         <div class="row">
                                             <div class="col text-center">
-                                                <a class="btn btn-lg btn-success text-center" href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}">
+                                                <a class="btn btn-lg btn-success text-center"
+                                                   href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}">
                                                     <i class="fas fa-plus"></i> Add attribute
                                                 </a>
                                             </div>
@@ -68,10 +69,11 @@
                                 </div>
                                 <div class="card-footer text-muted">
                                     <strong>Tags: </strong>
-                                    {%  for tag in resource_group.tags.all %}
+                                    {% for tag in resource_group.tags.all %}
                                         <small class="badge badge-secondary">{{ tag }}</small>
                                     {% endfor %}
-                                    <a class="btn btn-default btn-sm float-right" href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
+                                    <a class="btn btn-default btn-sm float-right"
+                                       href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
                                         Resources
                                         <span class="badge badge-secondary">{{ resource_group.resources.all|length }}</span>
                                     </a>

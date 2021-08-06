@@ -155,3 +155,46 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
         status_code: 201
         body_format: json
 ```
+
+## Tags
+
+Tags are words that are attached to objects, such as Resource Pool or Resource Group.
+
+Tags are intended to be used to specify identifying objects that are meaningful and relevant to users. Tags can be used
+to organize and select subsets of objects. Tags can be attached to objects at creation time and subsequently added and
+modified at any time.
+
+### How to add multiple tags
+
+* If the input doesn't contain any commas or double quotes, it is simply treated as a space-delimited list of tag names.
+
+* If the input does contain either of these characters:
+
+    * Groups of characters which appear between double quotes take precedence as multi-word tags (so double quoted tag
+      names may contain commas). An unclosed double quote will be ignored.
+
+    * Otherwise, if there are any unquoted commas in the input, it will be treated as comma-delimited. If not, it will
+      be treated as space-delimited.
+
+Examples:
+
+Tag input string       |    Resulting tags                |    Notes
+-----------------------|----------------------------------|-----------------------------------------------
+apple ball cat         | ``["apple", "ball", "cat"]``     | No commas, so space delimited
+apple, ball cat        | ``["apple", "ball cat"]``        | Comma present, so comma delimited
+"apple, ball" cat dog  | ``["apple, ball", "cat", "dog"]``| All commas are quoted, so space delimited
+"apple, ball", cat dog | ``["apple, ball", "cat dog"]``   | Contains an unquoted comma, so comma delimited
+apple "ball cat" dog   | ``["apple", "ball cat", "dog"]`` | No commas, so space delimited
+"apple" "ball dog      | ``["apple", "ball", "dog"]``     | Unclosed double quote is ignored
+
+## Over commitment
+
+Over commitment is available on all resource pool attributes for consumers and producers.
+
+The over commitment allows you to specify whether resource pools produce/consume more or less than expected.
+
+The most common case is CPU/vCPU:
+
+If a host has 28 core processors and hyperthreading is enabled, that host will produce 56 vCPUs (28 cores x 2 threads
+per core) then you can configure the over commitment on the CPU produced attribute to 2 to match this behavior.
+
