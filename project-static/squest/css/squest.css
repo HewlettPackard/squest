@@ -7,3 +7,8 @@
 .disable_list_style, .disable_list_style li {
     list-style-type: none;
 }
+
+.sortable > thead > tr > th {
+    cursor: pointer;
+    position: relative;
+}

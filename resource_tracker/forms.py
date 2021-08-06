@@ -11,8 +11,10 @@ class ResourceGroupForm(ModelForm):
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     tags = TagField(label="Tags",
                     required=False,
+                    help_text="Comma-separated list of tags (more details in documentation)",
                     widget=TagWidget(attrs={'class': 'form-control'}))
 
     class Meta:
@@ -116,6 +118,7 @@ class ResourcePoolForm(ModelForm):
 
     tags = TagField(label="Tags",
                     required=False,
+                    help_text="Comma-separated list of tags (more details in documentation)",
                     widget=TagWidget(attrs={'class': 'form-control'}))
 
     class Meta:
@@ -127,6 +130,35 @@ class ResourcePoolAttributeDefinitionForm(ModelForm):
     name = forms.CharField(label="Name",
                            required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+    over_commitment_producers = forms.FloatField(label="Over commitment for producers",
+                                                 required=False,
+                                                 initial=ResourcePoolAttributeDefinition._meta.get_field(
+                                                     'over_commitment_producers').default,
+                                                 help_text="All producers will produce X times more",
+
+                                                 widget=forms.NumberInput(
+                                                     attrs={'class': 'form-control', 'step': '0.1'}))
+
+    over_commitment_consumers = forms.FloatField(label="Over commitment for consumers",
+                                                 required=False,
+                                                 initial=ResourcePoolAttributeDefinition._meta.get_field(
+                                                     'over_commitment_consumers').default,
+
+                                                 help_text="All consumers will consume X times more",
+                                                 widget=forms.NumberInput(
+                                                     attrs={'class': 'form-control', 'step': '0.1'}))
+
+    def clean_over_commitment_producers(self):
+        data = self.cleaned_data['over_commitment_producers']
+        if not data:
+            data = ResourcePoolAttributeDefinition._meta.get_field('over_commitment_producers').default
+        return data
+
+    def clean_over_commitment_consumers(self):
+        data = self.cleaned_data['over_commitment_consumers']
+        if not data:
+            data = ResourcePoolAttributeDefinition._meta.get_field('over_commitment_consumers').default
+        return data
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -140,4 +172,4 @@ class ResourcePoolAttributeDefinitionForm(ModelForm):
 
     class Meta:
         model = ResourcePoolAttributeDefinition
-        fields = ["name"]
+        fields = ["name", "over_commitment_producers", "over_commitment_consumers"]

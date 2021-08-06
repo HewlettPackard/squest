@@ -65,6 +65,40 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertEquals(302, response.status_code)
         self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
 
+    def test_resource_pool_attribute_create_with_over_commitment(self):
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_create', kwargs=args)
+
+        data = {
+            "name": "new_attribute",
+            "over_commitment_producers": 2,
+            "over_commitment_consumers": 3
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(302, response.status_code)
+        self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
+        self.assertEqual(self.rp_vcenter.attribute_definitions.get(name='new_attribute').over_commitment_producers, 2)
+        self.assertEqual(self.rp_vcenter.attribute_definitions.get(name='new_attribute').over_commitment_consumers, 3)
+
+    def test_resource_pool_attribute_create_default_value_on_over_commitment(self):
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_create', kwargs=args)
+
+        data = {
+            "name": "new_attribute"
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(302, response.status_code)
+        self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
+        self.assertEqual(self.rp_vcenter.attribute_definitions.get(name='new_attribute').over_commitment_producers,
+                         ResourcePoolAttributeDefinition._meta.get_field('over_commitment_producers').default)
+        self.assertEqual(self.rp_vcenter.attribute_definitions.get(name='new_attribute').over_commitment_consumers,
+                         ResourcePoolAttributeDefinition._meta.get_field('over_commitment_consumers').default)
+
     def test_cannot_create_existing_attribute(self):
         args = {
             'resource_pool_id': self.rp_vcenter.id,
@@ -101,7 +135,7 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertIsNone(self.rg_ocp_workers_vcpu_attribute.consume_from)
         self.assertIsNone(self.rg_physical_servers_cpu_attribute.produce_for)
 
-    def test_resource_pool_attribute_edit(self):
+    def test_resource_pool_attribute_edit_name(self):
         args = {
             'resource_pool_id': self.rp_vcenter.id,
             'attribute_id': self.rp_vcenter_vcpu_attribute.id
@@ -114,6 +148,35 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertEquals(302, response.status_code)
         self.rp_vcenter_vcpu_attribute.refresh_from_db()
         self.assertEquals("new_name", self.rp_vcenter_vcpu_attribute.name)
+
+    def test_resource_pool_attribute_edit_over_commitment(self):
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+            'attribute_id': self.rp_vcenter_vcpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_edit', kwargs=args)
+        data = {
+            "name": self.rp_vcenter_vcpu_attribute.name,
+            "over_commitment_producers": 1.2,
+            "over_commitment_consumers": 1
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(302, response.status_code)
+        self.rp_vcenter_vcpu_attribute.refresh_from_db()
+        self.assertEquals(1.2, self.rp_vcenter_vcpu_attribute.over_commitment_producers)
+        self.assertEquals(1, self.rp_vcenter_vcpu_attribute.over_commitment_consumers)
+
+        # Send form wihtout ouercommitment to use default value
+        data = {
+            "name": self.rp_vcenter_vcpu_attribute.name
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(302, response.status_code)
+        self.rp_vcenter_vcpu_attribute.refresh_from_db()
+        self.assertEqual(self.rp_vcenter_vcpu_attribute.over_commitment_producers,
+                         ResourcePoolAttributeDefinition._meta.get_field('over_commitment_producers').default)
+        self.assertEqual(self.rp_vcenter_vcpu_attribute.over_commitment_consumers,
+                         ResourcePoolAttributeDefinition._meta.get_field('over_commitment_consumers').default)
 
     def test_resource_pool_attribute_producer_list(self):
         args = {

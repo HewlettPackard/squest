@@ -27,32 +27,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_pool_create' %}" method="post">{% csrf_token %}
-
-                            {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
-                                        {{ field.label }}
-                                    </label>
-                                    <div class="col-sm-4">
-                                        {{ field }}
-                                        {% if field.help_text %}
-                                            <small id="emailHelp" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endfor %}
-
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <!-- validate button -->
-                                    <button class="btn btn-success" type="submit">
-                                        <i class="fas fa-plus"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        {% include "generics/form_edit.html" %}
                     </div>
 
                 </div><!-- end container fluid -->
