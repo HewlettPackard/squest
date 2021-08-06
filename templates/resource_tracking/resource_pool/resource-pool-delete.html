@@ -18,7 +18,19 @@
             <div class="container-fluid">
                 <div class="card card-danger">
                     <div class="card-body">
-                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}" method="post">{% csrf_token %}
+                        {% if resource_pool.attribute_definitions.all.count == 0 %}
+                            No attributes present in the resource pool. Can be safely deleted.
+                        {% else %}
+                            The deletion of this resource pool will drive to the deletion of the following attributes:
+                            <ul>
+                            {% for attribute in resource_pool.attribute_definitions.all %}
+                                <li>{{ attribute.name }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <form class="form-horizontal"
+                              action="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"
+                              method="post">{% csrf_token %}
                             <!-- validate button -->
                             <button class="btn btn-danger" type="submit">
                                 <i class="fas fa-trash"></i>

@@ -163,11 +163,7 @@ class TestPieChart(BaseTest):
                              expected_data.get('data').get('datasets')[0].get('data'))
 
     def test_create_pie_chart_resource_pool_consumption_by_billing_groups(self):
-        print(BillingGroup.objects.all())
-
         data = create_pie_chart_resource_pool_consumption_by_billing_groups()
-        from pprint import pprint
-        pprint(data)
         expected_data = {
             self.vcenter_pool: {
                 self.vcenter_vcpu: {

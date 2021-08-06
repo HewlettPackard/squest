@@ -27,36 +27,15 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_group_edit' resource_group.id %}" method="post">{% csrf_token %}
-
-                            {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
-                                        {{ field.label }}
-                                    </label>
-                                    <div class="col-sm-4">
-                                        {{ field }}
-                                    </div>
-                                </div>
-                            {% endfor %}
-
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <!-- validate button -->
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fas fa-plus"></i>
-                                        Update
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        {% include "generics/form_edit.html" %}
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><strong>Attributes</strong></h3>
                         <div class="card-tools">
-                            <a href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}" class="btn btn-success btn-sm">
+                            <a href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}"
+                               class="btn btn-success btn-sm">
                                 <i class="fas fa-plus"></i> Add attribute
                             </a>
                         </div>
@@ -72,21 +51,23 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for attribute in resource_group.attribute_definitions.all %}
+                            {% for attribute in resource_group.attribute_definitions.all %}
                                 <tr>
                                     <td class="align-middle">{{ attribute.name }}</td>
                                     <td class="align-middle">{{ attribute.consume_from }}</td>
                                     <td class="align-middle">{{ attribute.produce_for }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-primary bg-sm">
+                                        <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                           class="btn btn-primary bg-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                           class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>
                                 </tr>
-                            {%  endfor %}
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

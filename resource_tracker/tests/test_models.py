@@ -167,9 +167,44 @@ class TestCalculation(TestCase):
 
     def test_get_total_consumed_by(self):
         self._create_simple_testing_stack()
-        self.assertEqual(100,
-                         self.vcenter_pool.attribute_definitions.get(name='vCPU').get_total_produced())
+        self.assertEqual(50,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').get_total_consumed())
 
         self.assertEqual(50,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').
+                         get_total_consumed_by(self.vm_group.attribute_definitions.get(name="vCPU")))
+
+    def test_get_total_produced_by_with_over_commitment(self):
+        self._create_simple_testing_stack()
+        # add another producer into the vcenter pool
+        server_group_2 = ResourceGroup.objects.create(name="server-group-2")
+        server_group2_cpu_attribute = server_group_2.add_attribute_definition(name='CPU')
+        self.vcenter_pool.attribute_definitions.get(name='vCPU') \
+            .add_producers(server_group_2.attribute_definitions.get(name='CPU'))
+        vcpu = self.vcenter_pool.attribute_definitions.get(name='vCPU')
+        vcpu.over_commitment_producers = 2
+        vcpu.save()
+        server = server_group_2.create_resource(name=f"server-group2")
+        server.set_attribute(server_group2_cpu_attribute, 150)
+
+        self.assertEqual(500,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').get_total_produced())
+
+        self.assertEqual(200,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').
+                         get_total_produced_by(self.server_group.attribute_definitions.get(name="CPU")))
+        self.assertEqual(300,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').
+                         get_total_produced_by(server_group_2.attribute_definitions.get(name="CPU")))
+
+    def test_get_total_consumed_by_with_over_commitment(self):
+        self._create_simple_testing_stack()
+        vcpu = self.vcenter_pool.attribute_definitions.get(name='vCPU')
+        vcpu.over_commitment_consumers = 3
+        vcpu.save()
+        self.assertEqual(150,
+                         self.vcenter_pool.attribute_definitions.get(name='vCPU').get_total_consumed())
+
+        self.assertEqual(150,
                          self.vcenter_pool.attribute_definitions.get(name='vCPU').
                          get_total_consumed_by(self.vm_group.attribute_definitions.get(name="vCPU")))

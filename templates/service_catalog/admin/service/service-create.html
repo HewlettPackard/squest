@@ -30,7 +30,7 @@
                         <form class="form-horizontal" action="{% url 'service_catalog:create_service' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
 
                             {% for field in form %}
-                                <div id={{ field.name }} class="form-group {% if field.errors %}has-error{% endif %}">
+                                <div class="form-group {% if field.errors %}has-error{% endif %}" id={{ field.name }}>
                                     <label for="{{field.name}}" class="col-sm-2 control-label">
                                         {{ field.label }}
                                     </label>

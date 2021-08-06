@@ -28,7 +28,7 @@ def resource_pool_create(request):
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': 'Create a new resource pool', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
     return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', context)
 
 
@@ -43,7 +43,7 @@ def resource_pool_edit(request, resource_pool_id):
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': resource_pool.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request, 'resource_tracking/resource_pool/resource-pool-edit.html', context)
 
 
@@ -84,7 +84,7 @@ def resource_pool_attribute_create(request, resource_pool_id):
         {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
         {'text': 'Create a new attribute', 'url': ""},
     ]
-    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'action': 'create'}
     return render(request, 'resource_tracking/resource_pool/attributes/attribute-create.html', context)
 
 
@@ -123,7 +123,8 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
         {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
         {'text': 'Create a new attribute', 'url': ""},
     ]
-    context = {'form': form, 'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs,
+               'action': 'edit'}
     return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html', context)
 
 
