@@ -145,6 +145,8 @@ class ResourcePoolAttributeDefinition(models.Model):
                                       related_name='attribute_definitions',
                                       related_query_name='attribute_definition',
                                       null=True)
+    over_commitment_producers = models.FloatField(default=1)
+    over_commitment_consumers = models.FloatField(default=1)
 
     class Meta:
         unique_together = ('name', 'resource_pool',)
@@ -170,7 +172,7 @@ class ResourcePoolAttributeDefinition(models.Model):
                     total_produced += resource.attributes.get(attribute_type=producer).value
                 except ResourceAttribute.DoesNotExist:
                     pass
-        return total_produced
+        return total_produced * self.over_commitment_producers
 
     def get_total_consumed(self):
         total_consumed = 0
@@ -180,7 +182,7 @@ class ResourcePoolAttributeDefinition(models.Model):
                     total_consumed += resource.attributes.get(attribute_type=consumer).value
                 except ResourceAttribute.DoesNotExist:
                     pass
-        return total_consumed
+        return total_consumed * self.over_commitment_consumers
 
     def get_percent_consumed(self):
         percent_consumed = 0
@@ -190,25 +192,23 @@ class ResourcePoolAttributeDefinition(models.Model):
             pass
         return round(percent_consumed)
 
-    @staticmethod
-    def get_total_produced_by(producer):
+    def get_total_produced_by(self, producer):
         total_produced = 0
         for resource in producer.resource_group_definition.resources.all():
             try:
                 total_produced += resource.attributes.get(attribute_type=producer).value
             except ResourceAttribute.DoesNotExist:
                 pass
-        return total_produced
+        return total_produced * self.over_commitment_producers
 
-    @staticmethod
-    def get_total_consumed_by(consumer):
+    def get_total_consumed_by(self, consumer):
         total_consumed = 0
         for resource in consumer.resource_group_definition.resources.all():
             try:
                 total_consumed += resource.attributes.get(attribute_type=consumer).value
             except ResourceAttribute.DoesNotExist:
                 pass
-        return total_consumed
+        return total_consumed * self.over_commitment_consumers
 
     def remove_all_producer(self):
         for producer in self.producers.all():

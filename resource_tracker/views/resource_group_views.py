@@ -26,7 +26,7 @@ def resource_group_edit(request, resource_group_id):
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request,
                   'resource_tracking/resource_group/resource-group-edit.html', context)
 
@@ -44,7 +44,7 @@ def resource_group_create(request):
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': 'Create a new resource group', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
     return render(request, 'resource_tracking/resource_group/resource-group-create.html', context)
 
 

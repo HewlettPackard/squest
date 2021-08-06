@@ -11,7 +11,8 @@
                         <h1>Resource pools</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_pool_create' %}">
+                        <a class="btn btn-success float-sm-right"
+                           href="{% url 'resource_tracker:resource_pool_create' %}">
                             <i class="fas fa-plus"></i> New resource pool
                         </a>
                     </div>
@@ -27,13 +28,12 @@
                                 <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
                                 <div class="card-tools">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fas fa-wrench"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                            <a class="dropdown-item text-primary" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span class="text-primary fas fa-pencil-alt"></span> Edit</a>
-                                            <a class="dropdown-item text-danger" href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span class="text-danger fas fa-trash"></span> Delete</a>
-                                        </div>
+                                        <a class="dropdown-item text-primary"
+                                           href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span
+                                                class="text-primary fas fa-pencil-alt"></span></a>
+                                        <a class="dropdown-item text-danger"
+                                           href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span
+                                                class="text-danger fas fa-trash"></span></a>
                                     </div>
                                 </div>
                             </div>
@@ -41,7 +41,8 @@
                                 {% if resource_pool.attribute_definitions.all|length == 0 %}
                                     <div class="row">
                                         <div class="col text-center">
-                                            <a class="btn btn-lg btn-success text-center" href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}">
+                                            <a class="btn btn-lg btn-success text-center"
+                                               href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}">
                                                 <i class="fas fa-plus"></i> Add attribute
                                             </a>
                                         </div>
@@ -64,25 +65,38 @@
                                                     <td class="align-middle">{{ attribute.name }}</td>
                                                     <td class="align-middle">
                                                         <div class="progress text_center">
-                                                            <div class="progress-bar {{ progress_value | get_progress_bar_color }}" role="progressbar" aria-valuenow="{{ progress_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress_value }}%">
-                                                                {{ progress_value }}%
+                                                            <div class="progress-bar {{ progress_value | get_progress_bar_color }}"
+                                                                 role="progressbar" aria-valuenow="{{ progress_value }}"
+                                                                 aria-valuemin="0" aria-valuemax="100"
+                                                                 style="width: {{ progress_value }}%">
+                                                                {{ progress_value | floatformat:0 }}%
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td class="align-middle">
                                                         <a href="{% url 'resource_tracker:resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                            {{ total_produced }}
+                                                            {{ total_produced | floatformat:0 }}
+                                                            {% if attribute.over_commitment_producers != 1 %}
+                                                                <i class="fas fa-info-circle text-primary"
+                                                                   title="Over commitment x{{ attribute.over_commitment_producers }} enabled">
+                                                                </i>
+                                                            {% endif %}
                                                         </a>
 
                                                     </td>
                                                     <td class="align-middle">
                                                         <a href="{% url 'resource_tracker:resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                            {{ total_consumed }}
+                                                            {{ total_consumed | floatformat:0 }}
+                                                            {% if attribute.over_commitment_consumers != 1 %}
+                                                                <i class="fas fa-info-circle text-primary"
+                                                                   title="Over commitment x{{ attribute.over_commitment_consumers }} enabled">
+                                                                </i>
+                                                            {% endif %}
                                                         </a>
 
                                                     </td>
                                                     <td class="align-middle">
-                                                        <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed }}</span>
+                                                        <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed | floatformat:0 }}</span>
                                                     </td>
                                                 </tr>
                                             {% endwith %}
@@ -93,7 +107,7 @@
                             </div>
                             <div class="card-footer">
                                 <strong>Tags: </strong>
-                                {%  for tag in resource_pool.tags.all %}
+                                {% for tag in resource_pool.tags.all %}
                                     <small class="badge badge-secondary">{{ tag }}</small>
                                 {% endfor %}
                             </div>

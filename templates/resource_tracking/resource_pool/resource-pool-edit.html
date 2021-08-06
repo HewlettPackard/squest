@@ -19,56 +19,27 @@
                 <!-- card update name -->
                 <div class="card">
                     <div class="card-body">
-                        {% if form.errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for field in form %}
-                                    {% if field.errors %}
-                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <form class="form-horizontal" action="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}" method="post">{% csrf_token %}
-
-                            {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
-                                        {{ field.label }}
-                                    </label>
-                                    <div class="col-sm-4">
-                                        {{ field }}
-                                    </div>
-                                </div>
-                            {% endfor %}
-
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <!-- validate button -->
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fas fa-plus"></i>
-                                        Update
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        {% include "generics/form_edit.html" %}
                     </div>
-
                 </div>
                 <!-- card list attributes -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><strong>Attributes</strong></h3>
                         <div class="card-tools">
-                            <a href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}" class="btn btn-success btn-sm">
+                            <a href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}"
+                               class="btn btn-success btn-sm">
                                 <i class="fas fa-plus"></i> Add attribute
                             </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <table id="tower_list" class="table">
+                        <table id="tower_list" class="table sortable text-center">
                             <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Over commitment for producers</th>
+                                <th>Over commitment for consumers</th>
                                 <th>Operations</th>
                             </tr>
                             </thead>
@@ -76,11 +47,15 @@
                             {% for attribute in resource_pool.attribute_definitions.all %}
                                 <tr>
                                     <td class="align-middle">{{ attribute.name }}</td>
+                                    <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:1 }}</td>
+                                    <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:1 }}</td>
                                     <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}" class="btn btn-primary btn-sm">
+                                        <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
+                                           class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}" class="btn btn-danger btn-sm">
+                                        <a href="{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
+                                           class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i> Delete
                                         </a>
                                     </td>

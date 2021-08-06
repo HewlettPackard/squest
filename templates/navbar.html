@@ -15,6 +15,9 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
                 <a class="dropdown-item" href="{% url 'profiles:profile' %}"><i class="fas fa-user"></i> User details</a>
+                 {% if request.user.is_staff %}
+                     <a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-cog"></i> Admin</a>
+                {% endif %}
                 <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </li>
