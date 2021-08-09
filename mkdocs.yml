@@ -36,6 +36,7 @@ nav:
     - Resource tracking: manual/resource_tracking.md
     - Settings: manual/settings.md
     - Billing groups: manual/billing_groups.md
+    - Announcements: manual/announcements.md
   - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
