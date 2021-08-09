@@ -9,6 +9,7 @@ Features:
 - Instance lifecycle management (update, delete)
 - Resource tracking
 - Billing groups 
+- Announcements
 
 If you want an idea of what you can do with Squest, click on the image below
 [![DEMO](https://img.youtube.com/vi/ZfTjS1t7X74/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZfTjS1t7X74)

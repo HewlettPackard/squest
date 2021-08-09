@@ -53,3 +53,16 @@ Email settings are based on the [django settings](https://docs.djangoproject.com
 EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
 EMAIL_PORT = 25
 ```
+
+
+## Time Zone
+
+Set your time zone in `squest/settings/development.py`.
+
+Default: 'Europe/Paris'
+
+Value: A string representing the [time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+```python
+TIME_ZONE = 'Europe/Paris'
+```

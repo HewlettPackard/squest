@@ -29,7 +29,7 @@ from service_catalog.models.request import RequestState
 from .color import map_dict_request_state, random_color, map_class_to_color
 from ..filters.instance_filter import InstanceFilter
 from ..filters.request_filter import RequestFilter
-from ..models.announcement import Announcement
+from service_catalog.models.announcement import Announcement
 from service_catalog.models import Doc
 
 
