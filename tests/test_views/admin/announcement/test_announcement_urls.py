@@ -47,16 +47,16 @@ class TestAnnouncementUrls(BaseTest):
         }
         test_list = [
             {'url': reverse('service_catalog:announcement_create'), 'data': {
-                'title': 'My announcement title success',
-                'message': 'My announcement message success',
-                'date_start': timezone.now() - timezone.timedelta(days=3),
+                'title': 'My announcement title info',
+                'message': 'My announcement message info',
+                'date_start': timezone.now(),
                 'date_stop': timezone.now() + timezone.timedelta(days=2),
-                'type': AnnouncementType.SUCCESS}},
+                'type': AnnouncementType.INFO}},
             {'url': reverse('service_catalog:announcement_edit', kwargs=args_announcement),
              'data': {
                 'title': 'My announcement title danger',
                 'message': 'My announcement message danger',
-                'date_start': timezone.now() - timezone.timedelta(days=5),
+                'date_start': timezone.now(),
                 'date_stop': timezone.now() + timezone.timedelta(days=7),
                 'type': AnnouncementType.DANGER}}
         ]
