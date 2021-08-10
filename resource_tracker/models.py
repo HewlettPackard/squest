@@ -4,6 +4,12 @@ from taggit.managers import TaggableManager
 from service_catalog.models import Instance
 
 
+class ExceptionResourceTracker:
+    class AttributeAlreadyExist(Exception):
+        def __init__(self, resource_group_name, attribute_name):
+            super().__init__(f"Attribute {attribute_name} already exist in {resource_group_name}")
+
+
 class ResourceGroup(models.Model):
     name = models.CharField(max_length=100,
                             blank=False,
@@ -14,22 +20,26 @@ class ResourceGroup(models.Model):
     def __str__(self):
         return self.name
 
-    def add_attribute_definition(self, name):
+    def add_attribute_definition(self, name, produce_for=None, consume_from=None):
 
         obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
 
         if len(obj) == 0:
-            return self.attribute_definitions.create(name=name)
-        elif len(obj) == 1:
-            pass
+            attribute = self.attribute_definitions.create(name=name, produce_for=produce_for, consume_from=consume_from)
+            attribute.save()
+            self.init_attribute(attribute)
+            return attribute
         else:
-            raise Exception(f"ResourceGroupAttributeDefinition with the same name({obj[0].name}) on "
-                            f"the same group({obj[0].resource_group_definition})")
+            raise ExceptionResourceTracker.AttributeAlreadyExist(resource_group_name=self.name, attribute_name=name)
+
+    def init_attribute(self, attribute):
+        for resource in self.resources.all():
+            resource.set_attribute(attribute, 0)
 
     def create_resource(self, name) -> 'Resource':
         resource, _ = self.resources.get_or_create(name=name)
         for attribute in self.attribute_definitions.all():
-            resource.add_attribute(attribute_type=attribute)
+            resource.set_attribute(attribute_type=attribute, value=0)
         return resource
 
     def get_sum_value_by_attribute(self, attribute_type):
@@ -55,14 +65,11 @@ class Resource(models.Model):
     tags = TaggableManager()
 
     def __str__(self):
-        return f"{self.name}["+",".join([f"{attribute.attribute_type.name}: {attribute.value}"
-                                         for attribute in self.attributes.all()]) + "]"
+        return f"{self.name}[" + ",".join([f"{attribute.attribute_type.name}: {attribute.value}"
+                                           for attribute in self.attributes.all()]) + "]"
 
-    def add_attribute(self, attribute_type):
-        return self.attributes.get_or_create(attribute_type=attribute_type)
-
-    def set_attribute(self, attribute_type, value):
-        attribute = self.attributes.get(attribute_type=attribute_type)
+    def set_attribute(self, attribute_type, value=0):
+        attribute, _ = self.attributes.get_or_create(attribute_type=attribute_type)
         attribute.value = value
         attribute.save()
 

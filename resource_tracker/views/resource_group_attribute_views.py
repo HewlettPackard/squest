@@ -13,9 +13,6 @@ def resource_group_attribute_create(request, resource_group_id):
         form = ResourceGroupAttributeDefinitionForm(request.POST)
         form.resource_group = resource_group  # give the resource_group so the form can validate the unique together
         if form.is_valid():
-            new_attribute = form.save()
-            new_attribute.resource_group_definition = resource_group
-            new_attribute.save()
             return redirect("resource_tracker:resource_group_edit", resource_group.id)
     else:
         form = ResourceGroupAttributeDefinitionForm()
@@ -34,6 +31,7 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
     attribute = get_object_or_404(ResourceGroupAttributeDefinition, id=attribute_id)
     form = ResourceGroupAttributeDefinitionForm(request.POST or None, instance=attribute)
+    form.resource_group = resource_group
     if form.is_valid():
         form.save()
         return redirect("resource_tracker:resource_group_edit", resource_group.id)

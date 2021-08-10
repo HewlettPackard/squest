@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
-    ResourcePool
+    ResourcePool, ExceptionResourceTracker
 
 
 class TestCalculation(TestCase):
@@ -50,8 +50,7 @@ class TestCalculation(TestCase):
     def test_ResourceGroupAddSameAttribute(self):
         server_group = ResourceGroup.objects.create(name="serverGroup1")
         server_group.add_attribute_definition(name='CPU')
-        server_group.add_attribute_definition(name='CPU')
-        server_group.add_attribute_definition(name='CPU')
+        self.assertRaises(ExceptionResourceTracker.AttributeAlreadyExist, server_group.add_attribute_definition, 'CPU')
         self.assertEqual(1, server_group.attribute_definitions.count())
         server_group.add_attribute_definition(name='RAM')
         self.assertEqual(2, server_group.attribute_definitions.count())
