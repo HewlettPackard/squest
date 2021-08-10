@@ -27,7 +27,7 @@
                         <div class="info-box bg-light">
                             <div class="info-box-content">
                                 <span class="info-box-text text-center text-muted">State</span>
-                                <span class="info-box-number text-center text-{{ instance.state|map_instance_state}} mb-0">{{ instance.state }}</span>
+                                <span class="info-box-number text-center text-{{ instance.state|map_instance_state }} mb-0">{{ instance.state }}</span>
                             </div>
                         </div>
                     </div>
@@ -48,7 +48,8 @@
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-code"></i> Instance spec</h3>
                                 <div class="card-tools">
-                                    <a href="{% url 'service_catalog:admin_instance_edit' instance.id %}" class="btn btn-primary btn-sm">
+                                    <a href="{% url 'service_catalog:admin_instance_edit' instance.id %}"
+                                       class="btn btn-primary btn-sm">
                                         <i class="fas fa-wrench"></i> Edit
                                     </a>
                                 </div>
@@ -65,7 +66,8 @@
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-medkit"></i> Support</h3>
                                 <div class="card-tools">
-                                    <a href="{% url 'service_catalog:admin_instance_new_support' instance.id %}" class="btn btn-primary btn-sm">
+                                    <a href="{% url 'service_catalog:admin_instance_new_support' instance.id %}"
+                                       class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus"></i> New support case
                                     </a>
                                 </div>
@@ -82,20 +84,25 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {%  for support in supports %}
+                                    {% for support in supports %}
                                         <tr>
-                                            <td class="align-middle"><a href="{% url 'service_catalog:admin_instance_support_details' instance_id=support.instance.id support_id=support.id %}">{{ support.title }}</a></td>
+                                            <td class="align-middle"><a
+                                                    href="{% url 'service_catalog:admin_instance_support_details' instance_id=support.instance.id support_id=support.id %}">{{ support.title }}</a>
+                                            </td>
                                             <td class="align-middle">{{ support.date_opened }}</td>
                                             <td class="align-middle">{{ support.date_closed }}</td>
-                                            <td style="width: 10%" class="align-middle"><h4><span class="badge bg-{{ support.state |map_support_state }} btn-block">{{ support.state }}</span></h4></td>
+                                            <td style="width: 10%" class="align-middle"><h4><span
+                                                    class="badge bg-{{ support.state |map_support_state }} btn-block">{{ support.state }}</span>
+                                            </h4></td>
                                         </tr>
-                                    {%  endfor %}
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% include "generics/operation_list.html" %}
             </div><!-- end container fluid -->
         </div>
     </div>

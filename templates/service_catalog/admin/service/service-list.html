@@ -39,7 +39,7 @@
                                     <td class="align-middle">{{ service.description }}</td>
                                     <td class="align-middle">
                                         <a href="{% url 'service_catalog:service_operations' service.id %}" class="btn btn-default bg-sm">
-                                            {{ service.operation_set.all | length }}
+                                            {{ service.operations.count }}
                                         </a>
                                     </td>
                                     <td class="align-middle">

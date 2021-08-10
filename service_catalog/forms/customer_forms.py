@@ -6,7 +6,7 @@ from guardian.models import UserObjectPermission
 from django.core.exceptions import ValidationError
 
 from profiles.models import BillingGroup
-from service_catalog.forms.utils import get_choices_from_string, get_fields_from_survey
+from service_catalog.forms.utils import get_fields_from_survey
 from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage
 from service_catalog.models.operations import OperationType
 
@@ -79,7 +79,8 @@ class ServiceRequestForm(forms.Form):
             user_provided_survey_fields[field_key] = value
         # create the instance
         instance_name = self.cleaned_data["instance_name"]
-        billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data["billing_group_id"] else self.service.billing_group_id
+        billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data[
+            "billing_group_id"] else self.service.billing_group_id
         billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None
         new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group)
         # give user perm on this instance
@@ -115,20 +116,7 @@ class OperationRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
                                                        operation_survey=self.operation.enabled_survey_fields)
-        for survey_filed in purged_survey["spec"]:
-            if survey_filed["type"] == "text":
-                self.fields[survey_filed['variable']] = forms. \
-                    CharField(label=survey_filed['question_name'],
-                              required=survey_filed['required'],
-                              widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-            if survey_filed["type"] == "multiplechoice":
-                self.fields[survey_filed['variable']] = forms. \
-                    ChoiceField(label=survey_filed['question_name'],
-                                required=survey_filed['required'],
-                                choices=get_choices_from_string(survey_filed["choices"]),
-                                error_messages={'required': 'At least you must select one choice'},
-                                widget=forms.Select(attrs={'class': 'form-control'}))
+        self.fields = get_fields_from_survey(purged_survey)
 
     def save(self):
         user_provided_survey_fields = dict()
