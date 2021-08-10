@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from service_catalog.forms import InstanceForm
 from service_catalog.models import Instance, Support
+from service_catalog.models.operations import OperationType, Operation
 from service_catalog.views import instance_new_support, instance_support_details
 
 
@@ -15,6 +16,8 @@ def admin_instance_details(request, instance_id):
     spec_json_pretty = json.dumps(instance.spec)
 
     supports = Support.objects.filter(instance=instance)
+    operations = Operation.objects.filter(service=instance.service,
+                                          type__in=[OperationType.UPDATE, OperationType.DELETE])
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
         {'text': f"{instance.name} ({instance.id})", 'url': ""},
@@ -22,6 +25,7 @@ def admin_instance_details(request, instance_id):
     context = {'instance': instance,
                'spec_json_pretty': spec_json_pretty,
                'supports': supports,
+               'operations': operations,
                'breadcrumbs': breadcrumbs}
 
     return render(request, 'service_catalog/admin/instance/instance-details.html', context=context)

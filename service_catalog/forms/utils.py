@@ -1,7 +1,10 @@
 from django import forms
-from django.core.exceptions import ValidationError
 
-from service_catalog.models.request import RequestState
+
+def _get_field_group(field_name, enable_fields):
+    if enable_fields[field_name]:
+        return "User"
+    return "Admin"
 
 
 def get_choices_from_string(string_with_anti_slash_n):
@@ -12,7 +15,7 @@ def get_choices_from_string(string_with_anti_slash_n):
     return returned_list
 
 
-def get_fields_from_survey(survey):
+def get_fields_from_survey(survey, enable_fields=None):
     fields = {}
     for survey_filed in survey["spec"]:
         if survey_filed["type"] == "text":
@@ -42,7 +45,7 @@ def get_fields_from_survey(survey):
                           help_text=survey_filed['question_description'],
                           min_length=survey_filed['min'],
                           max_length=survey_filed['max'],
-                          widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+                          widget=forms.PasswordInput(render_value=True, attrs={'class': 'form-control'}))
 
         elif survey_filed["type"] == "multiplechoice":
             fields[survey_filed['variable']] = forms. \
@@ -67,7 +70,7 @@ def get_fields_from_survey(survey):
         elif survey_filed["type"] == "integer":
             fields[survey_filed['variable']] = forms. \
                 IntegerField(label=survey_filed['question_name'],
-                             initial=survey_filed['default'],
+                             initial=int(survey_filed['default']),
                              required=survey_filed['required'],
                              help_text=survey_filed['question_description'],
                              min_value=survey_filed['min'],
@@ -77,10 +80,20 @@ def get_fields_from_survey(survey):
         elif survey_filed["type"] == "float":
             fields[survey_filed['variable']] = forms. \
                 FloatField(label=survey_filed['question_name'],
-                           initial=survey_filed['default'],
+                           initial=float(survey_filed['default']),
                            required=survey_filed['required'],
                            help_text=survey_filed['question_description'],
                            min_value=survey_filed['min'],
                            max_value=survey_filed['max'],
                            widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
+        if enable_fields:
+            fields[survey_filed['variable']].group = _get_field_group(field_name=survey_filed['variable'],
+                                                                      enable_fields=enable_fields)
     return fields
+
+
+def prefill_form_with_user_values(fields: dict, fill_in_survey: dict):
+    skipping_fields = ['instance_name', 'billing_group_id']
+    for field, value in fill_in_survey.items():
+        if field not in skipping_fields:
+            fields.get(field).initial = value

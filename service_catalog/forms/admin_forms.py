@@ -6,11 +6,10 @@ import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, ChoiceField
-from django.utils.translation import gettext_lazy as _
 from towerlib import Tower
 
 from profiles.models import BillingGroup
-from service_catalog.forms.utils import get_choices_from_string
+from service_catalog.forms.utils import get_fields_from_survey, prefill_form_with_user_values
 from service_catalog.models import TowerServer, Service, JobTemplate, Operation, Request, RequestMessage, Instance, \
     GlobalHook
 from service_catalog.models.instance import InstanceState
@@ -305,25 +304,9 @@ class AcceptRequestForm(forms.Form):
 
         # load user provided fields and add admin field if exist
         if "spec" in self.target_request.operation.job_template.survey:
-            for survey_definition in self.target_request.operation.job_template.survey["spec"]:
-                if survey_definition["type"] == "text":
-                    new_field = forms.CharField(label=survey_definition['question_name'],
-                                                required=survey_definition['required'],
-                                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-                    new_field.group = self._get_field_group(field_name=survey_definition['variable'],
-                                                            enabled_field=self.target_request.operation.enabled_survey_fields)
-                    self.fields[survey_definition['variable']] = new_field
-
-                if survey_definition["type"] == "multiplechoice":
-                    new_field = forms. \
-                        ChoiceField(label=survey_definition['question_name'],
-                                    required=survey_definition['required'],
-                                    choices=get_choices_from_string(survey_definition["choices"]),
-                                    error_messages={'required': 'At least you must select one choice'},
-                                    widget=forms.Select(attrs={'class': 'form-control'}))
-                    new_field.group = self._get_field_group(field_name=survey_definition['variable'],
-                                                            enabled_field=self.target_request.operation.enabled_survey_fields)
-                    self.fields[survey_definition['variable']] = new_field
+            self.fields = get_fields_from_survey(self.target_request.operation.job_template.survey,
+                                                 self.target_request.operation.enabled_survey_fields)
+            prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey)
 
     @staticmethod
     def _get_field_group(field_name, enabled_field):
@@ -382,7 +365,6 @@ def get_choices():
 
 
 class GlobalHookForm(ModelForm):
-
     model_choice = [('Request', 'Request'),
                     ('Instance', 'Instance')]
 
