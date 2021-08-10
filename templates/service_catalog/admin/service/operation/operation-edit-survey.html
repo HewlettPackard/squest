@@ -28,7 +28,8 @@
                             </div>
                         {% endif %}
                         <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
-
+                            <fieldset>
+                             <legend>User can edit:</legend>
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
                                     <div class="custom-control custom-switch">
@@ -37,6 +38,7 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                            </fieldset>
 
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
