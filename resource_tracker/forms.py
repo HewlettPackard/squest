@@ -1,9 +1,8 @@
-from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
-    Resource, ResourceAttribute, ResourcePool
+    Resource, ResourceAttribute, ResourcePool, ExceptionResourceTracker
 from service_catalog.models import Instance
 
 
@@ -38,14 +37,15 @@ class ResourceGroupAttributeDefinitionForm(ModelForm):
                                          widget=forms.Select(attrs={'class': 'form-control'}))
 
     def clean(self):
-        cleaned_data = self.cleaned_data
-        if hasattr(self, 'resource_group'):
-            if ResourceGroupAttributeDefinition.objects.filter(name=cleaned_data['name'],
-                                                               resource_group_definition=self.resource_group).exists():
-                raise ValidationError({'name': ["Attribute with this name already exists for this resource", ]})
-
-        # Always return cleaned_data
-        return cleaned_data
+        if not self.instance.id:
+            name = self.cleaned_data['name']
+            produce_for = self.cleaned_data['produce_for']
+            consume_from = self.cleaned_data['consume_from']
+            try:
+                self.resource_group.add_attribute_definition(name, produce_for, consume_from)
+            except ExceptionResourceTracker.AttributeAlreadyExist as e:
+                raise ValidationError({'name': e})
+        return self.cleaned_data
 
     class Meta:
         model = ResourceGroupAttributeDefinition
@@ -96,14 +96,11 @@ class ResourceForm(ModelForm):
         # get all attribute
         list_attribute_to_skip = ["name", "service_catalog_instance"]
         for attribute_name, value in self.cleaned_data.items():
-            if attribute_name not in list_attribute_to_skip and value is not None and value != "":
-                self.instance.add_attribute(ResourceGroupAttributeDefinition.objects.
-                                            get(name=attribute_name,
-                                                resource_group_definition=self.resource_group))
+            if attribute_name not in list_attribute_to_skip:
+                my_value = 0 if value is None or value == "" else value
                 self.instance.set_attribute(ResourceGroupAttributeDefinition.objects.
                                             get(name=attribute_name,
-                                                resource_group_definition=self.resource_group), value)
-
+                                                resource_group_definition=self.resource_group), my_value)
         return self.instance
 
     class Meta:
