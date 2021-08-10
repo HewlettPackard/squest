@@ -67,7 +67,12 @@ class CustomerRequestViewTest(BaseTestRequest):
             'request_id': self.test_request.id
         }
         data = {'text_variable': 'my_var',
-                'multiplechoice_variable': 'choice1'
+                'multiplechoice_variable': 'choice1',
+                'multiselect_var': 'multiselect_1',
+                'textarea_var': '2',
+                'password_var': 'pass',
+                'integer_var': '1',
+                'float_var': '0.6'
                 }
 
         url = reverse('service_catalog:admin_request_accept', kwargs=args)
@@ -132,7 +137,7 @@ class CustomerRequestViewTest(BaseTestRequest):
                             'state': str(expected_instance_state),
                             'service': self.test_request.operation.service.id,
                             'billing_group': None
-                        }    
+                        }
                     }
                 }
             }
