@@ -33,7 +33,6 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     form = ResourceGroupAttributeDefinitionForm(request.POST or None, instance=attribute)
     form.resource_group = resource_group
     if form.is_valid():
-        form.save()
         return redirect("resource_tracker:resource_group_edit", resource_group.id)
     breadcrumbs = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
