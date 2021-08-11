@@ -75,9 +75,9 @@ def create_pie_chart_instance_by_service_type() -> dict:
         pie_chart_service_tmp[key] = pie_chart_service_tmp.get(key, 0) + 1
     path = pie_chart_service['data']
     for service, count in pie_chart_service_tmp.items():
-        path['labels'].append(service.name)
+        path['labels'].append(service.name if service else "No service")
         path['datasets'][0]['data'].append(count)
-        color = get_color_from_string(service.id + 5)  # Append X to map services on other colors than billing groups
+        color = get_color_from_string(service.id if service else 0 + 5)  # Append X to map services on other colors than billing groups
         path['datasets'][0]['backgroundColor'].append(color)
     return pie_chart_service
 
