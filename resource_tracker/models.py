@@ -21,15 +21,26 @@ class ResourceGroup(models.Model):
         return self.name
 
     def add_attribute_definition(self, name, produce_for=None, consume_from=None):
+        self.raise_if_attribute_name_exist(name)
+        attribute = self.attribute_definitions.create(name=name, produce_for=produce_for, consume_from=consume_from)
+        attribute.save()
+        self.init_attribute(attribute)
+        return attribute
 
+    def edit_attribute_definition(self, attribute_id, name, produce_for=None, consume_from=None):
+        self.raise_if_attribute_name_exist(name)
+        attribute = ResourceGroupAttributeDefinition.objects.get(id=attribute_id)
+        attribute.name = name
+        attribute.produce_for = produce_for
+        attribute.consume_from = consume_from
+        attribute.save()
+        self.init_attribute(attribute)
+        return attribute
+
+    def raise_if_attribute_name_exist(self, name):
         obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
-
-        if len(obj) == 0:
-            attribute = self.attribute_definitions.create(name=name, produce_for=produce_for, consume_from=consume_from)
-            attribute.save()
-            self.init_attribute(attribute)
-            return attribute
-        else:
+        # if name is already used
+        if len(obj) != 0:
             raise ExceptionResourceTracker.AttributeAlreadyExist(resource_group_name=self.name, attribute_name=name)
 
     def init_attribute(self, attribute):
