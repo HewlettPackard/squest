@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
 
+{% block header %}
+<div class="col-sm-6">
+    <a class="btn btn-info float-sm-right" href="{% url "profiles:user_in_"|add:group_url|add:"_update" group.id %}">
+        <i class="fas fa-user-edit"></i> Manage users
+    </a>
+</div>
+{% endblock %}
+
 {% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div>
-                    <div class="col-sm-6">
-                        <a class="btn btn-info float-sm-right" href="{% url "profiles:user_in_"|add:group_url|add:"_update" group.id %}">
-                            <i class="fas fa-user-edit"></i> Manage users
-                        </a>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
@@ -49,5 +41,4 @@
                 </div><!-- end container fluid -->
             </div>
         </div>
-    </div>
 {% endblock %}

@@ -1,72 +1,59 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
-        <!-- Main content -->
-        <div class="content">
-            <div class="container-fluid">
-                <!-- card update name -->
-                <div class="card">
-                    <div class="card-body">
-                        {% include "generics/form_edit.html" %}
-                    </div>
-                </div>
-                <!-- card list attributes -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><strong>Attributes</strong></h3>
-                        <div class="card-tools">
-                            <a href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}"
-                               class="btn btn-success btn-sm">
-                                <i class="fas fa-plus"></i> Add attribute
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table id="tower_list" class="table sortable text-center">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Over commitment for producers</th>
-                                <th>Over commitment for consumers</th>
-                                <th>Operations</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for attribute in resource_pool.attribute_definitions.all %}
-                                <tr>
-                                    <td class="align-middle">{{ attribute.name }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:1 }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:1 }}</td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
-                                           class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
-                                           class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
-            </div><!-- end container fluid -->
-        </div>
+    <div class="content">
+        <div class="container-fluid">
+            <!-- card update name -->
+            <div class="card">
+                <div class="card-body">
+                    {% include "generics/form_edit.html" %}
+                </div>
+            </div>
+            <!-- card list attributes -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><strong>Attributes</strong></h3>
+                    <div class="card-tools">
+                        <a href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> Add attribute
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="tower_list" class="table sortable text-center">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Over commitment for producers</th>
+                            <th>Over commitment for consumers</th>
+                            <th>Operations</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for attribute in resource_pool.attribute_definitions.all %}
+                            <tr>
+                                <td class="align-middle">{{ attribute.name }}</td>
+                                <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:1 }}</td>
+                                <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:1 }}</td>
+                                <td class="align-middle">
+                                    <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
+                                       class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- end container fluid -->
     </div>
 {% endblock %}

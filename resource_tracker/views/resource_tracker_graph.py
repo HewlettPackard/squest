@@ -52,11 +52,16 @@ def resource_tracker_graph(request):
 
     dot.format = 'svg'
     svg = mark_safe(dot.pipe().decode('utf-8'))
-
-    return render(request, 'resource_tracking/graph/resource-tracker-graph.html',
-                  context={'svg': svg,
-                           'display_graph': display_graph,
-                           'resource_graph': resource_graph_filtered})
+    breadcrumbs = [
+        {'text': 'Resource Tracker Graph', 'url': ''},
+    ]
+    context = {
+        'svg': svg,
+        'display_graph': display_graph,
+        'resource_graph': resource_graph_filtered,
+        'breadcrumbs': breadcrumbs
+    }
+    return render(request, 'resource_tracking/graph/resource-tracker-graph.html', context=context)
 
 
 def create_resource_pool_svg(resource_pool: ResourcePool):

@@ -8,5 +8,8 @@ from resource_tracker.filtersets import UserFilter
 def user_list(request):
     users = User.objects.all()
     users_filtered = UserFilter(request.GET, queryset=users)
-    context = {'users': users_filtered}
+    breadcrumbs = [
+        {'text': 'Users', 'url': ''},
+    ]
+    context = {'filter': users_filtered, 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/user-list.html', context)

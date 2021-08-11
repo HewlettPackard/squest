@@ -12,7 +12,10 @@ from profiles.models import BillingGroup
 @user_passes_test(lambda u: u.is_superuser)
 def billing_group_list(request):
     groups = BillingGroup.objects.all()
-    context = {'groups': groups, 'group_url': "billing_group", 'display_title': 'Billing groups'}
+    breadcrumbs = [
+        {'text': 'Billing groups', 'url': ''},
+    ]
+    context = {'groups': groups, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-list.html', context)
 
 
@@ -27,8 +30,10 @@ def billing_group_edit(request, billing_group_id):
         {'text': 'Billing', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': ""},
     ]
-    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/group/group-edit.html', context)
+    template = {'form': {'button': 'edit'}}
+    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs,
+               'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -44,8 +49,9 @@ def billing_group_create(request):
         {'text': 'Billing', 'url': reverse('profiles:group_list')},
         {'text': 'Create a new billing group', 'url': ""},
     ]
-    context = {'form': form, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/group/group-create.html', context)
+    template = {'form': {'button': 'create'}}
+    context = {'form': form, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -61,14 +67,15 @@ def billing_group_delete(request, billing_group_id):
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': group.name, 'url': ""}
     ]
+    template_form = {'confirm_text': mark_safe(f"Confirm deletion of <strong>{group.name}</strong>?"),
+                     'button_text': 'Delete',
+                     'details': {
+                         'warning_sentence': 'Warning: some users are still present in this group, see them below:',
+                         'details_list': [user.username for user in group.user_set.all()]
+                     } if group.user_set.all() else None}
     context = {
         'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm deletion of <strong>{group.name}</strong>?"),
-        'action_url': reverse('profiles:billing_group_delete', kwargs=args),
-        'button_text': 'Delete',
-        'details': {'warning_sentence': 'Warning: some users are still present in this group, see them below:',
-                    'details_list': [user.username for user in group.user_set.all()]
-                    } if group.user_set.all() else None
+        'template_form': template_form
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
@@ -106,8 +113,10 @@ def user_in_billing_group_update(request, billing_group_id):
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
         {'text': "Users", 'url': ""}
     ]
-    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/group/user-in-group-update.html', context)
+    template = {'form': {'button': 'edit'}}
+    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs,
+               'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -126,10 +135,11 @@ def user_in_billing_group_remove(request, billing_group_id, user_id):
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
         {'text': "Users", 'url': ""}
     ]
+    template_form = {
+        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{user.username}</strong> from {group}?"),
+        'button_text': 'Remove'}
     context = {
         'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{ user.username }</strong> from { group }?"),
-        'action_url': reverse('profiles:user_in_billing_group_remove', kwargs=args),
-        'button_text': 'Remove'
+        'template_form': template_form
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)

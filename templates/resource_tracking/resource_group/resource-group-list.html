@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
 
+{% block header %}
+<div class="col-sm-6">
+    <a class="btn btn-success float-sm-right"
+       href="{% url 'resource_tracker:resource_group_create' %}">
+        <i class="fas fa-plus"></i> New resource group
+    </a>
+</div>
+{% endblock %}
 {% block content %}
     <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Resource groups</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right"
-                           href="{% url 'resource_tracker:resource_group_create' %}">
-                            <i class="fas fa-plus"></i> New resource group
-                        </a>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
         <div class="content">
             <div class="container-fluid">
                 <div class="row">

@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from resource_tracker.filtersets import ResourceGroupFilter
 from resource_tracker.forms import ResourceGroupForm
@@ -11,8 +12,11 @@ from resource_tracker.models import ResourceGroup
 def resource_group_list(request):
     resource_group_list = ResourceGroup.objects.all()
     resource_group_filtered = ResourceGroupFilter(request.GET, queryset=resource_group_list)
-    return render(request, 'resource_tracking/resource_group/resource-group-list.html',
-                  {'resource_groups': resource_group_filtered})
+    breadcrumbs = [
+        {'text': 'Resource groups', 'url': ''},
+    ]
+    context = {'breadcrumbs': breadcrumbs, "resource_groups": resource_group_filtered}
+    return render(request, 'resource_tracking/resource_group/resource-group-list.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -26,9 +30,9 @@ def resource_group_edit(request, resource_group_id):
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
-    return render(request,
-                  'resource_tracking/resource_group/resource-group-edit.html', context)
+    template = {'form': {'button': 'edit'}}
+    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'resource_tracking/resource_group/resource-group-edit.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -44,8 +48,9 @@ def resource_group_create(request):
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': 'Create a new resource group', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_group/resource-group-create.html', context)
+    template = {'form': {'button': 'create'}}
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -62,6 +67,20 @@ def resource_group_delete(request, resource_group_id):
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name, 'url': ""},
     ]
-    context = {'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
-    return render(request,
-                  'resource_tracking/resource_group/resource-group-delete.html', context)
+    if resource_group.resources.all():
+        details = {
+            'warning_sentence': 'The deletion of this resource group will drive to the deletion of the following resources:',
+            'details_list': [resource.name for resource in resource_group.resources.all()]
+        }
+    else:
+        details = {
+            'warning_sentence': 'No resources present in the resource group. Can be safely deleted.'
+
+        }
+    template_form = {
+        'confirm_text': mark_safe(f"Confirm deletion of the resource group <strong>{resource_group.name}</strong>"),
+        'button_text': 'Delete',
+        'details': details
+    }
+    context = {'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'template_form': template_form}
+    return render(request, 'generics/confirm-delete-template.html', context=context)

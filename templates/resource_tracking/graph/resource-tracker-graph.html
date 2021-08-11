@@ -1,27 +1,19 @@
 {% extends 'base.html' %}
 
+{% block header %}
+    <div class="col-sm-6">
+        <div class="float-sm-right">
+            <a class="btn btn-success" href="{% url 'resource_tracker:resource_pool_create' %}">
+                <i class="fas fa-plus"></i> New resource pool
+            </a>
+            <a class="btn btn-success" href="{% url 'resource_tracker:resource_group_create' %}">
+                <i class="fas fa-plus"></i> New resource group
+            </a>
+        </div>
+    </div>
+{% endblock %}
 {% block content %}
     <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Resource Tracker Graph</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="float-sm-right">
-                            <a class="btn btn-success" href="{% url 'resource_tracker:resource_pool_create' %}">
-                                <i class="fas fa-plus"></i> New resource pool
-                            </a>
-                            <a class="btn btn-success" href="{% url 'resource_tracker:resource_group_create' %}">
-                                <i class="fas fa-plus"></i> New resource group
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -49,5 +41,4 @@
                 </div>
             </div>
         </div>
-    </div>
 {% endblock %}

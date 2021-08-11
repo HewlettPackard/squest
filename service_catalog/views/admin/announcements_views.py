@@ -64,13 +64,13 @@ def announcement_delete(request, announcement_id):
         {'text': 'Announcement', 'url': reverse('service_catalog:announcement_list')},
         {'text': announcement.title, 'url': ""}
     ]
+    template_form = {'confirm_text': mark_safe(f"Confirm deletion of <strong>{announcement.title}</strong>?"),
+            'button_text': 'Delete',
+            'details': {'warning_sentence': 'Warning: this announcement is displayed',
+                        'details_list': None
+                        } if announcement.date_start < timezone.now() < announcement.date_stop else None}
     context = {
         'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm deletion of <strong>{announcement.title}</strong>?"),
-        'action_url': reverse('service_catalog:announcement_delete', args=[announcement_id]),
-        'button_text': 'Delete',
-        'details': {'warning_sentence': 'Warning: this announcement is displayed',
-                    'details_list': None
-                    } if announcement.date_start < timezone.now() < announcement.date_stop else None
+        'template_form': template_form
     }
-    return render(request, "generics/confirm-delete-template.html", context)
+    return render(request, "generics/confirm-delete-template.html", context=context)

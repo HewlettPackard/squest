@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from resource_tracker.filtersets import ResourcePoolFilter
 from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
@@ -28,8 +29,9 @@ def resource_pool_create(request):
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': 'Create a new resource pool', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', context)
+    template = {'form': {'button': 'create'}}
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -63,8 +65,22 @@ def resource_pool_delete(request, resource_pool_id):
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': resource_pool.name, 'url': ""},
     ]
-    context = {'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
-    return render(request, 'resource_tracking/resource_pool/resource-pool-delete.html', context)
+    if resource_pool.attribute_definitions.count() == 0:
+        details = {
+            'warning_sentence': 'No attributes present in the resource pool. Can be safely deleted.',
+            'details_list': None}
+    else:
+        details = {
+            'warning_sentence': 'The deletion of this resource pool will drive to the deletion of the following attributes:.',
+            'details_list': [attribute.name for attribute in resource_pool.attribute_definitions.all()]}
+
+    template_form = {'confirm_text': mark_safe(f"Do you wan to delete: <strong>{resource_pool.name}</strong>?"),
+                     'button_text': 'Delete',
+                     'details': details
+                     }
+    context = {'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, "template_form": template_form}
+    return render(request, 'generics/confirm-delete-template.html', context=context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_attribute_create(request, resource_pool_id):
@@ -84,8 +100,9 @@ def resource_pool_attribute_create(request, resource_pool_id):
         {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
         {'text': 'Create a new attribute', 'url': ""},
     ]
-    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_pool/attributes/attribute-create.html', context)
+    template = {'form': {'button': 'create'}}
+    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -123,9 +140,10 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
         {'text': resource_pool.name, 'url': reverse('resource_tracker:resource_pool_edit', args=[resource_pool_id])},
         {'text': 'Create a new attribute', 'url': ""},
     ]
+    template = {'form': {'button': 'edit'}}
     context = {'form': form, 'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs,
-               'action': 'edit'}
-    return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html', context)
+               'template': template}
+    return render(request, 'generics/create_page.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

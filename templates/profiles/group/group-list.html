@@ -1,23 +1,14 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>{{ display_title }}</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url "profiles:"|add:group_url|add:"_create" %}">
-                            <i class="fas fa-plus"></i> Add
-                        </a>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+{% block header %}
+    <div class="col-sm-6">
+        <a class="btn btn-success float-sm-right" href="{% url "profiles:"|add:group_url|add:"_create" %}">
+            <i class="fas fa-plus"></i> Add
+        </a>
+    </div>
+{% endblock %}
+    {% block content %}
+
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
@@ -57,5 +48,4 @@
                 </div><!-- end container fluid -->
             </div>
         </div>
-    </div>
 {% endblock %}

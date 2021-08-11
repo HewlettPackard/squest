@@ -26,15 +26,20 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <!-- validate button -->
-            {% if action == "edit" %}
+            {% if template.form.button == "edit" %}
                 <button class="btn btn-primary" type="submit">
                     <i class="fas fa-plus"></i>
                     Update
                 </button>
-            {% elif action == "create" %}
+            {% elif template.form.button == "create" %}
                 <button class="btn btn-success" type="submit">
                     <i class="fas fa-plus"></i>
                     Add
+                </button>
+            {% else %}
+                  <button class="btn btn-success" type="submit">
+                    <i class="fas fa-plus"></i>
+                    Process
                 </button>
             {% endif %}
         </div>

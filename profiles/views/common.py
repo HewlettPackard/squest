@@ -4,4 +4,8 @@ from django.shortcuts import render
 
 @login_required
 def profile(request):
-    return render(request, 'profiles/profile.html')
+    breadcrumbs = [
+        {'text': 'User details', 'url': ''},
+    ]
+    context = {'breadcrumbs': breadcrumbs}
+    return render(request, 'profiles/profile.html', context=context)

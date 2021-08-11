@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from resource_tracker.forms import ResourceGroupAttributeDefinitionForm
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition
@@ -22,8 +23,9 @@ def resource_group_attribute_create(request, resource_group_id):
          'url': reverse('resource_tracker:resource_group_edit', args=[resource_group_id])},
         {'text': 'Create a new attribute', 'url': ""},
     ]
-    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
-    return render(request, 'resource_tracking/resource_group/attributes/attribute-create.html', context)
+    template = {'form': {'button': 'create'}}
+    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -40,8 +42,11 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
          'url': reverse('resource_tracker:resource_group_edit', args=[resource_group_id])},
         {'text': attribute.name, 'url': ""},
     ]
-    context = {'form': form, 'attribute': attribute, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
-    return render(request, 'resource_tracking/resource_group/attributes/attribute-edit.html', context)
+    template = {'form': {'button': 'edit'}}
+
+    context = {'form': form, 'attribute': attribute, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs,
+               'template': template}
+    return render(request, 'generics/create_page.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -57,9 +62,13 @@ def resource_group_attribute_delete(request, resource_group_id, attribute_id):
          'url': reverse('resource_tracker:resource_group_edit', args=[resource_group_id])},
         {'text': attribute.name, 'url': ""},
     ]
+    template_form = {'confirm_text': mark_safe(f"Do you want to delete the attribute definition: {attribute.name}?"),
+                     'button_text': 'Delete',
+                     'details': None}
     context = {
         "resource_group": resource_group,
         "attribute": attribute,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'template_form': template_form
     }
-    return render(request, "resource_tracking/resource_group/attributes/attribute-delete.html", context)
+    return render(request, "generics/confirm-delete-template.html", context)

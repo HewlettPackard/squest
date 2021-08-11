@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from resource_tracker.forms import ResourceForm
 from resource_tracker.models import ResourceGroup, Resource
@@ -40,12 +41,17 @@ def resource_group_resource_delete(request, resource_group_id, resource_id):
          'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
         {'text': resource.name, 'url': ""},
     ]
+
+    template_form = {'confirm_text': mark_safe(f"Do you want to delete the resource: {resource.name}?"),
+                     'button_text': 'Delete',
+                     'details': None}
     context = {
         "resource_group": resource_group,
         "resource": resource,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'template_form': template_form
     }
-    return render(request, "resource_tracking/resource_group/resources/resource-delete.html", context)
+    return render(request, "generics/confirm-delete-template.html", context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -67,8 +73,10 @@ def resource_group_resource_create(request, resource_group_id):
          'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
         {'text': 'Create a new resource', 'url': ""},
     ]
-    context = {'resource_group': resource_group, 'form': form, 'breadcrumbs': breadcrumbs}
-    return render(request, 'resource_tracking/resource_group/resources/resource-create.html', context)
+    template = {'form': {'button': 'create'}}
+
+    context = {'resource_group': resource_group, 'form': form, 'breadcrumbs': breadcrumbs, 'template': template}
+    return render(request, 'generics/create_page.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -91,5 +99,7 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
          'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
         {'text': resource.name, 'url': ""},
     ]
-    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs}
-    return render(request, 'resource_tracking/resource_group/resources/resource-edit.html', context)
+    template = {'form': {'button': 'edit'}}
+    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs,
+               'template': template}
+    return render(request, 'generics/create_page.html', context)

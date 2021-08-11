@@ -1,66 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-body">
-                        <table id="tower_list" class="table">
-                            <thead>
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <table id="tower_list" class="table">
+                        <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Resource group</th>
+                            <th>Resource</th>
+                            <th>Produce</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for producer in attribute.producers.all %}
                             <tr>
-                                <th>Attribute</th>
-                                <th>Resource group</th>
-                                <th>Resource</th>
-                                <th>Produce</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for producer in attribute.producers.all %}
-                                <tr>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=producer.resource_group_definition.id attribute_id=producer.id %}">
-                                            {{ producer.name }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_group_edit' resource_group_id=producer.resource_group_definition.id %}">
-                                            {{ producer.resource_group_definition.name }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
+                                <td class="align-middle">
+                                    <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=producer.resource_group_definition.id attribute_id=producer.id %}">
+                                        {{ producer.name }}
+                                    </a>
+                                </td>
+                                <td class="align-middle">
+                                    <a href="{% url 'resource_tracker:resource_group_edit' resource_group_id=producer.resource_group_definition.id %}">
+                                        {{ producer.resource_group_definition.name }}
+                                    </a>
+                                </td>
+                                <td class="align-middle">
 
-                                        <a class="btn btn-default bg-sm"
-                                           href="{% url 'resource_tracker:resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
-                                            {{ producer.resource_group_definition.resources.all | length }}
-                                        </a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <h3>
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-arrow-up"></i> {{ attribute|get_total_produced_by:producer }}
-                                            </span>
-                                            {% if attribute.over_commitment_producers != 1 %}
-                                                <i class="fas fa-info-circle align-middle"
-                                                   title="Over commitment x{{ attribute.over_commitment_producers }} enabled"></i>
-                                            {% endif %}
-                                        </h3>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                    <a class="btn btn-default bg-sm"
+                                       href="{% url 'resource_tracker:resource_group_resource_list' resource_group_id=producer.resource_group_definition.id %}">
+                                        {{ producer.resource_group_definition.resources.all | length }}
+                                    </a>
+                                </td>
+                                <td class="align-middle">
+                                    <h3>
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-arrow-up"></i> {{ attribute|get_total_produced_by:producer }}
+                                        </span>
+                                        {% if attribute.over_commitment_producers != 1 %}
+                                            <i class="fas fa-info-circle align-middle"
+                                               title="Over commitment x{{ attribute.over_commitment_producers }} enabled"></i>
+                                        {% endif %}
+                                    </h3>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
