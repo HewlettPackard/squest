@@ -81,10 +81,10 @@ class ResourceForm(ModelForm):
                                                                   attribute_type=attribute)
                 except ResourceAttribute.DoesNotExist:
                     pass
-            new_field = forms.CharField(label=attribute.name,
-                                        required=False,
-                                        initial=initial_value,
-                                        widget=forms.TextInput(attrs={'class': 'form-control'}))
+            new_field = forms.IntegerField(label=attribute.name,
+                                           required=False,
+                                           initial=initial_value,
+                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
 
             self.fields[attribute.name] = new_field
 
