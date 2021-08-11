@@ -33,18 +33,21 @@ class AnnouncementForm(ModelForm):
             }
         )
         now = timezone.now().astimezone().strftime("%Y-%m-%d %H:%M")
-        self.fields['date_start'].help_text = f"Time Zone is {timezone.get_current_timezone()} ({now})"
-        self.fields['date_stop'].help_text = f"Time Zone is {timezone.get_current_timezone()} ({now})"
+        tz_name = timezone.get_current_timezone()
+        help_text = f"Time Zone is {tz_name} ({now})"
+        self.fields['date_start'].help_text = help_text
+        self.fields['date_stop'].help_text = help_text
 
     title = forms.CharField(label="Title",
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     message = forms.CharField(label="Message",
+                              help_text="HTML supported",
                               widget=forms.Textarea(attrs={'class': 'form-control'}))
 
     date_start = forms.DateTimeField(label="Date start")
 
-    date_stop = forms.DateTimeField(label="Date stop", help_text=f"Time Zone is {timezone.get_current_timezone()}")
+    date_stop = forms.DateTimeField(label="Date stop")
 
     type = forms.ChoiceField(label="Type",
                              choices=AnnouncementType.choices,
