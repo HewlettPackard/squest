@@ -56,7 +56,7 @@ class TestPieChart(BaseTest):
         user = user1
         state = RequestState.ACCEPTED
         for i in range(7):
-            instance = Instance.objects.create(service=service, name=name,
+            instance = Instance.objects.create(service=None, name=name,
                                                billing_group=billing_group)
             Request.objects.create(instance=instance, state=state, user=user,
                                    operation=service.operations.first())
@@ -127,7 +127,7 @@ class TestPieChart(BaseTest):
         # This test may fail if we add Meta: ordering. Please update expected data
         data = create_pie_chart_instance_by_service_type()
         expected_data = {'title': 'Instance by service type', 'id': 'pie-chart-service',
-                         'data': {'labels': ['VMWare', 'OCP', 'K8S'],
+                         'data': {'labels': ['No service', 'OCP', 'K8S'],
                                   'datasets': [{'data': [7, 5, 3]}]}}
         self.assertEqual(data.get('title'), expected_data.get('title'))
         self.assertEqual(data.get('id'), expected_data.get('id'))
