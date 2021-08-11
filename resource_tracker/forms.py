@@ -82,6 +82,7 @@ class ResourceForm(ModelForm):
                 except ResourceAttribute.DoesNotExist:
                     pass
             new_field = forms.IntegerField(label=attribute.name,
+                                           min_value=0,
                                            required=False,
                                            initial=initial_value,
                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
