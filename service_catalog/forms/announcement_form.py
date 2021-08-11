@@ -58,7 +58,7 @@ class AnnouncementForm(ModelForm):
         cleaned_data = super(AnnouncementForm, self).clean()
         date_start = cleaned_data.get("date_start")
         date_stop = cleaned_data.get("date_stop")
-        now = timezone.now().astimezone()
+        now = timezone.now()
         if date_start > date_stop:
             raise ValidationError({"date_start": "The start date must be earlier than the end date"})
         if date_start.date() < now.date():
