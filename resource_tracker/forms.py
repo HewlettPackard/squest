@@ -37,12 +37,17 @@ class ResourceGroupAttributeDefinitionForm(ModelForm):
                                          widget=forms.Select(attrs={'class': 'form-control'}))
 
     def clean(self):
+        name = self.cleaned_data['name']
+        produce_for = self.cleaned_data['produce_for']
+        consume_from = self.cleaned_data['consume_from']
         if not self.instance.id:
-            name = self.cleaned_data['name']
-            produce_for = self.cleaned_data['produce_for']
-            consume_from = self.cleaned_data['consume_from']
             try:
                 self.resource_group.add_attribute_definition(name, produce_for, consume_from)
+            except ExceptionResourceTracker.AttributeAlreadyExist as e:
+                raise ValidationError({'name': e})
+        else:
+            try:
+                self.resource_group.edit_attribute_definition(self.instance.id, name, produce_for, consume_from)
             except ExceptionResourceTracker.AttributeAlreadyExist as e:
                 raise ValidationError({'name': e})
         return self.cleaned_data

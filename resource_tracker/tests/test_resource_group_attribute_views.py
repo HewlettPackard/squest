@@ -69,6 +69,28 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         self.rg_physical_servers_cpu_attribute.refresh_from_db()
         self.assertEquals(self.rg_physical_servers_cpu_attribute.name, "new_attribute_name")
 
+    def test_resource_group_attribute_edit_existing_name(self):
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+            "attribute_id": self.rg_physical_servers_cpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_group_attribute_edit', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+
+        # test POST without producer or consumer
+        new_name = self.rg_physical_servers_memory_attribute.name
+        data = {
+            "name": new_name
+        }
+        old_name = self.rg_physical_servers_cpu_attribute.name
+        response = self.client.post(url, data=data)
+        self.assertEquals(200, response.status_code)
+        self.rg_physical_servers_cpu_attribute.refresh_from_db()
+        self.assertEquals(self.rg_physical_servers_cpu_attribute.name, old_name)
+
     def test_resource_group_attribute_delete(self):
         args = {
             "resource_group_id": self.rg_physical_servers.id,
