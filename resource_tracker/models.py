@@ -28,8 +28,9 @@ class ResourceGroup(models.Model):
         return attribute
 
     def edit_attribute_definition(self, attribute_id, name, produce_for=None, consume_from=None):
-        self.raise_if_attribute_name_exist(name)
         attribute = ResourceGroupAttributeDefinition.objects.get(id=attribute_id)
+        if name != attribute.name:
+            self.raise_if_attribute_name_exist(name)
         attribute.name = name
         attribute.produce_for = produce_for
         attribute.consume_from = consume_from
