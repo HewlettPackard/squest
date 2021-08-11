@@ -17,6 +17,7 @@ from service_catalog.models import TowerServer, Service, JobTemplate, Operation,
     GlobalHook
 from service_catalog.models.documentation import Doc
 from service_catalog.models.instance import InstanceState
+from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -212,8 +213,20 @@ class EditServiceForm(ModelForm):
 
 
 class AddServiceOperationForm(ModelForm):
-    choice_type = [('UPDATE', 'Update'),
-                   ('DELETE', 'Delete')]
+    def __init__(self, *args, **kwargs):
+        super(AddServiceOperationForm, self).__init__(*args, **kwargs)
+        choice_type_others = [('UPDATE', 'Update'),
+                              ('DELETE', 'Delete')]
+
+        choice_type_creation = [('CREATE', 'Create')]
+        # Default behavior
+        self.fields['type'].initial = choice_type_others[0]
+        self.fields['type'].choices = choice_type_others
+
+        if self.instance.id:  # if we have an operation
+            if self.instance.type == OperationType.CREATE:
+                self.fields['type'].initial = choice_type_creation[0]
+                self.fields['type'].choices = choice_type_creation
 
     name = forms.CharField(label="Name",
                            required=True,
@@ -228,7 +241,7 @@ class AddServiceOperationForm(ModelForm):
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     type = forms.ChoiceField(label="Type",
-                             choices=choice_type,
+                             choices=[(None, None)],
                              required=True,
                              error_messages={'required': 'At least you must select one type'},
                              widget=forms.Select(attrs={'class': 'form-control'}))
