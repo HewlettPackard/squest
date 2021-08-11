@@ -64,6 +64,27 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
                                                resource_group=self.rg_physical_servers)
         self.assertEquals(2, len(target_resource.attributes.all()))
 
+    def test_resource_group_resource_create_non_integer_value(self):
+        arg = {
+            "resource_group_id": self.rg_physical_servers.id
+        }
+        url = reverse('resource_tracker:resource_group_resource_create', kwargs=arg)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+
+        # test POST
+        data = {
+            "name": "new_resource",
+            "CPU": "eee",
+            "Memory": "ee"
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(200, response.status_code)
+
+        self.assertEqual(0,self.rg_physical_servers.resources.filter(name='new_resource').count())
+
     def test_resource_group_resource_create(self):
         arg = {
             "resource_group_id": self.rg_physical_servers.id
