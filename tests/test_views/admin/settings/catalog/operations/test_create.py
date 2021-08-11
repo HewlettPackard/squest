@@ -13,7 +13,7 @@ class OperationCreateTestCase(BaseTest):
         }
         self.url = reverse('service_catalog:add_service_operation', kwargs=args)
 
-    def test_create_service_operation(self):
+    def test_create_a_delete_service_operation(self):
         data = {
             "name": "new_service",
             "description": "a new service",
@@ -25,4 +25,35 @@ class OperationCreateTestCase(BaseTest):
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertEquals(number_operation_before + 1,
+                          Operation.objects.filter(service=self.service_test.id).count())
+
+    def test_create_an_update_service_operation(self):
+        data = {
+            "name": "new_service",
+            "description": "a new service",
+            "job_template": self.job_template_test.id,
+            "type": "UPDATE",
+            "process_timeout_second": 60
+        }
+        number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
+        response = self.client.post(self.url, data=data)
+        self.assertEquals(302, response.status_code)
+        self.assertEquals(number_operation_before + 1,
+                          Operation.objects.filter(service=self.service_test.id).count())
+
+    def test_create_a_create_service_operation(self):
+        """
+        Only one create operation per service, it will fail
+        """
+        data = {
+            "name": "new_service",
+            "description": "a new service",
+            "job_template": self.job_template_test.id,
+            "type": "CREATE",
+            "process_timeout_second": 60
+        }
+        number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
+        response = self.client.post(self.url, data=data)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(number_operation_before,
                           Operation.objects.filter(service=self.service_test.id).count())
