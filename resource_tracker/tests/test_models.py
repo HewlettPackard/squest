@@ -207,3 +207,18 @@ class TestCalculation(TestCase):
         self.assertEqual(150,
                          self.vcenter_pool.attribute_definitions.get(name='vCPU').
                          get_total_consumed_by(self.vm_group.attribute_definitions.get(name="vCPU")))
+
+    def test_edit_resource_group_doesnt_reset_all_resource_values(self):
+        self._create_simple_testing_stack()
+
+        rg = ResourceGroup.objects.create(name="My Resource Group")
+        cpu = rg.add_attribute_definition("CPU")
+        memory = rg.add_attribute_definition("Memory")
+        resource = rg.create_resource(f"server-1")
+        self.assertEqual(resource.attributes.get(attribute_type=cpu).value, 0)
+        self.assertEqual(resource.attributes.get(attribute_type=memory).value, 0)
+        resource.attributes.get(attribute_type=cpu).value = 10
+        resource.set_attribute(attribute_type=cpu, value=10)
+        self.assertEqual(resource.attributes.get(attribute_type=cpu).value, 10)
+        rg.edit_attribute_definition(attribute_id=cpu.id, name="CPU")
+        self.assertEqual(resource.attributes.get(attribute_type=cpu).value, 10)
