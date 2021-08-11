@@ -46,7 +46,7 @@ class ResourceGroup(models.Model):
 
     def init_attribute(self, attribute):
         for resource in self.resources.all():
-            resource.set_attribute(attribute, 0)
+            resource.attributes.get_or_create(attribute_type=attribute, defaults={'value': 0})
 
     def create_resource(self, name) -> 'Resource':
         resource, _ = self.resources.get_or_create(name=name)
