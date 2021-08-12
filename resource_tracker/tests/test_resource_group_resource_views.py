@@ -83,7 +83,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
 
-        self.assertEqual(0,self.rg_physical_servers.resources.filter(name='new_resource').count())
+        self.assertEqual(0, self.rg_physical_servers.resources.filter(name='new_resource').count())
+
     def test_resource_group_resource_create_negative_value(self):
         arg = {
             "resource_group_id": self.rg_physical_servers.id
@@ -97,13 +98,13 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         # test POST
         data = {
             "name": "new_resource",
-            "CPU": "eee",
-            "Memory": ""
+            "CPU": "0",
+            "Memory": "-12"
         }
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
 
-        self.assertEqual(0,self.rg_physical_servers.resources.filter(name='new_resource').count())
+        self.assertEqual(0, self.rg_physical_servers.resources.filter(name='new_resource').count())
 
     def test_resource_group_resource_create(self):
         arg = {
@@ -153,7 +154,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         resource_to_edit.refresh_from_db()
         self.assertEquals(resource_to_edit.name, "updated_name")
 
-        resource_attribute_cpu = ResourceAttribute.objects.get(resource=resource_to_edit, attribute_type=self.rg_physical_servers_cpu_attribute)
+        resource_attribute_cpu = ResourceAttribute.objects.get(resource=resource_to_edit,
+                                                               attribute_type=self.rg_physical_servers_cpu_attribute)
         self.assertEquals(resource_attribute_cpu.value, 1)
 
         resource_attribute_memory = ResourceAttribute.objects.get(resource=resource_to_edit,
