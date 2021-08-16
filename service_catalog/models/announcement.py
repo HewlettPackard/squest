@@ -11,8 +11,11 @@ class AnnouncementType(models.TextChoices):
 
 
 class Announcement(models.Model):
-    title = models.CharField(max_length=100)
-    message = models.CharField(max_length=500, blank=True)
+    class Meta:
+        ordering = ['-date_created']
+
+    title = models.CharField(max_length=200)
+    message = models.CharField(max_length=1000, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, auto_now=False)
     date_start = models.DateTimeField(auto_now_add=False, auto_now=False)
     date_stop = models.DateTimeField(auto_now_add=False, auto_now=False)
