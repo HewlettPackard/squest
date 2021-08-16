@@ -1,9 +1,11 @@
 $(document).ready( function () {
-    $('#tower_list').DataTable();
-    $('#job_template_list').DataTable();
-    $('#service_list').DataTable();
-    $('#request_list').DataTable();
-    $('#customer_request_operation_list').DataTable();
+    var params={"order": [], "columnDefs": [{"targets": 'no-sort', "orderable": false,}]};
+    $('#tower_list').DataTable(params);
+    $('#job_template_list').DataTable(params);
+    $('#service_list').DataTable(params);
+    $('#request_list').DataTable(params);
+    $('#customer_request_operation_list').DataTable(params);
+    $('#announcement_list').DataTable(params);
 
     $('[data-toggle="popover"]').popover({
         placement : 'top',

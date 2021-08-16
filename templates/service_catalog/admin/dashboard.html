@@ -17,7 +17,7 @@
                             <div class="alert alert-{{ announcement.type|lower }} alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h4><i class="icon {{ announcement.type|map_color_to_icon }}"></i> {{ announcement.title }}</h4>
-                                {{ announcement.message }}
+                                {{ announcement.message | safe }}
                             </div>
                         </div>
                     </div>
