@@ -22,6 +22,8 @@ class BaseTestResourceTracker(BaseTest):
         self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
         self.rg_physical_servers_cpu_attribute = self.rg_physical_servers.add_attribute_definition(name="CPU")
         self.rg_physical_servers_memory_attribute = self.rg_physical_servers.add_attribute_definition(name="Memory")
+        self.rg_physical_servers_description = self.rg_physical_servers.add_text_attribute_definition(name="Description")
+        self.rg_physical_servers_text = self.rg_physical_servers.add_text_attribute_definition(name="Another text")
 
         self.rg_ocp_workers = ResourceGroup.objects.create(name="Worker VMs")
         self.rg_ocp_workers_vcpu_attribute = self.rg_ocp_workers.add_attribute_definition(name="vCPU")

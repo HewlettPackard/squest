@@ -55,6 +55,7 @@ def resource_group_delete(request, resource_group_id):
         # delete all resource attributes
         resource_group.resources.all().delete()
         resource_group.attribute_definitions.all().delete()
+        resource_group.text_attribute_definitions.all().delete()
         resource_group.delete()
         # delete all resources
         return redirect("resource_tracker:resource_group_list")

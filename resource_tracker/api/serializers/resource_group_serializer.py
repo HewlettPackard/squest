@@ -1,18 +1,27 @@
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute, ResourceGroupAttributeDefinition
+from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute, ResourceTextAttribute, \
+    ResourceGroupAttributeDefinition, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Instance
 
 
 class ResourceGroupAttributeDefinitionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ResourceGroupAttributeDefinition
         fields = ["id", "name"]
 
 
+class ResourceGroupTextAttributeDefinitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResourceGroupTextAttributeDefinition
+        fields = ["id", "name"]
+
+
 class ResourceAttributeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResourceAttribute
+        fields = ["name", "value"]
 
     name = serializers.SerializerMethodField(method_name="get_attribute_name")
 
@@ -20,22 +29,29 @@ class ResourceAttributeSerializer(serializers.ModelSerializer):
     def get_attribute_name(resource_attribute):
         return resource_attribute.attribute_type.name
 
+
+class ResourceTextAttributeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ResourceAttribute
+        model = ResourceTextAttribute
         fields = ["name", "value"]
+
+    name = serializers.SerializerMethodField(method_name="get_text_attribute_name")
+
+    @staticmethod
+    def get_text_attribute_name(resource_attribute):
+        return resource_attribute.text_attribute_type.name
 
 
 class ResourceSerializer(serializers.ModelSerializer):
-
-    attributes = ResourceAttributeSerializer(many=True)
-
     class Meta:
         model = Resource
-        fields = ["id", "name", "service_catalog_instance", "attributes"]
+        fields = ["id", "name", "service_catalog_instance", "attributes", "text_attributes"]
+
+    attributes = ResourceAttributeSerializer(many=True)
+    text_attributes = ResourceTextAttributeSerializer(many=True)
 
 
 class ResourceGroupSerializer(serializers.ModelSerializer):
-
     resources = ResourceSerializer(many=True, read_only=True)
 
     class Meta:
@@ -58,10 +74,25 @@ class AttributeCreateSerializer(serializers.Serializer):
                                               f"group '{resource_group.name}'")
 
 
-class ResourceCreateSerializer(serializers.Serializer):
+class TextAttributeCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    value = serializers.CharField(max_length=500)
 
+    def validate_name(self, value):
+        """Chek that this name is one the the text attribute"""
+        resource_group = self.context.get('resource_group')
+        try:
+            ResourceGroupTextAttributeDefinition.objects.get(name=value, resource_group_definition=resource_group)
+            return value
+        except ResourceGroupTextAttributeDefinition.DoesNotExist:
+            raise serializers.ValidationError(f"'{value}' is not a valid text attribute of the resource "
+                                              f"group '{resource_group.name}'")
+
+
+class ResourceCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     attributes = AttributeCreateSerializer(many=True)
+    text_attributes = TextAttributeCreateSerializer(many=True)
     service_catalog_instance = PrimaryKeyRelatedField(queryset=Instance.objects.all(),
                                                       allow_null=True)
 
@@ -74,6 +105,16 @@ class ResourceCreateSerializer(serializers.Serializer):
             else:
                 raise serializers.ValidationError(f"Duplicate attribute '{t[0][1]}'")
         return attributes
+
+    def validate_text_attributes(self, text_attributes):
+        seen = set()
+        for text_attribute in text_attributes:
+            t = tuple(text_attribute.items())
+            if t[0][1] not in seen:
+                seen.add(t[0][1])
+            else:
+                raise serializers.ValidationError(f"Duplicate text attribute '{t[0][1]}'")
+        return text_attributes
 
     def validate_name(self, value):
         resource_group = self.context.get('resource_group')
@@ -98,4 +139,11 @@ class ResourceCreateSerializer(serializers.Serializer):
             ResourceAttribute.objects.create(value=attribute.pop('value'),
                                              resource=new_resource,
                                              attribute_type=attribute_type)
+        text_attributes = validated_data.pop('text_attributes')
+        for text_attribute in text_attributes:
+            text_attribute_type = ResourceGroupTextAttributeDefinition.objects.get(name=text_attribute.pop('name'),
+                                                                                   resource_group_definition=resource_group)
+            ResourceTextAttribute.objects.create(value=text_attribute.pop('value'),
+                                                 resource=new_resource,
+                                                 text_attribute_type=text_attribute_type)
         return new_resource

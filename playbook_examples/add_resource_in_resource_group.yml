@@ -5,7 +5,7 @@
 
   vars:
     squest_api: "http://127.0.0.1:8000/api/"
-    resource_group_vm_id: 8
+    resource_group_name: "OCP Worker node"
     squest: # this would be the sent data from squest as extra vars
       request:
         instance:
@@ -17,6 +17,7 @@
     vm_name: "test-vm"
     vm_vcpu: 4
     vm_memory: 16
+    desc: "My description"
 
   tasks:
     - name: Print info sent by Squest
@@ -26,6 +27,21 @@
     # -----------------------
     # PLACE HERE ALL THE MAGIC TO CREATE THE RESOURCE
     # -----------------------
+    - name: Get resource group id
+      uri:
+        url: "{{ squest_api }}resource_tracker/resource_group/"
+        user: "admin"
+        password: "admin"
+        method: GET
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+      register: output
+
+    - name: Setting host facts using complex arguments
+      set_fact:
+        resource_group_vm_id: "{{ output.json | selectattr('name', 'equalto', resource_group_name ) | map(attribute='id') | list | first  }}"
+
     - name: Create a resource in squest
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/{{ resource_group_vm_id }}/resources/"
@@ -40,6 +56,9 @@
               value: "{{ vm_vcpu }}"
             - name: "Memory"
               value: "{{ vm_memory }}"
+          text_attributes:
+            - name: "Comments"
+              value: "{{ desc }}"
         force_basic_auth: yes
         status_code: 201
         body_format: json

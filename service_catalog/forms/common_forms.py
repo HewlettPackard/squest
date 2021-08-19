@@ -6,7 +6,6 @@ from service_catalog.models import RequestMessage, SupportMessage
 
 class RequestMessageForm(ModelForm):
     content = forms.CharField(label="Add a comment",
-                              required=True,
                               help_text="Markdown supported",
                               widget=forms.Textarea(attrs={'class': 'form-control'}))
 

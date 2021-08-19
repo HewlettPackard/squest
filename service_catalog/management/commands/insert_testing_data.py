@@ -64,9 +64,9 @@ class Command(BaseCommand):
                                             job_template=job_templates[1])
             states = [RequestState.SUBMITTED, RequestState.FAILED, RequestState.ACCEPTED, RequestState.NEED_INFO,
                       RequestState.REJECTED, RequestState.CANCELED, RequestState.PROCESSING, RequestState.COMPLETE]
-            for i in range(random.randint(1, 10)):
+            for i in range(random.randint(1, 3)):
                 for username in users:
-                    if random.randint(0,2) == 1:
+                    if random.randint(0, 2) == 1:
                         continue
                     user = users[username]
                     new_instance = Instance.objects.create(service=service, name=f"My instance",
@@ -93,6 +93,7 @@ class Command(BaseCommand):
         ocp_worker_node_group = ResourceGroup.objects.create(name="OCP Worker node")
         ocp_worker_node_group_vcpu_attribute = ocp_worker_node_group.add_attribute_definition(name="vCPU")
         ocp_worker_node_group_memory_attribute = ocp_worker_node_group.add_attribute_definition(name="Memory")
+        ocp_worker_node_group.add_text_attribute_definition(name="Comments")
         ocp_project_group = ResourceGroup.objects.create(name="OCP Project")
         ocp_project_group_cpu_att = ocp_project_group.add_attribute_definition(name="requests.cpu")
         ocp_project_group_mem_att = ocp_project_group.add_attribute_definition(name="requests.memory")
@@ -132,4 +133,3 @@ class Command(BaseCommand):
             new_ocp_project.set_attribute(ocp_project_group_cpu_att, random.randint(8, 32))
             new_ocp_project.set_attribute(ocp_project_group_mem_att, random.randint(8, 32))
             new_ocp_project.service_catalog_instance = Instance.objects.order_by("?").first()
-

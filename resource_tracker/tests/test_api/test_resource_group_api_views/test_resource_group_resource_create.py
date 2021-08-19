@@ -12,7 +12,7 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
         super(TestResourceGroupResourceCreate, self).setUp()
         self.url = reverse('api_resource_group_resource_list_create', args=[self.rg_physical_servers.id])
 
-    def _check_resource_created(self, data, executed_attribute_length):
+    def _check_resource_created(self, data, executed_attribute_length, executed_text_attribute_length=0):
         number_resource_before = Resource.objects.filter(resource_group=self.rg_physical_servers).count()
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -21,6 +21,7 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
         self.assertEqual(response.data['name'], 'new_resource')
         self.assertTrue("service_catalog_instance" in response.data)
         self.assertEqual(len(response.data['attributes']), executed_attribute_length)
+        self.assertEqual(len(response.data['text_attributes']), executed_text_attribute_length)
 
     def test_create_valid_resource(self):
         data = {
@@ -31,9 +32,15 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                     "name": "CPU",
                     "value": "12"
                 }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                }
             ]
         }
-        self._check_resource_created(data=data, executed_attribute_length=1)
+        self._check_resource_created(data=data, executed_attribute_length=1, executed_text_attribute_length=1)
 
     def test_create_valid_resource_with_instance(self):
         test_instance = Instance.objects.create(name="test_instance")
@@ -45,9 +52,15 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                     "name": "CPU",
                     "value": "12"
                 }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                }
             ]
         }
-        self._check_resource_created(data=data, executed_attribute_length=1)
+        self._check_resource_created(data=data, executed_attribute_length=1, executed_text_attribute_length=1)
 
     def test_create_resource_with_non_valid_instance(self):
         data = {
@@ -57,6 +70,12 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                 {
                     "name": "CPU",
                     "value": "12"
+                }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
                 }
             ]
         }
@@ -76,9 +95,19 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                     "name": "memory",
                     "value": "20"
                 }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                },
+                {
+                    "name": "Another text",
+                    "value": "My text"
+                }
             ]
         }
-        self._check_resource_created(data=data, executed_attribute_length=2)
+        self._check_resource_created(data=data, executed_attribute_length=2, executed_text_attribute_length=2)
 
     def test_create_resource_twice(self):
         data = {
@@ -93,9 +122,15 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                     "name": "memory",
                     "value": "20"
                 }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                }
             ]
         }
-        self._check_resource_created(data=data, executed_attribute_length=2)
+        self._check_resource_created(data=data, executed_attribute_length=2, executed_text_attribute_length=1)
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -112,6 +147,16 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                     "name": "CPU",
                     "value": "20"
                 }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                },
+                {
+                    "name": "Another text",
+                    "value": "My text"
+                }
             ]
         }
         response = self.client.post(self.url, data=data, format='json')
@@ -125,6 +170,12 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                 {
                     "name": "do_not_exist_attribute",
                     "value": "12"
+                }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
                 }
             ]
         }
@@ -140,6 +191,12 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
                 {
                     "name": "CPU",
                     "value": "12"
+                }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
                 }
             ]
         }

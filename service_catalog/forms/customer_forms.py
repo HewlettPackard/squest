@@ -36,7 +36,6 @@ class FormUtils:
 
 class ServiceRequestForm(forms.Form):
     instance_name = forms.CharField(label="Instance name",
-                                    required=True,
                                     help_text="Help to identify the requested service in the 'Instances' view",
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -133,11 +132,9 @@ class OperationRequestForm(forms.Form):
 
 class SupportRequestForm(forms.Form):
     title = forms.CharField(label="Title",
-                            required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     content = forms.CharField(label="Add a comment",
-                              required=True,
                               help_text="Markdown supported",
                               widget=forms.Textarea(attrs={'class': 'form-control'}))
 
