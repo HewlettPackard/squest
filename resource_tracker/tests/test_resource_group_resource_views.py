@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker.models import Resource, ResourceAttribute
+from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAttribute
 from resource_tracker.tests.base_test_resource_tracker import BaseTestResourceTracker
 
 
@@ -120,7 +120,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         data = {
             "name": "new_resource",
             "CPU": 12,
-            "Memory": 12
+            "Memory": 12,
+            "Description": "text"
         }
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
@@ -147,17 +148,28 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         data = {
             "name": "updated_name",
             "CPU": 1,
-            "Memory": 2
+            "Memory": 2,
+            "Description": "text modified"
+
         }
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         resource_to_edit.refresh_from_db()
         self.assertEquals(resource_to_edit.name, "updated_name")
 
-        resource_attribute_cpu = ResourceAttribute.objects.get(resource=resource_to_edit,
-                                                               attribute_type=self.rg_physical_servers_cpu_attribute)
+        resource_attribute_cpu = ResourceAttribute.objects.get(
+            resource=resource_to_edit,
+            attribute_type=self.rg_physical_servers_cpu_attribute
+        )
         self.assertEquals(resource_attribute_cpu.value, 1)
 
-        resource_attribute_memory = ResourceAttribute.objects.get(resource=resource_to_edit,
-                                                                  attribute_type=self.rg_physical_servers_memory_attribute)
+        resource_attribute_memory = ResourceAttribute.objects.get(
+            resource=resource_to_edit,
+            attribute_type=self.rg_physical_servers_memory_attribute
+        )
         self.assertEquals(resource_attribute_memory.value, 2)
+        resource_text_attribute_description = ResourceTextAttribute.objects.get(
+            resource=resource_to_edit,
+            text_attribute_type=self.rg_physical_servers_description
+        )
+        self.assertEquals(resource_text_attribute_description.value, "text modified")

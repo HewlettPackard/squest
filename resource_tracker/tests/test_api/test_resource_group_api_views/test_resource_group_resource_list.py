@@ -20,3 +20,4 @@ class TestResourceGroupResourceList(BaseTestAPI):
             self.assertTrue("name" in resource)
             self.assertTrue("service_catalog_instance" in resource)
             self.assertTrue("attributes" in resource)
+            self.assertTrue("text_attributes" in resource)

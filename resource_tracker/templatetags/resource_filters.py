@@ -1,6 +1,7 @@
 from django.template.defaulttags import register
 
-from resource_tracker.models import ResourceAttribute, ResourcePoolAttributeDefinition, ResourceGroupAttributeDefinition
+from resource_tracker.models import ResourceAttribute, ResourcePoolAttributeDefinition, \
+    ResourceGroupAttributeDefinition, ResourceTextAttribute, ResourceGroupTextAttributeDefinition
 
 
 @register.filter(name='get_attribute_value_from_name')
@@ -10,6 +11,18 @@ def get_attribute_value_from_name(resource, attribute_name):
                                                   attribute_type=ResourceGroupAttributeDefinition.objects.
                                                   get(name=attribute_name,
                                                       resource_group_definition=resource.resource_group))
+        return attribute.value
+    except ResourceAttribute.DoesNotExist:
+        return ""
+
+
+@register.filter(name='get_text_attribute_value_from_name')
+def get_text_attribute_value_from_name(resource, attribute_name):
+    try:
+        attribute = ResourceTextAttribute.objects.get(resource=resource,
+                                                      text_attribute_type=ResourceGroupTextAttributeDefinition.objects.
+                                                      get(name=attribute_name,
+                                                          resource_group_definition=resource.resource_group))
         return attribute.value
     except ResourceAttribute.DoesNotExist:
         return ""

@@ -11,6 +11,9 @@ urlpatterns = [
          name='resource_group_edit'),
     path('resource_group/<int:resource_group_id>/delete/', views.resource_group_delete,
          name='resource_group_delete'),
+
+    #computed attributes
+
     path('resource_group/<int:resource_group_id>/attributes/create/',
          views.resource_group_attribute_create,
          name='resource_group_attribute_create'),
@@ -20,6 +23,19 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/delete/',
          views.resource_group_attribute_delete,
          name='resource_group_attribute_delete'),
+
+    #text attributes
+
+    path('resource_group/<int:resource_group_id>/text-attributes/create/',
+         views.resource_group_text_attribute_create,
+         name='resource_group_text_attribute_create'),
+    path('resource_group/<int:resource_group_id>/text-attributes/<int:attribute_id>/edit/',
+         views.resource_group_text_attribute_edit,
+         name='resource_group_text_attribute_edit'),
+    path('resource_group/<int:resource_group_id>/text-attributes/<int:attribute_id>/delete/',
+         views.resource_group_text_attribute_delete,
+         name='resource_group_text_attribute_delete'),
+
     path('resource_group/<int:resource_group_id>/resources/',
          views.resource_group_resource_list,
          name='resource_group_resource_list'),

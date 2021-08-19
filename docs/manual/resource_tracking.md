@@ -64,6 +64,8 @@ Example of resource group:
 - Openshift projects
 - Openstack tenants
 
+Resource groups also have text attributes to provide some additional information.
+
 ### Resource
 
 A resource is an instance of a `resource group` definition.
@@ -128,6 +130,7 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
     vm_name: "test-vm"
     vm_vcpu: 4
     vm_memory: 16
+    desc: "My description"
 
   tasks:
     - name: Print info sent by Squest
@@ -151,6 +154,9 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
               value: "{{ vm_vcpu }}"
             - name: "Memory"
               value: "{{ vm_memory }}"
+          text_attributes:
+            - name: "Description"
+              value: "{{ desc }}"
         force_basic_auth: yes
         status_code: 201
         body_format: json

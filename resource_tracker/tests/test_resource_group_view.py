@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute
+from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute, ResourceTextAttribute
 from resource_tracker.tests.base_test_resource_tracker import BaseTestResourceTracker
 
 
@@ -50,10 +50,13 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         }
         list_resource_id_to_be_delete = list()
         list_attribute_id_to_be_delete = list()
+        list_text_attribute_id_to_be_delete = list()
         for resource in self.rg_physical_servers.resources.all():
             list_resource_id_to_be_delete.append(copy(resource.id))
             for attribute in resource.attributes.all():
                 list_attribute_id_to_be_delete.append(copy(attribute.id))
+            for attribute in resource.text_attributes.all():
+                list_text_attribute_id_to_be_delete.append(copy(attribute.id))
         url = reverse('resource_tracker:resource_group_delete', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
@@ -65,3 +68,5 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         # check that all attributes of instances have been deleted
         for attribute_id in list_attribute_id_to_be_delete:
             self.assertFalse(ResourceAttribute.objects.filter(id=attribute_id).exists())
+        for attribute_id in list_text_attribute_id_to_be_delete:
+            self.assertFalse(ResourceTextAttribute.objects.filter(id=attribute_id).exists())
