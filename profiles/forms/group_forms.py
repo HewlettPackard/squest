@@ -18,7 +18,6 @@ class AddUserForm(forms.Form):
 
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'})
                            )
 

@@ -25,16 +25,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class TowerServerForm(ModelForm):
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     host = forms.CharField(label="Host",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control',
                                                          'placeholder': "awx.mydomain.net:8043"}))
 
     token = forms.CharField(label="Token",
-                            required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     secure = forms.BooleanField(label="Is secure (https)",
@@ -90,7 +87,6 @@ class ServiceForm(ModelForm):
         self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
 
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     description = forms.CharField(label="Description",
@@ -163,7 +159,6 @@ class EditServiceForm(ModelForm):
             self.fields['billing'].initial = 'defined'
 
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     description = forms.CharField(label="Description",
@@ -229,7 +224,6 @@ class AddServiceOperationForm(ModelForm):
                 self.fields['type'].choices = choice_type_creation
 
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     description = forms.CharField(label="Description",
@@ -237,17 +231,14 @@ class AddServiceOperationForm(ModelForm):
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          required=True,
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     type = forms.ChoiceField(label="Type",
                              choices=[(None, None)],
-                             required=True,
                              error_messages={'required': 'At least you must select one type'},
                              widget=forms.Select(attrs={'class': 'form-control'}))
 
-    process_timeout_second = forms.IntegerField(required=True,
-                                                initial=60,
+    process_timeout_second = forms.IntegerField(initial=60,
                                                 label="Process timeout (second)",
                                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -346,7 +337,6 @@ class AcceptRequestForm(forms.Form):
 
 class InstanceForm(ModelForm):
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     spec = forms.JSONField(label="JSON Spec",
@@ -386,23 +376,19 @@ class GlobalHookForm(ModelForm):
                     ('Instance', 'Instance')]
 
     name = forms.CharField(label="Name",
-                           required=True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     model = ChoiceField(label="Model",
-                        required=True,
                         choices=model_choice,
                         error_messages={'required': 'At least you must select one model'},
                         widget=forms.Select(attrs={'class': 'form-control'}))
 
     state = ChoiceField(label="State",
-                        required=True,
                         choices=get_choices(),
                         error_messages={'required': 'At least you must select one state'},
                         widget=forms.Select(attrs={'class': 'form-control'}))
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          required=True,
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     extra_vars = forms.JSONField(label="Extra vars (JSON)",
@@ -433,7 +419,6 @@ class GlobalHookForm(ModelForm):
 
 class DocForm(ModelForm):
     title = forms.CharField(label="Name",
-                            required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     content = MartorFormField(widget=AdminMartorWidget())

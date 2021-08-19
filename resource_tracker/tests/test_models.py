@@ -1,7 +1,9 @@
+from random import randint
+
 from django.test import TestCase
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
-    ResourcePool, ExceptionResourceTracker
+    ResourcePool, ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
 
 
 class TestCalculation(TestCase):
@@ -12,18 +14,31 @@ class TestCalculation(TestCase):
         server_cpu_attribute_def = self.server_group.add_attribute_definition(name='CPU')
         server = self.server_group.create_resource(name=f"server-group1")
         server.set_attribute(server_cpu_attribute_def, 100)
+        # create a big server group
+        self.big_server_group = ResourceGroup.objects.create(name="big-server-group")
+        self.big_server_group_cpu = self.big_server_group.add_attribute_definition(name='CPU')
+        self.big_server_group_desc = self.big_server_group.add_text_attribute_definition(name='Description')
+        self.big_server_group_cpu_count = 0
+        for i in range(5):
+            resource = self.big_server_group.create_resource(name=f"big-server-group{i}")
+            value = randint(10, 150)
+            resource.set_attribute(self.big_server_group_cpu, value)
+            self.big_server_group_cpu_count += value
 
         self.vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
         self.vcenter_pool.add_attribute_definition(name='vCPU')
         self.vcenter_pool.attribute_definitions.get(name='vCPU') \
             .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
         self.assertEqual(100, self.vcenter_pool.attribute_definitions.get(name='vCPU').get_total_produced())
-
+        self.assertIn(member=self.server_group.attribute_definitions.get(name="CPU"),
+                      container=self.vcenter_pool.attribute_definitions.get(name='vCPU').producers.all())
         # create VM group that consume
         self.vm_group = ResourceGroup.objects.create(name="vm-group")
         vm_vcpu_attribute = self.vm_group.add_attribute_definition(name='vCPU')
         self.vcenter_pool.attribute_definitions.get(name='vCPU') \
             .add_consumers(self.vm_group.attribute_definitions.get(name='vCPU'))
+        self.assertIn(member=self.vm_group.attribute_definitions.get(name='vCPU'),
+                      container=self.vcenter_pool.attribute_definitions.get(name='vCPU').consumers.all())
         vm1 = self.vm_group.create_resource(name=f"vm1")
         vm1.set_attribute(vm_vcpu_attribute, 25)
         vm2 = self.vm_group.create_resource(name=f"vm2")
@@ -36,7 +51,7 @@ class TestCalculation(TestCase):
         self.ram_attribute = self.server_group.add_attribute_definition(name='RAM')
         self.server1 = self.server_group.create_resource(name="server1")
 
-    def test_ResourceGroup(self):
+    def test_resource_group(self):
         name = r'serverGroup1'
         server_group = ResourceGroup.objects.create(name=name)
         self.assertIsInstance(server_group, ResourceGroup)
@@ -47,27 +62,35 @@ class TestCalculation(TestCase):
         self.assertEqual(attribute, server_group.attribute_definitions.get(name=attribute).name)
         self.assertIsInstance(server_group.attribute_definitions.get(name=attribute), ResourceGroupAttributeDefinition)
 
-    def test_ResourceGroupAddSameAttribute(self):
+    def test_resource_group_add_same_attribute(self):
         server_group = ResourceGroup.objects.create(name="serverGroup1")
         server_group.add_attribute_definition(name='CPU')
+        self.assertRaises(ExceptionResourceTracker.AttributeAlreadyExist,
+                          server_group.raise_if_attribute_name_exist, 'CPU')
         self.assertRaises(ExceptionResourceTracker.AttributeAlreadyExist, server_group.add_attribute_definition, 'CPU')
         self.assertEqual(1, server_group.attribute_definitions.count())
         server_group.add_attribute_definition(name='RAM')
         self.assertEqual(2, server_group.attribute_definitions.count())
 
-    def test_create_resource_from_ResourceGroup(self):
+    def test_create_resource_from_resource_group(self):
         self._create_vcenter_pool_with_one_server()
 
         self.assertIsInstance(self.server1, Resource)
         self.assertEqual(1, self.server_group.resources.count())
 
-        self.assertIsInstance(self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='CPU')), ResourceAttribute)
-        self.assertEqual(0, self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='CPU')).value)
+        self.assertIsInstance(
+            self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='CPU')),
+            ResourceAttribute)
+        self.assertEqual(0, self.server1.attributes.get(
+            attribute_type=ResourceGroupAttributeDefinition.objects.get(name='CPU')).value)
 
-        self.assertIsInstance(self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='RAM')), ResourceAttribute)
-        self.assertEqual(0, self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='RAM')).value)
+        self.assertIsInstance(
+            self.server1.attributes.get(attribute_type=ResourceGroupAttributeDefinition.objects.get(name='RAM')),
+            ResourceAttribute)
+        self.assertEqual(0, self.server1.attributes.get(
+            attribute_type=ResourceGroupAttributeDefinition.objects.get(name='RAM')).value)
 
-    def test_create_multiple_resource_from_ResourceGroup(self):
+    def test_create_multiple_resource_from_resource_group(self):
         self._create_vcenter_pool_with_one_server()
         server2 = self.server_group.create_resource(name="server2")
         self.assertIsInstance(server2, Resource)
@@ -108,12 +131,12 @@ class TestCalculation(TestCase):
             server.set_attribute(self.cpu_attribute, cpu)
             self.assertEqual(cpu, server.attributes.get(attribute_type=self.cpu_attribute).value)
 
-    def test_get_attribute_on_ResourceGroup(self):
+    def test_get_attribute_on_resource_group(self):
         self._create_testing_server_group()
         self.assertEqual(len(self.cpu_list), self.server_group.resources.count())
         self.assertEqual(sum(self.cpu_list), self.server_group.get_sum_value_by_attribute(self.cpu_attribute))
 
-    def test_link_ResourceGroupAttributeDefinition_to_a_ResourcePool(self):
+    def test_link_resource_group_attribute_definition_to_a_resource_pool(self):
         self._create_testing_server_group()
         vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
         vcenter_cpu_attribute = vcenter_pool.add_attribute_definition(name='vCPU')
@@ -222,3 +245,67 @@ class TestCalculation(TestCase):
         self.assertEqual(resource.attributes.get(attribute_type=cpu).value, 10)
         rg.edit_attribute_definition(attribute_id=cpu.id, name="CPU")
         self.assertEqual(resource.attributes.get(attribute_type=cpu).value, 10)
+
+    def test_get_total_resource(self):
+        self._create_simple_testing_stack()
+        self.assertEqual(self.big_server_group_cpu.get_total_resource(), self.big_server_group_cpu_count)
+
+    def test_edit_text_attribute(self):
+        self._create_simple_testing_stack()
+        new_name = "New text"
+        new_help_text = "help"
+        self.big_server_group_desc.edit(new_name, new_help_text)
+        self.big_server_group_desc.refresh_from_db()
+        self.assertEqual(new_name, self.big_server_group_desc.name)
+
+    def test_edit_attribute(self):
+        self._create_simple_testing_stack()
+        new_name = "Memory"
+        new_help_text = "help"
+        new_produce_for = self.vcenter_pool.attribute_definitions.get(name='vCPU')
+        new_consume_from = None
+        self.big_server_group_cpu.edit(new_name, new_produce_for, new_consume_from, new_help_text)
+        self.big_server_group_cpu.refresh_from_db()
+        self.assertEqual(new_name, self.big_server_group_cpu.name)
+        self.assertEqual(new_consume_from, self.big_server_group_cpu.consume_from)
+        self.assertEqual(new_produce_for, self.big_server_group_cpu.produce_for)
+
+    def test_add_new_text_attribute(self):
+        # add + init methods
+        self._create_simple_testing_stack()
+        self.big_server_group.add_text_attribute_definition('New text attribute')
+        self.big_server_group.refresh_from_db()
+        for resource in self.big_server_group.resources.all():
+            attribute_type = ResourceGroupTextAttributeDefinition.objects.get(name='New text attribute')
+            attribute = resource.text_attributes.get(text_attribute_type=attribute_type)
+            self.assertEqual(attribute.value, "")
+
+    def test_add_new_attribute(self):
+        # add + init methods
+        self._create_simple_testing_stack()
+        self.big_server_group.add_attribute_definition('New attribute')
+        self.big_server_group.refresh_from_db()
+        for resource in self.big_server_group.resources.all():
+            attribute_type = ResourceGroupAttributeDefinition.objects.get(name='New attribute')
+            attribute = resource.attributes.get(attribute_type=attribute_type)
+            self.assertEqual(attribute.value, 0)
+
+    def test_help_text_on_attribute_definition(self):
+        rg = ResourceGroup.objects.create(name="My Resource Group")
+        cpu = rg.add_attribute_definition("CPU", help_text="HEELP")
+        self.assertEqual(cpu.help_text, "HEELP")
+
+    def test_help_text_on_text_attribute_definition(self):
+        rg = ResourceGroup.objects.create(name="My Resource Group")
+        cpu = rg.add_text_attribute_definition("CPU", help_text="HEELP")
+        self.assertEqual(cpu.help_text, "HEELP")
+
+    def test_remove_all_producer(self):
+        self._create_simple_testing_stack()
+        self.vcenter_pool.attribute_definitions.get(name='vCPU').remove_all_producer()
+        self.assertEqual(self.vcenter_pool.attribute_definitions.get(name='vCPU').producers.count(), 0)
+
+    def test_remove_all_consumer(self):
+        self._create_simple_testing_stack()
+        self.vcenter_pool.attribute_definitions.get(name='vCPU').remove_all_consumer()
+        self.assertEqual(self.vcenter_pool.attribute_definitions.get(name='vCPU').consumers.count(), 0)
