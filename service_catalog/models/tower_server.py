@@ -22,6 +22,7 @@ class TowerServer(models.Model):
                                                                      tower_server=self,
                                                                      defaults={'name': job_template_from_tower.name})
             # update the survey
+            job_template.ask_variables_on_launch = job_template_from_tower.ask_variables_on_launch
             job_template.survey = job_template_from_tower.survey_spec
             job_template.save()
             # update all operation that uses this template

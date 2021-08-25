@@ -23,22 +23,34 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Actions</th>
+                                <th>Extra vars enabled</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for job_template in job_templates %}
+                            {% for job_template in job_templates %}
                                 <tr>
                                     <td class="align-middle">{{ job_template.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}" class="btn btn-default bg-sm">
+                                        <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}"
+                                           class="btn btn-default bg-sm">
                                             <i class="fas fa-external-link-square-alt"></i>
                                         </a>
-                                        <a href="{% url 'service_catalog:delete_job_template' tower_id=job_template.tower_server.id job_template_id=job_template.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'service_catalog:delete_job_template' tower_id=job_template.tower_server.id job_template_id=job_template.id %}"
+                                           class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
+                                    <td id="ask_variables_on_launch_{{job_template.id}}" class="align-middle">{{ job_template.ask_variables_on_launch }}
+
+                                        {% if not job_template.ask_variables_on_launch %}
+                                            <a class="fix_api" data-id="ask_variables_on_launch_{{job_template.id}}"
+                                               data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}" title="Click to fix">
+                                            <i class="fas fa-hammer"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
                                 </tr>
-                            {%  endfor %}
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -46,4 +58,29 @@
             </div>
         </div>
     </div>
+    {% csrf_token %}
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
+    <script>
+        let data = {"ask_variables_on_launch": true}
+        $(".fix_api").click(function () {
+            var url = $(this).attr('data-url');
+            var id = $(this).attr('data-id');
+
+            $.ajax({
+                url: url,
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',  // Do not send CSRF token to another domain.
+                type: 'PATCH',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success:function(data) {
+                    $("#"+id).text("True")
+                    }
+            });
+        });
+
+    </script>
+
 {% endblock %}

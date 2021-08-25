@@ -101,6 +101,8 @@ The playbook will:
 
 Day 2 operations are operations that **update** or **delete** existing resources.
 
+> **Note: ** If you want to be able to specify extra_vars on a schedule, you must select Prompt on Launch for EXTRA VARIABLES on the workflow template, or a enable a survey on the workflow template, then those answered survey questions become extra_vars.
+
 When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest` 
 that contains the instance spec sent by the playbook used to provision at first the resource.
 
