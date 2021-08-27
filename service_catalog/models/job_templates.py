@@ -1,7 +1,7 @@
 from django.db import models
 
 from .tower_server import TowerServer
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
@@ -30,8 +30,8 @@ class JobTemplate(models.Model):
     def set_ask_variables_on_launch(self, value: bool):
         self.get_tower_job_template()._update_values("ask_variables_on_launch", value)
 
-@receiver(pre_save, sender=JobTemplate)
+
+@receiver(post_save, sender=JobTemplate)
 def ask_variables_on_launch(sender, instance: JobTemplate, **kwargs):
-    previous = JobTemplate.objects.get(id=instance.id)
-    if previous.ask_variables_on_launch != instance.ask_variables_on_launch:
-        instance.set_ask_variables_on_launch(instance.ask_variables_on_launch)
+    instance.set_ask_variables_on_launch(instance.ask_variables_on_launch)
+

@@ -40,14 +40,24 @@
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
-                                    <td id="ask_variables_on_launch_{{job_template.id}}" class="align-middle">{{ job_template.ask_variables_on_launch }}
-
-                                        {% if not job_template.ask_variables_on_launch %}
-                                            <a class="fix_api" data-id="ask_variables_on_launch_{{job_template.id}}"
-                                               data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}" title="Click to fix">
-                                            <i class="fas fa-hammer"></i>
-                                            </a>
+                                    <td id="ask_variables_on_launch_{{ job_template.id }}"
+                                        class="align-middle">
+                                        {% if job_template.ask_variables_on_launch %}
+                                              <div class="custom-control custom-switch">
+                                              <input checked type="checkbox" class=" fix_api custom-control-input"  data-id="ask_variables_on_launch_{{ job_template.id }}"
+                                                   data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
+                                                   data-template-name="{{ job_template.name }}" id=f"customSwitch{{ job_template.id }}">
+                                              <label class=" custom-control-label" for=f"customSwitch{{ job_template.id }}"></label>
+                                            </div>
+                                        {% else %}
+                                            <div class="custom-control custom-switch">
+                                              <input type="checkbox" class=" fix_api custom-control-input"  data-id="ask_variables_on_launch_{{ job_template.id }}"
+                                                   data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
+                                                   data-template-name="{{ job_template.name }}" id=f"customSwitch{{ job_template.id }}">
+                                              <label class=" custom-control-label" for=f"customSwitch{{ job_template.id }}"></label>
+                                            </div>
                                         {% endif %}
+
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -59,14 +69,16 @@
         </div>
     </div>
     {% csrf_token %}
-<script>
-const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-</script>
     <script>
-        let data = {"ask_variables_on_launch": true}
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
+    <script>
         $(".fix_api").click(function () {
             var url = $(this).attr('data-url');
+            var template_name = $(this).attr('data-template-name');
             var id = $(this).attr('data-id');
+            var value = $(this).is(":checked")
+            let data = {"ask_variables_on_launch": value}
 
             $.ajax({
                 url: url,
@@ -74,13 +86,28 @@ const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
                 mode: 'same-origin',  // Do not send CSRF token to another domain.
                 type: 'PATCH',
                 data: JSON.stringify(data),
-                contentType: 'application/json',
-                success:function(data) {
-                    $("#"+id).text("True")
-                    }
-            });
-        });
+                contentType: 'application/json'
+            }).done((data) => {
+                $(document).Toasts('create', {
+                    title: 'Update ask_variables_on_launch on ' + template_name,
+                    body: 'Done',
+                    autohide: true,
+                    delay: 2000,
+                    class: 'bg-info mr-3 my-3'
+                });
 
+
+            }).fail((data) => {
+                console.error("Error during API call");
+                $(document).Toasts('create', {
+                    title: 'Fail to update ask_variables_on_launch on ' + template_name ,
+                    body: 'Error',
+                    autohide: true,
+                    delay: 3000,
+                    class: 'bg-danger mr-3 my-3'
+                });
+            })
+        });
     </script>
 
 {% endblock %}
