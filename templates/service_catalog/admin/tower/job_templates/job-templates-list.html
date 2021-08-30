@@ -43,21 +43,32 @@
                                     <td id="ask_variables_on_launch_{{ job_template.id }}"
                                         class="align-middle">
                                         {% if job_template.ask_variables_on_launch %}
-                                              <div class="custom-control custom-switch">
-                                              <input checked type="checkbox" class=" fix_api custom-control-input"  data-id="ask_variables_on_launch_{{ job_template.id }}"
-                                                   data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
-                                                   data-template-name="{{ job_template.name }}" id=f"customSwitch{{ job_template.id }}">
-                                              <label class=" custom-control-label" for=f"customSwitch{{ job_template.id }}"></label>
+                                            <div class="custom-control custom-switch">
+                                                <input checked disabled type="checkbox"
+                                                       class=" fix_api custom-control-input"
+                                                       data-id="{{ job_template.id }}"
+                                                       data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
+                                                       data-template-name="{{ job_template.name }}"
+                                                       id="customSwitch{{ job_template.id }}">
+                                                <label id="label_{{ job_template.id }}"
+                                                       class=" custom-control-label"
+                                                       for="customSwitch{{ job_template.id }}"></label>
                                             </div>
                                         {% else %}
                                             <div class="custom-control custom-switch">
-                                              <input type="checkbox" class=" fix_api custom-control-input"  data-id="ask_variables_on_launch_{{ job_template.id }}"
-                                                   data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
-                                                   data-template-name="{{ job_template.name }}" id=f"customSwitch{{ job_template.id }}">
-                                              <label class=" custom-control-label" for=f"customSwitch{{ job_template.id }}"></label>
+                                                <input type="checkbox" class=" fix_api custom-control-input"
+                                                       data-id="{{ job_template.id }}"
+                                                       data-url="{% url 'fix_ask_variables_on_launch' pk=job_template.id %}"
+                                                       data-template-name="{{ job_template.name }}"
+                                                       id="customSwitch{{ job_template.id }}">
+                                                <label id="label_{{ job_template.id }}"
+                                                       class=" custom-control-label"
+                                                       for="customSwitch{{ job_template.id }}"></label>
+                                                <i title="Extra variables are not enabled on this job template. Squest metadata of the instance will not be sent"
+                                                   class="text-warning fas fa-exclamation-circle icon warning"
+                                                   id="icon_{{ job_template.id }}"></i>
                                             </div>
                                         {% endif %}
-
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -78,16 +89,14 @@
             var template_name = $(this).attr('data-template-name');
             var id = $(this).attr('data-id');
             var value = $(this).is(":checked")
-            let data = {"ask_variables_on_launch": value}
 
             $.ajax({
                 url: url,
                 headers: {'X-CSRFToken': csrftoken},
                 mode: 'same-origin',  // Do not send CSRF token to another domain.
-                type: 'PATCH',
-                data: JSON.stringify(data),
+                type: 'GET',
                 contentType: 'application/json'
-            }).done((data) => {
+            }).done(() => {
                 $(document).Toasts('create', {
                     title: 'Update ask_variables_on_launch on ' + template_name,
                     body: 'Done',
@@ -95,12 +104,14 @@
                     delay: 2000,
                     class: 'bg-info mr-3 my-3'
                 });
+                $(this).attr("disabled", true)
+                $("#icon_" + id).remove()
 
 
-            }).fail((data) => {
+            }).fail(() => {
                 console.error("Error during API call");
                 $(document).Toasts('create', {
-                    title: 'Fail to update ask_variables_on_launch on ' + template_name ,
+                    title: 'Fail to update ask_variables_on_launch on ' + template_name,
                     body: 'Error',
                     autohide: true,
                     delay: 3000,

@@ -1,8 +1,10 @@
+import logging
+
 from django.db import models
 
 from .tower_server import TowerServer
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
+logger = logging.getLogger(__name__)
 
 
 class JobTemplate(models.Model):
@@ -28,10 +30,8 @@ class JobTemplate(models.Model):
         return self.tower_server.get_tower_instance().get_job_template_by_id(self.tower_id)
 
     def set_ask_variables_on_launch(self, value: bool):
-        self.get_tower_job_template()._update_values("ask_variables_on_launch", value)
+        self.ask_variables_on_launch = value
+        self.save()
 
-
-@receiver(post_save, sender=JobTemplate)
-def ask_variables_on_launch(sender, instance: JobTemplate, **kwargs):
-    instance.set_ask_variables_on_launch(instance.ask_variables_on_launch)
-
+    def push_ask_variables_on_launch(self):
+        self.get_tower_job_template()._update_values("ask_variables_on_launch", self.ask_variables_on_launch)

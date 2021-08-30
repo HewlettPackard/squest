@@ -9,6 +9,9 @@ class TowerServer(models.Model):
     secure = models.BooleanField(default=True)
     ssl_verify = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.name} ({self.host})"
+
     def sync(self):
         """
         Sync all job templates
