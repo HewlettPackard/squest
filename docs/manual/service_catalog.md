@@ -67,7 +67,7 @@ The playbook will:
     squest_api_url: "http://192.168.58.128:8000/api/"
 
   tasks:
-    - name: Print the job tempalate survey variable
+    - name: Print the job template survey variable
       debug:
         var: file_name
 
@@ -150,7 +150,7 @@ The playbook receive as well all information that help to retrieve the resource 
   gather_facts: false
 
   tasks:
-    - name: Print the job tempalate survey variable
+    - name: Print the job template survey variable
       debug:
         var: string_to_place_in_file
 

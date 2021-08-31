@@ -16,12 +16,35 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#details" data-toggle="tab">Details</a></li>
+                            <li class="nav-item">
+                                <a
+                                        {% if current_tab == 'details' %}
+                                            class="nav-link active"
+                                        {% else %}
+                                            class="nav-link"
+                                        {% endif %}
+                                            href="#details" data-toggle="tab">Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                        {% if current_tab == 'tokens' %}
+                                            class="nav-link active"
+                                        {% else %}
+                                            class="nav-link"
+                                        {% endif %}
+                                            href="#tokens" data-toggle="tab">Tokens</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="active tab-pane" id="details">
+                            <div id="details"
+                                    {% if current_tab == 'details' %}
+                                 class="active tab-pane"
+                                    {% else %}
+                                 class="tab-pane"
+                                    {% endif %}
+                            >
                                 <dl class="row">
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Username</dt>
@@ -50,6 +73,38 @@
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Created</dt>
                                         <dd class="col-sm-8">{{ user.date_joined }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                            <div id="tokens"
+                                    {% if current_tab == 'tokens' %}
+                                 class="active tab-pane"
+                                    {% else %}
+                                 class="tab-pane"
+                                    {% endif %}
+                            >
+                                <dl class="row d-flex justify-content-between align-content-center">
+                                    <div class="col">
+                                        <dt class="col">API token</dt>
+                                        <dd class="col">
+                                            {{ token_api.key }}
+                                            {% if token_api_is_expired %}
+                                                <i title="Token is expired"
+                                                   class="text-danger fas fa-exclamation-circle icon danger"></i>
+                                            {% endif %}
+                                        </dd>
+
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a title="Generate another key"
+                                           class="btn btn-secondary d-flex align-items-center"
+                                           href="{% url "profiles:token_generate" token_api.id %}">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </a>
+                                        <a title="Edit this token" class="btn btn-primary d-flex align-items-center"
+                                           href="{% url "profiles:token_edit" token_api.id %}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                     </div>
                                 </dl>
                             </div>
