@@ -83,30 +83,56 @@
                                  class="tab-pane"
                                     {% endif %}
                             >
-                                <dl class="row d-flex justify-content-between align-content-center">
-                                    <div class="col">
-                                        <dt class="col">API token</dt>
-                                        <dd class="col">
-                                            {{ token_api.key }}
-                                            {% if token_api_is_expired %}
-                                                <i title="Token is expired"
-                                                   class="text-danger fas fa-exclamation-circle icon danger"></i>
-                                            {% endif %}
-                                        </dd>
-
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <a title="Generate another key"
-                                           class="btn btn-secondary d-flex align-items-center"
-                                           href="{% url "profiles:token_generate" token_api.id %}">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </a>
-                                        <a title="Edit this token" class="btn btn-primary d-flex align-items-center"
-                                           href="{% url "profiles:token_edit" token_api.id %}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </div>
-                                </dl>
+                                <a title="Add" class="btn btn-success float-sm-right mb-2"
+                                   href="{% url "profiles:token_create" %}">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                                <table id="tower_list" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Created date</th>
+                                        <th>Expiration date</th>
+                                        <th>Key</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for token in tokens %}
+                                        <tr>
+                                            <td class="align-middle">{{ token.name }}</td>
+                                            <td class="align-middle">{{ token.description }}</td>
+                                            <td class="align-middle">{{ token.created }}</td>
+                                            <td class="align-middle">{{ token.expires }}</td>
+                                            <td class="align-middle">{{ token }}</td>
+                                            <td class="align-middle">
+                                                <span title="Copy key"
+                                                   id="copyButton"
+                                                   data-token="{{ token.key }}"
+                                                   class="btn btn-secondary">
+                                                    <i class="fas fa-copy"></i>
+                                                </span>
+                                                <a title="Generate another key"
+                                                   class="btn btn-info"
+                                                   href="{% url "profiles:token_generate" token.id %}">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </a>
+                                                <a title="Edit"
+                                                   class="btn btn-primary"
+                                                   href="{% url "profiles:token_edit" token.id %}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a title="Delete"
+                                                   class="btn btn-danger"
+                                                   href="{% url "profiles:token_delete" token.id %}">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -114,5 +140,10 @@
             </div>
         </div>
     </div>
+    <script>
+    $(document).ready(function(){
+        $("#copyButton").click(function(){ navigator.clipboard.writeText($(this).attr("data-token"))})
+    });
+    </script>
 
 {% endblock %}

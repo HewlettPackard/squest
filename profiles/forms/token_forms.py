@@ -8,11 +8,12 @@ from profiles.models import Token
 class TokenForm(forms.ModelForm):
     class Meta:
         model = Token
-        fields = ['key', 'expires']
+        fields = ['name', 'description', 'expires']
 
     def __init__(self, *args, **kwargs):
         super(TokenForm, self).__init__(*args, **kwargs)
-        self.fields['key'].widget.attrs['class'] = 'form-control'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+        self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['expires'].widget = DateTimePicker(
             options={
                 'useCurrent': True,

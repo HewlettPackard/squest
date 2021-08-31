@@ -31,7 +31,6 @@ class TestAPIToken(BaseTestRequest):
 
     def test_expired_token(self):
         expiration_date = timezone.now() - timezone.timedelta(days=2)
-
         self.api_token.refresh_from_db()
         self.api_token.expires = expiration_date
         self.api_token.save()

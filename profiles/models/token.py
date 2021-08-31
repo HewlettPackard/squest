@@ -15,6 +15,8 @@ class Token(models.Model):
 
     user = models.ForeignKey(
         to=User,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
         related_name='tokens'
     )
@@ -30,6 +32,14 @@ class Token(models.Model):
         max_length=40,
         unique=True,
         validators=[MinLengthValidator(40)]
+    )
+    name = models.CharField(
+        max_length=50,
+        blank=True
+    )
+    description = models.CharField(
+        max_length=200,
+        blank=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -51,7 +61,6 @@ class Token(models.Model):
 
     def update_key(self):
         self.key = self.generate_key()
-        self.expires = timezone.now() + timezone.timedelta(days=1)
         self.save()
 
     def set_expiration_date(self, date):
