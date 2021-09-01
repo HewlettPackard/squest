@@ -1,8 +1,5 @@
-from collections import OrderedDict
-
 from rest_framework import status
 from rest_framework.reverse import reverse
-
 from service_catalog.models import Instance
 from service_catalog.serializers.instance_serializer import InstanceSerializer
 from tests.base_test_request import BaseTestRequest
