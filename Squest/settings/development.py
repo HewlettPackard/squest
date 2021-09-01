@@ -16,6 +16,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from service_catalog.utils import str_to_bool
 
+print("Loading Squest development settings")
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -26,10 +28,7 @@ SECRET_KEY = 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-'
 DEBUG = True
 TESTING = sys.argv[1:2] == ['test']
 COLLECTING_STATIC = sys.argv[1:2] == ['collectstatic']
-ALLOWED_HOSTS = ['*']
-print("DEBUG: {}".format(DEBUG))
-print("TESTING: {}".format(TESTING))
-print("COLLECTING_STATIC: {}".format(COLLECTING_STATIC))
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [

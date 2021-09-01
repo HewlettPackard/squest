@@ -1,6 +1,9 @@
 # Production settings
 from Squest.settings.development import *
 import os
+
+print("Override dev settings with production settings")
+
 # update default secret key if provided
 from_env_secret_key = os.environ.get('SECRET_KEY', None)
 if from_env_secret_key is not None:

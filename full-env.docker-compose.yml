@@ -11,6 +11,7 @@ services:
       MYSQL_SERVICE_HOST: db
       WAIT_HOSTS: db:3306, rabbitmq:5672
       CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest
+      SQUEST_ENV: production
     volumes:
       - django_static:/app/static
       - django_media:/app/media
@@ -19,8 +20,18 @@ services:
       - rabbitmq
       - celery-worker
       - celery-beat
+
+  nginx:
+    command: nginx -c /etc/nginx/squest/nginx.conf
+    image: nginx:alpine
+    depends_on:
+      - django
     ports:
-      - "8000:8000"
+      - "8080:8080"
+    volumes:
+      - django_media:/app/media:ro
+      - django_static:/app/static:ro
+      - ./docker/nginx.conf:/etc/nginx/squest/nginx.conf:ro
 
   celery-worker:
     <<: *django

@@ -34,6 +34,7 @@ django-taggit = "^1.5.1"
 mike = "^1.0.1"
 martor = "^1.6.4"
 django-tempus-dominus = "^5.1.2"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 

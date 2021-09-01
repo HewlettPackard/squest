@@ -14,6 +14,7 @@ services:
       - "${PWD}/docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
     ports:
       - "3306:3306"
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
     environment:
@@ -23,6 +24,7 @@ services:
       MYSQL_ROOT_PASSWORD: p@ssw0rd
     ports:
       - "8082:80"
+
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
