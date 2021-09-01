@@ -18,6 +18,7 @@
     vm_vcpu: 4
     vm_memory: 16
     desc: "My description"
+    squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
 
   tasks:
     - name: Print info sent by Squest
@@ -30,10 +31,9 @@
     - name: Get resource group id
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/"
-        user: "admin"
-        password: "admin"
+        headers:
+          Authorization: "Token {{ squest_token }}"
         method: GET
-        force_basic_auth: yes
         status_code: 200
         body_format: json
       register: output
@@ -45,8 +45,8 @@
     - name: Create a resource in squest
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/{{ resource_group_vm_id }}/resources/"
-        user: "admin"
-        password: "admin"
+        headers:
+          Authorization: "Token {{ squest_token }}"
         method: POST
         body:
           name: "{{ vm_name }}"
@@ -59,6 +59,5 @@
           text_attributes:
             - name: "Comments"
               value: "{{ desc }}"
-        force_basic_auth: yes
         status_code: 201
         body_format: json
