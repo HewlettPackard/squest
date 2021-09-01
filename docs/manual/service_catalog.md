@@ -64,10 +64,11 @@ The playbook will:
   gather_facts: false
   
   vars:
+    squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
     squest_api_url: "http://192.168.58.128:8000/api/"
 
   tasks:
-    - name: Print the job tempalate survey variable
+    - name: Print the job template survey variable
       debug:
         var: file_name
 
@@ -86,13 +87,12 @@ The playbook will:
     - name: Update spec of the instance via the squest API
       uri:
         url: "{{ squest_api_url }}service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/" # do not forget the last slash
-        user: "admin"
-        password: "admin"
+        headers:
+          Authorization: "Token {{ squest_token }}"
         method: PATCH
         body:
           spec:
             file_name: "{{ file_name }}"
-        force_basic_auth: yes
         status_code: 200
         body_format: json
 ```
@@ -150,7 +150,7 @@ The playbook receive as well all information that help to retrieve the resource 
   gather_facts: false
 
   tasks:
-    - name: Print the job tempalate survey variable
+    - name: Print the job template survey variable
       debug:
         var: string_to_place_in_file
 

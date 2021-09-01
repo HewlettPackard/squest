@@ -1,0 +1,22 @@
+- name: Get info from squest API
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    squest_api: "http://127.0.0.1:8000/api/"
+    squest_token: d97ebdbeccf5fc3fba740e8e89048e3d453bd729
+
+  tasks:
+    - name: Get all resource group
+      uri:
+        url: "{{ squest_api }}resource_tracker/resource_group/"
+        headers:
+          Authorization: Token {{ squest_token }}
+        method: GET
+        status_code: 200
+        body_format: json
+      register: output
+
+    - debug:
+        var: output

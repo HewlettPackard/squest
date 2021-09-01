@@ -4,6 +4,7 @@
   gather_facts: false
 
   vars:
+    squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
     squest:
       request:
         instance:
@@ -33,12 +34,11 @@
     - name: Update squest with info
       uri:
         url: "http://192.168.58.128:8000/api/admin/instance/{{ squest['request']['instance']['id'] }}/"
-        user: "admin"
-        password: "admin"
+        headers:
+          Authorization: "Token {{ squest_token }}"
         method: PATCH
         body:
           spec:
             file_name: "{{ file_name }}"
-        force_basic_auth: yes
         status_code: 200
         body_format: json
