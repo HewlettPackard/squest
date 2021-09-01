@@ -12,5 +12,5 @@ python manage.py collectstatic --noinput
 echo "Inserting default data"
 python manage.py insert_default_data
 
-echo "Starting integrated web server"
-python manage.py runserver 0.0.0.0:8000
+echo "Starting web server"
+gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi

@@ -1,0 +1,11 @@
+squest.domain.local {   # This line should match the ALLOWED_HOSTS in your Squest settings
+    reverse_proxy nginx:8080
+    encode gzip zstd
+    tls /etc/ssl/private/squest.crt /etc/ssl/private/squest.key
+    # or:
+    # tls /etc/ssl/private/cert.pem
+
+    log {
+      level error
+    }
+}
