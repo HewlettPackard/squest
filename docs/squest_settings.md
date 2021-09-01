@@ -4,7 +4,7 @@ Settings are placed into the `squest/settings/development.py` file which is a st
 
 ## LDAP backend
 
-LDAP can be activated by setting the environment vairable `LDAP_ENABLED` to `True` or directly in the `settings.py` file:
+LDAP can be activated by setting the environment variable `LDAP_ENABLED` to `True` or directly in the `settings.py` file:
 
 ```python
 LDAP_ENABLED= True

@@ -25,7 +25,7 @@ RUN set -ex \
     && RUN_DEPS=" \
     default-libmysqlclient-dev \
     gcc \
-    npm \
+    curl \
     libldap2-dev libsasl2-dev \
     graphviz \
     " \
@@ -39,13 +39,24 @@ RUN pip install "poetry==$POETRY_VERSION"
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
 RUN chmod +x /wait
 
+# Install node and NPM
+ENV NODE_VERSION=12.22.6
+ENV NVM_VERSION=v0.38.0
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN node --version
+RUN npm --version
+
 # Copy project code
 RUN mkdir /app
 WORKDIR /app
 # Copy only requirements to cache them in docker layer
-COPY poetry.lock pyproject.toml /app/
-# Copy the full project
-COPY . /app/
+COPY poetry.lock pyproject.toml package.json package-lock.json /app/
+
 # Create a static and media folders
 RUN mkdir /app/static && \
     mkdir /app/media && \
@@ -55,6 +66,9 @@ RUN mkdir /app/static && \
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install
 RUN cd /app && npm install
+
+# Copy the full project
+COPY . /app/
 
 # Integrated web server port
 EXPOSE 8000

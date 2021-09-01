@@ -1,0 +1,19 @@
+# docker-compose -f dev-env.docker-compose.yml -f full-env.docker-compose.yml tls.docker-compose.yml up
+version: '3.7'
+
+services:
+  django:
+    environment:
+      ALLOWED_HOSTS: "squest.domain.local"
+
+  tls:
+    image: caddy:2-alpine
+    depends_on:
+      - nginx
+    volumes:
+      - ./docker/certs/squest.crt:/etc/ssl/private/squest.crt
+      - ./docker/certs/squest.key:/etc/ssl/private/squest.key
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      - "80:80"   # Allows for http redirection
+      - "443:443"
