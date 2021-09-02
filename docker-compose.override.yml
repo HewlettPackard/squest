@@ -1,0 +1,7 @@
+# this file is loaded automatically when running "docker-compose up"
+version: '3.7'
+
+services:
+  nginx:
+    ports:
+      - "8080:8080"
