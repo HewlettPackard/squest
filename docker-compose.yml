@@ -61,8 +61,6 @@ services:
     image: nginx:alpine
     depends_on:
       - django
-    ports:
-      - "8080:8080"
     volumes:
       - django_media:/app/media:ro
       - django_static:/app/static:ro
