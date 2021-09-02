@@ -1,4 +1,4 @@
-# docker-compose -f dev-env.docker-compose.yml -f full-env.docker-compose.yml tls.docker-compose.yml up
+# docker-compose -f docker-compose.yml -f tls.docker-compose.yml up
 version: '3.7'
 
 services:
