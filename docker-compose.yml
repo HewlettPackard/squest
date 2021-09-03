@@ -4,11 +4,7 @@ version: '3.7'
 services:
   db:
     image: mariadb:latest
-    environment:
-      MYSQL_DATABASE: squest_db
-      MYSQL_USER: squest_user
-      MYSQL_PASSWORD: squest_password
-      MYSQL_ROOT_PASSWORD: p@ssw0rd
+    env_file: docker/environment_variables/db.env
     volumes:
       - db_data:/var/lib/mysql
       - "${PWD}/docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
@@ -17,11 +13,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
-    environment:
-      PMA_HOST: db
-      PMA_ARBITRARY: 1
-      MYSQL_USERNAME: root
-      MYSQL_ROOT_PASSWORD: p@ssw0rd
+    env_file: docker/environment_variables/phpmyadmin.env
     ports:
       - "8082:80"
 
@@ -30,10 +22,7 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
-    environment:
-      RABBITMQ_DEFAULT_USER: "rabbitmq"
-      RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "squest"
+    env_file: docker/environment_variables/rabbitmq.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
@@ -42,11 +31,7 @@ services:
     build:
       context: .
       dockerfile: docker/squest.Dockerfile
-    environment:
-      MYSQL_SERVICE_HOST: db
-      WAIT_HOSTS: db:3306, rabbitmq:5672
-      CELERY_BROKER_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest
-      SQUEST_ENV: production
+    env_file: docker/environment_variables/squest.env
     volumes:
       - django_static:/app/static
       - django_media:/app/media

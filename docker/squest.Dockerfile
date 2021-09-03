@@ -60,8 +60,10 @@ COPY poetry.lock pyproject.toml package.json package-lock.json /app/
 # Create a static and media folders
 RUN mkdir /app/static && \
     mkdir /app/media && \
+    mkdir /app/node_modules && \
     chown ${APP_USER}:${APP_USER} /app/static && \
-    chown ${APP_USER}:${APP_USER} /app/media
+    chown ${APP_USER}:${APP_USER} /app/media && \
+    chown ${APP_USER}:${APP_USER} /app/node_modules
 
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install

@@ -12,23 +12,36 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 import sys
 from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+import time
 from service_catalog.utils import str_to_bool
 
-print("Loading Squest development settings")
+# LOAD configuration from the environment
+SECRET_KEY = os.environ.get('SECRET_KEY', 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-')
+DEBUG = str_to_bool(os.getenv('DEBUG', True))
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'squest_db')
+MYSQL_USER = os.environ.get('MYSQL_USER', 'squest_user')
+MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'squest_password')
+MYSQL_HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
+MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
+LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 
+# -------------------------------
+# SQUEST CONFIG
+# -------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-'
-DEBUG = True
 TESTING = sys.argv[1:2] == ['test']
 COLLECTING_STATIC = sys.argv[1:2] == ['collectstatic']
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+IS_GUNICORN_EXECUTION = False
+if "gunicorn" in sys.argv[0]:
+    IS_GUNICORN_EXECUTION = True
+
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"DEBUG: {DEBUG}")
+print(f"TESTING: {TESTING}")
+print(f"COLLECTING_STATIC: {COLLECTING_STATIC}")
+print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+print(f"IS_GUNICORN_EXECUTION: {IS_GUNICORN_EXECUTION}")
 
 # Application definition
 INSTALLED_APPS = [
@@ -66,7 +79,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Squest.urls'
 
-TEMPLATES_DIR = str(BASE_DIR) + os.sep + '../templates'
+TEMPLATES_DIR = str(BASE_DIR) + os.sep + 'templates'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -91,11 +104,11 @@ WSGI_APPLICATION = 'Squest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE', 'squest_db'),
-        'USER': os.environ.get('MYSQL_USER', 'squest_user'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'squest_password'),
-        'HOST': os.environ.get('MYSQL_SERVICE_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('MYSQL_SERVICE_PORT', '3306'),
+        'NAME': MYSQL_DATABASE,
+        'USER': MYSQL_USER,
+        'PASSWORD': MYSQL_PASSWORD,
+        'HOST': MYSQL_HOST,
+        'PORT': MYSQL_PORT,
     }
 }
 
@@ -120,7 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # -----------------------------------------
 # LDAP
 # -----------------------------------------
-LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 if LDAP_ENABLED:
     from Squest.ldap_config import *
 
@@ -142,8 +154,8 @@ if LDAP_ENABLED and not TESTING:
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Europe/Paris'
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
+TIME_ZONE = os.environ.get('TIME_ZONE', 'Europe/Paris')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -156,26 +168,23 @@ LOGOUT_REDIRECT_URL = 'service_catalog:home'
 # -----------------------------------------
 
 STATIC_URL = '/static/'
-if COLLECTING_STATIC:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, '../project-static')  # project statics
-    ]
-    STATIC_ROOT = os.path.join(BASE_DIR, '../static')
-else:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, '../static'),  # retrieve from collect static command
-        os.path.join(BASE_DIR, '../project-static')  # project statics
-    ]
-MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'project-static')  # project statics
+]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-# https://github.com/whitespy/django-node-assets
+
+# -----------------------------------------
+# NODE CONFIG https://github.com/whitespy/django-node-assets
+# -----------------------------------------
 STATICFILES_FINDERS = [
     'django_node_assets.finders.NodeModulesFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
-NODE_PACKAGE_JSON = os.path.join(BASE_DIR, '../package.json')
-NODE_MODULES_ROOT = os.path.join(BASE_DIR, '../node_modules')
+NODE_PACKAGE_JSON = os.path.join(BASE_DIR, 'package.json')
+NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
 
 # -----------------------------------------
 # LOGGING CONFIG
@@ -212,8 +221,10 @@ LOGGING = {
 # CELERY CONFIG
 # -----------------------------------------
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://rabbitmq:rabbitmq@localhost:5672/squest')
+print(f"CELERY_BROKER_URL: {CELERY_BROKER_URL}")
 # Add a five-minutes timeout to all Celery tasks.
-CELERYD_TASK_SOFT_TIME_LIMIT = 300
+CELERYD_TASK_SOFT_TIME_LIMIT = int(os.environ.get('CELERYD_TASK_SOFT_TIME_LIMIT', 300))
+print(f"CELERYD_TASK_SOFT_TIME_LIMIT: {CELERYD_TASK_SOFT_TIME_LIMIT}")
 CELERY_TASK_ALWAYS_EAGER = TESTING
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERYD_HIJACK_ROOT_LOGGER = False
@@ -223,12 +234,12 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
 
 # -----------------------------------------
-# Squest CONFIG
+# Squest email config
 # -----------------------------------------
-SQUEST_HOST = "host.domain.example"
-SQUEST_EMAIL_NOTIFICATION_ENABLED = False
-EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
-EMAIL_PORT = 25
+SQUEST_HOST = os.environ.get('SQUEST_HOST', "squest.domain.local")
+SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(os.environ.get('SQUEST_EMAIL_NOTIFICATION_ENABLED', False))
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 
 # -----------------------------------------
 # Martor CONFIG https://github.com/agusmakmun/django-markdown-editor
@@ -283,8 +294,6 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Markdown urls
-import time
-
 MARTOR_UPLOAD_PATH = 'doc_images/uploads/{}'.format(time.strftime("%Y/%m/%d/"))
 MARTOR_UPLOAD_URL = '/api/uploader/'  # change to local uploader
 
@@ -310,6 +319,9 @@ MARTOR_MARKDOWN_BASE_MENTION_URL = 'https://python.web.id/author/'  # please cha
 # MARTOR_ALTERNATIVE_CSS_FILE_THEME = "semantic-themed/semantic.min.css" # default None
 MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "jquery/dist/jquery.min.js"  # default None
 
+# -----------------------------------------
+# DJANGO REST FRAMEWORK CONFIG
+# -----------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',

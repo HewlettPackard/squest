@@ -9,7 +9,7 @@ Pre-requisites:
 - docker
 - docker-compose
 
-To run the application, execute the full env docker compose file
+To run the application, execute the docker compose file
 ```bash
 docker-compose up
 ```
@@ -69,13 +69,10 @@ squest.domain.local {   # This line should match the ALLOWED_HOSTS in your Sques
 }
 ```
 
-Update the `ALLOWED_HOSTS` environment variable from the Django Docker compose service in the file 
-`tls.docker-compose.yml` to match your FQDN.
-```yaml
-services:
-  django:
-    environment:
-      ALLOWED_HOSTS: "squest.domain.local"
+Update the `ALLOWED_HOSTS` environment variable from the configuration file `docker/environment_variables/squest.env` 
+to match your FQDN.
+```bash
+ALLOWED_HOSTS=squest.domain.local
 ```
 
 Start docker compose with the TLS configuration:
