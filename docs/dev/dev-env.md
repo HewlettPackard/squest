@@ -38,7 +38,7 @@ The development environment is composed of 4 parts:
 
 Run the Docker compose file with only required services to bring up database, message broker and other required system
 ```bash
-docker-compose -f docker-compose.yml db phpmyadmin rabbitmq up
+docker-compose up db phpmyadmin rabbitmq
 ```
 
 ### Javascript libraries
@@ -99,6 +99,8 @@ poetry shell
 python manage.py runserver
 ```
 
+Settings are placed into the `squest/settings.py` file which is a standard [Django core settings file](https://docs.djangoproject.com/en/3.1/ref/settings/).
+
 ## Commands
 
 To clean all Celery pending tasks
@@ -120,7 +122,6 @@ Run code coverage
 coverage run --source='.' manage.py test
 coverage report
 ```
-
 
 ## phpMyAdmin
 
