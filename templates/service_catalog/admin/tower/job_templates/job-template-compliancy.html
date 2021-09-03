@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        {% include "generics/breadcrumbs.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+                {% for detail in compliancy_details %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-{{ detail.type|lower }}">
+                                    <h4 class="card-title"><i class="icon {{ detail.type|map_color_to_icon }}"></i> {{ detail.name }}</h4>
+                                </div>
+                                <div class="card-body">
+                                    {{ detail.description }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

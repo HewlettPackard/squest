@@ -13,11 +13,11 @@ class TestServiceRequestForm(BaseTest):
         self.assertEquals(expected_value, utils.get_choices_from_string(test_string))
 
     def test_create_form_fields(self):
-        excepted_result = len(self.testing_survey["spec"])
-        self.assertEquals(len(utils.get_fields_from_survey(self.testing_survey)), excepted_result)
+        expected_result = len(self.testing_survey["spec"])
+        self.assertEquals(len(utils.get_fields_from_survey(self.testing_survey)), expected_result)
 
     def test_set_default_fields_values(self):
         form = utils.get_fields_from_survey(self.testing_survey)
-        excepted_results = ["", "choice1", ["multiselect_2", "multiselect_3"], "textarea_val", None, 1, 1.5]
-        for field, excepted_result in zip(form.values(), excepted_results):
-            self.assertEquals(field.initial, excepted_result)
+        expected_results = ["", "choice1", ["multiselect_2", "multiselect_3"], "textarea_val", None, 1, 1.5]
+        for field, expected_result in zip(form.values(), expected_results):
+            self.assertEquals(field.initial, expected_result)

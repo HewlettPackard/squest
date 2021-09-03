@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from service_catalog.forms import AnnouncementForm
-from service_catalog.models import AnnouncementType
+from service_catalog.models import BootstrapType
 from tests.base import BaseTest
 
 
@@ -17,7 +16,7 @@ class TestAnnouncementForm(BaseTest):
             'message': 'My announcement message info',
             'date_start': timezone.now(),
             'date_stop': timezone.now() + timezone.timedelta(days=2),
-            'type': AnnouncementType.INFO
+            'type': BootstrapType.INFO
         }
         form = AnnouncementForm(data)
         self.assertTrue(form.is_valid)
@@ -28,7 +27,7 @@ class TestAnnouncementForm(BaseTest):
             'message': 'My announcement message info',
             'date_start': timezone.now() + timezone.timedelta(days=2),
             'date_stop': timezone.now(),
-            'type': AnnouncementType.INFO
+            'type': BootstrapType.INFO
         }
         form = AnnouncementForm(data)
         self.assertFalse(form.is_valid())
@@ -39,7 +38,7 @@ class TestAnnouncementForm(BaseTest):
             'message': 'My announcement message info',
             'date_start': timezone.now() - timezone.timedelta(days=3),
             'date_stop': timezone.now() + timezone.timedelta(days=2),
-            'type': AnnouncementType.INFO
+            'type': BootstrapType.INFO
         }
         form = AnnouncementForm(data)
         self.assertFalse(form.is_valid())

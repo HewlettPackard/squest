@@ -40,12 +40,12 @@
                                         {% if tower_server.secure %}https://{% else %}http://{%  endif %}{{ tower_server.host }}
                                     </a></td>
                                     <td class="align-middle">
-                                        <a href="{% url 'service_catalog:tower_job_templates_list' tower_server.id %}" class="btn btn-default bg-sm">
+                                        <a id="job_template_count_{{ tower_server.id }}" href="{% url 'service_catalog:tower_job_templates_list' tower_server.id %}" class="btn btn-default bg-sm">
                                             {{ tower_server.jobtemplate_set.all | length }}
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <a id="tower_{{ tower_server.id }}" onclick="sync_tower({{ tower_server.id }})" role="button" class="btn btn-default bg-sm">
+                                        <a id="tower_{{ tower_server.id }}" onclick="sync_all_job_template({{ tower_server.id }})" role="button" class="btn btn-default bg-sm">
                                             <i class="fas fa-sync"></i> Sync job templates
                                         </a>
                                         <a href="{% url 'service_catalog:update_tower' tower_server.id %}" class="btn btn-primary bg-sm">
