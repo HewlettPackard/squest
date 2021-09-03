@@ -101,6 +101,8 @@ The playbook will:
 
 Day 2 operations are operations that **update** or **delete** existing resources.
 
+> **Note:** By default, recent version of AWX/Tower drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the Tower/AWX API.
+
 When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest` 
 that contains the instance spec sent by the playbook used to provision at first the resource.
 

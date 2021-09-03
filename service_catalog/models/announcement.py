@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class AnnouncementType(models.TextChoices):
+class BootstrapType(models.TextChoices):
     SUCCESS = 'SUCCESS', _('SUCCESS')
     DANGER = 'DANGER', _('DANGER')
     WARNING = 'WARNING', _('WARNING')
@@ -19,5 +19,5 @@ class Announcement(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, auto_now=False)
     date_start = models.DateTimeField(auto_now_add=False, auto_now=False)
     date_stop = models.DateTimeField(auto_now_add=False, auto_now=False)
-    type = models.CharField(max_length=10, choices=AnnouncementType.choices, default=AnnouncementType.INFO)
+    type = models.CharField(max_length=10, choices=BootstrapType.choices, default=BootstrapType.INFO)
     created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)

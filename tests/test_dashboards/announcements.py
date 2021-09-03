@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from django.utils import timezone
 
-from service_catalog.models import AnnouncementType, Announcement
+from service_catalog.models import BootstrapType, Announcement
 from tests.base import BaseTest
 
 
@@ -17,7 +17,7 @@ class TestAnnouncements(BaseTest):
             date_start=timezone.now(),
             date_stop=timezone.now() + timezone.timedelta(days=2),
             created_by=self.superuser,
-            type=AnnouncementType.SUCCESS
+            type=BootstrapType.SUCCESS
         )
         self.my_announcement_past = Announcement.objects.create(
             title='My announcement title past',
@@ -25,7 +25,7 @@ class TestAnnouncements(BaseTest):
             date_start=timezone.now() - timezone.timedelta(days=5),
             date_stop=timezone.now() - timezone.timedelta(days=1),
             created_by=self.superuser,
-            type=AnnouncementType.DANGER
+            type=BootstrapType.DANGER
         )
         self.my_announcement_future = Announcement.objects.create(
             title='My announcement title future',
@@ -33,11 +33,11 @@ class TestAnnouncements(BaseTest):
             date_start=timezone.now() + timezone.timedelta(hours=3),
             date_stop=timezone.now() + timezone.timedelta(days=2),
             created_by=self.superuser,
-            type=AnnouncementType.INFO
+            type=BootstrapType.INFO
         )
-        self.excepted_now = 1
-        self.excepted_future = 2
-        self.excepted_past = 1
+        self.expected_now = 1
+        self.expected_future = 2
+        self.expected_past = 1
 
     def test_mock_announcements_in_dashboard(self):
         now_origin = timezone.now()
@@ -54,6 +54,6 @@ class TestAnnouncements(BaseTest):
             available_other_now = Announcement.objects.filter(date_start__lte=now_other).filter(date_stop__gte=now_other)
             available_other_future = Announcement.objects.filter(date_start__lte=future_other).filter(date_stop__gte=future_other)
             available_other_past = Announcement.objects.filter(date_start__lte=past_other).filter(date_stop__gte=past_other)
-        self.assertEquals(len(available_other_now), len(available_origin_now), self.excepted_now)
-        self.assertEquals(len(available_other_future), len(available_origin_future), self.excepted_future)
-        self.assertEquals(len(available_other_past), len(available_origin_past), self.excepted_past)
+        self.assertEquals(len(available_other_now), len(available_origin_now), self.expected_now)
+        self.assertEquals(len(available_other_future), len(available_origin_future), self.expected_future)
+        self.assertEquals(len(available_other_past), len(available_origin_past), self.expected_past)
