@@ -8,5 +8,5 @@ def app_version():
     """
     Return Squest version as listed in `__version__` in `init.py` of settings package
     """
-    from Squest.settings import __version__
+    from Squest.version import __version__
     return __version__

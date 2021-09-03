@@ -2,10 +2,6 @@
 version: '3.7'
 
 services:
-  django:
-    environment:
-      ALLOWED_HOSTS: "squest.domain.local"
-
   tls:
     image: caddy:2-alpine
     depends_on:

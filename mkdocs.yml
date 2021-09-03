@@ -29,8 +29,8 @@ nav:
   - Home: index.md
   - Deployment: deployment.md
   - Configuration:
-    - Squest: squest_settings.md
-    - Tower: tower_settings.md
+    - Squest: configuration/squest_settings.md
+    - Tower: configuration/tower_settings.md
   - Manual:
     - Service catalog: manual/service_catalog.md
     - Resource tracking: manual/resource_tracking.md
