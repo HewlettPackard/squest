@@ -35,9 +35,10 @@ def add_tower(request):
 
 
 @permission_required('service_catalog.change_towerserver')
-def sync_tower(request, tower_id):
+def sync_tower(request, tower_id, job_template_id=None):
     if request.method == 'POST':
-        task = tasks.sync_tower.delay(tower_id)
+
+        task = tasks.sync_tower.delay(tower_id, job_template_id)
         task_result = TaskResult(task_id=task.task_id)
         task_result.save()
         return JsonResponse({"task_id": task_result.id}, status=202)
@@ -60,6 +61,7 @@ def tower_job_templates_list(request, tower_id):
         {'text': 'Job templates', 'url': ""},
     ]
     context = {
+        'tower_id': tower_server.id,
         "job_templates": job_templates,
         'breadcrumbs': breadcrumbs
     }
@@ -89,6 +91,23 @@ def delete_job_template(request, tower_id, job_template_id):
     server = get_object_or_404(JobTemplate, id=job_template_id)
     server.delete()
     return redirect('service_catalog:tower_job_templates_list', tower_id=tower_id)
+
+
+def job_template_compliancy(request, tower_id, job_template_id):
+    tower_server = get_object_or_404(TowerServer, id=tower_id)
+    job_template = get_object_or_404(JobTemplate, id=job_template_id)
+    breadcrumbs = [
+        {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
+        {'text': tower_server.name, 'url': ""},
+        {'text': 'Job templates', 'url': reverse('service_catalog:tower_job_templates_list', args=[tower_id])},
+        {'text': job_template.name, 'url': ""},
+        {'text': 'Compliancy', 'url': ""}
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'compliancy_details': job_template.get_compliancy_details(),
+    }
+    return render(request, "service_catalog/admin/tower/job_templates/job-template-compliancy.html", context)
 
 
 @permission_required('service_catalog.change_towerserver')

@@ -22,23 +22,45 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Squest compliant</th>
                                 <th>Actions</th>
+
                             </tr>
                             </thead>
                             <tbody>
-                            {%  for job_template in job_templates %}
+                            {% for job_template in job_templates %}
                                 <tr>
-                                    <td class="align-middle">{{ job_template.name }}</td>
+                                    <td id="name_{{ job_template.id }}" class="align-middle">{{ job_template.name }}</td>
                                     <td class="align-middle">
-                                        <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}" class="btn btn-default bg-sm">
+                                        <a href="{% url 'service_catalog:job_template_compliancy' tower_id=job_template.tower_server.id job_template_id=job_template.id %}"
+                                           class="btn bg-sm">
+                                            <i id="icon_{{ job_template.id }}"
+                                                {% if job_template.compliant %}
+                                                    class="fas fa-check text-success"
+                                                {% else %}
+                                                    class="fas fa-times text-danger"
+                                                {% endif %}
+                                            ></i>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a title="Synchronize {{ job_template.name }} from Tower/AWX"
+                                           id="job_template_{{ job_template.id }}"
+                                           onclick="sync_job_template({{ tower_id }},{{ job_template.id }})"
+                                           role="button" class="btn btn-default bg-sm">
+                                            <i class="fas fa-sync"></i>
+                                        </a>
+                                        <a href="{% if  job_template.tower_server.secure %}https://{% else %}http://{% endif %}{{ job_template.tower_server.host }}/#/templates/job_template/{{ job_template.tower_id }}"
+                                           class="btn btn-default bg-sm">
                                             <i class="fas fa-external-link-square-alt"></i>
                                         </a>
-                                        <a href="{% url 'service_catalog:delete_job_template' tower_id=job_template.tower_server.id job_template_id=job_template.id %}" class="btn btn-danger bg-sm">
+                                        <a href="{% url 'service_catalog:delete_job_template' tower_id=job_template.tower_server.id job_template_id=job_template.id %}"
+                                           class="btn btn-danger bg-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
-                            {%  endfor %}
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

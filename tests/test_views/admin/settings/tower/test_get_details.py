@@ -1,8 +1,11 @@
 import json
+import copy
 from unittest import mock
+from unittest.mock import MagicMock
 
 from django.urls import reverse
 
+from service_catalog.models import JobTemplate
 from tests.test_views.admin.settings.tower.base_test_tower import BaseTestTower
 
 
@@ -23,10 +26,60 @@ class AdminTowerGetViewsTest(BaseTestTower):
             mock_sync.assert_called()
             self.assertTrue("task_id" in data)
 
+    def test_sync_tower_when_added_job_template(self):
+        self.mock_tower_sync(4)
+
+    def test_sync_tower_when_deleted_job_template(self):
+        self.mock_tower_sync(-1)
+
+    def mock_tower_sync(self, delta):
+        with mock.patch('service_catalog.models.tower_server.TowerServer.get_tower_instance') as mock_tower_instance:
+            current_number_job_template = JobTemplate.objects.filter(tower_server=self.tower_server_test).count()
+            target_number_job_template = current_number_job_template + delta
+            job_template_list = list()
+            for i in range(target_number_job_template):
+                magic_mock = MagicMock(
+                    id=i + 100,
+                    survey_spec=self.testing_survey,
+                    _data=self.job_template_testing_data
+                )
+                magic_mock.name = f"Test {i}"
+                job_template_list.append(magic_mock)
+            mock_tower_instance.return_value = MagicMock(
+                job_templates=job_template_list
+            )
+            self.tower_server_test.sync()
+            self.tower_server_test.refresh_from_db()
+            mock_tower_instance.assert_called()
+            # assert that the survey is the same
+            self.assertEquals(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
+                              target_number_job_template)
+
+    def test_sync_job_template(self):
+        with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
+            args = copy.copy(self.args)
+            args['job_template_id'] = self.job_template_test.id
+            url = reverse('service_catalog:sync_job_template', kwargs=args)
+            response = self.client.post(url)
+            self.assertEquals(202, response.status_code)
+            data = json.loads(response.content)
+            mock_sync.assert_called()
+            self.assertTrue("task_id" in data)
+
     def test_user_cannot_sync_tower(self):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
             self.client.login(username=self.standard_user, password=self.common_password)
             url = reverse('service_catalog:sync_tower', kwargs=self.args)
+            response = self.client.post(url)
+            self.assertEquals(302, response.status_code)
+            mock_sync.assert_not_called()
+
+    def test_user_cannot_sync_job_template(self):
+        with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
+            self.client.login(username=self.standard_user, password=self.common_password)
+            args = copy.copy(self.args)
+            args['job_template_id'] = self.job_template_test.id
+            url = reverse('service_catalog:sync_job_template', kwargs=args)
             response = self.client.post(url)
             self.assertEquals(302, response.status_code)
             mock_sync.assert_not_called()
@@ -48,3 +101,10 @@ class AdminTowerGetViewsTest(BaseTestTower):
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertEquals(1, len(response.context["job_templates"]))
+
+    def test_tower_job_templates_compliancy_list(self):
+        args = copy.copy(self.args)
+        args['job_template_id'] = self.job_template_test.id
+        url = reverse('service_catalog:job_template_compliancy', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)

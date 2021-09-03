@@ -12,8 +12,16 @@ class TestTowerServer(BaseTest):
     @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_same_survey(self, mock_tower_instance):
         # test sync with same job template
-        mock_tower_instance.return_value = MagicMock(job_templates=[MagicMock(id=1,
-                                                                              survey_spec=self.testing_survey)])
+        mock_tower_instance.return_value = MagicMock(
+            job_templates=[
+                MagicMock(
+                    id=1,
+                    survey_spec=self.testing_survey,
+                    _data=self.job_template_testing_data
+                )
+            ]
+        )
+        mock_tower_instance.return_value.job_templates[0].name = "Mock"
         self.tower_server_test.sync()
         mock_tower_instance.assert_called()
         # assert that the survey is the same
@@ -52,8 +60,16 @@ class TestTowerServer(BaseTest):
                 },
             ]
         }
-        mock_tower_instance.return_value = MagicMock(job_templates=[MagicMock(id=1,
-                                                                              survey_spec=new_survey)])
+        mock_tower_instance.return_value = MagicMock(
+            job_templates=[
+                MagicMock(
+                    id=1,
+                    survey_spec=new_survey,
+                    _data=self.job_template_testing_data
+                )
+            ]
+        )
+        mock_tower_instance.return_value.job_templates[0].name = "Mock"
         self.tower_server_test.sync()
         # assert that the survey has been updated
         updated_template = JobTemplate.objects.get(id=self.job_template_test.id,

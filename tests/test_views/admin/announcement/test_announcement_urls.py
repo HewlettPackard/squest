@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 
-from service_catalog.models.announcement import Announcement, AnnouncementType
+from service_catalog.models.bootstrap_type import BootstrapType
+from service_catalog.models.announcement import Announcement
 from tests.base import BaseTest
 
 
@@ -17,7 +18,7 @@ class TestAnnouncementUrls(BaseTest):
             date_start=timezone.now() - timezone.timedelta(days=1),
             date_stop=timezone.now() + timezone.timedelta(days=1),
             created_by=self.my_user,
-            type=AnnouncementType.INFO
+            type=BootstrapType.INFO
         )
 
     def test_all_get(self):
@@ -51,14 +52,14 @@ class TestAnnouncementUrls(BaseTest):
                 'message': 'My announcement message info',
                 'date_start': timezone.now(),
                 'date_stop': timezone.now() + timezone.timedelta(days=2),
-                'type': AnnouncementType.INFO}},
+                'type': BootstrapType.INFO}},
             {'url': reverse('service_catalog:announcement_edit', kwargs=args_announcement),
              'data': {
                 'title': 'My announcement title danger',
                 'message': 'My announcement message danger',
                 'date_start': timezone.now(),
                 'date_stop': timezone.now() + timezone.timedelta(days=7),
-                'type': AnnouncementType.DANGER}}
+                'type': BootstrapType.DANGER}}
         ]
         announcement_count = Announcement.objects.count()
         for test in test_list:

@@ -4,7 +4,8 @@ from django.forms import ModelForm
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
-from service_catalog.models.announcement import Announcement, AnnouncementType
+from service_catalog.models.bootstrap_type import BootstrapType
+from service_catalog.models.announcement import Announcement
 
 
 class AnnouncementForm(ModelForm):
@@ -50,8 +51,8 @@ class AnnouncementForm(ModelForm):
     date_stop = forms.DateTimeField(label="Date stop")
 
     type = forms.ChoiceField(label="Type",
-                             choices=AnnouncementType.choices,
-                             initial=AnnouncementType.INFO,
+                             choices=BootstrapType.choices,
+                             initial=BootstrapType.INFO,
                              widget=forms.Select(attrs={'class': 'form-control'}))
 
     def clean(self):
