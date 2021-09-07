@@ -1,0 +1,17 @@
+# docker-compose -f docker-compose.yml -f docker-compose.override.yml -f tls.docker-compose.yml -f ldap.docker-compose.yml up
+version: '3.7'
+
+services:
+
+  django:
+    volumes:
+      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
+  celery-worker:
+    volumes:
+      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
+  celery-beat:
+    volumes:
+      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt

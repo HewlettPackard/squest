@@ -5,14 +5,3 @@ services:
   nginx:
     ports:
       - "8080:8080"
-
-  # with ldap enabled
-#  django:
-#    volumes:
-#      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
-#  celery-worker:
-#    volumes:
-#      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
-#  celery-beat:
-#    volumes:
-#      - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
