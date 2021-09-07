@@ -75,8 +75,5 @@ COPY . /app/
 # Integrated web server port
 EXPOSE 8000
 
-# Change to a non-root user
-USER ${APP_USER}:${APP_USER}
-
 # default entry point
 CMD ["/app/docker/entrypoint.sh"]
