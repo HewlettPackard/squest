@@ -67,15 +67,27 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 ```
 
-Update the `docker-override.yml` file to mount your configuration file in django and celery containers:
+Update the `ldap.docker-compose.yml` file to mount your configuration file and the CA certificate of the LDAP 
+server (if LDAPS is used) in django and celery containers:
 ```yaml
   django:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
   celery-worker:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
   celery-beat:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+      - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
+```
+
+>**Note:** The ldap server certificate must be placed in "/usr/local/share/ca-certificates". The docker image execute 
+an update of the certificate store on startup
+
+Run docker compose with the ldap config
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f ldap.docker-compose.yml up 
 ```
