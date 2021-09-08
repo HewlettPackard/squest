@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Update certificate store"
-update-ca-certificates
-
-echo "Switch to django user"
-su django
-
 echo "Wait for required services to start"
 /wait
 
