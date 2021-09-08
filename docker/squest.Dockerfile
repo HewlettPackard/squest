@@ -60,10 +60,7 @@ COPY poetry.lock pyproject.toml package.json package-lock.json /app/
 # Create a static and media folders
 RUN mkdir /app/static && \
     mkdir /app/media && \
-    mkdir /app/node_modules && \
-    chown ${APP_USER}:${APP_USER} /app/static && \
-    chown ${APP_USER}:${APP_USER} /app/media && \
-    chown ${APP_USER}:${APP_USER} /app/node_modules
+    mkdir /app/node_modules
 
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install
@@ -71,9 +68,14 @@ RUN cd /app && npm install
 
 # Copy the full project
 COPY . /app/
+# Give rights to our user on all files
+RUN chown -R ${APP_USER}:${APP_USER} /app
 
 # Integrated web server port
 EXPOSE 8000
+
+# Change to a non-root user
+USER ${APP_USER}:${APP_USER}
 
 # default entry point
 CMD ["/app/docker/entrypoint.sh"]
