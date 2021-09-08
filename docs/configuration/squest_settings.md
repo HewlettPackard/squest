@@ -49,17 +49,16 @@ print("LDAP config loaded")
 # -----------------------
 # LDAP auth backend
 # -----------------------
-AUTH_LDAP_SERVER_URI = "ldaps://ad.example.com"
+AUTH_LDAP_SERVER_URI = "ldaps://ad.example.com:636"
 AUTH_LDAP_BIND_DN = "CN=my_app,OU=Service_Accounts,DC=example,DC=com"
 AUTH_LDAP_BIND_PASSWORD = os.environ.get('AUTH_LDAP_BIND_PASSWORD', None)
 AUTH_LDAP_USER_SEARCH = LDAPSearch("OU=Service_Accounts,DC=example,DC=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
-LDAP_CA_FILE_PATH = "/path/to/my/company-ca.crt"
-AUTH_LDAP_CONNECTION_OPTIONS: {
+LDAP_CA_FILE_PATH = "/usr/local/share/ca-certificates/ldap_ca.crt"  # default path in ldap docker compose file
+AUTH_LDAP_CONNECTION_OPTIONS = {
     ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
     ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
     ldap.OPT_X_TLS_NEWCTX: 0
 }
-AUTH_LDAP_START_TLS: True
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
@@ -83,9 +82,6 @@ server (if LDAPS is used) in django and celery containers:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
       - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
 ```
-
->**Note:** The ldap server certificate must be placed in "/usr/local/share/ca-certificates". The docker image execute 
-an update of the certificate store on startup
 
 Run docker compose with the ldap config
 ```bash

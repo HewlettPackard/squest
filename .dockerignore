@@ -2,3 +2,4 @@
 /node_modules
 /media
 */ldap_config.py*
+/docker/certs/*
