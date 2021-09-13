@@ -1,0 +1,7 @@
+{% if is_super %}
+<a href="{% url 'service_catalog:edit_service' record.id %}?instance={{ record.name }}">
+    {{ record.service.name }}
+</a>
+{% else %}
+{{ record.service.name }}
+{% endif %}

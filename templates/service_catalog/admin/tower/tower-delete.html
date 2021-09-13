@@ -22,7 +22,7 @@
                     </div>
                     <div class="card-body">
                         <form action='' method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the server "{{ object.name }}"?</p>
+                            <p>Do you want to delete the server "{{ tower_server.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'service_catalog:list_tower' %}">Cancel</a>
                         </form>

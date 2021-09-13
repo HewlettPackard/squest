@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'taggit',
     'martor',
+    'django_tables2',
     'service_catalog',
     'resource_tracker',
     'profiles',
@@ -329,3 +330,9 @@ REST_FRAMEWORK = {
         'Squest.api.authentication.TokenAuthentication',
     )
 }
+
+# -----------------------------------------
+# DJANGO TABLES2 TEMPLATE
+# -----------------------------------------
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+

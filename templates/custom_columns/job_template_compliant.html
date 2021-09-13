@@ -1,0 +1,10 @@
+<a href="{% url 'service_catalog:job_template_compliancy' tower_id=record.tower_server.id job_template_id=record.id %}"
+   class="btn bg-sm">
+    <i id="icon_{{ record.id }}"
+            {% if record.compliant %}
+       class="fas fa-check text-success"
+            {% else %}
+       class="fas fa-times text-danger"
+            {% endif %}
+    ></i>
+</a>

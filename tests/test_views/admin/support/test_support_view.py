@@ -15,5 +15,4 @@ class TestAdminSupportViews(BaseTestRequest):
         url = reverse('service_catalog:admin_support_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("supports" in response.context)
-        self.assertEquals(len(response.context["supports"].qs), 1)
+        self.assertEquals(len(response.context["table"].data.data), 1)

@@ -8,13 +8,6 @@ from profiles.forms import GroupForm, AddUserForm
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def group_list(request):
-    groups = Group.objects.all()
-    context = {'groups': groups, 'group_url': "group", 'display_title': 'Groups'}
-    return render(request, 'profiles/group/group-list.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def group_edit(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     form = GroupForm(request.POST or None, instance=group)
@@ -73,18 +66,6 @@ def group_delete(request, group_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def user_by_group_list(request, group_id):
-    group = get_object_or_404(Group, id=group_id)
-    breadcrumbs = [
-        {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': group.name, 'url': ""},
-        {'text': "Users", 'url': ""}
-    ]
-    context = {'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/group/user-by-group-list.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def user_in_group_update(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     form = AddUserForm(request.POST or None, current_users=group.user_set.all())
@@ -127,7 +108,7 @@ def user_in_group_remove(request, group_id, user_id):
     ]
     context = {
         'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{ user.username }</strong> from { group }?"),
+        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{user.username}</strong> from {group}?"),
         'action_url': reverse('profiles:user_in_group_remove', kwargs=args),
         'button_text': 'Remove'
     }

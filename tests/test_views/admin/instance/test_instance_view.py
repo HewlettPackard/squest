@@ -15,8 +15,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         url = reverse('service_catalog:instance_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("instances" in response.context)
-        self.assertEquals(len(response.context["instances"].qs), 2)
+        self.assertEquals(len(response.context["table"].data.data), 2)
 
     def test_admin_can_get_details(self):
         args = {

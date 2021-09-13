@@ -1,0 +1,10 @@
+<a id="tower_{{ record.id }}" onclick="sync_all_job_template({{ record.id }})" role="button"
+   class="btn btn-default bg-sm">
+    <i class="fas fa-sync"></i> Sync job templates
+</a>
+<a href="{% url 'service_catalog:update_tower' record.id %}" class="btn btn-primary bg-sm">
+    <i class="fas fa-edit"></i> Edit
+</a>
+<a href="{% url 'service_catalog:delete_tower' record.id %}" class="btn btn-danger bg-sm">
+    <i class="fas fa-trash"></i> Delete
+</a>

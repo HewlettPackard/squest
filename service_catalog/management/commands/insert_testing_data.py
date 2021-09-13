@@ -2,7 +2,6 @@ import logging
 import os
 import random
 
-import yaml
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
@@ -30,9 +29,9 @@ class Command(BaseCommand):
         for username in users_name:
 
             try:
-                users[username] = User.objects.get(username=username)
+                users[username] = User.objects.get(username=username, password="admin")
             except User.DoesNotExist:
-                users[username] = User.objects.create_user(username=username)
+                users[username] = User.objects.create_user(username=username, password="admin")
             logger.info(f"Get or create '{users[username]}'")
         anthony_token = os.environ['AWX_TOKEN']
         tower, _ = TowerServer.objects.get_or_create(name=r'AWX HPE', host=r'awx.gre.hpecorp.net:8043',

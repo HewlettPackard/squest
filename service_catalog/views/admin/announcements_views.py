@@ -9,12 +9,6 @@ from service_catalog.models.announcement import Announcement
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def announcement_list(request):
-    return render(request, 'service_catalog/settings/announcements/announcement-list.html',
-                  {'announcements': Announcement.objects.all()})
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def announcement_create(request):
     if request.method == 'POST':
         form = AnnouncementForm(request.POST)

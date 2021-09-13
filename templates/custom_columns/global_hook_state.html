@@ -1,0 +1,7 @@
+{% if record.model == "Instance" %}
+    <strong class="text-{{ record.state |map_instance_state }}">{{ record.state }}</strong>
+{% elif record.model == "Request" %}
+    <strong class="text-{{ record.state |map_request_state }}">{{ record.state }}</strong>
+{% else %}
+    <strong>{{ record.state }}</strong>
+{% endif %}

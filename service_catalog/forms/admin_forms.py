@@ -6,7 +6,6 @@ import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, ChoiceField
-from django.utils.translation import gettext_lazy as _
 from martor.fields import MartorFormField
 from martor.widgets import AdminMartorWidget
 from towerlib import Tower
@@ -19,6 +18,7 @@ from service_catalog.models.documentation import Doc
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
+from service_catalog.models.state_hooks import HookModel
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -367,24 +367,17 @@ def save_service(service, commit, billing):
     return service
 
 
-def get_choices():
-    return RequestState.choices + InstanceState.choices
-
-
 class GlobalHookForm(ModelForm):
-    model_choice = [('Request', 'Request'),
-                    ('Instance', 'Instance')]
-
     name = forms.CharField(label="Name",
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     model = ChoiceField(label="Model",
-                        choices=model_choice,
+                        choices=HookModel.choices,
                         error_messages={'required': 'At least you must select one model'},
                         widget=forms.Select(attrs={'class': 'form-control'}))
 
     state = ChoiceField(label="State",
-                        choices=get_choices(),
+                        choices=InstanceState.choices + RequestState.choices,
                         error_messages={'required': 'At least you must select one state'},
                         widget=forms.Select(attrs={'class': 'form-control'}))
 
