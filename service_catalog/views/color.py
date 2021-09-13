@@ -9,7 +9,7 @@ map_dict_request_state = {
     RequestState.PROCESSING: "orange",
     RequestState.COMPLETE: "success",
     RequestState.FAILED: "danger",
-    RequestState.CANCELED: "light"
+    RequestState.CANCELED: "secondary"
 }
 
 map_dict_instance_state = {

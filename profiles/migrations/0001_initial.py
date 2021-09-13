@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -18,7 +17,9 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)
+                 ),
             ],
         ),
         migrations.CreateModel(
@@ -26,7 +27,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, unique=True)),
-                ('user_set', models.ManyToManyField(blank=True, help_text='The users in this billing group.', related_name='billing_groups', related_query_name='billing_groups', to=settings.AUTH_USER_MODEL)),
+                ('user_set', models.ManyToManyField(blank=True, help_text='The users in this billing group.',
+                                                    related_name='billing_groups', related_query_name='billing_groups',
+                                                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

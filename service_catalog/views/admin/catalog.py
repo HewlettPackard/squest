@@ -9,12 +9,6 @@ from service_catalog.models.operations import OperationType
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def manage_services(request):
-    services = Service.objects.all()
-    return render(request, 'service_catalog/admin/service/service-list.html', {'services': services})
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def add_service(request):
     if request.method == 'POST':
         form = ServiceForm(request.POST, request.FILES)
@@ -36,25 +30,6 @@ def add_service(request):
     context = {'form': form, 'breadcrumbs': breadcrumbs}
     return render(request,
                   'service_catalog/admin/service/service-create.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def service_operations(request, service_id):
-    target_service = get_object_or_404(Service, id=service_id)
-    operations = Operation.objects.filter(service=target_service)
-    breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
-        {'text': target_service.name, 'url': ""},
-        {'text': 'Operations', 'url': ""},
-    ]
-    context = {
-        "operations": operations,
-        "service": target_service,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request,
-                  "service_catalog/admin/service/operation/operation-list.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

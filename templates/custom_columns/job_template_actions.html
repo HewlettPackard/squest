@@ -1,0 +1,14 @@
+<a title="Synchronize {{ record.name }} from Tower/AWX"
+   id="job_template_{{ record.id }}"
+   onclick="sync_job_template({{ tower_id }},{{ record.id }})"
+   role="button" class="btn btn-default bg-sm">
+    <i class="fas fa-sync"></i>
+</a>
+<a href="{% if  record.tower_server.secure %}https://{% else %}http://{% endif %}{{ record.tower_server.host }}/#/templates/job_template/{{ record.tower_id }}"
+   class="btn btn-default bg-sm">
+    <i class="fas fa-external-link-square-alt"></i>
+</a>
+<a href="{% url 'service_catalog:delete_job_template' tower_id=record.tower_server.id job_template_id=record.id %}"
+   class="btn btn-danger bg-sm">
+    <i class="fas fa-trash"></i>
+</a>

@@ -100,7 +100,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
         url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertEquals(1, len(response.context["job_templates"]))
+        self.assertEquals(1, len(response.context["table"].data.data))
 
     def test_tower_job_templates_compliancy_list(self):
         args = copy.copy(self.args)

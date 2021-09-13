@@ -1,0 +1,3 @@
+<a href="{% if record.secure %}https://{% else %}http://{% endif %}{{ record.url }}">
+    {% if record.secure %}https://{% else %}http://{% endif %}{{ record.host }}
+</a>

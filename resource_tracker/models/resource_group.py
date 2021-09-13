@@ -1,8 +1,8 @@
 from django.db import models
 from taggit.managers import TaggableManager
 
-from resource_tracker.models import ResourceGroupAttributeDefinition, ExceptionResourceTracker, ResourceTextAttribute, \
-    ResourceAttribute, ResourceGroupTextAttributeDefinition
+from resource_tracker.models import ResourceGroupAttributeDefinition, ExceptionResourceTracker, \
+    ResourceGroupTextAttributeDefinition
 
 
 class ResourceGroup(models.Model):
@@ -52,7 +52,7 @@ class ResourceGroup(models.Model):
         text_attribute = ResourceGroupTextAttributeDefinition.objects.get(id=attribute_id)
         if name != text_attribute.name:
             self.raise_if_text_attribute_name_exist(name)
-        text_attribute.edit(name,help_text)
+        text_attribute.edit(name, help_text)
         self.init_text_attribute(text_attribute)
         return text_attribute
 
@@ -66,7 +66,7 @@ class ResourceGroup(models.Model):
         for resource in self.resources.all():
             resource.text_attributes.get_or_create(text_attribute_type=attribute)
 
-    def create_resource(self, name) -> 'Resource':
+    def create_resource(self, name):
         resource, _ = self.resources.get_or_create(name=name)
         for attribute in self.attribute_definitions.all():
             resource.attributes.create(attribute_type=attribute)

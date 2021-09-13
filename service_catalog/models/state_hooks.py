@@ -1,10 +1,16 @@
 import logging
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from service_catalog.models import Service, JobTemplate
 
 logger = logging.getLogger(__name__)
+
+
+class HookModel(models.TextChoices):
+    Instance = 'Instance', _('Instance')
+    Request = 'Request', _('Request')
 
 
 class ServiceStateHook(models.Model):
@@ -13,7 +19,7 @@ class ServiceStateHook(models.Model):
                                  related_name='instances',
                                  related_query_name='instance',
                                  null=True)
-    model = models.CharField(max_length=100)
+    model = models.CharField(max_length=100, choices=HookModel.choices)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     extra_vars = models.JSONField(default=dict)
@@ -21,7 +27,7 @@ class ServiceStateHook(models.Model):
 
 class GlobalHook(models.Model):
     name = models.CharField(unique=True, max_length=100)
-    model = models.CharField(max_length=100)
+    model = models.CharField(max_length=100, choices=HookModel.choices)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     extra_vars = models.JSONField(default=dict)

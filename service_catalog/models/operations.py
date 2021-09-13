@@ -16,12 +16,13 @@ class OperationType(models.TextChoices):
 
 class Operation(models.Model):
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name="Operation name")
     description = models.CharField(max_length=500, blank=True, null=True)
     type = models.CharField(
         max_length=10,
         choices=OperationType.choices,
         default=OperationType.CREATE,
+        verbose_name="Operation type"
     )
     enabled_survey_fields = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
@@ -29,7 +30,7 @@ class Operation(models.Model):
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     auto_accept = models.BooleanField(default=False)
     auto_process = models.BooleanField(default=False)
-    process_timeout_second = models.IntegerField(default=60)
+    process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
 
     def update_survey(self):
         new_end_user_survey = dict()

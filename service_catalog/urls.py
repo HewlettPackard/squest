@@ -3,6 +3,16 @@ from django.urls import path
 
 from Squest import settings
 from . import views
+from .views.announcement_list_view import AnnouncementListView
+from .views.doc_list_view import DocListView
+from .views.global_hook_list_view import GlobalHookListView
+from .views.instance_list_view import InstanceListView
+from .views.job_template_list_view import JobTemplateListView
+from .views.operation_list_view import OperationListView
+from .views.request_list_view import RequestListView
+from .views.service_list_view import ServiceListView
+from .views.support_list_view import SupportListView
+from .views.tower_server_list_view import TowerServerListView
 
 app_name = 'service_catalog'
 
@@ -11,29 +21,29 @@ urlpatterns = [
     path('', views.dashboards, name='home'),
     path('dashboards/', views.dashboards, name='dashboards'),
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
-    path('requests/', views.request_list, name='request_list'),
+    path('requests/', RequestListView.as_view(), name='request_list'),
     path('services/', views.service_list, name='service_list'),
-    path('instances/', views.instance_list, name='instance_list'),
-    path('docs/', views.doc_list, name='doc_list'),
+    path('instances/', InstanceListView.as_view(), name='instance_list'),
+    path('docs/', DocListView.as_view(), name='doc_list'),
     path('docs/<int:doc_id>/show/', views.doc_show, name='doc_show'),
 
     # settings URLs
-    path('settings/tower/', views.list_tower, name='list_tower'),
+    path('settings/tower/', TowerServerListView.as_view(), name='list_tower'),
     path('settings/tower/add/', views.add_tower, name='add_tower'),
     path('settings/tower/<int:tower_id>/sync/', views.sync_tower, name='sync_tower'),
     path('settings/tower/<int:tower_id>/sync/<int:job_template_id>', views.sync_tower, name='sync_job_template'),
     path('settings/tower/<int:tower_id>/delete/', views.delete_tower, name='delete_tower'),
     path('settings/tower/<int:tower_id>/update/', views.update_tower, name='update_tower'),
-    path('settings/tower/<int:tower_id>/job_templates/', views.tower_job_templates_list,
+    path('settings/tower/<int:tower_id>/job_templates/', JobTemplateListView.as_view(),
          name='tower_job_templates_list'),
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
          name='delete_job_template'),
     path('settings/tower/<int:tower_id>/job_templates/<int:job_template_id>/compliancy', views.job_template_compliancy,
          name='job_template_compliancy'),
 
-    path('settings/catalog/service/', views.manage_services, name='manage_services'),
+    path('settings/catalog/service/', ServiceListView.as_view(), name='manage_services'),
     path('settings/catalog/service/add_service/', views.add_service, name='create_service'),
-    path('settings/catalog/service/<int:service_id>/operations/', views.service_operations, name='service_operations'),
+    path('settings/catalog/service/<int:service_id>/operations/', OperationListView.as_view(), name='service_operations'),
     path('settings/catalog/service/<int:service_id>/delete/', views.delete_service, name='delete_service'),
     path('settings/catalog/service/<int:service_id>/edit/', views.edit_service, name='edit_service'),
     path('settings/catalog/service/<int:service_id>/operations/add/', views.add_service_operation,
@@ -44,14 +54,14 @@ urlpatterns = [
     views.edit_service_operation, name='edit_service_operation'),
     path('settings/catalog/service/<int:service_id>/operations/<int:operation_id>/survey/',
     views.service_operation_edit_survey, name='service_operation_edit_survey'),
-    path('settings/global_hook/', views.global_hook_list, name='global_hook_list'),
+    path('settings/global_hook/', GlobalHookListView.as_view(), name='global_hook_list'),
     path('settings/global_hook/create/', views.global_hook_create, name='global_hook_create'),
     path('settings/global_hook/<int:global_hook_id>/edit/', views.global_hook_edit, name='global_hook_edit'),
     path('settings/global_hook/<int:global_hook_id>/delete/', views.global_hook_delete, name='global_hook_delete'),
     path('settings/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
 
-    path('settings/announcement/', views.announcement_list, name='announcement_list'),
+    path('settings/announcement/', AnnouncementListView.as_view(), name='announcement_list'),
     path('settings/announcement/create/', views.announcement_create, name='announcement_create'),
     path('settings/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
     path('settings/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
@@ -86,5 +96,5 @@ urlpatterns = [
     path('admin/instance/<int:instance_id>/support/<int:support_id>', views.admin_instance_support_details,
          name='admin_instance_support_details'),
     path('admin/instance/<int:instance_id>/edit/', views.admin_instance_edit, name='admin_instance_edit'),
-    path('admin/support/', views.admin_support_list, name='admin_support_list'),
+    path('admin/support/', SupportListView.as_view(), name='admin_support_list'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

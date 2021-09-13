@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block header_button %}
+    {% if html_button_path %}
+        {% include html_button_path %}
+    {% endif %}
+{% endblock %}
+
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-body">
+                        {% render_table table %}
+                    </div>
+                </div>
+            </section>
+            {% if filter %}
+                <section class="col-lg-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form class="form-horizontal" action="" method="get">{% csrf_token %}
+                                {{ filter.form.as_p }}
+                                <button class="btn btn-primary" type="submit">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'admin-lte/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js' %}"></script>
+{% endblock %}

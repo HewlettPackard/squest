@@ -8,7 +8,6 @@ import profiles.models.token
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('profiles', '0001_initial'),
@@ -20,10 +19,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', models.DateTimeField(blank=True, null=True)),
-                ('expires', models.DateTimeField(blank=True, null=True, validators=[profiles.models.token.validate_date])),
-                ('key', models.CharField(max_length=40, unique=True, validators=[django.core.validators.MinLengthValidator(40)])),
+                ('expires',
+                 models.DateTimeField(blank=True, null=True, validators=[profiles.models.token.validate_date])),
+                ('key', models.CharField(max_length=40, unique=True,
+                                         validators=[django.core.validators.MinLengthValidator(40)])),
                 ('description', models.CharField(blank=True, max_length=200)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tokens', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                           related_name='tokens', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
