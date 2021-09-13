@@ -7,7 +7,7 @@ from service_catalog.models import Doc
 
 
 class DocTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/doc_actions.html')
+    actions = TemplateColumn(template_name='custom_columns/doc_actions.html', orderable=False)
     services = TemplateColumn(template_name='custom_columns/doc_services.html', verbose_name="Linked services")
     title = LinkColumn("service_catalog:doc_show", args=[A("id")])
 

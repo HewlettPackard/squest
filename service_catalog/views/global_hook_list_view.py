@@ -7,7 +7,7 @@ from service_catalog.models import GlobalHook
 
 class GlobalHookTable(tables.Table):
     state = TemplateColumn(template_name='custom_columns/global_hook_state.html')
-    actions = TemplateColumn(template_name='custom_columns/global_hook_actions.html')
+    actions = TemplateColumn(template_name='custom_columns/global_hook_actions.html', orderable=False)
 
     class Meta:
         model = GlobalHook
