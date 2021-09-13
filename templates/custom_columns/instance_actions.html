@@ -1,0 +1,15 @@
+{% if is_super %}
+    <a href="{% url 'service_catalog:admin_instance_details' record.id %}" class="btn btn-info bg-sm">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+{% else %}
+    <a href="{% url 'service_catalog:customer_instance_details' record.id %}"
+       class="btn btn-info bg-sm {{ record.id |map_instance_available }}">
+        <i class="fas fa-wrench"></i> Manage
+    </a>
+    {% if record.state == "DELETED" %}
+        <a href="{% url 'service_catalog:customer_instance_archive' record.id %}" class="btn btn-dark bg-sm">
+            <i class="fas fa-archive"></i> Archive
+        </a>
+    {% endif %}
+{% endif %}

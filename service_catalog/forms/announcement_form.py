@@ -13,7 +13,6 @@ class AnnouncementForm(ModelForm):
         super(AnnouncementForm, self).__init__(*args, **kwargs)
         self.fields['date_start'].widget = DateTimePicker(
             options={
-                'useCurrent': True,
                 'timeZone': str(timezone.get_current_timezone()),
                 'collapse': False,
                 'minDate': str(timezone.now().astimezone().strftime("%Y-%m-%d 00:00:00")),
@@ -24,7 +23,6 @@ class AnnouncementForm(ModelForm):
         )
         self.fields['date_stop'].widget = DateTimePicker(
             options={
-                'useCurrent': True,
                 'timeZone': str(timezone.get_current_timezone()),
                 'collapse': False,
                 'minDate': str(timezone.now().astimezone().strftime("%Y-%m-%d 00:00:00")),

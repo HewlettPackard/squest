@@ -10,13 +10,6 @@ from profiles.models import BillingGroup
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def billing_group_list(request):
-    groups = BillingGroup.objects.all()
-    context = {'groups': groups, 'group_url': "billing_group", 'display_title': 'Billing groups'}
-    return render(request, 'profiles/group/group-list.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def billing_group_edit(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
     form = BillingGroupForm(request.POST or None, instance=group)
@@ -71,18 +64,6 @@ def billing_group_delete(request, billing_group_id):
                     } if group.user_set.all() else None
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def user_by_billing_group_list(request, billing_group_id):
-    group = get_object_or_404(BillingGroup, id=billing_group_id)
-    breadcrumbs = [
-        {'text': 'Groups', 'url': reverse('profiles:group_list')},
-        {'text': group.name, 'url': ""},
-        {'text': "Users", 'url': ""}
-    ]
-    context = {'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/group/user-by-group-list.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

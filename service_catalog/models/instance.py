@@ -25,7 +25,7 @@ class InstanceState(models.TextChoices):
 
 
 class Instance(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(verbose_name="Instance name", max_length=100)
     spec = models.JSONField(default=dict)
     service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
     state = FSMField(default=InstanceState.PENDING)

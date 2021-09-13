@@ -13,12 +13,10 @@ class TestCustomerRequestList(BaseTestRequest):
         url = reverse('service_catalog:request_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("filter" in response.context)
-        self.assertEquals(len(response.context["filter"].qs), 1)
-
+        self.assertEquals(len(response.context["table"].data.data), 1)
+        self.client.logout()
         # second user has no request
         self.client.login(username=self.standard_user_2, password=self.common_password)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("filter" in response.context)
-        self.assertEquals(len(response.context["filter"].qs), 0)
+        self.assertEquals(len(response.context["table"].data.data), 0)

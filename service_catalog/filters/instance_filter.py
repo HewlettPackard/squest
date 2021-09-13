@@ -1,41 +1,23 @@
-import django_filters
-from django import forms
+from django.forms import SelectMultiple
+from django_filters import MultipleChoiceFilter
+from service_catalog.models import Instance, Service
+from service_catalog.models.instance import InstanceState
+from utils.squest_filter import SquestFilter
 
-from service_catalog.models import Instance
 
-
-class InstanceFilter(django_filters.FilterSet):
-    PENDING = 'pending'
-    PROVISION_FAILED = 'provision_failed'
-    PROVISIONING = 'provisioning'
-    UPDATING = 'updating'
-    UPDATE_FAILED = 'update_failed'
-    DELETING = 'deleting'
-    DELETED = 'deleted'
-    DELETE_FAILED = 'delete_failed'
-    ARCHIVED = 'archived'
-    AVAILABLE = 'available'
-
-    CHOICES = (
-        (PENDING, 'PENDING'),
-        (PROVISION_FAILED, 'PROVISION_FAILED'),
-        (PROVISIONING, 'PROVISIONING'),
-        (UPDATING, 'UPDATING'),
-        (UPDATE_FAILED, 'UPDATE_FAILED'),
-        (DELETING, 'DELETING'),
-        (DELETE_FAILED, 'DELETE_FAILED'),
-        (DELETED, 'DELETED'),
-        (ARCHIVED, 'ARCHIVED'),
-        (AVAILABLE, 'AVAILABLE'),
-    )
-
-    name = django_filters.CharFilter(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    state = django_filters.MultipleChoiceFilter(
-        choices=CHOICES,
-        null_value=None,
-        widget=forms.SelectMultiple(attrs={'class': 'selectpicker',
-                                           'data-live-search': "true"}))
-
+class InstanceFilter(SquestFilter):
     class Meta:
         model = Instance
-        fields = ['name', 'state']
+        fields = ['name', 'service__id', 'state']
+
+    state = MultipleChoiceFilter(
+        choices=InstanceState.choices,
+        widget=SelectMultiple(attrs={'data-live-search': "true"}))
+
+    service__id = MultipleChoiceFilter(
+        widget=SelectMultiple(attrs={'data-live-search': "true"}))
+
+    def __init__(self, *args, **kwargs):
+        super(InstanceFilter, self).__init__(*args, **kwargs)
+        self.filters['service__id'].field.label = 'Type'
+        self.filters['service__id'].field.choices = [(service.id, service.name) for service in Service.objects.all()]

@@ -9,12 +9,6 @@ from service_catalog.models.request import RequestState
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def global_hook_list(request):
-    return render(request, 'service_catalog/settings/global_hooks/global-hook-list.html',
-                  {'global_hooks': GlobalHook.objects.all()})
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def global_hook_create(request):
     if request.method == 'POST':
         form = GlobalHookForm(request.POST)

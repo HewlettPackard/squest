@@ -10,12 +10,6 @@ from service_catalog.models import TowerServer, JobTemplate
 from service_catalog.serializers import TaskResultSerializer
 
 
-@permission_required('service_catalog.view_towerserver')
-def list_tower(request):
-    tower_servers = TowerServer.objects.all()
-    return render(request, 'service_catalog/admin/tower/tower-list.html', {'tower_servers': tower_servers})
-
-
 @permission_required('service_catalog.add_towerserver')
 def add_tower(request):
     if request.method == 'POST':
@@ -49,24 +43,6 @@ def get_task_result(request, task_id):
     task_result = TaskResult.objects.get(id=task_id)
     serialized_task = TaskResultSerializer(task_result)
     return JsonResponse(serialized_task.data, status=202)
-
-
-@permission_required('service_catalog.view_jobtemplate')
-def tower_job_templates_list(request, tower_id):
-    tower_server = get_object_or_404(TowerServer, id=tower_id)
-    job_templates = JobTemplate.objects.filter(tower_server=tower_server)
-    breadcrumbs = [
-        {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
-        {'text': tower_server.name, 'url': ""},
-        {'text': 'Job templates', 'url': ""},
-    ]
-    context = {
-        'tower_id': tower_server.id,
-        "job_templates": job_templates,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request,
-                  "service_catalog/admin/tower/job_templates/job-templates-list.html", context)
 
 
 @permission_required('service_catalog.delete_towerserver')

@@ -11,7 +11,6 @@ class TestServiceRequestForm(BaseTest):
         super(TestServiceRequestForm, self).setUp()
         data = {
             'text_variable': 'my_var',
-            'multiplechoice_variable': 'choice1',
             'multiplechoice_variable': 'choice1', 'multiselect_var': 'multiselect_1',
             'textarea_var': '2',
             'password_var': 'pass',

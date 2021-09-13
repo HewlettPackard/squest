@@ -7,7 +7,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django_fsm import can_proceed
 
-from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.mail_utils import send_email_request_canceled, send_mail_request_update
 from service_catalog.models import Request
