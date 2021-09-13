@@ -13,8 +13,8 @@ class TowerServerTable(tables.Table):
     name = LinkColumn("service_catalog:update_tower", args=[A("id")])
     host = TemplateColumn(template_name='custom_columns/tower_server_host.html')
     jobtemplate = TemplateColumn(template_name='custom_columns/tower_server_job_templates.html',
-                                  verbose_name="Job templates")
-    actions = TemplateColumn(template_name='custom_columns/tower_server_actions.html')
+                                 verbose_name="Job templates")
+    actions = TemplateColumn(template_name='custom_columns/tower_server_actions.html', orderable=False)
 
     class Meta:
         model = TowerServer

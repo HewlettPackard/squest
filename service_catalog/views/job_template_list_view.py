@@ -12,7 +12,7 @@ from service_catalog.models import JobTemplate, TowerServer
 class JobTemplateTable(tables.Table):
     compliant = TemplateColumn(template_name='custom_columns/job_template_compliant.html',
                                verbose_name="Squest compliant")
-    actions = TemplateColumn(template_name='custom_columns/job_template_actions.html')
+    actions = TemplateColumn(template_name='custom_columns/job_template_actions.html', orderable=False)
 
     class Meta:
         model = JobTemplate
