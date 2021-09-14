@@ -35,6 +35,7 @@ class OperationListView(SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         service_id = self.kwargs.get('service_id')
         context['service_id'] = service_id
+        context['html_button_path'] = "generics/buttons/add_operation.html"
         context['breadcrumbs'] = [
             {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
             {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
