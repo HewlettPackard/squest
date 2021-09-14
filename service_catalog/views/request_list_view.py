@@ -34,6 +34,7 @@ class RequestListView(SingleTableMixin, FilterView):
     table_class = RequestTable
     model = Request
     template_name = 'generics/list.html'
+    ordering = '-date_submitted'
 
     filterset_class = RequestFilter
 
