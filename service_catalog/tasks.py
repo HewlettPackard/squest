@@ -1,6 +1,7 @@
 import logging
 
 from celery import shared_task
+from django.core import management
 from django.core.mail import EmailMultiAlternatives
 
 from .models import TowerServer, Request
@@ -33,3 +34,13 @@ def send_email(subject, plain_text, html_template, from_email, receivers, reply_
     msg = EmailMultiAlternatives(subject, plain_text, from_email, receivers, reply_to=reply_to)
     msg.attach_alternative(html_template, "text/html")
     msg.send()
+
+
+@shared_task
+def perform_backup():
+    logger.info("Execute database backup")
+    management.call_command('dbbackup', '--clean')
+    logger.info("Database backup complete")
+    logger.info("Execute media backup")
+    management.call_command('mediabackup', '--clean')
+    logger.info("Database media complete")

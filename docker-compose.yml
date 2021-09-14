@@ -7,7 +7,7 @@ services:
     env_file: docker/environment_variables/db.env
     volumes:
       - db_data:/var/lib/mysql
-      - "${PWD}/docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+      - "./docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
     ports:
       - "3306:3306"
 
@@ -35,6 +35,7 @@ services:
     volumes:
       - django_static:/app/static
       - django_media:/app/media
+      - backup:/app/backup
     depends_on:
       - db
       - rabbitmq
@@ -69,10 +70,11 @@ services:
     ports: []
     command: >
       bash -c "/wait &&
-      celery -A service_catalog worker --beat --scheduler django -l info"
+      celery -A service_catalog worker --beat -l info"
 
 volumes:
   db_data: {}
   rabbitmq_data: {}
   django_static: {}
   django_media: {}
+  backup: {}
