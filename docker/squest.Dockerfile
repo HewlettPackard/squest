@@ -9,7 +9,7 @@
 #-p 8000:8000 \
 #squest
 
-FROM python:3.8-slim
+FROM python:3.8-slim-bullseye
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
@@ -23,7 +23,7 @@ RUN groupadd -r ${APP_USER} && useradd --no-log-init -r -g ${APP_USER} ${APP_USE
 # Install system deps
 RUN set -ex \
     && RUN_DEPS=" \
-    default-libmysqlclient-dev \
+    default-libmysqlclient-dev default-mysql-client \
     gcc \
     curl \
     libldap2-dev libsasl2-dev \
@@ -60,7 +60,8 @@ COPY poetry.lock pyproject.toml package.json package-lock.json /app/
 # Create a static and media folders
 RUN mkdir /app/static && \
     mkdir /app/media && \
-    mkdir /app/node_modules
+    mkdir /app/node_modules && \
+    mkdir /app/backup
 
 # Project initialization
 RUN cd /app && poetry config virtualenvs.create false && poetry install

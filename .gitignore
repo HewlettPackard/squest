@@ -5,6 +5,7 @@ static/
 ldap_config.py
 node_modules/
 docker/certs/*
+backup/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
