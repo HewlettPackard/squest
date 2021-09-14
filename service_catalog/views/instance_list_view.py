@@ -25,7 +25,7 @@ class InstanceTable(tables.Table):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "service__name", "request", "state", "opened_support_count", "actions")
+        fields = ("name", "service__name", "request", "state", "opened_support_count", "spoc", "actions")
 
 
 class InstanceListView(SingleTableMixin, FilterView):

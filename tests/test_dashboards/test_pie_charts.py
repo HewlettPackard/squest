@@ -57,7 +57,7 @@ class TestPieChart(BaseTest):
         state = RequestState.ACCEPTED
         for i in range(7):
             instance = Instance.objects.create(service=None, name=name,
-                                               billing_group=billing_group)
+                                               billing_group=billing_group, spoc=user)
             Request.objects.create(instance=instance, state=state, user=user,
                                    operation=service.operations.first())
             instances.append(instance)
@@ -68,7 +68,7 @@ class TestPieChart(BaseTest):
         state = RequestState.FAILED
         for i in range(5):
             instance = Instance.objects.create(service=service, name=name,
-                                               billing_group=billing_group)
+                                               billing_group=billing_group, spoc=user)
             Request.objects.create(instance=instance, state=state, user=user,
                                    operation=service.operations.first())
             instances.append(instance)
@@ -80,7 +80,7 @@ class TestPieChart(BaseTest):
         state = RequestState.COMPLETE
         for i in range(3):
             instance = Instance.objects.create(service=service, name=name,
-                                               billing_group=billing_group)
+                                               billing_group=billing_group,spoc=user)
             Request.objects.create(instance=instance, state=state, user=user,
                                    operation=service.operations.first())
             instances.append(instance)

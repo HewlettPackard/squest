@@ -37,9 +37,10 @@ squest:
       id: 1
       name: test
       service: 1
-      spec: {}
+      spec:
+        file_name: foo.conf
       state: PROVISIONING
-file_name: foo.conf
+      spoc: 2
 ```
 
 Specs related to the created instance are important in order to be sent later to a playbook in charge of updating 
@@ -139,6 +140,7 @@ squest:
       service: 1
       spec: 
         file_name: foo.conf
+      spoc: 2
       state: UPDATING
 string_to_place_in_file: "this is a string"
 ```
