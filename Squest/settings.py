@@ -13,7 +13,11 @@ import os
 import sys
 from pathlib import Path
 import time
-from service_catalog.utils import str_to_bool
+
+from celery.schedules import crontab
+
+from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
+    get_celery_crontab_parameters_from_crontab_line
 
 # LOAD configuration from the environment
 SECRET_KEY = os.environ.get('SECRET_KEY', 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-')
@@ -25,6 +29,8 @@ MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'squest_password')
 MYSQL_HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
 MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
+BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
+BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM. Use */1 to test every minute
 
 # -------------------------------
 # SQUEST CONFIG
@@ -43,6 +49,9 @@ print(f"COLLECTING_STATIC: {COLLECTING_STATIC}")
 print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 print(f"IS_GUNICORN_EXECUTION: {IS_GUNICORN_EXECUTION}")
 print(f"LDAP_ENABLED: {LDAP_ENABLED}")
+print(f"BACKUP_ENABLED: {BACKUP_ENABLED}")
+if BACKUP_ENABLED:
+    print(f"BACKUP_CRONTAB: {BACKUP_CRONTAB}")
 
 # Application definition
 INSTALLED_APPS = [
@@ -64,6 +73,7 @@ INSTALLED_APPS = [
     'taggit',
     'martor',
     'django_tables2',
+    'dbbackup',
     'service_catalog',
     'resource_tracker',
     'profiles',
@@ -234,6 +244,7 @@ CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BEAT_SCHEDULER = 'service_catalog.celery_beat_scheduler.DatabaseSchedulerWithCleanup'
 
 # -----------------------------------------
 # Squest email config
@@ -336,3 +347,25 @@ REST_FRAMEWORK = {
 # -----------------------------------------
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
 
+# -----------------------------------------
+# django-dbbackup https://django-dbbackup.readthedocs.io/en/master/index.html
+# -----------------------------------------
+DBBACKUP_CLEANUP_KEEP = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
+DBBACKUP_CLEANUP_KEEP_MEDIA = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': 'backup'}
+mysqldump_major_version = get_mysql_dump_major_version()
+print(f"mysqldump major version: {mysqldump_major_version}")
+if mysqldump_major_version < 10:
+    DBBACKUP_CONNECTORS = {
+        'default': {
+            'DUMP_SUFFIX': '--no-tablespaces --column-statistics=0',
+        }
+    }
+if BACKUP_ENABLED:
+    CELERY_BEAT_SCHEDULE = {
+        "perform_backup": {
+            "task": "service_catalog.tasks.perform_backup",
+            "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)),
+        },
+    }

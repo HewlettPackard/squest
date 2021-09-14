@@ -86,7 +86,7 @@ celery -A service_catalog worker -l info
 Run Celery beat for periodic tasks from a new terminal
 ```bash
 poetry shell
-celery -A service_catalog worker --beat --scheduler django -l info
+celery -A service_catalog worker --beat -l info
 ```
 
 ### Django integrated web server
