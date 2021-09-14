@@ -316,12 +316,6 @@ class AcceptRequestForm(forms.Form):
                                                  self.target_request.operation.enabled_survey_fields)
             prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey)
 
-    @staticmethod
-    def _get_field_group(field_name, enabled_field):
-        if enabled_field[field_name]:
-            return "User"
-        return "Admin"
-
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
