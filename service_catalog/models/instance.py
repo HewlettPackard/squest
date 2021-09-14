@@ -1,8 +1,12 @@
 import logging
 
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition, post_transition
+from guardian.models import UserObjectPermission
 
 from profiles.models import BillingGroup
 from . import Service
@@ -28,11 +32,13 @@ class Instance(models.Model):
     name = models.CharField(verbose_name="Instance name", max_length=100)
     spec = models.JSONField(default=dict)
     service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
+    spoc = models.ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
+                             on_delete=models.SET_NULL)
     state = FSMField(default=InstanceState.PENDING)
     billing_group = models.ForeignKey(
         BillingGroup,
         blank=True,
-        null=True, 
+        null=True,
         on_delete=models.SET_NULL,
         related_name='instances',
         related_query_name='instance'
@@ -98,3 +104,10 @@ class Instance(models.Model):
 
 
 post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
+
+
+@receiver(post_save, sender=Instance)
+def give_permissions_after_creation(sender, instance, created, **kwargs):
+    if created:
+        UserObjectPermission.objects.assign_perm('change_instance', instance.spoc, obj=instance)
+        UserObjectPermission.objects.assign_perm('view_instance', instance.spoc, obj=instance)

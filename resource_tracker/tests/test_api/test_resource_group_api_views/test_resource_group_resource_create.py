@@ -43,7 +43,7 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
         self._check_resource_created(data=data, executed_attribute_length=1, executed_text_attribute_length=1)
 
     def test_create_valid_resource_with_instance(self):
-        test_instance = Instance.objects.create(name="test_instance")
+        test_instance = Instance.objects.create(name="test_instance", spoc=self.superuser)
         data = {
             "name": "new_resource",
             "service_catalog_instance": test_instance.id,

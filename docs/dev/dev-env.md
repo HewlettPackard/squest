@@ -17,12 +17,12 @@ Following tools need to be installed on your workstation:
 
 Ubuntu based OS:
 ```bash
-sudo apt-get install libmysqlclient-dev graphviz
+sudo apt-get install libmysqlclient-dev graphviz default-mysql-client
 ```
 
 CentOS/RedHat/Fedora
 ```bash
-sudo yum install mysql-devel graphviz
+sudo yum install mysql-devel graphviz mysql
 ```
 
 ## Start a development environment
