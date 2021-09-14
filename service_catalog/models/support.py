@@ -19,8 +19,8 @@ class Support(models.Model):
                                  related_query_name="support")
     user_open = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     state = FSMField(default=SupportState.OPENED, choices=SupportState.choices)
-    date_opened = models.DateField(auto_now=True, blank=True, null=True)
-    date_closed = models.DateField(auto_now=False, blank=True, null=True)
+    date_opened = models.DateTimeField(auto_now=True, blank=True, null=True)
+    date_closed = models.DateTimeField(auto_now=False, blank=True, null=True)
 
     @transition(field=state, source=SupportState.OPENED, target=SupportState.CLOSED)
     def do_close(self):
