@@ -1,6 +1,5 @@
-from guardian.mixins import UserObjectPermission
-
 from service_catalog.forms import AcceptRequestForm
+from service_catalog.forms.utils import _get_field_group
 from service_catalog.models import Request, Instance
 from tests.base import BaseTest
 
@@ -36,12 +35,12 @@ class TestServiceRequestForm(BaseTest):
             'float_var': False,
             'integer_var': False
         }
-        expected_result = "User"
-        self.assertEquals(expected_result, AcceptRequestForm._get_field_group(field_name, enabled_field))
+        expected_result = "1. User"
+        self.assertEquals(expected_result, _get_field_group(field_name, enabled_field))
 
         field_name = 'multiplechoice_variable'
-        expected_result = "Admin"
-        self.assertEquals(expected_result, AcceptRequestForm._get_field_group(field_name, enabled_field))
+        expected_result = "2. Admin"
+        self.assertEquals(expected_result, _get_field_group(field_name, enabled_field))
 
     def test_accept_forms_field_count(self):
         parameters = {
