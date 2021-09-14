@@ -81,10 +81,8 @@ class ServiceRequestForm(forms.Form):
         billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data[
             "billing_group_id"] else self.service.billing_group_id
         billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None
-        new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group)
-        # give user perm on this instance
-        UserObjectPermission.objects.assign_perm('change_instance', self.user, obj=new_instance)
-        UserObjectPermission.objects.assign_perm('view_instance', self.user, obj=new_instance)
+        new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
+                                               spoc=self.user)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
                                              operation=self.create_operation,

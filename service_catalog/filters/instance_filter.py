@@ -8,7 +8,7 @@ from utils.squest_filter import SquestFilter
 class InstanceFilter(SquestFilter):
     class Meta:
         model = Instance
-        fields = ['name', 'service__id', 'state']
+        fields = ['name', 'spoc__username', 'service__id', 'state']
 
     state = MultipleChoiceFilter(
         choices=InstanceState.choices,
@@ -19,5 +19,6 @@ class InstanceFilter(SquestFilter):
 
     def __init__(self, *args, **kwargs):
         super(InstanceFilter, self).__init__(*args, **kwargs)
+        self.filters['spoc__username'].field.label = 'SPOC (Name)'
         self.filters['service__id'].field.label = 'Type'
         self.filters['service__id'].field.choices = [(service.id, service.name) for service in Service.objects.all()]
