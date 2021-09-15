@@ -1,137 +1,127 @@
 {% extends 'base.html' %}
-
-{% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
+{% block header_button %}
+    <a class="btn btn-primary float-right"
+       href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
+        Resources
+        <span class="badge badge-light">{{ resource_group.resources.all|length }}</span>
+    </a>
+{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% include "generics/form_edit.html" %}
+            </div>
         </div>
-        <!-- /.content-header -->
-        <!-- Main content -->
-        <div class="content">
-            <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
                 <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><strong>Attributes</strong></h3>
+                        <div class="card-tools">
+                            <a href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}"
+                               class="btn btn-success btn-sm">
+                                <i class="fas fa-plus"></i> Add attribute
+                            </a>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        {% if form.errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for field in form %}
-                                    {% if field.errors %}
-                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        {% include "generics/form_edit.html" %}
+                        <table class="table data_table_lite">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Consume from</th>
+                                <th>Produce for</th>
+                                <th>
+                                    <div class="float-right">
+                                        Operations
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for attribute in resource_group.attribute_definitions.all %}
+                                <tr>
+                                    <td class="align-middle">{{ attribute.name }}</td>
+                                    <td class="align-middle">{{ attribute.consume_from }}</td>
+                                    <td class="align-middle">{{ attribute.produce_for }}</td>
+                                    <td class="align-middle">
+                                        <div class="float-right">
+                                            <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                               class="btn btn-primary bg-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                               class="btn btn-danger bg-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"><strong>Attributes</strong></h3>
-                                <div class="card-tools">
-                                    <a href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}"
-                                       class="btn btn-success btn-sm">
-                                        <i class="fas fa-plus"></i> Add attribute
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <table class="table data_table_lite">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Consume from</th>
-                                        <th>Produce for</th>
-                                        <th>
-                                            <div class="float-right">
-                                                Operations
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for attribute in resource_group.attribute_definitions.all %}
-                                        <tr>
-                                            <td class="align-middle">{{ attribute.name }}</td>
-                                            <td class="align-middle">{{ attribute.consume_from }}</td>
-                                            <td class="align-middle">{{ attribute.produce_for }}</td>
-                                            <td class="align-middle">
-                                                <div class="float-right">
-                                                    <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                                       class="btn btn-primary bg-sm">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                                       class="btn btn-danger bg-sm">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"><strong>Text attributes</strong></h3>
-                                <div class="card-tools">
-                                    <a href="{% url 'resource_tracker:resource_group_text_attribute_create' resource_group.id %}"
-                                       class="btn btn-success btn-sm">
-                                        <i class="fas fa-plus"></i> Add text attribute
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <table class="table data_table_lite">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>
-                                            <div class="float-right">
-                                                Operations
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for attribute in resource_group.text_attribute_definitions.all %}
-                                        <tr>
-                                            <td class="align-middle">{{ attribute.name }}</td>
-                                            <td class="align-middle">
-                                                <div class="float-right">
-
-                                                    <a href="{% url 'resource_tracker:resource_group_text_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                                       class="btn btn-primary bg-sm">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <a href="{% url 'resource_tracker:resource_group_text_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                                       class="btn btn-danger bg-sm">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                </div>
-
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><strong>Text attributes</strong></h3>
+                        <div class="card-tools">
+                            <a href="{% url 'resource_tracker:resource_group_text_attribute_create' resource_group.id %}"
+                               class="btn btn-success btn-sm">
+                                <i class="fas fa-plus"></i> Add text attribute
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table data_table_lite">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>
+                                    <div class="float-right">
+                                        Operations
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for attribute in resource_group.text_attribute_definitions.all %}
+                                <tr>
+                                    <td class="align-middle">{{ attribute.name }}</td>
+                                    <td class="align-middle">
+                                        <div class="float-right">
+
+                                            <a href="{% url 'resource_tracker:resource_group_text_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                               class="btn btn-primary bg-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'resource_tracker:resource_group_text_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
+                                               class="btn btn-danger bg-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock %}
