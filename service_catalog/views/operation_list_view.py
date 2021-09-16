@@ -2,6 +2,8 @@ from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
+from guardian.mixins import LoginRequiredMixin
+
 from service_catalog.filters.operation_filter import OperationFilter
 from service_catalog.models import Operation, Service
 
@@ -20,7 +22,7 @@ class OperationTable(tables.Table):
                   "actions")
 
 
-class OperationListView(SingleTableMixin, FilterView):
+class OperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = OperationTable
     model = Operation

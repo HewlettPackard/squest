@@ -25,3 +25,8 @@ class GlobalHookDeleteViewsTest(BaseTest):
         response = self.client.post(self.url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(GlobalHook.objects.filter(id=id_to_delete).exists())
+
+    def test_cannot_delete_global_hook_when_logout(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEquals(302, response.status_code)

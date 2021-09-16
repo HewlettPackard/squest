@@ -32,7 +32,7 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'service_catalog:customer_instance_request_new_operation' instance_id=instance.id operation_id=operation.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'service_catalog:instance_request_new_operation' instance_id=instance.id operation_id=operation.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">

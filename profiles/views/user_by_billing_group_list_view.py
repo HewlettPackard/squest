@@ -3,6 +3,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
 from django.contrib.auth.models import User
+from guardian.mixins import LoginRequiredMixin
 
 from profiles.filters.user_filter import UserFilter
 from profiles.models import BillingGroup
@@ -17,7 +18,7 @@ class UserByBillingGroupTable(tables.Table):
         fields = ("username", "email", "actions")
 
 
-class UserByBillingGroupListView(SingleTableMixin, FilterView):
+class UserByBillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = UserByBillingGroupTable
     model = User

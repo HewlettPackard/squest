@@ -34,6 +34,10 @@ class TestAnnouncementUrls(BaseTest):
         for url in urls_list:
             response = self.client.get(url)
             self.assertEquals(200, response.status_code)
+        self.client.logout()
+        for url in urls_list:
+            response = self.client.get(url)
+            self.assertEquals(302, response.status_code)
 
     def test_all_delete_post(self):
         args_announcement = {

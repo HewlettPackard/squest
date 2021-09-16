@@ -1,6 +1,8 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
+from guardian.mixins import LoginRequiredMixin
+
 from service_catalog.filters.global_hook_filter import GlobalHookFilter
 from service_catalog.models import GlobalHook
 
@@ -15,7 +17,7 @@ class GlobalHookTable(tables.Table):
         fields = ("name", "model", "state", "job_template", "actions")
 
 
-class GlobalHookListView(SingleTableMixin, FilterView):
+class GlobalHookListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = GlobalHookTable
     model = GlobalHook

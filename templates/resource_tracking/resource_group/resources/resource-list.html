@@ -41,7 +41,7 @@
                                     <td class="align-middle">{{ resource.name }}</td>
                                     <td class="align-middle">
                                         {% if  resource.service_catalog_instance %}
-                                        <a href="{% url "service_catalog:admin_instance_details" resource.service_catalog_instance.id %}">
+                                        <a href="{% url "service_catalog:instance_details" resource.service_catalog_instance.id %}">
                                             {{ resource.service_catalog_instance.name }}
                                         </a>
                                         {% endif %}

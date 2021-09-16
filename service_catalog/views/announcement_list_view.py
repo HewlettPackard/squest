@@ -1,6 +1,7 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn, Column
+from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.announcement_filter import AnnouncementFilter
 from service_catalog.models import Announcement
@@ -17,7 +18,7 @@ class AnnouncementTable(tables.Table):
         fields = ("title", "date_start", "date_stop", "created_by__username", "type", "actions")
 
 
-class AnnouncementListView(SingleTableMixin, FilterView):
+class AnnouncementListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = AnnouncementTable
     model = Announcement

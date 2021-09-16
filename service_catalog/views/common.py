@@ -5,7 +5,6 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
@@ -14,16 +13,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_fsm import can_proceed
 from guardian.shortcuts import get_objects_for_user
 from martor.utils import LazyEncoder
 
 from profiles.models import BillingGroup
 from resource_tracker.models import ResourcePool
-from service_catalog.forms import SupportRequestForm
-from service_catalog.forms.common_forms import RequestMessageForm, SupportMessageForm
+from service_catalog.forms.common_forms import RequestMessageForm
 from service_catalog.models import Doc
-from service_catalog.models import Request, Instance, RequestMessage, Support, SupportMessage, Service
+from service_catalog.models import Request, Instance, RequestMessage, Support, Service
 from service_catalog.models.announcement import Announcement
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -169,8 +166,11 @@ def create_pie_chart_resource_pool_consumption_by_billing_groups() -> dict:
 
 @login_required
 def dashboards(request):
+    context = dict()
+    now = timezone.now()
+    context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
+    context['title'] = "Dashboard"
     if request.user.is_superuser:
-        context = dict()
         context['total_request'] = Request.objects.filter(state=RequestState.SUBMITTED).count()
         context['total_instance'] = Instance.objects.filter(state='AVAILABLE').count()
         context['total_support_opened'] = Support.objects.filter(state='OPENED').count()
@@ -181,18 +181,12 @@ def dashboards(request):
         context['pie_charts']['pie_chart_service'] = create_pie_chart_instance_by_service_type()
         context['pie_charts']['pie_chart_billing'] = create_pie_chart_instance_by_billing_groups()
         context['chart_resource_pool'] = create_pie_chart_resource_pool_consumption_by_billing_groups()
-        now = timezone.now()
-        context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
-        return render(request, 'service_catalog/admin/dashboard.html', context=context)
-
     else:
-        context = {
-            'total_request': get_objects_for_user(request.user, 'service_catalog.view_request').filter(
-                state=RequestState.SUBMITTED).count(),
-            'total_instance': get_objects_for_user(request.user, 'service_catalog.view_instance').filter(
-                state=InstanceState.AVAILABLE).count(),
-        }
-    return render(request, 'service_catalog/customer/dashboard.html', context=context)
+        context['total_request'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
+                state=RequestState.SUBMITTED).count()
+        context['total_instance'] = get_objects_for_user(request.user, 'service_catalog.view_instance').filter(
+                state=InstanceState.AVAILABLE).count()
+    return render(request, 'service_catalog/common/dashboard.html', context=context)
 
 
 def request_comment(request, request_id, redirect_to_view, breadcrumbs):
@@ -215,63 +209,6 @@ def request_comment(request, request_id, redirect_to_view, breadcrumbs):
         'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/common/request-comment.html", context)
-
-
-def instance_new_support(request, instance_id, breadcrumbs):
-    target_instance = get_object_or_404(Instance, id=instance_id)
-    parameters = {
-        'instance_id': instance_id
-    }
-    if request.method == 'POST':
-        form = SupportRequestForm(request.user, request.POST, **parameters)
-        if form.is_valid():
-            form.save()
-            if request.user.is_superuser:
-                return redirect('service_catalog:admin_instance_details', target_instance.id)
-            else:
-                return redirect('service_catalog:customer_instance_details', target_instance.id)
-    else:
-        form = SupportRequestForm(request.user, **parameters)
-    context = {'form': form, 'instance': target_instance, 'breadcrumbs': breadcrumbs}
-    return render(request, 'service_catalog/common/support-create.html', context)
-
-
-def instance_support_details(request, instance_id, support_id, breadcrumbs):
-    instance = get_object_or_404(Instance, id=instance_id)
-    support = get_object_or_404(Support, id=support_id)
-    messages = SupportMessage.objects.filter(support=support)
-    if request.method == "POST":
-        form = SupportMessageForm(request.POST or None)
-        if "btn_close" in request.POST:
-            if not can_proceed(support.do_close):
-                raise PermissionDenied
-            support.do_close()
-            support.save()
-        if "btn_re_open" in request.POST:
-            if not can_proceed(support.do_open):
-                raise PermissionDenied
-            support.do_open()
-            support.save()
-        if form.is_valid():
-            if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
-                new_message = form.save()
-                new_message.support = support
-                new_message.sender = request.user
-                new_message.save()
-            if request.user.is_superuser:
-                return redirect('service_catalog:admin_instance_support_details', instance.id, support.id)
-            else:
-                return redirect('service_catalog:customer_instance_support_details', instance.id, support.id)
-    else:
-        form = SupportMessageForm()
-    context = {
-        "form": form,
-        "instance": instance,
-        "messages": messages,
-        "support": support,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request, "service_catalog/common/instance-support-details.html", context)
 
 
 @login_required

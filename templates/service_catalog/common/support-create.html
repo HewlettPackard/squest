@@ -29,7 +29,7 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <form class="form-horizontal" action="{% url 'service_catalog:customer_instance_new_support' instance_id=instance.id %}" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url 'service_catalog:instance_new_support' instance_id=instance.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
