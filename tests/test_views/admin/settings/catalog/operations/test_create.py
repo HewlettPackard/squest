@@ -57,3 +57,15 @@ class OperationCreateTestCase(BaseTest):
         self.assertEquals(200, response.status_code)
         self.assertEquals(number_operation_before,
                           Operation.objects.filter(service=self.service_test.id).count())
+
+    def test_cannot_add_service_operation_when_logout(self):
+        self.client.logout()
+        data = {
+            "name": "new_service",
+            "description": "a new service",
+            "job_template": self.job_template_test.id,
+            "type": "CREATE",
+            "process_timeout_second": 60
+        }
+        response = self.client.post(self.url, data=data)
+        self.assertEquals(302, response.status_code)

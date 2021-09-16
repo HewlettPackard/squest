@@ -2,6 +2,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
 from django.contrib.auth.models import Group
+from guardian.mixins import LoginRequiredMixin
 
 from profiles.filters.group_filter import GroupFilter
 
@@ -16,7 +17,7 @@ class GroupTable(tables.Table):
         fields = ("name", "users", "actions")
 
 
-class GroupListView(SingleTableMixin, FilterView):
+class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = GroupTable
     model = Group

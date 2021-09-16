@@ -21,7 +21,7 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
             'operation_id': self.update_operation_test.id
         }
         data = {'text_variable': 'my_var'}
-        url = reverse('service_catalog:customer_instance_request_new_operation', kwargs=args)
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_instance.refresh_from_db()
@@ -35,7 +35,7 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
             'operation_id': self.update_operation_test_2.id
         }
         data = {'text_variable': 'my_var'}
-        url = reverse('service_catalog:customer_instance_request_new_operation', kwargs=args)
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
         response = self.client.post(url, data=data)
         self.assertEquals(403, response.status_code)
 
@@ -48,6 +48,6 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
                 'operation_id': self.update_operation_test.id
             }
             data = {'text_variable': 'my_var'}
-            url = reverse('service_catalog:customer_instance_request_new_operation', kwargs=args)
+            url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
             response = self.client.post(url, data=data)
             self.assertEquals(403, response.status_code)

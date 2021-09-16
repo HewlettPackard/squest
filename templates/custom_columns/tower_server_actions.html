@@ -1,5 +1,9 @@
-<a id="tower_{{ record.id }}" onclick="sync_all_job_template({{ record.id }})" role="button"
-   class="btn btn-default bg-sm">
+
+<a id="tower_{{ record.id }}"
+   data-tower-id ="{{ record.id }}"
+   data-url-sync="{% url 'service_catalog:sync_tower' record.id %}"
+   data-url-job-template="{% url 'api_admin_job_template_list' %}"
+   role="button" class="btn btn-default bg-sm ajax_sync_all_job_template">
     <i class="fas fa-sync"></i> Sync job templates
 </a>
 <a href="{% url 'service_catalog:update_tower' record.id %}" class="btn btn-primary bg-sm">

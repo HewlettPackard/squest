@@ -1,6 +1,7 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
+from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.models import Service
@@ -17,7 +18,7 @@ class ServiceTable(tables.Table):
         fields = ("name", "description", "operations", "actions")
 
 
-class ServiceListView(SingleTableMixin, FilterView):
+class ServiceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = ServiceTable
     model = Service

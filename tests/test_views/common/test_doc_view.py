@@ -27,26 +27,38 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_admin_can_list_doc(self):
         self._test_can_list_doc()
 
+    def test_cannot_get_doc_list_when_logout(self):
+        self.client.logout()
+        url = reverse('service_catalog:doc_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_admin_can_list_admin_doc_list(self):
         self.client.login(username=self.superuser, password=self.common_password)
         url = reverse('admin:service_catalog_doc_changelist')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
 
-    def test_admin_can_edit_admin_doc_list(self):
+    def test_admin_can_edit_admin_doc(self):
         self.client.login(username=self.superuser, password=self.common_password)
         url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
 
-    def test_customer_cannot_edit_admin_doc_list(self):
+    def test_customer_cannot_edit_admin_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)
         self.assertTrue("next=/admin", response.url)
 
-    def test_customer_cannot_list_admin_doc_list(self):
+    def test_cannot_edit_admin_doc_when_logout(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
+    def test_customer_cannot_list_admin_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('admin:service_catalog_doc_changelist')
         response = self.client.get(url)

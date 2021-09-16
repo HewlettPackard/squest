@@ -4,6 +4,7 @@ from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn, LinkColumn
 from django_tables2.utils import A
 from guardian.decorators import permission_required
+from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.tower_server_filter import TowerServerFilter
 from service_catalog.models import TowerServer
@@ -22,7 +23,7 @@ class TowerServerTable(tables.Table):
         fields = ("name", "host", "jobtemplate", "actions")
 
 
-class TowerServerListView(SingleTableMixin, FilterView):
+class TowerServerListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = TowerServerTable
     model = TowerServer

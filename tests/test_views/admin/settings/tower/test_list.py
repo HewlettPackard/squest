@@ -14,6 +14,11 @@ class AdminTowerListViewsTest(BaseTestTower):
         self.assertEquals(200, response.status_code)
         self.assertEquals(1, len(response.context["table"].data.data))
 
+    def test_cannot_get_tower_server_list_when_logout(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEquals(302, response.status_code)
+
     def test_user_cannot_list_tower_server(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         response = self.client.get(self.url)

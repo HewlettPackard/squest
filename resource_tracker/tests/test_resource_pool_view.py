@@ -17,6 +17,12 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertEquals(200, response.status_code)
         self.assertTrue("resource_pools" in response.context)
 
+    def test_cannot_get_resource_pool_list_when_logout(self):
+        self.client.logout()
+        url = reverse('resource_tracker:resource_pool_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_resource_pool_create(self):
         url = reverse('resource_tracker:resource_pool_create')
         data = {
@@ -188,6 +194,17 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
 
+    def test_cannot_get_resource_pool_attribute_producer_list_when_logout(self):
+        self.client.logout()
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+            'attribute_id': self.rp_vcenter_vcpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_producer_list', kwargs=args)
+
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_resource_pool_attribute_consumer_list(self):
         args = {
             'resource_pool_id': self.rp_vcenter.id,
@@ -197,3 +214,14 @@ class TestResourcePoolViews(BaseTestResourceTracker):
 
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
+
+    def test_cannot_get_resource_pool_attribute_consumer_list_when_logout(self):
+        self.client.logout()
+        args = {
+            'resource_pool_id': self.rp_vcenter.id,
+            'attribute_id': self.rp_vcenter_vcpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_pool_attribute_consumer_list', kwargs=args)
+
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)

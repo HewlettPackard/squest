@@ -1,8 +1,4 @@
-import json
-
 from django.urls import reverse
-
-from service_catalog.models import Support
 from tests.base_test_request import BaseTestRequest
 
 
@@ -12,7 +8,13 @@ class TestAdminSupportViews(BaseTestRequest):
         super(TestAdminSupportViews, self).setUp()
 
     def test_get_support_list(self):
-        url = reverse('service_catalog:admin_support_list')
+        url = reverse('service_catalog:support_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertEquals(len(response.context["table"].data.data), 1)
+
+    def test_cannot_get_support_list_when_logout(self):
+        self.client.logout()
+        url = reverse('service_catalog:support_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)

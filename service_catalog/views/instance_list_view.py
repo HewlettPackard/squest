@@ -2,19 +2,18 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn, LinkColumn
 from django_tables2.utils import A
+from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.models import Instance
 
 
 class InstanceTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/instance_actions.html', orderable=False)
     state = TemplateColumn(template_name='custom_columns/instance_state.html')
     service__name = TemplateColumn(template_name='custom_columns/instance_type.html', verbose_name="Type")
-    request = TemplateColumn(template_name='custom_columns/instance_requests.html', verbose_name="Requests")
     opened_support_count = TemplateColumn(template_name='custom_columns/instance_opened_support.html',
                                           verbose_name="Opened support")
-    name = LinkColumn("service_catalog:customer_instance_details", args=[A("id")], verbose_name="Name")
+    name = LinkColumn("service_catalog:instance_details", args=[A("id")], verbose_name="Name")
 
     def before_render(self, request):
         if request.user.is_superuser:
@@ -25,10 +24,10 @@ class InstanceTable(tables.Table):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "service__name", "request", "state", "opened_support_count", "spoc", "actions")
+        fields = ("name", "service__name", "state", "opened_support_count", "spoc")
 
 
-class InstanceListView(SingleTableMixin, FilterView):
+class InstanceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = InstanceTable
     model = Instance

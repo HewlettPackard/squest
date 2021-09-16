@@ -20,3 +20,9 @@ class TestCustomerRequestList(BaseTestRequest):
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertEquals(len(response.context["table"].data.data), 0)
+
+    def test_cannot_get_requests_list_when_logout(self):
+        self.client.logout()
+        url = reverse('service_catalog:request_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
