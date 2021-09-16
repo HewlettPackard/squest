@@ -22,10 +22,5 @@
 }
 
 .form-control-checkbox {
-    height: calc(0.75em + 0.25rem + 1px);
-    padding: 0.10rem 0.25rem;
-    font-size: 0.875rem;
-    line-height: 0.75;
-    border-radius: 0.1rem;
-    width: 10%;
+    padding: 0 0.75rem;
 }

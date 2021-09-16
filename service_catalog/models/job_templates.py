@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 from . import BootstrapType
 from .tower_server import TowerServer
@@ -10,7 +12,7 @@ class JobTemplate(models.Model):
     survey = models.JSONField(default=dict)
     tower_server = models.ForeignKey(TowerServer, on_delete=models.CASCADE)
     tower_job_template_data = models.JSONField(default=dict)
-    compliant = models.BooleanField(default=False)
+    is_compliant = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('tower_id', 'tower_server',)
@@ -23,7 +25,7 @@ class JobTemplate(models.Model):
         tower_job_run = tower_job_template.launch(extra_vars=extra_vars)
         return tower_job_run.id
 
-    def is_compliant(self):
+    def check_is_compliant(self):
         return self.is_ask_variables_on_launch_compliant()
 
     def get_compliancy_details(self):
@@ -43,3 +45,9 @@ class JobTemplate(models.Model):
 
     def is_ask_variables_on_launch_compliant(self):
         return self.tower_job_template_data['ask_variables_on_launch']
+
+
+@receiver(pre_delete, sender=JobTemplate)
+def job_template_delete(sender, instance, using, **kwargs):
+    from . import Service, OperationType
+    Service.objects.filter(operation__job_template=instance, operation__type__exact=OperationType.CREATE).update(**{"enabled":False})

@@ -4,28 +4,14 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
 
 from profiles.models import BillingGroup
-from . import Service
+from . import Service, InstanceState
 from .state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
-
-
-class InstanceState(models.TextChoices):
-    PENDING = 'PENDING', _('PENDING')
-    PROVISION_FAILED = 'PROVISION_FAILED', _('PROVISION_FAILED')
-    PROVISIONING = 'PROVISIONING', _('PROVISIONING')
-    UPDATING = 'UPDATING', _('UPDATING')
-    UPDATE_FAILED = 'UPDATE_FAILED', _('UPDATE_FAILED')
-    DELETING = 'DELETING', _('DELETING')
-    DELETED = 'DELETED', _('DELETED')
-    DELETE_FAILED = 'DELETE_FAILED', _('DELETE_FAILED')
-    ARCHIVED = 'ARCHIVED', _('ARCHIVED')
-    AVAILABLE = 'AVAILABLE', _('AVAILABLE')
 
 
 class Instance(models.Model):

@@ -57,7 +57,7 @@ def group_delete(request, group_id):
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{group.name}</strong>?"),
         'action_url': reverse('profiles:group_delete', kwargs=args),
         'button_text': 'Delete',
-        'details': {'warning_sentence': 'Warning: some users are still present in this group, see them below:',
+        'details': {'warning_sentence': 'Warning: some users are still present in this group:',
                     'details_list': [user.username for user in group.user_set.all()]
                     } if group.user_set.all() else None,
         'group_url': "group"

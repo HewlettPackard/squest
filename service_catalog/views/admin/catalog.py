@@ -27,9 +27,8 @@ def add_service(request):
         {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
         {'text': 'Create a new service', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs}
-    return render(request,
-                  'service_catalog/admin/service/service-create.html', context)
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
+    return render(request, 'service_catalog/admin/service/service-create.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -64,7 +63,7 @@ def edit_service(request, service_id):
         {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
         {'text': target_service.name, 'url': ""},
     ]
-    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request,
                   'service_catalog/admin/service/service-edit.html', context)
 
@@ -88,7 +87,7 @@ def add_service_operation(request, service_id):
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
         {'text': 'Create a new operation', 'url': ""},
     ]
-    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'create'}
     return render(request,
                   'service_catalog/admin/service/operation/operation-create.html', context)
 
@@ -136,7 +135,8 @@ def edit_service_operation(request, service_id, operation_id):
     context = {'form': form,
                'service': target_service,
                'operation': target_operation,
-               'breadcrumbs': breadcrumbs
+               'breadcrumbs': breadcrumbs,
+               'action': 'edit'
                }
     return render(request,
                   'service_catalog/admin/service/operation/operation-edit.html', context)

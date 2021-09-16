@@ -26,10 +26,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <form class="form-horizontal" action="" method="get">
-                                {{ filter.form.as_p }}
-                                <button class="btn btn-primary" type="submit">Apply</button>
-                            </form>
+                            {% include 'generics/form_edit.html' with form=filter.form action='apply' method='get'%}
                         </div>
                     </div>
                 </section>
