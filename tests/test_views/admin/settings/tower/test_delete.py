@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import TowerServer, JobTemplate
+from service_catalog.models import TowerServer, JobTemplate, Service, OperationType
 from tests.test_views.admin.settings.tower.base_test_tower import BaseTestTower
 
 
@@ -27,6 +27,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
 
     def test_admin_can_delete_job_template(self):
+        services = [service for service in Service.objects.filter(operation__job_template=self.job_template_test, operation__type__exact=OperationType.CREATE)]
         args = {
             'tower_id': self.tower_server_test.id,
             'job_template_id': self.job_template_test.id
@@ -36,6 +37,11 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(JobTemplate.objects.filter(id=id_to_delete).exists())
+        for service in services:
+            service.refresh_from_db()
+            self.assertIsNotNone(service.operations.filter(type=OperationType.CREATE).first())
+            self.assertIsNone(service.operations.filter(type=OperationType.CREATE).first().job_template)
+            self.assertFalse(service.enabled)
 
     def test_user_cannot_delete_job_template(self):
         self.client.login(username=self.standard_user, password=self.common_password)

@@ -7,36 +7,56 @@
         {% endfor %}
     </div>
 {% endif %}
-<form class="form-horizontal" action="" method="post">{% csrf_token %}
+{% with method=method|default:"post" %}
+    <form class="form-horizontal" method="{{ method }}">
+        {% if method == "post" %}
+            {% csrf_token %}
+        {% endif %}
+        {% for field in form %}
+            {% if field.field.widget.input_type == "checkbox" %}
+                <div class="mb-1 {% if field.errors %}has-error{% endif %}">
+                    {{ field }}
+                    <label for="{{ field.id_for_label }}" class="form-check-label">
+                        {{ field.label }}
+                    </label>
+                    {% if field.help_text %}
+                        <small class="pl-3 pb-2 form-text text-muted">{{ field.help_text|safe }}</small>
+                    {% endif %}
+                </div>
+            {% else %}
+                {% if not field.is_hidden %}
+                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="control-label">
+                            {{ field.label }}
+                        </label>
+                        <div class="col-sm-12">
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
 
-    {% for field in form %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-            <label for="{{ field.id_for_label }}" class="col-sm-2 control-label">
-                {{ field.label }}
-            </label>
-            <div class="col-sm-12">
-                {{ field }}
-                {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+        <div class="mt-2 form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <!-- validate button -->
+                {% if action == "edit" %}
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-plus"></i>
+                        Update
+                    </button>
+                {% elif action == "create" %}
+                    <button class="btn btn-success" type="submit">
+                        <i class="fas fa-plus"></i>
+                        Add
+                    </button>
+                {% elif action == 'apply' %}
+                    <button class="btn btn-primary" type="submit">Apply</button>
                 {% endif %}
             </div>
         </div>
-    {% endfor %}
-
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <!-- validate button -->
-            {% if action == "edit" %}
-                <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-plus"></i>
-                    Update
-                </button>
-            {% elif action == "create" %}
-                <button class="btn btn-success" type="submit">
-                    <i class="fas fa-plus"></i>
-                    Add
-                </button>
-            {% endif %}
-        </div>
-    </div>
-</form>
+    </form>
+{% endwith %}

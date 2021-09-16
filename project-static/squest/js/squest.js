@@ -208,7 +208,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
                 document.getElementById(icon_id).classList.remove('text-success');
                 document.getElementById(icon_id).classList.remove('fa-times');
                 document.getElementById(icon_id).classList.remove('text-danger');
-                if (res.compliant) {
+                if (res.is_compliant) {
                     document.getElementById(icon_id).classList.add('fa-check');
                     document.getElementById(icon_id).classList.add('text-success');
                 } else {

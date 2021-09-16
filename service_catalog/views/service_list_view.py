@@ -9,13 +9,14 @@ from service_catalog.models import Service
 
 class ServiceTable(tables.Table):
     actions = TemplateColumn(template_name='custom_columns/service_actions.html', orderable=False)
+    enabled = TemplateColumn(template_name='custom_columns/boolean_check.html')
     operations = TemplateColumn(template_name='custom_columns/service_operations.html',
                                 verbose_name="Operations", orderable=False)
 
     class Meta:
         model = Service
         attrs = {"id": "service_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "operations", "actions")
+        fields = ("name", "description", "enabled", "operations", "actions")
 
 
 class ServiceListView(LoginRequiredMixin, SingleTableMixin, FilterView):

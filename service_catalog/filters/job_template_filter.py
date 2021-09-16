@@ -5,4 +5,4 @@ from utils.squest_filter import SquestFilter
 class JobTemplateFilter(SquestFilter):
     class Meta:
         model = JobTemplate
-        fields = ['name', 'compliant']
+        fields = ['name', 'is_compliant']
