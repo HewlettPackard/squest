@@ -6,4 +6,4 @@ class ServiceFilter(SquestFilter):
 
     class Meta:
         model = Service
-        fields = ['name']
+        fields = ['name', 'enabled']

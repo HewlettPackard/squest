@@ -2,16 +2,9 @@ import copy
 
 from django.db import models
 from django.db.models.signals import post_save
-from django.utils.translation import gettext_lazy as _
 
-from service_catalog.models import JobTemplate
+from service_catalog.models import JobTemplate, OperationType
 from service_catalog.models import Service
-
-
-class OperationType(models.TextChoices):
-    CREATE = 'CREATE', _('Create')
-    UPDATE = 'UPDATE', _('Update')
-    DELETE = 'DELETE', _('Delete')
 
 
 class Operation(models.Model):
@@ -27,7 +20,7 @@ class Operation(models.Model):
     enabled_survey_fields = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
                                 related_query_name="operation")
-    job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
+    job_template = models.ForeignKey(JobTemplate, null=True, on_delete=models.SET_NULL)
     auto_accept = models.BooleanField(default=False)
     auto_process = models.BooleanField(default=False)
     process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")

@@ -27,11 +27,11 @@ class TestJobTemplate(BaseTest):
     def test_is_compliant(self):
         self.set_up_tower()
         job_templates = JobTemplate.objects.filter(tower_server=self.tower_server_test)
-        self.assertTrue(job_templates[0].is_compliant())
+        self.assertTrue(job_templates[0].check_is_compliant())
 
     def test_is_not_compliant(self):
         self.job_template_testing_data['ask_variables_on_launch'] = False
         self.set_up_tower()
         job_templates = JobTemplate.objects.filter(tower_server=self.tower_server_test)
-        self.assertFalse(job_templates[0].is_compliant())
+        self.assertFalse(job_templates[0].check_is_compliant())
 

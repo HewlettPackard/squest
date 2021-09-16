@@ -213,7 +213,7 @@ def request_comment(request, request_id, redirect_to_view, breadcrumbs):
 
 @login_required
 def service_list(request):
-    services = Service.objects.all()
+    services = Service.objects.filter(enabled=True)
     return render(request, 'service_catalog/common/service/service-list.html', {'services': services})
 
 

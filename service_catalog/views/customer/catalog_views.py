@@ -9,7 +9,7 @@ from service_catalog.models import Service
 
 @login_required
 def customer_service_request(request, service_id):
-    target_service = get_object_or_404(Service, id=service_id)
+    target_service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
     parameters = {
         'service_id': service_id
     }

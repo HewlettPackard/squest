@@ -13,6 +13,6 @@ class SquestFilter(django_filters.FilterSet):
             elif isinstance(current_filter.field.widget, forms.Select):
                 current_filter.field.widget.attrs['class'] = 'form-control selectpicker'
             elif isinstance(current_filter.field.widget, forms.CheckboxInput):
-                current_filter.field.widget.attrs['class'] = 'form-control form-control-checkbox'
+                current_filter.field.widget.attrs['class'] = 'form-control-checkbox'
             else:
                 current_filter.field.widget.attrs['class'] = 'form-control'

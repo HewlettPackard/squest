@@ -2,11 +2,12 @@ from django.contrib.auth.decorators import permission_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 
 from service_catalog import tasks
 from service_catalog.forms import TowerServerForm
-from service_catalog.models import TowerServer, JobTemplate
+from service_catalog.models import TowerServer, JobTemplate, Operation, OperationType
 from service_catalog.serializers import TaskResultSerializer
 
 
@@ -24,7 +25,7 @@ def add_tower(request):
         {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
         {'text': 'Create a new server', 'url': ""}
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
     return render(request, 'service_catalog/admin/tower/tower-create.html', context)
 
 
@@ -64,9 +65,34 @@ def delete_tower(request, tower_id):
 
 @permission_required('service_catalog.delete_jobtemplate')
 def delete_job_template(request, tower_id, job_template_id):
-    server = get_object_or_404(JobTemplate, id=job_template_id)
-    server.delete()
-    return redirect('service_catalog:tower_job_templates_list', tower_id=tower_id)
+    tower_server = get_object_or_404(TowerServer, id=tower_id)
+    job_template = get_object_or_404(JobTemplate, id=job_template_id)
+    if request.method == 'POST':
+        job_template.delete()
+        return redirect('service_catalog:tower_job_templates_list', tower_id=tower_id)
+    args = {
+        "tower_id": tower_server.id,
+        "job_template_id": job_template.id,
+    }
+    breadcrumbs = [
+        {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
+        {'text': tower_server.name, 'url': ""},
+        {'text': 'Job templates', 'url': reverse('service_catalog:tower_job_templates_list', args=[tower_id])},
+        {'text': job_template.name, 'url': ""},
+        {'text': 'Delete', 'url': ""}
+    ]
+    warning_service_disabled = ' - This service will be disabled'
+    operations = Operation.objects.filter(job_template=job_template)
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Confirm deletion of <strong>{job_template.name}</strong>?"),
+        'action_url': reverse('service_catalog:delete_job_template', kwargs=args),
+        'button_text': 'Delete',
+        'details': {'warning_sentence': 'Warning: some services/operations are still using this job template:',
+                    'details_list': [f"Service: \"{operation.service.name}\" / Operation: \"{operation.name}\"{warning_service_disabled if operation.type == OperationType.CREATE else ''}." for operation in operations]
+                    } if operations else None
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
 
 @permission_required('service_catalog.view_towerserver')
 def job_template_compliancy(request, tower_id, job_template_id):
@@ -97,5 +123,5 @@ def update_tower(request, tower_id):
         {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
         {'text': tower_server.name, 'url': ""}
     ]
-    context = {'form': form, 'tower_server': tower_server, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'tower_server': tower_server, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request, 'service_catalog/admin/tower/tower-edit.html', context)

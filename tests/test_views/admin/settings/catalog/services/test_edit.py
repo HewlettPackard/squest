@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Operation, Service
+from service_catalog.models import Operation, Service, OperationType
 from tests.base import BaseTest
 
 
@@ -17,7 +17,8 @@ class ServiceDeleteTestCase(BaseTest):
             "description": "description-of-service-test-updated",
             "billing": "defined",
             "billing_group_id": "",
-            "billing_group_is_shown": "on"
+            "billing_group_is_shown": "on",
+            "enabled": False
         }
 
     def test_admin_can_edit_service(self):
@@ -34,3 +35,18 @@ class ServiceDeleteTestCase(BaseTest):
         self.service_test.refresh_from_db()
         self.assertEquals(self.service_test.name, "service-test")
         self.assertEquals(self.service_test.description, "description-of-service-test")
+
+    def test_hide_service_after_disabled(self):
+        service_count = Service.objects.all().count()
+        response = self.client.get(reverse("service_catalog:service_list"))
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(response.context["services"].count(), service_count)
+        self.client.post(self.url, data=self.data)
+        self.service_test.refresh_from_db()
+        self.assertFalse(self.service_test.enabled)
+        response = self.client.get(reverse("service_catalog:service_list"))
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(response.context["services"].count(), service_count - 1)
+        response = self.client.get(reverse("service_catalog:customer_service_request",
+                                           kwargs={'service_id': self.service_test.id}))
+        self.assertEquals(404, response.status_code)

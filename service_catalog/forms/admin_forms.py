@@ -37,12 +37,12 @@ class TowerServerForm(ModelForm):
     secure = forms.BooleanField(label="Is secure (https)",
                                 initial=True,
                                 required=False,
-                                widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                widget=forms.CheckboxInput())
 
     ssl_verify = forms.BooleanField(label="SSL verify",
                                     initial=False,
                                     required=False,
-                                    widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                    widget=forms.CheckboxInput())
 
     def clean(self):
         cleaned_data = super().clean()
@@ -98,11 +98,11 @@ class ServiceForm(ModelForm):
 
     auto_accept = forms.BooleanField(label="Auto accept",
                                      required=False,
-                                     widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                     widget=forms.CheckboxInput())
 
     auto_process = forms.BooleanField(label="Auto process",
                                       required=False,
-                                      widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                      widget=forms.CheckboxInput())
 
     image = forms.ImageField(label="Choose a file",
                              required=False,
@@ -144,7 +144,7 @@ class ServiceForm(ModelForm):
     class Meta:
         model = Service
         fields = ["name", "description", "job_template", "auto_accept", "auto_process", "image",
-                  "billing", "billing_group_id", "billing_group_is_shown"]
+                  "billing", "billing_group_id", "billing_group_is_shown", "enabled"]
 
 
 class EditServiceForm(ModelForm):
@@ -157,6 +157,10 @@ class EditServiceForm(ModelForm):
             self.fields['billing'].initial = 'all_billing_groups'
         else:
             self.fields['billing'].initial = 'defined'
+        if not self.instance.asert_create_operation_have_job_template():
+            self.fields['enabled'].disabled = True
+            self.fields['enabled'].help_text = \
+                "To enable this service, please link a job template to the 'CREATE' operation."
 
     name = forms.CharField(label="Name",
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -204,7 +208,7 @@ class EditServiceForm(ModelForm):
 
     class Meta:
         model = Service
-        fields = ["name", "description", "image", "billing", "billing_group_id", "billing_group_is_shown"]
+        fields = ["name", "description", "image", "billing", "billing_group_id", "billing_group_is_shown", 'enabled']
 
 
 class AddServiceOperationForm(ModelForm):
@@ -245,12 +249,12 @@ class AddServiceOperationForm(ModelForm):
     auto_accept = forms.BooleanField(label="Auto accept",
                                      initial=False,
                                      required=False,
-                                     widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                     widget=forms.CheckboxInput())
 
     auto_process = forms.BooleanField(label="Auto process",
                                       initial=False,
                                       required=False,
-                                      widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+                                      widget=forms.CheckboxInput())
 
     class Meta:
         model = Operation

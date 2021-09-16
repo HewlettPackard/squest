@@ -41,7 +41,7 @@ class TowerServer(models.Model):
         job_template.name = job_template_from_tower.name
         job_template.tower_job_template_data = job_template_from_tower._data
         job_template.survey = job_template_from_tower.survey_spec
-        job_template.compliant = job_template.is_compliant()
+        job_template.is_compliant = job_template.check_is_compliant()
         job_template.save()
         # update all operation that uses this template
         from service_catalog.models import Operation
