@@ -2,6 +2,8 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn, LinkColumn
 from django_tables2.utils import A
+from guardian.mixins import LoginRequiredMixin
+
 from service_catalog.filters.doc_filter import DocFilter
 from service_catalog.models import Doc
 
@@ -17,7 +19,7 @@ class DocTable(tables.Table):
         fields = ("title", "services", "actions")
 
 
-class DocListView(SingleTableMixin, FilterView):
+class DocListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = DocTable
     model = Doc

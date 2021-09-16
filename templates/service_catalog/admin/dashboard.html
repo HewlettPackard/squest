@@ -1,209 +1,78 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-    <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Dashboard</h1>
-                    </div>
-                </div>
-                {% for announcement in announcements %}
-                    <div class="row">
-                        <div class="col-lg col">
-                            <div class="alert alert-{{ announcement.type|lower }} alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                <h4><i class="icon {{ announcement.type|map_color_to_icon }}"></i> {{ announcement.title }}</h4>
-                                {{ announcement.message | safe }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div><!-- /.container-fluid -->
-        </section>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>{{ total_request }}</h3>
-                                <p>New Request</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED"
-                               class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h3>{{ total_instance }}</h3>
-                                <p>Instances available</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-th"></i>
-                            </div>
-                            <a href="{% url 'service_catalog:instance_list' %}?state=available"
-                               class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>{{ total_support_opened }}</h3>
-                                <p>Opened support</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-medkit"></i>
-                            </div>
-                            <a href="{% url 'service_catalog:admin_support_list' %}?state=OPENED"
-                               class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-default">
-                            <div class="inner">
-                                <h3>{{ total_user }}</h3>
-                                <p>Users</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <a href="{% url 'profiles:user_list' %}" class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col">
-                        <!-- small card -->
-                        <div class="small-box bg-pink">
-                            <div class="inner">
-                                <h3>{{ total_user_without_billing_groups }}</h3>
-                                <p>Users without billing groups</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-users-slash"></i>
-                            </div>
-                            <a href="{% url 'profiles:user_list' %}?no_billing_groups=on" class="small-box-footer">
-                                More info <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                </div> <!--  row-->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <strong>Metrics</strong>
-                                </h3>
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row justify-content-around">
-                                    {% for _,pie_chart in pie_charts.items %}
-                                        <div class="col-md-3 text-center">
-                                            <div style="height:25vh">
-                                                <canvas id="{{ pie_chart.id }}"></canvas>
-                                            </div>
-
-                                            <div class="knob-label">{{ pie_chart.title }}</div>
-                                        </div>
-                                    {% endfor %}
-
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-
-                </div> <!--  row-->
-                {% for resource_pool,rp_list in chart_resource_pool.items %}
-                    <div class="row justify-content-around">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <strong>Resource consumption on {{ resource_pool }} by Billing Groups</strong>
-                                    </h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- /.card-header -->
-                                <div class="card-body">
-                                    <div class="row justify-content-around">
-
-
-                                        {% for _,rp_attribute in rp_list.items %}
-                                            <div class="col-md-3 text-center">
-                                                <div style="">
-                                                    <canvas id="{{ rp_attribute.id }}"></canvas>
-                                                </div>
-
-                                                <div class="knob-label">{{ rp_attribute.title }}</div>
-                                            </div>
-
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <!-- /.card-body -->
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                    </div> <!--  row-->
-
-                {% endfor %}
-
-            </div><!-- container-fluid -->
-
-        </div><!-- content -->
-
-    </div><!-- /.container-fluid -->
-
-    {% load static %}
-    <script src="{% static 'squest/js/dashboards.js' %}"></script>
-    <script>
-        window.onload = function () {
-            {% for _,pie_chart in pie_charts.items %}
-                createPieChart(data ={{ pie_chart.data |safe }}, id = "{{ pie_chart.id }}")
-            {% endfor %}
-
-            {% for resource_pool,rp_list in chart_resource_pool.items %}
-                {% for _,rp_attribute in rp_list.items %}
-                    createPieChart(data ={{ rp_attribute.data |safe }}, id = "{{ rp_attribute.id }}")
-                {% endfor %}
-            {% endfor %}
-
-        }
-    </script>
-    <script src="{% static '/admin-lte/plugins/jquery-knob/jquery.knob.min.js' %}"></script>
-
-{% endblock %}
+<div class="col-lg col">
+    <!-- small card -->
+    <div class="small-box bg-info">
+        <div class="inner">
+            <h3>{{ total_request }}</h3>
+            <p>New Request</p>
+        </div>
+        <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED"
+           class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+</div>
+<div class="col-lg col">
+    <!-- small card -->
+    <div class="small-box bg-success">
+        <div class="inner">
+            <h3>{{ total_instance }}</h3>
+            <p>Active instances</p>
+        </div>
+        <div class="icon">
+            <i class="fas fa-th"></i>
+        </div>
+        <a href="{% url 'service_catalog:instance_list' %}?state=available"
+           class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+</div>
+<div class="col-lg col">
+    <!-- small card -->
+    <div class="small-box bg-warning">
+        <div class="inner">
+            <h3>{{ total_support_opened }}</h3>
+            <p>Opened support</p>
+        </div>
+        <div class="icon">
+            <i class="fas fa-medkit"></i>
+        </div>
+        <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
+           class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+</div>
+<div class="col-lg col">
+    <!-- small card -->
+    <div class="small-box bg-default">
+        <div class="inner">
+            <h3>{{ total_user }}</h3>
+            <p>Users</p>
+        </div>
+        <div class="icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <a href="{% url 'profiles:user_list' %}" class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+</div>
+<div class="col-lg col">
+    <!-- small card -->
+    <div class="small-box bg-pink">
+        <div class="inner">
+            <h3>{{ total_user_without_billing_groups }}</h3>
+            <p>Users without billing groups</p>
+        </div>
+        <div class="icon">
+            <i class="fas fa-users-slash"></i>
+        </div>
+        <a href="{% url 'profiles:user_list' %}?no_billing_groups=on" class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+</div>

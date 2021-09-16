@@ -56,3 +56,12 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         url = reverse('service_catalog:delete_tower', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
+
+    def test_cannot_delete_job_template_page_when_logout(self):
+        self.client.logout()
+        args = {
+            'tower_id': self.tower_server_test.id,
+        }
+        url = reverse('service_catalog:delete_tower', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)

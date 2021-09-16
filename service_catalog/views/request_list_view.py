@@ -2,6 +2,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn, LinkColumn
 from django_tables2.utils import A
+from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.models import Request
@@ -11,7 +12,7 @@ class RequestTable(tables.Table):
     actions = TemplateColumn(template_name='custom_columns/request_actions.html', orderable=False)
     state = TemplateColumn(template_name='custom_columns/request_state.html')
     operation__type = TemplateColumn(verbose_name="Type", template_name='custom_columns/request_operation_type.html')
-    instance__name = LinkColumn("service_catalog:customer_instance_details", args=[A("instance__id")],
+    instance__name = LinkColumn("service_catalog:instance_details", args=[A("instance__id")],
                                 verbose_name="Instance")
 
     def before_render(self, request):
@@ -29,7 +30,7 @@ class RequestTable(tables.Table):
                   "operation__type", "state", "actions")
 
 
-class RequestListView(SingleTableMixin, FilterView):
+class RequestListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = RequestTable
     model = Request

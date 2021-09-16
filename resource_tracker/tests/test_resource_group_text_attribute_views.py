@@ -43,6 +43,17 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name_2",
                                                                             resource_group_definition=self.rg_physical_servers).exists())
 
+    def test_resource_group_text_attribute_create_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+        }
+        url = reverse('resource_tracker:resource_group_text_attribute_create', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_resource_group_text_attribute_edit(self):
         args = {
             "resource_group_id": self.rg_physical_servers.id,
@@ -62,6 +73,18 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertEquals(302, response.status_code)
         self.rg_physical_servers_description.refresh_from_db()
         self.assertEquals(self.rg_physical_servers_description.name, "new_text_attribute_name")
+
+    def test_cannot_edit_resource_group_text_attribute_when_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+            "attribute_id": self.rg_physical_servers_description.id
+        }
+        url = reverse('resource_tracker:resource_group_text_attribute_edit', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
 
     def test_resource_group_text_attribute_edit_existing_name(self):
         args = {
@@ -120,6 +143,16 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(ResourceGroupTextAttributeDefinition.objects.filter(id=attribute_id).exists())
+
+    def test_cannot_delete_resource_group_text_attribute_when_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+            "attribute_id": self.rg_physical_servers_description.id
+        }
+        url = reverse('resource_tracker:resource_group_text_attribute_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
 
     def test_create_resource_after_adding_text_attributes(self):
         args = {

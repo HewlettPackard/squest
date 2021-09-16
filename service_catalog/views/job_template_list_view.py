@@ -2,8 +2,9 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn
+from django_tables2 import tables, TemplateColumn, Column
 from guardian.decorators import permission_required
+from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.job_template_filter import JobTemplateFilter
 from service_catalog.models import JobTemplate, TowerServer
@@ -13,14 +14,16 @@ class JobTemplateTable(tables.Table):
     compliant = TemplateColumn(template_name='custom_columns/job_template_compliant.html',
                                verbose_name="Squest compliant")
     actions = TemplateColumn(template_name='custom_columns/job_template_actions.html', orderable=False)
+    name = Column(attrs={"td": {"class": "job_template_name"}})
 
     class Meta:
+        row_attrs = {"id": lambda record: f'job_template_{record.id}'}
         model = JobTemplate
         attrs = {"id": "job_template_table", "class": "table squest-pagination-tables"}
         fields = ("name", "compliant", "actions")
 
 
-class JobTemplateListView(SingleTableMixin, FilterView):
+class JobTemplateListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = JobTemplateTable
     model = JobTemplate
@@ -43,4 +46,5 @@ class JobTemplateListView(SingleTableMixin, FilterView):
             {'text': TowerServer.objects.get(id=tower_server_id).name, 'url': ""},
             {'text': 'Job templates', 'url': ""},
         ]
+        context['tower_id'] = tower_server_id
         return context

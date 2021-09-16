@@ -48,6 +48,17 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
                                                                   resource_group_definition=self.rg_physical_servers)
         self.assertEquals(target_rga.produce_for, self.rp_vcenter_vcpu_attribute)
 
+    def test_cannot_create_resource_group_attribute_when_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+        }
+        url = reverse('resource_tracker:resource_group_attribute_create', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_resource_group_attribute_edit(self):
         args = {
             "resource_group_id": self.rg_physical_servers.id,
@@ -68,6 +79,18 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         self.assertEquals(302, response.status_code)
         self.rg_physical_servers_cpu_attribute.refresh_from_db()
         self.assertEquals(self.rg_physical_servers_cpu_attribute.name, "new_attribute_name")
+
+    def test_cannot_edit_resource_group_attribute_when_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+            "attribute_id": self.rg_physical_servers_cpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_group_attribute_edit', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
 
     def test_resource_group_attribute_edit_existing_name(self):
         args = {
@@ -132,3 +155,15 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(ResourceGroupAttributeDefinition.objects.filter(id=attribute_id).exists())
+
+    def test_cannot_delete_resource_group_attribute_logout(self):
+        self.client.logout()
+        args = {
+            "resource_group_id": self.rg_physical_servers.id,
+            "attribute_id": self.rg_physical_servers_cpu_attribute.id
+        }
+        url = reverse('resource_tracker:resource_group_attribute_delete', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)

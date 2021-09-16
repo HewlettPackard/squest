@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from service_catalog.models import OperationType
 from tests.base import BaseTest
 
 
@@ -18,7 +19,7 @@ class OperationEditTestCase(BaseTest):
             "name": "updated",
             "description": "updated description",
             "job_template": self.job_template_test.id,
-            "type": "DELETE",
+            "type": OperationType.DELETE,
             "process_timeout_second": 60
         }
         response = self.client.post(self.url, data=data)
@@ -58,13 +59,31 @@ class OperationEditTestCase(BaseTest):
             "name": "updated",
             "description": "updated description",
             "job_template": self.job_template_test.id,
-            "type": "UPDATE",
+            "type": OperationType.UPDATE,
             "process_timeout_second": 600
         }
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
         self.create_operation_test.refresh_from_db()
         self.assertEquals("CREATE", self.create_operation_test.type)
+
+    def test_cannot_edit_service_operation_when_logout(self):
+        self.client.logout()
+        args = {
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id,
+        }
+        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+
+        data = {
+            "name": "updated",
+            "description": "updated description",
+            "job_template": self.job_template_test.id,
+            "type": OperationType.UPDATE,
+            "process_timeout_second": 600
+        }
+        response = self.client.post(url, data=data)
+        self.assertEquals(302, response.status_code)
 
     def test_transform_delete_into_create(self):
         args = {
@@ -77,7 +96,7 @@ class OperationEditTestCase(BaseTest):
             "name": "updated",
             "description": "updated description",
             "job_template": self.job_template_test.id,
-            "type": "CREATE",
+            "type": OperationType.CREATE,
             "process_timeout_second": 600
         }
         response = self.client.post(url, data=data)

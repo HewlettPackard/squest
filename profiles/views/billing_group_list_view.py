@@ -1,6 +1,7 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2 import tables, TemplateColumn
+from guardian.mixins import LoginRequiredMixin
 
 from profiles.filters.billing_group_filter import BillingGroupFilter
 from profiles.models import BillingGroup
@@ -16,7 +17,7 @@ class BillingGroupTable(tables.Table):
         fields = ("name", "users", "actions")
 
 
-class BillingGroupListView(SingleTableMixin, FilterView):
+class BillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = BillingGroupTable
     model = BillingGroup

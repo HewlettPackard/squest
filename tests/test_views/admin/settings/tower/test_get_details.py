@@ -102,9 +102,23 @@ class AdminTowerGetViewsTest(BaseTestTower):
         self.assertEquals(200, response.status_code)
         self.assertEquals(1, len(response.context["table"].data.data))
 
+    def test_cannot_get_tower_job_templates_list_when_logout(self):
+        self.client.logout()
+        url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
     def test_tower_job_templates_compliancy_list(self):
         args = copy.copy(self.args)
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_compliancy', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
+
+    def test_cannot_get_tower_job_templates_compliancy_list_when_logout(self):
+        self.client.logout()
+        args = copy.copy(self.args)
+        args['job_template_id'] = self.job_template_test.id
+        url = reverse('service_catalog:job_template_compliancy', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)

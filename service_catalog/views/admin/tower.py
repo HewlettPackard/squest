@@ -68,7 +68,7 @@ def delete_job_template(request, tower_id, job_template_id):
     server.delete()
     return redirect('service_catalog:tower_job_templates_list', tower_id=tower_id)
 
-
+@permission_required('service_catalog.view_towerserver')
 def job_template_compliancy(request, tower_id, job_template_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
     job_template = get_object_or_404(JobTemplate, id=job_template_id)

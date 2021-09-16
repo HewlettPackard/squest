@@ -35,7 +35,7 @@ class FormUtils:
 
 
 class ServiceRequestForm(forms.Form):
-    instance_name = forms.CharField(label="Instance name",
+    instance_name = forms.CharField(label="Squest instance name",
                                     help_text="Help to identify the requested service in the 'Instances' view",
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
 

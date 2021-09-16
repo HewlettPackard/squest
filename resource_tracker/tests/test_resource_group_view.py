@@ -11,11 +11,17 @@ class TestResourceGroupViews(BaseTestResourceTracker):
     def setUp(self):
         super(TestResourceGroupViews, self).setUp()
 
-    def test_resource_pool_list(self):
+    def test_resource_group_list(self):
         url = reverse('resource_tracker:resource_group_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("resource_groups" in response.context)
+
+    def test_cannot_get_resource_group_list_when_logout(self):
+        self.client.logout()
+        url = reverse('resource_tracker:resource_group_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
 
     def test_resource_group_create(self):
         url = reverse('resource_tracker:resource_group_create')

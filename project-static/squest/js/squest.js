@@ -1,7 +1,13 @@
 $(document).ready(function () {
     var params = {"order": [], "columnDefs": [{"targets": 'no-sort', "orderable": false,}]};
     $('#service_list').DataTable(params);
-    var params_lite = {"info":false, "paging": false, "lengthChange":false, "order": [], "columnDefs": [{"targets": 'no-sort', "orderable": false}]};
+    var params_lite = {
+        "info": false,
+        "paging": false,
+        "lengthChange": false,
+        "order": [],
+        "columnDefs": [{"targets": 'no-sort', "orderable": false}]
+    };
     $('.data_table_lite').DataTable(params_lite);
 
     $('[data-toggle="popover"]').popover({
@@ -10,6 +16,9 @@ $(document).ready(function () {
     });
     // adapt side bar height to the current page
     $('.main-sidebar').height($(document).outerHeight());
+
+    $('.ajax_sync_all_job_template').click(sync_all_job_template);
+    $('.ajax_sync_job_template').click(sync_job_template);
 });
 
 function getCookie(name) {
@@ -30,10 +39,13 @@ function getCookie(name) {
 
 const csrf_token = getCookie('csrftoken');
 
-function sync_all_job_template(tower_id) {
+function sync_all_job_template() {
+    const tower_id = $(this).data('tower-id');
+    const url_sync = $(this).data('url-sync');
+    const url_job_template = $(this).data('url-job-template');
     const sync_button_id = "tower_" + tower_id;
     $.ajax({
-        url: '/settings/tower/' + tower_id + '/sync/',
+        url: url_sync,
         method: 'POST',
         data: {
             csrfmiddlewaretoken: csrf_token
@@ -49,8 +61,8 @@ function sync_all_job_template(tower_id) {
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
         setTimeout(function () {
-            getTowerUpdateStatus(res.task_id, tower_id);
-        }, 1000);
+            getTowerUpdateStatus(res.task_id, tower_id, url_job_template);
+        }, 2000);
 
     }).fail((err) => {
         alert_error("Error during API call");
@@ -65,7 +77,7 @@ function sync_all_job_template(tower_id) {
     });
 }
 
-function getTowerUpdateStatus(taskID, tower_id) {
+function getTowerUpdateStatus(taskID, tower_id, url_job_template) {
     const sync_button_id = "tower_" + tower_id;
     const job_template_count = "job_template_count_" + tower_id;
     $.ajax({
@@ -75,7 +87,6 @@ function getTowerUpdateStatus(taskID, tower_id) {
             csrfmiddlewaretoken: csrf_token
         },
     }).done((res) => {
-        // console.log(res);
         const taskStatus = res.status;
         if (taskStatus === 'SUCCESS') {
             $(document).Toasts('create', {
@@ -88,7 +99,7 @@ function getTowerUpdateStatus(taskID, tower_id) {
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
             $.ajax({
-                url: `/api/service_catalog/admin/job_template/`,
+                url: url_job_template,
                 method: 'GET',
                 data: {
                     csrfmiddlewaretoken: csrf_token
@@ -125,10 +136,14 @@ function getTowerUpdateStatus(taskID, tower_id) {
     });
 }
 
-function sync_job_template(tower_id, job_template_id) {
+function sync_job_template() {
+    const job_template_id = $(this).data('job-template-id');
+    const url_sync = $(this).data('url-sync');
+    const url_job_template_detail = $(this).data('url-job-template-detail');
+
     const sync_button_id = "job_template_" + job_template_id;
     $.ajax({
-        url: '/settings/tower/' + tower_id + '/sync/' + job_template_id,
+        url: url_sync,
         method: 'POST',
         data: {
             csrfmiddlewaretoken: csrf_token
@@ -144,8 +159,8 @@ function sync_job_template(tower_id, job_template_id) {
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
         setTimeout(function () {
-            getJobTemplateUpdateStatus(res.task_id, job_template_id);
-        }, 1000);
+            getJobTemplateUpdateStatus(res.task_id, job_template_id, url_job_template_detail);
+        }, 2000);
 
     }).fail((err) => {
         alert_error("Error during API call");
@@ -160,10 +175,10 @@ function sync_job_template(tower_id, job_template_id) {
     });
 }
 
-function getJobTemplateUpdateStatus(taskID, job_template_id) {
+function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_detail) {
     const sync_button_id = "job_template_" + job_template_id;
     const icon_id = "icon_" + job_template_id;
-    const name_id = "name_" + job_template_id;
+    const html_name = $("#job_template_"+job_template_id+" td.job_template_name");
     $.ajax({
         url: `/tasks/${taskID}/`,
         method: 'GET',
@@ -183,13 +198,12 @@ function getJobTemplateUpdateStatus(taskID, job_template_id) {
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
             $.ajax({
-                url: '/api/service_catalog/admin/job_template/' + job_template_id,
+                url: url_job_template_detail,
                 method: 'GET',
                 data: {
                     csrfmiddlewaretoken: csrf_token
                 },
             }).done((res) => {
-                console.log(res);
                 document.getElementById(icon_id).classList.remove('fa-check');
                 document.getElementById(icon_id).classList.remove('text-success');
                 document.getElementById(icon_id).classList.remove('fa-times');
@@ -197,12 +211,11 @@ function getJobTemplateUpdateStatus(taskID, job_template_id) {
                 if (res.compliant) {
                     document.getElementById(icon_id).classList.add('fa-check');
                     document.getElementById(icon_id).classList.add('text-success');
-                } else
-                {
+                } else {
                     document.getElementById(icon_id).classList.add('fa-times');
                     document.getElementById(icon_id).classList.add('text-danger');
-                }
-                document.getElementById(name_id).innerText=res.name;
+                };
+                html_name.html(res.name);
 
             });
             return true;

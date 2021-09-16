@@ -1,7 +1,6 @@
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
-from service_catalog.models import Request, RequestMessage
+from service_catalog.models import RequestMessage
 from tests.base_test_request import BaseTestRequest
 
 
@@ -33,6 +32,11 @@ class CustomerRequestCommentTest(BaseTestRequest):
         self.assertEquals(302, response.status_code)
         self.assertEquals(number_message_before + 1,
                           RequestMessage.objects.filter(request=self.test_request).count())
+
+    def test_cannot_get_comment_list_when_logout(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEquals(403, response.status_code)
 
     def test_admin_can_list_request_comment(self):
         self._assert_can_list_comment()
