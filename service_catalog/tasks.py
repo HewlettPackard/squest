@@ -4,6 +4,7 @@ from celery import shared_task
 from django.core import management
 from django.core.mail import EmailMultiAlternatives
 
+from .maintenance_jobs import cleanup_ghost_docs_images
 from .models import TowerServer, Request
 
 logger = logging.getLogger(__name__)
@@ -44,3 +45,8 @@ def perform_backup():
     logger.info("Execute media backup")
     management.call_command('mediabackup', '--clean')
     logger.info("Database media complete")
+
+
+@shared_task
+def task_cleanup_ghost_docs_images():
+    cleanup_ghost_docs_images()

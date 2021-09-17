@@ -37,6 +37,7 @@ django-tempus-dominus = "^5.1.2"
 gunicorn = "^20.1.0"
 django-tables2 = "^2.4.0"
 django-dbbackup = "^3.3.0"
+django-cleanup = "^5.2.0"
 
 [tool.poetry.dev-dependencies]
 
