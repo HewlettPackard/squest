@@ -30,7 +30,9 @@ MYSQL_HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
 MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
-BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM. Use */1 to test every minute
+BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
+DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
+DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
 
 # -------------------------------
 # SQUEST CONFIG
@@ -77,6 +79,7 @@ INSTALLED_APPS = [
     'service_catalog',
     'resource_tracker',
     'profiles',
+    'django_cleanup.apps.CleanupConfig', # should stay last to override delete method of our model
 ]
 
 MIDDLEWARE = [
@@ -245,6 +248,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_BEAT_SCHEDULER = 'service_catalog.celery_beat_scheduler.DatabaseSchedulerWithCleanup'
+CELERY_BEAT_SCHEDULE = {}
 
 # -----------------------------------------
 # Squest email config
@@ -307,7 +311,7 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Markdown urls
-MARTOR_UPLOAD_PATH = 'doc_images/uploads/{}'.format(time.strftime("%Y/%m/%d/"))
+MARTOR_UPLOAD_PATH = 'doc_images/uploads/{}'.format(time.strftime("%Y%m%d/"))
 MARTOR_UPLOAD_URL = '/api/uploader/'  # change to local uploader
 
 # Maximum Upload Image
@@ -331,6 +335,12 @@ MARTOR_MARKDOWN_BASE_MENTION_URL = 'https://python.web.id/author/'  # please cha
 # MARTOR_ALTERNATIVE_JS_FILE_THEME = "semantic-themed/semantic.min.js"   # default None
 # MARTOR_ALTERNATIVE_CSS_FILE_THEME = "semantic-themed/semantic.min.css" # default None
 MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "jquery/dist/jquery.min.js"  # default None
+
+if DOC_IMAGES_CLEANUP_ENABLED:
+    CELERY_BEAT_SCHEDULE["cleanup_martor"] = {
+            "task": "service_catalog.tasks.task_cleanup_ghost_docs_images",
+            "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(DOC_IMAGES_CLEANUP_CRONTAB)),
+        }
 
 # -----------------------------------------
 # DJANGO REST FRAMEWORK CONFIG
@@ -363,11 +373,9 @@ if mysqldump_major_version < 10:
         }
     }
 if BACKUP_ENABLED:
-    CELERY_BEAT_SCHEDULE = {
-        "perform_backup": {
-            "task": "service_catalog.tasks.perform_backup",
-            "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)),
-        },
+    CELERY_BEAT_SCHEDULE["perform_backup"] = {
+        "task": "service_catalog.tasks.perform_backup",
+        "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)),
     }
 
 # -----------------------------------------
