@@ -21,40 +21,40 @@
                 </li>
                 {% if user.is_superuser %}
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:list_tower'%}" class="nav-link {% if 'settings/tower' in request.path %}active{% endif %}">
+                        <a href="{% url 'service_catalog:list_tower'%}" class="nav-link {% if '/tower/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-chess-rook"></i>
                             <p>Tower/AWX</p>
                         </a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a href="{% url 'service_catalog:service_list'%}" class="nav-link {% if 'services' in request.path %}active{% endif %}">
+                    <a href="{% url 'service_catalog:service_list'%}" class="nav-link {% if '/service/' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>Service catalog</p>
                     </a>
                 </li>
                 <li class="nav-item menu-close">
-                    <a href="{% url 'service_catalog:request_list' %}" class="nav-link {% if 'request' in request.path %}active{% endif %}">
+                    <a href="{% url 'service_catalog:request_list' %}" class="nav-link {% if '/request/' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-list"></i>
                         <p>Requests <span class="badge badge-info right">{% submitted_request user %}</span></p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'service_catalog:instance_list'%}" class="nav-link {% if 'instance' in request.path and not request.GET.state %}active{% endif %}">
+                    <a href="{% url 'service_catalog:instance_list'%}" class="nav-link {% if '/instance/' in request.path and not request.GET.state %}active{% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>Instances</p>
                     </a>
                 </li>
                 {% if user.is_superuser %}
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:support_list'%}?state=OPENED" class="nav-link {% if 'admin/support/' in request.path %}active{% endif %}">
+                        <a href="{% url 'service_catalog:support_list'%}?state=OPENED" class="nav-link {% if '/support/' in request.path %}active{% endif %}">
                             <i class="nav-icon fa fa-medkit"></i>
                             <p>Supports <span class="badge badge-warning right">{% opened_support %}</span></p>
                         </a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a href="{% url 'service_catalog:doc_list'%}?state=OPENED" class="nav-link {% if 'docs/' in request.path %}active{% endif %}">
+                    <a href="{% url 'service_catalog:doc_list'%}?state=OPENED" class="nav-link {% if '/doc/' in request.path %}active{% endif %}">
                         <i class="nav-icon far fa-file-alt"></i>
                         <p>Docs</p>
                     </a>
@@ -62,32 +62,27 @@
                 {% if user.is_superuser %}
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:resource_pool_list'%}" class="nav-link {% if 'resource_tracker/resource_pool' in request.path %}active{% endif %}">
+                        <a href="{% url 'resource_tracker:resource_pool_list'%}" class="nav-link {% if '/resource_tracker/resource_pool/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-poll"></i>
                             <p>Resource pools</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:resource_group_list'%}" class="nav-link {% if 'resource_tracker/resource_group' in request.path %}active{% endif %}">
+                        <a href="{% url 'resource_tracker:resource_group_list'%}" class="nav-link {% if '/resource_tracker/resource_group/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-object-group"></i>
                             <p>Resource groups</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:resource_tracker_graph'%}" class="nav-link {% if 'resource_tracker/resource_tracker_graph' in request.path %}active{% endif %}">
+                        <a href="{% url 'resource_tracker:resource_tracker_graph'%}" class="nav-link {% if '/resource_tracker/resource_tracker_graph/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-project-diagram"></i>
                             <p>Graph</p>
                         </a>
                     </li>
+
+                    <li class="nav-header">Profiles</li>
                     <li class="nav-item">
-                        <a href="{% url 'profiles:billing_group_list'%}" class="nav-link {% if 'billing' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-dollar-sign"></i>
-                            <p>Billing Groups</p>
-                        </a>
-                    </li>
-                    <li class="nav-header">Settings</li>
-                    <li class="nav-item">
-                        <a href="{% url 'profiles:user_list'%}" class="nav-link {% if 'profiles/users/' in request.path %}active{% endif %}">
+                        <a href="{% url 'profiles:user_list'%}" class="nav-link {% if '/user/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-user"></i>
                             <p>Users</p>
                         </a>
@@ -99,13 +94,20 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:global_hook_list'%}" class="nav-link {% if '/global_hook/' in request.path %}active{% endif %}">
+                        <a href="{% url 'profiles:billing_group_list'%}" class="nav-link {% if '/billing-group/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-dollar-sign"></i>
+                            <p>Billing Groups</p>
+                        </a>
+                    </li>
+                    <li class="nav-header">Tools</li>
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:global_hook_list'%}" class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-file-code"></i>
                             <p>Global hooks</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:announcement_list'%}" class="nav-link {% if '/announcement/' in request.path %}active{% endif %}">
+                        <a href="{% url 'service_catalog:announcement_list'%}" class="nav-link {% if '/tool/announcement/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-bullhorn"></i>
                             <p>Announcements</p>
                         </a>

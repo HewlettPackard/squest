@@ -33,7 +33,7 @@ class UserByBillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterVie
         context = super().get_context_data(**kwargs)
         billing_group_id = self.kwargs.get('billing_group_id')
         context['breadcrumbs'] = [
-            {'text': 'Billing Groups', 'url': reverse('profiles:billing_group_list')},
+            {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
             {'text': BillingGroup.objects.get(id=billing_group_id).name, 'url': ""},
             {'text': "Users", 'url': ""}
         ]
