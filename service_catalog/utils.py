@@ -48,3 +48,8 @@ def get_celery_crontab_parameters_from_crontab_line(crontab_line):
         "day_of_month": line_split_on_space[3],
         "month_of_year": line_split_on_space[4]
     }
+
+
+def get_images_link_from_markdown(markdown_text):
+    regex = r"!\[[^\]]*\]\((\/media\/doc_images\/.*?)\s*(\"(?:.*[^\"])\")?\s*\)"
+    return [x.group(1) for x in re.finditer(regex, markdown_text, re.MULTILINE)]

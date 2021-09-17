@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
-    get_celery_crontab_parameters_from_crontab_line
+    get_celery_crontab_parameters_from_crontab_line, get_images_link_from_markdown
 
 
 class TestUtils(unittest.TestCase):
@@ -57,3 +57,28 @@ class TestUtils(unittest.TestCase):
         for crontab_line, expected_result in map_test.items():
             self.assertEquals(get_celery_crontab_parameters_from_crontab_line(crontab_line),
                               expected_result)
+
+    def test_regex_for_media_cleanup(self):
+
+        test_str = """
+# Delete Images test
+![Single picture on a line](/media/doc_images/uploads/to_be_deleted1.jpg)
+TextBefore ![Single picture on a line with text before](/media/doc_images/uploads/to_be_deleted2.jpg)
+![Single picture on a line with text after](/media/doc_images/uploads/to_be_deleted3.jpg) Text after
+TextBefore ![Single picture on a line with text before and after](/notmedia/doc_images/uploads/non_deleted.jpg) Text after
+![Single picture on a line on /media](/media/doc_images/google/doc_images/uploads/to_be_deleted4.jpg)
+![First picture of the line](/media/doc_images/google/doc_images/uploads/to_be_deleted5.jpg)Random![Second picture of the line](/media/doc_images/google/doc_images/uploads/to_be_deleted6.jpg)
+![Single picture on a line with space between] (/media/doc_images/uploads/picturelink.jpg)
+![Single picture on a line with text between  ]eeeee(/media/doc_images/uploads/picturelink.jpg)
+![Single picture on a line but not on /media/doc_images](/google/doc_images/uploads/picturelink.jpg) Text after
+![Single picture on a line from google with /media/doc_images in path](https://google/media/doc_images/uploads/picturelink.jpg) 
+"""
+        list_expected = ['/media/doc_images/uploads/to_be_deleted1.jpg',
+                         '/media/doc_images/uploads/to_be_deleted2.jpg',
+                         '/media/doc_images/uploads/to_be_deleted3.jpg',
+                         '/media/doc_images/google/doc_images/uploads/to_be_deleted4.jpg',
+                         '/media/doc_images/google/doc_images/uploads/to_be_deleted5.jpg',
+                         '/media/doc_images/google/doc_images/uploads/to_be_deleted6.jpg']
+
+        list_of_media = get_images_link_from_markdown(test_str)
+        self.assertListEqual(list_expected, list_of_media)
