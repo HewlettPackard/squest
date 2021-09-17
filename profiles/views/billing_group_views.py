@@ -17,7 +17,7 @@ def billing_group_edit(request, billing_group_id):
         form.save()
         return redirect("profiles:billing_group_list")
     breadcrumbs = [
-        {'text': 'Billing', 'url': reverse('profiles:group_list')},
+        {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': group.name, 'url': ""},
     ]
     context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
@@ -34,7 +34,7 @@ def billing_group_create(request):
     else:
         form = BillingGroupForm()
     breadcrumbs = [
-        {'text': 'Billing', 'url': reverse('profiles:group_list')},
+        {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': 'Create a new billing group', 'url': ""},
     ]
     context = {'form': form, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
@@ -83,7 +83,7 @@ def user_in_billing_group_update(request, billing_group_id):
                 group.user_set.add(user)
             return redirect("profiles:user_by_billing_group_list", billing_group_id=billing_group_id)
     breadcrumbs = [
-        {'text': 'Groups', 'url': reverse('profiles:group_list')},
+        {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
         {'text': "Users", 'url': ""}
     ]

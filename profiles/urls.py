@@ -18,7 +18,8 @@ urlpatterns = [
     path('profile/token/<int:token_id>/generate', views.token_generate, name='token_generate'),
     path('profile/token/<int:token_id>/edit', views.token_edit, name='token_edit'),
     path('profile/token/<int:token_id>/delete', views.token_delete, name='token_delete'),
-    path('users/', UserListView.as_view(), name='user_list'),
+
+    path('user/', UserListView.as_view(), name='user_list'),
 
     # group URLs
     path('group/<int:group_id>/users/', UserByGroupListView.as_view(), name='user_by_group_list'),
