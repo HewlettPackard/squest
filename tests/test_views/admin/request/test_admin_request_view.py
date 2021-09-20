@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
-from service_catalog.models import Request, Message, RequestMessage
+from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from tests.base_test_request import BaseTestRequest
@@ -111,17 +111,21 @@ class CustomerRequestViewTest(BaseTestRequest):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.AVAILABLE)
 
-    def _process_with_expected_instance_state(self, expected_instance_state):
+    def _process_with_expected_instance_state(self, expected_instance_state,
+                                              expected_request_state=RequestState.PROCESSING, mock_value=10):
         args = {
             'request_id': self.test_request.id
         }
         url = reverse('service_catalog:admin_request_process', kwargs=args)
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
-            mock_job_execute.return_value = 10
+            if isinstance(mock_value, Exception):
+                mock_job_execute.side_effect = mock_value
+            else:
+                mock_job_execute.return_value = mock_value
             response = self.client.post(url)
             self.assertEquals(302, response.status_code)
             self.test_request.refresh_from_db()
-            self.assertEquals(self.test_request.state, RequestState.PROCESSING)
+            self.assertEquals(self.test_request.state, expected_request_state)
             expected_parameters = {
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
@@ -144,9 +148,9 @@ class CustomerRequestViewTest(BaseTestRequest):
             }
             self.test_instance.refresh_from_db()
             self.assertEquals(self.test_instance.state, expected_instance_state)
-            self.assertIsNotNone(self.test_request.periodic_task)
-
-            mock_job_execute.assert_called_with(extra_vars=expected_parameters)
+            if not isinstance(mock_value, Exception):
+                self.assertIsNotNone(self.test_request.periodic_task)
+                mock_job_execute.assert_called_with(extra_vars=expected_parameters)
 
     def test_admin_request_process_new_instance(self):
         self.test_request.state = RequestState.ACCEPTED
@@ -188,3 +192,13 @@ class CustomerRequestViewTest(BaseTestRequest):
         url = reverse('service_catalog:admin_request_process', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(403, response.status_code)
+
+    def test_admin_request_process_new_instance_on_non_exist_job_template_id(self):
+        self.test_request.state = RequestState.ACCEPTED
+        self.test_request.save()
+        self._process_with_expected_instance_state(InstanceState.PROVISION_FAILED, RequestState.FAILED,
+                                                   ExceptionServiceCatalog.JobTemplateNotFound(
+                                                       tower_name=self.tower_server_test.name,
+                                                       job_template_id=self.job_template_test.tower_id))
+        self.test_request.refresh_from_db()
+        self.assertIsNotNone(self.test_request.failure_message)

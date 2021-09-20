@@ -14,9 +14,8 @@ from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
 
-from . import Operation
-from .instance import Instance, InstanceState
-from .operations import OperationType
+from . import Operation, ExceptionServiceCatalog, InstanceState, OperationType
+from .instance import Instance
 from .state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
@@ -110,6 +109,8 @@ class Request(models.Model):
             self.has_failed(reason="requests.exceptions.SSLError")
         except requests.exceptions.ConnectionError:
             self.has_failed(reason="requests.exceptions.ConnectionError")
+        except ExceptionServiceCatalog.JobTemplateNotFound as e:
+            self.has_failed(reason=e)
 
         if tower_job_id is not None:
             self.tower_job_id = tower_job_id
