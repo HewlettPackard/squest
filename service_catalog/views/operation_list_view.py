@@ -1,25 +1,11 @@
 from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn
 from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.operation_filter import OperationFilter
 from service_catalog.models import Operation, Service
-
-
-class OperationTable(tables.Table):
-    type = TemplateColumn(template_name='custom_columns/operation_type.html')
-    auto_accept = TemplateColumn(template_name='custom_columns/operation_boolean.html')
-    auto_process = TemplateColumn(template_name='custom_columns/operation_boolean.html')
-    survey = TemplateColumn(template_name='custom_columns/operation_survey.html', orderable=False)
-    actions = TemplateColumn(template_name='custom_columns/operation_actions.html', orderable=False)
-
-    class Meta:
-        model = Operation
-        attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
-                  "actions")
+from service_catalog.tables.operation_tables import OperationTable
 
 
 class OperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):

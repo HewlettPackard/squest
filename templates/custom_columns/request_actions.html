@@ -1,10 +1,10 @@
-{% if is_super %}
-    <div class="row justify-content-around">
-        <a href="{% url 'service_catalog:admin_request_comment' record.id %}" class="btn btn-primary bg-sm"
+{% if request.user.is_superuser %}
+    <div class="row">
+        <a href="{% url 'service_catalog:admin_request_comment' record.id %}" class="btn btn-primary"
            title="Comments">
             <i class="fas fa-comments"></i>
         </a>
-        <div class="dropdown">
+        <div class="dropdown pl-1">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
             </button>
@@ -34,7 +34,6 @@
             </div>
         </div>
     </div>
-
 {% else %}
     <a href="{% url 'service_catalog:customer_request_comment' record.id %}"
        class="btn btn-primary bg-sm" title="Comments">

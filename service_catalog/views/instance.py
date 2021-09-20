@@ -1,17 +1,16 @@
-import json
-
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.core.exceptions import PermissionDenied
-
 from django_fsm import can_proceed
-
 from guardian.decorators import permission_required_or_403
 
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm
 from service_catalog.forms.common_forms import SupportMessageForm
-from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage
+from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request
+from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
+from service_catalog.tables.request_tables import RequestTable
+from service_catalog.views.support_list_view import SupportTable
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -139,18 +138,22 @@ def instance_support_details(request, instance_id, support_id):
 @permission_required_or_403('service_catalog.view_instance', (Instance, 'id', 'instance_id'))
 def instance_details(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
-    spec_json_pretty = json.dumps(instance.spec)
     supports = Support.objects.filter(instance=instance)
     operations = Operation.objects.filter(service=instance.service,
                                           type__in=[OperationType.UPDATE, OperationType.DELETE])
+    requests = Request.objects.filter(instance=instance)
+    operations_table = OperationTableFromInstanceDetails(operations)
+    requests_table = RequestTable(requests,
+                                  hide_fields=["instance__name", "instance__service__name"])
+    supports_table = SupportTable(supports, hide_fields=["instance__name"])
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
         {'text': f"{instance.name} ({instance.id})", 'url': ""},
     ]
     context = {'instance': instance,
-               'spec_json_pretty': spec_json_pretty,
-               'supports': supports,
-               'operations': operations,
-               'breadcrumbs': breadcrumbs
+               'operations_table': operations_table,
+               'requests_table': requests_table,
+               'supports_table': supports_table,
+               'breadcrumbs': breadcrumbs,
                }
     return render(request, 'service_catalog/common/instance-details.html', context=context)
