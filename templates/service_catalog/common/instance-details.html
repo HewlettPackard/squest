@@ -1,113 +1,78 @@
 {% extends 'base.html' %}
-
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    {% if request.user.is_superuser %}
+        <a href="{% url 'service_catalog:instance_edit' instance.id %}"
+           class="btn btn-primary float-right">
+            <i class="fas fa-wrench"></i> Edit
+        </a>
+    {% endif %}
+{% endblock %}
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 col-sm-3">
-                <div class="info-box bg-light">
-                    <div class="info-box-content">
-                        {% if request.user.is_superuser %}
-                            <span class="info-box-text text-center text-muted">Billing group</span>
-                            <span class="info-box-number text-center text-muted mb-0">{{ instance.billing_group }}</span>
-                        {% else %}
-                            <span class="info-box-text text-center text-muted">Name</span>
-                            <span class="info-box-number text-center text-muted mb-0">{{ instance.name }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-3">
-                <div class="info-box bg-light">
-                    <div class="info-box-content">
-                        <span class="info-box-text text-center text-muted">State</span>
-                        <span class="info-box-number text-center text-{{ instance.state|map_instance_state }} mb-0">{{ instance.state }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-3">
-                <div class="info-box bg-light">
-                    <div class="info-box-content">
-                        <span class="info-box-text text-center text-muted">Service</span>
-                        <span class="info-box-number text-center text-muted mb-0">{{ instance.service.name }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-3">
-                <div class="info-box bg-light">
-                    <div class="info-box-content">
-                        <span class="info-box-text text-center text-muted">SPOC</span>
-                        <span class="info-box-number text-center text-muted mb-0">
-                            {% if instance.spoc %}
-                                {{ instance.spoc.username }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm">
-                <div class="card">
+            <section class="col-lg-3">
+                <div class="card card-{{ instance.state |map_instance_state }}">
                     <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-code"></i> Instance spec</h3>
-                        {% if request.user.is_superuser %}
-                            <div class="card-tools">
-                                <a href="{% url 'service_catalog:instance_edit' instance.id %}"
-                                   class="btn btn-primary btn-sm">
-                                    <i class="fas fa-wrench"></i> Edit
-                                </a>
-                            </div>
-                        {% endif %}
+                        <h3 class="card-title">Details</h3>
                     </div>
                     <div class="card-body">
-                        {{ spec_json_pretty|safe }}
+                        <div class="text-center">
+                            {% if instance.service.image %}
+                                <img class="card-img-top" src="{{ instance.service.image.url }}" alt="User profile picture">
+                            {% else %}
+                                <img class="card-img-top" src="{%  static '/squest/img/no_image.png' %}" alt="">
+                            {% endif %}
+                        </div>
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>Name</b> <a class="float-right">{{ instance.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Service</b> <a class="float-right">{{ instance.service.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>State</b> <strong class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Billing group</b> <a class="float-right">{{ instance.billing_group.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>SPOC</b> <a class="float-right">{{ instance.spoc.username }}</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                {% include "service_catalog/common/documentation/doc-list-from-instance.html" %}
-            </div>
-            <div class="col-sm-8">
+            </section>
+            <section class="col-lg-9">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-medkit"></i> Support</h3>
-                        <div class="card-tools">
-                            <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
-                               class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus"></i> New support case
-                            </a>
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Spec</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="operations">
+                                {% render_table operations_table %}
+                            </div>
+                            <div class="tab-pane" id="support">
+                                {% render_table supports_table %}
+                            </div>
+                            <div class="tab-pane" id="spec">
+                                <pre><code class="language-json">{{ instance.spec | pretty_json}}</code></pre>
+                            </div>
+                            <div class="tab-pane" id="requests">
+                                {% render_table requests_table %}
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table id="customer_support_on_instance_list" class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Opened</th>
-                                <th>Closed</th>
-                                <th>State</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for support in supports %}
-                                <tr>
-                                    <td class="align-middle"><a
-                                            href="{% url 'service_catalog:instance_support_details' instance_id=support.instance.id support_id=support.id %}">{{ support.title }}</a>
-                                    </td>
-                                    <td class="align-middle">{{ support.date_opened }}</td>
-                                    <td class="align-middle">{{ support.date_closed }}</td>
-                                    <td style="width: 10%" class="align-middle"><h4><span
-                                            class="badge bg-{{ support.state |map_support_state }} btn-block">{{ support.state }}</span>
-                                    </h4></td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
-            </div>
+            </section>
         </div>
-        {% include "service_catalog/common/operation_list.html" %}
     </div><!-- end container fluid -->
 {% endblock %}

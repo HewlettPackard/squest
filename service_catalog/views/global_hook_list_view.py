@@ -1,20 +1,10 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn
 from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.global_hook_filter import GlobalHookFilter
 from service_catalog.models import GlobalHook
-
-
-class GlobalHookTable(tables.Table):
-    state = TemplateColumn(template_name='custom_columns/global_hook_state.html')
-    actions = TemplateColumn(template_name='custom_columns/global_hook_actions.html', orderable=False)
-
-    class Meta:
-        model = GlobalHook
-        attrs = {"id": "global_hook_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "model", "state", "job_template", "actions")
+from service_catalog.tables.global_hook_tables import GlobalHookTable
 
 
 class GlobalHookListView(LoginRequiredMixin, SingleTableMixin, FilterView):

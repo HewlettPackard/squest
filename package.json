@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@highlightjs/cdn-assets": "^11.2.0",
     "admin-lte": "^3.1.0",
     "bootstrap": "^4.6.0",
     "bootstrap-select": "^1.13.18",

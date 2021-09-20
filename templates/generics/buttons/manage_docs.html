@@ -1,4 +1,4 @@
-{% if is_super %}
+{% if request.user.is_superuser %}
     <a class="btn btn-info float-sm-right" href="{% url 'admin:service_catalog_doc_changelist' %}">
         <i class="fas fa-folder"></i> Manage docs
     </a>

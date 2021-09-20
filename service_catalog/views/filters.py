@@ -1,3 +1,5 @@
+import json
+
 from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
@@ -125,3 +127,8 @@ def map_support_state(value):
         SupportState.CLOSED: "danger"
     }
     return map_dict[value]
+
+
+@register.filter(name="pretty_json")
+def pretty_json(value):
+    return json.dumps(value, indent=4)
