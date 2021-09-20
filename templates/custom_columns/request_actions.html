@@ -27,7 +27,7 @@
                         class="{{ record.id |get_action_text_class:"reject" }} fas fa-ban"></span> Reject</a>
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"accept" }}"
                    href="{% url 'service_catalog:admin_request_accept' record.id %}"><span
-                        class="{{ record.id |get_action_text_class:"accept" }} fas fa-thumbs-up"></span> Accept</a>
+                        class="{{ record.id |get_action_text_class:"accept" }} fas fa-clipboard-check"></span> Review</a>
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"process" }}"
                    href="{% url 'service_catalog:admin_request_process' record.id %}"><span
                         class="{{ record.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>

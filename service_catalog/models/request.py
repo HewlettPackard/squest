@@ -9,27 +9,15 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
 
-from . import Operation, ExceptionServiceCatalog, InstanceState, OperationType
+from . import Operation, ExceptionServiceCatalog, InstanceState, OperationType, RequestState
 from .instance import Instance
 from .state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
-
-
-class RequestState(models.TextChoices):
-    SUBMITTED = 'SUBMITTED', _('SUBMITTED')
-    NEED_INFO = 'NEED_INFO', _('NEED_INFO')
-    REJECTED = 'REJECTED', _('REJECTED')
-    ACCEPTED = 'ACCEPTED', _('ACCEPTED')
-    CANCELED = 'CANCELED', _('CANCELED')
-    PROCESSING = 'PROCESSING', _('PROCESSING')
-    COMPLETE = 'COMPLETE', _('COMPLETE')
-    FAILED = 'FAILED', _('FAILED')
 
 
 class Request(models.Model):
@@ -74,7 +62,7 @@ class Request(models.Model):
     def reject(self):
         pass
 
-    @transition(field=state, source=[RequestState.SUBMITTED, RequestState.FAILED], target=RequestState.ACCEPTED)
+    @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED], target=RequestState.ACCEPTED)
     def accept(self):
         pass
 
