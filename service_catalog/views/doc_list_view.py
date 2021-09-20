@@ -1,22 +1,10 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn, LinkColumn
-from django_tables2.utils import A
 from guardian.mixins import LoginRequiredMixin
 
 from service_catalog.filters.doc_filter import DocFilter
 from service_catalog.models import Doc
-
-
-class DocTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/doc_actions.html', orderable=False)
-    services = TemplateColumn(template_name='custom_columns/doc_services.html', verbose_name="Linked services")
-    title = LinkColumn("service_catalog:doc_show", args=[A("id")])
-
-    class Meta:
-        model = Doc
-        attrs = {"id": "doc_table", "class": "table squest-pagination-tables"}
-        fields = ("title", "services", "actions")
+from service_catalog.tables.doc_tables import DocTable
 
 
 class DocListView(LoginRequiredMixin, SingleTableMixin, FilterView):

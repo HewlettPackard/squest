@@ -1,0 +1,6 @@
+{% if instance.state == 'AVAILABLE' %}
+    <a href="{% url 'service_catalog:instance_request_new_operation' instance_id=instance.id operation_id=record.id %}"
+       class="btn btn-info bg-sm">
+        <i class="fas fa-play"></i> Request
+    </a>
+{% endif %}
