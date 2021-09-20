@@ -17,6 +17,11 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.assertTrue("services" in response.context)
         self.assertEquals(len(response.context["services"]), 2)
 
+    def test_customer_cannot_manage_service(self):
+        url = reverse('service_catalog:manage_services')
+        response = self.client.get(url)
+        self.assertEquals(403, response.status_code)
+
     def test_customer_service_request(self):
         args = {
             "service_id": self.service_test.id
