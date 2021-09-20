@@ -136,6 +136,10 @@ class ServiceForm(ModelForm):
         widget=forms.CheckboxInput()
     )
 
+    enabled = forms.BooleanField(label="Enabled",
+                                 required=False,
+                                 widget=forms.CheckboxInput())
+
     def save(self, commit=True):
         service = super(ServiceForm, self).save(commit=False)
         billing = self.cleaned_data.get('billing')
