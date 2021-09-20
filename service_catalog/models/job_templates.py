@@ -2,8 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from . import BootstrapType
-from .tower_server import TowerServer
+from . import BootstrapType, ExceptionServiceCatalog, TowerServer
 
 
 class JobTemplate(models.Model):
@@ -22,6 +21,9 @@ class JobTemplate(models.Model):
 
     def execute(self, extra_vars):
         tower_job_template = self.tower_server.get_tower_instance().get_job_template_by_id(self.tower_id)
+        if tower_job_template is None:
+            raise ExceptionServiceCatalog.JobTemplateNotFound(tower_name=self.tower_server.name,
+                                                              job_template_id=self.tower_id)
         tower_job_run = tower_job_template.launch(extra_vars=extra_vars)
         return tower_job_run.id
 
@@ -50,4 +52,5 @@ class JobTemplate(models.Model):
 @receiver(pre_delete, sender=JobTemplate)
 def job_template_delete(sender, instance, using, **kwargs):
     from . import Service, OperationType
-    Service.objects.filter(operation__job_template=instance, operation__type__exact=OperationType.CREATE).update(**{"enabled":False})
+    Service.objects.filter(operation__job_template=instance, operation__type__exact=OperationType.CREATE).update(
+        **{"enabled": False})
