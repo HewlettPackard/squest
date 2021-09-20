@@ -1,3 +1,4 @@
+from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.bootstrap_type import BootstrapType
