@@ -100,7 +100,6 @@ class TestAdminInstanceViews(BaseTestRequest):
         url = reverse('service_catalog:instance_support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(403, response.status_code)
-        self.assertIsNone(response.context)
 
     def test_instance_edit(self):
         args = {

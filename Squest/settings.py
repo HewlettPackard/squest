@@ -369,3 +369,8 @@ if BACKUP_ENABLED:
             "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)),
         },
     }
+
+# -----------------------------------------
+# DJANGO GUARDIAN
+# -----------------------------------------
+GUARDIAN_RAISE_403 = True
