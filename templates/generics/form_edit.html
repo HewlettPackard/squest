@@ -8,7 +8,7 @@
     </div>
 {% endif %}
 {% with method=method|default:"post" %}
-    <form class="form-horizontal" method="{{ method }}">
+    <form class="form-horizontal" method="{{ method }}" {% if multipart %}enctype="multipart/form-data"{% endif %}>
         {% if method == "post" %}
             {% csrf_token %}
         {% endif %}
