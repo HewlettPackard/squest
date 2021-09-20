@@ -62,18 +62,21 @@ class CustomerRequestViewTest(BaseTestRequest):
         self.assertEquals(self.test_request.state, RequestState.REJECTED)
         self.assertEquals(1, RequestMessage.objects.filter(request=self.test_request.id).count())
 
-    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state):
+    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None):
         args = {
             'request_id': self.test_request.id
         }
-        data = {'text_variable': 'my_var',
-                'multiplechoice_variable': 'choice1',
-                'multiselect_var': 'multiselect_1',
-                'textarea_var': '2',
-                'password_var': 'pass',
-                'integer_var': '1',
-                'float_var': '0.6'
-                }
+        if custom_data:
+            data = custom_data
+        else:
+            data = {'text_variable': 'my_var',
+                    'multiplechoice_variable': 'choice1',
+                    'multiselect_var': 'multiselect_1',
+                    'textarea_var': '2',
+                    'password_var': 'pass',
+                    'integer_var': '1',
+                    'float_var': '0.6'
+                    }
 
         url = reverse('service_catalog:admin_request_accept', kwargs=args)
         response = self.client.post(url, data=data)
@@ -86,6 +89,35 @@ class CustomerRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
+
+    def test_admin_request_accept_accepted_instance(self):
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.PENDING)
+        self.test_request.refresh_from_db()
+        old_survey = self.test_request.fill_in_survey
+        data = {
+            'text_variable': 'var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': 'multiselect_1',
+            'textarea_var': '1',
+            'password_var': 'password',
+            'integer_var': '2',
+            'float_var': '0.8'
+        }
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.PENDING, custom_data=data)
+        self.test_request.refresh_from_db()
+        data_expected = {
+            'text_variable': 'var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': ['multiselect_1'],
+            'textarea_var': '1',
+            'password_var': 'password',
+            'integer_var': 2,
+            'float_var': 0.8
+        }
+        self.assertDictEqual(self.test_request.fill_in_survey, data_expected)
+        self.assertNotEqual(self.test_request.fill_in_survey, old_survey)
 
     def test_admin_request_accept_failed_update(self):
         self.test_instance.state = InstanceState.UPDATE_FAILED
