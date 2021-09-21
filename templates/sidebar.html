@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li class="nav-item menu-close">
-                    <a href="{% url 'service_catalog:request_list' %}" class="nav-link {% if '/request/' in request.path %}active{% endif %}">
+                    <a href="{% url 'service_catalog:request_list' %}" class="nav-link {% if '/request/' in request.path and '/service/' not in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-list"></i>
                         <p>Requests <span class="badge badge-info right">{% submitted_request user %}</span></p>
                     </a>

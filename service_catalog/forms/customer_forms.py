@@ -2,7 +2,6 @@ import copy
 
 import urllib3
 from django import forms
-from guardian.models import UserObjectPermission
 from django.core.exceptions import ValidationError
 
 from profiles.models import BillingGroup
@@ -51,7 +50,6 @@ class ServiceRequestForm(forms.Form):
         self.user = user
         service_id = kwargs.pop('service_id', None)
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
-
         self.service = Service.objects.get(id=service_id)
         if self.service.billing_groups_are_restricted:
             self.fields['billing_group_id'].choices = [(g.id, g.name) for g in self.user.billing_groups.all()]
@@ -71,6 +69,7 @@ class ServiceRequestForm(forms.Form):
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
                                                        operation_survey=self.create_operation.enabled_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey))
+        self.fields['instance_name'].form_title = "1. Squest fields"
 
     def save(self):
         user_provided_survey_fields = dict()
