@@ -16,8 +16,19 @@ class Message(models.Model):
 
 
 class RequestMessage(Message):
-    request = models.ForeignKey(Request, blank=True, null=True, on_delete=models.CASCADE)
+    request = models.ForeignKey(Request,
+                                blank=True, null=True,
+                                on_delete=models.CASCADE,
+                                related_name='comments',
+                                related_query_name='comment'
+                                )
 
 
 class SupportMessage(Message):
-    support = models.ForeignKey(Support, blank=True, null=True, on_delete=models.CASCADE)
+    support = models.ForeignKey(Support,
+                                blank=True,
+                                null=True,
+                                on_delete=models.CASCADE,
+                                related_name='supports',
+                                related_query_name='support'
+                                )
