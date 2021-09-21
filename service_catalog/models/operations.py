@@ -1,14 +1,14 @@
 import copy
 
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 
 from service_catalog.models import JobTemplate, OperationType
 from service_catalog.models import Service
 
 
 class Operation(models.Model):
-
     name = models.CharField(max_length=100, verbose_name="Operation name")
     description = models.CharField(max_length=500, blank=True, null=True)
     type = models.CharField(
@@ -25,7 +25,7 @@ class Operation(models.Model):
     auto_process = models.BooleanField(default=False)
     process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
 
-    def update_survey(self):
+    def update_survey(self, save=True):
         new_end_user_survey = dict()
         old_enabled_survey_fields = copy.copy(self.enabled_survey_fields)
         for survey_field in self.job_template.survey.get("spec", []):
@@ -35,7 +35,8 @@ class Operation(models.Model):
             else:
                 new_end_user_survey[field_id] = old_enabled_survey_fields[field_id]
         self.enabled_survey_fields = new_end_user_survey
-        self.save()
+        if save:
+            self.save()
 
     @classmethod
     def add_job_template_survey_as_default_survey(cls, sender, instance, created, *args, **kwargs):
@@ -58,3 +59,11 @@ class Operation(models.Model):
 
 
 post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Operation)
+
+
+@receiver(pre_save, sender=Operation)
+def on_change(sender, instance: Operation, **kwargs):
+    if instance.id is not None:
+        previous = Operation.objects.get(id=instance.id)
+        if previous.job_template != instance.job_template:
+            instance.update_survey(save=False)

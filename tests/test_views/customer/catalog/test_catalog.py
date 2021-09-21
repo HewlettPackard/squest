@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Request
+from service_catalog.models import Request, Service
 from tests.base_test_request import BaseTestRequest
 
 
@@ -15,7 +15,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
         self.assertTrue("services" in response.context)
-        self.assertEquals(len(response.context["services"]), 2)
+        self.assertEquals(len(response.context["services"]), Service.objects.filter(enabled=True).count())
 
     def test_customer_cannot_manage_service(self):
         url = reverse('service_catalog:manage_services')
