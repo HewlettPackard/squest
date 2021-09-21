@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block header_button %}
+    <div class="float-right">
+        {% if target_request.state == "NEED_INFO" %}
+            <a class="btn btn-info {{ target_request.id |is_action_dropdown_disabled:'re_submit' }}"
+               href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
+                <i class="fas fa-redo"></i> Reset to  submitted
+            </a>
+        {% endif %}
+        <a class="btn btn-secondary {{ target_request.id |is_action_dropdown_disabled:'cancel' }}"
+           href="{% url 'service_catalog:admin_request_cancel' target_request.id %}">
+            <i class="fas fa-window-close"></i> Cancel
+        </a>
+        <a class="btn btn-warning {{ target_request.id |is_action_dropdown_disabled:'need_info' }}"
+           href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">
+            <i class="fas fa-info-circle"></i> Ask more info
+        </a>
+        <a class="btn btn-danger {{ target_request.id |is_action_dropdown_disabled:'reject' }}"
+           href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
+            <i class="fas fa-ban"></i> Reject
+        </a>
+        <a class="btn btn-primary {{ target_request.id |is_action_dropdown_disabled:'accept' }}"
+           href="{% url 'service_catalog:admin_request_accept' target_request.id %}">
+            <i class="fas fa-clipboard-check"></i> Review
+        </a>
+        <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'process' }}"
+           href="{% url 'service_catalog:admin_request_process' target_request.id %}">
+            <i class="fas fa-play"></i> Process
+        </a>
+    </div>
+{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card card-{{ target_request.state |map_request_state }}">
+                    <div class="card-header">
+                        <h3 class="card-title">Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item border-top-0">
+                                <b>ID</b><span class="float-right">{{ target_request.id }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Instance</b><a href="{% url 'service_catalog:instance_details' target_request.instance.id %}" class="float-right">{{ target_request.instance.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Service</b><span class="float-right">{{ target_request.operation.service.name }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Operation</b><span class="float-right">{{ target_request.operation.name }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Operation type</b><strong class="float-right text-{{ target_request.operation.type |map_operation_type }}">{{ target_request.operation.type }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Request state</b><strong class="float-right text-{{ target_request.state |map_request_state }}">{{ target_request.state }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Instance state</b><strong class="float-right text-{{ target_request.instance.state |map_instance_state }}">{{ target_request.instance.state }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Requester</b><span class="float-right">{{ target_request.user.username }}</span>
+                            </li>
+                            <li class="list-group-item border-bottom-0">
+                                <b>Tower job</b>
+                                <a href="{{ target_request.tower_job_url }}" class="float-right">{{ target_request.tower_job_id }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="survey">
+                                <pre><code class="language-json">{{ target_request.fill_in_survey | pretty_json}}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div><!-- end container fluid -->
+{% endblock %}

@@ -217,3 +217,17 @@ def admin_request_comment(request, request_id):
         {'text': request_id, 'url': ""},
     ]
     return request_comment(request, request_id, 'service_catalog:admin_request_comment', breadcrumbs)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_details(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': request_id, 'url': ""},
+    ]
+    context = {'target_request': target_request,
+               'breadcrumbs': breadcrumbs,
+               }
+    return render(request, 'service_catalog/admin/request/request-details.html', context=context)
