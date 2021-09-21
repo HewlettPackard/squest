@@ -6,6 +6,7 @@ from utils.squest_table import SquestTable
 
 
 class RequestTable(SquestTable):
+    id = LinkColumn("service_catalog:admin_request_details", args=[A("id")])
     actions = TemplateColumn(template_name='custom_columns/request_actions.html', orderable=False)
     state = TemplateColumn(template_name='custom_columns/request_state.html')
     operation__type = TemplateColumn(verbose_name="Type", template_name='custom_columns/request_operation_type.html')
@@ -13,7 +14,6 @@ class RequestTable(SquestTable):
                                 verbose_name="Instance")
 
     def before_render(self, request):
-        self.columns.hide('id')
         if request.user.is_superuser:
             self.columns.show('user')
         else:

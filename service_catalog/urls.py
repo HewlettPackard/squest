@@ -24,6 +24,7 @@ urlpatterns = [
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
 
     path('request/', RequestListView.as_view(), name='request_list'),
+    path('request/<int:request_id>/', views.admin_request_details, name='admin_request_details'),
     path('request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
     path('request/<int:request_id>/comment/', views.customer_request_comment, name='customer_request_comment'),
     path('request/<int:request_id>/comment/', views.admin_request_comment, name='admin_request_comment'),
