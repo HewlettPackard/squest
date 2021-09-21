@@ -326,3 +326,84 @@ class BaseTest(TestCase):
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test,
                                                                 type=OperationType.DELETE)
+        # ---------------------------------------------------
+        # Service with empty survey
+        # ---------------------------------------------------
+        self.testing_empty_survey = {
+            "name": "test-empty-survey",
+            "description": "test-empty-survey-description",
+            "spec": []
+        }
+        self.job_template_empty_survey_test = JobTemplate.objects.create(
+            name="job-template-empty-survey-test",
+            survey=self.testing_empty_survey,
+            tower_id=2,
+            tower_server=self.tower_server_test,
+            tower_job_template_data=self.job_template_testing_data
+        )
+        self.service_empty_survey_test = Service.objects.create(name="service-empty-test",
+                                                                description="description-of-service-test")
+        self.service_empty_survey_test.image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        self.service_empty_survey_test.save()
+        self.create_operation_empty_survey_test = Operation.objects.create(
+            name="create test empty survey",
+            service=self.service_empty_survey_test,
+            job_template=self.job_template_empty_survey_test,
+            process_timeout_second=30
+        )
+
+        # ---------------------------------------------------
+        # Small job template
+        # ---------------------------------------------------
+        self.testing_small_survey = {
+            "name": "test-small-survey",
+            "description": "test-small-survey-description",
+            "spec":
+                [
+                    {
+                        "question_name": "text",
+                        "question_description": "text_des",
+                        "required": True,
+                        "type": "text",
+                        "variable": "text",
+                        "min": 0,
+                        "max": 1024,
+                        "default": "text_val",
+                        "choices": "",
+                        "formattedChoices": [
+                            {
+                                "choice": "",
+                                "isDefault": False,
+                                "id": 0
+                            }
+                        ],
+                        "new_question": False
+                    },
+                    {
+                        "question_name": "integer",
+                        "question_description": "integer_des",
+                        "required": True,
+                        "type": "integer",
+                        "variable": "integer_var",
+                        "min": 0,
+                        "max": 1024,
+                        "default": 1,
+                        "choices": "",
+                        "formattedChoices": [
+                            {
+                                "choice": "",
+                                "isDefault": False,
+                                "id": 0
+                            }
+                        ],
+                        "new_question": False
+                    },
+                ]
+        }
+        self.job_template_small_survey_test = JobTemplate.objects.create(
+            name="job-template-small-survey-test",
+            survey=self.testing_small_survey,
+            tower_id=3,
+            tower_server=self.tower_server_test,
+            tower_job_template_data=self.job_template_testing_data
+        )

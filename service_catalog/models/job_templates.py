@@ -13,6 +13,11 @@ class JobTemplate(models.Model):
     tower_job_template_data = models.JSONField(default=dict)
     is_compliant = models.BooleanField(default=False)
 
+    @property
+    def tower_url(self):
+        protocol = "https" if self.tower_server.secure else "http"
+        return f"{protocol}://{self.tower_server.host}/#/templates/job_template/{self.tower_id}"
+
     class Meta:
         unique_together = ('tower_id', 'tower_server',)
 

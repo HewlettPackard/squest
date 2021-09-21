@@ -6,7 +6,7 @@
    role="button" class="btn btn-default bg-sm ajax_sync_job_template">
     <i class="fas fa-sync"></i>
 </a>
-<a href="{% if  record.tower_server.secure %}https://{% else %}http://{% endif %}{{ record.tower_server.host }}/#/templates/job_template/{{ record.tower_id }}"
+<a href="{{ record.tower_url }}"
    class="btn btn-default bg-sm">
     <i class="fas fa-external-link-square-alt"></i>
 </a>

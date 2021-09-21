@@ -100,7 +100,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
         url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertEquals(1, len(response.context["table"].data.data))
+        self.assertEquals(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(), len(response.context["table"].data.data))
 
     def test_cannot_get_tower_job_templates_list_when_logout(self):
         self.client.logout()
@@ -120,5 +120,28 @@ class AdminTowerGetViewsTest(BaseTestTower):
         args = copy.copy(self.args)
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_compliancy', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
+    def test_get_tower_job_templates_details(self):
+        args = copy.copy(self.args)
+        args['job_template_id'] = self.job_template_test.id
+        url = reverse('service_catalog:job_template_details', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+
+    def test_customer_cannot_get_tower_job_templates_details(self):
+        self.client.logout()
+        self.client.login(username=self.standard_user, password=self.common_password)
+        self._cannot_get_job_templates_details()
+
+    def test_cannot_get_tower_job_templates_details_when_logout(self):
+        self.client.logout()
+        self._cannot_get_job_templates_details()
+
+    def _cannot_get_job_templates_details(self):
+        args = copy.copy(self.args)
+        args['job_template_id'] = self.job_template_test.id
+        url = reverse('service_catalog:job_template_details', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)

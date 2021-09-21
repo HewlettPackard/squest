@@ -16,6 +16,7 @@ from .views.tower_server_list_view import TowerServerListView
 
 app_name = 'service_catalog'
 
+
 urlpatterns = [
     path('', views.dashboards, name='home'),
 
@@ -36,18 +37,18 @@ urlpatterns = [
     path('request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
 
     path('service/', views.service_list, name='service_list'),
-    path('service/manage', ServiceListView.as_view(), name='manage_services'),
+    path('service/manage/', ServiceListView.as_view(), name='manage_services'),
     path('service/<int:service_id>/request/', views.customer_service_request, name='customer_service_request'),
     path('service/add_service/', views.add_service, name='create_service'),
-    path('service/<int:service_id>/operations/', OperationListView.as_view(), name='service_operations'),
     path('service/<int:service_id>/delete/', views.delete_service, name='delete_service'),
     path('service/<int:service_id>/edit/', views.edit_service, name='edit_service'),
-    path('service/<int:service_id>/operations/add/', views.add_service_operation, name='add_service_operation'),
-    path('service/<int:service_id>/operations/<int:operation_id>/delete/',
+    path('service/<int:service_id>/operation/', OperationListView.as_view(), name='service_operations'),
+    path('service/<int:service_id>/operation/add/', views.add_service_operation, name='add_service_operation'),
+    path('service/<int:service_id>/operation/<int:operation_id>/delete/',
          views.delete_service_operation, name='delete_service_operation'),
-    path('service/<int:service_id>/operations/<int:operation_id>/edit/',
+    path('service/<int:service_id>/operation/<int:operation_id>/edit/',
          views.edit_service_operation, name='edit_service_operation'),
-    path('service/<int:service_id>/operations/<int:operation_id>/survey/',
+    path('service/<int:service_id>/operation/<int:operation_id>/survey/',
          views.service_operation_edit_survey, name='service_operation_edit_survey'),
 
     path('instance/', InstanceListView.as_view(), name='instance_list'),
@@ -72,11 +73,13 @@ urlpatterns = [
     path('tower/<int:tower_id>/sync/<int:job_template_id>', views.sync_tower, name='sync_job_template'),
     path('tower/<int:tower_id>/delete/', views.delete_tower, name='delete_tower'),
     path('tower/<int:tower_id>/update/', views.update_tower, name='update_tower'),
-    path('tower/<int:tower_id>/job_templates/', JobTemplateListView.as_view(), name='tower_job_templates_list'),
-    path('tower/<int:tower_id>/job_templates/<int:job_template_id>/delete', views.delete_job_template,
+    path('tower/<int:tower_id>/job_template/', JobTemplateListView.as_view(), name='tower_job_templates_list'),
+    path('tower/<int:tower_id>/job_template/<int:job_template_id>/delete/', views.delete_job_template,
          name='delete_job_template'),
-    path('tower/<int:tower_id>/job_templates/<int:job_template_id>/compliancy', views.job_template_compliancy,
+    path('tower/<int:tower_id>/job_template/<int:job_template_id>/compliancy/', views.job_template_compliancy,
          name='job_template_compliancy'),
+    path('tower/<int:tower_id>/job_template/<int:job_template_id>/', views.job_template_details,
+         name='job_template_details'),
 
     path('tool/global_hook/', GlobalHookListView.as_view(), name='global_hook_list'),
     path('tool/global_hook/create/', views.global_hook_create, name='global_hook_create'),
