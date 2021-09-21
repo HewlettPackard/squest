@@ -1,9 +1,9 @@
-{% if request.user.is_superuser %}
-    <div class="row">
-        <a href="{% url 'service_catalog:admin_request_comment' record.id %}" class="btn btn-primary"
-           title="Comments">
-            <i class="fas fa-comments"></i>
-        </a>
+<div class="row">
+    <a href="{% url 'service_catalog:admin_request_comment' record.id %}" class="btn btn-default"
+       title="Comments">
+        <i class="fas fa-comments text-primary"></i> <span class="badge badge-default">{{ record.comments.all|length }}</span>
+    </a>
+    {% if request.user.is_superuser %}
         <div class="dropdown pl-1">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -33,17 +33,15 @@
                         class="{{ record.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
             </div>
         </div>
-    </div>
-{% else %}
-    <a href="{% url 'service_catalog:customer_request_comment' record.id %}"
-       class="btn btn-primary bg-sm" title="Comments">
-        <i class="fas fa-comments"></i>
-    </a>
-    {% if record.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
-        <a href="{% url 'service_catalog:customer_request_cancel' record.id %}"
-           class="btn btn-danger bg-sm" title="Cancel request">
-            <i class="fas fa-ban"></i>
-        </a>
-    {% endif %}
 
-{% endif %}
+    {% else %}
+        <div class="pl-1">
+            {% if record.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
+                <a href="{% url 'service_catalog:customer_request_cancel' record.id %}"
+                   class="btn btn-danger bg-sm" title="Cancel request">
+                    <i class="fas fa-ban"></i>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

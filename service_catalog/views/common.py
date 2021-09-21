@@ -184,6 +184,8 @@ def dashboards(request):
     else:
         context['total_request'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
                 state=RequestState.SUBMITTED).count()
+        context['total_request_need_info'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
+            state=RequestState.NEED_INFO).count()
         context['total_instance'] = get_objects_for_user(request.user, 'service_catalog.view_instance').filter(
                 state=InstanceState.AVAILABLE).count()
     return render(request, 'service_catalog/common/dashboard.html', context=context)
