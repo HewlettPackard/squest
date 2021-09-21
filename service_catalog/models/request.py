@@ -39,6 +39,13 @@ class Request(models.Model):
         logger.debug(f"Request][process] instance {self.id} is not available or pending")
         return False
 
+    @property
+    def tower_job_url(self):
+        if self.tower_job_id is not None:
+            protocol = "https" if self.operation.job_template.tower_server.secure else "http"
+            return f"{protocol}://{self.operation.job_template.tower_server.host}#/jobs/playbook/{self.tower_job_id}"
+        return ""
+
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
     def need_info(self):
         pass

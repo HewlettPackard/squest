@@ -144,7 +144,9 @@ class CustomerRequestViewTest(BaseTestRequest):
                                                  expected_instance_state=InstanceState.AVAILABLE)
 
     def _process_with_expected_instance_state(self, expected_instance_state,
-                                              expected_request_state=RequestState.PROCESSING, mock_value=10):
+                                              expected_request_state=RequestState.PROCESSING, mock_value=None):
+        if mock_value is None:
+            mock_value = 10
         args = {
             'request_id': self.test_request.id
         }
@@ -234,3 +236,27 @@ class CustomerRequestViewTest(BaseTestRequest):
                                                        job_template_id=self.job_template_test.tower_id))
         self.test_request.refresh_from_db()
         self.assertIsNotNone(self.test_request.failure_message)
+
+    def test_admin_request_details(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_details', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+
+    def _validate_access_request_details(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_details', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+
+    def test_customer_cannot_access_request_details(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        self._validate_access_request_details()
+
+    def test_not_logged_cannot_access_request_details(self):
+        self.client.logout()
+        self._validate_access_request_details()
