@@ -328,7 +328,9 @@ class AcceptRequestForm(forms.Form):
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            user_provided_survey_fields[field_key] = value
+            # tower doesnt allow empty value for choices fields
+            if value != '':
+                user_provided_survey_fields[field_key] = value
         # update the request
         self.target_request.fill_in_survey = user_provided_survey_fields
         self.target_request.accept()
