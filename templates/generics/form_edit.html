@@ -13,6 +13,14 @@
             {% csrf_token %}
         {% endif %}
         {% for field in form %}
+            {% if field.field.separator %}
+                <div class="mb-8">
+                    <hr class="solid">
+                </div>
+            {% endif %}
+            {% if field.field.form_title %}
+                <h5 class="text-primary">{{ field.field.form_title }}</h5>
+            {% endif %}
             {% if field.field.widget.input_type == "checkbox" %}
                 <div class="mb-1 {% if field.errors %}has-error{% endif %}">
                     {{ field }}
@@ -27,7 +35,7 @@
                 {% if not field.is_hidden %}
                     <div class="form-group {% if field.errors %}has-error{% endif %}">
                         <label for="{{ field.id_for_label }}" class="control-label">
-                            {{ field.label }}
+                            {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                         </label>
                         <div class="col-sm-12">
                             {{ field }}
@@ -42,21 +50,29 @@
 
         <div class="mt-2 form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <!-- validate button -->
-                {% if action == "edit" %}
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-plus"></i>
-                        Update
-                    </button>
-                {% elif action == "create" %}
-                    <button class="btn btn-success" type="submit">
-                        <i class="fas fa-plus"></i>
-                        Add
-                    </button>
-                {% elif action == 'apply' %}
-                    <button class="btn btn-primary" type="submit">Apply</button>
-                {% endif %}
+                {% block form_validation_button %}
+                    <!-- validate button -->
+                    {% if icon_button and text_button and color_button %}
+                        <button class="btn btn-{{ color_button }}" type="submit">
+                            <i class="fas {{ icon_button }}"></i>
+                            {{ text_button }}
+                        </button>
+                    {% elif action == "edit" %}
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-plus"></i>
+                            Update
+                        </button>
+                    {% elif action == "create" %}
+                        <button class="btn btn-success" type="submit">
+                            <i class="fas fa-plus"></i>
+                            Add
+                        </button>
+                    {% elif action == 'apply' %}
+                        <button class="btn btn-primary" type="submit">Apply</button>
+                    {% endif %}
+                {% endblock %}
             </div>
         </div>
+        <small class="form-text text-muted"><span class="text-danger">*</span> Required field</small>
     </form>
 {% endwith %}

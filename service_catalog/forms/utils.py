@@ -9,7 +9,7 @@ def _get_field_group(field_name, enable_fields):
 
 def get_choices_from_string(string_with_anti_slash_n):
     split_lines = string_with_anti_slash_n.splitlines()
-    returned_list = list()
+    returned_list = [('', "Select an option")]
     for line in split_lines:
         returned_list.append((line, line))
     return returned_list
@@ -89,6 +89,8 @@ def get_fields_from_survey(survey, enable_fields=None):
         if enable_fields:
             fields[survey_filed['variable']].group = _get_field_group(field_name=survey_filed['variable'],
                                                                       enable_fields=enable_fields)
+    fields[next(iter(fields))].separator = True
+    fields[next(iter(fields))].form_title = "2. Service fields"
     return fields
 
 

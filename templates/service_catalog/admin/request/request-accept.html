@@ -25,7 +25,7 @@
                         {% for field in field_group.list %}
                             <div class="form-group {% if field.errors %}has-error{% endif %}">
                                 <label for="{{ field.name }}" class="control-label">
-                                    {{ field.label }}
+                                    {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
                                 <div>
                                     {{ field }}
@@ -44,6 +44,7 @@
                             </button>
                         </div>
                     </div>
+                    <small class="form-text text-muted"><span class="text-danger">*</span> Required field</small>
                 </form>
             </div>
         </div>

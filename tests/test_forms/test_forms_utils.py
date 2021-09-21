@@ -9,7 +9,7 @@ class TestServiceRequestForm(BaseTest):
 
     def test_get_choices_from_string(self):
         test_string = "choice1\nchoice2\nchoice3"
-        expected_value = [("choice1", "choice1"), ("choice2", "choice2"), ("choice3", "choice3")]
+        expected_value = [("", "Select an option"), ("choice1", "choice1"), ("choice2", "choice2"), ("choice3", "choice3")]
         self.assertEquals(expected_value, utils.get_choices_from_string(test_string))
 
     def test_create_form_fields(self):
