@@ -137,6 +137,7 @@ class ServiceForm(ModelForm):
     )
 
     enabled = forms.BooleanField(label="Enabled",
+                                 initial=True,
                                  required=False,
                                  widget=forms.CheckboxInput())
 

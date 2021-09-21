@@ -32,7 +32,6 @@ def add_tower(request):
 @permission_required('service_catalog.change_towerserver')
 def sync_tower(request, tower_id, job_template_id=None):
     if request.method == 'POST':
-
         task = tasks.sync_tower.delay(tower_id, job_template_id)
         task_result = TaskResult(task_id=task.task_id)
         task_result.save()
@@ -89,12 +88,31 @@ def delete_job_template(request, tower_id, job_template_id):
         'action_url': reverse('service_catalog:delete_job_template', kwargs=args),
         'button_text': 'Delete',
         'details': {'warning_sentence': 'Warning: some services/operations are still using this job template:',
-                    'details_list': [f"Service: \"{operation.service.name}\" / Operation: \"{operation.name}\"{warning_service_disabled if operation.type == OperationType.CREATE else ''}." for operation in operations]
+                    'details_list': [
+                        f"Service: \"{operation.service.name}\" / Operation: \"{operation.name}\"{warning_service_disabled if operation.type == OperationType.CREATE else ''}."
+                        for operation in operations]
                     } if operations else None
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
-@permission_required('service_catalog.view_towerserver')
+
+@permission_required('service_catalog.view_jobtemplate')
+def job_template_details(request, tower_id, job_template_id):
+    tower_server = get_object_or_404(TowerServer, id=tower_id)
+    job_template = get_object_or_404(JobTemplate, id=job_template_id)
+    breadcrumbs = [
+        {'text': 'Tower/AWX', 'url': reverse('service_catalog:list_tower')},
+        {'text': tower_server.name, 'url': ""},
+        {'text': 'Job templates', 'url': reverse('service_catalog:tower_job_templates_list', args=[tower_id])},
+        {'text': job_template.name, 'url': ""},
+    ]
+    context = {
+        "job_template": job_template,
+        'breadcrumbs': breadcrumbs
+    }
+    return render(request, "service_catalog/admin/tower/job_templates/job-template-details.html", context=context)
+
+@permission_required('service_catalog.view_jobtemplate')
 def job_template_compliancy(request, tower_id, job_template_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
     job_template = get_object_or_404(JobTemplate, id=job_template_id)
