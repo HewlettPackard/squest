@@ -4,3 +4,4 @@
 */ldap_config.py*
 /docker/certs/*
 /backup
+/site
