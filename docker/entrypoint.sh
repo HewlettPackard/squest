@@ -6,9 +6,6 @@ echo "Wait for required services to start"
 echo "Applying database migration"
 python manage.py migrate
 
-echo "Collect static files"
-python manage.py collectstatic --noinput
-
 echo "Inserting default data"
 python manage.py insert_default_data
 
