@@ -58,6 +58,7 @@ urlpatterns = [
     path('instance/<int:instance_id>/support/<int:support_id>/', views.instance_support_details,
          name='instance_support_details'),
     path('instance/<int:instance_id>/edit/', views.instance_edit, name='instance_edit'),
+    path('instance/<int:instance_id>/delete/', views.instance_delete, name='instance_delete'),
     path('instance/<int:instance_id>/archive/', views.instance_archive, name='instance_archive'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/', views.instance_request_new_operation,
          name='instance_request_new_operation'),
