@@ -44,7 +44,7 @@
                                 {%  endfor %}
                             </div>
                             <div class="card-footer">
-                                <form action="{% url 'service_catalog:customer_request_comment' target_request.id %}" method="post" _lpchecked="1">{% csrf_token %}
+                                <form action="{% url 'service_catalog:request_comment' target_request.id %}" method="post" _lpchecked="1">{% csrf_token %}
                                     {{  form.as_p }}
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">

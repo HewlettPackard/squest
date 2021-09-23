@@ -2,7 +2,7 @@ import json
 
 from django.urls import reverse
 
-from service_catalog.models import Support
+from service_catalog.models import Support, Instance, Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -136,3 +136,27 @@ class TestAdminInstanceViews(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertEquals(self.test_instance.name, "test_instance_1")
+
+    def test_admin_can_delete_instance(self):
+        args = {
+            'instance_id': self.test_instance.id
+        }
+        request_id_list = [request.id for request in Request.objects.filter(instance=self.test_instance)]
+        url = reverse('service_catalog:instance_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+        self.client.post(url)
+        self.assertFalse(Instance.objects.filter(id=self.test_instance.id).exists())
+        for request_id in request_id_list:
+            self.assertFalse(Request.objects.filter(id=request_id).exists())
+
+    def test_customer_cannot_delete_instance(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        args = {
+            'instance_id': self.test_instance.id
+        }
+        url = reverse('service_catalog:instance_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+        self.client.post(url)
+        self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())

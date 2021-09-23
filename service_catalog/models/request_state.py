@@ -11,3 +11,4 @@ class RequestState(models.TextChoices):
     PROCESSING = 'PROCESSING', _('PROCESSING')
     COMPLETE = 'COMPLETE', _('COMPLETE')
     FAILED = 'FAILED', _('FAILED')
+    ARCHIVED = 'ARCHIVED', _('ARCHIVED')

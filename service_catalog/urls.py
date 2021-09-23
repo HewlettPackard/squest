@@ -9,6 +9,7 @@ from .views.global_hook_list_view import GlobalHookListView
 from .views.instance_list_view import InstanceListView
 from .views.job_template_list_view import JobTemplateListView
 from .views.operation_list_view import OperationListView
+from .views.request_archived_list_view import RequestArchivedListView
 from .views.request_list_view import RequestListView
 from .views.service_list_view import ServiceListView
 from .views.support_list_view import SupportListView
@@ -25,16 +26,17 @@ urlpatterns = [
     path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
 
     path('request/', RequestListView.as_view(), name='request_list'),
+    path('request/archived/', RequestArchivedListView.as_view(), name='request_archived_list'),
     path('request/<int:request_id>/', views.admin_request_details, name='admin_request_details'),
-    path('request/<int:request_id>/cancel/', views.customer_request_cancel, name='customer_request_cancel'),
-    path('request/<int:request_id>/comment/', views.customer_request_comment, name='customer_request_comment'),
-    path('request/<int:request_id>/comment/', views.admin_request_comment, name='admin_request_comment'),
-    path('request/<int:request_id>/cancel/', views.admin_request_cancel, name='admin_request_cancel'),
+    path('request/<int:request_id>/cancel/', views.request_cancel, name='request_cancel'),
+    path('request/<int:request_id>/comment/', views.request_comment, name='request_comment'),
     path('request/<int:request_id>/need-info/', views.admin_request_need_info, name='admin_request_need_info'),
     path('request/<int:request_id>/re-submit/', views.admin_request_re_submit, name='admin_request_re_submit'),
     path('request/<int:request_id>/reject/', views.admin_request_reject, name='admin_request_reject'),
     path('request/<int:request_id>/accept/', views.admin_request_accept, name='admin_request_accept'),
     path('request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
+    path('request/<int:request_id>/archive/', views.admin_request_archive_toggle, name='admin_request_archive_toggle'),
+    path('request/<int:request_id>/delete/', views.request_delete, name='request_delete'),
 
     path('service/', views.service_list, name='service_list'),
     path('service/manage/', ServiceListView.as_view(), name='manage_services'),

@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from profiles.models import BillingGroup
-from tests.test_service_catalog.test_group.test_group_base import TestGroupBase
+from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
 class TestGroupModel(TestGroupBase):
