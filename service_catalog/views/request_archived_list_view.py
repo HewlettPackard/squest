@@ -1,20 +1,21 @@
+from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
-from service_catalog.filters.request_filter import RequestFilter
+from service_catalog.filters.request_filter import RequestArchivedFilter
 from service_catalog.models import Request
 from service_catalog.tables.request_tables import RequestTable
 
 
-class RequestListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class RequestArchivedListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = RequestTable
     model = Request
     template_name = 'generics/list.html'
     ordering = '-date_submitted'
 
-    filterset_class = RequestFilter
+    filterset_class = RequestArchivedFilter
 
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
@@ -25,6 +26,8 @@ class RequestListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Requests"
-        context['html_button_path'] = "generics/buttons/request-archived-list.html"
+        context['breadcrumbs'] = [
+            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+            {'text': 'Archived requests', 'url': ""}
+        ]
         return context

@@ -15,7 +15,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        self.url = reverse('service_catalog:customer_request_comment', kwargs=args)
+        self.url = reverse('service_catalog:request_comment', kwargs=args)
 
     def _assert_can_list_comment(self):
         response = self.client.get(self.url)
@@ -50,7 +50,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:customer_request_comment', kwargs=args)
+        url = reverse('service_catalog:request_comment', kwargs=args)
         response = self.client.get(url)
         self.assertEquals(403, response.status_code)
 

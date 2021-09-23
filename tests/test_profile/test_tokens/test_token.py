@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from profiles.forms.token_forms import TokenForm
 from profiles.models import Token
-from tests.test_service_catalog.test_group.test_group_base import TestGroupBase
+from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
 class TestToken(TestGroupBase):

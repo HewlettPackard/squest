@@ -8,16 +8,16 @@ from service_catalog.models.request import RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
-class CustomerRequestViewTest(BaseTestRequest):
+class AdminRequestViewTest(BaseTestRequest):
 
     def setUp(self):
-        super(CustomerRequestViewTest, self).setUp()
+        super(AdminRequestViewTest, self).setUp()
 
-    def test_admin_request_cancel(self):
+    def test_request_cancel(self):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_cancel', kwargs=args)
+        url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())
@@ -260,3 +260,24 @@ class CustomerRequestViewTest(BaseTestRequest):
     def test_not_logged_cannot_access_request_details(self):
         self.client.logout()
         self._validate_access_request_details()
+
+    def test_admin_can_delete_request(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:request_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+        self.client.post(url)
+        self.assertFalse(Request.objects.filter(id=self.test_request.id).exists())
+
+    def test_customer_cannot_delete_request(self):
+        self.client.login(username=self.standard_user, password=self.common_password)
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:request_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+        self.client.post(url)
+        self.assertTrue(Request.objects.filter(id=self.test_request.id).exists())

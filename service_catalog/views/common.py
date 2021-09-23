@@ -5,6 +5,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
@@ -12,7 +13,10 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django_fsm import can_proceed
+from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 from martor.utils import LazyEncoder
 
@@ -25,6 +29,7 @@ from service_catalog.models.announcement import Announcement
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from .color import map_dict_request_state, random_color, map_class_to_color
+from ..mail_utils import send_email_request_canceled
 
 
 def get_color_from_string(string):
@@ -191,7 +196,42 @@ def dashboards(request):
     return render(request, 'service_catalog/common/dashboard.html', context=context)
 
 
-def request_comment(request, request_id, redirect_to_view, breadcrumbs):
+@permission_required_or_403('service_catalog.delete_request', (Request, 'id', 'request_id'))
+def request_cancel(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    if request.method == "POST":
+        # check that we can cancel the request
+        if not can_proceed(target_request.cancel):
+            raise PermissionDenied
+        send_email_request_canceled(request_id,
+                                    user_applied_state=request.user if request.user.is_superuser else target_request.user,
+                                    request_owner_user=target_request.user)
+
+        if target_request.cancel():
+            target_request.save()
+        return redirect('service_catalog:request_list')
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': request_id, 'url': ""},
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Do you want to cancel the request <strong>{target_request.id}</strong>?"),
+        'action_url': reverse('service_catalog:request_cancel', kwargs={'request_id': request_id}),
+        'button_text': 'Confirm cancel request',
+        'details': {
+            'warning_sentence': f"Canceling this request will delete the instance {target_request.instance.name}."
+        } if target_request.instance.state == InstanceState.PENDING else None
+    }
+    return render(request, "generics/confirm-delete-template.html", context)
+
+
+@permission_required_or_403('service_catalog.view_request', (Request, 'id', 'request_id'))
+def request_comment(request, request_id):
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': request_id, 'url': ""},
+    ]
     target_request = get_object_or_404(Request, id=request_id)
     messages = RequestMessage.objects.filter(request=target_request)
     if request.method == "POST":
@@ -201,7 +241,7 @@ def request_comment(request, request_id, redirect_to_view, breadcrumbs):
             new_message.request = target_request
             new_message.sender = request.user
             new_message.save()
-            return redirect(redirect_to_view, target_request.id)
+            return redirect('service_catalog:request_comment', target_request.id)
     else:
         form = RequestMessageForm()
     context = {

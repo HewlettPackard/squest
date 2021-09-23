@@ -22,11 +22,12 @@ logger = logging.getLogger(__name__)
 
 class Request(models.Model):
     fill_in_survey = models.JSONField(default=dict)
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     date_submitted = models.DateTimeField(auto_now=True, blank=True, null=True)
     date_complete = models.DateTimeField(auto_now=False, blank=True, null=True)
+    date_archived = models.DateTimeField(auto_now=False, blank=True, null=True)
     tower_job_id = models.IntegerField(blank=True, null=True)
     state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
     periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
@@ -63,6 +64,8 @@ class Request(models.Model):
         instance = Instance.objects.get(request=self)
         if instance.state == InstanceState.PENDING:
             instance.delete()
+            return False
+        return True
 
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
@@ -138,6 +141,14 @@ class Request(models.Model):
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.COMPLETE)
     def complete(self):
         self.date_complete = datetime.now()
+
+    @transition(field=state, source=RequestState.COMPLETE, target=RequestState.ARCHIVED)
+    def archive(self):
+        self.date_archived = datetime.now()
+
+    @transition(field=state, source=RequestState.ARCHIVED, target=RequestState.COMPLETE)
+    def unarchive(self):
+        self.date_archived = None
 
     def delete(self, *args, **kwargs):
         if self.periodic_task is not None:

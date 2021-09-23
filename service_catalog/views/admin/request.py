@@ -5,37 +5,14 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
-from service_catalog.mail_utils import send_email_request_canceled, send_mail_request_update
-from service_catalog.models import Request
-from service_catalog.views import request_comment
+from service_catalog.mail_utils import send_mail_request_update
+from service_catalog.models import Request, RequestState
 
 logger = logging.getLogger(__name__)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def admin_request_cancel(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
-    if request.method == "POST":
-        # check that we can delete the request
-        if not can_proceed(target_request.cancel):
-            raise PermissionDenied
-        send_email_request_canceled(request_id, user_applied_state=request.user,
-                                    request_owner_user=target_request.user)
-        # now delete the request and the pending instance
-        target_request.delete()
-        return redirect('service_catalog:request_list')
-    breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
-    ]
-    context = {
-        'object': target_request,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request, "service_catalog/admin/request/request-cancel.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -211,15 +188,6 @@ def admin_request_process(request, request_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def admin_request_comment(request, request_id):
-    breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
-    ]
-    return request_comment(request, request_id, 'service_catalog:admin_request_comment', breadcrumbs)
-
-
-@user_passes_test(lambda u: u.is_superuser)
 def admin_request_details(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
 
@@ -231,3 +199,37 @@ def admin_request_details(request, request_id):
                'breadcrumbs': breadcrumbs,
                }
     return render(request, 'service_catalog/admin/request/request-details.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_archive_toggle(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    if target_request.state == RequestState.COMPLETE:
+        target_request.archive()
+    elif target_request.state == RequestState.ARCHIVED:
+        target_request.unarchive()
+    target_request.save()
+    return redirect('service_catalog:request_list')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_delete(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    parameters = {
+        'request_id': request_id
+    }
+    if request.method == 'POST':
+        target_request.delete()
+        return redirect("service_catalog:request_list")
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': request_id, 'url': ""},
+        {'text': "Delete", 'url': ""},
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Confirm deletion of request <strong>{target_request.id}</strong>?"),
+        'action_url': reverse('service_catalog:request_delete', kwargs=parameters),
+        'button_text': 'Delete'
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
