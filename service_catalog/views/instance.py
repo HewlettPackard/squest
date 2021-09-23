@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 
@@ -27,6 +28,35 @@ def instance_edit(request, instance_id):
     ]
     context = {'form': form, 'instance': instance, 'breadcrumbs': breadcrumbs}
     return render(request, 'service_catalog/admin/instance/instance-edit.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def instance_delete(request, instance_id):
+    instance = get_object_or_404(Instance, id=instance_id)
+    if request.method == 'POST':
+        instance.delete()
+        return redirect("service_catalog:instance_list")
+    args = {
+        "instance_id": instance_id,
+    }
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': f"{instance.name} ({instance.id})",
+         'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': 'Delete', 'url': ''}
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Confirm deletion of <strong>{instance.name}</strong>?"),
+        'action_url': reverse('service_catalog:instance_delete', kwargs=args),
+        'button_text': 'Delete',
+        'details':
+            {
+                'warning_sentence': 'Warning: all requests related to this instance will be deleted:',
+                'details_list': [f"ID: {request.id}, State: {request.state}" for request in instance.request_set.all()]
+            } if instance.request_set.count() != 0 else None
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))

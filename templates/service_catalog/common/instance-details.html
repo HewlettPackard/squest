@@ -3,10 +3,16 @@
 {% load static %}
 {% block header_button %}
     {% if request.user.is_superuser %}
-        <a href="{% url 'service_catalog:instance_edit' instance.id %}"
-           class="btn btn-primary float-right">
-            <i class="fas fa-wrench"></i> Edit
-        </a>
+        <div class="float-right">
+            <a href="{% url 'service_catalog:instance_edit' instance.id %}"
+               class="btn btn-primary">
+                <i class="fas fa-wrench"></i> Edit
+            </a>
+            <a href="{% url 'service_catalog:instance_delete' instance.id %}"
+               class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete
+            </a>
+        </div>
     {% endif %}
 {% endblock %}
 {% block main %}
@@ -20,9 +26,10 @@
                     <div class="card-body">
                         <div class="text-center">
                             {% if instance.service.image %}
-                                <img class="card-img-top" src="{{ instance.service.image.url }}" alt="User profile picture">
+                                <img class="card-img-top" src="{{ instance.service.image.url }}"
+                                     alt="User profile picture">
                             {% else %}
-                                <img class="card-img-top" src="{%  static '/squest/img/no_image.png' %}" alt="">
+                                <img class="card-img-top" src="{% static '/squest/img/no_image.png' %}" alt="">
                             {% endif %}
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
@@ -33,7 +40,8 @@
                                 <b>Service</b> <a class="float-right">{{ instance.service.name }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>State</b> <strong class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
+                                <b>State</b> <strong
+                                    class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
                                 <b>Billing group</b> <a class="float-right">{{ instance.billing_group.name }}</a>
@@ -49,10 +57,12 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a>
+                            </li>
                             <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
                             <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Spec</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
@@ -61,10 +71,14 @@
                                 {% render_table operations_table %}
                             </div>
                             <div class="tab-pane" id="support">
+                                <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
+                                   class="float-right btn btn-success">
+                                    <i class="fas fa-plus"></i> Open new support
+                                </a>
                                 {% render_table supports_table %}
                             </div>
                             <div class="tab-pane" id="spec">
-                                <pre><code class="language-json">{{ instance.spec | pretty_json}}</code></pre>
+                                <pre><code class="language-json">{{ instance.spec | pretty_json }}</code></pre>
                             </div>
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}
