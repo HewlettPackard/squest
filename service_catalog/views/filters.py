@@ -70,7 +70,12 @@ def is_action_dropdown_disabled(request_id, target_action):
     if target_action == "re_submit":
         if not can_proceed(target_request.re_submit):
             return "disabled"
-
+    if target_action == "archive":
+        if not can_proceed(target_request.archive):
+            return "disabled"
+    if target_action == "unarchive":
+        if not can_proceed(target_request.unarchive):
+            return "disabled"
     return ""
 
 
@@ -95,6 +100,12 @@ def get_action_text_class(request_id, target_action):
     if target_action == "re_submit":
         if can_proceed(target_request.re_submit):
             return "text-info"
+    if target_action == "archive":
+        if can_proceed(target_request.archive):
+            return "text-black"
+    if target_action == "unarchive":
+        if can_proceed(target_request.unarchive):
+            return "text-success"
     return ""
 
 

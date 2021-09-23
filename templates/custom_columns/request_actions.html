@@ -1,7 +1,8 @@
 <div class="row">
-    <a href="{% url 'service_catalog:admin_request_comment' record.id %}" class="btn btn-default"
+    <a href="{% url 'service_catalog:request_comment' record.id %}" class="btn btn-default"
        title="Comments">
-        <i class="fas fa-comments text-primary"></i> <span class="badge badge-default">{{ record.comments.all|length }}</span>
+        <i class="fas fa-comments text-primary"></i> <span
+            class="badge badge-default">{{ record.comments.all|length }}</span>
     </a>
     {% if request.user.is_superuser %}
         <div class="dropdown pl-1">
@@ -9,6 +10,18 @@
                     aria-haspopup="true" aria-expanded="false">
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% if record.state == "COMPLETE" %}
+                    <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'archive' }}"
+                       href="{% url 'service_catalog:admin_request_archive_toggle' record.id %}">
+                        <span class="{{ record.id |get_action_text_class:"archive" }} fas fa-archive"></span> Archive
+                    </a>
+                {% endif %}
+                {% if record.state == "ARCHIVED" %}
+                    <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'unarchive' }}"
+                       href="{% url 'service_catalog:admin_request_archive_toggle' record.id %}">
+                        <span class="{{ record.id |get_action_text_class:"unarchive" }} fas fa-box-open"></span> Unarchive
+                    </a>
+                {% endif %}
                 {% if record.state == "NEED_INFO" %}
                     <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"re_submit" }}"
                        href="{% url 'service_catalog:admin_request_re_submit' record.id %}"><span
@@ -16,7 +29,7 @@
                         submitted</a>
                 {% endif %}
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"cancel" }}"
-                   href="{% url 'service_catalog:admin_request_cancel' record.id %}"><span
+                   href="{% url 'service_catalog:request_cancel' record.id %}"><span
                         class="{{ record.id |get_action_text_class:"cancel" }} fas fa-window-close"></span> Cancel</a>
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"need_info" }}"
                    href="{% url 'service_catalog:admin_request_need_info' record.id %}"><span
@@ -27,7 +40,8 @@
                         class="{{ record.id |get_action_text_class:"reject" }} fas fa-ban"></span> Reject</a>
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"accept" }}"
                    href="{% url 'service_catalog:admin_request_accept' record.id %}"><span
-                        class="{{ record.id |get_action_text_class:"accept" }} fas fa-clipboard-check"></span> Review</a>
+                        class="{{ record.id |get_action_text_class:"accept" }} fas fa-clipboard-check"></span>
+                    Review</a>
                 <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"process" }}"
                    href="{% url 'service_catalog:admin_request_process' record.id %}"><span
                         class="{{ record.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
@@ -37,7 +51,7 @@
     {% else %}
         <div class="pl-1">
             {% if record.state in 'SUBMITTED,NEED_INFO,REJECTED' %}
-                <a href="{% url 'service_catalog:customer_request_cancel' record.id %}"
+                <a href="{% url 'service_catalog:request_cancel' record.id %}"
                    class="btn btn-danger bg-sm" title="Cancel request">
                     <i class="fas fa-ban"></i>
                 </a>
