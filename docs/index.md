@@ -1,14 +1,31 @@
 # Squest
 
-Squest is a Web portal that allow to expose Ansible Tower/AWX based automation as a service.
+<p align="center">
+    <img src="images/squest_full_logo.png">
+</p>
 
-Features:
+The current deployment is based on Docker compose.
 
-- Catalog of service that point to an Ansible Tower/AWX job template
-- Admin approval on requests
-- Instance lifecycle management (update, delete)
-- Resource tracking
-- Billing groups 
+Pre-requisites:
 
-If you want an idea of what you can do with Squest, click on the image below
-[![DEMO](https://img.youtube.com/vi/ZfTjS1t7X74/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZfTjS1t7X74)
+- docker
+- docker-compose
+
+To run the application, execute the docker compose file
+```bash
+docker-compose up
+```
+
+Then connect with your web browser to [http://127.0.0.1:8080](http://127.0.0.1:8080)
+The default admin account is `admin // admin`
+
+The default export the port 8080. If you want to use the standard HTTP port 80, update the 
+file `docker-compose.override.yml`.
+```yaml
+services:
+  nginx:
+    ports:
+      - "80:8080"
+```
+
+More details are available in the "Installation" section of this documentation.

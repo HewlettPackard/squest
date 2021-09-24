@@ -1,5 +1,20 @@
 # Lifecycle management
 
+## Populate the service catalog
+
+Once Squest is linked to a Tower/AWX server, "services" can be added into the catalog.
+
+A service is composed of `operations` that are pointers to "job templates" present in Tower/AWX.
+
+A service has at least one operation of type `CREATE` that allows to provision the resource.
+
+A service can have then multiple operation of type `UPDATE` and `DELETE` that allow to manage the lifecycle of instances that have been created via the `CREATE` operation.
+
+>**Note:** Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX. 
+Squest can only disable the ones that you don't want to be filled by your end users. 
+Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
+
+
 ## Provisioning a service
 
 When a user request for the first time a service, an instance is created automatically and set to "pending" state on Squest.
