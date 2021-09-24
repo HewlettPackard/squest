@@ -22,6 +22,9 @@ Main features:
   - Link objects to compose layers of your infrastructure (Physical servers, Virtualization, Containers, Projects, Tenants,...)
   - Visualize pool of resource of what you have provided (CPU, vCPU, memory, disk...)
   - Check consumptions before approving new requests
+- Billing groups 
+  - Group users per billing group
+  - Get charts and stats about resource consumption per group
 
 If you want an idea of what you can do with Squest, click on the image below
 
