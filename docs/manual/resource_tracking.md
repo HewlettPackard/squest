@@ -7,6 +7,10 @@ services on underlying layers.
 
 The resource tracking feature allows to monitor reserved resources and highlight available resource in an infrastructure.
 
+> **Note:** This feature is not a real time monitoring. It does not connect to you infrastructure to check the real 
+consumption but help to follow what resources have been reserved to avoid overallocation when accepting new request 
+from the service catalog.
+
 ## Concept
 
 To introduce the concept of resources, lets take the example of a virtualization stack like a VMware vCenter.
@@ -203,4 +207,3 @@ The most common case is CPU/vCPU:
 
 If a host has 28 core processors and hyperthreading is enabled, that host will produce 56 vCPUs (28 cores x 2 threads
 per core) then you can configure the over commitment on the CPU produced attribute to 2 to match this behavior.
-

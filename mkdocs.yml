@@ -27,7 +27,9 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Deployment: deployment.md
+  - Installation:
+    - TLS: installation/tls.md
+    - Backup: installation/backup.md
   - Configuration:
     - Squest: configuration/squest_settings.md
     - Tower: configuration/tower_settings.md
