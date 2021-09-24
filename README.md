@@ -1,11 +1,30 @@
+<p align="center">
+    <img src="docs/images/squest_full_logo.png">
+</p>
+
+# Squest - Request portal on top of Ansible Tower/AWX
+
 [![Gitter](https://badges.gitter.im/gitterHQ/gitter.svg)](https://gitter.im/HewlettPackard/squest)
-![Last pull request](https://github.com/HewlettPackard/squest/actions/workflows/on-pull-request-workflow.yml/badge.svg)
 
-# Squest - A service request portal based on Ansible Tower/AWX
+Squest is a Web portal that allow to expose Tower/AWX based automation as a service.
 
-Squest is a Web portal that allow to expose Tower based automation as a service.
+Main features:
+
+- Service catalog:
+  - Add services to your catalog based on job template you have in your Tower/AWX instance
+  - Create requests for service
+  - Review and approve requests
+  - Provision a service
+  - Manage lifecycle of each instance of a service
+  - Support page
+- Reserved resource tracking
+  - Create generic objects
+  - Link objects to compose layers of your infrastructure (Physical servers, Virtualization, Containers, Projects, Tenants,...)
+  - Visualize pool of resource of what you have provided (CPU, vCPU, memory, disk...)
+  - Check consumptions before approving new requests
 
 If you want an idea of what you can do with Squest, click on the image below
+
 [![DEMO](https://img.youtube.com/vi/ZfTjS1t7X74/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZfTjS1t7X74)
 
 ## Links
