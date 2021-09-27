@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from service_catalog import tasks
 from service_catalog.models.request import RequestState
 
-DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_HOST}"
+DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_EMAIL_HOST}"
 
 
 def _get_admin_emails():
@@ -76,7 +76,8 @@ def send_email_request_canceled(request_id, user_applied_state=None, request_own
     plain_text = f"Request #{request_id} - CANCELLED"
     template_name = "service_catalog/mails/request_cancelled.html"
     context = {'request_id': request_id,
-               'user_applied_state': user_applied_state}
+               'user_applied_state': user_applied_state,
+               'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_admin_emails()  # email sent to all admins
@@ -94,7 +95,8 @@ def send_email_request_error(target_request, error_message):
     template_name = "service_catalog/mails/request_error.html"
     context = {'request': target_request,
                'user_applied_state': DEFAULT_FROM_EMAIL,
-               'error_message': error_message}
+               'error_message': error_message,
+               'current_site': settings.SQUEST_HOST}
 
     html_template = get_template(template_name)
     html_content = html_template.render(context)
