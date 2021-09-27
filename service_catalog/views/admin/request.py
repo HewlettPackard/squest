@@ -34,8 +34,7 @@ def admin_request_need_info(request, request_id):
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
-    else:
-        form = MessageOnRequestForm(request.user, **parameters)
+    form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -65,8 +64,7 @@ def admin_request_re_submit(request, request_id):
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
-    else:
-        form = MessageOnRequestForm(request.user, **parameters)
+    form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -97,8 +95,7 @@ def admin_request_reject(request, request_id):
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
-    else:
-        form = MessageOnRequestForm(request.user, **parameters)
+    form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -124,8 +121,7 @@ def admin_request_accept(request, request_id):
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
-    else:
-        form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
+    form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -204,10 +200,12 @@ def admin_request_details(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_archive_toggle(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if target_request.state == RequestState.COMPLETE:
+    if can_proceed(target_request.archive):
         target_request.archive()
-    elif target_request.state == RequestState.ARCHIVED:
+    elif can_proceed(target_request.unarchive):
         target_request.unarchive()
+    else:
+        raise PermissionDenied
     target_request.save()
     return redirect('service_catalog:request_list')
 

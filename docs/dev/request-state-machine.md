@@ -28,11 +28,13 @@ graph TB
     need_info --> |cancel|canceled
     rejected --> |cancel|canceled
     submitted --> |cancel|canceled
+    submitted -->|reject| rejected
     canceled --> |delete| deleted
     deleted((Deleted))
     auto_pocess{auto process?}
     style auto_pocess fill:#80CBC4
     accepted --> auto_pocess
+    accepted -->|reject| rejected
     auto_pocess --> |Yes| operation_type
     admin_action_2{admin action}
     auto_pocess --> |No| admin_action_2
@@ -59,4 +61,7 @@ graph TB
     processing_ok --> |No| failed
     failed --> |retry| processing
     failed --> |cancel| accepted
+    archived[ARCHIVED] 
+    complete -->|archive| archived
+    archived -->|unarchive| complete
 ```

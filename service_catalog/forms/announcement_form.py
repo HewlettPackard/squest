@@ -1,5 +1,4 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
@@ -52,16 +51,6 @@ class AnnouncementForm(ModelForm):
                              choices=BootstrapType.choices,
                              initial=BootstrapType.INFO,
                              widget=forms.Select(attrs={'class': 'form-control'}))
-
-    def clean(self):
-        cleaned_data = super(AnnouncementForm, self).clean()
-        date_start = cleaned_data.get("date_start")
-        date_stop = cleaned_data.get("date_stop")
-        now = timezone.now()
-        if date_start > date_stop:
-            raise ValidationError({"date_start": "The start date must be earlier than the end date"})
-        if date_start.date() < now.date():
-            raise ValidationError({"date_start": "The start date must not be in the past"})
 
     class Meta:
         model = Announcement

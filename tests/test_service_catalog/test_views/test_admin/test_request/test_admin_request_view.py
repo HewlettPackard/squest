@@ -1,7 +1,5 @@
 from unittest import mock
-
 from django.urls import reverse
-
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -30,11 +28,29 @@ class AdminRequestViewTest(BaseTestRequest):
         data = {
             "message": "admin message"
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEquals(self.test_request.state, RequestState.NEED_INFO)
         self.assertEquals(1, RequestMessage.objects.filter(request=self.test_request.id).count())
+
+    def test_admin_cannot_request_need_info_on_forbidden_states(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_need_info', kwargs=args)
+        data = {
+            "message": "admin message"
+        }
+        forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
+                            RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.NEED_INFO]
+        for forbidden_state in forbidden_states:
+            self.test_request.state = forbidden_state
+            self.test_request.save()
+            response = self.client.post(url, data=data)
+            self.assertEquals(403, response.status_code)
 
     def test_admin_request_re_submit(self):
         self.test_request.state = RequestState.NEED_INFO
@@ -43,10 +59,25 @@ class AdminRequestViewTest(BaseTestRequest):
             'request_id': self.test_request.id
         }
         url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEquals(self.test_request.state, RequestState.SUBMITTED)
+
+    def test_admin_cannot_request_re_submit_on_forbidden_states(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
+        forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
+                            RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.SUBMITTED]
+        for forbidden_state in forbidden_states:
+            self.test_request.state = forbidden_state
+            self.test_request.save()
+            response = self.client.post(url)
+            self.assertEquals(403, response.status_code)
 
     def test_admin_request_reject(self):
         args = {
@@ -56,11 +87,30 @@ class AdminRequestViewTest(BaseTestRequest):
         data = {
             "message": "admin message"
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEquals(self.test_request.state, RequestState.REJECTED)
         self.assertEquals(1, RequestMessage.objects.filter(request=self.test_request.id).count())
+
+    def test_admin_cannot_request_reject_on_forbidden_states(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_reject', kwargs=args)
+        data = {
+            "message": "admin message"
+        }
+        forbidden_states = [RequestState.CANCELED, RequestState.PROCESSING, RequestState.FAILED, RequestState.COMPLETE,
+                            RequestState.REJECTED, RequestState.ARCHIVED]
+        for forbidden_state in forbidden_states:
+            print(forbidden_state)
+            self.test_request.state = forbidden_state
+            self.test_request.save()
+            response = self.client.post(url, data=data)
+            self.assertEquals(403, response.status_code)
 
     def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None):
         args = {
@@ -79,6 +129,8 @@ class AdminRequestViewTest(BaseTestRequest):
                     }
 
         url = reverse('service_catalog:admin_request_accept', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.test_request.refresh_from_db()
@@ -151,6 +203,8 @@ class AdminRequestViewTest(BaseTestRequest):
             'request_id': self.test_request.id
         }
         url = reverse('service_catalog:admin_request_process', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             if isinstance(mock_value, Exception):
                 mock_job_execute.side_effect = mock_value
@@ -281,3 +335,57 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEquals(302, response.status_code)
         self.client.post(url)
         self.assertTrue(Request.objects.filter(id=self.test_request.id).exists())
+
+    def test_admin_request_archive_toggle(self):
+        self.test_request.state = RequestState.COMPLETE
+        self.test_request.save()
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_archive_toggle', kwargs=args)
+        response = self.client.post(url)
+        self.assertEquals(302, response.status_code)
+        self.test_request.refresh_from_db()
+        self.assertEquals(self.test_request.state, RequestState.ARCHIVED)
+        response = self.client.post(url)
+        self.assertEquals(302, response.status_code)
+        self.test_request.refresh_from_db()
+        self.assertEquals(self.test_request.state, RequestState.COMPLETE)
+
+    def test_admin_cannot_request_archive_toggle_on_forbidden_states(self):
+        args = {
+            'request_id': self.test_request.id
+        }
+        url = reverse('service_catalog:admin_request_archive_toggle', kwargs=args)
+        forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
+                            RequestState.REJECTED, RequestState.SUBMITTED, RequestState.NEED_INFO]
+        for forbidden_state in forbidden_states:
+            self.test_request.state = forbidden_state
+            self.test_request.save()
+            response = self.client.post(url)
+            self.assertEquals(403, response.status_code)
+
+    def test_customer_can_list_his_archived_requests(self):
+        self.test_request = Request.objects.create(fill_in_survey={},
+                                                   instance=self.test_instance,
+                                                   operation=self.create_operation_test,
+                                                   user=self.standard_user,
+                                                   state=RequestState.ARCHIVED)
+        # fist user has one request
+        url = reverse('service_catalog:request_archived_list')
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(len(response.context["table"].data.data), 1)
+        self.client.logout()
+        # second user has no request
+        self.client.login(username=self.standard_user_2, password=self.common_password)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(len(response.context["table"].data.data), 0)
+
+    def test_cannot_get_archived_requests_list_when_logout(self):
+        self.client.logout()
+        url = reverse('service_catalog:request_archived_list')
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
+

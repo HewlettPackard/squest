@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from tests.test_service_catalog.test_views.admin.settings.tower.base_test_tower import BaseTestTower
+from tests.test_service_catalog.test_views.test_admin.test_settings.test_tower.base_test_tower import BaseTestTower
 
 
 class AdminTowerListViewsTest(BaseTestTower):
