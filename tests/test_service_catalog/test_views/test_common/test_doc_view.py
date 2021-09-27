@@ -17,8 +17,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:doc_list')
         response = self.client.get(url)
         self.assertEquals(200, response.status_code)
-        self.assertTrue("docs" in response.context)
-        self.assertEquals(len(response.context["docs"]), 1)
+        self.assertTrue("table" in response.context)
+        self.assertEquals(response.context["table"].data.data.count(), 1)
 
     def test_customer_can_list_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
