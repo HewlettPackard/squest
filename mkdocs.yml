@@ -28,6 +28,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Installation:
+    - LDAP: installation/ldap.md
     - TLS: installation/tls.md
     - Backup: installation/backup.md
   - Configuration:

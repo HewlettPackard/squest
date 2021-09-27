@@ -311,7 +311,7 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Markdown urls
-MARTOR_UPLOAD_PATH = 'doc_images/uploads/{}'.format(time.strftime("%Y%m%d/"))
+MARTOR_UPLOAD_PATH = 'doc_images/uploads'
 MARTOR_UPLOAD_URL = '/api/uploader/'  # change to local uploader
 
 # Maximum Upload Image
