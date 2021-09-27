@@ -27,10 +27,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   django: &django
-    image: squest
-    build:
-      context: .
-      dockerfile: docker/squest.Dockerfile
+    image: quay.io/hewlettpackardenterprise/squest:latest
     env_file: docker/environment_variables/squest.env
     volumes:
       - django_static:/app/static

@@ -16,7 +16,7 @@ jobs:
       - name: Get current app version
         id: vars
         run: |
-          echo ::set-output name=version::$(grep "__version__ =" Squest/settings/__init__.py |awk '{printf $3}' | sed -e 's/^"//' -e 's/"$//')
+          echo ::set-output name=version::$(grep "__version__ =" Squest/version.py |awk '{printf $3}' | sed -e 's/^"//' -e 's/"$//')
 
       - name: Print app version
         run: |
