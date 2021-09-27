@@ -52,4 +52,8 @@ def get_celery_crontab_parameters_from_crontab_line(crontab_line):
 
 def get_images_link_from_markdown(markdown_text):
     regex = r"!\[[^\]]*\]\((\/media\/doc_images\/.*?)\s*(\"(?:.*[^\"])\")?\s*\)"
-    return [x.group(1) for x in re.finditer(regex, markdown_text, re.MULTILINE)]
+    file_paths = [x.group(1) for x in re.finditer(regex, markdown_text, re.MULTILINE)]
+    list_file_name = list()
+    for file_path in file_paths:
+        list_file_name.append(os.path.basename(file_path))
+    return list_file_name
