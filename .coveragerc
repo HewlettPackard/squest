@@ -1,0 +1,8 @@
+[run]
+
+omit =
+    tests/*
+    Squest/*
+    manage.py
+    */apps.py
+    service_catalog/management/commands/*
