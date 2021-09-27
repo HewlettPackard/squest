@@ -35,7 +35,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libuv1-dev
-          sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev
+          sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev graphviz
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2

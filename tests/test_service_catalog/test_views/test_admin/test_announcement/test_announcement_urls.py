@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 
@@ -11,13 +10,12 @@ class TestAnnouncementUrls(BaseTest):
 
     def setUp(self):
         super(TestAnnouncementUrls, self).setUp()
-        self.my_user = User.objects.create(username='test_user')
         self.my_announcement = Announcement.objects.create(
             title='My announcement title',
             message='My announcement message',
             date_start=timezone.now() - timezone.timedelta(days=1),
             date_stop=timezone.now() + timezone.timedelta(days=1),
-            created_by=self.my_user,
+            created_by=self.superuser,
             type=BootstrapType.INFO
         )
 

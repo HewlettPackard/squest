@@ -25,7 +25,7 @@ class GlobalHookFilter(SquestFilter):
 
     state_request = MultipleChoiceFilter(
         label="Request state",
-        method='apply_filter_state',
+        method='add_states_in_filter',
         choices=RequestState.choices,
         null_value=None,
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
@@ -38,7 +38,8 @@ class GlobalHookFilter(SquestFilter):
         self.state_filter_value += value
         return queryset
 
-    def apply_filter_state(self, queryset, field_name, value):
-        tmp = self.state_filter_value + value
+    def filter_queryset(self, queryset):
+        queryset = super(GlobalHookFilter, self).filter_queryset(queryset)
+        tmp = self.state_filter_value
         self.state_filter_value = []
         return queryset.filter(state__in=tmp)

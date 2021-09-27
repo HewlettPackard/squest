@@ -29,6 +29,8 @@ class TestResourceGroupViews(BaseTestResourceTracker):
             "name": "new_resource_group",
         }
         number_rp_before = ResourceGroup.objects.all().count()
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertEquals(number_rp_before + 1, ResourceGroup.objects.all().count())
@@ -44,6 +46,8 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         data = {
             "name": new_name,
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.rg_physical_servers.refresh_from_db()
@@ -64,6 +68,8 @@ class TestResourceGroupViews(BaseTestResourceTracker):
             for attribute in resource.text_attributes.all():
                 list_text_attribute_id_to_be_delete.append(copy(attribute.id))
         url = reverse('resource_tracker:resource_group_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         # check that the resource group has been deleted
