@@ -120,7 +120,10 @@ python manage.py test
 Run code coverage
 ```bash
 coverage run --source='.' manage.py test
+# generate terminal report
 coverage report
+# generate HTML report
+coverage html
 ```
 
 ## phpMyAdmin
