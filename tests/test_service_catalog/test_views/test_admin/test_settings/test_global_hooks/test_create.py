@@ -11,6 +11,10 @@ class GlobalHooksCreateViewsTest(BaseTest):
         self.url = reverse('service_catalog:global_hook_create')
         self.number_global_hook_before = GlobalHook.objects.all().count()
 
+    def test_get_page(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
+
     def test_create_valid_global_hook(self):
         data = {
             "name": "hook1",
