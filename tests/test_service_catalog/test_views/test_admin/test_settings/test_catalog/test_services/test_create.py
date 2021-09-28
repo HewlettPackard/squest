@@ -24,9 +24,10 @@ class ServiceCreateTestCase(BaseTest):
             "billing_group_id": "",
             "billing_group_is_shown": "on"
         }
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         number_service_before = copy(Service.objects.all().count())
         response = self.client.post(self.url, data=data)
-        print(response.status_code)
         self.assertEquals(302, response.status_code)
         self.assertEquals(number_service_before + 1,
                           Service.objects.all().count())

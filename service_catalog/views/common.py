@@ -140,10 +140,9 @@ def create_pie_chart_resource_pool_consumption_by_billing_groups() -> dict:
                 chart_resource_pool_tmp[resource_pool][rp_attribute][bg] = 0
             for consumer in rp_attribute.consumers.all():
                 for resource_attribute in consumer.attribute_types.all():
-                    try:
+                    bg = None
+                    if resource_attribute.resource.service_catalog_instance:
                         bg = resource_attribute.resource.service_catalog_instance.billing_group
-                    except AttributeError:
-                        bg = None
                     chart_resource_pool_tmp[resource_pool][rp_attribute][bg] += resource_attribute.value
     chart_resource_pool = dict()
     for resource_pool in chart_resource_pool_tmp:

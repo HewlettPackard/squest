@@ -22,6 +22,8 @@ class OperationEditTestCase(BaseTest):
             "type": OperationType.DELETE,
             "process_timeout_second": 60
         }
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)
         self.update_operation_test.refresh_from_db()
@@ -42,6 +44,8 @@ class OperationEditTestCase(BaseTest):
             "type": "CREATE",
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.create_operation_test.refresh_from_db()
@@ -62,6 +66,8 @@ class OperationEditTestCase(BaseTest):
             "type": OperationType.UPDATE,
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
         self.create_operation_test.refresh_from_db()
@@ -82,6 +88,8 @@ class OperationEditTestCase(BaseTest):
             "type": OperationType.UPDATE,
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(302, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
 
@@ -99,6 +107,8 @@ class OperationEditTestCase(BaseTest):
             "type": OperationType.CREATE,
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
         self.delete_operation_test.refresh_from_db()
@@ -118,6 +128,8 @@ class OperationEditTestCase(BaseTest):
             "type": "CREATE",
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(200, response.status_code)
         self.update_operation_test.refresh_from_db()
@@ -133,6 +145,8 @@ class OperationEditTestCase(BaseTest):
             'text_variable': True,
             'multiplechoice_variable': True
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.update_operation_test.refresh_from_db()
@@ -150,6 +164,8 @@ class OperationEditTestCase(BaseTest):
         data = {
             'text_variable': True,
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.update_operation_test.refresh_from_db()
@@ -166,6 +182,8 @@ class OperationEditTestCase(BaseTest):
             'non_existing': True,
             'non_existing_2': True
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.update_operation_test.refresh_from_db()
@@ -186,6 +204,8 @@ class OperationEditTestCase(BaseTest):
             "type": "CREATE",
             "process_timeout_second": 600
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         self.assertEquals({}, self.create_operation_empty_survey_test.enabled_survey_fields)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
