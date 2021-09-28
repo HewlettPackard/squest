@@ -30,28 +30,44 @@ jobs:
           --health-retries=3
     steps:
       - uses: actions/checkout@v2
+
       - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y libuv1-dev
           sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Install poetry
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
+
       - name: Install dependencies
         run: |
           poetry install
+
       - name: Run Tests
         env:
           MYSQL_USER: "root"
           MYSQL_PASSWORD: "p@ssw0rd"
         run: |
           poetry run coverage run --source='.' manage.py test
+
       - name: Run coverage report
         run: |
           poetry run coverage report
+
+      - name: Generate HTML report
+        run: |
+          poetry run coverage html
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: htmlcov
+          path: htmlcov
