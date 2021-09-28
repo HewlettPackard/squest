@@ -28,6 +28,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": "new_pool",
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         number_rp_before = ResourcePool.objects.all().count()
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
@@ -43,6 +45,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": new_name,
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.rp_vcenter.refresh_from_db()
@@ -54,6 +58,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
             'resource_pool_id': self.rp_vcenter.id,
         }
         url = reverse('resource_tracker:resource_pool_delete', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
         self.assertFalse(ResourcePool.objects.filter(id=id_to_delete).exists())
@@ -67,6 +73,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": "new_attribute"
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
@@ -82,6 +90,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
             "over_commitment_producers": 2,
             "over_commitment_consumers": 3
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
@@ -97,6 +107,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": "new_attribute"
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertTrue(self.rp_vcenter.attribute_definitions.get(name='new_attribute'))
@@ -128,6 +140,8 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": "vCPU"
         }
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         # before executing we do have resource group attributes that consume or produce
         self.assertIsNotNone(self.rg_ocp_workers_vcpu_attribute.consume_from)
         self.assertIsNotNone(self.rg_physical_servers_cpu_attribute.produce_for)

@@ -21,6 +21,8 @@ class OperationCreateTestCase(BaseTest):
             "type": "DELETE",
             "process_timeout_second": 60
         }
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)
@@ -35,6 +37,8 @@ class OperationCreateTestCase(BaseTest):
             "type": "UPDATE",
             "process_timeout_second": 60
         }
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)
@@ -52,6 +56,8 @@ class OperationCreateTestCase(BaseTest):
             "type": "CREATE",
             "process_timeout_second": 60
         }
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
         self.assertEquals(200, response.status_code)
@@ -67,5 +73,7 @@ class OperationCreateTestCase(BaseTest):
             "type": "CREATE",
             "process_timeout_second": 60
         }
+        response = self.client.get(self.url)
+        self.assertEquals(302, response.status_code)
         response = self.client.post(self.url, data=data)
         self.assertEquals(302, response.status_code)

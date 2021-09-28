@@ -19,12 +19,12 @@ class AnnouncementFilter(SquestFilter):
         widget=SelectMultiple(attrs={'data-live-search': "true"})
     )
     opens = BooleanFilter(
-        label='Opens only',
-        method='announcements_opens',
+        label='Active only',
+        method='get_active_announcements',
         widget=CheckboxInput(attrs={'class': 'form-control-checkbox'})
     )
 
-    def announcements_opens(self, queryset, field_name, value):
+    def get_active_announcements(self, queryset, field_name, value):
         if value:
             now = timezone.now()
             return queryset.filter(date_start__lte=now, date_stop__gte=now)

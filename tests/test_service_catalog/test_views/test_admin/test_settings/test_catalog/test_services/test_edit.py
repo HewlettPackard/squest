@@ -22,6 +22,8 @@ class ServiceDeleteTestCase(BaseTest):
         }
 
     def test_admin_can_edit_service(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(self.url, data=self.data)
         self.assertEquals(302, response.status_code)
         self.service_test.refresh_from_db()
@@ -30,6 +32,8 @@ class ServiceDeleteTestCase(BaseTest):
 
     def test_standard_user_cannot_edit_service(self):
         self.client.login(username=self.standard_user, password=self.common_password)
+        response = self.client.get(self.url)
+        self.assertEquals(302, response.status_code)
         response = self.client.post(self.url, data=self.data)
         self.assertEquals(302, response.status_code)
         self.service_test.refresh_from_db()
