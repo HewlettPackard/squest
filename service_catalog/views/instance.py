@@ -26,7 +26,7 @@ def instance_edit(request, instance_id):
         {'text': f"{instance.name} ({instance.id})",
          'url': reverse('service_catalog:instance_details', args=[instance_id])},
     ]
-    context = {'form': form, 'instance': instance, 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'breadcrumbs': breadcrumbs}
     return render(request, 'service_catalog/admin/instance/instance-edit.html', context)
 
 

@@ -19,6 +19,7 @@ from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 from service_catalog.models.state_hooks import HookModel
+from utils.squest_model_form import SquestModelForm
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -340,17 +341,15 @@ class AcceptRequestForm(forms.Form):
         self.target_request.instance.save()
 
 
-class InstanceForm(ModelForm):
-    name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    spec = forms.JSONField(label="JSON Spec",
-                           required=False,
-                           widget=forms.Textarea(attrs={'class': 'form-control'}))
+class InstanceForm(SquestModelForm):
+    state = forms.ChoiceField(
+        choices=InstanceState.choices,
+        required=True,
+        widget=forms.Select())
 
     class Meta:
         model = Instance
-        fields = ["name", "spec"]
+        fields = "__all__"
 
 
 def save_service(service, commit, billing):
