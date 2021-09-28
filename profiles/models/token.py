@@ -64,10 +64,6 @@ class Token(models.Model):
         self.key = self.generate_key()
         self.save()
 
-    def set_expiration_date(self, date):
-        self.expires = date
-        self.save()
-
     def is_expired(self):
         if self.expires is None or timezone.now() < self.expires:
             return False

@@ -10,7 +10,7 @@ from django_fsm import can_proceed
 
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.mail_utils import send_mail_request_update
-from service_catalog.models import Request, RequestState
+from service_catalog.models import Request
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,8 @@ def admin_request_need_info(request, request_id):
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
-    form = MessageOnRequestForm(request.user, **parameters)
+    else:
+        form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -64,7 +65,8 @@ def admin_request_re_submit(request, request_id):
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
-    form = MessageOnRequestForm(request.user, **parameters)
+    else:
+        form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -95,7 +97,8 @@ def admin_request_reject(request, request_id):
             message = form.cleaned_data['message']
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
-    form = MessageOnRequestForm(request.user, **parameters)
+    else:
+        form = MessageOnRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -121,7 +124,8 @@ def admin_request_accept(request, request_id):
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
-    form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
+    else:
+        form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},

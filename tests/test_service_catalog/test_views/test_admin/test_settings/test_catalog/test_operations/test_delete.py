@@ -16,6 +16,8 @@ class OperationDeleteTestCase(BaseTest):
             'operation_id': self.create_operation_test.id
         }
         url = reverse('service_catalog:delete_service_operation', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(403, response.status_code)
         response = self.client.post(url)
         self.assertRaises(PermissionDenied)
 
@@ -25,5 +27,7 @@ class OperationDeleteTestCase(BaseTest):
             'operation_id': self.update_operation_test.id
         }
         url = reverse('service_catalog:delete_service_operation', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
         response = self.client.post(url)
         self.assertEquals(302, response.status_code)
