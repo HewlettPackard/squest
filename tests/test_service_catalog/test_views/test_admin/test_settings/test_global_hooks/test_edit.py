@@ -11,11 +11,15 @@ class GlobalHooksEditViewsTest(BaseTest):
         self.global_hook_test = GlobalHook.objects.create(name="hook1",
                                                           model="Instance",
                                                           state="PROVISIONING",
-                                                          job_template= self.job_template_test)
+                                                          job_template=self.job_template_test)
         args = {
             "global_hook_id": self.global_hook_test.id
         }
         self.url = reverse('service_catalog:global_hook_edit', kwargs=args)
+
+    def test_get_page(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
 
     def test_edit_global_hook(self):
         data = {

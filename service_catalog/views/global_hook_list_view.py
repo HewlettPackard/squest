@@ -1,3 +1,6 @@
+from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
@@ -13,6 +16,11 @@ class GlobalHookListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     model = GlobalHook
     template_name = 'generics/list.html'
     filterset_class = GlobalHookFilter
+
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return super(GlobalHookListView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

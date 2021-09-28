@@ -44,7 +44,7 @@ class Request(models.Model):
     def tower_job_url(self):
         if self.tower_job_id is not None:
             protocol = "https" if self.operation.job_template.tower_server.secure else "http"
-            return f"{protocol}://{self.operation.job_template.tower_server.host}#/jobs/playbook/{self.tower_job_id}"
+            return f"{protocol}://{self.operation.job_template.tower_server.host}/#/jobs/playbook/{self.tower_job_id}"
         return ""
 
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
@@ -72,7 +72,8 @@ class Request(models.Model):
     def reject(self):
         pass
 
-    @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED], target=RequestState.ACCEPTED)
+    @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
+                target=RequestState.ACCEPTED)
     def accept(self):
         pass
 
@@ -124,7 +125,8 @@ class Request(models.Model):
                 task='service_catalog.tasks.check_tower_job_status_task',
                 args=json.dumps([self.id]))
             logger.info(
-                f'[Request][process] request \'{self.id}\': periodic task created. Expire in {self.operation.process_timeout_second} seconds')
+                f'[Request][process] request \'{self.id}\': periodic task created. '
+                f'Expire in {self.operation.process_timeout_second} seconds')
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.FAILED)
     def has_failed(self, reason=None):
@@ -188,19 +190,8 @@ class Request(models.Model):
             # notify owner and admins that the request is complete
             send_mail_request_update(target_request=self)
 
-        if job_object.status == "canceled":
-            error_message = f"Tower job '{self.tower_job_id}' status is 'canceled'"
-            self.has_failed(error_message)
-            self.save()
-            # as the process has been cancelled, set back the instance to available
-            self.instance.available()
-            self.instance.save()
-            self.periodic_task.delete()
-            send_email_request_error(target_request=self,
-                                     error_message=error_message)
-
-        if job_object.status == "failed":
-            error_message = f"Tower job '{self.tower_job_id}' status is 'failed'"
+        if job_object.status in ["canceled", "failed"]:
+            error_message = f"Tower job '{self.tower_job_id}' status is '{job_object.status}'"
             self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()
