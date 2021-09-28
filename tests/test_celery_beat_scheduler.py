@@ -20,3 +20,4 @@ class TestCeleryBeatScheduler(BaseTest):
         # execute the cleaner. The ghost task should be deleted
         DatabaseSchedulerWithCleanup(app)
         self.assertFalse(PeriodicTask.objects.filter(name="test-periodic").exists())
+        mock_scheduler.assert_called()
