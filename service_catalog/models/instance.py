@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Instance(models.Model):
     name = models.CharField(verbose_name="Instance name", max_length=100)
-    spec = models.JSONField(default=dict)
+    spec = models.JSONField(default=dict, blank=True)
     service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
     spoc = models.ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
                              on_delete=models.SET_NULL)
@@ -32,6 +33,10 @@ class Instance(models.Model):
 
     def __str__(self):
         return f"{self.id}-{self.name}"
+
+    def clean(self):
+        if self.spec is None:
+            raise ValidationError("Please enter a valid JSON.")
 
     def opened_support_count(self):
         from .support import SupportState
