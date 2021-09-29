@@ -1,0 +1,42 @@
+# ansible-playbook functional_tests/playbooks/create.yml -i
+
+---
+- hosts: squest_testing
+  become: False
+  gather_facts: False
+
+  tasks:
+    - name: Get UUID and file name from Squest
+      set_fact:
+        uuid_file: "{{ squest['request']['instance']['spec']['uuid_file'] }}"
+        file_name: "{{ squest['request']['instance']['spec']['file_name'] }}"
+
+    - name: Generate path
+      set_fact:
+        file_path: "/tmp/squest_functional_test/{{ uuid_file }}"
+
+    - name: Prints variables
+      ansible.builtin.debug:
+        msg:
+          - "UUID: {{ uuid_file }}"
+          - "file_name: {{ file_name }}"
+          - "file_content: {{ file_content }}"
+
+    - name: Write the given content in file
+      ansible.builtin.copy:
+        content: "{{ file_content }}"
+        dest: "{{ file_path }}/{{ file_name }}"
+
+    - name: Update squest with info
+      uri:
+        validate_certs: no
+        url: "{{ squest_api_url }}/service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/"
+        headers:
+          Authorization: "Token {{ squest_token }}"
+        method: PATCH
+        body:
+          spec:
+            file_name: "{{ file_name }}"
+            uuid_file: "{{ uuid_file }}"
+        status_code: 200
+        body_format: json
