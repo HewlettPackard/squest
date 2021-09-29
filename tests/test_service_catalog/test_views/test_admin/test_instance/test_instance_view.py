@@ -104,7 +104,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.test_instance.refresh_from_db()
         self.assertEquals(self.test_instance.name, "new_instance_name")
 
-    def test_instance_edit_empty_spec(self):
+    def test_instance_edit_with_empty_spec(self):
         old_spec = copy(self.test_instance.spec)
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
         self.edit_instance_data['spec'] = ''
@@ -112,8 +112,10 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.assertEquals(200, response.status_code)
         self.test_instance.refresh_from_db()
         self.assertEquals(self.test_instance.spec, old_spec)
+        self.assertEquals(response.context['form'].errors['spec'][0],
+                          'Please enter a valid JSON. Empty value is {} for JSON.')
 
-    def test_instance_edit_empty_dict_spec(self):
+    def test_instance_edit_with_empty_dict_spec(self):
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
         self.edit_instance_data['spec'] = '{}'
         response = self.client.post(url, data=self.edit_instance_data)

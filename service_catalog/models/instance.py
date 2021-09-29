@@ -1,5 +1,5 @@
 import logging
-
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -7,11 +7,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
-
 from profiles.models import BillingGroup
 from . import Service, InstanceState
 from .state_hooks import HookManager
-
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +34,7 @@ class Instance(models.Model):
 
     def clean(self):
         if self.spec is None:
-            raise ValidationError("Please enter a valid JSON.")
+            raise ValidationError({'spec': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
     def opened_support_count(self):
         from .support import SupportState
