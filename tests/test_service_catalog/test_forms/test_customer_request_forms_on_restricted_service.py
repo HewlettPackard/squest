@@ -38,4 +38,20 @@ class TestRequestForm(BaseTest):
             "text_variable": "text"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertEqual([(self.billing_group_test.id, self.billing_group_test.name)], form.fields['billing_group_id'].choices)
+        self.assertTrue(form.is_valid())
+
+    def test_create_request_with_billing_group_on_non_restricted_billing(self):
+        self.service_test.billing_groups_are_restricted = False
+        self.service_test.save()
+        parameters = {
+            'service_id': self.service_test.id
+        }
+        data = {
+            "instance_name": "instance test",
+            "billing_group_id": self.billing_group_test.id,
+            "text_variable": "text"
+        }
+        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertEqual([(self.billing_group_test.id, self.billing_group_test.name)], form.fields['billing_group_id'].choices)
         self.assertTrue(form.is_valid())

@@ -1,5 +1,6 @@
 from profiles.models import BillingGroup
 from service_catalog.forms import ServiceForm, EditServiceForm
+from service_catalog.models import OperationType
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -74,6 +75,36 @@ class TestServiceForm(BaseTest):
                     self.assertEquals(test['value'], test['expected'])
             else:
                 self.assertIn(data['name'], self.failed_expected)
+
+    def test_edit_service_on_disabled_service(self):
+        create_operation = self.service_test.operations.filter(type=OperationType.CREATE)[0]
+        create_operation.job_template = None
+        create_operation.save()
+        self.service_test.save()
+        data = self.data_list[0]
+        form = EditServiceForm(data, instance=self.service_test)
+        self.assertEquals(True, form.fields['enabled'].disabled)
+        self.assertEquals("To enable this service, please link a job template to the 'CREATE' operation.", form.fields['enabled'].help_text)
+
+    def test_edit_service_on_restricted_billing_group_selectable(self):
+        self.service_test.billing_group_is_selectable = True
+        self.service_test.save()
+        data = self.data_list[0]
+        form = EditServiceForm(data, instance=self.service_test)
+        self.assertEquals('restricted_billing_groups', form.fields['billing'].initial)
+
+    def test_edit_service_on_restricted_billing_group_non_selectable(self):
+        data = self.data_list[0]
+        form = EditServiceForm(data, instance=self.service_test)
+        self.assertEquals('defined', form.fields['billing'].initial)
+
+    def test_edit_service_on_non_restricted_billing_group_selectable(self):
+        self.service_test.billing_group_is_selectable = True
+        self.service_test.billing_groups_are_restricted = False
+        self.service_test.save()
+        data = self.data_list[0]
+        form = EditServiceForm(data, instance=self.service_test)
+        self.assertEquals('all_billing_groups', form.fields['billing'].initial)
 
     @staticmethod
     def get_test_list(data, service):
