@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 class HookModel(models.TextChoices):
-    Instance = 'Instance', _('Instance')
     Request = 'Request', _('Request')
+    Instance = 'Instance', _('Instance')
 
 
 class ServiceStateHook(models.Model):
