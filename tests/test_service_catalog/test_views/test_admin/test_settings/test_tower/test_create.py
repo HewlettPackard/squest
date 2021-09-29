@@ -21,6 +21,10 @@ class AdminTowerCreateViewsTest(BaseTestTower):
 
         self.number_tower_before = TowerServer.objects.all().count()
 
+    def test_get_page(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
+
     def test_admin_can_create_tower_server(self):
         test_url_list = [("http://tower0.domain.net/", "tower0.domain.net"),
                          ("http://tower1.domain.net", "tower1.domain.net"),
