@@ -48,8 +48,7 @@ class JobTemplate(models.Model):
             )
         ]
 
-    ## Compliancy checks
-
+    # Compliance checks
     def is_ask_variables_on_launch_compliant(self):
         return self.tower_job_template_data['ask_variables_on_launch']
 
