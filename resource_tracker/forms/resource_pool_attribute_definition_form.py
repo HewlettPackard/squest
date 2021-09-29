@@ -1,16 +1,16 @@
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ResourcePoolAttributeDefinition
+from utils.squest_model_form import SquestModelForm
 
 
-class ResourcePoolAttributeDefinitionForm(ModelForm):
+class ResourcePoolAttributeDefinitionForm(SquestModelForm):
     class Meta:
         model = ResourcePoolAttributeDefinition
         fields = ["name", "over_commitment_producers", "over_commitment_consumers"]
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
     over_commitment_producers = forms.FloatField(label="Over commitment for producers",
                                                  required=False,
                                                  initial=ResourcePoolAttributeDefinition._meta.get_field(
@@ -18,7 +18,7 @@ class ResourcePoolAttributeDefinitionForm(ModelForm):
                                                  help_text="All producers will produce X times more",
 
                                                  widget=forms.NumberInput(
-                                                     attrs={'class': 'form-control', 'step': '0.1'}))
+                                                     attrs={'step': '0.1'}))
 
     over_commitment_consumers = forms.FloatField(label="Over commitment for consumers",
                                                  required=False,
@@ -27,7 +27,7 @@ class ResourcePoolAttributeDefinitionForm(ModelForm):
 
                                                  help_text="All consumers will consume X times more",
                                                  widget=forms.NumberInput(
-                                                     attrs={'class': 'form-control', 'step': '0.1'}))
+                                                     attrs={'step': '0.1'}))
 
     def clean_over_commitment_producers(self):
         data = self.cleaned_data['over_commitment_producers']

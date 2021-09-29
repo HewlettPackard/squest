@@ -1,21 +1,21 @@
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
+from utils.squest_model_form import SquestModelForm
 
 
-class ResourceGroupTextAttributeDefinitionForm(ModelForm):
+class ResourceGroupTextAttributeDefinitionForm(SquestModelForm):
     class Meta:
         model = ResourceGroupTextAttributeDefinition
         fields = ["name", "help_text"]
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     help_text = forms.CharField(label="Help text",
                                 required=False,
                                 max_length=ResourceGroupTextAttributeDefinition._meta.get_field('help_text').max_length,
-                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                widget=forms.TextInput())
 
     def clean(self):
         super(ResourceGroupTextAttributeDefinitionForm, self).clean()
