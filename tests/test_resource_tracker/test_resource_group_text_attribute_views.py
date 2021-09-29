@@ -33,7 +33,7 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name",
                                                                             resource_group_definition=self.rg_physical_servers).exists())
 
-        # test POST with producer
+        # test POST
         new_name = "new_text_attribute_name_2"
         data = {
             "name": new_name,
@@ -42,6 +42,11 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertEquals(302, response.status_code)
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name_2",
                                                                             resource_group_definition=self.rg_physical_servers).exists())
+        # test POST with already exist attribute
+        response = self.client.post(url, data=data)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(f"Attribute {new_name} already exist in {self.rg_physical_servers.name}",
+                          response.context['form'].errors['name'][0])
 
     def test_resource_group_text_attribute_create_logout(self):
         self.client.logout()

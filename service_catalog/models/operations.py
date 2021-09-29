@@ -28,12 +28,13 @@ class Operation(models.Model):
     def update_survey(self, save=True):
         new_end_user_survey = dict()
         old_enabled_survey_fields = copy.copy(self.enabled_survey_fields)
-        for survey_field in self.job_template.survey.get("spec", []):
-            field_id = survey_field["variable"]
-            if field_id not in old_enabled_survey_fields:
-                new_end_user_survey[field_id] = True
-            else:
-                new_end_user_survey[field_id] = old_enabled_survey_fields[field_id]
+        if self.job_template is not None:
+            for survey_field in self.job_template.survey.get("spec", []):
+                field_id = survey_field["variable"]
+                if field_id not in old_enabled_survey_fields:
+                    new_end_user_survey[field_id] = True
+                else:
+                    new_end_user_survey[field_id] = old_enabled_survey_fields[field_id]
         self.enabled_survey_fields = new_end_user_survey
         if save:
             self.save()

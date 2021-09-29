@@ -48,6 +48,12 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
                                                                   resource_group_definition=self.rg_physical_servers)
         self.assertEquals(target_rga.produce_for, self.rp_vcenter_vcpu_attribute)
 
+        # test POST with already exist attribute
+        response = self.client.post(url, data=data)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals(f"Attribute {new_name} already exist in {self.rg_physical_servers.name}",
+                          response.context['form'].errors['name'][0])
+
     def test_cannot_create_resource_group_attribute_when_logout(self):
         self.client.logout()
         args = {
