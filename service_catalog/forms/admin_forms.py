@@ -5,7 +5,7 @@ import towerlib
 import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import ChoiceField
+from django.forms import ChoiceField, ModelForm
 from martor.fields import MartorFormField
 from martor.widgets import AdminMartorWidget
 from towerlib import Tower
@@ -370,27 +370,27 @@ def save_service(service, commit, billing):
     return service
 
 
-class GlobalHookForm(SquestModelForm):
+class GlobalHookForm(ModelForm):
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput())
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     model = ChoiceField(label="Model",
                         choices=HookModel.choices,
                         error_messages={'required': 'At least you must select one model'},
-                        widget=forms.Select())
+                        widget=forms.Select(attrs={'class': 'form-control'}))
 
     state = ChoiceField(label="State",
                         choices=InstanceState.choices + RequestState.choices,
                         error_messages={'required': 'At least you must select one state'},
-                        widget=forms.Select())
+                        widget=forms.Select(attrs={'class': 'form-control'}))
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          widget=forms.Select())
+                                          widget=forms.Select(attrs={'class': 'form-control'}))
 
     extra_vars = forms.JSONField(label="Extra vars (JSON)",
                                  initial=dict(),
                                  required=False,
-                                 widget=forms.Textarea())
+                                 widget=forms.Textarea(attrs={'class': 'form-control'}))
 
     def clean(self):
         cleaned_data = super(GlobalHookForm, self).clean()

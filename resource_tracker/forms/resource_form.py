@@ -39,7 +39,7 @@ class ResourceForm(SquestModelForm):
                                            required=False,
                                            initial=initial_value,
                                            help_text=attribute.help_text,
-                                           widget=forms.TextInput())
+                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
             self.fields[attribute.name] = new_field
             self.attributes_name_list.append(attribute.name)
         for text_attribute in self.resource_group.text_attribute_definitions.all():
