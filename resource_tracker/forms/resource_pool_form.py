@@ -1,9 +1,9 @@
-from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ResourcePool
+from utils.squest_model_form import SquestModelForm
 
 
-class ResourcePoolForm(ModelForm):
+class ResourcePoolForm(SquestModelForm):
     class Meta:
         model = ResourcePool
         fields = ["name", "tags"]
@@ -14,4 +14,4 @@ class ResourcePoolForm(ModelForm):
     tags = TagField(label="Tags",
                     required=False,
                     help_text="Comma-separated list of tags (more details in documentation)",
-                    widget=TagWidget(attrs={'class': 'form-control'}))
+                    widget=TagWidget())

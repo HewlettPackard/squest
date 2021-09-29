@@ -1,22 +1,22 @@
-from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourceTextAttribute, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Instance
+from utils.squest_model_form import SquestModelForm
 
 
-class ResourceForm(ModelForm):
+class ResourceForm(SquestModelForm):
     class Meta:
         model = Resource
         fields = ["name", "service_catalog_instance"]
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     service_catalog_instance = forms.ModelChoiceField(queryset=Instance.objects.all(),
                                                       label="Service catalog instance",
                                                       required=False,
-                                                      widget=forms.Select(attrs={'class': 'form-control'}))
+                                                      widget=forms.Select())
 
     def __init__(self, *args, **kwargs):
         resource_group_id = kwargs.pop('resource_group_id', None)
@@ -39,7 +39,7 @@ class ResourceForm(ModelForm):
                                            required=False,
                                            initial=initial_value,
                                            help_text=attribute.help_text,
-                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                           widget=forms.TextInput())
             self.fields[attribute.name] = new_field
             self.attributes_name_list.append(attribute.name)
         for text_attribute in self.resource_group.text_attribute_definitions.all():
@@ -55,7 +55,7 @@ class ResourceForm(ModelForm):
                                         required=False,
                                         initial=initial_value,
                                         help_text=text_attribute.help_text,
-                                        widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                        widget=forms.TextInput())
 
             self.fields[text_attribute.name] = new_field
             self.text_attributes_name_list.append(text_attribute.name)
