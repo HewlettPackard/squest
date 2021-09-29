@@ -5,6 +5,7 @@
 
   vars:
     squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
+    squest_api_url: "http://192.168.58.128:8000/api"
     squest:
       request:
         instance:
@@ -33,7 +34,7 @@
 
     - name: Update squest with info
       uri:
-        url: "http://192.168.58.128:8000/api/admin/instance/{{ squest['request']['instance']['id'] }}/"
+        url: "{{ squest_api_url }}/service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/"
         headers:
           Authorization: "Token {{ squest_token }}"
         method: PATCH

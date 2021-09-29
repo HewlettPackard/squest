@@ -19,6 +19,10 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
         }
         self.url = reverse('service_catalog:update_tower', kwargs=self.args)
 
+    def test_get_page(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
+
     def test_update_tower(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.return_value = None

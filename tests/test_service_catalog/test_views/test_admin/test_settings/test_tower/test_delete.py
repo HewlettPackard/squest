@@ -13,6 +13,10 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         }
         self.url = reverse('service_catalog:delete_tower', kwargs=self.args)
 
+    def test_get_page(self):
+        response = self.client.get(self.url)
+        self.assertEquals(200, response.status_code)
+
     def test_admin_can_delete_tower_server(self):
         id_to_delete = self.tower_server_test.id
         response = self.client.post(self.url)
@@ -27,7 +31,8 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
 
     def test_admin_can_delete_job_template(self):
-        services = [service for service in Service.objects.filter(operation__job_template=self.job_template_test, operation__type__exact=OperationType.CREATE)]
+        services = [service for service in Service.objects.filter(operation__job_template=self.job_template_test,
+                                                                  operation__type__exact=OperationType.CREATE)]
         args = {
             'tower_id': self.tower_server_test.id,
             'job_template_id': self.job_template_test.id
