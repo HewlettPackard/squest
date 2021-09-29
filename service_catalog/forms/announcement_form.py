@@ -1,13 +1,13 @@
 from django import forms
-from django.forms import ModelForm
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
 from service_catalog.models.bootstrap_type import BootstrapType
 from service_catalog.models.announcement import Announcement
+from utils.squest_model_form import SquestModelForm
 
 
-class AnnouncementForm(ModelForm):
+class AnnouncementForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(AnnouncementForm, self).__init__(*args, **kwargs)
         self.fields['date_start'].widget = DateTimePicker(
@@ -37,11 +37,11 @@ class AnnouncementForm(ModelForm):
         self.fields['date_stop'].help_text = help_text
 
     title = forms.CharField(label="Title",
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+                            widget=forms.TextInput())
 
     message = forms.CharField(label="Message",
                               help_text="HTML supported",
-                              widget=forms.Textarea(attrs={'class': 'form-control'}))
+                              widget=forms.Textarea())
 
     date_start = forms.DateTimeField(label="Date start")
 
@@ -50,7 +50,7 @@ class AnnouncementForm(ModelForm):
     type = forms.ChoiceField(label="Type",
                              choices=BootstrapType.choices,
                              initial=BootstrapType.INFO,
-                             widget=forms.Select(attrs={'class': 'form-control'}))
+                             widget=forms.Select())
 
     class Meta:
         model = Announcement

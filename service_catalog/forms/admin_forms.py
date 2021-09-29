@@ -5,7 +5,7 @@ import towerlib
 import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, ChoiceField
+from django.forms import ChoiceField
 from martor.fields import MartorFormField
 from martor.widgets import AdminMartorWidget
 from towerlib import Tower
@@ -24,16 +24,15 @@ from utils.squest_model_form import SquestModelForm
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-class TowerServerForm(ModelForm):
+class TowerServerForm(SquestModelForm):
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     host = forms.CharField(label="Host",
-                           widget=forms.TextInput(attrs={'class': 'form-control',
-                                                         'placeholder': "awx.mydomain.net:8043"}))
+                           widget=forms.TextInput(attrs={'placeholder': "awx.mydomain.net:8043"}))
 
     token = forms.CharField(label="Token",
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+                            widget=forms.TextInput())
 
     secure = forms.BooleanField(label="Is secure (https)",
                                 initial=True,
@@ -82,20 +81,20 @@ class TowerServerForm(ModelForm):
         fields = ["name", "host", "token", "secure", "ssl_verify"]
 
 
-class ServiceForm(ModelForm):
+class ServiceForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(ServiceForm, self).__init__(*args, **kwargs)
         self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     description = forms.CharField(label="Description",
                                   required=False,
-                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                  widget=forms.TextInput())
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          widget=forms.Select(attrs={'class': 'form-control'}))
+                                          widget=forms.Select())
 
     auto_accept = forms.BooleanField(label="Auto accept",
                                      required=False,
@@ -119,7 +118,7 @@ class ServiceForm(ModelForm):
             ))
         ],
         initial='defined',
-        widget=forms.RadioSelect(attrs={'class': 'disable_list_style'})
+        widget=forms.RadioSelect()
     )
 
     billing_group_id = forms.ChoiceField(
@@ -127,7 +126,7 @@ class ServiceForm(ModelForm):
         choices=[(None, None)],
         initial=None,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select()
     )
 
     billing_group_is_shown = forms.BooleanField(
@@ -153,7 +152,7 @@ class ServiceForm(ModelForm):
                   "billing", "billing_group_id", "billing_group_is_shown", "enabled"]
 
 
-class EditServiceForm(ModelForm):
+class EditServiceForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(EditServiceForm, self).__init__(*args, **kwargs)
         self.fields['billing_group_id'].choices += [(g.id, g.name) for g in BillingGroup.objects.all()]
@@ -169,11 +168,11 @@ class EditServiceForm(ModelForm):
                 "To enable this service, please link a job template to the 'CREATE' operation."
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     description = forms.CharField(label="Description",
                                   required=False,
-                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                  widget=forms.TextInput())
 
     image = forms.ImageField(label="Choose a file",
                              required=False,
@@ -217,7 +216,7 @@ class EditServiceForm(ModelForm):
         fields = ["name", "description", "image", "billing", "billing_group_id", "billing_group_is_shown", 'enabled']
 
 
-class AddServiceOperationForm(ModelForm):
+class AddServiceOperationForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(AddServiceOperationForm, self).__init__(*args, **kwargs)
         choice_type_others = [('UPDATE', 'Update'),
@@ -234,23 +233,23 @@ class AddServiceOperationForm(ModelForm):
                 self.fields['type'].choices = choice_type_creation
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     description = forms.CharField(label="Description",
                                   required=False,
-                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                  widget=forms.TextInput())
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          widget=forms.Select(attrs={'class': 'form-control'}))
+                                          widget=forms.Select())
 
     type = forms.ChoiceField(label="Type",
                              choices=[(None, None)],
                              error_messages={'required': 'At least you must select one type'},
-                             widget=forms.Select(attrs={'class': 'form-control'}))
+                             widget=forms.Select())
 
     process_timeout_second = forms.IntegerField(initial=60,
                                                 label="Process timeout (second)",
-                                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                                widget=forms.TextInput())
 
     auto_accept = forms.BooleanField(label="Auto accept",
                                      initial=False,
@@ -371,27 +370,27 @@ def save_service(service, commit, billing):
     return service
 
 
-class GlobalHookForm(ModelForm):
+class GlobalHookForm(SquestModelForm):
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     model = ChoiceField(label="Model",
                         choices=HookModel.choices,
                         error_messages={'required': 'At least you must select one model'},
-                        widget=forms.Select(attrs={'class': 'form-control'}))
+                        widget=forms.Select())
 
     state = ChoiceField(label="State",
                         choices=InstanceState.choices + RequestState.choices,
                         error_messages={'required': 'At least you must select one state'},
-                        widget=forms.Select(attrs={'class': 'form-control'}))
+                        widget=forms.Select())
 
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
-                                          widget=forms.Select(attrs={'class': 'form-control'}))
+                                          widget=forms.Select())
 
     extra_vars = forms.JSONField(label="Extra vars (JSON)",
                                  initial=dict(),
                                  required=False,
-                                 widget=forms.Textarea(attrs={'class': 'form-control'}))
+                                 widget=forms.Textarea())
 
     def clean(self):
         cleaned_data = super(GlobalHookForm, self).clean()
@@ -414,9 +413,9 @@ class GlobalHookForm(ModelForm):
         fields = ["name", "model", "state", "job_template", "extra_vars"]
 
 
-class DocForm(ModelForm):
+class DocForm(SquestModelForm):
     title = forms.CharField(label="Name",
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+                            widget=forms.TextInput())
 
     content = MartorFormField(widget=AdminMartorWidget())
 

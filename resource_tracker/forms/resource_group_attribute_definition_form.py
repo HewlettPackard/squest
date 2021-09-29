@@ -1,30 +1,30 @@
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
 from taggit.forms import *
 from resource_tracker.models import ResourceGroupAttributeDefinition, ResourcePoolAttributeDefinition, \
     ExceptionResourceTracker
+from utils.squest_model_form import SquestModelForm
 
 
-class ResourceGroupAttributeDefinitionForm(ModelForm):
+class ResourceGroupAttributeDefinitionForm(SquestModelForm):
     class Meta:
         model = ResourceGroupAttributeDefinition
         fields = ["name", "help_text", "consume_from", "produce_for"]
 
     name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                           widget=forms.TextInput())
 
     consume_from = forms.ModelChoiceField(queryset=ResourcePoolAttributeDefinition.objects.all(),
                                           required=False,
-                                          widget=forms.Select(attrs={'class': 'form-control'}))
+                                          widget=forms.Select())
 
     produce_for = forms.ModelChoiceField(queryset=ResourcePoolAttributeDefinition.objects.all(),
                                          required=False,
-                                         widget=forms.Select(attrs={'class': 'form-control'}))
+                                         widget=forms.Select())
 
     help_text = forms.CharField(label="Help text",
                                 required=False,
                                 max_length=ResourceGroupAttributeDefinition._meta.get_field('help_text').max_length,
-                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                widget=forms.TextInput())
 
     def clean(self):
         super(ResourceGroupAttributeDefinitionForm, self).clean()
