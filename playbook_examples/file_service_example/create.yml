@@ -1,0 +1,74 @@
+# ansible-playbook playbook_examples/file_service_example/create.yml \
+# -i playbook_examples/squest_inventory/inventory \
+# --extra-vars @playbook_examples/squest_inventory/squest_extra_vars/create.yml
+
+---
+- hosts: squest_testing
+  become: False
+  gather_facts: False
+
+  tasks:
+    - name: Generate UUID
+      set_fact:
+        uuid_file: "{{ file_name | to_uuid }}"
+
+    - name: Generate path
+      set_fact:
+        file_path: "/tmp/squest_functional_test/{{ uuid_file }}"
+
+    - name: Prints variables
+      ansible.builtin.debug:
+        msg:
+          - "UUID: {{ uuid_file }}"
+          - "file_name: {{ file_name }}"
+          - "file_content: {{ file_content }}"
+
+    - name: Create a directory with UUID
+      ansible.builtin.file:
+        path: "{{ file_path }}"
+        state: directory
+        recurse: yes
+        mode: u+rw,g-wx,o-wx
+        modification_time: preserve
+        access_time: preserve
+
+    - name: Write the given content in file
+      ansible.builtin.copy:
+        content: "{{ file_content }}"
+        dest: "{{ file_path }}/{{ file_name }}"
+
+    - name: Update squest with info
+      uri:
+        validate_certs: no
+        url: "{{ squest_api_url }}/service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/"
+        headers:
+          Authorization: "Token {{ squest_token }}"
+        method: PATCH
+        body:
+          spec:
+            file_name: "{{ file_name }}"
+            uuid_file: "{{ uuid_file }}"
+        status_code: 200
+        body_format: json
+
+    # -----------------------
+    # FOLLOWING PART EXECUTE AN AUTOMATIC CREATION OF RESOURCE IN A RESOURCE GROUP OF SQUEST RESOURCE TRACKING
+    # -----------------------
+
+    - name: Create a resource in resouce tracking
+      uri:
+        url: "{{ squest_api }}/resource_tracker/resource_group/{{ resource_group_file_id }}/resources/"
+        headers:
+          Authorization: "Token {{ squest_token }}"
+        method: POST
+        body:
+          name: "{{ squest['request']['instance']['name'] }}"
+          service_catalog_instance: "{{ squest['request']['instance']['id'] }}"
+          attributes: {}
+          text_attributes:
+            - name: "file_name"
+              value: "{{ file_name }}"
+            - name: "file_uuid"
+              value: "{{ uuid_file }}"
+        status_code: 201
+        body_format: json
