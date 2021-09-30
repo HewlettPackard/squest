@@ -89,8 +89,9 @@ def get_fields_from_survey(survey, enable_fields=None):
         if enable_fields:
             fields[survey_filed['variable']].group = _get_field_group(field_name=survey_filed['variable'],
                                                                       enable_fields=enable_fields)
-    fields[next(iter(fields))].separator = True
-    fields[next(iter(fields))].form_title = "2. Service fields"
+    if fields:
+        fields[next(iter(fields))].separator = True
+        fields[next(iter(fields))].form_title = "2. Service fields"
     return fields
 
 
