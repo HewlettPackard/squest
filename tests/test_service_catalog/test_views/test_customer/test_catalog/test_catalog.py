@@ -37,3 +37,11 @@ class TestCustomerCatalogViews(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEquals(302, response.status_code)
         self.assertEquals(number_request_before + 1, Request.objects.all().count())
+
+    def test_customer_service_request_without_survey(self):
+        args = {
+            "service_id": self.service_empty_survey_test.id
+        }
+        url = reverse('service_catalog:customer_service_request', kwargs=args)
+        response = self.client.get(url)
+        self.assertEquals(200, response.status_code)
