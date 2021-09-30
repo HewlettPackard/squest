@@ -1,11 +1,10 @@
-- name: Get info from squest API
-  hosts: localhost
-  connection: local
-  gather_facts: false
+# ansible-playbook playbook_examples/test_get_api.yml \
+# -i playbook_examples/squest_inventory/inventory
 
-  vars:
-    squest_api: "http://127.0.0.1:8000/api/"
-    squest_token: d97ebdbeccf5fc3fba740e8e89048e3d453bd729
+---
+- name: Get info from squest API
+  hosts: squest_testing
+  gather_facts: false
 
   tasks:
     - name: Get all resource group

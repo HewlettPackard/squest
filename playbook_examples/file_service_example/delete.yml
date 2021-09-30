@@ -1,0 +1,27 @@
+# ansible-playbook playbook_examples/file_service_example/create.yml \
+# -i playbook_examples/squest_inventory/inventory \
+# --extra-vars @playbook_examples/squest_inventory/squest_extra_vars/delete.yml
+
+---
+- hosts: squest_testing
+  become: False
+  gather_facts: False
+
+  tasks:
+    - name: Get UUID
+      set_fact:
+        uuid_file: "{{ squest['request']['instance']['spec']['uuid_file'] }}"
+
+    - name: Generate path
+      set_fact:
+        file_path: "/tmp/squest_functional_test/{{ uuid_file }}"
+
+    - name: Prints variables
+      ansible.builtin.debug:
+        msg:
+          - "UUID: {{ uuid_file }}"
+
+    - name: Recursively remove directory
+      ansible.builtin.file:
+        path: "{{ file_path }}"
+        state: absent

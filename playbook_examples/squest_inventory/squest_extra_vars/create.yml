@@ -1,0 +1,12 @@
+---
+# survey variables
+file_name: 'my_file.txt'
+file_content: 'this is my content'
+
+# fake squest data (make sure to have an instance with ID=1)
+squest:
+  request:
+    instance:
+      id: 1
+      name: "My file"
+      spec: { }
