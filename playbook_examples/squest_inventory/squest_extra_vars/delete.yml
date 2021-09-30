@@ -1,0 +1,9 @@
+---
+# fake squest data (make sure to have an instance with ID=1)
+squest:
+  request:
+    instance:
+      id: 1
+      spec:
+        file_name: 'my_file.txt'
+        uuid_file: 51b1d14c-cedf-5837-9063-b8cb45f950fe
