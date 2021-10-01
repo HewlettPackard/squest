@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'fontawesome-free',
     'django_celery_results',
     'django_celery_beat',
     'guardian',
@@ -79,7 +78,7 @@ INSTALLED_APPS = [
     'service_catalog',
     'resource_tracker',
     'profiles',
-    'django_cleanup.apps.CleanupConfig', # should stay last to override delete method of our model
+    'django_cleanup.apps.CleanupConfig',  # should stay last to override delete method of our model
 ]
 
 MIDDLEWARE = [
@@ -339,9 +338,9 @@ MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "jquery/dist/jquery.min.js"  # default None
 
 if DOC_IMAGES_CLEANUP_ENABLED:
     CELERY_BEAT_SCHEDULE["cleanup_martor"] = {
-            "task": "service_catalog.tasks.task_cleanup_ghost_docs_images",
-            "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(DOC_IMAGES_CLEANUP_CRONTAB)),
-        }
+        "task": "service_catalog.tasks.task_cleanup_ghost_docs_images",
+        "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(DOC_IMAGES_CLEANUP_CRONTAB)),
+    }
 
 # -----------------------------------------
 # DJANGO REST FRAMEWORK CONFIG
