@@ -1,7 +1,9 @@
 ---
-# survey variables
+# user provided survey variables
 file_name: 'my_file.txt'
 file_content: 'this is my content'
+# admin provided survey variables
+create_resource: False
 
 # fake squest data (make sure to have an instance with ID=1)
 squest:

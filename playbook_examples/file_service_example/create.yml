@@ -55,16 +55,18 @@
     # FOLLOWING PART EXECUTE AN AUTOMATIC CREATION OF RESOURCE IN A RESOURCE GROUP OF SQUEST RESOURCE TRACKING
     # -----------------------
 
-    - name: Create a resource in resouce tracking
+    - when: create_resource|bool == true
+      name: Create a resource in resouce tracking
       uri:
-        url: "{{ squest_api }}/resource_tracker/resource_group/{{ resource_group_file_id }}/resources/"
+        validate_certs: no
+        url: "{{ squest_api_url }}/resource_tracker/resource_group/{{ resource_group_file_id }}/resources/"
         headers:
           Authorization: "Token {{ squest_token }}"
         method: POST
         body:
           name: "{{ squest['request']['instance']['name'] }}"
           service_catalog_instance: "{{ squest['request']['instance']['id'] }}"
-          attributes: {}
+          attributes: []
           text_attributes:
             - name: "file_name"
               value: "{{ file_name }}"
