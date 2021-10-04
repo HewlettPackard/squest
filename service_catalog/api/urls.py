@@ -11,4 +11,5 @@ urlpatterns = [
     path('admin/job_template/', JobTemplateList.as_view(), name='api_admin_job_template_list'),
     path('admin/job_template/<int:pk>/', JobTemplateDetails.as_view(), name='api_admin_job_template_details'),
     path('request/', RequestList.as_view(), name='api_admin_request_list'),
+    path('request/<int:pk>/', RequestDetails.as_view(), name='api_admin_request_details'),
 ]
