@@ -8,7 +8,14 @@ class RequestSerializer(serializers.ModelSerializer):
 
     instance = InstanceSerializer()
 
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request", None)
+        if request and request.user and request.user.is_superuser is False:
+            for field in fields.values():
+                field.read_only = True
+        return fields
+
     class Meta:
         model = Request
-        fields = ['id', 'state', 'instance', 'operation']
-        read_only_fields = ['instance', 'state']
+        exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
