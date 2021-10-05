@@ -17,6 +17,7 @@ COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_tracker_graph(request):
+    edges = set()
     dot = Digraph(comment='Graph')
     dot.attr(bgcolor=COLORS["transparent"])
     dot.name = 'Resource Tracker Graph'
@@ -44,11 +45,17 @@ def resource_tracker_graph(request):
         for attribute in resource_group.attribute_definitions.filter():
             rg = f"{resource_group.name}:{attribute.name}"
             if attribute.consume_from:
-                dot.edge(f"{attribute.consume_from.resource_pool.name}:{attribute.consume_from.name}", rg,
-                         color=COLORS['provider'])
+                rp_consume = f"{attribute.consume_from.resource_pool.name}:{attribute.consume_from.name}"
+                unique_id = f"{rp_consume}{rg}"
+                if unique_id not in edges:
+                    edges.add(unique_id)
+                    dot.edge(rp_consume, rg, color=COLORS['provider'])
             if attribute.produce_for:
-                dot.edge(rg, f"{attribute.produce_for.resource_pool.name}:{attribute.produce_for.name}",
-                         color=COLORS['consumer'])
+                rp_produce = f"{attribute.produce_for.resource_pool.name}:{attribute.produce_for.name}"
+                unique_id = f"{rg}{rp_produce}"
+                if unique_id not in edges:
+                    edges.add(unique_id)
+                    dot.edge(rg, rp_produce, color=COLORS['consumer'])
 
     dot.format = 'svg'
     svg = mark_safe(dot.pipe().decode('utf-8'))
