@@ -13,8 +13,8 @@ class TestAPIToken(BaseTestRequest):
         self.api_token = Token.objects.create(user=self.superuser)
         self.api_token.save()
         self.api_token_user = Token.objects.create(user=self.standard_user)
-        self.header = {'HTTP_AUTHORIZATION': f"Token {self.api_token.key}"}
-        self.header_user = {'HTTP_AUTHORIZATION': f"Token {self.api_token_user.key}"}
+        self.header = {'HTTP_AUTHORIZATION': f"Bearer {self.api_token.key}"}
+        self.header_user = {'HTTP_AUTHORIZATION': f"Bearer {self.api_token_user.key}"}
         self.client.logout()
 
     def test_token_admin(self):
