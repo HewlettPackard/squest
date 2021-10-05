@@ -34,7 +34,7 @@
         validate_certs: no
         url: "{{ squest_api_url }}/service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/"
         headers:
-          Authorization: "Token {{ squest_token }}"
+          Authorization: "{{ squest_bearer_token }}"
         method: PATCH
         body:
           spec:

@@ -13,7 +13,7 @@ Usage example with curl
 ```bash
 export SQUEST_TOKEN=d97ebdbeccf5fc3fba740e8e89048e3d453bd729
 curl -X GET http://127.0.0.1:8000/api/resource_tracker/resource_group/ \
--H "Authorization: Token $SQUEST_TOKEN"
+-H "Authorization: Bearer $SQUEST_TOKEN"
 ```
 
 Usage example in Ansible URI module:
@@ -26,13 +26,14 @@ Usage example in Ansible URI module:
   vars:
     squest_api: "http://127.0.0.1:8000/api/"
     squest_token: d97ebdbeccf5fc3fba740e8e89048e3d453bd729
+    squest_bearer_token: "Bearer {{ squest_token }}"
 
   tasks:
     - name: Get all resource group
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/"
         headers:
-          Authorization: Token {{ squest_token }}
+          Authorization: "{{ squest_bearer_token }}"
         method: GET
         status_code: 200
         body_format: json

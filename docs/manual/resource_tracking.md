@@ -123,6 +123,7 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
 
   vars:
     squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
+    squest_bearer_token: "Bearer {{ squest_token }}"
     squest_api: "http://127.0.0.1:8000/api/"
     resource_group_vm_id: 8
     squest: # this would be the sent data from squest as extra vars
@@ -149,7 +150,7 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/{{ resource_group_vm_id }}/resources/"
         headers:
-          Authorization: "Token {{ squest_token }}"
+          Authorization: "{{ squest_bearer_token }}"
         method: POST
         body:
           name: "{{ vm_name }}"
