@@ -11,7 +11,7 @@
       uri:
         url: "{{ squest_api }}resource_tracker/resource_group/"
         headers:
-          Authorization: Token {{ squest_token }}
+          Authorization: "{{ squest_bearer_token }}"
         method: GET
         status_code: 200
         body_format: json

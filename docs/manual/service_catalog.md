@@ -81,6 +81,7 @@ The playbook will:
   
   vars:
     squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
+    squest_bearer_token: "Bearer {{ squest_token }}"
     squest_api_url: "http://192.168.58.128:8000/api/"
 
   tasks:
@@ -104,7 +105,7 @@ The playbook will:
       uri:
         url: "{{ squest_api_url }}service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/" # do not forget the last slash
         headers:
-          Authorization: "Token {{ squest_token }}"
+          Authorization: "{{ squest_bearer_token }}"
         method: PATCH
         body:
           spec:

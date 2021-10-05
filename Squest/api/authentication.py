@@ -8,6 +8,7 @@ class TokenAuthentication(authentication.TokenAuthentication):
     A custom authentication scheme which enforces Token expiration times.
     """
     model = Token
+    keyword = 'Bearer'
 
     def authenticate_credentials(self, key):
         model = self.get_model()
