@@ -15,4 +15,6 @@ class TestResourceGroupDetail(BaseTestAPI):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("id" in response.json())
         self.assertTrue("name" in response.json())
-        self.assertTrue("resources" in response.json())
+        self.assertTrue("attribute_definitions" in response.json())
+        self.assertTrue("text_attribute_definitions" in response.json())
+        self.assertTrue("tags" in response.json())

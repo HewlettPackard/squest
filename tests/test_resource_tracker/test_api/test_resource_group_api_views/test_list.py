@@ -10,7 +10,7 @@ class TestResourceGroupList(BaseTestAPI):
 
     def setUp(self):
         super(TestResourceGroupList, self).setUp()
-        self.url = reverse('api_resource_group_list')
+        self.url = reverse('api_resource_group_list_create')
 
     def test_resource_group_list(self):
         response = self.client.get(self.url, format='json')

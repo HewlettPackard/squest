@@ -6,11 +6,11 @@ from tests.test_resource_tracker.test_api.base_test_api import BaseTestAPI
 from service_catalog.models import Instance
 
 
-class TestResourceGroupResourceCreate(BaseTestAPI):
+class TestResourceCreate(BaseTestAPI):
 
     def setUp(self):
-        super(TestResourceGroupResourceCreate, self).setUp()
-        self.url = reverse('api_resource_group_resource_list_create', args=[self.rg_physical_servers.id])
+        super(TestResourceCreate, self).setUp()
+        self.url = reverse('api_resource_list_create', args=[self.rg_physical_servers.id])
 
     def _check_resource_created(self, data, executed_attribute_length, executed_text_attribute_length=0):
         number_resource_before = Resource.objects.filter(resource_group=self.rg_physical_servers).count()
@@ -183,7 +183,7 @@ class TestResourceGroupResourceCreate(BaseTestAPI):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_non_valid_resource_group(self):
-        url = reverse('api_resource_group_resource_list_create', args=[123456])
+        url = reverse('api_resource_list_create', args=[123456])
         data = {
             "name": "new_resource",
             "service_catalog_instance": None,

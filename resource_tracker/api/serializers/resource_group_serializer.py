@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute, ResourceTextAttribute, \
     ResourceGroupAttributeDefinition, ResourceGroupTextAttributeDefinition
@@ -9,7 +10,7 @@ from service_catalog.models import Instance
 class ResourceGroupAttributeDefinitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceGroupAttributeDefinition
-        fields = ["id", "name"]
+        fields = ["id", "name", "consume_from", "produce_for", "help_text"]
 
 
 class ResourceGroupTextAttributeDefinitionSerializer(serializers.ModelSerializer):
@@ -51,12 +52,26 @@ class ResourceSerializer(serializers.ModelSerializer):
     text_attributes = ResourceTextAttributeSerializer(many=True)
 
 
-class ResourceGroupSerializer(serializers.ModelSerializer):
-    resources = ResourceSerializer(many=True, read_only=True)
+class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
+    attribute_definitions = ResourceGroupAttributeDefinitionSerializer(many=True)
+    text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializer(many=True)
+    tags = TagListSerializerField()
 
     class Meta:
         model = ResourceGroup
-        fields = '__all__'
+        fields = ["id", "name", "attribute_definitions", "text_attribute_definitions", "tags"]
+
+    def create(self, validated_data):
+        tags = validated_data.pop('tags')
+        attribute_definitions_data = validated_data.pop('attribute_definitions')
+        text_attribute_definitions_data = validated_data.pop('text_attribute_definitions')
+        resource_group = ResourceGroup.objects.create(**validated_data)
+        resource_group.tags.set(*tags)
+        for attribute_definition in attribute_definitions_data:
+            resource_group.add_attribute_definition(**attribute_definition)
+        for text_attribute_definition in text_attribute_definitions_data:
+            resource_group.add_text_attribute_definition(**text_attribute_definition)
+        return resource_group
 
 
 class AttributeCreateSerializer(serializers.Serializer):
