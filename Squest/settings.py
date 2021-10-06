@@ -92,7 +92,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Squest.urls'
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 TEMPLATES_DIR = str(BASE_DIR) + os.sep + 'templates'
 TEMPLATES = [
     {
