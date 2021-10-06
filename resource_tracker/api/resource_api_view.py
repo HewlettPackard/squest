@@ -32,3 +32,16 @@ class ResourceListCreate(generics.ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Http404:
             raise NotFound()
+
+
+class ResourceGetDelete(generics.RetrieveDestroyAPIView):
+    queryset = Resource.objects.all()
+    permission_classes = [IsAdminUser]
+    serializer_class = ResourceSerializer
+
+    def get_object(self):
+        resource_group_id = self.kwargs.get('resource_group_id')
+        resource_id = self.kwargs.get('resource_id')
+        resource = get_object_or_404(Resource, id=resource_id,
+                                     resource_group_id=resource_group_id)
+        return resource
