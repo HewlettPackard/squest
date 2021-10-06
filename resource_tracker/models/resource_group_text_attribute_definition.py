@@ -8,7 +8,7 @@ class ResourceGroupTextAttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
                             blank=False)
     resource_group_definition = models.ForeignKey('ResourceGroup',
-                                                  on_delete=models.PROTECT,
+                                                  on_delete=models.CASCADE,
                                                   related_name='text_attribute_definitions',
                                                   related_query_name='text_attribute_definition',
                                                   null=True)

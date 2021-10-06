@@ -7,17 +7,17 @@ class ResourceGroupAttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
                             blank=False)
     resource_group_definition = models.ForeignKey('ResourceGroup',
-                                                  on_delete=models.PROTECT,
+                                                  on_delete=models.CASCADE,
                                                   related_name='attribute_definitions',
                                                   related_query_name='attribute_definition',
                                                   null=True)
     consume_from = models.ForeignKey('ResourcePoolAttributeDefinition',
-                                     on_delete=models.PROTECT,
+                                     on_delete=models.SET_NULL,
                                      related_name='consumers',
                                      related_query_name='consumer',
                                      null=True)
     produce_for = models.ForeignKey('ResourcePoolAttributeDefinition',
-                                    on_delete=models.PROTECT,
+                                    on_delete=models.SET_NULL,
                                     related_name='producers',
                                     related_query_name='producer',
                                     null=True)
