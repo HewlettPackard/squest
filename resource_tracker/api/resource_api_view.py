@@ -34,7 +34,7 @@ class ResourceListCreate(generics.ListCreateAPIView):
             raise NotFound()
 
 
-class ResourceGetDelete(generics.RetrieveDestroyAPIView):
+class ResourceGetDelete(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     permission_classes = [IsAdminUser]
     serializer_class = ResourceSerializer

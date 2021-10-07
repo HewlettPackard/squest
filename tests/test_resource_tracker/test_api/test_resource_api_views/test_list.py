@@ -13,7 +13,6 @@ class TestResourceGroupResourceList(BaseTestAPI):
     def test_resource_group_resources_list(self):
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        resp_json = response.json()
         self.assertEqual(len(response.json()), 4)
         for resource in response.json():
             self.assertTrue("id" in resource)

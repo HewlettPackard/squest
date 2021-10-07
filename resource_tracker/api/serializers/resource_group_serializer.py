@@ -16,7 +16,7 @@ class ResourceGroupAttributeDefinitionSerializer(serializers.ModelSerializer):
 class ResourceGroupTextAttributeDefinitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceGroupTextAttributeDefinition
-        fields = ["id", "name"]
+        fields = ["id", "name", "help_text"]
 
 
 class ResourceAttributeSerializer(serializers.ModelSerializer):
@@ -24,11 +24,7 @@ class ResourceAttributeSerializer(serializers.ModelSerializer):
         model = ResourceAttribute
         fields = ["name", "value"]
 
-    name = serializers.SerializerMethodField(method_name="get_attribute_name")
-
-    @staticmethod
-    def get_attribute_name(resource_attribute):
-        return resource_attribute.attribute_type.name
+    name = serializers.CharField(source="attribute_type.name")
 
 
 class ResourceTextAttributeSerializer(serializers.ModelSerializer):
@@ -36,11 +32,7 @@ class ResourceTextAttributeSerializer(serializers.ModelSerializer):
         model = ResourceTextAttribute
         fields = ["name", "value"]
 
-    name = serializers.SerializerMethodField(method_name="get_text_attribute_name")
-
-    @staticmethod
-    def get_text_attribute_name(resource_attribute):
-        return resource_attribute.text_attribute_type.name
+    name = serializers.CharField(source="text_attribute_type.name")
 
 
 class ResourceSerializer(serializers.ModelSerializer):
@@ -50,6 +42,42 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     attributes = ResourceAttributeSerializer(many=True)
     text_attributes = ResourceTextAttributeSerializer(many=True)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.service_catalog_instance = validated_data.get('service_catalog_instance',
+                                                               instance.service_catalog_instance)
+        instance.save()
+
+        attributes = validated_data.get('attributes')
+        for attribute in attributes:
+            attribute_item_name = attribute["attribute_type"].get('name', None)
+            try:
+                attribute_def = ResourceGroupAttributeDefinition.objects.get(resource_group_definition=instance.resource_group,
+                                                                             name=attribute_item_name)
+                attribute_item = ResourceAttribute.objects.get(resource=instance, attribute_type=attribute_def)
+                attribute_item.value = attribute.get('value', attribute_item.value)
+                attribute_item.save()
+            except ResourceGroupAttributeDefinition.DoesNotExist:
+                raise serializers.ValidationError({
+                    attribute_item_name: f'Not a valid attribute of the resource group {instance.resource_group.name}'
+                })
+
+        text_attributes = validated_data.get('text_attributes')
+        for text_attribute in text_attributes:
+            text_attribute_item_name = text_attribute["text_attribute_type"].get('name', None)
+            try:
+                text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(resource_group_definition=instance.resource_group,
+                                                                                      name=text_attribute_item_name)
+                text_attribute_item = ResourceTextAttribute.objects.get(resource=instance, text_attribute_type=text_attribute_def)
+                text_attribute_item.value = text_attribute.get('value', text_attribute_item.value)
+                text_attribute_item.save()
+            except ResourceGroupTextAttributeDefinition.DoesNotExist:
+                raise serializers.ValidationError({
+                    text_attribute_item_name: f'Not a valid text attribute of the resource group '
+                                              f'{instance.resource_group.name}'
+                })
+        return instance
 
 
 class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
