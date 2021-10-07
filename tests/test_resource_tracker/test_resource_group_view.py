@@ -14,14 +14,14 @@ class TestResourceGroupViews(BaseTestResourceTracker):
     def test_resource_group_list(self):
         url = reverse('resource_tracker:resource_group_list')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("resource_groups" in response.context)
 
     def test_cannot_get_resource_group_list_when_logout(self):
         self.client.logout()
         url = reverse('resource_tracker:resource_group_list')
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_create(self):
         url = reverse('resource_tracker:resource_group_create')
@@ -30,10 +30,10 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         }
         number_rp_before = ResourceGroup.objects.all().count()
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_rp_before + 1, ResourceGroup.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_rp_before + 1, ResourceGroup.objects.all().count())
         self.assertTrue(ResourceGroup.objects.filter(name="new_resource_group").exists())
 
     def test_resource_group_edit(self):
@@ -47,11 +47,11 @@ class TestResourceGroupViews(BaseTestResourceTracker):
             "name": new_name,
         }
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.rg_physical_servers.refresh_from_db()
-        self.assertEquals(self.rg_physical_servers.name, new_name)
+        self.assertEqual(self.rg_physical_servers.name, new_name)
 
     def test_resource_group_delete(self):
         id_to_delete = copy(self.rg_physical_servers.id)
@@ -69,9 +69,9 @@ class TestResourceGroupViews(BaseTestResourceTracker):
                 list_text_attribute_id_to_be_delete.append(copy(attribute.id))
         url = reverse('resource_tracker:resource_group_delete', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         # check that the resource group has been deleted
         self.assertFalse(ResourceGroup.objects.filter(id=id_to_delete).exists())
         # check that all resource instances have been deleted

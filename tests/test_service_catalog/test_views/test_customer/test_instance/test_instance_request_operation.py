@@ -23,10 +23,10 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         data = {'text_variable': 'my_var'}
         url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.test_instance.refresh_from_db()
-        self.assertEquals(self.test_instance.state, InstanceState.AVAILABLE)
-        self.assertEquals(expected_request_number, Request.objects.all().count())
+        self.assertEqual(self.test_instance.state, InstanceState.AVAILABLE)
+        self.assertEqual(expected_request_number, Request.objects.all().count())
 
     def test_cannot_request_non_valid_operation(self):
         # operation belong to another service
@@ -37,7 +37,7 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         data = {'text_variable': 'my_var'}
         url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
         response = self.client.post(url, data=data)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_cannot_request_non_available_instance(self):
         for state in [InstanceState.PENDING, InstanceState.PROVISIONING, InstanceState.DELETING, InstanceState.DELETED]:
@@ -50,4 +50,4 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
             data = {'text_variable': 'my_var'}
             url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
             response = self.client.post(url, data=data)
-            self.assertEquals(403, response.status_code)
+            self.assertEqual(403, response.status_code)

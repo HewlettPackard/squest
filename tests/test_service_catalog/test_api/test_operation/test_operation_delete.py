@@ -20,7 +20,7 @@ class TestApiOperationDelete(BaseTestRequest):
         operation_count = Operation.objects.count()
         response = self.client.delete(self.get_operation_details_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEquals(operation_count - 1, Operation.objects.count())
+        self.assertEqual(operation_count - 1, Operation.objects.count())
         self.assertFalse(Operation.objects.filter(id=self.operation_to_delete_id).exists())
 
     def test_admin_cannot_delete_create_operation(self):

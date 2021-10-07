@@ -15,15 +15,15 @@ class OperationListTestCase(BaseTest):
 
     def test_get_operation_list(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_customer_can_get_operation_list(self):
         self.client.logout()
         self.client.login(username=self.standard_user.username, password=self.common_password)
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_cannot_get_operation_list_logout(self):
         self.client.logout()
         response = self.client.get(self.url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

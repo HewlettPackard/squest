@@ -19,7 +19,7 @@ class TestApiServiceDelete(BaseTestRequest):
         service_count = Service.objects.count()
         response = self.client.delete(self.get_request_details_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEquals(service_count - 1, Service.objects.count())
+        self.assertEqual(service_count - 1, Service.objects.count())
         self.assertFalse(Service.objects.filter(id=self.service_to_delete_id).exists())
 
     def test_customer_cannot_delete_request(self):

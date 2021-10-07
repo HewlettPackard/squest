@@ -30,8 +30,8 @@ class TestApiOperationRequestCreate(BaseTestRequest):
         request_count = Request.objects.count()
         response = self.client.post(self.url, data=self.data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(request_count + 1, Request.objects.count())
-        self.assertEquals(response.data, self.expected)
+        self.assertEqual(request_count + 1, Request.objects.count())
+        self.assertEqual(response.data, self.expected)
 
     def test_cannot_create_on_provisioning_operation(self):
         self.kwargs = {

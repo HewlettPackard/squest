@@ -26,11 +26,11 @@ class TestStateHook(BaseTestRequest):
         with mock.patch("service_catalog.models.state_hooks.HookManager.trigger_hook") as mock_trigger_hook:
             self.test_request.accept()
             self.test_request.save()
-            self.assertEquals(mock_trigger_hook.call_count, 1)
+            self.assertEqual(mock_trigger_hook.call_count, 1)
 
             self.test_instance.provisioning()
             self.test_instance.save()
-            self.assertEquals(mock_trigger_hook.call_count, 2)
+            self.assertEqual(mock_trigger_hook.call_count, 2)
 
     def test_hook_manager_execute_job_template(self):
         from service_catalog.serializers.instance_serializer import InstanceSerializer

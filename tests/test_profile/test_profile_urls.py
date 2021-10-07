@@ -15,17 +15,17 @@ class TestProfileUrls(TestGroupBase):
         ]
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(200, response.status_code)
+            self.assertEqual(200, response.status_code)
         self.client.logout()
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
 
     def test_get_token_tab_in_profile_detail(self):
         session = self.client.session
         session['current_tab'] = 'tokens'
         session.save()
         response = self.client.get(reverse('profiles:profile'))
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertIn('current_tab', response.context)
         self.assertIn(response.context['current_tab'], 'tokens')

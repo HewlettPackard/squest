@@ -20,7 +20,7 @@ class TestGroupModel(TestGroupBase):
         init_group_len = len(BillingGroup.objects.all())
         for test in test_list:
             self.client.post(url, data=test['data'])
-            self.assertEquals(len(BillingGroup.objects.all()), init_group_len + test['offset'])
+            self.assertEqual(len(BillingGroup.objects.all()), init_group_len + test['offset'])
 
     def test_edit_billing_group(self):
         args_group = {
@@ -36,7 +36,7 @@ class TestGroupModel(TestGroupBase):
         ]
         for test in test_list:
             self.client.post(url, data=test['data'])
-            self.assertEquals(BillingGroup.objects.get(id=self.test_billing_group.id).name, test['expected'])
+            self.assertEqual(BillingGroup.objects.get(id=self.test_billing_group.id).name, test['expected'])
 
     def test_delete_billing_group(self):
         args_group = {
@@ -60,7 +60,7 @@ class TestGroupModel(TestGroupBase):
         ]
         for data in data_list:
             self.client.post(url, data=data)
-            self.assertEquals(list(set(data.get('users', []))),
+            self.assertEqual(list(set(data.get('users', []))),
                               list(set([user.id for user in self.test_billing_group.user_set.all()])))
 
     def test_remove_user_from_billing_group(self):
@@ -76,4 +76,4 @@ class TestGroupModel(TestGroupBase):
             url = reverse('profiles:user_in_billing_group_remove',
                           kwargs={**args_group, **test_data['args_user']})
             self.client.post(url)
-            self.assertEquals(len(self.test_billing_group.user_set.all()), init_users_len - test_data['offset'])
+            self.assertEqual(len(self.test_billing_group.user_set.all()), init_users_len - test_data['offset'])

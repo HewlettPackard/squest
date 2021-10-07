@@ -46,4 +46,4 @@ class TestMaintenanceJob(BaseTest):
         Doc.objects.create(title="test doc", content=content)
         deleted_media_list = cleanup_ghost_docs_images(image_path=doc_image_path)
         expected_list_of_deleted_files = ["to_be_deleted.jpg"]
-        self.assertEquals(deleted_media_list, expected_list_of_deleted_files)
+        self.assertEqual(deleted_media_list, expected_list_of_deleted_files)

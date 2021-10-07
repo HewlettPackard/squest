@@ -22,5 +22,5 @@ class GlobalHookAjaxTest(BaseTest):
                 "model": test["model"]
             }
             response = self.client.get(url, data=data)
-            self.assertEquals(200, response.status_code)
-            self.assertEquals(test["expected_option"], response.context["options"])
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(test["expected_option"], response.context["options"])

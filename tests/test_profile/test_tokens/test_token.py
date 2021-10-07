@@ -23,16 +23,16 @@ class TestToken(TestGroupBase):
         ]
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(200, response.status_code)
+            self.assertEqual(200, response.status_code)
         self.client.logout()
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
 
     def test_all_get_redirect(self):
         original_key = self.token.key
         response = self.client.get(reverse('profiles:token_generate', kwargs=self.args_token))
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.token.refresh_from_db()
         self.assertNotEqual(original_key, self.token.key)
 
@@ -49,14 +49,14 @@ class TestToken(TestGroupBase):
         initial_created = Token.objects.filter(description='My description').count()
         initial_edited = Token.objects.filter(description='Edited description').count()
         response = self.client.post(test[0]['url'], data=test[0]['data'])
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(Token.objects.filter(description='My description').count() == initial_created + 1)
         response = self.client.post(test[1]['url'], data=test[1]['data'])
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(Token.objects.filter(description='Initial').count() == initial - 1)
         self.assertTrue(Token.objects.filter(description='Edited description').count() == initial_edited + 1)
         response = self.client.post(test[2]['url'], data=test[2]['data'])
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(Token.objects.filter(description='Edited description').count() == initial_edited)
 
     def test_create_token_with_expired_date(self):

@@ -15,9 +15,9 @@ class TestInstanceCreate(BaseTestRequest):
         instance_count = Instance.objects.count()
         response = self.client.post(self.url, data=data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(instance_count + 1, Instance.objects.count())
+        self.assertEqual(instance_count + 1, Instance.objects.count())
         expected["id"] = response.data["id"]
-        self.assertEquals(response.data, expected)
+        self.assertEqual(response.data, expected)
 
     def test_instance_create_all_field(self):
         data = {
