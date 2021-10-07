@@ -23,7 +23,7 @@ class AdminTowerCreateViewsTest(BaseTestTower):
 
     def test_get_page(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_admin_can_create_tower_server(self):
         test_url_list = [("http://tower0.domain.net/", "tower0.domain.net"),
@@ -56,20 +56,20 @@ class AdminTowerCreateViewsTest(BaseTestTower):
                         "token": "xxxx"
                     }
                     response = self.client.post(self.url, data=data)
-                    self.assertEquals(302, response.status_code)
-                    self.assertEquals(self.number_tower_before + 1, TowerServer.objects.all().count())
+                    self.assertEqual(302, response.status_code)
+                    self.assertEqual(self.number_tower_before + 1, TowerServer.objects.all().count())
                     mock_tower_sync.assert_called()
                     self.number_tower_before = self.number_tower_before + 1
                     self.assertTrue(TowerServer.objects.filter(name=name).exists())
                     new_tower = TowerServer.objects.get(name=name)
-                    self.assertEquals(name, new_tower.name)
-                    self.assertEquals(expected_host, new_tower.host)
+                    self.assertEqual(name, new_tower.name)
+                    self.assertEqual(expected_host, new_tower.host)
 
     def test_connection_error_on_create(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.side_effect = requests.exceptions.ConnectionError
             response = self.client.post(self.url, data=self.data)
-            self.assertEquals(self.number_tower_before, TowerServer.objects.all().count())
+            self.assertEqual(self.number_tower_before, TowerServer.objects.all().count())
             self.assertContains(response, "Unable to connect to tower.domain.local",
                                 status_code=200, html=False)
 
@@ -77,18 +77,18 @@ class AdminTowerCreateViewsTest(BaseTestTower):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.side_effect = requests.exceptions.SSLError
             response = self.client.post(self.url, data=self.data)
-            self.assertEquals(self.number_tower_before, TowerServer.objects.all().count())
+            self.assertEqual(self.number_tower_before, TowerServer.objects.all().count())
             self.assertContains(response, "Certificate verify failed", status_code=200, html=False)
 
     def test_auth_failed_on_create(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.side_effect = towerlib.towerlibexceptions.AuthFailed
             response = self.client.post(self.url, data=self.data)
-            self.assertEquals(self.number_tower_before, TowerServer.objects.all().count())
+            self.assertEqual(self.number_tower_before, TowerServer.objects.all().count())
             self.assertContains(response, "Fail to authenticate with provided token", status_code=200, html=False)
 
     def test_user_cannot_create_tower_server(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         response = self.client.post(self.url, data=self.data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(self.number_tower_before, TowerServer.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(self.number_tower_before, TowerServer.objects.all().count())

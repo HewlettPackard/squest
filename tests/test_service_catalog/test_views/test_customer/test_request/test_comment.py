@@ -19,9 +19,9 @@ class CustomerRequestCommentTest(BaseTestRequest):
 
     def _assert_can_list_comment(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("messages" in response.context)
-        self.assertEquals(1, len(response.context["messages"]))
+        self.assertEqual(1, len(response.context["messages"]))
 
     def _assert_can_add_comment(self):
         number_message_before = RequestMessage.objects.filter(request=self.test_request).count()
@@ -29,14 +29,14 @@ class CustomerRequestCommentTest(BaseTestRequest):
             "content": "new message"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_message_before + 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_message_before + 1,
                           RequestMessage.objects.filter(request=self.test_request).count())
 
     def test_cannot_get_comment_list_when_logout(self):
         self.client.logout()
         response = self.client.get(self.url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_admin_can_list_request_comment(self):
         self._assert_can_list_comment()
@@ -52,7 +52,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
         }
         url = reverse('service_catalog:request_comment', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_admin_can_add_request_message(self):
         self._assert_can_add_comment()
@@ -67,4 +67,4 @@ class CustomerRequestCommentTest(BaseTestRequest):
             "content": "new message"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)

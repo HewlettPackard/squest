@@ -26,11 +26,11 @@ class TestGroupUrls(TestGroupBase):
         ]
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(200, response.status_code)
+            self.assertEqual(200, response.status_code)
         self.client.logout()
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
 
     def test_all_delete_post(self):
         args_user = {
@@ -45,7 +45,7 @@ class TestGroupUrls(TestGroupBase):
         ]
         for url in urls_list:
             response = self.client.post(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
 
     def test_all_post_with_data(self):
         args_group = {
@@ -59,4 +59,4 @@ class TestGroupUrls(TestGroupBase):
         ]
         for test in test_list:
             response = self.client.post(test['url'], data=test['data'])
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)

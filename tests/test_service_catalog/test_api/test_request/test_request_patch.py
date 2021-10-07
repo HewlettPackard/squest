@@ -68,4 +68,4 @@ class TestApiRequestPatch(BaseTestRequest):
         for expected_data, data in zip(expected_data_list, data_list):
             for key_var, val_var in expected_data.items():
                 self.assertIn(key_var, data.keys())
-                self.assertEquals(val_var, data[key_var])
+                self.assertEqual(val_var, data[key_var])

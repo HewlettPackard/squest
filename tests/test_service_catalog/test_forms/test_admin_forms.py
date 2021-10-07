@@ -36,11 +36,11 @@ class TestServiceRequestForm(BaseTest):
             'integer_var': False
         }
         expected_result = "1. User"
-        self.assertEquals(expected_result, _get_field_group(field_name, enabled_field))
+        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
         field_name = 'multiplechoice_variable'
         expected_result = "2. Admin"
-        self.assertEquals(expected_result, _get_field_group(field_name, enabled_field))
+        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
     def test_accept_forms_field_count(self):
         parameters = {
@@ -54,4 +54,4 @@ class TestServiceRequestForm(BaseTest):
                 'integer_var': ['1'],
                 'float_var': ['1.5']}
         form = AcceptRequestForm(self.superuser, data, **parameters)
-        self.assertEquals(len(self.test_request.fill_in_survey), len(form.fields))
+        self.assertEqual(len(self.test_request.fill_in_survey), len(form.fields))

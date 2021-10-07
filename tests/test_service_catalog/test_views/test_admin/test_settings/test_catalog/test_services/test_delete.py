@@ -16,18 +16,18 @@ class ServiceDeleteTestCase(BaseTest):
     def test_delete_service(self):
         number_service_before = Service.objects.all().count()
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(self.url)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_service_before - 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_service_before - 1,
                           Service.objects.all().count())
 
     def test_standard_user_cannot_delete_service(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         response = self.client.get(self.url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         number_service_before = Service.objects.all().count()
         response = self.client.post(self.url)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_service_before,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_service_before,
                           Service.objects.all().count())

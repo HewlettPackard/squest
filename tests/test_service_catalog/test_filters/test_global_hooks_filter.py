@@ -34,8 +34,8 @@ class TestGlobalHooksFilter(BaseTest):
         }
         hook_filter = GlobalHookFilter(data)
         self.assertTrue(hook_filter.form.is_valid())
-        self.assertEquals(1, hook_filter.qs.count())
-        self.assertEquals(self.global_hook4, hook_filter.qs[0])
+        self.assertEqual(1, hook_filter.qs.count())
+        self.assertEqual(self.global_hook4, hook_filter.qs[0])
 
     def test_filter_by_request_state(self):
         data = {
@@ -43,8 +43,8 @@ class TestGlobalHooksFilter(BaseTest):
         }
         hook_filter = GlobalHookFilter(data)
         self.assertTrue(hook_filter.form.is_valid())
-        self.assertEquals(1, hook_filter.qs.count())
-        self.assertEquals(self.global_hook3, hook_filter.qs[0])
+        self.assertEqual(1, hook_filter.qs.count())
+        self.assertEqual(self.global_hook3, hook_filter.qs[0])
 
     def test_filter_by_instance_and_request_state(self):
         data = {
@@ -53,6 +53,6 @@ class TestGlobalHooksFilter(BaseTest):
         }
         hook_filter = GlobalHookFilter(data)
         self.assertTrue(hook_filter.form.is_valid())
-        self.assertEquals(2, hook_filter.qs.count())
+        self.assertEqual(2, hook_filter.qs.count())
         self.assertIn(self.global_hook4, hook_filter.qs)
         self.assertIn(self.global_hook3, hook_filter.qs)

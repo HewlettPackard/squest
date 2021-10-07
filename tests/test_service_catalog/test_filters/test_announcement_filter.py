@@ -34,8 +34,8 @@ class TestAnnouncementFilter(BaseTest):
         )
         announcement_filter = AnnouncementFilter(data={'opens': True})
         self.assertTrue(announcement_filter.form.is_valid())
-        self.assertEquals(1, announcement_filter.qs.count())
+        self.assertEqual(1, announcement_filter.qs.count())
         announcement_filter = AnnouncementFilter(data={'opens': False})
         self.assertTrue(announcement_filter.form.is_valid())
-        self.assertEquals(3, announcement_filter.qs.count())
+        self.assertEqual(3, announcement_filter.qs.count())
 

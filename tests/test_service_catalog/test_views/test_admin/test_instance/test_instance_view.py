@@ -30,33 +30,33 @@ class TestAdminInstanceViews(BaseTestRequest):
     def test_get_instance_list(self):
         url = reverse('service_catalog:instance_list')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(len(response.context["table"].data.data), 2)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 2)
 
     def test_cannot_get_instance_list_when_logout(self):
         self.client.logout()
         url = reverse('service_catalog:instance_list')
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_admin_can_get_details(self):
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("instance" in response.context)
-        self.assertEquals(self.test_instance.name, response.context["instance"].name)
+        self.assertEqual(self.test_instance.name, response.context["instance"].name)
 
     def test_cannot_get_instance_details_when_logout(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_customer_cannot_get_details_on_non_own_instance(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_admin_instance_new_support(self):
         url = reverse('service_catalog:instance_new_support', kwargs=self.args)
@@ -66,8 +66,8 @@ class TestAdminInstanceViews(BaseTestRequest):
         }
         number_support_before = Support.objects.all().count()
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_support_before + 1, Support.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_support_before + 1, Support.objects.all().count())
 
     def test_customer_cannot_create_new_support_on_non_own_instance(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
@@ -78,63 +78,63 @@ class TestAdminInstanceViews(BaseTestRequest):
         }
         number_support_before = Support.objects.all().count()
         response = self.client.post(url, data=data)
-        self.assertEquals(403, response.status_code)
-        self.assertEquals(number_support_before, Support.objects.all().count())
+        self.assertEqual(403, response.status_code)
+        self.assertEqual(number_support_before, Support.objects.all().count())
 
     def test_admin_get_instance_support_details(self):
         self.args['support_id'] = self.support_test.id
         url = reverse('service_catalog:instance_support_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("support" in response.context)
-        self.assertEquals(self.support_test.title, response.context["support"].title)
+        self.assertEqual(self.support_test.title, response.context["support"].title)
 
     def test_customer_cannot_get_instance_support_details_of_another_user(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         self.args['support_id'] = self.support_test.id
         url = reverse('service_catalog:instance_support_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_instance_edit(self):
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
 
         response = self.client.post(url, data=self.edit_instance_data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.test_instance.refresh_from_db()
-        self.assertEquals(self.test_instance.name, "new_instance_name")
+        self.assertEqual(self.test_instance.name, "new_instance_name")
 
     def test_instance_edit_with_empty_spec(self):
         old_spec = copy(self.test_instance.spec)
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
         self.edit_instance_data['spec'] = ''
         response = self.client.post(url, data=self.edit_instance_data)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.test_instance.refresh_from_db()
-        self.assertEquals(self.test_instance.spec, old_spec)
-        self.assertEquals(response.context['form'].errors['spec'][0],
+        self.assertEqual(self.test_instance.spec, old_spec)
+        self.assertEqual(response.context['form'].errors['spec'][0],
                           'Please enter a valid JSON. Empty value is {} for JSON.')
 
     def test_instance_edit_with_empty_dict_spec(self):
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
         self.edit_instance_data['spec'] = '{}'
         response = self.client.post(url, data=self.edit_instance_data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.test_instance.refresh_from_db()
-        self.assertEquals(self.test_instance.spec, {})
+        self.assertEqual(self.test_instance.spec, {})
 
     def test_customer_cannot_edit_instance(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('service_catalog:instance_edit', kwargs=self.args)
         response = self.client.post(url, data=self.edit_instance_data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(self.test_instance.name, "test_instance_1")
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(self.test_instance.name, "test_instance_1")
 
     def test_admin_can_delete_instance(self):
         request_id_list = [request.id for request in Request.objects.filter(instance=self.test_instance)]
         url = reverse('service_catalog:instance_delete', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.client.post(url)
         self.assertFalse(Instance.objects.filter(id=self.test_instance.id).exists())
         for request_id in request_id_list:
@@ -144,6 +144,6 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('service_catalog:instance_delete', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.client.post(url)
         self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())

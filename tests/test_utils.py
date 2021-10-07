@@ -35,7 +35,7 @@ class TestUtils(unittest.TestCase):
             attrs = {'read.return_value': version_output}
             process_mock.configure_mock(**attrs)
             mock_os_popen.return_value = process_mock
-            self.assertEquals(get_mysql_dump_major_version(), expected_result)
+            self.assertEqual(get_mysql_dump_major_version(), expected_result)
 
     def test_get_celery_crontab_parameters_from_crontab_line(self):
         map_test = {
@@ -55,7 +55,7 @@ class TestUtils(unittest.TestCase):
             }
         }
         for crontab_line, expected_result in map_test.items():
-            self.assertEquals(get_celery_crontab_parameters_from_crontab_line(crontab_line),
+            self.assertEqual(get_celery_crontab_parameters_from_crontab_line(crontab_line),
                               expected_result)
 
     def test_regex_for_media_cleanup(self):

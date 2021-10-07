@@ -31,18 +31,18 @@ class TestAnnouncementUrls(BaseTest):
         ]
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(200, response.status_code)
+            self.assertEqual(200, response.status_code)
         self.client.logout()
         for url in urls_list:
             response = self.client.get(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
 
     def test_all_delete_post(self):
         args_announcement = {
             'announcement_id': self.my_announcement.id
         }
         response = self.client.post(reverse('service_catalog:announcement_delete', kwargs=args_announcement))
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_all_post_with_data(self):
         args_announcement = {
@@ -66,11 +66,11 @@ class TestAnnouncementUrls(BaseTest):
         announcement_count = Announcement.objects.count()
         for test in test_list:
             response = self.client.post(test['url'], data=test['data'])
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
         self.my_announcement = Announcement.objects.get(id=self.my_announcement.id)
-        self.assertEquals(self.my_announcement.title, test_list[1]['data']['title'])
-        self.assertEquals(self.my_announcement.message, test_list[1]['data']['message'])
-        self.assertEquals(self.my_announcement.date_start, test_list[1]['data']['date_start'])
-        self.assertEquals(self.my_announcement.date_stop, test_list[1]['data']['date_stop'])
-        self.assertEquals(self.my_announcement.type, test_list[1]['data']['type'])
-        self.assertEquals(announcement_count + 1, Announcement.objects.count())
+        self.assertEqual(self.my_announcement.title, test_list[1]['data']['title'])
+        self.assertEqual(self.my_announcement.message, test_list[1]['data']['message'])
+        self.assertEqual(self.my_announcement.date_start, test_list[1]['data']['date_start'])
+        self.assertEqual(self.my_announcement.date_stop, test_list[1]['data']['date_stop'])
+        self.assertEqual(self.my_announcement.type, test_list[1]['data']['type'])
+        self.assertEqual(announcement_count + 1, Announcement.objects.count())

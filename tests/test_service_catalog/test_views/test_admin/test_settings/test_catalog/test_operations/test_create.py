@@ -22,11 +22,11 @@ class OperationCreateTestCase(BaseTest):
             "process_timeout_second": 60
         }
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_operation_before + 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_operation_before + 1,
                           Operation.objects.filter(service=self.service_test.id).count())
 
     def test_create_an_update_service_operation(self):
@@ -38,11 +38,11 @@ class OperationCreateTestCase(BaseTest):
             "process_timeout_second": 60
         }
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_operation_before + 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_operation_before + 1,
                           Operation.objects.filter(service=self.service_test.id).count())
 
     def test_create_a_create_service_operation(self):
@@ -57,11 +57,11 @@ class OperationCreateTestCase(BaseTest):
             "process_timeout_second": 60
         }
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(number_operation_before,
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(number_operation_before,
                           Operation.objects.filter(service=self.service_test.id).count())
 
     def test_cannot_add_service_operation_when_logout(self):
@@ -74,6 +74,6 @@ class OperationCreateTestCase(BaseTest):
             "process_timeout_second": 60
         }
         response = self.client.get(self.url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

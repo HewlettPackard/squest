@@ -17,4 +17,4 @@ class TestOperation(BaseTest):
             'integer_var': False
         }
 
-        self.assertEquals(self.create_operation_test.enabled_survey_fields, expected_result)
+        self.assertEqual(self.create_operation_test.enabled_survey_fields, expected_result)

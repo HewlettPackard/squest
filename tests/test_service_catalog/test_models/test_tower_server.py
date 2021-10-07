@@ -41,7 +41,7 @@ class TestTowerServer(BaseTest):
         }
 
     def test_str(self):
-        self.assertEquals("tower-server-test (localhost)", str(self.tower_server_test))
+        self.assertEqual("tower-server-test (localhost)", str(self.tower_server_test))
 
     @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_same_survey(self, mock_tower_instance):
@@ -111,6 +111,6 @@ class TestTowerServer(BaseTest):
         job_template_from_tower.name = "tower_job_template_update"
         self.tower_server_test._update_job_template_from_tower(job_template_from_tower)
         self.job_template_test.refresh_from_db()
-        self.assertEquals(self.job_template_test.name, "tower_job_template_update")
-        self.assertEquals(self.job_template_test.survey, self.new_survey)
-        self.assertEquals(self.job_template_test.tower_job_template_data, self.job_template_testing_data)
+        self.assertEqual(self.job_template_test.name, "tower_job_template_update")
+        self.assertEqual(self.job_template_test.survey, self.new_survey)
+        self.assertEqual(self.job_template_test.tower_job_template_data, self.job_template_testing_data)

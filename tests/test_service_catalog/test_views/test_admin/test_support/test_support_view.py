@@ -10,11 +10,11 @@ class TestAdminSupportViews(BaseTestRequest):
     def test_get_support_list(self):
         url = reverse('service_catalog:support_list')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(len(response.context["table"].data.data), 1)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 1)
 
     def test_cannot_get_support_list_when_logout(self):
         self.client.logout()
         url = reverse('service_catalog:support_list')
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)

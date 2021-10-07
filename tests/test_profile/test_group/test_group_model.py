@@ -20,5 +20,5 @@ class TestGroupProcessing(TestGroupBase):
         ]
         for data in data_list:
             self.client.post(url, data=data)
-            self.assertEquals(list(set(data.get('users', []))),
+            self.assertEqual(list(set(data.get('users', []))),
                               list(set([user.id for user in self.my_group.user_set.all()])))
