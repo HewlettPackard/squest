@@ -80,6 +80,16 @@ class ResourceSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ResourceGroupSerializerRead(TaggitSerializer, serializers.ModelSerializer):
+    attribute_definitions = ResourceGroupAttributeDefinitionSerializer(many=True, read_only=True)
+    text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializer(read_only=True)
+    tags = TagListSerializerField()
+
+    class Meta:
+        model = ResourceGroup
+        fields = ["id", "name", "attribute_definitions", "text_attribute_definitions", "tags"]
+
+
 class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
     attribute_definitions = ResourceGroupAttributeDefinitionSerializer(many=True)
     text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializer(many=True)
