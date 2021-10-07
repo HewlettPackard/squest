@@ -17,7 +17,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         }
         url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("resource_group" in response.context)
         self.assertTrue("list_attribute_name" in response.context)
 
@@ -28,7 +28,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg)
         self.client.logout()
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_resource_delete(self):
         server_to_delete = Resource.objects.get(name="server-1")
@@ -40,13 +40,13 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         # test GET
         url = reverse('resource_tracker:resource_group_resource_delete', kwargs=arg)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         attribute_id = copy(server_to_delete.id)
         self.assertTrue(Resource.objects.filter(id=attribute_id).exists())
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertFalse(Resource.objects.filter(id=attribute_id).exists())
 
     def test_cannot_delete_resource_group_resource_when_logout(self):
@@ -60,7 +60,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         url = reverse('resource_tracker:resource_group_resource_delete', kwargs=arg)
         self.client.logout()
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_resource_create_empty(self):
         arg = {
@@ -70,7 +70,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         data = {
@@ -79,12 +79,12 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "Memory": 12
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(Resource.objects.filter(name="new_resource",
                                                 resource_group=self.rg_physical_servers).exists())
         target_resource = Resource.objects.get(name="new_resource",
                                                resource_group=self.rg_physical_servers)
-        self.assertEquals(2, len(target_resource.attributes.all()))
+        self.assertEqual(2, len(target_resource.attributes.all()))
 
     def test_cannot_create_resource_group_resource_when_logout(self):
         self.client.logout()
@@ -95,7 +95,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_resource_create_non_integer_value(self):
         arg = {
@@ -105,7 +105,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         data = {
@@ -114,7 +114,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "Memory": "ee"
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         self.assertEqual(0, self.rg_physical_servers.resources.filter(name='new_resource').count())
 
@@ -126,7 +126,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         data = {
@@ -135,7 +135,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "Memory": "-12"
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         self.assertEqual(0, self.rg_physical_servers.resources.filter(name='new_resource').count())
 
@@ -147,7 +147,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         data = {
@@ -157,12 +157,12 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "Description": "text"
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(Resource.objects.filter(name="new_resource",
                                                 resource_group=self.rg_physical_servers).exists())
         target_resource = Resource.objects.get(name="new_resource",
                                                resource_group=self.rg_physical_servers)
-        self.assertEquals(2, len(target_resource.attributes.all()))
+        self.assertEqual(2, len(target_resource.attributes.all()))
 
     def test_resource_group_resource_edit(self):
         resource_to_edit = Resource.objects.get(name="server-1",
@@ -175,7 +175,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         data = {
@@ -186,26 +186,26 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         resource_to_edit.refresh_from_db()
-        self.assertEquals(resource_to_edit.name, "updated_name")
+        self.assertEqual(resource_to_edit.name, "updated_name")
 
         resource_attribute_cpu = ResourceAttribute.objects.get(
             resource=resource_to_edit,
             attribute_type=self.rg_physical_servers_cpu_attribute
         )
-        self.assertEquals(resource_attribute_cpu.value, 1)
+        self.assertEqual(resource_attribute_cpu.value, 1)
 
         resource_attribute_memory = ResourceAttribute.objects.get(
             resource=resource_to_edit,
             attribute_type=self.rg_physical_servers_memory_attribute
         )
-        self.assertEquals(resource_attribute_memory.value, 2)
+        self.assertEqual(resource_attribute_memory.value, 2)
         resource_text_attribute_description = ResourceTextAttribute.objects.get(
             resource=resource_to_edit,
             text_attribute_type=self.rg_physical_servers_description
         )
-        self.assertEquals(resource_text_attribute_description.value, "text modified")
+        self.assertEqual(resource_text_attribute_description.value, "text modified")
 
     def test_cannot_edit_resource_group_resource_when_logout(self):
         self.client.logout()
@@ -219,4 +219,4 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

@@ -27,7 +27,7 @@ class TestRequest(BaseTestRequest):
             self.test_request.process()
             self.test_request.save()
             self.test_request.refresh_from_db()
-            self.assertEquals(self.test_request.state, RequestState.PROCESSING)
+            self.assertEqual(self.test_request.state, RequestState.PROCESSING)
             self.test_request.perform_processing()
             self.assertTrue(PeriodicTask.objects.filter(name=self.expected_created_periodic_task_name).exists())
             expected_extra_vars = {
@@ -59,9 +59,9 @@ class TestRequest(BaseTestRequest):
             for expected_data, data in zip(expected_data_list, data_list):
                 for key_var, val_var in expected_data.items():
                     self.assertIn(key_var, data.keys())
-                    self.assertEquals(val_var, data[key_var])
+                    self.assertEqual(val_var, data[key_var])
             self.test_instance.refresh_from_db()
-            self.assertEquals(self.test_instance.state, expected_state)
+            self.assertEqual(self.test_instance.state, expected_state)
 
     def test_process_pending_instance_to_be_provisioned(self):
         expected_state = InstanceState.PROVISIONING
@@ -91,8 +91,8 @@ class TestRequest(BaseTestRequest):
             self.test_request.process()
             self.test_request.perform_processing()
             self.test_instance.refresh_from_db()
-            self.assertEquals(self.test_instance.state, expected_instance_state)
-            self.assertEquals(self.test_request.state, RequestState.FAILED)
+            self.assertEqual(self.test_instance.state, expected_instance_state)
+            self.assertEqual(self.test_request.state, RequestState.FAILED)
             mock_job_execute.assert_called()
 
     def test_failure_when_provisioning(self):
@@ -134,7 +134,7 @@ class TestRequest(BaseTestRequest):
                                                  instance=self.test_instance,
                                                  operation=self.create_operation_test,
                                                  user=self.standard_user)
-            self.assertEquals(new_request.state, expected_state)
+            self.assertEqual(new_request.state, expected_state)
             if check_execution_called:
                 mock_job_execute.assert_called()
 
@@ -173,8 +173,8 @@ class TestRequest(BaseTestRequest):
             self.test_request.check_job_status()
             self.test_instance.refresh_from_db()
             self.test_request.refresh_from_db()
-            self.assertEquals(self.test_instance.state, expected_instance_state)
-            self.assertEquals(self.test_request.state, RequestState.FAILED)
+            self.assertEqual(self.test_instance.state, expected_instance_state)
+            self.assertEqual(self.test_request.state, RequestState.FAILED)
             mock_periodic_task_delete.assert_called()
 
     def test_process_timeout_when_provisioning(self):
@@ -200,10 +200,10 @@ class TestRequest(BaseTestRequest):
         self._process_timeout_with_expected_state(expected_instance_state)
 
     def test_tower_job_url(self):
-        self.assertEquals("", self.test_request.tower_job_url)
+        self.assertEqual("", self.test_request.tower_job_url)
         self.test_request.tower_job_id = 123
         self.test_request.save()
-        self.assertEquals("https://localhost/#/jobs/playbook/123", self.test_request.tower_job_url)
+        self.assertEqual("https://localhost/#/jobs/playbook/123", self.test_request.tower_job_url)
 
     def test_delete_request_also_delete_periodic_task(self):
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
@@ -236,9 +236,9 @@ class TestRequest(BaseTestRequest):
                 self.test_request.check_job_status()
                 self.test_request.refresh_from_db()
                 mock_email.assert_called()
-                self.assertEquals(self.test_request.state, RequestState.COMPLETE)
+                self.assertEqual(self.test_request.state, RequestState.COMPLETE)
                 self.assertFalse(PeriodicTask.objects.filter(id=self.periodic_task_test.id).exists())
-                self.assertEquals(self.test_instance.state, expected_instance_state)
+                self.assertEqual(self.test_instance.state, expected_instance_state)
 
     def test_check_job_status_successful_operation_create(self):
         self._prepare_base_request_for_test()
@@ -272,9 +272,9 @@ class TestRequest(BaseTestRequest):
                 self.test_request.check_job_status()
                 self.test_request.refresh_from_db()
                 mock_email.assert_called()
-                self.assertEquals(self.test_request.state, RequestState.FAILED)
+                self.assertEqual(self.test_request.state, RequestState.FAILED)
                 self.assertFalse(PeriodicTask.objects.filter(id=self.periodic_task_test.id).exists())
-                self.assertEquals(self.test_instance.state, InstanceState.PROVISION_FAILED)
+                self.assertEqual(self.test_instance.state, InstanceState.PROVISION_FAILED)
 
     def test_check_job_status_cancel(self):
         self._test_request_fail(job_status="canceled")

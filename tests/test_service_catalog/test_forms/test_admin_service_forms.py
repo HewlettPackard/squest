@@ -61,7 +61,7 @@ class TestServiceForm(BaseTest):
                 new_service = form.save()
                 test_list = self.get_test_list(data, new_service)
                 for test in test_list:
-                    self.assertEquals(test['value'], test['expected'])
+                    self.assertEqual(test['value'], test['expected'])
             else:
                 self.assertIn(data['name'], self.failed_expected)
 
@@ -72,7 +72,7 @@ class TestServiceForm(BaseTest):
                 form.save()
                 test_list = self.get_test_list(data, self.service_test)
                 for test in test_list:
-                    self.assertEquals(test['value'], test['expected'])
+                    self.assertEqual(test['value'], test['expected'])
             else:
                 self.assertIn(data['name'], self.failed_expected)
 
@@ -83,20 +83,20 @@ class TestServiceForm(BaseTest):
         self.service_test.save()
         data = self.data_list[0]
         form = EditServiceForm(data, instance=self.service_test)
-        self.assertEquals(True, form.fields['enabled'].disabled)
-        self.assertEquals("To enable this service, please link a job template to the 'CREATE' operation.", form.fields['enabled'].help_text)
+        self.assertEqual(True, form.fields['enabled'].disabled)
+        self.assertEqual("To enable this service, please link a job template to the 'CREATE' operation.", form.fields['enabled'].help_text)
 
     def test_edit_service_on_restricted_billing_group_selectable(self):
         self.service_test.billing_group_is_selectable = True
         self.service_test.save()
         data = self.data_list[0]
         form = EditServiceForm(data, instance=self.service_test)
-        self.assertEquals('restricted_billing_groups', form.fields['billing'].initial)
+        self.assertEqual('restricted_billing_groups', form.fields['billing'].initial)
 
     def test_edit_service_on_restricted_billing_group_non_selectable(self):
         data = self.data_list[0]
         form = EditServiceForm(data, instance=self.service_test)
-        self.assertEquals('defined', form.fields['billing'].initial)
+        self.assertEqual('defined', form.fields['billing'].initial)
 
     def test_edit_service_on_non_restricted_billing_group_selectable(self):
         self.service_test.billing_group_is_selectable = True
@@ -104,7 +104,7 @@ class TestServiceForm(BaseTest):
         self.service_test.save()
         data = self.data_list[0]
         form = EditServiceForm(data, instance=self.service_test)
-        self.assertEquals('all_billing_groups', form.fields['billing'].initial)
+        self.assertEqual('all_billing_groups', form.fields['billing'].initial)
 
     @staticmethod
     def get_test_list(data, service):

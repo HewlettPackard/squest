@@ -15,19 +15,19 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
 
     def test_get_page(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_admin_can_delete_tower_server(self):
         id_to_delete = self.tower_server_test.id
         response = self.client.post(self.url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertFalse(TowerServer.objects.filter(id=id_to_delete).exists())
 
     def test_user_cannot_delete_tower_server(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         id_to_delete = self.tower_server_test.id
         response = self.client.post(self.url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
 
     def test_admin_can_delete_job_template(self):
@@ -40,7 +40,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         url = reverse('service_catalog:delete_job_template', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertFalse(JobTemplate.objects.filter(id=id_to_delete).exists())
         for service in services:
             service.refresh_from_db()
@@ -57,7 +57,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         url = reverse('service_catalog:delete_job_template', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(JobTemplate.objects.filter(id=id_to_delete).exists())
 
     def test_can_reach_delete_job_template_page(self):
@@ -66,7 +66,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         }
         url = reverse('service_catalog:delete_tower', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_cannot_delete_job_template_page_when_logout(self):
         self.client.logout()
@@ -75,4 +75,4 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         }
         url = reverse('service_catalog:delete_tower', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

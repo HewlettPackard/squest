@@ -21,7 +21,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
             url = reverse('service_catalog:sync_tower', kwargs=self.args)
             response = self.client.post(url)
-            self.assertEquals(202, response.status_code)
+            self.assertEqual(202, response.status_code)
             data = json.loads(response.content)
             mock_sync.assert_called()
             self.assertTrue("task_id" in data)
@@ -52,7 +52,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
             self.tower_server_test.refresh_from_db()
             mock_tower_instance.assert_called()
             # assert that the survey is the same
-            self.assertEquals(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
+            self.assertEqual(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
                               target_number_job_template)
 
     def test_sync_job_template(self):
@@ -61,7 +61,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
             args['job_template_id'] = self.job_template_test.id
             url = reverse('service_catalog:sync_job_template', kwargs=args)
             response = self.client.post(url)
-            self.assertEquals(202, response.status_code)
+            self.assertEqual(202, response.status_code)
             data = json.loads(response.content)
             mock_sync.assert_called()
             self.assertTrue("task_id" in data)
@@ -71,7 +71,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
             self.client.login(username=self.standard_user, password=self.common_password)
             url = reverse('service_catalog:sync_tower', kwargs=self.args)
             response = self.client.post(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
             mock_sync.assert_not_called()
 
     def test_user_cannot_sync_job_template(self):
@@ -81,7 +81,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
             args['job_template_id'] = self.job_template_test.id
             url = reverse('service_catalog:sync_job_template', kwargs=args)
             response = self.client.post(url)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
             mock_sync.assert_not_called()
 
     def test_get_task_result(self):
@@ -90,7 +90,7 @@ class AdminTowerGetViewsTest(BaseTestTower):
         }
         url = reverse('service_catalog:get_task_result', kwargs=args)
         response = self.client.post(url)
-        self.assertEquals(202, response.status_code)
+        self.assertEqual(202, response.status_code)
         data = json.loads(response.content)
         self.assertTrue("status" in data)
         self.assertTrue("id" in data)
@@ -99,21 +99,21 @@ class AdminTowerGetViewsTest(BaseTestTower):
     def test_tower_job_templates_list(self):
         url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(), len(response.context["table"].data.data))
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(), len(response.context["table"].data.data))
 
     def test_cannot_get_tower_job_templates_list_when_logout(self):
         self.client.logout()
         url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_tower_job_templates_compliancy_list(self):
         args = copy.copy(self.args)
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_compliancy', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_cannot_get_tower_job_templates_compliancy_list_when_logout(self):
         self.client.logout()
@@ -121,14 +121,14 @@ class AdminTowerGetViewsTest(BaseTestTower):
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_compliancy', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_get_tower_job_templates_details(self):
         args = copy.copy(self.args)
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_details', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_customer_cannot_get_tower_job_templates_details(self):
         self.client.logout()
@@ -144,4 +144,4 @@ class AdminTowerGetViewsTest(BaseTestTower):
         args['job_template_id'] = self.job_template_test.id
         url = reverse('service_catalog:job_template_details', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

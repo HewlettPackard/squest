@@ -16,10 +16,10 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())
 
     def _assert_cannot_cancel(self):
         args = {
@@ -56,5 +56,5 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(0, Request.objects.filter(id=self.test_request.id).count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())

@@ -19,7 +19,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("resource_group" in response.context)
 
         # test POST without producer or consumer
@@ -29,8 +29,8 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         }
         number_attribute_before = ResourceGroupAttributeDefinition.objects.all().count()
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_attribute_before + 1, ResourceGroupAttributeDefinition.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_attribute_before + 1, ResourceGroupAttributeDefinition.objects.all().count())
         self.assertTrue(ResourceGroupAttributeDefinition.objects.filter(name="new_attribute_name",
                                                                         resource_group_definition=self.rg_physical_servers).exists())
 
@@ -41,17 +41,17 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
             "produce_for": self.rp_vcenter_vcpu_attribute.id
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue(ResourceGroupAttributeDefinition.objects.filter(name="new_attribute_name_2",
                                                                         resource_group_definition=self.rg_physical_servers).exists())
         target_rga = ResourceGroupAttributeDefinition.objects.get(name="new_attribute_name_2",
                                                                   resource_group_definition=self.rg_physical_servers)
-        self.assertEquals(target_rga.produce_for, self.rp_vcenter_vcpu_attribute)
+        self.assertEqual(target_rga.produce_for, self.rp_vcenter_vcpu_attribute)
 
         # test POST with already exist attribute
         response = self.client.post(url, data=data)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(f"Attribute {new_name} already exist in {self.rg_physical_servers.name}",
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(f"Attribute {new_name} already exist in {self.rg_physical_servers.name}",
                           response.context['form'].errors['name'][0])
 
     def test_cannot_create_resource_group_attribute_when_logout(self):
@@ -63,7 +63,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_attribute_edit(self):
         args = {
@@ -74,7 +74,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST without producer or consumer
         new_name = "new_attribute_name"
@@ -82,9 +82,9 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
             "name": new_name
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.rg_physical_servers_cpu_attribute.refresh_from_db()
-        self.assertEquals(self.rg_physical_servers_cpu_attribute.name, "new_attribute_name")
+        self.assertEqual(self.rg_physical_servers_cpu_attribute.name, "new_attribute_name")
 
     def test_cannot_edit_resource_group_attribute_when_logout(self):
         self.client.logout()
@@ -96,7 +96,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_resource_group_attribute_edit_existing_name(self):
         args = {
@@ -107,7 +107,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST without producer or consumer
         new_name = self.rg_physical_servers_memory_attribute.name
@@ -116,9 +116,9 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         }
         old_name = self.rg_physical_servers_cpu_attribute.name
         response = self.client.post(url, data=data)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.rg_physical_servers_cpu_attribute.refresh_from_db()
-        self.assertEquals(self.rg_physical_servers_cpu_attribute.name, old_name)
+        self.assertEqual(self.rg_physical_servers_cpu_attribute.name, old_name)
 
     def test_resource_group_attribute_edit_same_name(self):
         args = {
@@ -129,7 +129,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST without producer or consumer
         new_name = self.rg_physical_servers_memory_attribute.name
@@ -139,10 +139,10 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
             "consume_from": ""
         }
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.rg_physical_servers_cpu_attribute.refresh_from_db()
-        self.assertEquals(self.rg_physical_servers_cpu_attribute.produce_for, None)
-        self.assertEquals(self.rg_physical_servers_cpu_attribute.consume_from, None)
+        self.assertEqual(self.rg_physical_servers_cpu_attribute.produce_for, None)
+        self.assertEqual(self.rg_physical_servers_cpu_attribute.consume_from, None)
 
     def test_resource_group_attribute_delete(self):
         args = {
@@ -153,13 +153,13 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # test POST
         attribute_id = copy(self.rg_physical_servers_cpu_attribute.id)
         self.assertTrue(ResourceGroupAttributeDefinition.objects.filter(id=attribute_id).exists())
         response = self.client.post(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertFalse(ResourceGroupAttributeDefinition.objects.filter(id=attribute_id).exists())
 
     def test_cannot_delete_resource_group_attribute_logout(self):
@@ -172,4 +172,4 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
 
         # test GET
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)

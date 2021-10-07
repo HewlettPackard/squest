@@ -21,14 +21,14 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
 
     def test_get_page(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_update_tower(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.return_value = None
             response = self.client.post(self.url, data=self.data)
-            self.assertEquals(302, response.status_code)
+            self.assertEqual(302, response.status_code)
             self.tower_server_test.refresh_from_db()
-            self.assertEquals(self.tower_server_test.name, "tower-server-test-updated")
-            self.assertEquals(self.tower_server_test.host, "tower-updated.domain.local")
-            self.assertEquals(self.tower_server_test.token, "xxxx-updated")
+            self.assertEqual(self.tower_server_test.name, "tower-server-test-updated")
+            self.assertEqual(self.tower_server_test.host, "tower-updated.domain.local")
+            self.assertEqual(self.tower_server_test.token, "xxxx-updated")

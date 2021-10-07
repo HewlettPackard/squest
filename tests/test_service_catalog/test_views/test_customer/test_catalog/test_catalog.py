@@ -13,14 +13,14 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_customer_list_service(self):
         url = reverse('service_catalog:service_list')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("services" in response.context)
-        self.assertEquals(len(response.context["services"]), Service.objects.filter(enabled=True).count())
+        self.assertEqual(len(response.context["services"]), Service.objects.filter(enabled=True).count())
 
     def test_customer_cannot_manage_service(self):
         url = reverse('service_catalog:manage_services')
         response = self.client.get(url)
-        self.assertEquals(403, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_customer_service_request(self):
         args = {
@@ -35,8 +35,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
         }
         number_request_before = Request.objects.all().count()
         response = self.client.post(url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_request_before + 1, Request.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_request_before + 1, Request.objects.all().count())
 
     def test_customer_service_request_without_survey(self):
         args = {
@@ -44,4 +44,4 @@ class TestCustomerCatalogViews(BaseTestRequest):
         }
         url = reverse('service_catalog:customer_service_request', kwargs=args)
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)

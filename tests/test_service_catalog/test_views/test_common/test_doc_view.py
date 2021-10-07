@@ -16,9 +16,9 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def _test_can_list_doc(self):
         url = reverse('service_catalog:doc_list')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTrue("table" in response.context)
-        self.assertEquals(response.context["table"].data.data.count(), 1)
+        self.assertEqual(response.context["table"].data.data.count(), 1)
 
     def test_customer_can_list_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
@@ -31,40 +31,40 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.client.logout()
         url = reverse('service_catalog:doc_list')
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_admin_can_list_admin_doc_list(self):
         self.client.login(username=self.superuser, password=self.common_password)
         url = reverse('admin:service_catalog_doc_changelist')
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_admin_can_edit_admin_doc(self):
         self.client.login(username=self.superuser, password=self.common_password)
         url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
         response = self.client.get(url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_customer_cannot_edit_admin_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue("next=/admin", response.url)
 
     def test_cannot_edit_admin_doc_when_logout(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('admin:service_catalog_doc_change', args=[self.new_doc.id])
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_customer_cannot_list_admin_doc(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         url = reverse('admin:service_catalog_doc_changelist')
         response = self.client.get(url)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertTrue("next=/admin", response.url)
 
     def test_get_doc_page(self):
         response = self.client.get(reverse('service_catalog:doc_show', args=[self.new_doc.id]))
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)

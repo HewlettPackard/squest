@@ -13,7 +13,7 @@ class GlobalHooksCreateViewsTest(BaseTest):
 
     def test_get_page(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_create_valid_global_hook(self):
         data = {
@@ -24,8 +24,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(self.number_global_hook_before + 1, GlobalHook.objects.all().count())
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(self.number_global_hook_before + 1, GlobalHook.objects.all().count())
 
     def test_create_invalid_model(self):
         data = {
@@ -36,8 +36,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(self.number_global_hook_before, GlobalHook.objects.all().count())
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(self.number_global_hook_before, GlobalHook.objects.all().count())
         self.assertContains(response, "Select a valid choice", status_code=200, html=False)
 
     def test_create_valid_model_invalid_state(self):
@@ -49,8 +49,8 @@ class GlobalHooksCreateViewsTest(BaseTest):
             "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(200, response.status_code)
-        self.assertEquals(self.number_global_hook_before, GlobalHook.objects.all().count())
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(self.number_global_hook_before, GlobalHook.objects.all().count())
         self.assertContains(response, "Select a valid choice", status_code=200, html=False)
 
     def test_create_valid_model_valid_state_from_other_model(self):
@@ -74,6 +74,6 @@ class GlobalHooksCreateViewsTest(BaseTest):
 
         for data in to_be_tested:
             response = self.client.post(self.url, data=data)
-            self.assertEquals(200, response.status_code)
-            self.assertEquals(self.number_global_hook_before, GlobalHook.objects.all().count())
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(self.number_global_hook_before, GlobalHook.objects.all().count())
             self.assertContains(response, "is not a valid state of model", status_code=200, html=False)

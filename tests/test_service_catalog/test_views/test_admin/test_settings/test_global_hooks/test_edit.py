@@ -19,7 +19,7 @@ class GlobalHooksEditViewsTest(BaseTest):
 
     def test_get_page(self):
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_edit_global_hook(self):
         data = {
@@ -30,7 +30,7 @@ class GlobalHooksEditViewsTest(BaseTest):
             "extra_vars": "{}"
         }
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.global_hook_test.refresh_from_db()
-        self.assertEquals(self.global_hook_test.name, "hook2")
-        self.assertEquals(self.global_hook_test.state, "PENDING")
+        self.assertEqual(self.global_hook_test.name, "hook2")
+        self.assertEqual(self.global_hook_test.state, "PENDING")

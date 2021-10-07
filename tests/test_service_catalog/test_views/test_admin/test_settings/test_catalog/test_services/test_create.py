@@ -25,11 +25,11 @@ class ServiceCreateTestCase(BaseTest):
             "billing_group_is_shown": "on"
         }
         response = self.client.get(self.url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         number_service_before = copy(Service.objects.all().count())
         response = self.client.post(self.url, data=data)
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_service_before + 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_service_before + 1,
                           Service.objects.all().count())
 
     def test_create_service_with_image(self):
@@ -51,8 +51,8 @@ class ServiceCreateTestCase(BaseTest):
         }
         number_service_before = Service.objects.all().count()
         response = self.client.post(self.url, data=data, format="multipart")
-        self.assertEquals(302, response.status_code)
-        self.assertEquals(number_service_before + 1,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_service_before + 1,
                           Service.objects.all().count())
 
         new_service_with_image = Service.objects.get(name="new_service_with_image")
