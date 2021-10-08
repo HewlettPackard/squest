@@ -30,7 +30,7 @@ class BaseTestAPI(APITestCase):
         self.rp_ocp_workers_request_cpu_attribute = self.rp_ocp_workers.add_attribute_definition(name='requests.cpu')
         self.rp_ocp_workers_request_memory_attribute = self.rp_ocp_workers.add_attribute_definition(name='requests.memory')
 
-        # resources
+        # resource groups
         self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
         self.rg_physical_servers_cpu_attribute = self.rg_physical_servers.add_attribute_definition(name="CPU")
         self.rg_physical_servers_memory_attribute = self.rg_physical_servers.add_attribute_definition(name="Memory")

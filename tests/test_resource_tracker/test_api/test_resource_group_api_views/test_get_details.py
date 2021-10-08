@@ -18,3 +18,10 @@ class TestResourceGroupDetail(BaseTestAPI):
         self.assertTrue("attribute_definitions" in response.json())
         self.assertTrue("text_attribute_definitions" in response.json())
         self.assertTrue("tags" in response.json())
+
+        self.assertEqual(response.json()["id"], self.rg_physical_servers.id)
+        self.assertEqual(response.json()["name"], self.rg_physical_servers.name)
+        self.assertEqual(len(response.json()["attribute_definitions"]),
+                         self.rg_physical_servers.attribute_definitions.all().count())
+        self.assertEqual(len(response.json()["text_attribute_definitions"]),
+                         self.rg_physical_servers.text_attribute_definitions.all().count())

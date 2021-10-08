@@ -28,8 +28,3 @@ class TestResourceGroupDelete(BaseTestAPI):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(number_resource_before,
                          ResourceGroup.objects.all().count())
-
-    def test_customer_cannot_delete(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
-        response = self.client.delete(self.url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
