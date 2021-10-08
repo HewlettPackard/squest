@@ -15,7 +15,7 @@ class TestResourceDelete(BaseTestAPI):
         self.url = reverse('api_resource_retrieve_delete',  args=[self.rg_physical_servers.id,
                                                                   self.resource_to_delete.id])
 
-    def test_delete(self):
+    def test_delete_resource(self):
         number_resource_before = Resource.objects.filter(resource_group=self.rg_physical_servers).count()
         response = self.client.delete(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

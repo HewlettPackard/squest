@@ -12,7 +12,6 @@ from resource_tracker.models import Resource, ResourceGroup
 class ResourceListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourceSerializer
-    lookup_field = "resource_group_id"
 
     def get_queryset(self):
         resource_group_id = self.kwargs['resource_group_id']

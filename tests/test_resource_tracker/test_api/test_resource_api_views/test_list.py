@@ -4,10 +4,10 @@ from rest_framework.reverse import reverse
 from tests.test_resource_tracker.test_api.base_test_api import BaseTestAPI
 
 
-class TestResourceGroupResourceList(BaseTestAPI):
+class TestResourceList(BaseTestAPI):
 
     def setUp(self):
-        super(TestResourceGroupResourceList, self).setUp()
+        super(TestResourceList, self).setUp()
         self.url = reverse('api_resource_list_create',  args=[self.rg_physical_servers.id])
 
     def test_resource_group_resources_list(self):
