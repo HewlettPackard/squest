@@ -8,10 +8,10 @@ from service_catalog.models import Instance
 from tests.test_resource_tracker.test_api.base_test_api import BaseTestAPI
 
 
-class TestResourceGroupResourceUpdate(BaseTestAPI):
+class TestResourceUpdate(BaseTestAPI):
 
     def setUp(self):
-        super(TestResourceGroupResourceUpdate, self).setUp()
+        super(TestResourceUpdate, self).setUp()
         self.resource_to_update = Resource.objects.get(name="server-0")
         self.url = reverse('api_resource_retrieve_delete',  args=[self.rg_physical_servers.id,
                                                                   self.resource_to_update.id])
@@ -87,8 +87,10 @@ class TestResourceGroupResourceUpdate(BaseTestAPI):
                 }
             ]
         }
-        previous_memory = self.resource_to_update.attributes.get(attribute_type=self.rg_physical_servers_memory_attribute).value
-        previous_description = copy.copy(self.resource_to_update.text_attributes.get(text_attribute_type=self.rg_physical_servers_text).value)
+        previous_memory = self.resource_to_update.attributes.\
+            get(attribute_type=self.rg_physical_servers_memory_attribute).value
+        previous_description = copy.copy(self.resource_to_update.text_attributes.
+                                         get(text_attribute_type=self.rg_physical_servers_text).value)
 
         response = self.client.put(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
