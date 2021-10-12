@@ -3,6 +3,7 @@ import tempfile
 from django.contrib.auth.models import User
 from django.test import TestCase
 
+from profiles.models import BillingGroup
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service
 from service_catalog.models.operations import OperationType
 
@@ -407,3 +408,6 @@ class BaseTest(TestCase):
             tower_server=self.tower_server_test,
             tower_job_template_data=self.job_template_testing_data
         )
+
+        self.test_billing_group = BillingGroup.objects.create(name='test_billing_group')
+        self.test_billing_group2 = BillingGroup.objects.create(name='test_billing_group2')

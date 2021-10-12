@@ -62,7 +62,7 @@ class HookManager(object):
         # check if global hooks exist for this object sender model and state
         global_hook_set = GlobalHook.objects.filter(model=sender.__name__, state=target)
         from service_catalog.serializers.instance_serializer import InstanceSerializer
-        from service_catalog.serializers.request_serializer import RequestSerializer
+        from service_catalog.serializers.request_serializers import RequestSerializer
         from service_catalog.models import Instance, Request
         if global_hook_set:
             # serialize the instance
