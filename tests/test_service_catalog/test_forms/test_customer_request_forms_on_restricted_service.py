@@ -53,5 +53,5 @@ class TestRequestForm(BaseTest):
             "text_variable": "text"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
-        self.assertEqual([(self.billing_group_test.id, self.billing_group_test.name)], form.fields['billing_group_id'].choices)
+        self.assertEqual([(billing_group.id, billing_group.name) for billing_group in BillingGroup.objects.all()], form.fields['billing_group_id'].choices)
         self.assertTrue(form.is_valid())

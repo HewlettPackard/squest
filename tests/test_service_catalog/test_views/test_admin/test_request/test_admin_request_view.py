@@ -3,7 +3,9 @@ from django.urls import reverse
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
+from service_catalog.serializers.request_serializers import RequestSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
+from collections import OrderedDict
 
 
 class AdminRequestViewTest(BaseTestRequest):
@@ -214,31 +216,40 @@ class AdminRequestViewTest(BaseTestRequest):
             self.assertEquals(302, response.status_code)
             self.test_request.refresh_from_db()
             self.assertEquals(self.test_request.state, expected_request_state)
-            expected_parameters = {
+            expected_extra_vars = {
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
-                'squest': {
-                    'request': {
-                        'id': self.test_request.id,
-                        'state': RequestState.PROCESSING,
-                        'operation': self.test_request.operation.id,
-                        'instance': {
-                            'id': self.test_instance.id,
-                            'name': 'test_instance_1',
-                            'spec': {},
-                            'state': str(expected_instance_state),
-                            'service': self.test_request.operation.service.id,
-                            'billing_group': None,
-                            'spoc': self.test_request.instance.spoc.id
-                        }
-                    }
-                }
+            }
+            expected_request = {
+                'id': self.test_request.id,
+                'state': RequestState.PROCESSING,
+                'operation': self.test_request.operation.id,
+            }
+            expected_instance = {
+                'id': self.test_instance.id,
+                'name': 'test_instance_1',
+                'spec': {},
+                'state': str(expected_instance_state),
+                'service': self.test_request.operation.service.id,
+                'billing_group': None,
+                'spoc': self.test_request.instance.spoc.id
             }
             self.test_instance.refresh_from_db()
             self.assertEquals(self.test_instance.state, expected_instance_state)
             if not isinstance(mock_value, Exception):
                 self.assertIsNotNone(self.test_request.periodic_task)
-                mock_job_execute.assert_called_with(extra_vars=expected_parameters)
+                mock_job_execute.assert_called()
+                kwargs = mock_job_execute.call_args[1]
+                expected_data_list = [expected_extra_vars, expected_request, expected_instance]
+                data_list = [
+                    kwargs.get("extra_vars", None),
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None),
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None)
+                ]
+                for expected_data, data in zip(expected_data_list, data_list):
+                    for key_var, val_var in expected_data.items():
+                        self.assertIn(key_var, data.keys())
+                        self.assertEquals(val_var, data[key_var])
 
     def test_admin_request_process_new_instance(self):
         self.test_request.state = RequestState.ACCEPTED
@@ -388,4 +399,3 @@ class AdminRequestViewTest(BaseTestRequest):
         url = reverse('service_catalog:request_archived_list')
         response = self.client.get(url)
         self.assertEquals(302, response.status_code)
-

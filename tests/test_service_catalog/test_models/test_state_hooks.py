@@ -34,7 +34,7 @@ class TestStateHook(BaseTestRequest):
 
     def test_hook_manager_execute_job_template(self):
         from service_catalog.serializers.instance_serializer import InstanceSerializer
-        from service_catalog.serializers.request_serializer import RequestSerializer
+        from service_catalog.serializers.request_serializers import RequestSerializer
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute:
 
             HookManager.trigger_hook(sender=Request, instance=self.test_request,

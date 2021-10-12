@@ -33,24 +33,33 @@ class TestRequest(BaseTestRequest):
             expected_extra_vars = {
                 'instance_name': 'test instance',
                 'text_variable': 'my_var',
-                'squest': {
-                    'request': {
-                        'id': self.test_request.id,
-                        'state': RequestState.PROCESSING,
-                        'operation': self.test_request.operation.id,
-                        'instance': {
-                            'id': self.test_instance.id,
-                            'name': 'test_instance_1',
-                            'spec': {},
-                            'state': str(expected_state),
-                            'service': self.test_request.operation.service.id,
-                            'billing_group': None,
-                            'spoc': self.test_request.instance.spoc.id
-                        }
-                    }
-                }
             }
-            mock_job_execute.assert_called_with(extra_vars=expected_extra_vars)
+            expected_request = {
+                'id': self.test_request.id,
+                'state': RequestState.PROCESSING,
+                'operation': self.test_request.operation.id,
+            }
+            expected_instance = {
+                'id': self.test_instance.id,
+                'name': 'test_instance_1',
+                'spec': {},
+                'state': str(expected_state),
+                'service': self.test_request.operation.service.id,
+                'billing_group': None,
+                'spoc': self.test_request.instance.spoc.id
+            }
+            mock_job_execute.assert_called()
+            kwargs = mock_job_execute.call_args[1]
+            expected_data_list = [expected_extra_vars, expected_request, expected_instance]
+            data_list = [
+                kwargs.get("extra_vars", None),
+                kwargs.get("extra_vars", None).get('squest', None).get('request', None),
+                kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None)
+            ]
+            for expected_data, data in zip(expected_data_list, data_list):
+                for key_var, val_var in expected_data.items():
+                    self.assertIn(key_var, data.keys())
+                    self.assertEquals(val_var, data[key_var])
             self.test_instance.refresh_from_db()
             self.assertEquals(self.test_instance.state, expected_state)
 
@@ -92,11 +101,13 @@ class TestRequest(BaseTestRequest):
 
     def test_ssl_failure_when_provisioning(self):
         expected_instance_state = InstanceState.PROVISION_FAILED
-        self._process_with_job_template_execution_failure(expected_instance_state, side_effect=requests.exceptions.SSLError('Test'))
+        self._process_with_job_template_execution_failure(expected_instance_state,
+                                                          side_effect=requests.exceptions.SSLError('Test'))
 
     def test_auth_failure_when_provisioning(self):
         expected_instance_state = InstanceState.PROVISION_FAILED
-        self._process_with_job_template_execution_failure(expected_instance_state, side_effect=towerlib.towerlibexceptions.AuthFailed('Test'))
+        self._process_with_job_template_execution_failure(expected_instance_state,
+                                                          side_effect=towerlib.towerlibexceptions.AuthFailed('Test'))
 
     def test_failure_when_updating(self):
         self.test_instance.state = InstanceState.AVAILABLE

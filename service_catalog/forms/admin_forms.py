@@ -141,10 +141,25 @@ class ServiceForm(SquestModelForm):
                                  required=False,
                                  widget=forms.CheckboxInput())
 
+    def clean_billing_group_id(self):
+        if not self.cleaned_data['billing_group_id']:
+            return None
+        return self.cleaned_data['billing_group_id']
+
     def save(self, commit=True):
-        service = super(ServiceForm, self).save(commit=False)
         billing = self.cleaned_data.get('billing')
-        return save_service(service, commit, billing)
+        if billing == 'restricted_billing_groups':
+            self.instance.billing_group_is_shown = True
+            self.instance.billing_group_is_selectable = True
+            self.instance.billing_groups_are_restricted = True
+        elif billing == 'all_billing_groups':
+            self.instance.billing_group_is_shown = True
+            self.instance.billing_group_is_selectable = True
+            self.instance.billing_groups_are_restricted = False
+        else:
+            self.instance.billing_group_is_selectable = False
+            self.instance.billing_groups_are_restricted = False
+        return super(ServiceForm, self).save()
 
     class Meta:
         model = Service
@@ -206,10 +221,25 @@ class EditServiceForm(SquestModelForm):
         widget=forms.CheckboxInput()
     )
 
+    def clean_billing_group_id(self):
+        if not self.cleaned_data['billing_group_id']:
+            return None
+        return self.cleaned_data['billing_group_id']
+
     def save(self, commit=True):
-        service = super(EditServiceForm, self).save(commit=False)
         billing = self.cleaned_data.get('billing')
-        return save_service(service, commit, billing)
+        if billing == 'restricted_billing_groups':
+            self.instance.billing_group_is_shown = True
+            self.instance.billing_group_is_selectable = True
+            self.instance.billing_groups_are_restricted = True
+        elif billing == 'all_billing_groups':
+            self.instance.billing_group_is_shown = True
+            self.instance.billing_group_is_selectable = True
+            self.instance.billing_groups_are_restricted = False
+        else:
+            self.instance.billing_group_is_selectable = False
+            self.instance.billing_groups_are_restricted = False
+        return super(EditServiceForm, self).save()
 
     class Meta:
         model = Service
@@ -349,25 +379,6 @@ class InstanceForm(SquestModelForm):
     class Meta:
         model = Instance
         fields = "__all__"
-
-
-def save_service(service, commit, billing):
-    if not service.billing_group_id:
-        service.billing_group_id = None
-    if billing == 'restricted_billing_groups':
-        service.billing_group_is_shown = True
-        service.billing_group_is_selectable = True
-        service.billing_groups_are_restricted = True
-    elif billing == 'all_billing_groups':
-        service.billing_group_is_shown = True
-        service.billing_group_is_selectable = True
-        service.billing_groups_are_restricted = False
-    else:
-        service.billing_group_is_selectable = False
-        service.billing_groups_are_restricted = False
-    if commit:
-        service.save()
-    return service
 
 
 class GlobalHookForm(ModelForm):

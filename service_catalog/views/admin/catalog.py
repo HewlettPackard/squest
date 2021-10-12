@@ -14,11 +14,7 @@ def add_service(request):
         form = ServiceForm(request.POST, request.FILES)
         if form.is_valid():
             new_service = form.save()
-            # create the first operation of type create that link this service to a job template
-            job_template = form.cleaned_data['job_template']
-            Operation.objects.create(name=new_service.name,
-                                     service=new_service,
-                                     job_template=job_template)
+            new_service.create_provisioning_operation(form.cleaned_data['job_template'])
             return redirect('service_catalog:service_list')
     else:
         form = ServiceForm()
