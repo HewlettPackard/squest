@@ -13,7 +13,7 @@ class TestGroupUrls(TestGroupBase):
             'user_id': self.my_user.id
         }
         args_group = {
-            'billing_group_id': self.my_billing_group.id
+            'billing_group_id': self.test_billing_group.id
         }
         urls_list = [
             reverse('profiles:user_by_billing_group_list', kwargs=args_group),
@@ -37,7 +37,7 @@ class TestGroupUrls(TestGroupBase):
             'user_id': self.my_user.id
         }
         args_group = {
-            'billing_group_id': self.my_billing_group.id
+            'billing_group_id': self.test_billing_group.id
         }
         urls_list = [
             reverse('profiles:user_in_billing_group_remove', kwargs={**args_group, **args_user}),
@@ -49,7 +49,7 @@ class TestGroupUrls(TestGroupBase):
 
     def test_all_post_with_data(self):
         args_group = {
-            'billing_group_id': self.my_billing_group.id
+            'billing_group_id': self.test_billing_group.id
         }
         test_list = [
             {'url': reverse('profiles:billing_group_create'), 'data': {'name': 'group_test2'}},

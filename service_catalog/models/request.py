@@ -95,7 +95,7 @@ class Request(models.Model):
         # run Tower job
         tower_extra_vars = copy.copy(self.fill_in_survey)
         # add the current instance to extra vars
-        from ..serializers.request_serializer import RequestSerializer
+        from ..serializers.request_serializers import RequestSerializer
         tower_extra_vars["squest"] = {
             "request": RequestSerializer(self).data
         }

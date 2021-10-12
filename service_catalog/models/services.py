@@ -22,3 +22,13 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
+
+    def create_provisioning_operation(self, job_template):
+        if self.operations.filter(type=OperationType.CREATE):
+            raise Exception({"Provisionning operation": "A service can have only one 'CREATE' operation"})
+        from service_catalog.models import Operation
+        Operation.objects.create(name=self.name,
+                                 service=self,
+                                 job_template=job_template
+                                 )
+        self.save()
