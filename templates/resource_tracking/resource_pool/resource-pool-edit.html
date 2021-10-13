@@ -47,8 +47,8 @@
                             {% for attribute in resource_pool.attribute_definitions.all %}
                                 <tr>
                                     <td class="align-middle">{{ attribute.name }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:1 }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:1 }}</td>
+                                    <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:2 }}</td>
+                                    <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:2 }}</td>
                                     <td class="align-middle">
                                         <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
                                            class="btn btn-primary btn-sm">

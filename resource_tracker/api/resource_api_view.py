@@ -5,7 +5,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
-from resource_tracker.api.serializers.resource_group_serializer import ResourceSerializer, ResourceCreateSerializer
+from resource_tracker.api.serializers.resource_group.resource_serializers import ResourceSerializer, \
+    ResourceCreateSerializer
 from resource_tracker.models import Resource, ResourceGroup
 
 

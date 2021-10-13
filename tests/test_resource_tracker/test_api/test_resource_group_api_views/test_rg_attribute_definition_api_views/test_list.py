@@ -1,7 +1,8 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from resource_tracker.api.serializers.resource_group_serializer import ResourceGroupAttributeDefinitionSerializer
+from resource_tracker.api.serializers.resource_group.attribute_definition_serializers import \
+    ResourceGroupAttributeDefinitionSerializer
 from resource_tracker.models import ResourceGroupAttributeDefinition
 from tests.test_resource_tracker.test_api.base_test_api import BaseTestAPI
 

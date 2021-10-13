@@ -1,22 +1,12 @@
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
-from taggit.serializers import TaggitSerializer, TagListSerializerField
 
-from resource_tracker.models import ResourceGroup, Resource, ResourceAttribute, ResourceTextAttribute, \
+from resource_tracker.api.serializers.resource_group.attribute_definition_serializers import AttributeCreateSerializer
+from resource_tracker.api.serializers.resource_group.text_attribute_definition_serializers import \
+    TextAttributeCreateSerializer
+from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAttribute, \
     ResourceGroupAttributeDefinition, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Instance
-
-
-class ResourceGroupAttributeDefinitionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ResourceGroupAttributeDefinition
-        fields = ["id", "name", "consume_from", "produce_for", "help_text"]
-
-
-class ResourceGroupTextAttributeDefinitionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ResourceGroupTextAttributeDefinition
-        fields = ["id", "name", "help_text"]
 
 
 class ResourceAttributeSerializer(serializers.ModelSerializer):
@@ -69,7 +59,8 @@ class ResourceSerializer(serializers.ModelSerializer):
             try:
                 text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(resource_group_definition=instance.resource_group,
                                                                                       name=text_attribute_item_name)
-                text_attribute_item = ResourceTextAttribute.objects.get(resource=instance, text_attribute_type=text_attribute_def)
+                text_attribute_item = ResourceTextAttribute.objects.get(resource=instance,
+                                                                        text_attribute_type=text_attribute_def)
                 text_attribute_item.value = text_attribute.get('value', text_attribute_item.value)
                 text_attribute_item.save()
             except ResourceGroupTextAttributeDefinition.DoesNotExist:
@@ -78,68 +69,6 @@ class ResourceSerializer(serializers.ModelSerializer):
                                               f'{instance.resource_group.name}'
                 })
         return instance
-
-
-class ResourceGroupSerializerRead(TaggitSerializer, serializers.ModelSerializer):
-    attribute_definitions = ResourceGroupAttributeDefinitionSerializer(many=True, read_only=True)
-    text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializer(read_only=True)
-    tags = TagListSerializerField()
-
-    class Meta:
-        model = ResourceGroup
-        fields = ["id", "name", "attribute_definitions", "text_attribute_definitions", "tags"]
-
-
-class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
-    attribute_definitions = ResourceGroupAttributeDefinitionSerializer(many=True)
-    text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializer(many=True)
-    tags = TagListSerializerField()
-
-    class Meta:
-        model = ResourceGroup
-        fields = ["id", "name", "attribute_definitions", "text_attribute_definitions", "tags"]
-
-    def create(self, validated_data):
-        tags = validated_data.pop('tags')
-        attribute_definitions_data = validated_data.pop('attribute_definitions')
-        text_attribute_definitions_data = validated_data.pop('text_attribute_definitions')
-        resource_group = ResourceGroup.objects.create(**validated_data)
-        resource_group.tags.set(*tags)
-        for attribute_definition in attribute_definitions_data:
-            resource_group.add_attribute_definition(**attribute_definition)
-        for text_attribute_definition in text_attribute_definitions_data:
-            resource_group.add_text_attribute_definition(**text_attribute_definition)
-        return resource_group
-
-
-class AttributeCreateSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    value = serializers.IntegerField()
-
-    def validate_name(self, value):
-        """Chek that this name is one the the attribute"""
-        resource_group = self.context.get('resource_group')
-        try:
-            ResourceGroupAttributeDefinition.objects.get(name=value, resource_group_definition=resource_group)
-            return value
-        except ResourceGroupAttributeDefinition.DoesNotExist:
-            raise serializers.ValidationError(f"'{value}' is not a valid attribute of the resource "
-                                              f"group '{resource_group.name}'")
-
-
-class TextAttributeCreateSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    value = serializers.CharField(max_length=500)
-
-    def validate_name(self, value):
-        """Chek that this name is one the the text attribute"""
-        resource_group = self.context.get('resource_group')
-        try:
-            ResourceGroupTextAttributeDefinition.objects.get(name=value, resource_group_definition=resource_group)
-            return value
-        except ResourceGroupTextAttributeDefinition.DoesNotExist:
-            raise serializers.ValidationError(f"'{value}' is not a valid text attribute of the resource "
-                                              f"group '{resource_group.name}'")
 
 
 class ResourceCreateSerializer(serializers.Serializer):
