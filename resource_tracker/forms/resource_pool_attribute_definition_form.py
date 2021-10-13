@@ -18,7 +18,7 @@ class ResourcePoolAttributeDefinitionForm(SquestModelForm):
                                                  help_text="All producers will produce X times more",
 
                                                  widget=forms.NumberInput(
-                                                     attrs={'step': '0.1'}))
+                                                     attrs={'step': '0.01'}))
 
     over_commitment_consumers = forms.FloatField(label="Over commitment for consumers",
                                                  required=False,
@@ -27,7 +27,7 @@ class ResourcePoolAttributeDefinitionForm(SquestModelForm):
 
                                                  help_text="All consumers will consume X times more",
                                                  widget=forms.NumberInput(
-                                                     attrs={'step': '0.1'}))
+                                                     attrs={'step': '0.01'}))
 
     def clean_over_commitment_producers(self):
         data = self.cleaned_data['over_commitment_producers']

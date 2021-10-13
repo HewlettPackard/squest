@@ -12,17 +12,19 @@ class TestAttributeDefinitionCreate(BaseTestAPI):
         self.url = reverse('api_attribute_definition_list_create', args=[self.rg_physical_servers.id])
 
     def _check_attribute_definition_create(self, data):
-        number_resource_group_before = ResourceGroupAttributeDefinition.objects.all().count()
+        number_attribute_before = ResourceGroupAttributeDefinition.objects.all().count()
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').name, data["name"])
+        self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').resource_group_definition.id,
+                         self.rg_physical_servers.id)
         try:
             self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').consume_from.id, data["consume_from"])
             self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').produce_for.id, data["produce_for"])
         except AttributeError:  # consumer and producer may be None
             pass
         self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').help_text, data["help_text"])
-        self.assertEqual(number_resource_group_before + 1,
+        self.assertEqual(number_attribute_before + 1,
                          ResourceGroupAttributeDefinition.objects.all().count())
 
     def test_attribute_definition_create(self):

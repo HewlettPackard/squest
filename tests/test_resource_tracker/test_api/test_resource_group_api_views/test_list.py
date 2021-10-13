@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from resource_tracker.api.serializers.resource_group_serializer import ResourceGroupSerializer
+from resource_tracker.api.serializers.resource_group.resource_group_serializers import ResourceGroupSerializer
 from resource_tracker.models import ResourceGroup
 from tests.test_resource_tracker.test_api.base_test_api import BaseTestAPI
 

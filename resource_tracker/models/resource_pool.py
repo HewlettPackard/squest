@@ -12,5 +12,7 @@ class ResourcePool(models.Model):
     def __str__(self):
         return self.name
 
-    def add_attribute_definition(self, name):
-        return self.attribute_definitions.create(name=name)
+    def add_attribute_definition(self, name, over_commitment_producers=1, over_commitment_consumers=1):
+        return self.attribute_definitions.create(name=name,
+                                                 over_commitment_producers=over_commitment_producers,
+                                                 over_commitment_consumers=over_commitment_consumers)
