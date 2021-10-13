@@ -1,9 +1,14 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser
 
-from resource_tracker.api.serializers.resource_group_serializer import ResourceGroupSerializer, \
-    ResourceGroupSerializerRead, ResourceGroupAttributeDefinitionSerializer
-from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition
+from resource_tracker.api.serializers.resource_group.attribute_definition_serializers import \
+    ResourceGroupAttributeDefinitionSerializer
+from resource_tracker.api.serializers.resource_group.resource_group_serializers import ResourceGroupSerializer, \
+    ResourceGroupSerializerRead
+from resource_tracker.api.serializers.resource_group.text_attribute_definition_serializers import \
+    ResourceGroupTextAttributeDefinitionSerializer
+from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, \
+    ResourceGroupTextAttributeDefinition
 
 
 class ResourceGroupList(generics.ListCreateAPIView):
@@ -26,6 +31,10 @@ class AttributeDefinitionList(generics.ListCreateAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
 
+    def create(self, request, *args, **kwargs):
+        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        return super(AttributeDefinitionList, self).create(request, *args, **kwargs)
+
 
 class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
@@ -35,3 +44,34 @@ class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+
+    def update(self, request, *args, **kwargs):
+        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        return super(AttributeDefinitionDetails, self).update(request, *args, **kwargs)
+
+
+class TextAttributeDefinitionList(generics.ListCreateAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = ResourceGroupTextAttributeDefinitionSerializer
+
+    def get_queryset(self):
+        resource_group_id = self.kwargs.get("pk")
+        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+
+    def create(self, request, *args, **kwargs):
+        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        return super(TextAttributeDefinitionList, self).create(request, *args, **kwargs)
+
+
+class TextAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = ResourceGroupTextAttributeDefinitionSerializer
+    lookup_url_kwarg = "text_attribute_definition_id"
+
+    def get_queryset(self):
+        resource_group_id = self.kwargs.get("pk")
+        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+
+    def update(self, request, *args, **kwargs):
+        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        return super(TextAttributeDefinitionDetails, self).update(request, *args, **kwargs)

@@ -11,7 +11,7 @@ class ResourcePoolAttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
                             blank=False)
     resource_pool = models.ForeignKey('ResourcePool',
-                                      on_delete=models.PROTECT,
+                                      on_delete=models.CASCADE,
                                       related_name='attribute_definitions',
                                       related_query_name='attribute_definition',
                                       null=True)
