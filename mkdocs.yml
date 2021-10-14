@@ -31,6 +31,7 @@ nav:
     - LDAP: installation/ldap.md
     - TLS: installation/tls.md
     - Backup: installation/backup.md
+    - Upgrade: installation/upgrade.md
   - Configuration:
     - Squest: configuration/squest_settings.md
     - Tower: configuration/tower_settings.md
