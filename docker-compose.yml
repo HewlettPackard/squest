@@ -49,6 +49,13 @@ services:
       - django_static:/app/static:ro
       - ./docker/nginx.conf:/etc/nginx/squest/nginx.conf:ro
 
+  maintenance:
+    image: nginx:alpine
+    volumes:
+      - ./docker/maintenance.html:/usr/share/nginx/html/index.html
+      - ./docker/maintenance.nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./project-static/squest/img/squest_full_logo_transparent.png:/usr/share/nginx/html/squest_full_logo_transparent.png
+
   celery-worker:
     <<: *django
     depends_on:
