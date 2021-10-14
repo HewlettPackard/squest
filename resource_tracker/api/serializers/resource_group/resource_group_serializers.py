@@ -20,7 +20,7 @@ class ResourceGroupSerializerRead(TaggitSerializer, serializers.ModelSerializer)
 
 class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
     attribute_definitions = ResourceGroupAttributeDefinitionSerializerRead(many=True)
-    text_attribute_definitions = ResourceGroupAttributeDefinitionSerializerRead(many=True)
+    text_attribute_definitions = ResourceGroupTextAttributeDefinitionSerializerRead(many=True)
     tags = TagListSerializerField()
 
     class Meta:
