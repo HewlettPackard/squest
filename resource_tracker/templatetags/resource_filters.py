@@ -24,7 +24,7 @@ def get_text_attribute_value_from_name(resource, attribute_name):
                                                       get(name=attribute_name,
                                                           resource_group=resource.resource_group))
         return attribute.value
-    except ResourceAttribute.DoesNotExist:
+    except ResourceTextAttribute.DoesNotExist:
         return ""
 
 
