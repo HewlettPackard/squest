@@ -18,11 +18,11 @@ class TestTextAttributeDefinitionDetail(BaseTestAPI):
         self.assertTrue("id" in response.json())
         self.assertTrue("name" in response.json())
         self.assertTrue("help_text" in response.json())
-        self.assertTrue("resource_group_definition" in response.json())
+        self.assertTrue("resource_group" in response.json())
         self.assertEqual(response.json()["id"], self.rg_physical_servers_description.id)
         self.assertEqual(response.json()["name"], self.rg_physical_servers_description.name)
         self.assertEqual(response.json()["help_text"], self.rg_physical_servers_description.help_text)
-        self.assertEqual(response.json()["resource_group_definition"], self.rg_physical_servers.id)
+        self.assertEqual(response.json()["resource_group"], self.rg_physical_servers.id)
 
     def test_cannot_get_text_attribute_definition_detail_when_wrong_rg(self):
         url = reverse('api_text_attribute_definition_retrieve_update_delete',

@@ -32,7 +32,7 @@ class ResourceGroup(models.Model):
         return attribute
 
     def raise_if_attribute_name_exist(self, name):
-        obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
+        obj = ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group=self)
         # if name is already used
         if len(obj) != 0:
             raise ExceptionResourceTracker.AttributeAlreadyExist(resource_group_name=self.name, attribute_name=name)
@@ -57,7 +57,7 @@ class ResourceGroup(models.Model):
         return text_attribute
 
     def raise_if_text_attribute_name_exist(self, name):
-        obj = ResourceGroupTextAttributeDefinition.objects.filter(name=name, resource_group_definition=self)
+        obj = ResourceGroupTextAttributeDefinition.objects.filter(name=name, resource_group=self)
         # if name is already used
         if len(obj) != 0:
             raise ExceptionResourceTracker.AttributeAlreadyExist(resource_group_name=self.name, attribute_name=name)

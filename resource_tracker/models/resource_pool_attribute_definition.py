@@ -33,7 +33,7 @@ class ResourcePoolAttributeDefinition(models.Model):
         total_produced = 0
         for producer in self.producers.all():  # producer == ResourceGroupAttributeDefinition
             # For all ResourceGroup that produce for my attribute
-            for resource in producer.resource_group_definition.resources.all():
+            for resource in producer.resource_group.resources.all():
                 # For all resource in the resource group, get the good attribute
                 try:
                     total_produced += resource.attributes.get(attribute_type=producer).value
@@ -44,7 +44,7 @@ class ResourcePoolAttributeDefinition(models.Model):
     def get_total_consumed(self):
         total_consumed = 0
         for consumer in self.consumers.all():  # consumer == ResourceGroupAttributeDefinition
-            for resource in consumer.resource_group_definition.resources.all():
+            for resource in consumer.resource_group.resources.all():
                 try:
                     total_consumed += resource.attributes.get(attribute_type=consumer).value
                 except ResourceAttribute.DoesNotExist:
@@ -61,7 +61,7 @@ class ResourcePoolAttributeDefinition(models.Model):
 
     def get_total_produced_by(self, producer):
         total_produced = 0
-        for resource in producer.resource_group_definition.resources.all():
+        for resource in producer.resource_group.resources.all():
             try:
                 total_produced += resource.attributes.get(attribute_type=producer).value
             except ResourceAttribute.DoesNotExist:
@@ -70,7 +70,7 @@ class ResourcePoolAttributeDefinition(models.Model):
 
     def get_total_consumed_by(self, consumer):
         total_consumed = 0
-        for resource in consumer.resource_group_definition.resources.all():
+        for resource in consumer.resource_group.resources.all():
             try:
                 total_consumed += resource.attributes.get(attribute_type=consumer).value
             except ResourceAttribute.DoesNotExist:

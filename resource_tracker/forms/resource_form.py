@@ -79,7 +79,7 @@ class ResourceForm(SquestModelForm):
             self.instance.set_attribute(
                 ResourceGroupAttributeDefinition.objects.get(
                     name=attribute_name,
-                    resource_group_definition=self.resource_group
+                    resource_group=self.resource_group
                 ),
                 my_value
             )
@@ -91,7 +91,7 @@ class ResourceForm(SquestModelForm):
             self.instance.set_text_attribute(
                 ResourceGroupTextAttributeDefinition.objects.get(
                     name=text_attribute_name,
-                    resource_group_definition=self.resource_group
+                    resource_group=self.resource_group
                 ),
                 my_value
             )

@@ -17,7 +17,7 @@ class TestTextAttributeDefinitionCreate(BaseTestAPI):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ResourceGroupTextAttributeDefinition.objects.latest('id').name, data["name"])
         self.assertEqual(ResourceGroupTextAttributeDefinition.objects.latest('id').help_text, data["help_text"])
-        self.assertEqual(ResourceGroupTextAttributeDefinition.objects.latest('id').resource_group_definition.id,
+        self.assertEqual(ResourceGroupTextAttributeDefinition.objects.latest('id').resource_group.id,
                          self.rg_physical_servers.id)
         self.assertEqual(number_text_attribute_before + 1,
                          ResourceGroupTextAttributeDefinition.objects.all().count())
@@ -33,6 +33,6 @@ class TestTextAttributeDefinitionCreate(BaseTestAPI):
         data = {
             "name": "new_attribute",
             "help_text": "help",
-            "resource_group_definition": 14
+            "resource_group": 14
         }
         self._check_text_attribute_definition_create(data)

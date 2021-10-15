@@ -32,7 +32,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_attribute_before + 1, ResourceGroupAttributeDefinition.objects.all().count())
         self.assertTrue(ResourceGroupAttributeDefinition.objects.filter(name="new_attribute_name",
-                                                                        resource_group_definition=self.rg_physical_servers).exists())
+                                                                        resource_group=self.rg_physical_servers).exists())
 
         # test POST with producer
         new_name = "new_attribute_name_2"
@@ -43,9 +43,9 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertTrue(ResourceGroupAttributeDefinition.objects.filter(name="new_attribute_name_2",
-                                                                        resource_group_definition=self.rg_physical_servers).exists())
+                                                                        resource_group=self.rg_physical_servers).exists())
         target_rga = ResourceGroupAttributeDefinition.objects.get(name="new_attribute_name_2",
-                                                                  resource_group_definition=self.rg_physical_servers)
+                                                                  resource_group=self.rg_physical_servers)
         self.assertEqual(target_rga.produce_for, self.rp_vcenter_vcpu_attribute)
 
         # test POST with already exist attribute
