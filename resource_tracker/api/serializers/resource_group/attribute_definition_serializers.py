@@ -6,14 +6,14 @@ from resource_tracker.models import ResourceGroupAttributeDefinition
 class ResourceGroupAttributeDefinitionSerializerRead(serializers.ModelSerializer):
     class Meta:
         model = ResourceGroupAttributeDefinition
-        fields = ["id", "resource_group_definition", "name", "consume_from", "produce_for", "help_text"]
-        read_only_fields = ["resource_group_definition"]
+        fields = ["id", "resource_group", "name", "consume_from", "produce_for", "help_text"]
+        read_only_fields = ["resource_group"]
 
 
 class ResourceGroupAttributeDefinitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceGroupAttributeDefinition
-        fields = ["id", "resource_group_definition", "name", "consume_from", "produce_for", "help_text"]
+        fields = ["id", "resource_group", "name", "consume_from", "produce_for", "help_text"]
 
 
 class AttributeCreateSerializer(serializers.Serializer):
@@ -24,7 +24,7 @@ class AttributeCreateSerializer(serializers.Serializer):
         """Chek that this name is one the the attribute"""
         resource_group = self.context.get('resource_group')
         try:
-            ResourceGroupAttributeDefinition.objects.get(name=value, resource_group_definition=resource_group)
+            ResourceGroupAttributeDefinition.objects.get(name=value, resource_group=resource_group)
             return value
         except ResourceGroupAttributeDefinition.DoesNotExist:
             raise serializers.ValidationError(f"'{value}' is not a valid attribute of the resource "

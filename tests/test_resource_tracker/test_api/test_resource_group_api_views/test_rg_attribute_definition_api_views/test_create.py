@@ -16,7 +16,7 @@ class TestAttributeDefinitionCreate(BaseTestAPI):
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').name, data["name"])
-        self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').resource_group_definition.id,
+        self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').resource_group.id,
                          self.rg_physical_servers.id)
         try:
             self.assertEqual(ResourceGroupAttributeDefinition.objects.latest('id').consume_from.id, data["consume_from"])

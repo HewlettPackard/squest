@@ -17,9 +17,9 @@ class TestAttributeDefinitionList(BaseTestAPI):
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(ResourceGroupAttributeDefinition.objects.
-                         filter(resource_group_definition=self.rg_physical_servers).count(),
+                         filter(resource_group=self.rg_physical_servers).count(),
                          len(response.data))
         all_instances = ResourceGroupAttributeDefinition.objects.\
-            filter(resource_group_definition=self.rg_physical_servers)
+            filter(resource_group=self.rg_physical_servers)
         serializer = ResourceGroupAttributeDefinitionSerializer(all_instances, many=True)
         self.assertEqual(response.data, serializer.data)

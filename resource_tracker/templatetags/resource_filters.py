@@ -10,7 +10,7 @@ def get_attribute_value_from_name(resource, attribute_name):
         attribute = ResourceAttribute.objects.get(resource=resource,
                                                   attribute_type=ResourceGroupAttributeDefinition.objects.
                                                   get(name=attribute_name,
-                                                      resource_group_definition=resource.resource_group))
+                                                      resource_group=resource.resource_group))
         return attribute.value
     except ResourceAttribute.DoesNotExist:
         return ""
@@ -22,7 +22,7 @@ def get_text_attribute_value_from_name(resource, attribute_name):
         attribute = ResourceTextAttribute.objects.get(resource=resource,
                                                       text_attribute_type=ResourceGroupTextAttributeDefinition.objects.
                                                       get(name=attribute_name,
-                                                          resource_group_definition=resource.resource_group))
+                                                          resource_group=resource.resource_group))
         return attribute.value
     except ResourceAttribute.DoesNotExist:
         return ""

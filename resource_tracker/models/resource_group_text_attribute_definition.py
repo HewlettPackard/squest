@@ -3,15 +3,15 @@ from django.db import models
 
 class ResourceGroupTextAttributeDefinition(models.Model):
     class Meta:
-        unique_together = ('name', 'resource_group_definition',)
+        unique_together = ('name', 'resource_group',)
 
     name = models.CharField(max_length=100,
                             blank=False)
-    resource_group_definition = models.ForeignKey('ResourceGroup',
-                                                  on_delete=models.CASCADE,
-                                                  related_name='text_attribute_definitions',
-                                                  related_query_name='text_attribute_definition',
-                                                  null=True)
+    resource_group = models.ForeignKey('ResourceGroup',
+                                       on_delete=models.CASCADE,
+                                       related_name='text_attribute_definitions',
+                                       related_query_name='text_attribute_definition',
+                                       null=True)
 
     help_text = models.CharField(max_length=100, default='', null=True, blank=True)
 
@@ -21,4 +21,4 @@ class ResourceGroupTextAttributeDefinition(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.resource_group_definition} - {self.name}"
+        return f"{self.resource_group} - {self.name}"

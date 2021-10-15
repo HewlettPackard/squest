@@ -46,7 +46,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         for attribute in attributes:
             attribute_item_name = attribute["attribute_type"].get('name', None)
             try:
-                attribute_def = ResourceGroupAttributeDefinition.objects.get(resource_group_definition=instance.resource_group,
+                attribute_def = ResourceGroupAttributeDefinition.objects.get(resource_group=instance.resource_group,
                                                                              name=attribute_item_name)
                 attribute_item = ResourceAttribute.objects.get(resource=instance, attribute_type=attribute_def)
                 attribute_item.value = attribute.get('value', attribute_item.value)
@@ -60,7 +60,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         for text_attribute in text_attributes:
             text_attribute_item_name = text_attribute["text_attribute_type"].get('name', None)
             try:
-                text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(resource_group_definition=instance.resource_group,
+                text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(resource_group=instance.resource_group,
                                                                                       name=text_attribute_item_name)
                 text_attribute_item = ResourceTextAttribute.objects.get(resource=instance,
                                                                         text_attribute_type=text_attribute_def)
@@ -120,14 +120,14 @@ class ResourceCreateSerializer(serializers.Serializer):
         attributes = validated_data.pop('attributes')
         for attribute in attributes:
             attribute_type = ResourceGroupAttributeDefinition.objects.get(name=attribute.pop('name'),
-                                                                          resource_group_definition=resource_group)
+                                                                          resource_group=resource_group)
             ResourceAttribute.objects.create(value=attribute.pop('value'),
                                              resource=new_resource,
                                              attribute_type=attribute_type)
         text_attributes = validated_data.pop('text_attributes')
         for text_attribute in text_attributes:
             text_attribute_type = ResourceGroupTextAttributeDefinition.objects.get(name=text_attribute.pop('name'),
-                                                                                   resource_group_definition=resource_group)
+                                                                                   resource_group=resource_group)
             ResourceTextAttribute.objects.create(value=text_attribute.pop('value'),
                                                  resource=new_resource,
                                                  text_attribute_type=text_attribute_type)

@@ -38,8 +38,8 @@
                                                 <tbody>
                                                 {% for consumer in attribute.consumers.all %}
                                                     <tr>
-                                                        <td><a href="{% url "resource_tracker:resource_group_edit" consumer.resource_group_definition.id %}">{{ consumer.resource_group_definition.name }}</a></td>
-                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=consumer.resource_group_definition.id attribute_id=consumer.id %}">{{ consumer.name }}</a></td>
+                                                        <td><a href="{% url "resource_tracker:resource_group_edit" consumer.resource_group.id %}">{{ consumer.resource_group.name }}</a></td>
+                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=consumer.resource_group.id attribute_id=consumer.id %}">{{ consumer.name }}</a></td>
                                                     </tr>
                                                 {% endfor %}
                                                 </tbody>
@@ -65,8 +65,8 @@
                                                 <tbody>
                                                 {% for producer in attribute.producers.all %}
                                                     <tr>
-                                                        <td><a href="{% url "resource_tracker:resource_group_edit" producer.resource_group_definition.id %}">{{ producer.resource_group_definition.name }}</a></td>
-                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=producer.resource_group_definition.id attribute_id=producer.id %}">{{ producer.name }}</a></td>
+                                                        <td><a href="{% url "resource_tracker:resource_group_edit" producer.resource_group.id %}">{{ producer.resource_group.name }}</a></td>
+                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=producer.resource_group.id attribute_id=producer.id %}">{{ producer.name }}</a></td>
                                                     </tr>
                                                 {% endfor %}
                                                 </tbody>
