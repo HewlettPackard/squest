@@ -1,11 +1,11 @@
 from unittest import mock
+
 from django.urls import reverse
+
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
-from service_catalog.serializers.request_serializers import RequestSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
-from collections import OrderedDict
 
 
 class AdminRequestViewTest(BaseTestRequest):
@@ -241,10 +241,23 @@ class AdminRequestViewTest(BaseTestRequest):
                 mock_job_execute.assert_called()
                 kwargs = mock_job_execute.call_args[1]
                 expected_data_list = [expected_extra_vars, expected_request, expected_instance]
+                try:
+                    test_resource = kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None).get(
+                        'resources', None)[0]  # we know that we've only one resource
+                    expected_resources = {
+                        'id': self.resource_server.id,
+                        'resource_group': self.rg_physical_servers.id,
+                        'service_catalog_instance': self.test_instance.id
+                    }
+                    expected_data_list.append(expected_resources)
+                except IndexError:  # resource list is empty
+                    test_resource = dict()
+                    expected_data_list.append(dict())
                 data_list = [
                     kwargs.get("extra_vars", None),
                     kwargs.get("extra_vars", None).get('squest', None).get('request', None),
-                    kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None)
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None),
+                    test_resource
                 ]
                 for expected_data, data in zip(expected_data_list, data_list):
                     for key_var, val_var in expected_data.items():
@@ -257,6 +270,16 @@ class AdminRequestViewTest(BaseTestRequest):
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
     def test_admin_request_process_update_instance(self):
+        self.test_instance.state = InstanceState.AVAILABLE
+        self.test_instance.save()
+        self.test_request.state = RequestState.ACCEPTED
+        self.test_request.operation = self.update_operation_test
+        self.test_request.save()
+        self._process_with_expected_instance_state(InstanceState.UPDATING)
+
+    def test_admin_request_process_update_instance_with_attached_resource(self):
+        self.resource_server.service_catalog_instance = self.test_instance
+        self.resource_server.save()
         self.test_instance.state = InstanceState.AVAILABLE
         self.test_instance.save()
         self.test_request.state = RequestState.ACCEPTED
