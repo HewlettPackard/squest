@@ -12,7 +12,8 @@ from service_catalog.models import Instance
 class ResourceAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceAttribute
-        fields = ["name", "value"]
+        fields = ["name", "resource", "value"]
+        read_ony_fields = ["resource"]
 
     name = serializers.CharField(source="attribute_type.name")
 
@@ -20,7 +21,8 @@ class ResourceAttributeSerializer(serializers.ModelSerializer):
 class ResourceTextAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceTextAttribute
-        fields = ["name", "value"]
+        fields = ["name", "resource", "value"]
+        read_ony_fields = ["resource"]
 
     name = serializers.CharField(source="text_attribute_type.name")
 
@@ -28,7 +30,8 @@ class ResourceTextAttributeSerializer(serializers.ModelSerializer):
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = ["id", "name", "service_catalog_instance", "attributes", "text_attributes"]
+        fields = ["id", "resource_group", "name", "service_catalog_instance", "attributes", "text_attributes"]
+        read_ony_fields = ["resource_group"]
 
     attributes = ResourceAttributeSerializer(many=True)
     text_attributes = ResourceTextAttributeSerializer(many=True)
