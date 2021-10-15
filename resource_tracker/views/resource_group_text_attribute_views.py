@@ -60,6 +60,7 @@ def resource_group_text_attribute_delete(request, resource_group_id, attribute_i
     context = {
         "resource_group": resource_group,
         "attribute": attribute,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        "attribute_type": "text_attribute"
     }
     return render(request, "resource_tracking/resource_group/attributes/attribute-delete.html", context)

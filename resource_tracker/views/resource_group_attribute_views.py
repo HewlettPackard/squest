@@ -60,6 +60,7 @@ def resource_group_attribute_delete(request, resource_group_id, attribute_id):
     context = {
         "resource_group": resource_group,
         "attribute": attribute,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        "attribute_type": "attribute"
     }
     return render(request, "resource_tracking/resource_group/attributes/attribute-delete.html", context)
