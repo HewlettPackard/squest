@@ -6,11 +6,11 @@ from resource_tracker.models import ResourceAttribute
 class ResourceGroupAttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
                             blank=False)
-    resource_group_definition = models.ForeignKey('ResourceGroup',
-                                                  on_delete=models.CASCADE,
-                                                  related_name='attribute_definitions',
-                                                  related_query_name='attribute_definition',
-                                                  null=True)
+    resource_group = models.ForeignKey('ResourceGroup',
+                                       on_delete=models.CASCADE,
+                                       related_name='attribute_definitions',
+                                       related_query_name='attribute_definition',
+                                       null=True)
     consume_from = models.ForeignKey('ResourcePoolAttributeDefinition',
                                      on_delete=models.SET_NULL,
                                      related_name='consumers',
@@ -25,11 +25,11 @@ class ResourceGroupAttributeDefinition(models.Model):
     help_text = models.CharField(max_length=100, default='', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.resource_group_definition} - {self.name}"
+        return f"{self.resource_group} - {self.name}"
 
     def get_total_resource(self):
         total = 0
-        for resource in self.resource_group_definition.resources.all():
+        for resource in self.resource_group.resources.all():
             try:
                 total += resource.attributes.get(attribute_type=self).value
             except ResourceAttribute.DoesNotExist:
@@ -44,4 +44,4 @@ class ResourceGroupAttributeDefinition(models.Model):
         self.save()
 
     class Meta:
-        unique_together = ('name', 'resource_group_definition',)
+        unique_together = ('name', 'resource_group',)

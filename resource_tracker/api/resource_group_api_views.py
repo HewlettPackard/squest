@@ -29,10 +29,10 @@ class AttributeDefinitionList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
-        return ResourceGroupAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+        return ResourceGroupAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
     def create(self, request, *args, **kwargs):
-        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        request.data['resource_group'] = self.kwargs.get('pk', None)
         return super(AttributeDefinitionList, self).create(request, *args, **kwargs)
 
 
@@ -43,10 +43,10 @@ class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
-        return ResourceGroupAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+        return ResourceGroupAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
     def update(self, request, *args, **kwargs):
-        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        request.data['resource_group'] = self.kwargs.get('pk', None)
         return super(AttributeDefinitionDetails, self).update(request, *args, **kwargs)
 
 
@@ -56,10 +56,10 @@ class TextAttributeDefinitionList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
-        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
     def create(self, request, *args, **kwargs):
-        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        request.data['resource_group'] = self.kwargs.get('pk', None)
         return super(TextAttributeDefinitionList, self).create(request, *args, **kwargs)
 
 
@@ -70,8 +70,8 @@ class TextAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
-        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_definition_id=resource_group_id)
+        return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
     def update(self, request, *args, **kwargs):
-        request.data['resource_group_definition'] = self.kwargs.get('pk', None)
+        request.data['resource_group'] = self.kwargs.get('pk', None)
         return super(TextAttributeDefinitionDetails, self).update(request, *args, **kwargs)

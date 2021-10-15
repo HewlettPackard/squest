@@ -31,7 +31,7 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_text_attribute_before + 1, ResourceGroupTextAttributeDefinition.objects.all().count())
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name",
-                                                                            resource_group_definition=self.rg_physical_servers).exists())
+                                                                            resource_group=self.rg_physical_servers).exists())
 
         # test POST
         new_name = "new_text_attribute_name_2"
@@ -41,7 +41,7 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name_2",
-                                                                            resource_group_definition=self.rg_physical_servers).exists())
+                                                                            resource_group=self.rg_physical_servers).exists())
         # test POST with already exist attribute
         response = self.client.post(url, data=data)
         self.assertEqual(200, response.status_code)
@@ -179,7 +179,7 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_text_attribute_before + 1, ResourceGroupTextAttributeDefinition.objects.all().count())
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name",
-                                                                            resource_group_definition=self.rg_physical_servers).exists())
+                                                                            resource_group=self.rg_physical_servers).exists())
 
         # test POST with producer
         new_name = "new_text_attribute_name_2"
@@ -189,7 +189,7 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name_2",
-                                                                            resource_group_definition=self.rg_physical_servers).exists())
+                                                                            resource_group=self.rg_physical_servers).exists())
 
 
         url = reverse('resource_tracker:resource_group_resource_create', kwargs=args)
