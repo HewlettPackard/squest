@@ -1,3 +1,4 @@
+from resource_tracker.models import ResourceGroup
 from service_catalog.models import Request, Instance, Support
 from tests.test_service_catalog.base import BaseTest
 
@@ -21,3 +22,8 @@ class BaseTestRequest(BaseTest):
         # second instance for second user
         self.test_instance_2 = Instance.objects.create(name="test_instance_2", service=self.service_test,
                                                        spoc=self.standard_user_2)
+
+        self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
+        self.rg_physical_servers_cpu_attribute = self.rg_physical_servers.add_attribute_definition(name="CPU")
+        self.resource_server = self.rg_physical_servers.create_resource(name=f"resource_server")
+        self.resource_server.set_attribute(self.rg_physical_servers_cpu_attribute, 12)

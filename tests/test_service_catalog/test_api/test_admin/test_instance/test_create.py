@@ -11,13 +11,17 @@ class TestInstanceCreate(BaseTestRequest):
         super(TestInstanceCreate, self).setUp()
         self.url = reverse('api_admin_instance_list')
 
-    def _test_create(self, data, expected):
+    def _assert_created(self, data, expected):
         instance_count = Instance.objects.count()
         response = self.client.post(self.url, data=data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(instance_count + 1, Instance.objects.count())
-        expected["id"] = response.data["id"]
-        self.assertEqual(response.data, expected)
+        self.assertEqual(response.data['name'], expected['name'])
+        self.assertEqual(response.data['service'], expected['service'])
+        self.assertEqual(response.data['spoc'], expected['spoc'])
+        self.assertEqual(response.data['billing_group'], expected['billing_group'])
+        self.assertEqual(response.data['spec'], expected['spec'])
+        self.assertEqual(response.data['resources'], expected['resources'])
 
     def test_instance_create_all_field(self):
         data = {
@@ -36,8 +40,9 @@ class TestInstanceCreate(BaseTestRequest):
                     'spec': {'key1': 'val1', 'key2': 'val2'},
                     'service': self.service_test_2.id,
                     'spoc': self.standard_user_2.id,
+                    'resources': [],
                     'billing_group': None}
-        self._test_create(data, expected)
+        self._assert_created(data, expected)
 
     def test_instance_create_spec_empty_dict(self):
         data = {
@@ -53,8 +58,9 @@ class TestInstanceCreate(BaseTestRequest):
                     'spec': {},
                     'service': self.service_test_2.id,
                     'spoc': self.standard_user_2.id,
+                    'resources': [],
                     'billing_group': None}
-        self._test_create(data, expected)
+        self._assert_created(data, expected)
 
     def test_instance_create_no_service(self):
         data = {
@@ -71,5 +77,6 @@ class TestInstanceCreate(BaseTestRequest):
                     'spec': {},
                     'service': None,
                     'spoc': self.standard_user_2.id,
+                    'resources': [],
                     'billing_group': None}
-        self._test_create(data, expected)
+        self._assert_created(data, expected)
