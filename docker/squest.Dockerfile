@@ -19,7 +19,7 @@ ENV NODE_VERSION=12.22.6
 ENV NVM_VERSION=v0.38.0
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-ENV RUN_DEPS="default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev"
+ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev"
 ENV BUID_DEPS="gcc"
 
 # Install system deps
