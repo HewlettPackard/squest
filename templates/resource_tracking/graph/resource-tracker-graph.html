@@ -25,7 +25,7 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <section class="col-lg-9 connectedSortable ui-sortable">
+                    <section class="col-lg-9 connectedSortable ui-sortable pt-5">
                         {% if display_graph %}
                             {{ svg }}
                         {% else %}
@@ -36,6 +36,10 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                                <div class="card-tools">
+                                    <!-- Collapse Button -->
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                                </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -50,4 +54,9 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function(){
+            $('body').css({'background-color': '#F4F6F9'});
+        });
+    </script>
 {% endblock %}
