@@ -12,7 +12,7 @@ from resource_tracker.models import ResourceGroup, ResourcePool
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
           'available': '#ffc107', "bg-green": "#28a745", "bg-yellow": "#ffc107", "bg-red": "#dc3545",
-          'transparent': '#ffffff00'}
+          'transparent': '#ffffff00', 'secondary': '#6c757d'}
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -91,7 +91,7 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                             'attribute_id': attribute.id})},
             'available': {
                 'display': f"{round(attribute.get_total_produced() - attribute.get_total_consumed())} "
-                           f"({round(100 - attribute.get_percent_consumed())}%)",
+                           f"{attribute.get_percent_available_human_readable()}",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }
         for attribute in resource_pool.attribute_definitions.filter()]
@@ -132,6 +132,8 @@ def create_resource_group_svg(resource_group: ResourceGroup):
 
 
 def get_progress_bar_color(progress_value):
+    if progress_value == 'N/A':
+        return COLORS["secondary"]
     if progress_value < 80:
         return COLORS["bg-green"]
     if 80 < progress_value < 90:

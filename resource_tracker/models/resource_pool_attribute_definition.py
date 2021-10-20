@@ -51,7 +51,14 @@ class ResourcePoolAttributeDefinition(models.Model):
                     pass
         return total_consumed * self.over_commitment_consumers
 
+    def get_percent_available_human_readable(self):
+        if self.get_total_produced() == 0:
+            return ""
+        return f"({round(100 - self.get_percent_consumed())}%)"
+
     def get_percent_consumed(self):
+        if self.get_total_produced() == 0:
+            return "N/A"
         percent_consumed = 0
         try:
             percent_consumed = (self.get_total_consumed() * 100) / self.get_total_produced()
