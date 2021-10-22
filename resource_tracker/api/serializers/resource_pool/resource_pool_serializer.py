@@ -3,7 +3,7 @@ from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from resource_tracker.api.serializers.resource_pool.attribute_definition_serializers import \
     ResourcePoolAttributeDefinitionSerializerRead, ResourcePoolAttributeDefinitionSerializer
-from resource_tracker.models import ResourceGroup, ResourcePool
+from resource_tracker.models import ResourcePool
 
 
 class ResourcePoolSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -11,7 +11,7 @@ class ResourcePoolSerializer(TaggitSerializer, serializers.ModelSerializer):
     tags = TagListSerializerField()
 
     class Meta:
-        model = ResourceGroup
+        model = ResourcePool
         fields = ["id", "name", "attribute_definitions", "tags"]
 
     def create(self, validated_data):
@@ -29,5 +29,5 @@ class ResourcePoolSerializerRead(TaggitSerializer, serializers.ModelSerializer):
     tags = TagListSerializerField()
 
     class Meta:
-        model = ResourceGroup
+        model = ResourcePool
         fields = ["id", "name", "attribute_definitions", "tags"]
