@@ -23,7 +23,7 @@ class TestApiOperationListInInstance(BaseTestRequest):
         self.client.force_login(user=self.standard_user_2)
         self._check_list(status_expected=status.HTTP_404_NOT_FOUND)
 
-    def test_cannot_get_operation_list_when_loggout(self):
+    def test_cannot_get_operation_list_when_logout(self):
         self.client.logout()
         self._check_list(status_expected=status.HTTP_403_FORBIDDEN)
 

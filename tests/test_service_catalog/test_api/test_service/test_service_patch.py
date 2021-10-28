@@ -41,7 +41,7 @@ class TestApiServicePatch(BaseTestRequest):
                                      content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_patch_service_when_loggout(self):
+    def test_cannot_patch_service_when_logout(self):
         self.client.logout()
         response = self.client.patch(self.get_service_details_url, data=self.patch_data,
                                      content_type="application/json")
