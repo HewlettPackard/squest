@@ -20,7 +20,7 @@ class TestApiOperationList(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), self.service_test.operations.count())
 
-    def test_cannot_get_operation_list_when_loggout(self):
+    def test_cannot_get_operation_list_when_logout(self):
         self.client.logout()
         response = self.client.get(self.get_operation_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

@@ -48,7 +48,7 @@ class TestApiServiceDetails(BaseTestRequest):
         response = self.client.get(self.get_service_details_url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_cannot_get_request_details_when_loggout(self):
+    def test_cannot_get_request_details_when_logout(self):
         self.client.logout()
         response = self.client.get(self.get_service_details_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
