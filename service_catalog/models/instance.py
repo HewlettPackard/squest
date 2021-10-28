@@ -56,7 +56,8 @@ class Instance(models.Model):
     def available(self):
         pass
 
-    @transition(field=state, source=InstanceState.AVAILABLE, target=InstanceState.UPDATING)
+    @transition(field=state, source=[InstanceState.AVAILABLE, InstanceState.UPDATE_FAILED],
+                target=InstanceState.UPDATING)
     def updating(self):
         pass
 
