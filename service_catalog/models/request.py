@@ -34,8 +34,9 @@ class Request(models.Model):
     periodic_task_date_expire = models.DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = models.TextField(blank=True, null=True)
 
-    def instance_is_available_or_pending(self):
-        if self.instance.state == InstanceState.AVAILABLE or self.instance.state == InstanceState.PENDING:
+    def can_process(self):
+        if self.instance.state in [InstanceState.AVAILABLE, InstanceState.PENDING, InstanceState.UPDATE_FAILED,
+                                   InstanceState.PROVISION_FAILED, InstanceState.DELETE_FAILED]:
             return True
         logger.debug(f"Request][process] instance {self.id} is not available or pending")
         return False
@@ -77,8 +78,8 @@ class Request(models.Model):
     def accept(self):
         pass
 
-    @transition(field=state, source=RequestState.ACCEPTED, target=RequestState.PROCESSING,
-                conditions=[instance_is_available_or_pending])
+    @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
+                conditions=[can_process])
     def process(self):
         logger.info(f"[Request][process] trying to start processing request '{self.id}'")
         # the instance now switch depending of the operation type

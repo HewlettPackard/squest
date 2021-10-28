@@ -7,6 +7,7 @@ import requests
 import towerlib
 from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
+from django_fsm import can_proceed
 
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
@@ -282,13 +283,16 @@ class TestRequest(BaseTestRequest):
     def test_check_job_status_failed(self):
         self._test_request_fail(job_status="failed")
 
-    def test_instance_is_available_or_pending(self):
-        self.assertTrue(self.test_request.instance_is_available_or_pending())
-        self.test_instance.state = InstanceState.UPDATING
-        self.test_instance.save()
-        self.assertFalse(self.test_request.instance_is_available_or_pending())
-
     def test_cancel(self):
         self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())
         self.test_request.cancel()
         self.assertFalse(Instance.objects.filter(id=self.test_instance.id).exists())
+
+    def test_reprocess_after_failed(self):
+        for state in [InstanceState.PENDING, InstanceState.PROVISION_FAILED, InstanceState.AVAILABLE,
+                      InstanceState.DELETE_FAILED, InstanceState.UPDATE_FAILED]:
+            self.test_request.state = RequestState.FAILED
+            self.test_request.save()
+            self.test_request.instance.state = state
+            self.test_request.instance.save()
+            self.assertTrue(can_proceed(self.test_request.process))
