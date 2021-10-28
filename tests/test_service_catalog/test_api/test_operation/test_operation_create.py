@@ -56,14 +56,8 @@ class TestApiOperationCreate(BaseTestRequest):
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_post_operation_when_loggout(self):
+    def test_cannot_post_operation_when_logout(self):
         self.client.logout()
         response = self.client.post(self.get_operation_details_url, data=self.post_data,
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def check_data_in_dict(self, expected_data_list, data_list):
-        for expected_data, data in zip(expected_data_list, data_list):
-            for key_var, val_var in expected_data.items():
-                self.assertIn(key_var, data.keys())
-                self.assertEqual(val_var, data[key_var])

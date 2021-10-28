@@ -3,13 +3,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
 from guardian.models import UserObjectPermission
 from profiles.models import BillingGroup
 from . import Service, InstanceState
 from .state_hooks import HookManager
+
 logger = logging.getLogger(__name__)
 
 
@@ -96,8 +97,26 @@ class Instance(models.Model):
 post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
 
 
+@receiver(pre_save, sender=Instance)
+def change_spoc(sender, instance, **kwargs):
+    if instance.id:
+        old_instance = sender.objects.get(id=instance.id)
+        if old_instance.spoc != instance.spoc:
+            remove_permission_to_spoc(old_instance)
+            assign_permission_to_spoc(instance)
+
+
 @receiver(post_save, sender=Instance)
 def give_permissions_after_creation(sender, instance, created, **kwargs):
     if created:
-        UserObjectPermission.objects.assign_perm('change_instance', instance.spoc, obj=instance)
-        UserObjectPermission.objects.assign_perm('view_instance', instance.spoc, obj=instance)
+        assign_permission_to_spoc(instance)
+
+
+def assign_permission_to_spoc(instance):
+    UserObjectPermission.objects.assign_perm('change_instance', instance.spoc, obj=instance)
+    UserObjectPermission.objects.assign_perm('view_instance', instance.spoc, obj=instance)
+
+
+def remove_permission_to_spoc(instance):
+    UserObjectPermission.objects.remove_perm('change_instance', instance.spoc, obj=instance)
+    UserObjectPermission.objects.remove_perm('view_instance', instance.spoc, obj=instance)

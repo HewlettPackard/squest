@@ -40,7 +40,7 @@ class TestApiOperationDelete(BaseTestRequest):
         response = self.client.delete(self.get_operation_details_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_delete_operation_when_loggout(self):
+    def test_cannot_delete_operation_when_logout(self):
         self.client.logout()
         response = self.client.delete(self.get_operation_details_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

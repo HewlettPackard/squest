@@ -43,7 +43,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.service_test.save()
         self._check_create(status.HTTP_404_NOT_FOUND)
 
-    def test_cannot_create_when_loggout(self):
+    def test_cannot_create_when_logout(self):
         self.client.logout()
         self._check_create(status.HTTP_403_FORBIDDEN)
 
