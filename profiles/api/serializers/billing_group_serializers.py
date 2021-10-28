@@ -7,4 +7,3 @@ class BillingGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingGroup
         fields = '__all__'
-        read_only = True
