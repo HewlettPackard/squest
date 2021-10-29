@@ -70,21 +70,21 @@ def get_fields_from_survey(survey, enable_fields=None):
         elif survey_filed["type"] == "integer":
             fields[survey_filed['variable']] = forms. \
                 IntegerField(label=survey_filed['question_name'],
-                             initial=int(survey_filed['default']),
+                             initial=None if not survey_filed['default'] else int(survey_filed['default']),
                              required=survey_filed['required'],
                              help_text=survey_filed['question_description'],
-                             min_value=survey_filed['min'],
-                             max_value=survey_filed['max'],
+                             min_value=None if not survey_filed['min'] else int(survey_filed['min']),
+                             max_value=None if not survey_filed['max'] else int(survey_filed['max']),
                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
         elif survey_filed["type"] == "float":
             fields[survey_filed['variable']] = forms. \
                 FloatField(label=survey_filed['question_name'],
-                           initial=float(survey_filed['default']),
+                           initial=None if not survey_filed['default'] else float(survey_filed['default']),
                            required=survey_filed['required'],
                            help_text=survey_filed['question_description'],
-                           min_value=survey_filed['min'],
-                           max_value=survey_filed['max'],
+                           min_value=None if not survey_filed['min'] else float(survey_filed['min']),
+                           max_value=None if not survey_filed['max'] else float(survey_filed['max']),
                            widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
         if enable_fields:
             fields[survey_filed['variable']].group = _get_field_group(field_name=survey_filed['variable'],
