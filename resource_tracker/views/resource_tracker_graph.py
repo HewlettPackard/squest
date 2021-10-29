@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from graphviz import Digraph
 from taggit.models import Tag
 
-from resource_tracker.filtersets import GraphFilter
+from resource_tracker.filters.graph_filter import GraphFilter
 from resource_tracker.models import ResourceGroup, ResourcePool
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',

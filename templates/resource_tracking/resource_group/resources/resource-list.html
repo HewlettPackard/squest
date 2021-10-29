@@ -10,7 +10,8 @@
                         {% include "generics/breadcrumbs.html" %}
                     </div>
                     <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right" href="{% url 'resource_tracker:resource_group_resource_create' resource_group_id=resource_group.id %}">
+                        <a class="btn btn-success float-sm-right"
+                           href="{% url 'resource_tracker:resource_group_resource_create' resource_group_id=resource_group.id %}">
                             <i class="fas fa-plus"></i> Add
                         </a>
                     </div>
@@ -19,55 +20,77 @@
         </section>
         <div class="content">
             <div class="container-fluid">
-                <div class="card">
-                    <div class="card-body">
-                        <table id="resource_group_list" class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Instance</th>
-                                {% for attribute_name in list_attribute_name %}
-                                    <th>{{ attribute_name }}</th>
-                                {%  endfor %}
-                                {% for attribute_name in list_text_attribute_name %}
-                                    <th>{{ attribute_name }}</th>
-                                {%  endfor %}
-                                <th>Operations</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {%  for resource in resource_group.resources.all %}
-                                <tr>
-                                    <td class="align-middle">{{ resource.name }}</td>
-                                    <td class="align-middle">
-                                        {% if  resource.service_catalog_instance %}
-                                        <a href="{% url "service_catalog:instance_details" resource.service_catalog_instance.id %}">
-                                            {{ resource.service_catalog_instance.name }}
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                    {% for attribute_name in list_attribute_name %}
-                                        <td class="align-middle">{{ resource | get_attribute_value_from_name:attribute_name }}</td>
-                                    {%  endfor %}
-                                    {% for attribute_name in list_text_attribute_name %}
-                                        <td class="align-middle">{{ resource | get_text_attribute_value_from_name:attribute_name }}</td>
-                                    {%  endfor %}
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_group_resource_edit' resource_group_id=resource_group.id resource_id=resource.id %}" class="btn btn-primary bg-sm">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <a href="{% url 'resource_tracker:resource_group_resource_delete' resource_group_id=resource_group.id resource_id=resource.id %}" class="btn btn-danger bg-sm">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            {%  endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="row">
+                    <section class="col-lg-9 connectedSortable ui-sortable">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="resource_group_list" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Instance</th>
+                                        {% for attribute_name in list_attribute_name %}
+                                            <th>{{ attribute_name }}</th>
+                                        {% endfor %}
+                                        {% for attribute_name in list_text_attribute_name %}
+                                            <th>{{ attribute_name }}</th>
+                                        {% endfor %}
+                                        <th>Operations</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for resource in resources.qs %}
+                                        <tr>
+                                            <td class="align-middle">{{ resource.name }}</td>
+                                            <td class="align-middle">
+                                                {% if  resource.service_catalog_instance %}
+                                                    <a href="{% url "service_catalog:instance_details" resource.service_catalog_instance.id %}">
+                                                        {{ resource.service_catalog_instance.name }}
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                            {% for attribute_name in list_attribute_name %}
+                                                <td class="align-middle">{{ resource | get_attribute_value_from_name:attribute_name }}</td>
+                                            {% endfor %}
+                                            {% for attribute_name in list_text_attribute_name %}
+                                                <td class="align-middle">{{ resource | get_text_attribute_value_from_name:attribute_name }}</td>
+                                            {% endfor %}
+                                            <td class="align-middle">
+                                                <a href="{% url 'resource_tracker:resource_group_resource_edit' resource_group_id=resource_group.id resource_id=resource.id %}"
+                                                   class="btn btn-primary bg-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="{% url 'resource_tracker:resource_group_resource_delete' resource_group_id=resource_group.id resource_id=resource.id %}"
+                                                   class="btn btn-danger bg-sm">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                </div><!-- end container fluid -->
+                        </div><!-- end container fluid -->
+                    </section>
+                    <section class="col-lg-3 connectedSortable ui-sortable">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form method="get">
+                                    {{ resources.form.as_p }}
+                                    <button class="btn btn-primary" type="submit">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
             </div>
+
         </div>
     </div>
 {% endblock %}

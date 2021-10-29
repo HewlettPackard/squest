@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
+from resource_tracker.filters.resource_filter import ResourceFilter
 from resource_tracker.forms import ResourceForm
 from resource_tracker.models import ResourceGroup, Resource
 
@@ -19,12 +20,14 @@ def resource_group_resource_list(request, resource_group_id):
         for attribute in resource.text_attributes.all():
             if attribute.text_attribute_type.name not in list_text_attribute_name:
                 list_text_attribute_name.append(attribute.text_attribute_type.name)
+    resources_filtered = ResourceFilter(request.GET, queryset=resource_group.resources.all())
     breadcrumbs = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name, 'url': ""},
     ]
     context = {
         'resource_group': resource_group,
+        'resources': resources_filtered,
         'list_attribute_name': list_attribute_name,
         'list_text_attribute_name': list_text_attribute_name,
         'breadcrumbs': breadcrumbs
