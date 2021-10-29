@@ -60,11 +60,14 @@ def get_total_consumed(resource_pool_id, attribute_name):
 
 @register.filter(name='get_progress_bar_color')
 def get_progress_bar_color(progress_value):
-    if progress_value < 80:
-        return "bg-green"
-    if 80 < progress_value < 90:
-        return "bg-yellow"
-    return "bg-red"
+    if isinstance(progress_value, int):
+        if progress_value < 80:
+            return "bg-green"
+        if 80 < progress_value < 90:
+            return "bg-yellow"
+        return "bg-red"
+    else:
+        return "bg-gray"
 
 
 @register.filter(name='has_attribute')
