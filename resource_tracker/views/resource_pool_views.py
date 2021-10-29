@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from resource_tracker.filtersets import ResourcePoolFilter
+from resource_tracker.filters.resource_pool_filter import ResourcePoolFilter
 from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
 from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinition
 
