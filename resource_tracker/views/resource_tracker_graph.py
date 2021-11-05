@@ -76,21 +76,21 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                                 kwargs={'resource_pool_id': resource_pool.id,
                                         'attribute_id': attribute.id})},
             'produced': {
-                'display': round(attribute.get_total_produced()),
+                'display': round(attribute.total_produced),
                 'tooltip': f"Go to {attribute}'s producers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_producer_list',
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'consumed': {
-                'display': round(attribute.get_total_consumed()),
+                'display': round(attribute.total_consumed),
                 'tooltip': f"Go to {attribute}'s consumers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_consumer_list',
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'available': {
-                'display': f"{round(attribute.get_total_produced() - attribute.get_total_consumed())} "
+                'display': f"{round(attribute.total_produced - attribute.total_consumed)} "
                            f"{attribute.get_percent_available_human_readable()}",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }
@@ -117,7 +117,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['attributes_list'] = [
         {
             'key': attribute.name,
-            'value': round(attribute.get_total_resource()),
+            'value': round(attribute.total_resource),
             'tooltip': f"Go to {attribute}",
             'href': reverse('resource_tracker:resource_group_attribute_edit',
                             kwargs={'resource_group_id': resource_group.id,
