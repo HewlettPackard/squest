@@ -8,6 +8,9 @@ def app_version():
     """
     Return Squest version as listed in `__version__` in `init.py` of settings package
     """
+    from django.conf import settings
+    if settings.TESTING:
+        return ""  # do not load git module on each test
     import git
     from Squest.version import __version__
     repo = git.Repo(search_parent_directories=True)

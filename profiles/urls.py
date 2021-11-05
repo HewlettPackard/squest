@@ -42,4 +42,11 @@ urlpatterns = [
     path('billing-group/<int:billing_group_id>/edit/', views.billing_group_edit, name='billing_group_edit'),
     path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
 
+    # notifications
+    path('notification/switch', views.notification_switch, name='notification_switch'),
+    path('notification/add_service', views.notification_add_service, name='notification_add_service'),
+    path('notification/remove_service/<int:service_id>',
+         views.notification_remove_service,
+         name='notification_remove_service'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
