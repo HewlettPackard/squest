@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
     <div class="content-wrapper">
@@ -17,36 +18,22 @@
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
-                                <a
-                                    {% if current_tab == 'details' %}
-                                        class="nav-link active"
-                                    {% else %}
-                                        class="nav-link"
-                                    {% endif %}
-                                        href="#details" data-toggle="tab">Details
+                                <a href="#details" data-toggle="tab" {% if current_tab == 'details' %}class="nav-link active" {% else %}class="nav-link"{% endif %}>Details
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    {% if current_tab == 'tokens' %}
-                                        class="nav-link active"
-                                    {% else %}
-                                        class="nav-link"
-                                    {% endif %}
-                                        href="#tokens" data-toggle="tab">Tokens
+                                <a href="#tokens" data-toggle="tab" {% if current_tab == 'tokens' %} class="nav-link active" {% else %}class="nav-link"{% endif %}>Tokens
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#notifications" data-toggle="tab" {% if current_tab == 'notifications' %} class="nav-link active" {% else %}class="nav-link"{% endif %}>Notifications
                                 </a>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div id="details"
-                                    {% if current_tab == 'details' %}
-                                 class="active tab-pane"
-                                    {% else %}
-                                 class="tab-pane"
-                                    {% endif %}
-                            >
+                            <div id="details" {% if current_tab == 'details' %}class="active tab-pane" {% else %}class="tab-pane"{% endif %}>
                                 <dl class="row">
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Username</dt>
@@ -134,6 +121,63 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div id="notifications" {% if current_tab == 'notifications' %}class="active tab-pane" {% else %}class="tab-pane"{% endif %}>
+                                <dl class="row">
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Notifications</dt>
+                                        <dd class="col-sm-8">
+                                            {% if user.profile.notification_enabled %}
+                                                <blockquote class="quote-success">
+                                                    <p class="text-success"><i class="fas fa-bell"></i> Enabled</p>
+                                                    <small>
+                                                        <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
+                                                            <i class="fas fa-bell-slash"></i> Disable
+                                                        </a>
+                                                    </small>
+                                                </blockquote>
+                                            {% else %}
+                                                <blockquote class="quote-secondary">
+                                                    <p class="text-secondary"><i class="fas fa-bell-slash"></i> Disabled</p>
+                                                    <small>
+                                                        <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
+                                                            <i class="fas fa-bell"></i> Enable
+                                                        </a>
+                                                    </small>
+                                                </blockquote>
+                                            {% endif %}
+
+                                        </dd>
+                                    </div>
+                                </dl>
+                                {% if request.user.is_superuser %}
+                                    <a title="Subscribe notification of a particular service" class="btn btn-default mb-2"
+                                       href="{% url "profiles:notification_add_service" %}">
+                                        <i class="fas fa-plus"></i> Subscribe to a particular service
+                                    </a>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for service in request.user.profile.subscribed_services_notification.all %}
+                                            <tr>
+                                                <td class="align-middle">{{ service.name }}</td>
+                                                <td class="align-middle">
+                                                    <a title="Delete"
+                                                       class="btn btn-danger"
+                                                       href="{% url "profiles:notification_remove_service" service.id %}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -164,7 +208,17 @@
             var button = $(event.relatedTarget)
             var recipient = button.data('token')
             $('#tokenKey').text(recipient)
-        })
+        });
+        // method used to make the active tab placed in the URL as parameter
+        $(function(){
+            var hash = window.location.hash;
+            hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show');
+            $('ul.nav.nav-pills a').click(function (e) {
+                $(this).tab('show');
+                var scrollmem = $('body').scrollTop();
+                window.location.hash = this.hash;
+            });
+        });
     </script>
 
 {% endblock %}
