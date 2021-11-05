@@ -48,7 +48,7 @@
                                     <td class="align-middle">
                                         <h3>
                                             <span class="badge badge-success">
-                                                <i class="fas fa-arrow-up"></i> {{ attribute|get_total_produced_by:producer }}
+                                                <i class="fas fa-arrow-up"></i> {{ attribute.total_produced }}
                                             </span>
                                             {% if attribute.over_commitment_producers != 1 %}
                                                 <i class="fas fa-info-circle align-middle"

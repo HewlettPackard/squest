@@ -38,26 +38,6 @@ def get_percent_consumption(resource_pool_id, attribute_name):
         return 0
 
 
-@register.filter(name='get_total_produced')
-def get_total_produced(resource_pool_id, attribute_name):
-    try:
-        resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
-                                                                              name=attribute_name)
-        return resource_pool_attribute.get_total_produced()
-    except ResourcePoolAttributeDefinition.DoesNotExist:
-        return 0
-
-
-@register.filter(name='get_total_consumed')
-def get_total_consumed(resource_pool_id, attribute_name):
-    try:
-        resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
-                                                                              name=attribute_name)
-        return resource_pool_attribute.get_total_consumed()
-    except ResourcePoolAttributeDefinition.DoesNotExist:
-        return 0
-
-
 @register.filter(name='get_progress_bar_color')
 def get_progress_bar_color(progress_value):
     if isinstance(progress_value, int):

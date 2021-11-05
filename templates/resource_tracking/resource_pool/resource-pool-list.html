@@ -60,7 +60,7 @@
                                         </thead>
                                         <tbody>
                                         {% for attribute in resource_pool.attribute_definitions.all %}
-                                            {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=resource_pool.id|get_total_produced:attribute.name total_consumed=resource_pool.id|get_total_consumed:attribute.name %}
+                                            {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=attribute.total_produced total_consumed=attribute.total_consumed %}
                                                 <tr>
                                                     <td class="align-middle">{{ attribute.name }}</td>
                                                     <td class="align-middle">

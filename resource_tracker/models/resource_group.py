@@ -67,11 +67,12 @@ class ResourceGroup(models.Model):
             resource.text_attributes.get_or_create(text_attribute_type=attribute)
 
     def create_resource(self, name):
-        resource, _ = self.resources.get_or_create(name=name)
-        for attribute in self.attribute_definitions.all():
-            resource.attributes.create(attribute_type=attribute)
-        for attribute in self.text_attribute_definitions.all():
-            resource.text_attributes.create(text_attribute_type=attribute)
+        resource, created = self.resources.get_or_create(name=name)
+        if created:
+            for attribute in self.attribute_definitions.all():
+                resource.attributes.create(attribute_type=attribute)
+            for attribute in self.text_attribute_definitions.all():
+                resource.text_attributes.create(text_attribute_type=attribute)
         return resource
 
     def get_sum_value_by_attribute(self, attribute_type):
