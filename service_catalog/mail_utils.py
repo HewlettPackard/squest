@@ -8,16 +8,18 @@ from service_catalog.models.request import RequestState
 DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_EMAIL_HOST}"
 
 
-def _get_admin_emails():
+def _get_admin_emails(service):
     """
-    Return a list of admin (is_staff) email
+    Return a list of admin (is_staff) email if notification is enabled and target service subscribed
     :return:
     """
     admins = User.objects.filter(is_staff=True)
     # create a list of email
     email_admins = list()
     for admin in admins:
-        email_admins.append(admin.email)
+        if admin.profile.notification_enabled:
+            if service in admin.profile.subscribed_services_notification.all():
+                email_admins.append(admin.email)
     return email_admins
 
 
@@ -53,17 +55,20 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
 
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails()   # email sent to all admins
-    receiver_email_list.append(target_request.user.email)   # email sent to the requester
-    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                           receivers=receiver_email_list,
-                           reply_to=receiver_email_list)
+    receiver_email_list = _get_admin_emails(service=target_request.instance.service)   # email sent to all admins
+    if target_request.user.profile.notification_enabled:
+        receiver_email_list.append(target_request.user.email)   # email sent to the requester
+    if len(receiver_email_list) > 0:
+        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                               receivers=receiver_email_list,
+                               reply_to=receiver_email_list)
 
 
-def send_email_request_canceled(request_id, user_applied_state=None, request_owner_user=None):
+def send_email_request_canceled(target_request, user_applied_state=None, request_owner_user=None):
     """
 
-    :param request_id: id of the Request
+    :param target_request: Request model
+    :type target_request: service_catalog.models.request.Request
     :param user_applied_state: user who called this method
     :type user_applied_state: User
     :param request_owner_user: user owner of the Request
@@ -72,19 +77,21 @@ def send_email_request_canceled(request_id, user_applied_state=None, request_own
     """
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
-    subject = f"Request #{request_id} - CANCELLED"
-    plain_text = f"Request #{request_id} - CANCELLED"
+    subject = f"Request #{target_request.id} - CANCELLED"
+    plain_text = f"Request #{target_request.id} - CANCELLED"
     template_name = "service_catalog/mails/request_cancelled.html"
-    context = {'request_id': request_id,
+    context = {'request_id': target_request.id,
                'user_applied_state': user_applied_state,
                'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails()  # email sent to all admins
-    receiver_email_list.append(request_owner_user.email)  # email sent to the requester
-    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                           receivers=receiver_email_list,
-                           reply_to=receiver_email_list)
+    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
+    if request_owner_user.profile.notification_enabled:
+        receiver_email_list.append(request_owner_user.email)  # email sent to the requester
+    if len(receiver_email_list) > 0:
+        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                               receivers=receiver_email_list,
+                               reply_to=receiver_email_list)
 
 
 def send_email_request_error(target_request, error_message):
@@ -100,7 +107,7 @@ def send_email_request_error(target_request, error_message):
 
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails()  # email sent to all admins
+    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            receivers=receiver_email_list,
                            reply_to=receiver_email_list)

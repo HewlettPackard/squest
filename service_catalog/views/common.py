@@ -202,7 +202,7 @@ def request_cancel(request, request_id):
         # check that we can cancel the request
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
-        send_email_request_canceled(request_id,
+        send_email_request_canceled(target_request,
                                     user_applied_state=request.user if request.user.is_superuser else target_request.user,
                                     request_owner_user=target_request.user)
 
