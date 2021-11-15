@@ -30,7 +30,6 @@ class Resource(models.Model):
         attribute, _ = self.attributes.get_or_create(attribute_type=attribute_type)
         attribute.value = value
         attribute.save()
-        attribute.attribute_type.calculate_total_resource()
 
     def set_text_attribute(self, text_attribute_type, value):
         text_attribute, _ = self.text_attributes.get_or_create(text_attribute_type=text_attribute_type)
