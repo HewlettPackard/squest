@@ -13,6 +13,8 @@ import os
 import sys
 from pathlib import Path
 import time
+import git
+from Squest.version import __version__
 
 from celery.schedules import crontab
 
@@ -382,3 +384,11 @@ if BACKUP_ENABLED:
 # DJANGO GUARDIAN
 # -----------------------------------------
 GUARDIAN_RAISE_403 = True
+
+# -----------------------------------------
+# SQUEST VERSION
+# -----------------------------------------
+repo = git.Repo(search_parent_directories=True)
+sha = str(repo.head.object.hexsha)[0:6]
+SQUEST_VERSION = f"{__version__} - {sha}"
+print(f"SQUEST_VERSION: {SQUEST_VERSION}")
