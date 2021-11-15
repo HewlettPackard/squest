@@ -1,3 +1,19 @@
+# v1.2 2021-11-15
+
+## Fix
+- Update permissions when SPOC is changed from instance
+- Fix display error in resource pool list
+- Fix default value when integer is used in Tower survey
+
+## Enhancement
+- Re-process failed requests
+- Add a filter in resource tracker resource list
+- Graph perf enhancement
+
+## Feature
+- User and billing group API
+- User can disable email notification
+
 # v1.1 2021-10-22
 
 ## Breaking changes
