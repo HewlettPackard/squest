@@ -29,18 +29,14 @@ class ResourceGroupAttributeDefinitionForm(SquestModelForm):
     def clean(self):
         super(ResourceGroupAttributeDefinitionForm, self).clean()
         name = self.cleaned_data['name']
-        produce_for = self.cleaned_data['produce_for']
-        consume_from = self.cleaned_data['consume_from']
-        help_text = self.cleaned_data['help_text']
-        if not self.instance.id:
-            try:
-                self.resource_group.add_attribute_definition(name, produce_for, consume_from, help_text)
-            except ExceptionResourceTracker.AttributeAlreadyExist as e:
-                raise ValidationError({'name': e})
-        else:
-            try:
-                self.resource_group.edit_attribute_definition(self.instance.id, name, produce_for, consume_from,
-                                                              help_text)
-            except ExceptionResourceTracker.AttributeAlreadyExist as e:
-                raise ValidationError({'name': e})
+        if self.instance.id:  # we are editing
+            if name != self.instance.name:
+                self.raise_validation_error_if_name_exist(name)
+        else:  # we are creating
+            self.raise_validation_error_if_name_exist(name)
         return self.cleaned_data
+
+    def raise_validation_error_if_name_exist(self, name):
+        if ResourceGroupAttributeDefinition.objects.filter(name=name, resource_group=self.resource_group).exists():
+            text_error = f"Attribute {name} already exist in {self.resource_group}"
+            raise ValidationError({'name': text_error})
