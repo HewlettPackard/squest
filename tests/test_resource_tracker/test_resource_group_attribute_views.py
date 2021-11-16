@@ -132,7 +132,6 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         self.assertEqual(200, response.status_code)
 
         # test POST without producer or consumer
-        new_name = self.rg_physical_servers_memory_attribute.name
         data = {
             "name": self.rg_physical_servers_cpu_attribute.name,
             "produce_for": "",

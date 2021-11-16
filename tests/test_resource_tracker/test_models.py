@@ -327,3 +327,39 @@ class TestCalculation(TestCase):
         self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
         self.vm1.delete()
         self.assertEqual(25, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
+
+    def test_pool_updated_after_adding_consumer_on_attribute(self):
+        # initial. A RP anf RG with one resource. No link yet
+        vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        vcenter_pool_vcpu_att = vcenter_pool.add_attribute_definition(name='vCPU')
+        server_group = ResourceGroup.objects.create(name="server-group")
+        server_cpu_attribute_def = server_group.add_attribute_definition(name='CPU')
+        server = server_group.create_resource(name=f"server-group1")
+        server.set_attribute(server_cpu_attribute_def, 100)
+        self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
+
+        # add link
+        vcenter_pool.attribute_definitions.get(name='vCPU') \
+            .add_producers(server_group.attribute_definitions.get(name='CPU'))
+
+        # assert pool consumption is updated
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(100, vcenter_pool_vcpu_att.total_produced)
+
+    def test_pool_updated_after_deleting_consumer_on_attribute(self):
+        # initial. A RP anf RG with one resource
+        vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        vcenter_pool_vcpu_att = vcenter_pool.add_attribute_definition(name='vCPU')
+        server_group = ResourceGroup.objects.create(name="server-group")
+        server_cpu_attribute_def = server_group.add_attribute_definition(name='CPU')
+        server = server_group.create_resource(name=f"server-group1")
+        server.set_attribute(server_cpu_attribute_def, 100)
+        vcenter_pool.attribute_definitions.get(name='vCPU') \
+            .add_producers(server_group.attribute_definitions.get(name='CPU'))
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(100, vcenter_pool_vcpu_att.total_produced)
+
+        # delete RP
+        server_group.delete()
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
