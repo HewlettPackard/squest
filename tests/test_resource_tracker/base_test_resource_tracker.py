@@ -1,14 +1,17 @@
 import random
+import time
 
 from resource_tracker.models import ResourcePool, ResourceGroup
 from tests.test_service_catalog.base import BaseTest
+from tests.utils import skip_auto_calculation
 
 
 class BaseTestResourceTracker(BaseTest):
 
+    @skip_auto_calculation
     def setUp(self):
         super(BaseTestResourceTracker, self).setUp()
-
+        start = time.time()
         # resource pools
         self.rp_vcenter = ResourcePool.objects.create(name="vCenter")
         self.rp_vcenter_vcpu_attribute = self.rp_vcenter.add_attribute_definition(name='vCPU')
@@ -63,3 +66,10 @@ class BaseTestResourceTracker(BaseTest):
             new_ocp_project = self.rg_ocp_projects.create_resource(name=f"project-{i}")
             new_ocp_project.set_attribute(self.rg_ocp_projects_cpu_attribute, random.randint(8, 32))
             new_ocp_project.set_attribute(self.rg_ocp_projects_mem_attribute, random.randint(8, 32))
+
+        self.rg_physical_servers.calculate_total_resource_of_attributes()
+        self.rg_ocp_workers.calculate_total_resource_of_attributes()
+        self.rg_ocp_projects.calculate_total_resource_of_attributes()
+        end = time.time()
+        seconds = end - start
+        # print(f"Bases test created in {seconds}")

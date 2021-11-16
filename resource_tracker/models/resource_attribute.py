@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
@@ -26,9 +26,3 @@ class ResourceAttribute(models.Model):
 def on_change(sender, instance, created, **kwargs):
     if instance.attribute_type is not None:
         instance.attribute_type.calculate_total_resource()
-
-        if instance.attribute_type.consume_from is not None:
-            instance.attribute_type.consume_from.calculate_total_consumed()
-
-        if instance.attribute_type.produce_for is not None:
-            instance.attribute_type.produce_for.calculate_total_produced()

@@ -39,6 +39,11 @@ class ResourceGroupAttributeDefinition(models.Model):
                 pass
         self.total_resource = total
         self.save()
+        # sync pool attributes
+        if self.consume_from is not None:
+            self.consume_from.calculate_total_consumed()
+        if self.produce_for is not None:
+            self.produce_for.calculate_total_produced()
 
     def edit(self, name, produce_for, consume_from, help_text):
         self.name = name
