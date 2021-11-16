@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from resource_tracker.models import ResourceAttribute
@@ -63,3 +63,16 @@ def on_delete(sender, instance, **kwargs):
 
     if instance.produce_for is not None:
         instance.produce_for.calculate_total_produced()
+
+
+def after_change(sender, instance, created, **kwargs):
+    post_save.disconnect(after_change, sender=sender)  # prevent post save recursion
+    if instance.consume_from is not None:
+        instance.consume_from.calculate_total_consumed()
+
+    if instance.produce_for is not None:
+        instance.produce_for.calculate_total_produced()
+    post_save.connect(after_change, sender=sender)
+
+
+post_save.connect(after_change, sender=ResourceGroupAttributeDefinition)
