@@ -77,3 +77,7 @@ class ResourceGroup(models.Model):
 
     def get_sum_value_by_attribute(self, attribute_type):
         return sum([resource.attributes.get(attribute_type=attribute_type).value for resource in self.resources.all()])
+
+    def calculate_total_resource_of_attributes(self):
+        for attribute_definition in self.attribute_definitions.all():
+            attribute_definition.calculate_total_resource()
