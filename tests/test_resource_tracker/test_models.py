@@ -12,8 +12,8 @@ class TestCalculation(TestCase):
         # create a group of server that produce into the vcenter pool
         self.server_group = ResourceGroup.objects.create(name="server-group")
         server_cpu_attribute_def = self.server_group.add_attribute_definition(name='CPU')
-        server = self.server_group.create_resource(name=f"server-group1")
-        server.set_attribute(server_cpu_attribute_def, 100)
+        self.server = self.server_group.create_resource(name=f"server-group1")
+        self.server.set_attribute(server_cpu_attribute_def, 100)
         # create a big server group
         self.big_server_group = ResourceGroup.objects.create(name="big-server-group")
         self.big_server_group_cpu = self.big_server_group.add_attribute_definition(name='CPU')
@@ -39,8 +39,8 @@ class TestCalculation(TestCase):
             .add_consumers(self.vm_group.attribute_definitions.get(name='vCPU'))
         self.assertIn(member=self.vm_group.attribute_definitions.get(name='vCPU'),
                       container=self.vcenter_pool.attribute_definitions.get(name='vCPU').consumers.all())
-        vm1 = self.vm_group.create_resource(name=f"vm1")
-        vm1.set_attribute(vm_vcpu_attribute, 25)
+        self.vm1 = self.vm_group.create_resource(name=f"vm1")
+        self.vm1.set_attribute(vm_vcpu_attribute, 25)
         vm2 = self.vm_group.create_resource(name=f"vm2")
         vm2.set_attribute(vm_vcpu_attribute, 25)
         self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
@@ -310,3 +310,15 @@ class TestCalculation(TestCase):
         self._create_simple_testing_stack()
         self.vcenter_pool.attribute_definitions.get(name='vCPU').remove_all_consumer()
         self.assertEqual(self.vcenter_pool.attribute_definitions.get(name='vCPU').consumers.count(), 0)
+
+    def test_delete_resource_group_also_delete_resource(self):
+        self._create_simple_testing_stack()
+        self.assertTrue(Resource.objects.filter(id=self.server.id).exists())
+        self.server_group.delete()
+        self.assertFalse(Resource.objects.filter(id=self.server.id).exists())
+
+    def test_resource_update_after_delete_resource(self):
+        self._create_simple_testing_stack()
+        self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
+        self.vm1.delete()
+        self.assertEqual(25, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)

@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from taggit.managers import TaggableManager
 
 from service_catalog.models import Instance
@@ -9,7 +11,7 @@ class Resource(models.Model):
                             blank=False,
                             unique=True)
     resource_group = models.ForeignKey('ResourceGroup',
-                                       on_delete=models.SET_NULL,
+                                       on_delete=models.CASCADE,
                                        related_name='resources',
                                        related_query_name='resource',
                                        null=True)
@@ -35,3 +37,21 @@ class Resource(models.Model):
         text_attribute, _ = self.text_attributes.get_or_create(text_attribute_type=text_attribute_type)
         text_attribute.value = value
         text_attribute.save()
+
+
+@receiver(post_delete, sender=Resource)
+def on_delete(sender, instance, **kwargs):
+    """
+    If a resource is deleted, the linked resource pool consumption is updated.
+    """
+    if instance.resource_group_id:
+        from resource_tracker.models import ResourceGroup
+        if ResourceGroup.objects.filter(id=instance.resource_group_id).exists():
+            target_resource_group = ResourceGroup.objects.get(id=instance.resource_group_id)
+            for resource_attribute in target_resource_group.attribute_definitions.all():
+                resource_attribute.calculate_total_resource()
+                if resource_attribute.consume_from is not None:
+                    resource_attribute.consume_from.calculate_total_consumed()
+
+                if resource_attribute.produce_for is not None:
+                    resource_attribute.produce_for.calculate_total_produced()
