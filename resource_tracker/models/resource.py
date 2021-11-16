@@ -50,8 +50,3 @@ def on_delete(sender, instance, **kwargs):
             target_resource_group = ResourceGroup.objects.get(id=instance.resource_group_id)
             for resource_attribute in target_resource_group.attribute_definitions.all():
                 resource_attribute.calculate_total_resource()
-                if resource_attribute.consume_from is not None:
-                    resource_attribute.consume_from.calculate_total_consumed()
-
-                if resource_attribute.produce_for is not None:
-                    resource_attribute.produce_for.calculate_total_produced()

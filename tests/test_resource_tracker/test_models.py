@@ -4,16 +4,19 @@ from django.test import TestCase
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourcePool, ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
+from tests.utils import skip_auto_calculation
 
 
 class TestCalculation(TestCase):
 
+    @skip_auto_calculation
     def _create_simple_testing_stack(self):
         # create a group of server that produce into the vcenter pool
         self.server_group = ResourceGroup.objects.create(name="server-group")
         server_cpu_attribute_def = self.server_group.add_attribute_definition(name='CPU')
         self.server = self.server_group.create_resource(name=f"server-group1")
         self.server.set_attribute(server_cpu_attribute_def, 100)
+        self.server_group.calculate_total_resource_of_attributes()
         # create a big server group
         self.big_server_group = ResourceGroup.objects.create(name="big-server-group")
         self.big_server_group_cpu = self.big_server_group.add_attribute_definition(name='CPU')
@@ -24,6 +27,7 @@ class TestCalculation(TestCase):
             value = randint(10, 150)
             resource.set_attribute(self.big_server_group_cpu, value)
             self.big_server_group_cpu_count += value
+        self.big_server_group.calculate_total_resource_of_attributes()
 
         self.vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
         self.vcenter_pool.add_attribute_definition(name='vCPU')
@@ -43,6 +47,7 @@ class TestCalculation(TestCase):
         self.vm1.set_attribute(vm_vcpu_attribute, 25)
         vm2 = self.vm_group.create_resource(name=f"vm2")
         vm2.set_attribute(vm_vcpu_attribute, 25)
+        self.vm_group.calculate_total_resource_of_attributes()
         self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
 
     def _create_vcenter_pool_with_one_server(self):
