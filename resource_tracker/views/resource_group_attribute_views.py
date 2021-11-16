@@ -13,6 +13,10 @@ def resource_group_attribute_create(request, resource_group_id):
         form = ResourceGroupAttributeDefinitionForm(request.POST)
         form.resource_group = resource_group  # give the resource_group so the form can validate the unique together
         if form.is_valid():
+            resource_group.add_attribute_definition(name=form.cleaned_data["name"],
+                                                    produce_for=form.cleaned_data["produce_for"],
+                                                    consume_from=form.cleaned_data["consume_from"],
+                                                    help_text=form.cleaned_data["help_text"])
             return redirect("resource_tracker:resource_group_edit", resource_group.id)
     else:
         form = ResourceGroupAttributeDefinitionForm()
@@ -33,6 +37,11 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     form = ResourceGroupAttributeDefinitionForm(request.POST or None, instance=attribute)
     form.resource_group = resource_group
     if form.is_valid():
+        resource_group.edit_attribute_definition(attribute_id=attribute.id,
+                                                 name=form.cleaned_data["name"],
+                                                 produce_for=form.cleaned_data["produce_for"],
+                                                 consume_from=form.cleaned_data["consume_from"],
+                                                 help_text=form.cleaned_data["help_text"])
         return redirect("resource_tracker:resource_group_edit", resource_group.id)
     breadcrumbs = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
@@ -40,7 +49,8 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
          'url': reverse('resource_tracker:resource_group_edit', args=[resource_group_id])},
         {'text': attribute.name, 'url': ""},
     ]
-    context = {'form': form, 'attribute': attribute, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {'form': form, 'attribute': attribute, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs,
+               'action': 'edit'}
     return render(request, 'resource_tracking/resource_group/attributes/attribute-edit.html', context)
 
 
