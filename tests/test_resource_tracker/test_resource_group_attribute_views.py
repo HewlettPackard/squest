@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker.models import ResourceGroupAttributeDefinition
+from resource_tracker.models import ResourceGroupAttributeDefinition, ResourcePool, ResourceGroup
 from tests.test_resource_tracker.base_test_resource_tracker import BaseTestResourceTracker
 
 
@@ -52,7 +52,7 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         response = self.client.post(url, data=data)
         self.assertEqual(200, response.status_code)
         self.assertEqual(f"Attribute {new_name} already exist in {self.rg_physical_servers.name}",
-                          response.context['form'].errors['name'][0])
+                         response.context['form'].errors['name'][0])
 
     def test_cannot_create_resource_group_attribute_when_logout(self):
         self.client.logout()
@@ -172,3 +172,57 @@ class TestResourceGroupAttributeViews(BaseTestResourceTracker):
         # test GET
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
+
+    def test_resource_group_attribute_add_producer_pool_is_updated(self):
+        vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        vcenter_pool_vcpu_att = vcenter_pool.add_attribute_definition(name='vCPU')
+        server_group = ResourceGroup.objects.create(name="server-group")
+        server_cpu_attribute_def = server_group.add_attribute_definition(name='CPU')
+        server = server_group.create_resource(name=f"server-group1")
+        server.set_attribute(server_cpu_attribute_def, 100)
+        # nothing produced yet
+        self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
+
+        args = {
+            "resource_group_id": server_group.id,
+            "attribute_id": server_cpu_attribute_def.id
+        }
+        url = reverse('resource_tracker:resource_group_attribute_edit', kwargs=args)
+
+        data = {
+            "name": server_group.name,
+            "produce_for": vcenter_pool_vcpu_att.id,
+            "consume_from": ""
+        }
+        response = self.client.post(url, data=data)
+        self.assertEqual(302, response.status_code)
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(100, vcenter_pool_vcpu_att.total_produced)
+
+    def test_resource_group_attribute_delete_producer_pool_is_updated(self):
+        vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
+        vcenter_pool_vcpu_att = vcenter_pool.add_attribute_definition(name='vCPU')
+        server_group = ResourceGroup.objects.create(name="server-group")
+        server_cpu_attribute_def = server_group.add_attribute_definition(name='CPU')
+        server = server_group.create_resource(name=f"server-group1")
+        server.set_attribute(server_cpu_attribute_def, 100)
+        vcenter_pool.attribute_definitions.get(name='vCPU') \
+            .add_producers(server_group.attribute_definitions.get(name='CPU'))
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(100, vcenter_pool_vcpu_att.total_produced)
+
+        args = {
+            "resource_group_id": server_group.id,
+            "attribute_id": server_cpu_attribute_def.id
+        }
+        url = reverse('resource_tracker:resource_group_attribute_edit', kwargs=args)
+
+        data = {
+            "name": server_group.name,
+            "produce_for": "",
+            "consume_from": ""
+        }
+        response = self.client.post(url, data=data)
+        self.assertEqual(302, response.status_code)
+        vcenter_pool_vcpu_att.refresh_from_db()
+        self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
