@@ -49,7 +49,7 @@ ALLOWED_HOSTS=squest.domain.local
 
 Start docker compose with the TLS configuration:
 ```bash
-docker-compose -f dev-env.docker-compose.yml -f full-env.docker-compose.yml -f tls.docker-compose.yml up
+docker-compose -f docker-compose.yml -f tls.docker-compose.yml up
 ```
 
 The squest service is then reachable via HTTP and HTTPS standard ports (80/443).
