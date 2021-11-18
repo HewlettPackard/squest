@@ -12,7 +12,7 @@ def resource_pool_list(request):
     resource_pool_list = ResourcePool.objects.all()
     resource_pool_filtered = ResourcePoolFilter(request.GET, queryset=resource_pool_list)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
-                  {'resource_pools': resource_pool_filtered})
+                  {'resource_pools': resource_pool_filtered, 'title': "Resource pools"})
 
 
 @user_passes_test(lambda u: u.is_superuser)

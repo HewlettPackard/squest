@@ -12,7 +12,7 @@ def resource_group_list(request):
     resource_group_list = ResourceGroup.objects.all()
     resource_group_filtered = ResourceGroupFilter(request.GET, queryset=resource_group_list)
     return render(request, 'resource_tracking/resource_group/resource-group-list.html',
-                  {'resource_groups': resource_group_filtered})
+                  {'resource_groups': resource_group_filtered, 'title': "Resource groups"})
 
 
 @user_passes_test(lambda u: u.is_superuser)

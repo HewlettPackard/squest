@@ -1,102 +1,95 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Resource groups</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <a class="btn btn-success float-sm-right"
-                           href="{% url 'resource_tracker:resource_group_create' %}">
-                            <i class="fas fa-plus"></i> New resource group
-                        </a>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <section class="col-lg-9 connectedSortable ui-sortable">
-                        {% for resource_group in resource_groups.qs %}
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title"><strong>{{ resource_group.name }}</strong></h3>
-                                    <div class="card-tools">
-                                        <div class="btn-group">
-                                            <a class="dropdown-item text-primary"
-                                               href="{% url 'resource_tracker:resource_group_edit' resource_group.id %}"><span
-                                                    class="text-primary fas fa-pencil-alt"></span></a>
-                                            <a class="dropdown-item text-danger"
-                                               href="{% url 'resource_tracker:resource_group_delete' resource_group.id %}"><span
-                                                    class="text-danger fas fa-trash"></span></a>
-                                        </div>
-                                    </div>
-                                </div>
+{% block header_button %}
+    <a class="btn btn-default float-right ml-1" data-widget="control-sidebar">
+        <i class="fas fa-sliders-h"></i>
+    </a>
+    <a class="btn btn-success float-sm-right"
+       href="{% url 'resource_tracker:resource_group_create' %}">
+        <i class="fas fa-plus"></i> New resource group
+    </a>
+{% endblock %}
 
-                                <div class="card-body">
-                                    {% if resource_group.attribute_definitions.all|length == 0 %}
-                                        <div class="row">
-                                            <div class="col text-center">
-                                                <a class="btn btn-lg btn-success text-center"
-                                                   href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}">
-                                                    <i class="fas fa-plus"></i> Add attribute
-                                                </a>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <table class="table table-sm">
-                                            <thead>
-                                            <tr>
-                                                <th>Attribute</th>
-                                                <th>Total resource</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for attribute in resource_group.attribute_definitions.all %}
-                                                <tr>
-                                                    <td class="align-middle">{{ attribute.name }}</td>
-                                                    <td class="align-middle">{{ attribute.get_total_resource }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    {% endif %}
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 connectedSortable ui-sortable">
+                {% for resource_group in resource_groups.qs %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><strong>{{ resource_group.name }}</strong></h3>
+                            <div class="card-tools">
+                                <div class="btn-group">
+                                    <a class="dropdown-item text-primary"
+                                       href="{% url 'resource_tracker:resource_group_edit' resource_group.id %}"><span
+                                            class="text-primary fas fa-pencil-alt"></span></a>
+                                    <a class="dropdown-item text-danger"
+                                       href="{% url 'resource_tracker:resource_group_delete' resource_group.id %}"><span
+                                            class="text-danger fas fa-trash"></span></a>
                                 </div>
-                                <div class="card-footer text-muted">
-                                    <strong>Tags: </strong>
-                                    {% for tag in resource_group.tags.all %}
-                                        <small class="badge badge-secondary">{{ tag }}</small>
-                                    {% endfor %}
-                                    <a class="btn btn-default btn-sm float-right"
-                                       href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
-                                        Resources
-                                        <span class="badge badge-secondary">{{ resource_group.resources.all|length }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </section>
-                    <section class="col-lg-3 connectedSortable ui-sortable">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <form method="get">
-                                    {{ resource_groups.form.as_p }}
-                                    <button class="btn btn-primary" type="submit">Apply</button>
-                                </form>
                             </div>
                         </div>
-                    </section>
-                </div>
+
+                        <div class="card-body">
+                            {% if resource_group.attribute_definitions.all|length == 0 %}
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <a class="btn btn-lg btn-success text-center"
+                                           href="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}">
+                                            <i class="fas fa-plus"></i> Add attribute
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th>Attribute</th>
+                                        <th>Total resource</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for attribute in resource_group.attribute_definitions.all %}
+                                        <tr>
+                                            <td class="align-middle">{{ attribute.name }}</td>
+                                            <td class="align-middle">{{ attribute.get_total_resource }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer text-muted">
+                            <strong>Tags: </strong>
+                            {% for tag in resource_group.tags.all %}
+                                <small class="badge badge-secondary">{{ tag }}</small>
+                            {% endfor %}
+                            <a class="btn btn-default btn-sm float-right"
+                               href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
+                                Resources
+                                <span class="badge badge-secondary">{{ resource_group.resources.all|length }}</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
+            <aside class="control-sidebar control-sidebar-light" style="display: block;">
+                <div class="row">
+                    <a class="nav-link float-left" data-widget="control-sidebar">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="p-3 control-sidebar-content">
+                    <div class="row pb-3">
+                        <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                    </div>
+                    <form method="get">
+                        {{ resource_groups.form.as_p }}
+                        <button class="btn btn-primary" type="submit">Apply</button>
+                    </form>
+                </div>
+            </aside>
         </div>
     </div>
+
 {% endblock %}
