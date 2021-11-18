@@ -2,34 +2,42 @@
 {% load render_table from django_tables2 %}
 
 {% block header_button %}
+    {% if filter %}
+        <a class="btn btn-default float-right ml-1" data-widget="control-sidebar">
+            <i class="fas fa-sliders-h"></i>
+        </a>
+    {% endif %}
     {% if html_button_path %}
         {% include html_button_path %}
     {% endif %}
 {% endblock %}
 
-
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <section class="col-lg-9">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         {% render_table table %}
                     </div>
                 </div>
-            </section>
+            </div>
             {% if filter %}
-                <section class="col-lg-3">
-                    <div class="card">
-                        <div class="card-header">
+                <aside class="control-sidebar control-sidebar-light" style="display: block;">
+                    <div class="row">
+                        <a class="nav-link float-left" data-widget="control-sidebar">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    <div class="p-3 control-sidebar-content">
+                        <div class="row pb-3">
                             <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
                         </div>
+
                         <!-- /.card-header -->
-                        <div class="card-body">
-                            {% include 'generics/form_edit.html' with form=filter.form action='apply' method='get'%}
-                        </div>
+                        {% include 'generics/form_edit.html' with form=filter.form action='apply' method='get' %}
                     </div>
-                </section>
+                </aside>
             {% endif %}
         </div>
     </div>
