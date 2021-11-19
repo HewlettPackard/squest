@@ -47,7 +47,7 @@
                 </li>
                 {% if user.is_superuser %}
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:support_list'%}?state=OPENED" class="nav-link {% if '/support/' in request.path %}active{% endif %}">
+                        <a href="{% url 'service_catalog:support_list'%}?state=OPENED" class="nav-link {% if '/support/' in request.path and not '/instance/' in request.path %}active{% endif %}">
                             <i class="nav-icon fa fa-medkit"></i>
                             <p>Supports <span class="badge badge-warning right">{% opened_support %}</span></p>
                         </a>
