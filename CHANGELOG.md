@@ -1,3 +1,17 @@
+# v1.2.1 2021-11-19
+
+## Fix
+- Resource pool consumption is now updated after resource deletion
+- Fix resource group save form
+- Fix resource pool calculation executed when adding/deleting resources
+
+## Enhancement
+- load git module only once in settings
+- remove useless calculation call
+- enhance test execution speed
+- add scroll bar in resource list table
+- filters moved into a sidebar
+
 # v1.2 2021-11-15
 
 ## Fix
