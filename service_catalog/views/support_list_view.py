@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
@@ -8,6 +10,7 @@ from service_catalog.models import Support
 from service_catalog.tables.support_tables import SupportTable
 
 
+@method_decorator(login_required, name='dispatch')
 class SupportListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = SupportTable

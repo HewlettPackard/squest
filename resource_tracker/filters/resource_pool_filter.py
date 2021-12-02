@@ -3,7 +3,7 @@ from django import forms
 
 from resource_tracker.filters.tag_filter import TagFilter
 from resource_tracker.models import ResourcePool
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class ResourcePoolFilter(SquestFilter):

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class UserFilter(SquestFilter):

@@ -1,12 +1,12 @@
-from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import Form, ModelChoiceField, Select
 
 from service_catalog.models import Service
 
 
-class NotificationServiceForm(forms.Form):
-    service = forms.ModelChoiceField(queryset=Service.objects.all(),
-                                     widget=forms.Select(attrs={'class': 'form-control'}))
+class NotificationServiceForm(Form):
+    service = ModelChoiceField(queryset=Service.objects.all(),
+                               widget=Select(attrs={'class': 'form-control'}))
 
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance

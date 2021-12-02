@@ -1,7 +1,7 @@
 from django_tables2 import TemplateColumn
 
 from service_catalog.models import GlobalHook
-from utils.squest_table import SquestTable
+from Squest.utils.squest_table import SquestTable
 
 
 class GlobalHookTable(SquestTable):

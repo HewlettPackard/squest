@@ -4,8 +4,7 @@ from tempus_dominus.widgets import DateTimePicker
 
 from service_catalog.models.bootstrap_type import BootstrapType
 from service_catalog.models.announcement import Announcement
-from utils.squest_model_form import SquestModelForm
-
+from Squest.utils.squest_model_form import SquestModelForm
 
 class AnnouncementForm(SquestModelForm):
     def __init__(self, *args, **kwargs):

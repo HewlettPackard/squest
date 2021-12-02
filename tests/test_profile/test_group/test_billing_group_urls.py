@@ -3,10 +3,10 @@ from django.urls import reverse
 from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
-class TestGroupUrls(TestGroupBase):
+class TestBillingGroupUrls(TestGroupBase):
 
     def setUp(self):
-        super(TestGroupUrls, self).setUp()
+        super(TestBillingGroupUrls, self).setUp()
 
     def test_all_get(self):
         args_user = {

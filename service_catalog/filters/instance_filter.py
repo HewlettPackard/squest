@@ -2,7 +2,7 @@ from django.forms import SelectMultiple, HiddenInput
 from django_filters import MultipleChoiceFilter
 from service_catalog.models import Instance, Service
 from service_catalog.models.instance import InstanceState
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class InstanceFilter(SquestFilter):

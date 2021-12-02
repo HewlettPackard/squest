@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -59,6 +59,7 @@ def instance_delete(request, instance_id):
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
@@ -84,6 +85,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
     return render(request, 'service_catalog/customer/instance/instance-request-operation.html', context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def instance_archive(request, instance_id):
     target_instance = get_object_or_404(Instance, id=instance_id)
@@ -100,6 +102,7 @@ def instance_archive(request, instance_id):
     return render(request, "service_catalog/customer/instance/instance-archive.html", context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def instance_new_support(request, instance_id):
     target_instance = get_object_or_404(Instance, id=instance_id)
@@ -122,6 +125,7 @@ def instance_new_support(request, instance_id):
     return render(request, 'service_catalog/common/support-create.html', context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def instance_support_details(request, instance_id, support_id):
     instance = get_object_or_404(Instance, id=instance_id)
@@ -165,6 +169,7 @@ def instance_support_details(request, instance_id, support_id):
     return render(request, "service_catalog/common/instance-support-details.html", context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.view_instance', (Instance, 'id', 'instance_id'))
 def instance_details(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)

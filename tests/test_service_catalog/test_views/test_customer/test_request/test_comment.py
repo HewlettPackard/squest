@@ -36,7 +36,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
     def test_cannot_get_comment_list_when_logout(self):
         self.client.logout()
         response = self.client.get(self.url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_admin_can_list_request_comment(self):
         self._assert_can_list_comment()

@@ -2,7 +2,7 @@ from django_tables2 import TemplateColumn, LinkColumn
 from django_tables2.utils import A
 
 from service_catalog.models import Request
-from utils.squest_table import SquestTable
+from Squest.utils.squest_table import SquestTable
 
 
 class RequestTable(SquestTable):

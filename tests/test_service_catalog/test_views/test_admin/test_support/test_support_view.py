@@ -17,4 +17,4 @@ class TestAdminSupportViews(BaseTestRequest):
         self.client.logout()
         url = reverse('service_catalog:support_list')
         response = self.client.get(url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(302, response.status_code)
