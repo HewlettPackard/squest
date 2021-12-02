@@ -2,7 +2,7 @@ from django.forms import SelectMultiple, CheckboxInput
 from django.utils import timezone
 from django_filters import MultipleChoiceFilter, BooleanFilter
 from service_catalog.models import Announcement, BootstrapType
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class AnnouncementFilter(SquestFilter):

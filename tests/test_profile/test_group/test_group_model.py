@@ -3,10 +3,10 @@ from django.urls import reverse
 from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
-class TestGroupProcessing(TestGroupBase):
+class TestGroupModel(TestGroupBase):
 
     def setUp(self):
-        super(TestGroupProcessing, self).setUp()
+        super(TestGroupModel, self).setUp()
 
     def test_update_users_in_group(self):
         args_group = {

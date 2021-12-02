@@ -1,18 +1,16 @@
-from django import forms
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
 from profiles.models import Token
+from Squest.utils.squest_model_form import SquestModelForm
 
-
-class TokenForm(forms.ModelForm):
+class TokenForm(SquestModelForm):
     class Meta:
         model = Token
         fields = ['description', 'expires']
 
     def __init__(self, *args, **kwargs):
         super(TokenForm, self).__init__(*args, **kwargs)
-        self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['expires'].widget = DateTimePicker(
             options={
                 'useCurrent': True,

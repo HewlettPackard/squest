@@ -1,7 +1,6 @@
 from taggit.forms import *
 from resource_tracker.models import ResourcePool
-from utils.squest_model_form import SquestModelForm
-
+from Squest.utils.squest_model_form import SquestModelForm
 
 class ResourcePoolForm(SquestModelForm):
     class Meta:

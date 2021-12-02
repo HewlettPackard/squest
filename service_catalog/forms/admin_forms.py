@@ -19,8 +19,7 @@ from service_catalog.models.instance import InstanceState
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 from service_catalog.models.state_hooks import HookModel
-from utils.squest_model_form import SquestModelForm
-
+from Squest.utils.squest_model_form import SquestModelForm
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 

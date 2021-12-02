@@ -2,7 +2,7 @@ from django.forms import SelectMultiple
 from django_filters import MultipleChoiceFilter
 from service_catalog.models import Operation
 from service_catalog.models.operations import OperationType
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class OperationFilter(SquestFilter):

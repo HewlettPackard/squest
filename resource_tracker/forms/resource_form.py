@@ -2,8 +2,7 @@ from taggit.forms import *
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourceTextAttribute, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Instance
-from utils.squest_model_form import SquestModelForm
-
+from Squest.utils.squest_model_form import SquestModelForm
 
 class ResourceForm(SquestModelForm):
     class Meta:

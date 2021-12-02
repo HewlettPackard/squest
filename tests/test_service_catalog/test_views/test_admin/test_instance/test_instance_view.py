@@ -47,10 +47,10 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.assertEqual(self.test_instance.name, response.context["instance"].name)
 
     def test_cannot_get_instance_details_when_logout(self):
-        self.client.login(username=self.standard_user_2, password=self.common_password)
+        self.client.logout()
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_customer_cannot_get_details_on_non_own_instance(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)

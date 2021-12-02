@@ -195,6 +195,7 @@ def dashboards(request):
     return render(request, 'service_catalog/common/dashboard.html', context=context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.delete_request', (Request, 'id', 'request_id'))
 def request_cancel(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
@@ -225,6 +226,7 @@ def request_cancel(request, request_id):
     return render(request, "generics/confirm-delete-template.html", context)
 
 
+@login_required
 @permission_required_or_403('service_catalog.view_request', (Request, 'id', 'request_id'))
 def request_comment(request, request_id):
     breadcrumbs = [

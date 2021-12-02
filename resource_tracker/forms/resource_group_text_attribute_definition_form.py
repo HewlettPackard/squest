@@ -1,8 +1,7 @@
 from django.core.exceptions import ValidationError
 from taggit.forms import *
 from resource_tracker.models import ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
-from utils.squest_model_form import SquestModelForm
-
+from Squest.utils.squest_model_form import SquestModelForm
 
 class ResourceGroupTextAttributeDefinitionForm(SquestModelForm):
     class Meta:
