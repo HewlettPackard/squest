@@ -4,7 +4,7 @@ from service_catalog.models import GlobalHook
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from service_catalog.models.state_hooks import HookModel
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class GlobalHookFilter(SquestFilter):

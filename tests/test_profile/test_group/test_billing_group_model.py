@@ -4,10 +4,10 @@ from profiles.models import BillingGroup
 from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
-class TestGroupModel(TestGroupBase):
+class TestBillingGroupModel(TestGroupBase):
 
     def setUp(self):
-        super(TestGroupModel, self).setUp()
+        super(TestBillingGroupModel, self).setUp()
 
     def test_create_billing_group(self):
         url = reverse('profiles:billing_group_create')

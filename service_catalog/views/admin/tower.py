@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -11,6 +11,8 @@ from service_catalog.models import TowerServer, JobTemplate, Operation, Operatio
 from service_catalog.serializers import TaskResultSerializer
 
 
+
+@login_required
 @permission_required('service_catalog.add_towerserver')
 def add_tower(request):
     if request.method == 'POST':
@@ -29,6 +31,8 @@ def add_tower(request):
     return render(request, 'service_catalog/admin/tower/tower-create.html', context)
 
 
+
+@login_required
 @permission_required('service_catalog.change_towerserver')
 def sync_tower(request, tower_id, job_template_id=None):
     if request.method == 'POST':
@@ -38,6 +42,8 @@ def sync_tower(request, tower_id, job_template_id=None):
         return JsonResponse({"task_id": task_result.id}, status=202)
 
 
+
+@login_required
 @permission_required('service_catalog.view_taskresult')
 def get_task_result(request, task_id):
     task_result = TaskResult.objects.get(id=task_id)
@@ -45,6 +51,7 @@ def get_task_result(request, task_id):
     return JsonResponse(serialized_task.data, status=202)
 
 
+@login_required
 @permission_required('service_catalog.delete_towerserver')
 def delete_tower(request, tower_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
@@ -62,6 +69,8 @@ def delete_tower(request, tower_id):
     return render(request, "service_catalog/admin/tower/tower-delete.html", context)
 
 
+
+@login_required
 @permission_required('service_catalog.delete_jobtemplate')
 def delete_job_template(request, tower_id, job_template_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
@@ -96,6 +105,8 @@ def delete_job_template(request, tower_id, job_template_id):
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
+
+@login_required
 @permission_required('service_catalog.view_jobtemplate')
 def job_template_details(request, tower_id, job_template_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
@@ -112,6 +123,8 @@ def job_template_details(request, tower_id, job_template_id):
     }
     return render(request, "service_catalog/admin/tower/job_templates/job-template-details.html", context=context)
 
+
+@login_required
 @permission_required('service_catalog.view_jobtemplate')
 def job_template_compliancy(request, tower_id, job_template_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
@@ -130,6 +143,8 @@ def job_template_compliancy(request, tower_id, job_template_id):
     return render(request, "service_catalog/admin/tower/job_templates/job-template-compliancy.html", context)
 
 
+
+@login_required
 @permission_required('service_catalog.change_towerserver')
 def update_tower(request, tower_id):
     tower_server = get_object_or_404(TowerServer, id=tower_id)

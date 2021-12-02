@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 
-from profiles.models import BillingGroup
+from profiles.models.team import Team
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -15,4 +15,11 @@ class TestGroupBase(BaseTest):
         self.my_user4 = User.objects.create(username='test_user4')
         self.my_group.user_set.add(self.my_user)
         self.my_group.user_set.add(self.my_user3)
+        self.test_team = Team.objects.create(name='test_team')
+        self.test_team.add_user_in_role("Admin", self.my_user2)
+        self.test_team.add_user_in_role("Admin", self.my_user3)
+        self.test_team.add_user_in_role("Member", self.my_user2)
+        self.test_team2 = Team.objects.create(name='test_team2')
+        self.test_team2.add_user_in_role("Admin", self.my_user)
+        self.test_team.add_user_in_role("Member", self.my_user4)
         self.test_billing_group.user_set.add(self.my_user2)

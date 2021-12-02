@@ -1,13 +1,7 @@
-from django import forms
-
 from profiles.models import BillingGroup
+from Squest.utils.squest_model_form import SquestModelForm
 
-
-class BillingGroupForm(forms.ModelForm):
-    name = forms.CharField(label="Name",
-                           widget=forms.TextInput(attrs={'class': 'form-control'})
-                           )
-
+class BillingGroupForm(SquestModelForm):
     class Meta:
         model = BillingGroup
         fields = ["name"]

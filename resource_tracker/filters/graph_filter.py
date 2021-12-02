@@ -1,7 +1,7 @@
 from django.forms import SelectMultiple
 
 from resource_tracker.filters.tag_filter import TagFilter
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class GraphFilter(SquestFilter):

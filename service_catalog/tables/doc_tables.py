@@ -1,8 +1,8 @@
 from django_tables2 import TemplateColumn, LinkColumn
 from django_tables2.utils import A
 
+from Squest.utils.squest_table import SquestTable
 from service_catalog.models import Doc
-from utils.squest_table import SquestTable
 
 
 class DocTable(SquestTable):

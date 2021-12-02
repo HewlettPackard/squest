@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if form.non_field_errors %}
+                            {{ form.non_field_errors }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <form id="UserRoleForObjectForm" class="form-horizontal"
+                      action="{{ url }}" method="post"
+                      data-get-users-with-role-url="{% url 'profiles:get_users_with_role' %}"
+                      data-content-type-id="{{ content_type_id }}"
+                      data-object-id="{{ object_id }}"
+                >
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                            <label for="{{ field.name }}" class="control-label">
+                                {{ field.label }}
+                            </label>
+                            <div class="col-sm-12">
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="mt-2 form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-success" type="submit">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                Edit role
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'squest/js/user-role-for-object.js' %}"></script>
+    <script>
+        $("#id_roles").change(function () {
+            get_users_with_role($(this).val());
+        });
+    </script>
+{% endblock %}

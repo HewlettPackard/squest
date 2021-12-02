@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django_filters.views import FilterView
@@ -10,16 +11,14 @@ from service_catalog.models import JobTemplate, TowerServer
 from service_catalog.tables.job_template_tables import JobTemplateTable
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(permission_required('service_catalog.view_jobtemplate'), name='dispatch')
 class JobTemplateListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
     table_class = JobTemplateTable
     model = JobTemplate
     template_name = 'generics/list.html'
     filterset_class = JobTemplateFilter
-
-    @method_decorator(permission_required('service_catalog.view_jobtemplate'))
-    def dispatch(self, *args, **kwargs):
-        return super(JobTemplateListView, self).dispatch(*args, **kwargs)
 
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()

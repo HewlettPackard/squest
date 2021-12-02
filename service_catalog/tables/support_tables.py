@@ -2,7 +2,7 @@ from django_tables2 import tables, TemplateColumn, LinkColumn
 from django_tables2.utils import A
 
 from service_catalog.models import Support
-from utils.squest_table import SquestTable
+from Squest.utils.squest_table import SquestTable
 
 
 class SupportTable(SquestTable):

@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from profiles.models import BillingGroup
-from utils.squest_filter import SquestFilter
+from Squest.utils.squest_filter import SquestFilter
 
 
 class BillingGroupFilter(django_filters.ModelMultipleChoiceFilter):
