@@ -16,7 +16,7 @@ class Team(Model):
         super(Team, self).__init__(*args, **kwargs)
         self.roles = Role.objects.filter(content_type=ContentType.objects.get_for_model(Team))
 
-    def add_user_in_role(self, role_name, user):
+    def add_user_in_role(self, user, role_name):
         UserRoleBinding.objects.get_or_create(
             user=user,
             content_type=ContentType.objects.get_for_model(Team),

@@ -23,7 +23,7 @@ def team_edit(request, team_id):
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
         {'text': team.name, 'url': ""},
     ]
-    context = {'form': form, 'group': team, 'group_url': "team", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'group': team, 'object_name': "team", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
 
 
@@ -33,7 +33,7 @@ def team_create(request):
         form = TeamForm(request.POST)
         if form.is_valid():
             team = form.save()
-            team.add_user_in_role("Admin", request.user)
+            team.add_user_in_role(request.user, "Admin")
             return redirect("profiles:team_list")
     else:
         form = TeamForm()
@@ -41,7 +41,7 @@ def team_create(request):
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
         {'text': 'Create a new team', 'url': ""},
     ]
-    context = {'form': form, 'group_url': "team", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'object_name': "team", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
 
 
@@ -67,7 +67,7 @@ def team_delete(request, team_id):
         'details': {'warning_sentence': 'Warning: some users are still present in this team:',
                     'details_list': [user.username for user in team.get_all_users()]
                     } if team.get_all_users() else None,
-        'group_url': "team"
+        'object_name': "team"
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
@@ -92,7 +92,7 @@ def user_in_team_update(request, team_id):
                 error = True
             if not error:
                 for user in to_add:
-                    team.add_user_in_role(role.name, user)
+                    team.add_user_in_role(user, role.name)
                 for user in to_remove:
                     team.remove_user(user)
                 return redirect("profiles:user_by_team_list", team_id=team_id)

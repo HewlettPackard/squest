@@ -38,6 +38,7 @@ class UserByBillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterVie
             {'text': "Users", 'url': ""}
         ]
         context['html_button_path'] = "generics/buttons/manage_users.html"
-        context['group_url'] = 'billing_group'
+        context['app_name'] = 'profiles'
+        context['object_name'] = 'billing_group'
         context['group_id'] = billing_group_id
         return context

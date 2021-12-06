@@ -19,12 +19,13 @@ def create_roles(apps, schema_editor):
         create_permissions(app_config, verbosity=0)
         app_config.models_module = None
     for model_name, roles in roles_config.items():
+        content_type = ContentType.objects.get(app_label=model_name.split('.')[0], model=model_name.split('.')[1])
         for role_name, role_params in roles.items():
             role, created = Role.objects.get_or_create(
                 name=role_name,
                 description=role_params['description'],
-                content_type=ContentType.objects.get(app_label=model_name.split('.')[0], model=model_name.split('.')[1])
+                content_type=content_type
             )
             for codename in role_params['permissions']:
-                permission = Permission.objects.get(codename=codename)
+                permission, created = Permission.objects.get_or_create(codename=codename, content_type=content_type)
                 role.permissions.add(permission)

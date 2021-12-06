@@ -1,6 +1,6 @@
-<a href="{% url "profiles:"|add:group_url|add:"_edit" record.id %}" class="btn btn-primary bg-sm">
+<a href="{% url "profiles:"|add:object_name|add:"_edit" record.id %}" class="btn btn-primary bg-sm">
     <i class="fas fa-edit"></i>
 </a>
-<a href="{% url "profiles:"|add:group_url|add:"_delete" record.id %}" class="btn btn-danger bg-sm">
+<a href="{% url "profiles:"|add:object_name|add:"_delete" record.id %}" class="btn btn-danger bg-sm">
     <i class="fas fa-trash"></i>
 </a>
