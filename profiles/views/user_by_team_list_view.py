@@ -56,7 +56,8 @@ class UserByTeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context['roles'] = roles
         context['add_button_url'] = "team"
         context['html_button_path'] = "profiles/user_role/change-users-in-role.html"
-        context['group_url'] = 'team'
+        context['app_name'] = 'profiles'
+        context['object_name'] = 'team'
         context['group_id'] = team_id
         context['object_id'] = team_id
         return context

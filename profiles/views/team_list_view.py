@@ -36,5 +36,5 @@ class TeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Teams"
         context['html_button_path'] = "generics/buttons/add_group.html"
-        context['group_url'] = 'team'
+        context['object_name'] = 'team'
         return context

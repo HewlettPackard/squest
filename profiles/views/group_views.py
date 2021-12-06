@@ -18,7 +18,7 @@ def group_edit(request, group_id):
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': group.name, 'url': ""},
     ]
-    context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'group': group, 'object_name': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
 
 
@@ -35,7 +35,7 @@ def group_create(request):
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
         {'text': 'Create a new group', 'url': ""},
     ]
-    context = {'form': form, 'group_url': "group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'object_name': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
 
 
@@ -60,7 +60,7 @@ def group_delete(request, group_id):
         'details': {'warning_sentence': 'Warning: some users are still present in this group:',
                     'details_list': [user.username for user in group.user_set.all()]
                     } if group.user_set.all() else None,
-        'group_url': "group"
+        'object_name': "group"
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
@@ -86,7 +86,7 @@ def user_in_group_update(request, group_id):
         {'text': group.name, 'url': reverse('profiles:user_by_group_list', args=[group_id])},
         {'text': "Users", 'url': ""}
     ]
-    context = {'form': form, 'group': group, 'group_url': "group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'group': group, 'object_name': "group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-in-group-update.html', context)
 
 

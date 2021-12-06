@@ -28,5 +28,5 @@ class GroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Groups"
         context['html_button_path'] = "generics/buttons/add_group.html"
-        context['group_url'] = 'group'
+        context['object_name'] = 'group'
         return context

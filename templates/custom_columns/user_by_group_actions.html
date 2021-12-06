@@ -1,3 +1,5 @@
-<a href="{% url "profiles:user_in_"|add:group_url|add:"_remove" group_id record.id %}" class="btn btn-danger bg-sm">
+{% load guardian_tags %}
+{% get_obj_perms request.user for object as "object_perms" %}
+<a href="{% url app_name|add:":user_in_"|add:object_name|add:"_remove" object_id record.id %}" class="btn btn-danger bg-sm{% if "change_"|add:object_name not in object_perms %} disabled{% endif %}">
     <i class="fas fa-trash"></i>
 </a>

@@ -28,5 +28,5 @@ class BillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Billing groups"
         context['html_button_path'] = "generics/buttons/add_group.html"
-        context['group_url'] = 'billing_group'
+        context['object_name'] = 'billing_group'
         return context

@@ -20,7 +20,7 @@ def billing_group_edit(request, billing_group_id):
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': group.name, 'url': ""},
     ]
-    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'group': group, 'object_name': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-edit.html', context)
 
 
@@ -37,7 +37,7 @@ def billing_group_create(request):
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
         {'text': 'Create a new billing group', 'url': ""},
     ]
-    context = {'form': form, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'object_name': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/group-create.html', context)
 
 
@@ -87,7 +87,7 @@ def user_in_billing_group_update(request, billing_group_id):
         {'text': group.name, 'url': reverse('profiles:user_by_billing_group_list', args=[billing_group_id])},
         {'text': "Users", 'url': ""}
     ]
-    context = {'form': form, 'group': group, 'group_url': "billing_group", 'breadcrumbs': breadcrumbs}
+    context = {'form': form, 'group': group, 'object_name': "billing_group", 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/group/user-in-group-update.html', context)
 
 

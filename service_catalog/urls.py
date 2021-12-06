@@ -64,6 +64,9 @@ urlpatterns = [
     path('instance/<int:instance_id>/archive/', views.instance_archive, name='instance_archive'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/', views.instance_request_new_operation,
          name='instance_request_new_operation'),
+    path('instance/<int:instance_id>/users/', views.user_in_instance_update, name='user_in_instance_update'),
+    path('instance/<int:instance_id>/users/remove/<int:user_id>/', views.user_in_instance_remove,
+         name='user_in_instance_remove'),
 
     path('support/', SupportListView.as_view(), name='support_list'),
 

@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -6,6 +8,9 @@ from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 
+from profiles.forms import UserRoleForObjectForm
+from profiles.models import Role, UserRoleBinding
+from profiles.views.user_by_team_list_view import UserByTeamTable
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm
 from service_catalog.forms.common_forms import SupportMessageForm
 from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request
@@ -181,6 +186,8 @@ def instance_details(request, instance_id):
     requests_table = RequestTable(requests,
                                   hide_fields=["instance__name", "instance__service__name"])
     supports_table = SupportTable(supports, hide_fields=["instance__name"])
+
+    users_table = UserByTeamTable(instance.get_all_users())
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
         {'text': f"{instance.name} ({instance.id})", 'url': ""},
@@ -189,6 +196,74 @@ def instance_details(request, instance_id):
                'operations_table': operations_table,
                'requests_table': requests_table,
                'supports_table': supports_table,
+               'users_table': users_table,
+               'roles': instance.get_roles_of_users(),
+               'app_name': 'service_catalog',
+               'object': instance,
+               'object_name': 'instance',
+               'object_id': instance.id,
                'breadcrumbs': breadcrumbs,
                }
     return render(request, 'service_catalog/common/instance-details.html', context=context)
+
+
+@login_required
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def user_in_instance_update(request, instance_id):
+    instance = get_object_or_404(Instance, id=instance_id)
+    form = UserRoleForObjectForm(request.POST or None, object=instance)
+    error = False
+    if request.method == 'POST':
+        if form.is_valid():
+            users_id = form.cleaned_data.get('users')
+            role_id = int(form.cleaned_data.get('roles'))
+            role = Role.objects.get(id=role_id)
+            current_users = instance.get_users_in_role(role.name)
+            selected_users = [User.objects.get(id=user_id) for user_id in users_id]
+            to_remove = list(set(current_users) - set(selected_users))
+            to_add = list(set(selected_users) - set(current_users))
+            if instance.spoc in to_remove and role.name == "Admin":
+                form.add_error('users', 'SPOC cannot be remove from Admin')
+                error = True
+            if not error:
+                for user in to_add:
+                    instance.add_user_in_role(user, role.name)
+                for user in to_remove:
+                    instance.remove_user(user)
+                return redirect("service_catalog:instance_details", instance_id=instance_id)
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': "Users", 'url': ""}
+    ]
+    context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Instance).id, 'object_id': instance.id,
+               'breadcrumbs': breadcrumbs}
+    return render(request, 'profiles/user_role/user-role-for-object-form.html', context)
+
+
+@login_required
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def user_in_instance_remove(request, instance_id, user_id):
+    instance = get_object_or_404(Instance, id=instance_id)
+    user = User.objects.get(id=user_id)
+    if user == instance.spoc:
+        return redirect('service_catalog:instance_details', instance_id=instance_id)
+    if request.method == 'POST':
+        instance.remove_user(user)
+        return redirect('service_catalog:instance_details', instance_id=instance_id)
+    args = {
+        "instance_id": instance_id,
+        "user_id": user_id
+    }
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': "Users", 'url': ""}
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{user.username}</strong> from {instance}?"),
+        'action_url': reverse('service_catalog:user_in_instance_remove', kwargs=args),
+        'button_text': 'Remove'
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
