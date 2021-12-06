@@ -8,8 +8,9 @@ from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 
-from profiles.forms import UserRoleForObjectForm
-from profiles.models import Role, UserRoleBinding
+from profiles.forms import UserRoleForObjectForm, TeamRoleForObjectForm
+from profiles.models import Role, UserRoleBinding, Team
+from profiles.views.team_by_object_list_table import TeamsByObjectTable
 from profiles.views.user_by_team_list_view import UserByTeamTable
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm
 from service_catalog.forms.common_forms import SupportMessageForm
@@ -188,6 +189,7 @@ def instance_details(request, instance_id):
     supports_table = SupportTable(supports, hide_fields=["instance__name"])
 
     users_table = UserByTeamTable(instance.get_all_users())
+    teams_table = TeamsByObjectTable(instance.get_all_teams())
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
         {'text': f"{instance.name} ({instance.id})", 'url': ""},
@@ -197,7 +199,9 @@ def instance_details(request, instance_id):
                'requests_table': requests_table,
                'supports_table': supports_table,
                'users_table': users_table,
-               'roles': instance.get_roles_of_users(),
+               'teams_table': teams_table,
+               'user_roles': instance.get_roles_of_users(),
+               'team_roles': instance.get_roles_of_teams(),
                'app_name': 'service_catalog',
                'object': instance,
                'object_name': 'instance',
@@ -238,7 +242,7 @@ def user_in_instance_update(request, instance_id):
     ]
     context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Instance).id, 'object_id': instance.id,
                'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/user_role/user-role-for-object-form.html', context)
+    return render(request, 'profiles/role/user-role-for-object-form.html', context)
 
 
 @login_required
@@ -264,6 +268,67 @@ def user_in_instance_remove(request, instance_id, user_id):
         'breadcrumbs': breadcrumbs,
         'confirm_text': mark_safe(f"Confirm to remove the user <strong>{user.username}</strong> from {instance}?"),
         'action_url': reverse('service_catalog:user_in_instance_remove', kwargs=args),
+        'button_text': 'Remove'
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
+
+@login_required
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def team_in_instance_update(request, instance_id):
+    instance = get_object_or_404(Instance, id=instance_id)
+    form = TeamRoleForObjectForm(request.POST or None, object=instance)
+    error = False
+    if request.method == 'POST':
+        if form.is_valid():
+            teams_id = form.cleaned_data.get('teams')
+            role_id = int(form.cleaned_data.get('roles'))
+            role = Role.objects.get(id=role_id)
+            current_teams = instance.get_teams_in_role(role.name)
+            selected_teams = [Team.objects.get(id=team_id) for team_id in teams_id]
+            to_remove = list(set(current_teams) - set(selected_teams))
+            to_add = list(set(selected_teams) - set(current_teams))
+            if instance.spoc in to_remove and role.name == "Admin":
+                form.add_error('teams', 'SPOC cannot be remove from Admin')
+                error = True
+            if not error:
+                for team in to_add:
+                    instance.add_team_in_role(team, role.name)
+                for team in to_remove:
+                    instance.remove_team(team)
+                return redirect("service_catalog:instance_details", instance_id=instance_id)
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': "Teams", 'url': ""}
+    ]
+    context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Instance).id, 'object_id': instance.id,
+               'breadcrumbs': breadcrumbs}
+    return render(request, 'profiles/role/team-role-for-object-form.html', context)
+
+
+@login_required
+@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+def team_in_instance_remove(request, instance_id, team_id):
+    instance = get_object_or_404(Instance, id=instance_id)
+    team = Team.objects.get(id=team_id)
+    if team == instance.spoc:
+        return redirect('service_catalog:instance_details', instance_id=instance_id)
+    if request.method == 'POST':
+        instance.remove_team(team)
+        return redirect('service_catalog:instance_details', instance_id=instance_id)
+    args = {
+        "instance_id": instance_id,
+        "team_id": team_id
+    }
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': "Teams", 'url': ""}
+    ]
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'confirm_text': mark_safe(f"Confirm to remove the team <strong>{team.teamname}</strong> from {instance}?"),
+        'action_url': reverse('service_catalog:team_in_instance_remove', kwargs=args),
         'button_text': 'Remove'
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)

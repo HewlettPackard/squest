@@ -30,15 +30,15 @@ class UserByGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        group_id = self.kwargs.get('group_id')
+        group = Group.objects.get(id=self.kwargs.get('group_id'))
         context['breadcrumbs'] = [
             {'text': 'Groups', 'url': reverse('profiles:group_list')},
-            {'text': Group.objects.get(id=group_id).name, 'url': ""},
+            {'text': group.name, 'url': ""},
             {'text': "Users", 'url': ""}
         ]
-        context['add_button_url'] = "group"
         context['html_button_path'] = "generics/buttons/manage_users.html"
         context['app_name'] = 'profiles'
         context['object_name'] = 'group'
-        context['group_id'] = group_id
+        context['object_id'] = group.id
+        context['object'] = group
         return context

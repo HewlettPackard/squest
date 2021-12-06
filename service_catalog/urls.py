@@ -67,6 +67,9 @@ urlpatterns = [
     path('instance/<int:instance_id>/users/', views.user_in_instance_update, name='user_in_instance_update'),
     path('instance/<int:instance_id>/users/remove/<int:user_id>/', views.user_in_instance_remove,
          name='user_in_instance_remove'),
+    path('instance/<int:instance_id>/teams/', views.team_in_instance_update, name='team_in_instance_update'),
+    path('instance/<int:instance_id>/teams/remove/<int:team_id>/', views.team_in_instance_remove,
+         name='team_in_instance_remove'),
 
     path('support/', SupportListView.as_view(), name='support_list'),
 

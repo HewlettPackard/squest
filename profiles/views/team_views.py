@@ -103,7 +103,7 @@ def user_in_team_update(request, team_id):
     ]
     context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Team).id, 'object_id': team.id,
                'breadcrumbs': breadcrumbs}
-    return render(request, 'profiles/user_role/user-role-for-object-form.html', context)
+    return render(request, 'profiles/role/user-role-for-object-form.html', context)
 
 
 @login_required

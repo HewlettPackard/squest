@@ -16,7 +16,7 @@ from profiles.models.team import Team
 
 class UserByTeamTable(tables.Table):
     actions = TemplateColumn(template_name='custom_columns/user_by_group_actions.html', orderable=False)
-    role = TemplateColumn(template_name='custom_columns/user_role_team.html', orderable=False)
+    role = TemplateColumn(template_name='custom_columns/role_object.html', orderable=False)
 
     class Meta:
         model = User
@@ -44,7 +44,7 @@ class UserByTeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         team = Team.objects.get(id=team_id)
         roles = dict()
         for user in team.get_all_users():
-            roles[user.username] = [binding.role.name for binding in UserRoleBinding.objects.filter(
+            roles[user.id] = [binding.role.name for binding in UserRoleBinding.objects.filter(
                 user=user,
                 content_type=ContentType.objects.get_for_model(Team),
                 object_id=team.id)]
@@ -54,10 +54,10 @@ class UserByTeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):
             {'text': "Users", 'url': ""}
         ]
         context['roles'] = roles
-        context['add_button_url'] = "team"
-        context['html_button_path'] = "profiles/user_role/change-users-in-role.html"
+        context['html_button_path'] = "profiles/role/change-users-in-role.html"
         context['app_name'] = 'profiles'
         context['object_name'] = 'team'
+        context['object'] = team
         context['group_id'] = team_id
         context['object_id'] = team_id
         return context

@@ -23,6 +23,9 @@ class Team(Model):
             object_id=self.id,
             role=self.roles.get(name=role_name)
         )
+        from profiles.models import TeamRoleBinding
+        for binding in TeamRoleBinding.objects.filter(team=self):
+            binding.assign_permissions(user)
 
     def get_users_in_role(self, role_name):
         bindings = UserRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
@@ -38,6 +41,9 @@ class Team(Model):
                                                   object_id=self.id)
         for binding in bindings:
             binding.delete()
+        from profiles.models import TeamRoleBinding
+        for binding in TeamRoleBinding.objects.filter(team=self):
+            binding.remove_permissions(user)
 
     def __str__(self):
         return self.name
