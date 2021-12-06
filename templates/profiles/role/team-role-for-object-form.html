@@ -16,9 +16,9 @@
                         {% endif %}
                     </div>
                 {% endif %}
-                <form id="UserRoleForObjectForm" class="form-horizontal"
+                <form id="TeamRoleForObjectForm" class="form-horizontal"
                       action="{{ url }}" method="post"
-                      data-get-users-with-role-url="{% url 'profiles:get_users_with_role' %}"
+                      data-get-teams-with-role-url="{% url 'profiles:get_teams_with_role' %}"
                       data-content-type-id="{{ content_type_id }}"
                       data-object-id="{{ object_id }}"
                 >
@@ -51,10 +51,10 @@
         </div>
     </div>
     {% load static %}
-    <script src="{% static 'squest/js/user-role-for-object.js' %}"></script>
+    <script src="{% static 'squest/js/role-for-object.js' %}"></script>
     <script>
         $("#id_roles").change(function () {
-            get_users_with_role($(this).val());
+            get_teams_with_role($(this).val());
         });
     </script>
 {% endblock %}

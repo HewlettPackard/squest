@@ -1,0 +1,7 @@
+{% load squest_utils %}
+{% for role_name in roles|lookup:record.id %}
+
+    <small class="badge badge-secondary">
+        {{ role_name }}
+    </small>
+{% endfor %}

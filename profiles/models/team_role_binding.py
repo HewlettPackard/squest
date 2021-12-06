@@ -21,35 +21,47 @@ class TeamRoleBinding(Model):
     def get_object(self):
         return self.content_type.get_object_for_this_type(id=self.object_id)
 
-    def assign_permissions(self):
-        for user in self.team.get_all_users():
-            for permission in self.role.permissions.all():
-                UserObjectPermission.objects.assign_perm(permission, user, obj=self.get_object())
+    def assign_permissions(self, user=None):
+        if user:
+            self._set_permission_for_user(user)
+        else:
+            for user in self.team.get_all_users():
+                self._set_permission_for_user(user)
 
-    def remove_permissions(self):
-        for user in self.team.get_all_users():
-            all_user_bindings = UserRoleBinding.objects.filter(user=user, content_type=self.content_type,
-                                                               object_id=self.object_id)
-            teams = [Team.objects.get(id=binding.object_id) for binding in
-                     UserRoleBinding.objects.filter(user=user,
-                                                    content_type=ContentType.objects.get_for_model(Team))]
-            all_team_bindings = TeamRoleBinding.objects.filter(team__in=teams, content_type=self.content_type,
-                                                               object_id=self.object_id).exclude(id=self.id)
-            others_permission = list()
-            for binding in all_user_bindings:
-                others_permission = [*others_permission, *list(binding.role.permissions.all())]
-            for binding in all_team_bindings:
-                others_permission = [*others_permission, *list(binding.role.permissions.all())]
-            user_bindings = UserRoleBinding.objects.filter(
-                user=user,
-                role=self.role,
-                content_type=self.content_type,
-                object_id=self.object_id
-            )
-            if user_bindings.count() == 0:
-                for permission in self.role.permissions.all():
-                    if permission not in others_permission:
-                        UserObjectPermission.objects.remove_perm(permission, user, obj=self.get_object())
+    def _set_permission_for_user(self, user):
+        for permission in self.role.permissions.all():
+            UserObjectPermission.objects.assign_perm(permission, user, obj=self.get_object())
+
+    def remove_permissions(self, user=None):
+        if user:
+            self._unset_permission_for_user(user)
+        else:
+            for user in self.team.get_all_users():
+                self._unset_permission_for_user(user)
+
+    def _unset_permission_for_user(self, user):
+        all_user_bindings = UserRoleBinding.objects.filter(user=user, content_type=self.content_type,
+                                                           object_id=self.object_id)
+        teams = [Team.objects.get(id=binding.object_id) for binding in
+                 UserRoleBinding.objects.filter(user=user,
+                                                content_type=ContentType.objects.get_for_model(Team))]
+        all_team_bindings = TeamRoleBinding.objects.filter(team__in=teams, content_type=self.content_type,
+                                                           object_id=self.object_id).exclude(id=self.id)
+        others_permission = list()
+        for binding in all_user_bindings:
+            others_permission = [*others_permission, *list(binding.role.permissions.all())]
+        for binding in all_team_bindings:
+            others_permission = [*others_permission, *list(binding.role.permissions.all())]
+        user_bindings = UserRoleBinding.objects.filter(
+            user=user,
+            role=self.role,
+            content_type=self.content_type,
+            object_id=self.object_id
+        )
+        if user_bindings.count() == 0:
+            for permission in self.role.permissions.all():
+                if permission not in others_permission:
+                    UserObjectPermission.objects.remove_perm(permission, user, obj=self.get_object())
 
 
 @receiver(post_save, sender=TeamRoleBinding)
