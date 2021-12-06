@@ -15,7 +15,9 @@
         </div>
     {% endif %}
 {% endblock %}
-{% block main %}
+{% block main %}8
+    {% load guardian_tags %}
+    {% get_obj_perms request.user for instance as "instance_perms" %}
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
@@ -70,6 +72,7 @@
                             <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
                             <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Spec</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+                            <li class="nav-item"><a class="nav-link" href="#users" data-toggle="tab">Users</a>
                             </li>
                         </ul>
                     </div>
@@ -91,10 +94,17 @@
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}
                             </div>
+                            <div class="tab-pane" id="users">
+                                <a class="btn btn-info float-sm-right{% if "change_instance" not in instance_perms %} disabled{% endif %}"
+                                   href="{% url "service_catalog:user_in_instance_update" instance.id %}">
+                                    <i class="fas fa-user-edit"></i> Manage users role
+                                </a>
+                                {% render_table users_table %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
-    </div><!-- end container fluid -->
+    </div>
 {% endblock %}

@@ -38,6 +38,7 @@ class UserByGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         ]
         context['add_button_url'] = "group"
         context['html_button_path'] = "generics/buttons/manage_users.html"
-        context['group_url'] = 'group'
+        context['app_name'] = 'profiles'
+        context['object_name'] = 'group'
         context['group_id'] = group_id
         return context
