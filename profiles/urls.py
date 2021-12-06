@@ -61,6 +61,7 @@ urlpatterns = [
     path('team/<int:team_id>/delete/', views.team_delete, name='team_delete'),
 
     # User Role Binding URLs
-    path('role/ajax/get-users-with-role/', views.ajax_get_users_with_role, name='get_users_with_role')
+    path('role/ajax/get-users-with-role/', views.ajax_get_users_with_role, name='get_users_with_role'),
+    path('role/ajax/get-teams-with-role/', views.ajax_get_teams_with_role, name='get_teams_with_role')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,10 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
-from profiles.models import BillingGroup, Role, UserRoleBinding
+from profiles.models import BillingGroup, Role, UserRoleBinding, Team, TeamRoleBinding
 from . import Service, InstanceState
 from .state_hooks import HookManager
 
@@ -117,11 +117,11 @@ class Instance(models.Model):
     def get_roles_of_users(self):
         roles = dict()
         for user in self.get_all_users():
-            roles[user.username] = [binding.role.name for binding in UserRoleBinding.objects.filter(
+            roles[user.id] = [binding.role.name for binding in UserRoleBinding.objects.filter(
                 user=user,
                 content_type=ContentType.objects.get_for_model(Instance),
                 object_id=self.id)]
-        roles[self.spoc.username].append("SPOC")
+        roles[self.spoc.id].append("SPOC")
         return roles
 
     def remove_user(self, user, role_name=None):
@@ -133,6 +133,38 @@ class Instance(models.Model):
             bindings = UserRoleBinding.objects.filter(user=user,
                                                       content_type=ContentType.objects.get_for_model(Instance),
                                                       object_id=self.id)
+        for binding in bindings:
+            binding.delete()
+
+    def add_team_in_role(self, team, role_name):
+        TeamRoleBinding.objects.get_or_create(
+            team=team,
+            content_type=ContentType.objects.get_for_model(Instance),
+            object_id=self.id,
+            role=self.roles.get(name=role_name)
+        )
+
+    def get_teams_in_role(self, role_name):
+        bindings = TeamRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
+        return Team.objects.filter(id__in=[binding.team.id for binding in bindings])
+
+    def get_all_teams(self):
+        bindings = TeamRoleBinding.objects.filter(role__in=self.roles, object_id=self.id)
+        return Team.objects.filter(id__in=[binding.team.id for binding in bindings])
+
+    def get_roles_of_teams(self):
+        roles = dict()
+        for team in self.get_all_teams():
+            roles[team.id] = [binding.role.name for binding in TeamRoleBinding.objects.filter(
+                team=team,
+                content_type=ContentType.objects.get_for_model(Instance),
+                object_id=self.id)]
+        return roles
+
+    def remove_team(self, team):
+        bindings = TeamRoleBinding.objects.filter(team=team,
+                                                  content_type=ContentType.objects.get_for_model(Instance),
+                                                  object_id=self.id)
         for binding in bindings:
             binding.delete()
 

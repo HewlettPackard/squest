@@ -4,4 +4,4 @@ from profiles.views.team_views import *
 from profiles.views.common import *
 from profiles.views.token_views import *
 from profiles.views.notification_views import *
-from profiles.views.user_role_binding_view import *
+from profiles.views.role_binding_view import *

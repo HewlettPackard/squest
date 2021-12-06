@@ -22,13 +22,16 @@ roles_config = {
                 "description": "An administrator of the instance can manage it",
                 "permissions": [
                     "change_instance",
+                    "request_operation_on_instance",
+                    "request_support_on_instance",
                     "view_instance"
                 ]
             },
-            "User": {
-                "description": "A user can ask for operations on the instance",
+            "Operator": {
+                "description": "An operator can request for operations on the instance",
                 "permissions": [
-                    "ask_instance",
+                    "request_operation_on_instance",
+                    "request_support_on_instance",
                     "view_instance"
                 ]
             },

@@ -31,14 +31,15 @@ class UserByBillingGroupListView(LoginRequiredMixin, SingleTableMixin, FilterVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        billing_group_id = self.kwargs.get('billing_group_id')
+        billing_group = BillingGroup.objects.get(id=self.kwargs.get('billing_group_id'))
         context['breadcrumbs'] = [
             {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},
-            {'text': BillingGroup.objects.get(id=billing_group_id).name, 'url': ""},
+            {'text': billing_group.name, 'url': ""},
             {'text': "Users", 'url': ""}
         ]
         context['html_button_path'] = "generics/buttons/manage_users.html"
         context['app_name'] = 'profiles'
         context['object_name'] = 'billing_group'
-        context['group_id'] = billing_group_id
+        context['object_id'] = billing_group.id
+        context['object'] = billing_group
         return context
