@@ -9,9 +9,9 @@ from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 
 from profiles.forms import UserRoleForObjectForm, TeamRoleForObjectForm
-from profiles.models import Role, UserRoleBinding, Team
-from profiles.views.team_by_object_list_table import TeamsByObjectTable
-from profiles.views.user_by_team_list_view import UserByTeamTable
+from profiles.models import Role, Team
+from profiles.tables import TeamsByObjectTable
+from profiles.tables import UserByObjectTable
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm
 from service_catalog.forms.common_forms import SupportMessageForm
 from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request
@@ -188,7 +188,7 @@ def instance_details(request, instance_id):
                                   hide_fields=["instance__name", "instance__service__name"])
     supports_table = SupportTable(supports, hide_fields=["instance__name"])
 
-    users_table = UserByTeamTable(instance.get_all_users())
+    users_table = UserByObjectTable(instance.get_all_users())
     teams_table = TeamsByObjectTable(instance.get_all_teams())
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},

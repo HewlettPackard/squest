@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
-from profiles.models import UserRoleBinding, TeamRoleBinding, Team
+from guardian.shortcuts import get_objects_for_user
+
+from profiles.models import UserRoleBinding, TeamRoleBinding, Team, Role
 
 
 @login_required
@@ -23,3 +26,14 @@ def ajax_get_teams_with_role(request):
     selected = [binding.user.id for binding in bindings]
     return render(request, 'profiles/role/teams-dropdown-list.html',
                   {'teams': Team.objects.all(), 'selected': selected})
+
+
+def get_objects_of_user_from_content_type(user, content_type_id):
+    content_type = ContentType.objects.get(id=content_type_id)
+    return [(obj.id, obj.__str__) for obj in
+            get_objects_for_user(user, f"{content_type.app_label}.change_{content_type.name}")]
+
+
+def get_roles_from_content_type(content_type_id):
+    content_type = ContentType.objects.get(id=content_type_id)
+    return [(role.id, role.name) for role in Role.objects.filter(content_type=content_type)]

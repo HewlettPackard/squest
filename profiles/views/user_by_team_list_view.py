@@ -12,23 +12,14 @@ from guardian.mixins import LoginRequiredMixin
 from profiles.filters.user_filter import UserFilter
 from profiles.models import UserRoleBinding
 from profiles.models.team import Team
-
-
-class UserByTeamTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/user_by_group_actions.html', orderable=False)
-    role = TemplateColumn(template_name='custom_columns/role_object.html', orderable=False)
-
-    class Meta:
-        model = User
-        attrs = {"id": "user_by_team_table", "class": "table squest-pagination-tables "}
-        fields = ("username", "email", "role", "actions")
+from profiles.tables import UserByObjectTable
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required_or_403('profiles.view_team', (Team, 'id', 'team_id')), name='dispatch')
 class UserByTeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 10}
-    table_class = UserByTeamTable
+    table_class = UserByObjectTable
     model = User
     template_name = 'generics/list.html'
     filterset_class = UserFilter
