@@ -45,6 +45,15 @@ class Team(Model):
         for binding in TeamRoleBinding.objects.filter(team=self):
             binding.remove_permissions(user)
 
+    def get_roles_of_users(self):
+        roles = dict()
+        for user in self.get_all_users():
+            roles[user.id] = [binding.role.name for binding in UserRoleBinding.objects.filter(
+                user=user,
+                content_type=ContentType.objects.get_for_model(Team),
+                object_id=self.id)]
+        return roles
+
     def __str__(self):
         return self.name
 

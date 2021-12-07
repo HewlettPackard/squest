@@ -18,6 +18,14 @@ class TeamRoleBinding(Model):
     object_id = PositiveIntegerField(null=False)
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    @property
+    def object_type(self):
+        return self.content_type.name
+
+    @property
+    def object_name(self):
+        return self.content_object.__str__()
+
     def get_object(self):
         return self.content_type.get_object_for_this_type(id=self.object_id)
 

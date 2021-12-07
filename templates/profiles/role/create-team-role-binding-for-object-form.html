@@ -11,23 +11,19 @@
                                 <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
                             {% endif %}
                         {% endfor %}
-                        {% if form.non_field_errors %}
-                            {{ form.non_field_errors }}
-                        {% endif %}
                     </div>
                 {% endif %}
-                <form id="UserRoleForObjectForm" class="form-horizontal"
+                <form id="CreateTeamRoleBindingForm" class="form-horizontal"
                       action="{{ url }}" method="post"
-                      data-get-users-with-role-url="{% url 'profiles:get_users_with_role' %}"
-                      data-content-type-id="{{ content_type_id }}"
-                      data-object-id="{{ object_id }}"
+                      data-update-roles-url="{% url 'profiles:ajax_update_roles' %}"
+                      data-update-objects-url="{% url 'profiles:ajax_update_objects' %}"
                 >
                     {% csrf_token %}
-
                     {% for field in form %}
                         <div class="form-group {% if field.errors %}has-error{% endif %}">
-                            <label for="{{ field.name }}" class="control-label">
-                                {{ field.label }}
+                            <label for="{{ field.id_for_label }}" class="control-label">
+                                {{ field.label }} {% if field.field.required %}
+                                <span class="text-danger">*</span>{% endif %}
                             </label>
                             <div class="col-sm-12">
                                 {{ field }}
@@ -41,7 +37,7 @@
                     <div class="mt-2 form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <button class="btn btn-success" type="submit">
-                                Edit role
+                                Create role
                             </button>
                         </div>
                     </div>
@@ -52,8 +48,8 @@
     {% load static %}
     <script src="{% static 'squest/js/role-for-object.js' %}"></script>
     <script>
-        $("#id_roles").change(function () {
-            get_users_with_role($(this).val());
+        $("#id_content_type").change(function () {
+            update_dropdown_binding_with_content_type($(this).val());
         });
     </script>
 {% endblock %}

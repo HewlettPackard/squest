@@ -5,10 +5,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from guardian.decorators import permission_required_or_403
-
-from profiles.forms import TeamForm, AddUserForm, UserRoleForObjectForm
-from profiles.models import Role
+from profiles.forms import TeamForm, UserRoleForObjectForm, CreateTeamRoleBindingForObjectForm
+from profiles.models import Role, TeamRoleBinding
 from profiles.models.team import Team
+from profiles.tables import UserByObjectTable, RoleBindingByTeamTable
+from profiles.views import get_roles_from_content_type, get_objects_of_user_from_content_type
 
 
 @login_required
@@ -132,3 +133,73 @@ def user_in_team_remove(request, team_id, user_id):
         'button_text': 'Remove'
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
+
+
+@login_required
+@permission_required_or_403('profiles.view_team', (Team, 'id', 'team_id'))
+def team_details(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    bindings = TeamRoleBinding.objects.filter(team=team)
+    users_table = UserByObjectTable(team.get_all_users())
+    roles_table = RoleBindingByTeamTable(bindings)
+    context = {
+        'breadcrumbs': [
+            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': Team.objects.get(id=team_id).name, 'url': ""}
+        ],
+        'roles': team.get_roles_of_users(),
+        'html_button_path': "profiles/role/change-users-in-role.html",
+        'app_name': 'profiles',
+        'object_name': 'team',
+        'object': team,
+        'group_id': team_id,
+        'object_id': team_id,
+        'users_table': users_table,
+        'roles_table': roles_table
+    }
+    return render(request, 'profiles/team-details.html', context=context)
+
+
+@login_required
+@permission_required_or_403('profiles.change_team', (Team, 'id', 'team_id'))
+def create_team_binding(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    content_types = list()
+    for role in Role.objects.all():
+        ct_tuple = (role.content_type.id, role.content_type.name)
+        if ct_tuple not in content_types:
+            content_types.append(ct_tuple)
+    form = CreateTeamRoleBindingForObjectForm(
+        request.POST or None,
+        user=request.user,
+        content_type=content_types
+    )
+    if request.method == 'POST':
+        if form.is_valid():
+            content_type = ContentType.objects.get(id=form.cleaned_data.get('content_type'))
+            role = Role.objects.get(id=form.cleaned_data.get('role'))
+            object_id = form.cleaned_data.get('object')
+            TeamRoleBinding.objects.create(team=team, content_type=content_type, role=role, object_id=object_id)
+            return redirect("profiles:team_details", team_id=team_id)
+    breadcrumbs = [
+        {'text': 'Teams', 'url': reverse('profiles:team_list')},
+        {'text': team.name, 'url': reverse('profiles:user_by_team_list', args=[team_id])},
+        {'text': "Roles", 'url': ""}
+    ]
+    context = {'form': form, 'breadcrumbs': breadcrumbs}
+    return render(request, 'profiles/role/create-team-role-binding-for-object-form.html', context)
+
+
+@login_required
+def ajax_team_role_binding_form_update_roles(request):
+    content_type_id = request.GET.get('content_type_id')
+    return render(request, 'profiles/role/object-dropdown-list.html',
+                  {'objects': get_roles_from_content_type(content_type_id)})
+
+
+@login_required
+def ajax_team_role_binding_form_update_objects(request):
+    content_type_id = request.GET.get('content_type_id')
+    return render(request, 'profiles/role/object-dropdown-list.html',
+                  {'objects': get_objects_of_user_from_content_type(request.user, content_type_id)})
+
