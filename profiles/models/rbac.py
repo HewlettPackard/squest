@@ -41,5 +41,29 @@ roles_config = {
                     "view_instance"
                 ]
             }
+        },
+    "service_catalog.request":
+        {
+            "Admin": {
+                "description": "An administrator of the request can manage it",
+                "permissions": [
+                    "change_request",
+                    "delete_request",
+                    "view_request"
+                ]
+            },
+            "Operator": {
+                "description": "An operator can request for operations on the request",
+                "permissions": [
+                    "change_request",
+                    "view_request"
+                ]
+            },
+            "Reader": {
+                "description": "A reader can access the request",
+                "permissions": [
+                    "view_request"
+                ]
+            }
         }
 }

@@ -6,13 +6,14 @@ from datetime import datetime, timedelta
 import requests
 import towerlib
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
-from guardian.models import UserObjectPermission
 
+from profiles.models import UserRoleBinding, TeamRoleBinding, Role, Team
 from . import Operation, ExceptionServiceCatalog, InstanceState, OperationType, RequestState
 from .instance import Instance
 from .state_hooks import HookManager
@@ -33,6 +34,10 @@ class Request(models.Model):
     periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
     periodic_task_date_expire = models.DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = models.TextField(blank=True, null=True)
+
+    def __init__(self, *args, **kwargs):
+        super(Request, self).__init__(*args, **kwargs)
+        self.roles = Role.objects.filter(content_type=ContentType.objects.get_for_model(Instance))
 
     def can_process(self):
         if self.instance.state in [InstanceState.AVAILABLE, InstanceState.PENDING, InstanceState.UPDATE_FAILED,
@@ -199,14 +204,93 @@ class Request(models.Model):
             send_email_request_error(target_request=self,
                                      error_message=error_message)
 
+    def add_user_in_role(self, user, role_name):
+        UserRoleBinding.objects.get_or_create(
+            user=user,
+            content_type=ContentType.objects.get_for_model(Instance),
+            object_id=self.id,
+            role=self.roles.get(name=role_name)
+        )
+
+    def get_users_in_role(self, role_name):
+        bindings = UserRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
+        return User.objects.filter(id__in=[binding.user.id for binding in bindings])
+
+    def get_all_users(self):
+        bindings = UserRoleBinding.objects.filter(role__in=self.roles, object_id=self.id)
+        return User.objects.filter(id__in=[binding.user.id for binding in bindings])
+
+    def get_roles_of_users(self):
+        roles = dict()
+        for user in self.get_all_users():
+            roles[user.id] = [binding.role.name for binding in UserRoleBinding.objects.filter(
+                user=user,
+                content_type=ContentType.objects.get_for_model(Instance),
+                object_id=self.id)]
+        return roles
+
+    def remove_user(self, user, role_name=None):
+        if role_name:
+            bindings = UserRoleBinding.objects.filter(user=user,
+                                                      content_type=ContentType.objects.get_for_model(Instance),
+                                                      object_id=self.id, role__name=role_name)
+        else:
+            bindings = UserRoleBinding.objects.filter(user=user,
+                                                      content_type=ContentType.objects.get_for_model(Instance),
+                                                      object_id=self.id)
+        for binding in bindings:
+            binding.delete()
+
+    def add_team_in_role(self, team, role_name):
+        TeamRoleBinding.objects.get_or_create(
+            team=team,
+            content_type=ContentType.objects.get_for_model(Instance),
+            object_id=self.id,
+            role=self.roles.get(name=role_name)
+        )
+
+    def get_teams_in_role(self, role_name):
+        bindings = TeamRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
+        return Team.objects.filter(id__in=[binding.team.id for binding in bindings])
+
+    def get_all_teams(self):
+        bindings = TeamRoleBinding.objects.filter(role__in=self.roles, object_id=self.id)
+        return Team.objects.filter(id__in=[binding.team.id for binding in bindings])
+
+    def get_roles_of_teams(self):
+        roles = dict()
+        for team in self.get_all_teams():
+            roles[team.id] = [binding.role.name for binding in TeamRoleBinding.objects.filter(
+                team=team,
+                content_type=ContentType.objects.get_for_model(Instance),
+                object_id=self.id)]
+        return roles
+
+    def remove_team(self, team, role_name):
+        if role_name:
+            bindings = TeamRoleBinding.objects.filter(team=team,
+                                                      content_type=ContentType.objects.get_for_model(Instance),
+                                                      object_id=self.id, role__name=role_name)
+        else:
+            bindings = TeamRoleBinding.objects.filter(team=team,
+                                                      content_type=ContentType.objects.get_for_model(Instance),
+                                                      object_id=self.id)
+        for binding in bindings:
+            binding.delete()
+
     @classmethod
-    def add_user_permission(cls, sender, instance, created, *args, **kwargs):
+    def add_permission(cls, sender, instance, created, *args, **kwargs):
         if created:
-            if instance.user is not None:
-                logger.info(
-                    f"[Request][add_user_permission] add user permission on request id {instance.id} for user {instance.user.username}")
-                UserObjectPermission.objects.assign_perm('view_request', instance.user, obj=instance)
-                UserObjectPermission.objects.assign_perm('delete_request', instance.user, obj=instance)
+            if instance.user:
+                instance.add_user_in_role(instance.user, "Admin")
+            instance_content_type = ContentType.objects.get_for_model(Instance)
+            user_bindings = UserRoleBinding.objects.filter(content_type=instance_content_type, object_id=instance.instance.id)
+            team_bindings = TeamRoleBinding.objects.filter(content_type=instance_content_type, object_id=instance.instance.id)
+            for user_binding in user_bindings:
+                instance.add_user_in_role(user_binding.user, user_binding.role.name)
+            for team_binding in team_bindings:
+                instance.add_team_in_role(team_binding.team, team_binding.role.name)
+
 
     @classmethod
     def accept_if_auto_accept_on_operation(cls, sender, instance, created, *args, **kwargs):
@@ -238,7 +322,7 @@ class Request(models.Model):
                     instance.save()
 
 
-post_save.connect(Request.add_user_permission, sender=Request)
+post_save.connect(Request.add_permission, sender=Request)
 post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
 post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
 post_transition.connect(HookManager.trigger_hook_handler, sender=Request)

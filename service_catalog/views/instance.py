@@ -66,7 +66,7 @@ def instance_delete(request, instance_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+@permission_required_or_403('service_catalog.request_operation_on_instance', (Instance, 'id', 'instance_id'))
 def instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
     if instance.state not in [InstanceState.AVAILABLE, InstanceState.UPDATING]:
@@ -109,7 +109,7 @@ def instance_archive(request, instance_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
 def instance_new_support(request, instance_id):
     target_instance = get_object_or_404(Instance, id=instance_id)
     breadcrumbs = [
@@ -132,7 +132,7 @@ def instance_new_support(request, instance_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
 def instance_support_details(request, instance_id, support_id):
     instance = get_object_or_404(Instance, id=instance_id)
     support = get_object_or_404(Support, id=support_id)
@@ -233,7 +233,7 @@ def user_in_instance_update(request, instance_id):
                 for user in to_add:
                     instance.add_user_in_role(user, role.name)
                 for user in to_remove:
-                    instance.remove_user(user)
+                    instance.remove_user(user, role.name)
                 return redirect("service_catalog:instance_details", instance_id=instance_id)
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
@@ -272,11 +272,12 @@ def user_in_instance_remove(request, instance_id, user_id):
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
+
 @login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def team_in_instance_update(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
-    form = TeamRoleForObjectForm(request.POST or None, object=instance)
+    form = TeamRoleForObjectForm(request.POST or None, user=request.user, object=instance)
     error = False
     if request.method == 'POST':
         if form.is_valid():
@@ -294,7 +295,7 @@ def team_in_instance_update(request, instance_id):
                 for team in to_add:
                     instance.add_team_in_role(team, role.name)
                 for team in to_remove:
-                    instance.remove_team(team)
+                    instance.remove_team(team, role.name)
                 return redirect("service_catalog:instance_details", instance_id=instance_id)
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
