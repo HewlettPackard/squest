@@ -105,6 +105,13 @@ class Instance(models.Model):
             object_id=self.id,
             role=self.roles.get(name=role_name)
         )
+        for request in self.request_set:
+            UserRoleBinding.objects.get_or_create(
+                user=user,
+                content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                object_id=request.id,
+                role=request.roles.get(name=role_name)
+            )
 
     def get_users_in_role(self, role_name):
         bindings = UserRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
@@ -126,13 +133,26 @@ class Instance(models.Model):
 
     def remove_user(self, user, role_name=None):
         if role_name:
-            bindings = UserRoleBinding.objects.filter(user=user,
-                                                      content_type=ContentType.objects.get_for_model(Instance),
-                                                      object_id=self.id, role__name=role_name)
+            bindings = list(UserRoleBinding.objects.filter(user=user,
+                                                           content_type=ContentType.objects.get_for_model(Instance),
+                                                           object_id=self.id, role__name=role_name))
+            for request in self.request_set:
+                bindings = [*bindings, *list(UserRoleBinding.objects.filter(
+                    user=user,
+                    content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                    object_id=request.id,
+                    role=request.roles.get(name=role_name)
+                ))]
         else:
-            bindings = UserRoleBinding.objects.filter(user=user,
-                                                      content_type=ContentType.objects.get_for_model(Instance),
-                                                      object_id=self.id)
+            bindings = list(UserRoleBinding.objects.filter(user=user,
+                                                           content_type=ContentType.objects.get_for_model(Instance),
+                                                           object_id=self.id))
+            for request in self.request_set:
+                bindings = [*bindings, *list(UserRoleBinding.objects.filter(
+                    user=user,
+                    content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                    object_id=request.id
+                ))]
         for binding in bindings:
             binding.delete()
 
@@ -143,6 +163,13 @@ class Instance(models.Model):
             object_id=self.id,
             role=self.roles.get(name=role_name)
         )
+        for request in self.request_set:
+            TeamRoleBinding.objects.get_or_create(
+                team=team,
+                content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                object_id=request.id,
+                role=request.roles.get(name=role_name)
+            )
 
     def get_teams_in_role(self, role_name):
         bindings = TeamRoleBinding.objects.filter(role=self.roles.get(name=role_name), object_id=self.id)
@@ -161,10 +188,28 @@ class Instance(models.Model):
                 object_id=self.id)]
         return roles
 
-    def remove_team(self, team):
-        bindings = TeamRoleBinding.objects.filter(team=team,
-                                                  content_type=ContentType.objects.get_for_model(Instance),
-                                                  object_id=self.id)
+    def remove_team(self, team, role_name):
+        if role_name:
+            bindings = list(TeamRoleBinding.objects.filter(team=team,
+                                                           content_type=ContentType.objects.get_for_model(Instance),
+                                                           object_id=self.id, role__name=role_name))
+            for request in self.request_set:
+                bindings = [*bindings, *list(TeamRoleBinding.objects.filter(
+                    team=team,
+                    content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                    object_id=request.id,
+                    role=request.roles.get(name=role_name)
+                ))]
+        else:
+            bindings = list(TeamRoleBinding.objects.filter(team=team,
+                                                           content_type=ContentType.objects.get_for_model(Instance),
+                                                           object_id=self.id))
+            for request in self.request_set:
+                bindings = [*bindings, *list(TeamRoleBinding.objects.filter(
+                    team=team,
+                    content_type=ContentType.objects.get(app_label="service_catalog", model="request"),
+                    object_id=request.id
+                ))]
         for binding in bindings:
             binding.delete()
 

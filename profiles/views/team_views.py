@@ -95,11 +95,11 @@ def user_in_team_update(request, team_id):
                 for user in to_add:
                     team.add_user_in_role(user, role.name)
                 for user in to_remove:
-                    team.remove_user(user)
-                return redirect("profiles:user_by_team_list", team_id=team_id)
+                    team.remove_user(user, role.name)
+                return redirect("profiles:team_details", team_id=team_id)
     breadcrumbs = [
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
-        {'text': team.name, 'url': reverse('profiles:user_by_team_list', args=[team_id])},
+        {'text': team.name, 'url': reverse('profiles:team_details', args=[team_id])},
         {'text': "Users", 'url': ""}
     ]
     context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Team).id, 'object_id': team.id,
@@ -113,17 +113,17 @@ def user_in_team_remove(request, team_id, user_id):
     team = get_object_or_404(Team, id=team_id)
     user = User.objects.get(id=user_id)
     if user in team.get_users_in_role("Admin") and team.get_users_in_role("Admin").count() == 1:
-        return redirect('profiles:user_by_team_list', team_id=team_id)
+        return redirect('profiles:team_details', team_id=team_id)
     if request.method == 'POST':
         team.remove_user(user)
-        return redirect('profiles:user_by_team_list', team_id=team_id)
+        return redirect('profiles:team_details', team_id=team_id)
     args = {
         "team_id": team_id,
         "user_id": user_id
     }
     breadcrumbs = [
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
-        {'text': team.name, 'url': reverse('profiles:user_by_team_list', args=[team_id])},
+        {'text': team.name, 'url': reverse('profiles:team_details', args=[team_id])},
         {'text': "Users", 'url': ""}
     ]
     context = {
@@ -183,7 +183,7 @@ def create_team_binding(request, team_id):
             return redirect("profiles:team_details", team_id=team_id)
     breadcrumbs = [
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
-        {'text': team.name, 'url': reverse('profiles:user_by_team_list', args=[team_id])},
+        {'text': team.name, 'url': reverse('profiles:team_details', args=[team_id])},
         {'text': "Roles", 'url': ""}
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs}

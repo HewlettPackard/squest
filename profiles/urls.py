@@ -8,7 +8,6 @@ from .views.group_list_view import GroupListView
 from .views.team_list_view import TeamListView
 from .views.user_by_billing_group_list_view import UserByBillingGroupListView
 from .views.user_by_group_list_view import UserByGroupListView
-from .views.user_by_team_list_view import UserByTeamListView
 from .views.user_list_view import UserListView
 
 app_name = 'profiles'
@@ -52,7 +51,6 @@ urlpatterns = [
          name='notification_remove_service'),
 
     # team URLs
-    path('team/<int:team_id>/users/', UserByTeamListView.as_view(), name='user_by_team_list'),
     path('team/<int:team_id>/users/update/', views.user_in_team_update, name='user_in_team_update'),
     path('team/<int:team_id>/users/remove/<int:user_id>/', views.user_in_team_remove, name='user_in_team_remove'),
     path('team/', TeamListView.as_view(), name='team_list'),
