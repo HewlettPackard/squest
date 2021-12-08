@@ -12,12 +12,11 @@ from profiles.models.team import Team
 class TeamTable(tables.Table):
     name = LinkColumn("profiles:team_details", args=[A("id")])
     actions = TemplateColumn(template_name='custom_columns/team_actions.html', orderable=False)
-    users = TemplateColumn(template_name='custom_columns/team_users.html', orderable=False)
 
     class Meta:
         model = Team
         attrs = {"id": "team_table", "class": "table squest-pagination-tables "}
-        fields = ("name", "users", "actions")
+        fields = ("name", "actions")
 
 
 class TeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):

@@ -20,7 +20,7 @@ class TestTeamUrls(TestGroupBase):
         urls_list = [
             reverse('profiles:team_create'),
             reverse('profiles:team_list'),
-            reverse('profiles:user_by_team_list', kwargs=args_team),
+            reverse('profiles:team_details', kwargs=args_team),
             reverse('profiles:user_in_team_update', kwargs=args_team),
             reverse('profiles:team_edit', kwargs=args_team),
             reverse('profiles:team_delete', kwargs=args_team),
