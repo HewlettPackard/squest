@@ -119,7 +119,8 @@ class TestTeamModel(TestGroupBase):
         test_list = [
             {'args_user': {'user_id': self.my_user.id}, 'offset': 0},
             {'args_user': {'user_id': self.my_user2.id}, 'offset': 1},
-            {'args_user': {'user_id': self.my_user3.id}, 'offset': 1}
+            {'args_user': {'user_id': self.my_user4.id}, 'offset': 2},
+            {'args_user': {'user_id': self.my_user3.id}, 'offset': 2}
         ]
         args_group = {
             'team_id': self.test_team.id
@@ -128,7 +129,7 @@ class TestTeamModel(TestGroupBase):
         for test_data in test_list:
             url = reverse('profiles:user_in_team_remove',
                           kwargs={**args_group, **test_data['args_user']})
-            self.client.post(url)
+            response = self.client.post(url)
             self.assertEqual(len(self.test_team.get_all_users()), init_users_len - test_data['offset'])
 
     def test_remove_permission(self):

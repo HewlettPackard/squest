@@ -1,6 +1,5 @@
 from django.urls import reverse
 
-from profiles.models import UserRoleBinding
 from tests.test_profile.test_group.test_group_base import TestGroupBase
 
 
@@ -21,6 +20,7 @@ class TestTeamUrls(TestGroupBase):
             reverse('profiles:team_create'),
             reverse('profiles:team_list'),
             reverse('profiles:team_details', kwargs=args_team),
+            reverse('profiles:create_team_role_binding', kwargs=args_team),
             reverse('profiles:user_in_team_update', kwargs=args_team),
             reverse('profiles:team_edit', kwargs=args_team),
             reverse('profiles:team_delete', kwargs=args_team),

@@ -92,7 +92,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
+@permission_required_or_403('service_catalog.delete_instance', (Instance, 'id', 'instance_id'))
 def instance_archive(request, instance_id):
     target_instance = get_object_or_404(Instance, id=instance_id)
     if request.method == "POST":
@@ -227,13 +227,13 @@ def user_in_instance_update(request, instance_id):
             to_remove = list(set(current_users) - set(selected_users))
             to_add = list(set(selected_users) - set(current_users))
             if instance.spoc in to_remove and role.name == "Admin":
-                form.add_error('users', 'SPOC cannot be remove from Admin')
+                form.add_error('users', 'SPOC cannot be removed from Admin')
                 error = True
             if not error:
                 for user in to_add:
                     instance.add_user_in_role(user, role.name)
                 for user in to_remove:
-                    instance.remove_user(user, role.name)
+                    instance.remove_user_in_role(user, role.name)
                 return redirect("service_catalog:instance_details", instance_id=instance_id)
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
@@ -253,7 +253,7 @@ def user_in_instance_remove(request, instance_id, user_id):
     if user == instance.spoc:
         return redirect('service_catalog:instance_details', instance_id=instance_id)
     if request.method == 'POST':
-        instance.remove_user(user)
+        instance.remove_user_in_role(user)
         return redirect('service_catalog:instance_details', instance_id=instance_id)
     args = {
         "instance_id": instance_id,
@@ -278,7 +278,6 @@ def user_in_instance_remove(request, instance_id, user_id):
 def team_in_instance_update(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
     form = TeamRoleForObjectForm(request.POST or None, user=request.user, object=instance)
-    error = False
     if request.method == 'POST':
         if form.is_valid():
             teams_id = form.cleaned_data.get('teams')
@@ -288,15 +287,11 @@ def team_in_instance_update(request, instance_id):
             selected_teams = [Team.objects.get(id=team_id) for team_id in teams_id]
             to_remove = list(set(current_teams) - set(selected_teams))
             to_add = list(set(selected_teams) - set(current_teams))
-            if instance.spoc in to_remove and role.name == "Admin":
-                form.add_error('teams', 'SPOC cannot be remove from Admin')
-                error = True
-            if not error:
-                for team in to_add:
-                    instance.add_team_in_role(team, role.name)
-                for team in to_remove:
-                    instance.remove_team(team, role.name)
-                return redirect("service_catalog:instance_details", instance_id=instance_id)
+            for team in to_add:
+                instance.add_team_in_role(team, role.name)
+            for team in to_remove:
+                instance.remove_team_in_role(team, role.name)
+            return redirect("service_catalog:instance_details", instance_id=instance_id)
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
         {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
@@ -315,7 +310,7 @@ def team_in_instance_remove(request, instance_id, team_id):
     if team == instance.spoc:
         return redirect('service_catalog:instance_details', instance_id=instance_id)
     if request.method == 'POST':
-        instance.remove_team(team)
+        instance.remove_team_in_role(team)
         return redirect('service_catalog:instance_details', instance_id=instance_id)
     args = {
         "instance_id": instance_id,

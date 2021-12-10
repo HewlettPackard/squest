@@ -19,7 +19,7 @@ class TestGroupBase(BaseTest):
         self.test_team.add_user_in_role(self.my_user2, "Admin")
         self.test_team.add_user_in_role(self.my_user3, "Admin")
         self.test_team.add_user_in_role(self.my_user2, "Member")
+        self.test_team.add_user_in_role(self.my_user4, "Member")
         self.test_team2 = Team.objects.create(name='test_team2')
         self.test_team2.add_user_in_role(self.my_user, "Admin")
-        self.test_team.add_user_in_role(self.my_user4, "Member")
         self.test_billing_group.user_set.add(self.my_user2)

@@ -22,6 +22,7 @@ roles_config = {
                 "description": "An administrator of the instance can manage it",
                 "permissions": [
                     "change_instance",
+                    "delete_instance",
                     "request_operation_on_instance",
                     "request_support_on_instance",
                     "view_instance"
