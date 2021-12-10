@@ -95,7 +95,7 @@ def user_in_team_update(request, team_id):
                 for user in to_add:
                     team.add_user_in_role(user, role.name)
                 for user in to_remove:
-                    team.remove_user(user, role.name)
+                    team.remove_user_in_role(user, role.name)
                 return redirect("profiles:team_details", team_id=team_id)
     breadcrumbs = [
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
@@ -115,7 +115,7 @@ def user_in_team_remove(request, team_id, user_id):
     if user in team.get_users_in_role("Admin") and team.get_users_in_role("Admin").count() == 1:
         return redirect('profiles:team_details', team_id=team_id)
     if request.method == 'POST':
-        team.remove_user(user)
+        team.remove_user_in_role(user)
         return redirect('profiles:team_details', team_id=team_id)
     args = {
         "team_id": team_id,

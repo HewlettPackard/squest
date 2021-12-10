@@ -60,16 +60,9 @@ class TeamRoleBinding(Model):
             others_permission = [*others_permission, *list(binding.role.permissions.all())]
         for binding in all_team_bindings:
             others_permission = [*others_permission, *list(binding.role.permissions.all())]
-        user_bindings = UserRoleBinding.objects.filter(
-            user=user,
-            role=self.role,
-            content_type=self.content_type,
-            object_id=self.object_id
-        )
-        if user_bindings.count() == 0:
-            for permission in self.role.permissions.all():
-                if permission not in others_permission:
-                    UserObjectPermission.objects.remove_perm(permission, user, obj=self.get_object())
+        for permission in self.role.permissions.all():
+            if permission not in others_permission:
+                UserObjectPermission.objects.remove_perm(permission, user, obj=self.get_object())
 
 
 @receiver(post_save, sender=TeamRoleBinding)
@@ -78,6 +71,6 @@ def set_permission(sender, instance, created, **kwargs):
         instance.assign_permissions()
 
 
-@receiver(post_delete, sender=UserRoleBinding)
+@receiver(post_delete, sender=TeamRoleBinding)
 def unset_permission(sender, instance, **kwargs):
     instance.remove_permissions()
