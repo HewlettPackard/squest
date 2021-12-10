@@ -13,7 +13,7 @@ from ..mail_utils import send_email_request_canceled
 
 
 @login_required
-@permission_required_or_403('service_catalog.delete_request', (Request, 'id', 'request_id'))
+@permission_required_or_403('service_catalog.cancel_request', (Request, 'id', 'request_id'))
 def request_cancel(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
     if request.method == "POST":
@@ -44,7 +44,7 @@ def request_cancel(request, request_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.change_request', (Request, 'id', 'request_id'))
+@permission_required_or_403('service_catalog.comment_request', (Request, 'id', 'request_id'))
 def request_comment(request, request_id):
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
