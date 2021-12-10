@@ -50,13 +50,16 @@ roles_config = {
                 "permissions": [
                     "change_request",
                     "delete_request",
+                    "cancel_request",
+                    "comment_request",
                     "view_request"
                 ]
             },
             "Operator": {
                 "description": "An operator can request for operations on the request",
                 "permissions": [
-                    "change_request",
+                    "comment_request",
+                    "cancel_request",
                     "view_request"
                 ]
             },
