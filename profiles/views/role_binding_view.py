@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
+from rest_framework.exceptions import PermissionDenied
 
 from profiles.models import UserRoleBinding, TeamRoleBinding, Team, Role
 
@@ -12,6 +13,10 @@ def ajax_get_users_with_role(request):
     role_id = request.GET.get('role_id')
     content_type_id = request.GET.get('content_type_id')
     object_id = request.GET.get('object_id')
+    content_type = ContentType.objects.get(id=content_type_id)
+    object = content_type.get_object_for_this_type(id=object_id)
+    if not request.user.has_perm(f"{content_type.app_label}.{content_type.name}", object):
+        raise PermissionDenied
     bindings = UserRoleBinding.objects.filter(role__id=role_id, content_type__id=content_type_id, object_id=object_id)
     selected = [binding.user.id for binding in bindings]
     return render(request, 'profiles/role/users-dropdown-list.html',
@@ -22,6 +27,10 @@ def ajax_get_teams_with_role(request):
     role_id = request.GET.get('role_id')
     content_type_id = request.GET.get('content_type_id')
     object_id = request.GET.get('object_id')
+    content_type = ContentType.objects.get(id=content_type_id)
+    object = content_type.get_object_for_this_type(id=object_id)
+    if not request.user.has_perm(f"{content_type.app_label}.{content_type.name}", object):
+        raise PermissionDenied
     bindings = TeamRoleBinding.objects.filter(role__id=role_id, content_type__id=content_type_id, object_id=object_id)
     selected = [binding.user.id for binding in bindings]
     return render(request, 'profiles/role/teams-dropdown-list.html',

@@ -5,3 +5,4 @@ from profiles.models.user_role_binding import UserRoleBinding
 from profiles.models.team import Team
 from profiles.models.team_role_binding import TeamRoleBinding
 from profiles.models.profile import Profile
+from profiles.models.role_manager import RoleManager

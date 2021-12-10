@@ -15,10 +15,10 @@ app_name = 'profiles'
 urlpatterns = [
     # common URLs
     path('profile/', views.profile, name='profile'),
-    path('profile/token/create', views.token_create, name='token_create'),
-    path('profile/token/<int:token_id>/generate', views.token_generate, name='token_generate'),
-    path('profile/token/<int:token_id>/edit', views.token_edit, name='token_edit'),
-    path('profile/token/<int:token_id>/delete', views.token_delete, name='token_delete'),
+    path('profile/token/create/', views.token_create, name='token_create'),
+    path('profile/token/<int:token_id>/generate/', views.token_generate, name='token_generate'),
+    path('profile/token/<int:token_id>/edit/', views.token_edit, name='token_edit'),
+    path('profile/token/<int:token_id>/delete/', views.token_delete, name='token_delete'),
 
     path('user/', UserListView.as_view(), name='user_list'),
 
@@ -44,9 +44,9 @@ urlpatterns = [
     path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
 
     # notifications
-    path('notification/switch', views.notification_switch, name='notification_switch'),
-    path('notification/add_service', views.notification_add_service, name='notification_add_service'),
-    path('notification/remove_service/<int:service_id>',
+    path('notification/switch/', views.notification_switch, name='notification_switch'),
+    path('notification/add_service/', views.notification_add_service, name='notification_add_service'),
+    path('notification/remove_service/<int:service_id>/',
          views.notification_remove_service,
          name='notification_remove_service'),
 
@@ -58,7 +58,7 @@ urlpatterns = [
     path('team/<int:team_id>/', views.team_details, name='team_details'),
     path('team/<int:team_id>/edit/', views.team_edit, name='team_edit'),
     path('team/<int:team_id>/delete/', views.team_delete, name='team_delete'),
-    path('team/<int:team_id>/details/create-role', views.create_team_binding, name='create_team_role_binding'),
+    path('team/<int:team_id>/details/create-role/', views.create_team_binding, name='create_team_role_binding'),
 
     # User Role Binding URLs
     path('role/ajax/get-users-with-role/', views.ajax_get_users_with_role, name='get_users_with_role'),
