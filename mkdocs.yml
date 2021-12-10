@@ -40,6 +40,7 @@ nav:
     - Resource tracking: manual/resource_tracking.md
     - Settings: manual/settings.md
     - Billing groups: manual/billing_groups.md
+    - Teams: manual/teams.md
     - REST API: manual/api.md
   - Development:
     - Setup a dev env: dev/dev-env.md
