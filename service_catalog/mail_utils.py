@@ -1,3 +1,5 @@
+import base64
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import get_template
@@ -6,6 +8,20 @@ from service_catalog import tasks
 from service_catalog.models.request import RequestState
 
 DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_EMAIL_HOST}"
+EMAIL_TITLE_PREFIX = "[Squest]"
+
+
+def _get_subject(target_object):
+    return f"{EMAIL_TITLE_PREFIX} {target_object.__class__.__name__} #{target_object.id} - {target_object}"
+
+
+def _get_headers(subject):
+    email_id = str(base64.b64encode(subject.encode()))
+    headers = dict()
+    headers["Message-ID"] = email_id
+    headers["In-Reply-To"] = email_id
+    headers["References"] = email_id
+    return headers
 
 
 def _get_admin_emails(service):
@@ -36,9 +52,7 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
 
-    subject = f"Request #{target_request.id} - {target_request.state} - {target_request.operation.type} " \
-              f"- {target_request.operation.name} - {target_request.instance.name}"
-
+    subject = _get_subject(target_request)
     if target_request.state == RequestState.SUBMITTED:
         template_name = "service_catalog/mails/request_submitted.html"
         plain_text = f"Request update for service: {target_request.instance.name}"
@@ -55,18 +69,58 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
 
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=target_request.instance.service)   # email sent to all admins
+    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
     if target_request.user.profile.notification_enabled:
-        receiver_email_list.append(target_request.user.email)   # email sent to the requester
+        receiver_email_list.append(target_request.user.email)  # email sent to the requester
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                                receivers=receiver_email_list,
-                               reply_to=receiver_email_list)
+                               reply_to=receiver_email_list,
+                               headers=_get_headers(subject))
+
+
+def send_mail_new_support_message(message):
+    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
+        return
+    subject = _get_subject(message.support)
+    template_name = "service_catalog/mails/support.html"
+    plain_text = f"New support message received on Instance #{message.support.instance.id} (#{message.support.id})"
+    context = {'message': message, 'current_site': settings.SQUEST_HOST}
+    html_template = get_template(template_name)
+    html_content = html_template.render(context)
+    receiver_email_list = _get_admin_emails(service=message.support.instance.service)
+    if message.support.spoc.profile.notification_enabled and message.support.spoc.email:
+        receiver_email_list.append(message.support.spoc.email)
+    receiver_email_list.remove(message.sender.email)
+    if len(receiver_email_list) > 0:
+        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                               receivers=receiver_email_list,
+                               reply_to=receiver_email_list,
+                               headers=_get_headers(subject))
+
+
+def send_mail_new_comment_on_request(message):
+    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
+        return
+    subject = _get_subject(message.request)
+    template_name = "service_catalog/mails/comment.html"
+    plain_text = f"New comment received on Request #{message.request.id}"
+    context = {'message': message, 'current_site': settings.SQUEST_HOST}
+    html_template = get_template(template_name)
+    html_content = html_template.render(context)
+    receiver_email_list = _get_admin_emails(service=message.request.instance.service)
+    if message.request.user.profile.notification_enabled and message.request.user.email:
+        receiver_email_list.append(message.request.user.email)
+    receiver_email_list.remove(message.sender.email)
+    if len(receiver_email_list) > 0:
+        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                               receivers=receiver_email_list,
+                               reply_to=receiver_email_list,
+                               headers=_get_headers(subject))
 
 
 def send_email_request_canceled(target_request, user_applied_state=None, request_owner_user=None):
     """
-
     :param target_request: Request model
     :type target_request: service_catalog.models.request.Request
     :param user_applied_state: user who called this method
@@ -77,7 +131,7 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
     """
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
-    subject = f"Request #{target_request.id} - CANCELLED"
+    subject = _get_subject(target_request)
     plain_text = f"Request #{target_request.id} - CANCELLED"
     template_name = "service_catalog/mails/request_cancelled.html"
     context = {'request_id': target_request.id,
@@ -91,14 +145,15 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                                receivers=receiver_email_list,
-                               reply_to=receiver_email_list)
+                               reply_to=receiver_email_list,
+                               headers=_get_headers(subject))
 
 
 def send_email_request_error(target_request, error_message):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
-    subject = f"Request #{target_request.id} - ERROR"
-    plain_text = f"Request #{target_request.id} - CANCELLED"
+    subject = _get_subject(target_request)
+    plain_text = f"Request #{target_request.id} - ERROR"
     template_name = "service_catalog/mails/request_error.html"
     context = {'request': target_request,
                'user_applied_state': DEFAULT_FROM_EMAIL,
@@ -110,4 +165,5 @@ def send_email_request_error(target_request, error_message):
     receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            receivers=receiver_email_list,
-                           reply_to=receiver_email_list)
+                           reply_to=receiver_email_list,
+                           headers=_get_headers(subject))

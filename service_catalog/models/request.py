@@ -36,6 +36,9 @@ class Request(RoleManager):
     periodic_task_date_expire = models.DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.operation.name} - {self.instance.name} (#{self.id})"
+
     def can_process(self):
         if self.instance.state in [InstanceState.AVAILABLE, InstanceState.PENDING, InstanceState.UPDATE_FAILED,
                                    InstanceState.PROVISION_FAILED, InstanceState.DELETE_FAILED]:
@@ -64,9 +67,8 @@ class Request(RoleManager):
                                      RequestState.ACCEPTED], target=RequestState.CANCELED)
     def cancel(self):
         # delete the related instance if the state was pending (we should have only one)
-        instance = Instance.objects.get(request=self)
-        if instance.state == InstanceState.PENDING:
-            instance.delete()
+        if self.instance.state == InstanceState.PENDING:
+            self.instance.delete()
             return False
         return True
 

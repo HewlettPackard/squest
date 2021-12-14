@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from service_catalog.mail_utils import _get_admin_emails
 from tests.test_service_catalog.base import BaseTest
 
