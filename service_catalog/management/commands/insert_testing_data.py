@@ -68,7 +68,7 @@ class Command(BaseCommand):
                     if random.randint(0, 2) == 1:
                         continue
                     user = users[username]
-                    new_instance = Instance.objects.create(service=service, name=f"My instance",
+                    new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
                                                            billing_group=random.choice(billing_groups), spoc=user)
                     # create the request
                     new_request, _ = Request.objects.get_or_create(instance=new_instance,

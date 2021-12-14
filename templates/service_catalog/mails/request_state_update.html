@@ -21,6 +21,10 @@ Request details:<br>
 <li>Operation name: <b>{{ request.operation.name }}</b></li>
 <br>
 <br>
-Retrieve this request on <a href="{{ current_site }}">Squest portal</a>.
+{% if request.state == COMPLETE %}
+    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
+{% else %}
+    Retrieve this request on <a href="{{ current_site }}/request/">Squest portal</a>.
+{% endif %}
 </body>
 </html>

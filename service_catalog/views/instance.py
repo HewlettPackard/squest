@@ -145,7 +145,7 @@ def instance_support_details(request, instance_id, support_id):
         {'text': support.title, 'url': ""},
     ]
     if request.method == "POST":
-        form = SupportMessageForm(request.POST or None)
+        form = SupportMessageForm(request.POST or None, sender=request.user, support=support)
         if "btn_close" in request.POST:
             if not can_proceed(support.do_close):
                 raise PermissionDenied
@@ -158,13 +158,10 @@ def instance_support_details(request, instance_id, support_id):
             support.save()
         if form.is_valid():
             if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
-                new_message = form.save()
-                new_message.support = support
-                new_message.sender = request.user
-                new_message.save()
+                form.save()
             return redirect('service_catalog:instance_support_details', instance.id, support.id)
     else:
-        form = SupportMessageForm()
+        form = SupportMessageForm(sender=request.user, support=support)
     context = {
         "form": form,
         "instance": instance,

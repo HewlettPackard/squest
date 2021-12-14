@@ -21,7 +21,7 @@ def request_cancel(request, request_id):
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         send_email_request_canceled(target_request,
-                                    user_applied_state=request.user if request.user.is_superuser else target_request.user,
+                                    user_applied_state=request.user,
                                     request_owner_user=target_request.user)
 
         if target_request.cancel():
@@ -53,15 +53,13 @@ def request_comment(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
     messages = RequestMessage.objects.filter(request=target_request)
     if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
+                                  target_request=target_request)
         if form.is_valid():
-            new_message = form.save()
-            new_message.request = target_request
-            new_message.sender = request.user
-            new_message.save()
+            form.save()
             return redirect('service_catalog:request_comment', target_request.id)
     else:
-        form = RequestMessageForm()
+        form = RequestMessageForm(sender=request.user, target_request=target_request)
     context = {
         'form': form,
         'target_request': target_request,

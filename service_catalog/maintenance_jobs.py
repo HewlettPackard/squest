@@ -1,7 +1,7 @@
 import logging
 import os
 from django.conf import settings
-from service_catalog.models import Doc
+from service_catalog.models.documentation import Doc
 from service_catalog.utils import get_images_link_from_markdown
 
 logger = logging.getLogger(__name__)
