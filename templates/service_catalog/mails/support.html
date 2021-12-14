@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support</title>
+</head>
+<h2>New message on {{ message.support }}</h2>
+
+<li>Instance: <b>{{ message.support.instance }}</b></li>
+<li>SPOC: <b>{{ message.support.instance.spoc.username }}</b></li>
+<li>Sender: <b>{{ message.sender.username }}</b></li>
+<br>
+<h3>{{ message.support.title }}</h3>
+<p>{{ message.content }}</p>
+<br>
+<br>
+
+Retrieve this support on <a href="{{ current_site }}/instance/{{ message.support.instance.id }}/support/{{ message.support.id }}/">Squest portal</a>.
+</body>
+</html>

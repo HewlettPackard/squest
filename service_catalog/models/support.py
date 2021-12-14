@@ -22,6 +22,9 @@ class Support(models.Model):
     date_opened = models.DateTimeField(auto_now=True, blank=True, null=True)
     date_closed = models.DateTimeField(auto_now=False, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.title} (#{self.id})"
+
     @transition(field=state, source=SupportState.OPENED, target=SupportState.CLOSED)
     def do_close(self):
         self.date_closed = datetime.now()

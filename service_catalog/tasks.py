@@ -28,11 +28,11 @@ def check_tower_job_status_task(request_id):
 
 
 @shared_task()
-def send_email(subject, plain_text, html_template, from_email, receivers, reply_to):
+def send_email(subject, plain_text, html_template, from_email, receivers, reply_to, headers=None):
     """
     Pass-through method so we use Celery async
     """
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, receivers, reply_to=reply_to)
+    msg = EmailMultiAlternatives(subject, plain_text, from_email, receivers, reply_to=reply_to, headers=headers)
     msg.attach_alternative(html_template, "text/html")
     msg.send()
 
