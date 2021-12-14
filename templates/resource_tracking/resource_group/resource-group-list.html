@@ -52,7 +52,7 @@
                                     {% for attribute in resource_group.attribute_definitions.all %}
                                         <tr>
                                             <td class="align-middle">{{ attribute.name }}</td>
-                                            <td class="align-middle">{{ attribute.get_total_resource }}</td>
+                                            <td class="align-middle">{{ attribute.total_resource }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
