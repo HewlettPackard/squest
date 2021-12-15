@@ -1,3 +1,17 @@
+# v1.3 2021-12-15
+
+## Fix
+- Support and instance in sidebar are no more highlighted together
+- Total resource was empty in resource group list
+- Email notification for comment on request and support message
+
+## Enhancement
+-  Filter hidden by default in graph
+
+## Feature
+- Team management to share instances
+- API - get resource/resource group/resource pool by name
+
 # v1.2.1 2021-11-19
 
 ## Fix
