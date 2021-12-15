@@ -17,6 +17,9 @@ class ResourceListCreate(generics.ListCreateAPIView):
     def get_queryset(self):
         resource_group_id = self.kwargs['resource_group_id']
         queryset = Resource.objects.filter(resource_group_id=resource_group_id)
+        name = self.request.query_params.get('name')
+        if name is not None:
+            queryset = queryset.filter(name=name)
         return queryset
 
     def create(self, request, **kwargs):
