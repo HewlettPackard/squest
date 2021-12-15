@@ -8,8 +8,18 @@ from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinitio
 
 class ResourcePoolList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
-    queryset = ResourcePool.objects.all()
     serializer_class = ResourcePoolSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned resource pool to a given name,
+        by filtering against a `name` query parameter in the URL.
+        """
+        queryset = ResourcePool.objects.all()
+        name = self.request.query_params.get('name')
+        if name is not None:
+            queryset = queryset.filter(name=name)
+        return queryset
 
 
 class ResourcePoolDetails(generics.RetrieveUpdateDestroyAPIView):

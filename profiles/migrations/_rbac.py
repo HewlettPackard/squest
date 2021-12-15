@@ -14,7 +14,7 @@ def create_roles(apps, schema_editor):
     This method create all default role which are group of permissions defined in models/rbac.py
     """
     for app_config in global_apps.get_app_configs():
-        create_contenttypes(app_config)
+        create_contenttypes(app_config, verbosity=0)
         app_config.models_module = True
         create_permissions(app_config, verbosity=0)
         app_config.models_module = None
