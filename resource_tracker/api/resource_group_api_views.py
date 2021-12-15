@@ -13,8 +13,18 @@ from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinit
 
 class ResourceGroupList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
-    queryset = ResourceGroup.objects.all()
     serializer_class = ResourceGroupSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned resource group to a given name,
+        by filtering against a `name` query parameter in the URL.
+        """
+        queryset = ResourceGroup.objects.all()
+        name = self.request.query_params.get('name')
+        if name is not None:
+            queryset = queryset.filter(name=name)
+        return queryset
 
 
 class ResourceGroupDetails(generics.RetrieveUpdateDestroyAPIView):

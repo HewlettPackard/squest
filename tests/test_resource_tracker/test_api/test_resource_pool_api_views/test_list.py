@@ -19,3 +19,19 @@ class TestResourcePoolList(BaseTestAPI):
         all_instances = ResourcePool.objects.all()
         serializer = ResourcePoolSerializer(all_instances, many=True)
         self.assertEqual(response.data, serializer.data)
+
+    def test_resource_pool_list_filter_by_name(self):
+        # test existing name
+        testing_rp = ResourcePool.objects.create(name="rp-test")
+        url = reverse('api_resource_pool_list_create') + f"?name={testing_rp.name}"
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, len(response.data))
+        serializer = ResourcePoolSerializer(testing_rp)
+        self.assertEqual(response.data,  [serializer.data])
+
+        # test non existing name
+        url = reverse('api_resource_pool_list_create') + f"?name=do_not_exist"
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, len(response.data))
