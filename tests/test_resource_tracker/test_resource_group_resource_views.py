@@ -15,11 +15,16 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         arg = {
             "resource_group_id": self.rg_physical_servers.id
         }
+        columns = ['selection', 'name', 'CPU', 'Memory', 'Description', 'Another text', 'operations']
         url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("resource_group" in response.context)
-        self.assertTrue("list_attribute_name" in response.context)
+        self.assertTrue("resource_group_id" in response.context)
+        for column in columns:
+            self.assertTrue(column in response.context['table'].columns.columns)
+            self.assertTrue(column in response.context['table'].base_columns)
+            self.assertTrue(column in response.context['table'].sequence)
+            self.assertTrue(column in response.context['table'].Meta.fields)
 
     def test_cannot_get_resource_group_resource_list_when_logout(self):
         arg = {

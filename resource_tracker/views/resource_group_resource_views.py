@@ -1,38 +1,42 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
-from resource_tracker.filters.resource_filter import ResourceFilter
 from resource_tracker.forms import ResourceForm
 from resource_tracker.models import ResourceGroup, Resource
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def resource_group_resource_list(request, resource_group_id):
-    resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
+def resource_group_resource_bulk_delete(request, resource_group_id):
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        selected_resources = Resource.objects.filter(pk__in=pks)
+        args = {
+            "resource_group_id": resource_group_id
+        }
+        breadcrumbs = [
+            {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': 'Resources', 'url': reverse('resource_tracker:resource_group_resource_list', kwargs={'resource_group_id': resource_group_id})},
+            {'text': "Delete multiple", 'url': ""}
+        ]
+        context = {
+            'breadcrumbs': breadcrumbs,
+            'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
+            'action_url': reverse('resource_tracker:resource_group_resource_bulk_delete_force', kwargs=args),
+            'object_list': selected_resources,
+            'button_text': 'Delete',
+        }
+        return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
 
-    list_attribute_name = list()
-    list_text_attribute_name = list()
-    for resource in resource_group.resources.all():
-        for attribute in resource.attributes.all():
-            if attribute.attribute_type.name not in list_attribute_name:
-                list_attribute_name.append(attribute.attribute_type.name)
-        for attribute in resource.text_attributes.all():
-            if attribute.text_attribute_type.name not in list_text_attribute_name:
-                list_text_attribute_name.append(attribute.text_attribute_type.name)
-    resources_filtered = ResourceFilter(request.GET, queryset=resource_group.resources.all())
-    breadcrumbs = [
-        {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
-        {'text': resource_group.name, 'url': ""},
-    ]
-    context = {
-        'resource_group': resource_group,
-        'resources': resources_filtered,
-        'list_attribute_name': list_attribute_name,
-        'list_text_attribute_name': list_text_attribute_name,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request, 'resource_tracking/resource_group/resources/resource-list.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_group_resource_bulk_delete_force(request, resource_group_id):
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        selected_resources = Resource.objects.filter(pk__in=pks)
+        selected_resources.delete()
+    return redirect("resource_tracker:resource_group_resource_list", resource_group_id)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -63,7 +67,7 @@ def resource_group_resource_create(request, resource_group_id):
         "resource_group_id": resource_group.id
     }
     if request.method == 'POST':
-        form = ResourceForm(request.POST,  **parameters)
+        form = ResourceForm(request.POST, **parameters)
         if form.is_valid():
             form.save()
             return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
@@ -99,5 +103,6 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
          'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
         {'text': resource.name, 'url': ""},
     ]
-    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs,
+               'action': 'edit'}
     return render(request, 'resource_tracking/resource_group/resources/resource-edit.html', context)

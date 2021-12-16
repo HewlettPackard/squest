@@ -1,0 +1,8 @@
+<a href="{% url 'resource_tracker:resource_group_resource_edit' resource_group_id=record.resource_group.id resource_id=record.id %}"
+   class="btn btn-primary bg-sm">
+    <i class="fas fa-edit"></i>
+</a>
+<a href="{% url 'resource_tracker:resource_group_resource_delete' resource_group_id=record.resource_group.id resource_id=record.id %}"
+   class="btn btn-danger bg-smv ml-1">
+    <i class="fas fa-trash"></i>
+</a>

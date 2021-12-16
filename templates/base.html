@@ -40,6 +40,7 @@
 <!-- Jquery -->
 <script src="{% static 'jquery/dist/jquery.js' %}"></script>
 {% block content %}
+    {% block start_content %}{% endblock %}
     <div class="content-wrapper" style="min-height: 278px;">
         {% block header %}
             <div class="content-header">
@@ -60,6 +61,7 @@
             {% block main %}{% endblock %}
         </div>
     </div>
+    {% block end_content %}{% endblock %}
 
 {% endblock %}
 
