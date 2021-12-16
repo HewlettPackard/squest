@@ -1,6 +1,7 @@
 from django.urls import path
 
 from resource_tracker import views
+from resource_tracker.views.resource_list_view import ResourceListView
 
 app_name = 'resource_tracker'
 
@@ -37,8 +38,14 @@ urlpatterns = [
          name='resource_group_text_attribute_delete'),
 
     path('resource_group/<int:resource_group_id>/resources/',
-         views.resource_group_resource_list,
+         ResourceListView.as_view(),
          name='resource_group_resource_list'),
+    path('resource_group/<int:resource_group_id>/resources/delete/',
+         views.resource_group_resource_bulk_delete,
+         name='resource_group_resource_bulk_delete'),
+    path('resource_group/<int:resource_group_id>/resources/delete-force/',
+         views.resource_group_resource_bulk_delete_force,
+         name='resource_group_resource_bulk_delete_force'),
     path('resource_group/<int:resource_group_id>/resources/create/',
          views.resource_group_resource_create,
          name='resource_group_resource_create'),
