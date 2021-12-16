@@ -12,13 +12,21 @@
     {% endif %}
 {% endblock %}
 
+{% block start_content %}
+    {% with action_url=action_url|default:"" %}
+        <form method="post" action={{ action_url }}>
+            {% csrf_token %}
+    {% endwith %}
+{% endblock %}
+
 {% block main %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        {% render_table table %}
+                            {% render_table table %}
+                        </form>
                     </div>
                 </div>
             </div>
@@ -42,7 +50,18 @@
         </div>
     </div>
     {% load static %}
+    <script>
+        function toggle(source) {
+            checkboxes = document.getElementsByName('selection');
+            for(var i in checkboxes)
+                checkboxes[i].checked = source.checked;
+        }
+    </script>
     <script src="{% static 'admin-lte/plugins/daterangepicker/daterangepicker.js' %}"></script>
     <script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
     <script src="{% static 'admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js' %}"></script>
+{% endblock %}
+
+{% block end_content %}
+        </form>
 {% endblock %}

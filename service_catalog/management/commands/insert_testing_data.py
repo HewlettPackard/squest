@@ -23,7 +23,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # create resource pools
-        print("ok")
         users_name = ['Elias', 'Nicolas', 'Anthony', 'Mathijs', 'Jeff', 'Mark']
         users = {}
         for username in users_name:

@@ -25,8 +25,7 @@ class Resource(models.Model):
     tags = TaggableManager()
 
     def __str__(self):
-        return f"{self.name}[" + ",".join([f"{attribute.attribute_type.name}: {attribute.value}"
-                                           for attribute in self.attributes.all()]) + "]"
+        return self.name
 
     def set_attribute(self, attribute_type, value):
         attribute, _ = self.attributes.get_or_create(attribute_type=attribute_type)

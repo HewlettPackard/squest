@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">{{ confirm_text }}</h3>
+            </div>
+            <div class="card-body">
+                <form class="form-horizontal" action={{ action_url }} method="post">
+                    {% csrf_token %}
+                    <ul>
+                    {% for object in object_list %}
+                        <input type="hidden" name="selection" value="{{ object.id }}" class="form-control" required="required" placeholder="None">
+                        <li>{{ object }}</li>
+                    {% endfor %}
+                     </ul>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="fas fa-trash"></i>
+                        {{ button_text }}
+                    </button>
+                    <button class="btn btn-light" type="button" onclick=window.history.back()>
+                        <i class="fas fa-window-close"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
