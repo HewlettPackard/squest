@@ -7,6 +7,7 @@ from django.contrib.auth.management import create_permissions
 
 from profiles.models import Role
 from profiles.models.rbac import roles_config
+from service_catalog.models import Instance
 
 
 def create_roles(apps, schema_editor):
@@ -29,3 +30,11 @@ def create_roles(apps, schema_editor):
             for codename in role_params['permissions']:
                 permission, created = Permission.objects.get_or_create(codename=codename, content_type=content_type)
                 role.permissions.add(permission)
+
+
+def init_spoc_role(apps, schema_editor):
+    """
+    This method set the Admin role for each spoc instance
+    """
+    for instance in Instance.objects.all():
+        instance.assign_permission_to_spoc()

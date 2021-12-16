@@ -63,4 +63,5 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RunPython(rbac.create_roles),
+        migrations.RunPython(rbac.init_spoc_role),
     ]

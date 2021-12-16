@@ -119,6 +119,12 @@ class Instance(RoleManager):
         for request in self.request_set.all():
             request.remove_team_in_role(team, role_name)
 
+    def assign_permission_to_spoc(self):
+        self.add_user_in_role(self.spoc, "Admin")
+
+    def remove_permission_to_spoc(self):
+        self.remove_user_in_role(self.spoc, "Admin")
+
 
 post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
 
@@ -128,19 +134,12 @@ def change_spoc(sender, instance, **kwargs):
     if instance.id:
         old_instance = sender.objects.get(id=instance.id)
         if old_instance.spoc != instance.spoc:
-            remove_permission_to_spoc(old_instance)
-            assign_permission_to_spoc(instance)
+            old_instance.remove_permission_to_spoc()
+            instance.assign_permission_to_spoc()
 
 
 @receiver(post_save, sender=Instance)
 def give_permissions_after_creation(sender, instance, created, **kwargs):
     if created:
-        assign_permission_to_spoc(instance)
+        instance.assign_permission_to_spoc()
 
-
-def assign_permission_to_spoc(instance):
-    instance.add_user_in_role(instance.spoc, "Admin")
-
-
-def remove_permission_to_spoc(instance):
-    instance.remove_user_in_role(instance.spoc, "Admin")
