@@ -27,6 +27,7 @@ class BaseTest(TestCase):
         # Tower
         # ------------------------------
         self.tower_server_test = TowerServer.objects.create(name="tower-server-test", host="localhost", token="xxx")
+        self.tower_server_test_2 = TowerServer.objects.create(name="tower-server-test-2", host="my-tower.com", token="xxx")
         self.job_template_testing_data = {'id': 7, 'type': 'job_template', 'url': '/api/v2/job_templates/7/',
                                           'related': {'created_by': '/api/v2/users/1/',
                                                       'modified_by': '/api/v2/users/3/',
@@ -247,6 +248,11 @@ class BaseTest(TestCase):
                                                             tower_id=1,
                                                             tower_server=self.tower_server_test,
                                                             tower_job_template_data=self.job_template_testing_data)
+        self.job_template_test_2 = JobTemplate.objects.create(name="job-template-test",
+                                                              survey=self.testing_survey,
+                                                              tower_id=1,
+                                                              tower_server=self.tower_server_test_2,
+                                                              tower_job_template_data=self.job_template_testing_data)
 
         # ---------------------------------------------------
         # Service test 1

@@ -24,7 +24,7 @@ class ResourceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['resource_group_id'] = resource_group_id
         context['title'] = "Resources"
-        context['action_url'] = reverse('resource_tracker:resource_group_resource_bulk_delete',
+        context['action_url'] = reverse('resource_tracker:resource_group_resource_bulk_delete_confirm',
                                         kwargs={'resource_group_id': resource_group_id})
         context['html_button_path'] = "resource_tracking/resource_group/resources/resource_list_buttons.html"
         return context

@@ -24,7 +24,7 @@ class TestApiServiceList(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Service.objects.filter(enabled=True).count())
 
-    def test_cannot_get_request_list_when_logout(self):
+    def test_cannot_get_service_list_when_logout(self):
         self.client.logout()
         response = self.client.get(self.get_service_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
