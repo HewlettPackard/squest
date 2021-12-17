@@ -49,38 +49,6 @@
                     </div>
                 </div>
             </div>
-            {% for resource_pool,rp_list in chart_resource_pool.items %}
-                <div class="row justify-content-around">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <strong>Resource consumption on {{ resource_pool }} by Billing Groups</strong>
-                                </h3>
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row justify-content-around">
-                                    {% for _,rp_attribute in rp_list.items %}
-                                        <div class="col-md-3 text-center">
-                                            <div style="">
-                                                <canvas id="{{ rp_attribute.id }}"></canvas>
-                                            </div>
-                                            <div class="knob-label">{{ rp_attribute.title }}</div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
         {% endif %}
     </div>
     {% if request.user.is_superuser %}
