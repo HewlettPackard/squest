@@ -163,6 +163,8 @@ def send_email_request_error(target_request, error_message):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
+    if target_request.user.profile.notification_enabled:
+        receiver_email_list.append(target_request.user.email)  # email sent to the requester
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            receivers=receiver_email_list,
                            reply_to=receiver_email_list,
