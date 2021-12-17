@@ -24,7 +24,7 @@ class TowerServer(models.Model):
             for job_template_from_tower in tower.job_templates:
                 id_in_tower.append(job_template_from_tower.id)
                 self._update_job_template_from_tower(job_template_from_tower)
-            JobTemplateLocal.objects.all().exclude(tower_id__in=id_in_tower).delete()
+            JobTemplateLocal.objects.filter(tower_server=self).exclude(tower_id__in=id_in_tower).delete()
         else:
             job_template = JobTemplateLocal.objects.get(id=job_template_id)
             self._update_job_template_from_tower(tower.get_job_template_by_id(job_template.tower_id))

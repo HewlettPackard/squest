@@ -8,7 +8,7 @@ from resource_tracker.models import ResourceGroup, Resource
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def resource_group_resource_bulk_delete(request, resource_group_id):
+def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
         selected_resources = Resource.objects.filter(pk__in=pks)
@@ -23,7 +23,7 @@ def resource_group_resource_bulk_delete(request, resource_group_id):
         context = {
             'breadcrumbs': breadcrumbs,
             'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
-            'action_url': reverse('resource_tracker:resource_group_resource_bulk_delete_force', kwargs=args),
+            'action_url': reverse('resource_tracker:resource_group_resource_bulk_delete', kwargs=args),
             'object_list': selected_resources,
             'button_text': 'Delete',
         }
@@ -31,7 +31,7 @@ def resource_group_resource_bulk_delete(request, resource_group_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def resource_group_resource_bulk_delete_force(request, resource_group_id):
+def resource_group_resource_bulk_delete(request, resource_group_id):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
         selected_resources = Resource.objects.filter(pk__in=pks)
