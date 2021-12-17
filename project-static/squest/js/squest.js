@@ -60,8 +60,8 @@ function sync_all_job_template() {
         });
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
-        setTimeout(function () {
-            getTowerUpdateStatus(res.task_id, tower_id, url_job_template);
+        var interval_id = setInterval(function () {
+            getTowerUpdateStatus(res.task_id, tower_id, url_job_template, interval_id);
         }, 2000);
 
     }).fail((err) => {
@@ -77,7 +77,7 @@ function sync_all_job_template() {
     });
 }
 
-function getTowerUpdateStatus(taskID, tower_id, url_job_template) {
+function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
     const sync_button_id = "tower_" + tower_id;
     const job_template_count = "job_template_count_" + tower_id;
     $.ajax({
@@ -106,8 +106,12 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template) {
                 },
             }).done((res) => {
                 document.getElementById(job_template_count).innerText = res.length;
+            }).fail((err) => {
+                document.getElementById(sync_button_id).classList.remove('disabled');
             });
+            clearInterval(interval_id);
             return true;
+
         }
         if (taskStatus === 'FAILURE') {
             $(document).Toasts('create', {
@@ -119,11 +123,10 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template) {
             });
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
+            clearInterval(interval_id);
             return false;
         }
-
     }).fail((err) => {
-        console.log(err);
         $(document).Toasts('create', {
             title: 'Tower sync',
             body: 'Failed',
@@ -133,6 +136,8 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template) {
         });
         // enable back sync button
         document.getElementById(sync_button_id).classList.remove('disabled');
+        clearInterval(interval_id);
+        return false;
     });
 }
 
@@ -158,8 +163,8 @@ function sync_job_template() {
         });
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
-        setTimeout(function () {
-            getJobTemplateUpdateStatus(res.task_id, job_template_id, url_job_template_detail);
+        var interval_id = setInterval(function () {
+            getJobTemplateUpdateStatus(res.task_id, job_template_id, url_job_template_detail, interval_id);
         }, 2000);
 
     }).fail((err) => {
@@ -175,7 +180,7 @@ function sync_job_template() {
     });
 }
 
-function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_detail) {
+function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_detail, interval_id) {
     const sync_button_id = "job_template_" + job_template_id;
     const icon_id = "icon_" + job_template_id;
     const html_name = $("#job_template_"+job_template_id+" td.job_template_name");
@@ -214,10 +219,11 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
                 } else {
                     document.getElementById(icon_id).classList.add('fa-times');
                     document.getElementById(icon_id).classList.add('text-danger');
-                };
+                }
                 html_name.html(res.name);
 
             });
+            clearInterval(interval_id);
             return true;
         }
         if (taskStatus === 'FAILURE') {
@@ -230,6 +236,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
             });
             // enable back sync button
             document.getElementById(sync_button_id).classList.remove('disabled');
+            clearInterval(interval_id);
             return false;
         }
 
@@ -244,6 +251,8 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
         });
         // enable back sync button
         document.getElementById(sync_button_id).classList.remove('disabled');
+        clearInterval(interval_id);
+        return false;
     });
 }
 
