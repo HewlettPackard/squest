@@ -47,6 +47,7 @@ in addition to all extra variables which come from the survey of the job templat
 Example of extra variables sent by Squest:
 ```yaml
 squest:
+  squest_host: http://squest.domain.local
   request:
     instance:
       id: 1
@@ -149,6 +150,7 @@ sequenceDiagram
 Example of extra vars sent by squest:
 ```yaml
 squest:
+  squest_host: http://squest.domain.local
   request:
     instance:
       id: 1
