@@ -101,7 +101,9 @@ class Request(RoleManager):
         tower_extra_vars = copy.copy(self.fill_in_survey)
         # add the current instance to extra vars
         from ..serializers.request_serializers import RequestSerializer
+        from django.conf import settings
         tower_extra_vars["squest"] = {
+            "squest_host": settings.SQUEST_HOST,
             "request": RequestSerializer(self).data
         }
         tower_job_id = None
