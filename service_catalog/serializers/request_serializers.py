@@ -29,13 +29,14 @@ class ServiceRequestSerializer(ModelSerializer):
         self.service_id = self.view.kwargs.get('pk', None)
         self.request = context.get('request', None)
         super(ServiceRequestSerializer, self).__init__(*args, **kwargs)
-        self.service = get_object_or_404(Service.objects.filter(enabled=True), id=self.service_id)
-        # get the create operation of this service
-        self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
-                                                       operation_survey=self.create_operation.enabled_survey_fields)
-        self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
+        if self.service_id is not None:
+            self.service = get_object_or_404(Service.objects.filter(enabled=True), id=self.service_id)
+            # get the create operation of this service
+            self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
+            # get all field that are not disabled by the admin
+            purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
+                                                           operation_survey=self.create_operation.enabled_survey_fields)
+            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def validate_billing_group(self, value):
         if not self.service.billing_group_is_selectable:
@@ -78,15 +79,15 @@ class OperationRequestSerializer(ModelSerializer):
         operation_id = self.view.kwargs.get('operation_id', None)
         instance_id = self.view.kwargs.get('instance_id', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
+        if operation_id is not None and instance_id is not None:
+            self.target_operation = get_object_or_404(Operation.objects.exclude(type=OperationType.CREATE), id=operation_id)
+            self.target_instance = get_object_or_404(
+                get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=instance_id)
 
-        self.target_operation = get_object_or_404(Operation.objects.exclude(type=OperationType.CREATE), id=operation_id)
-        self.target_instance = get_object_or_404(
-            get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=instance_id)
-
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(job_template_survey=self.target_operation.job_template.survey,
-                                                       operation_survey=self.target_operation.enabled_survey_fields)
-        self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
+            # get all field that are not disabled by the admin
+            purged_survey = FormUtils.get_available_fields(job_template_survey=self.target_operation.job_template.survey,
+                                                           operation_survey=self.target_operation.enabled_survey_fields)
+            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def save(self, **kwargs):
         new_request = Request.objects.create(instance=self.target_instance,
