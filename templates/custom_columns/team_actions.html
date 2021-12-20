@@ -1,7 +1,7 @@
 {% load guardian_tags %}
 {% get_obj_perms request.user for record as "team_perms" %}
 <a href="{% url "profiles:team_edit" record.id %}" class="btn btn-primary bg-sm{% if "change_team" not in team_perms %} disabled{% endif %}">
-    <i class="fas fa-edit"></i>
+    <i class="fas fa-pencil-alt"></i>
 </a>
 <a href="{% url "profiles:team_delete" record.id %}" class="btn btn-danger bg-sm{% if "change_team" not in team_perms %} disabled{% endif %}">
     <i class="fas fa-trash"></i>
