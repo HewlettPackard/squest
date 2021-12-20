@@ -1,3 +1,21 @@
+# v1.3.1 2021-12-20
+
+## Fix
+- Collect static are not executed during the docker image build anymore to prevent caching
+- Email sent when request execution fail
+- Migration of old permission after creating Teams
+- Fix job template sync when multiple tower/awx instance are declared
+- Fix swagger generated page on POST /service/<id>/request. Fileds w
+
+## Enhancement
+- Remove metrics and graph from the main dashboard to speed up the loading
+- Add squest host to metadata sent to Tower
+- UI: refactoring of the resource group list page
+- Add billing group to instance list filter
+
+## Feature
+- Bulk delete on resources
+
 # v1.3 2021-12-15
 
 ## Fix
