@@ -14,7 +14,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.kwargs = {
             "pk": self.service_test.id,
         }
-        self.url = reverse('api_service_request_list_create', kwargs=self.kwargs)
+        self.url = reverse('api_service_request_create', kwargs=self.kwargs)
         self.data = {
             'instance_name': 'instance test',
             'billing_group': None,
@@ -49,7 +49,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
     def test_cannot_create_on_non_existing_service(self):
         self.kwargs['pk'] = 9999999
-        self.url = reverse('api_service_request_list_create', kwargs=self.kwargs)
+        self.url = reverse('api_service_request_create', kwargs=self.kwargs)
         self._check_create(status.HTTP_404_NOT_FOUND)
 
     def test_cannot_create_with_non_own_billing_group(self):

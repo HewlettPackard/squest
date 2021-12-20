@@ -63,7 +63,7 @@ class DynamicSurveySerializer(Serializer):
             elif survey_filed["type"] == "integer":
                 fields[survey_filed['variable']] = IntegerField(
                     label=survey_filed['question_name'],
-                    initial=int(survey_filed['default']),
+                    initial=0 if not survey_filed['default'] else int(survey_filed['default']),
                     required=survey_filed['required'],
                     help_text=survey_filed['question_description'],
                     min_value=survey_filed['min'],
@@ -73,11 +73,10 @@ class DynamicSurveySerializer(Serializer):
             elif survey_filed["type"] == "float":
                 fields[survey_filed['variable']] = FloatField(
                     label=survey_filed['question_name'],
-                    initial=float(survey_filed['default']),
+                    initial=0 if not survey_filed['default'] else float(survey_filed['default']),
                     required=survey_filed['required'],
                     help_text=survey_filed['question_description'],
                     min_value=survey_filed['min'],
                     max_value=survey_filed['max'],
                 )
         return fields
-

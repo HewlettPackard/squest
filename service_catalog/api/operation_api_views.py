@@ -4,7 +4,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from service_catalog.models import Service, OperationType
+from service_catalog.models import Service, OperationType, Operation
 from service_catalog.serializers.operation_serializers import OperationSerializer, AdminOperationSerializer
 
 
@@ -29,6 +29,8 @@ class OperationListCreate(ListCreateAPIView):
 class OperationDetails(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         service_id = self.kwargs.get('service_id', None)
+        if service_id is None:
+            return Service.objects.none()
         queryset = Service.objects.get(id=service_id).operations.all()
         return queryset
 
