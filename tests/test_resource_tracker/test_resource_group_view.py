@@ -15,7 +15,7 @@ class TestResourceGroupViews(BaseTestResourceTracker):
         url = reverse('resource_tracker:resource_group_list')
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("resource_groups" in response.context)
+        self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
 
     def test_cannot_get_resource_group_list_when_logout(self):
         self.client.logout()

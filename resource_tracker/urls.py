@@ -1,12 +1,13 @@
 from django.urls import path
 
 from resource_tracker import views
+from resource_tracker.views import ResourceGroupListView
 from resource_tracker.views.resource_list_view import ResourceListView
 
 app_name = 'resource_tracker'
 
 urlpatterns = [
-    path('resource_group/', views.resource_group_list, name='resource_group_list'),
+    path('resource_group/', ResourceGroupListView.as_view(), name='resource_group_list'),
     path('resource_group/create/', views.resource_group_create, name='resource_group_create'),
     path('resource_group/<int:resource_group_id>/edit/', views.resource_group_edit,
          name='resource_group_edit'),

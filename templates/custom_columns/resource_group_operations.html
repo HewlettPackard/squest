@@ -1,0 +1,22 @@
+<a class="btn btn-default bg-sm" data-toggle="collapse" href="#collapse_{{ record.id }}" role="button" aria-expanded="false" aria-controls="#collapse_{{ record.id }}">
+    <i class="fas fa-list-ul"></i>
+</a>
+<a href="{% url 'resource_tracker:resource_group_edit' resource_group_id=record.id %}"
+   class="btn btn-primary bg-sm ml-1">
+    <i class="fas fa-pencil-alt"></i>
+</a>
+<a href="{% url 'resource_tracker:resource_group_delete' resource_group_id=record.id %}"
+   class="btn btn-danger bg-sm ml-1">
+    <i class="fas fa-trash"></i>
+</a>
+
+<div class="collapse" id="collapse_{{ record.id }}">
+    <ul class="list-group">
+        {% for attribute in record.attribute_definitions.all %}
+        <li class="list-group-item">
+            {{ attribute.name }}
+            <span class="float-right badge badge-primary badge-pill">{{ attribute.total_resource }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
