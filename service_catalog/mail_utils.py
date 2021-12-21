@@ -39,6 +39,24 @@ def _get_admin_emails(service):
     return email_admins
 
 
+def _get_receivers_for_request_message(request_message):
+    receiver_email_list = _get_admin_emails(service=request_message.request.instance.service)
+    if request_message.request.user.profile.notification_enabled and request_message.request.user.email:
+        receiver_email_list.append(request_message.request.user.email)
+    if request_message.sender.email in receiver_email_list:
+        receiver_email_list.remove(request_message.sender.email)
+    return receiver_email_list
+
+
+def _get_receivers_for_support_message(support_message):
+    receiver_email_list = _get_admin_emails(service=support_message.support.instance.service)
+    if support_message.support.instance.spoc.profile.notification_enabled and support_message.support.instance.spoc.email:
+        receiver_email_list.append(support_message.support.instance.spoc.email)
+    if support_message.sender.email in receiver_email_list:
+        receiver_email_list.remove(support_message.sender.email)
+    return receiver_email_list
+
+
 def send_mail_request_update(target_request, user_applied_state=None, message=None):
     """
     Notify users that a request has been updated
@@ -88,10 +106,7 @@ def send_mail_new_support_message(message):
     context = {'message': message, 'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=message.support.instance.service)
-    if message.support.spoc.profile.notification_enabled and message.support.spoc.email:
-        receiver_email_list.append(message.support.spoc.email)
-    receiver_email_list.remove(message.sender.email)
+    receiver_email_list = _get_receivers_for_support_message(message)
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                                receivers=receiver_email_list,
@@ -108,10 +123,7 @@ def send_mail_new_comment_on_request(message):
     context = {'message': message, 'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=message.request.instance.service)
-    if message.request.user.profile.notification_enabled and message.request.user.email:
-        receiver_email_list.append(message.request.user.email)
-    receiver_email_list.remove(message.sender.email)
+    receiver_email_list = _get_receivers_for_request_message(message)
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                                receivers=receiver_email_list,
