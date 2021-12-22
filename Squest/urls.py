@@ -19,6 +19,7 @@ from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from django.conf import settings
 
 #  drf-yasg
 from service_catalog.views import markdown_uploader
@@ -52,6 +53,11 @@ urlpatterns = [
         markdown_uploader, name='markdown_uploader_page'
     ),
 ]
+
+if settings.METRICS_ENABLED:
+    urlpatterns += [
+        path('metrics/', include('monitoring.urls')),
+    ]
 
 # if settings.DEBUG:
 #     # static files (images, css, javascript, etc.)
