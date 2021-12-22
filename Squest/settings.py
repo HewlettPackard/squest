@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 import sys
 from pathlib import Path
-import time
 import git
 from Squest.version import __version__
 
@@ -80,6 +79,7 @@ INSTALLED_APPS = [
     'service_catalog',
     'resource_tracker',
     'profiles',
+    'monitoring',
     'django_cleanup.apps.CleanupConfig',  # should stay last to override delete method of our model
 ]
 
@@ -392,3 +392,11 @@ repo = git.Repo(search_parent_directories=True)
 sha = str(repo.head.object.hexsha)[0:6]
 SQUEST_VERSION = f"{__version__} - {sha}"
 print(f"SQUEST_VERSION: {SQUEST_VERSION}")
+
+# -----------------------------------------
+# Metrics
+# -----------------------------------------
+METRICS_ENABLED = str_to_bool(os.environ.get('METRICS_ENABLED', False))
+METRICS_PASSWORD_PROTECTED = str_to_bool(os.environ.get('METRICS_PASSWORD_PROTECTED', True))
+METRICS_AUTHORIZATION_USERNAME = os.environ.get('METRICS_AUTHORIZATION_USERNAME', 'admin')
+METRICS_AUTHORIZATION_PASSWORD = os.environ.get('METRICS_AUTHORIZATION_PASSWORD', 'admin')
