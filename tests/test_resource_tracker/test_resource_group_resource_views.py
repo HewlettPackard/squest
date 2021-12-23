@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAttribute
+from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAttribute, ResourceGroupAttributeDefinition
 from tests.test_resource_tracker.base_test_resource_tracker import BaseTestResourceTracker
 
 
@@ -225,3 +225,27 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         # test GET
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
+
+    def test_delete_attribute_definition_from_resource_group(self):
+        # create a resource in a resource group with an attribute
+        worker_node_test = self.rg_ocp_workers.create_resource(name=f"worker-test")
+        worker_node_test.set_attribute(self.rg_ocp_workers_vcpu_attribute, 16)
+        worker_node_test.set_attribute(self.rg_ocp_workers_memory_attribute, 50)
+        self.assertTrue(worker_node_test.attributes.filter(attribute_type__name="vCPU").exists())
+
+        # we can reach the list of resource page
+        arg = {
+            "resource_group_id": self.rg_ocp_workers.id
+        }
+        url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+
+        # delete the attribute from the resource group definition
+        the_id = self.rg_ocp_workers_vcpu_attribute.id
+        self.rg_ocp_workers_vcpu_attribute.delete()
+        self.assertTrue(ResourceGroupAttributeDefinition.objects.get(id=self.rg_ocp_workers_memory_attribute.id))
+        self.assertEqual(0, ResourceAttribute.objects.filter(attribute_type_id=the_id).count())
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(worker_node_test.attributes.filter(attribute_type__name="vCPU").exists())
