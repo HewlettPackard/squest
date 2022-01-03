@@ -21,7 +21,7 @@ class TestMonitoring(TestCase):
     @override_settings(METRICS_ENABLED=True)
     def test_monitoring_no_login_provided(self):
         response = self.client.get(self.url)
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(401, response.status_code)
 
     @override_settings(METRICS_ENABLED=True)
     @override_settings(METRICS_AUTHORIZATION_PASSWORD="password")
@@ -44,3 +44,11 @@ class TestMonitoring(TestCase):
     def test_monitoring_password_protected_disabled(self):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
+
+    @override_settings(METRICS_ENABLED=True)
+    @override_settings(METRICS_AUTHORIZATION_PASSWORD="password")
+    def test_monitoring_invalid_credential_format(self):
+        credentials = base64.b64encode(b'admin_password')
+        self.client.defaults['HTTP_AUTHORIZATION'] = 'Basic ' + credentials.decode("ascii")
+        response = self.client.get(self.url)
+        self.assertEqual(400, response.status_code)

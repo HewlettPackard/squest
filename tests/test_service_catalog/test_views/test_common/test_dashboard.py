@@ -6,7 +6,7 @@ class TestDashboard(BaseTestResourceTracker):
 
     def test_admin_get_dashboard(self):
         expected_context_list = ['total_request', 'total_instance', 'total_support_opened',
-                                 'total_user_without_billing_groups', 'total_user', 'pie_charts', 'chart_resource_pool']
+                                 'total_user_without_billing_groups', 'total_user']
         response = self.client.get(reverse('service_catalog:dashboards'))
         self.assertEqual(200, response.status_code)
         for expected_context in expected_context_list:
@@ -15,7 +15,7 @@ class TestDashboard(BaseTestResourceTracker):
     def test_customer_get_dashboard(self):
         self.client.login(username=self.standard_user.username, password=self.common_password)
         not_expected_context_list = ['total_support_opened', 'total_user_without_billing_groups', 'total_user',
-                                     'pie_charts', 'chart_resource_pool']
+                                     'pie_charts']
         expected_context_list = ['total_request', 'total_instance', 'total_request_need_info']
         response = self.client.get(reverse('service_catalog:dashboards'))
         self.assertEqual(200, response.status_code)
