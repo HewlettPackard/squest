@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import Request, RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
@@ -36,7 +37,7 @@ class TestApiRequestPatch(BaseTestRequest):
             'tower_job_id': self.test_request_standard_user_1.tower_job_id,
             'state': RequestState.NEED_INFO,
             'operation': self.update_operation_test.id,
-            'user': self.test_request_standard_user_1.user.id
+            'user': UserSerializer(self.test_request_standard_user_1.user).data
         }
 
     def test_admin_patch_request(self):

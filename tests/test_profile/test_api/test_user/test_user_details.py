@@ -22,8 +22,8 @@ class TestApiUserDetails(BaseTestRequest):
             'is_staff': self.standard_user.is_staff,
             'is_superuser': self.standard_user.is_superuser,
             'is_active': self.standard_user.is_active,
-            'groups': list(self.standard_user.groups.all()),
-            'user_permissions': list(self.standard_user.user_permissions.all()),
+            # 'groups': list(self.standard_user.groups.all()),
+            # 'user_permissions': list(self.standard_user.user_permissions.all()),
         }
         self.expected_data_list = [self.expected_data]
 

@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
@@ -44,7 +45,8 @@ class TestApiRequestDetails(BaseTestRequest):
             'tower_job_id': self.test_request_standard_user_1.tower_job_id,
             'state': self.test_request_standard_user_1.state,
             'operation': self.test_request_standard_user_1.operation.id,
-            'user': self.test_request_standard_user_1.user.id}
+            'user': UserSerializer(instance=self.test_request_standard_user_1.user).data
+        }
         self.expected_instance = {
             'id': self.test_request_standard_user_1.instance.id,
             'state': self.test_request_standard_user_1.instance.state,

@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import Request, RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
@@ -27,7 +28,7 @@ class TestApiRequestPut(BaseTestRequest):
             'tower_job_id': 6,
             'state': RequestState.NEED_INFO,
             'operation': self.update_operation_test.id,
-            'user': self.standard_user_2.id
+            'user': {'id': self.standard_user.id}
         }
         self.kwargs = {
             'pk': self.test_request_standard_user_1.id
@@ -37,7 +38,14 @@ class TestApiRequestPut(BaseTestRequest):
     def test_admin_put_on_request(self):
         response = self.client.put(self.get_request_details_url, data=self.put_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        check_data_in_dict(self, [self.put_data], [response.data])
+        expected = {
+            'fill_in_survey': dict(),
+            'tower_job_id': 6,
+            'state': RequestState.NEED_INFO,
+            'operation': self.update_operation_test.id,
+            'user': UserSerializer(instance=self.standard_user).data
+        }
+        check_data_in_dict(self, [expected], [response.data])
 
     def test_admin_cannot_put_on_request_not_full(self):
         self.put_data.pop('operation')
