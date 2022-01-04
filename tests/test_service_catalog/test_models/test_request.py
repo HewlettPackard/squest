@@ -9,6 +9,7 @@ from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
 from django_fsm import can_proceed
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
@@ -39,6 +40,7 @@ class TestRequest(BaseTestRequest):
                 'id': self.test_request.id,
                 'state': RequestState.PROCESSING,
                 'operation': self.test_request.operation.id,
+                'user': UserSerializer(self.test_request.user).data
             }
             expected_instance = {
                 'id': self.test_instance.id,
@@ -49,13 +51,15 @@ class TestRequest(BaseTestRequest):
                 'billing_group': None,
                 'spoc': self.test_request.instance.spoc.id
             }
+            expected_user = UserSerializer(self.test_request.user).data
             mock_job_execute.assert_called()
             kwargs = mock_job_execute.call_args[1]
-            expected_data_list = [expected_extra_vars, expected_request, expected_instance]
+            expected_data_list = [expected_extra_vars, expected_request, expected_instance, expected_user]
             data_list = [
                 kwargs.get("extra_vars", None),
                 kwargs.get("extra_vars", None).get('squest', None).get('request', None),
-                kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None)
+                kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None),
+                kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('user', None)
             ]
             for expected_data, data in zip(expected_data_list, data_list):
                 for key_var, val_var in expected_data.items():

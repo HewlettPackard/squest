@@ -19,7 +19,9 @@ class TestApiUserCreate(BaseTestRequest):
         response = self.client.post(self.create_user_url, data=self.post_data,
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        check_data_in_dict(self, [self.post_data], [response.data])
+        check_data_in_dict(self, [{
+            'username': "myUsername",
+        }], [response.data])
 
     def _create_user_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_user_url, data=self.post_data,
