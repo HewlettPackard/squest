@@ -3,6 +3,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField, ValidationError
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
 from service_catalog.models import Request, Service, OperationType, Operation, Instance
@@ -104,6 +105,7 @@ class RequestSerializer(ModelSerializer):
         read_only = True
 
     instance = InstanceSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
 
 
 class AdminRequestSerializer(ModelSerializer):
@@ -112,3 +114,4 @@ class AdminRequestSerializer(ModelSerializer):
         exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
 
     instance = InstanceSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
