@@ -55,7 +55,7 @@ RUN cd /app && poetry config virtualenvs.create false && poetry install && npm i
 COPY . /app/
 
 # Create media and backup folders
-RUN mkdir -p /app/media /app/backup
+RUN mkdir -p /app/media /app/backup /app/static
 
 # Create a group and user to run our app
 ARG APP_USER=django
