@@ -38,13 +38,8 @@ class TestApiRequestPut(BaseTestRequest):
     def test_admin_put_on_request(self):
         response = self.client.put(self.get_request_details_url, data=self.put_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected = {
-            'fill_in_survey': dict(),
-            'tower_job_id': 6,
-            'state': RequestState.NEED_INFO,
-            'operation': self.update_operation_test.id,
-            'user': UserSerializer(instance=self.standard_user).data
-        }
+        expected = self.put_data
+        expected['user'] = UserSerializer(instance=self.standard_user).data
         check_data_in_dict(self, [expected], [response.data])
 
     def test_admin_cannot_put_on_request_not_full(self):

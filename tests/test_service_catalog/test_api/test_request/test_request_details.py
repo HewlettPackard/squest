@@ -25,13 +25,13 @@ class TestApiRequestDetails(BaseTestRequest):
         )
         self.test_request_standard_user_2 = Request.objects.create(
             fill_in_survey={},
-            instance=self.test_instance,
+            instance=self.test_instance_2,
             operation=self.create_operation_test,
             user=self.standard_user_2
         )
         Request.objects.create(
             fill_in_survey={},
-            instance=self.test_instance,
+            instance=self.test_instance_2,
             operation=self.update_operation_test,
             user=self.standard_user_2
         )

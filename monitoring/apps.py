@@ -9,7 +9,7 @@ class MonitoringConfig(AppConfig):
     name = 'monitoring'
 
     def ready(self):
-        if 'manage.py' not in sys.argv:
+        if 'manage.py' not in sys.argv and 'test' not in sys.argv:
             from .models import ComponentCollector
             prometheus_client.REGISTRY.register(ComponentCollector())
             # Unregister default metrics
