@@ -92,7 +92,7 @@ class TestResourceCreate(BaseTestAPI):
                     "value": "12"
                 },
                 {
-                    "name": "memory",
+                    "name": "Memory",
                     "value": "20"
                 }
             ],
@@ -119,7 +119,7 @@ class TestResourceCreate(BaseTestAPI):
                     "value": "12"
                 },
                 {
-                    "name": "memory",
+                    "name": "Memory",
                     "value": "20"
                 }
             ],

@@ -17,7 +17,7 @@ class TestApiRequestDelete(BaseTestRequest):
         )
         self.test_request_standard_user_2 = Request.objects.create(
             fill_in_survey={},
-            instance=self.test_instance,
+            instance=self.test_instance_2,
             operation=self.create_operation_test,
             user=self.standard_user_2
         )
@@ -61,9 +61,10 @@ class TestApiRequestDelete(BaseTestRequest):
     def test_customer_cannot_delete_non_owned_request_canceled(self):
         self.test_request_standard_user_2.state = RequestState.CANCELED
         self.test_request_standard_user_2.save()
-        self.client.force_login(user=self.standard_user)
         self.kwargs['pk'] = self.test_request_standard_user_2.id
         self.get_request_details_url = reverse('api_request_details', kwargs=self.kwargs)
+        self.client.logout()
+        self.client.force_login(user=self.standard_user)
         response = self.client.delete(self.get_request_details_url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

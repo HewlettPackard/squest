@@ -400,3 +400,23 @@ METRICS_ENABLED = str_to_bool(os.environ.get('METRICS_ENABLED', False))
 METRICS_PASSWORD_PROTECTED = str_to_bool(os.environ.get('METRICS_PASSWORD_PROTECTED', True))
 METRICS_AUTHORIZATION_USERNAME = os.environ.get('METRICS_AUTHORIZATION_USERNAME', 'admin')
 METRICS_AUTHORIZATION_PASSWORD = os.environ.get('METRICS_AUTHORIZATION_PASSWORD', 'admin')
+
+# -----------------------------------------
+# Testing settings
+# -----------------------------------------
+if TESTING:
+    import logging
+    logging.disable(logging.CRITICAL)
+    DEBUG = False
+    TEMPLATE_DEBUG = False
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
+
+print('[Settings] loaded')
