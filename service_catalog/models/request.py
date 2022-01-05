@@ -210,7 +210,7 @@ class Request(RoleManager):
         if created:
             if instance.user:
                 instance.add_user_in_role(instance.user, "Admin")
-            instance_content_type = ContentType.objects.get_for_model(Request)
+            instance_content_type = ContentType.objects.get_for_model(Instance)
             user_bindings = UserRoleBinding.objects.filter(
                 content_type=instance_content_type,
                 object_id=instance.instance.id
