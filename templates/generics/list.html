@@ -23,12 +23,20 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                {% if table.data.data %}
                 <div class="card">
                     <div class="card-body">
-                            {% render_table table %}
+                        {% render_table table %}
                         </form>
                     </div>
                 </div>
+                {% else %}
+                    <div class="alert alert-info alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4><i class="icon fas fa-info }}"></i> No data</h4>
+                        There is no data to show
+                    </div>
+                {% endif %}
             </div>
             {% if filter %}
                 <aside class="control-sidebar control-sidebar-light" style="display: block;">
