@@ -13,11 +13,14 @@ from django.utils import timezone
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
 
-from profiles.models import UserRoleBinding, TeamRoleBinding
+from profiles.models.user_role_binding import UserRoleBinding
+from profiles.models.team_role_binding import TeamRoleBinding
 from profiles.models.role_manager import RoleManager
-from . import Operation, ExceptionServiceCatalog, InstanceState, OperationType, RequestState
-from .instance import Instance
-from .state_hooks import HookManager
+from service_catalog.models.operations import Operation, OperationType
+from service_catalog.models.exceptions import ExceptionServiceCatalog
+from service_catalog.models.request_state import RequestState
+from service_catalog.models.instance import Instance, InstanceState
+from service_catalog.models.state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
 

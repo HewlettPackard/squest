@@ -10,15 +10,6 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                {% if form.errors %}
-                    <div class="alert alert-danger" role="alert">
-                        {% for field in form %}
-                            {% if field.errors %}
-                                <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
                 {% include "generics/form_edit.html" %}
             </div>
         </div>
@@ -102,7 +93,6 @@
                                     <td class="align-middle">{{ attribute.name }}</td>
                                     <td class="align-middle">
                                         <div class="float-right">
-
                                             <a href="{% url 'resource_tracker:resource_group_text_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
                                                class="btn btn-primary bg-sm">
                                                 <i class="fas fa-pencil-alt"></i>
@@ -112,7 +102,6 @@
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
-
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -121,7 +110,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 {% endblock %}

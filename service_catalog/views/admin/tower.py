@@ -28,7 +28,7 @@ def add_tower(request):
         {'text': 'Create a new server', 'url': ""}
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'service_catalog/admin/tower/tower-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 
@@ -157,4 +157,4 @@ def update_tower(request, tower_id):
         {'text': tower_server.name, 'url': ""}
     ]
     context = {'form': form, 'tower_server': tower_server, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
-    return render(request, 'service_catalog/admin/tower/tower-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)

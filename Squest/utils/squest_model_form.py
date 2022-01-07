@@ -9,6 +9,7 @@ class SquestModelForm(ModelForm):
         for field_name, current_field in self.fields.items():
             if isinstance(current_field.widget, Select):
                 current_field.widget.attrs['class'] = 'form-control selectpicker'
+                current_field.widget.attrs['data-live-search'] = "true"
             elif isinstance(current_field.widget, CheckboxInput):
                 current_field.widget.attrs['class'] = ''
             elif isinstance(current_field.widget, CheckboxSelectMultiple):

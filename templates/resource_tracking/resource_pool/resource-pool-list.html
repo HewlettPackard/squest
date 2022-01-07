@@ -21,10 +21,14 @@
                             <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
                             <div class="card-tools">
                                 <div class="btn-group">
-                                    <a class="dropdown-item text-primary"
+                                    <a href="{% url 'resource_tracker:resource_pool_refresh_consumption' resource_pool.id %}"
+                                       class="dropdown-item text-black" title="Refresh consumption">
+                                       <i class="fas fa-sync"></i>
+                                    </a>
+                                    <a class="dropdown-item text-primary" title="Edit"
                                        href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span
                                             class="text-primary fas fa-pencil-alt"></span></a>
-                                    <a class="dropdown-item text-danger"
+                                    <a class="dropdown-item text-danger" title="Delete"
                                        href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span
                                             class="text-danger fas fa-trash"></span></a>
                                 </div>
@@ -45,7 +49,7 @@
                                     <thead>
                                     <tr>
                                         <th>Attribute</th>
-                                        <th>Utilization</th>
+                                        <th>Consumption</th>
                                         <th>Produced</th>
                                         <th>Consumed</th>
                                         <th>Available</th>

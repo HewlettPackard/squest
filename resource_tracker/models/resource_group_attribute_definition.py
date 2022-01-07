@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from resource_tracker.models import ResourceAttribute
+from resource_tracker.models.resource_attribute import ResourceAttribute
 
 
 class ResourceGroupAttributeDefinition(models.Model):

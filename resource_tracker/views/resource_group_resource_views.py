@@ -80,7 +80,7 @@ def resource_group_resource_create(request, resource_group_id):
         {'text': 'Create a new resource', 'url': ""},
     ]
     context = {'resource_group': resource_group, 'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_group/resources/resource-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -105,4 +105,4 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
     ]
     context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs,
                'action': 'edit'}
-    return render(request, 'resource_tracking/resource_group/resources/resource-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)

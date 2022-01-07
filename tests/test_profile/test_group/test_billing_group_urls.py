@@ -16,7 +16,6 @@ class TestBillingGroupUrls(TestGroupBase):
             'billing_group_id': self.test_billing_group.id
         }
         urls_list = [
-            reverse('profiles:user_by_billing_group_list', kwargs=args_group),
             reverse('profiles:user_in_billing_group_update', kwargs=args_group),
             reverse('profiles:billing_group_list'),
             reverse('profiles:billing_group_create'),

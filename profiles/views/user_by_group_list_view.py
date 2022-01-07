@@ -1,20 +1,11 @@
 from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn
 from django.contrib.auth.models import User, Group
 from guardian.mixins import LoginRequiredMixin
 
 from profiles.filters.user_filter import UserFilter
-
-
-class UserByGroupTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/user_by_group_actions.html', orderable=False)
-
-    class Meta:
-        model = User
-        attrs = {"id": "user_by_group_table", "class": "table squest-pagination-tables "}
-        fields = ("username", "email", "actions")
+from profiles.tables.user_by_group_table import UserByGroupTable
 
 
 class UserByGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):

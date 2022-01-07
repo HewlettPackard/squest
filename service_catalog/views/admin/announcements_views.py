@@ -24,7 +24,7 @@ def announcement_create(request):
         {'text': "Create a new announcement", 'url': ""}
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'service_catalog/settings/announcements/announcement-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -45,7 +45,7 @@ def announcement_edit(request, announcement_id):
                'breadcrumbs': breadcrumbs,
                'action': 'edit'
                }
-    return render(request, 'service_catalog/settings/announcements/announcement-edit.html', context=context)
+    return render(request, 'generics/generic_form.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

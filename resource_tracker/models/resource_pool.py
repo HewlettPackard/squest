@@ -16,3 +16,8 @@ class ResourcePool(models.Model):
         return self.attribute_definitions.create(name=name,
                                                  over_commitment_producers=over_commitment_producers,
                                                  over_commitment_consumers=over_commitment_consumers)
+
+    def update_all_consumed_and_produced(self):
+        for attribute in self.attribute_definitions.all():
+            attribute.calculate_total_consumed()
+            attribute.calculate_total_produced()
