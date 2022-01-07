@@ -90,6 +90,31 @@
                             <p>Graph</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link{% if '/quota-attribute/' in request.path or '/billing-group/' in request.path %} active{% endif %}">
+                            <i class="nav-icon fas fa-dollar-sign"></i>
+                            <p>
+                                Billing
+                                <i class="right fas fa-angle-down"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'profiles:quota_attribute_definition_list' %}"
+                                   class="nav-link {% if '/quota-attribute/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-chart-pie"></i>
+                                    <p>Quota</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'profiles:billing_group_list' %}"
+                                   class="nav-link {% if '/billing-group/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>Groups</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 {% endif %}
 
                 <li class="nav-header">Profiles</li>
@@ -107,13 +132,6 @@
                            class="nav-link {% if '/group/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>Groups</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'profiles:billing_group_list' %}"
-                           class="nav-link {% if '/billing-group/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-dollar-sign"></i>
-                            <p>Billing Groups</p>
                         </a>
                     </li>
                 {% endif %}

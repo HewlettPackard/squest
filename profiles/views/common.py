@@ -9,9 +9,6 @@ def profile(request):
     tokens = Token.objects.filter(user=request.user)
     context = {
         'tokens': tokens,
-        'current_tab': 'details'
+        'title': "User details"
     }
-    if 'current_tab' in request.session:
-        context['current_tab'] = request.session['current_tab']
-        del request.session['current_tab']
     return render(request, 'profiles/profile.html', context)

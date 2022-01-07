@@ -120,7 +120,8 @@ class Instance(RoleManager):
             request.remove_team_in_role(team, role_name)
 
     def assign_permission_to_spoc(self):
-        self.add_user_in_role(self.spoc, "Admin")
+        if self.spoc:
+            self.add_user_in_role(self.spoc, "Admin")
 
     def remove_permission_to_spoc(self):
         self.remove_user_in_role(self.spoc, "Admin")
@@ -130,16 +131,30 @@ post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
 
 
 @receiver(pre_save, sender=Instance)
-def change_spoc(sender, instance, **kwargs):
+def pre_save(sender, instance, **kwargs):
+    instance._old_billing_group = None
+    instance._need_update = False
     if instance.id:
         old_instance = sender.objects.get(id=instance.id)
+        if old_instance.billing_group != instance.billing_group:
+            instance._old_billing_group = old_instance.billing_group
+            instance._need_update = True
         if old_instance.spoc != instance.spoc:
             old_instance.remove_permission_to_spoc()
             instance.assign_permission_to_spoc()
 
 
 @receiver(post_save, sender=Instance)
-def give_permissions_after_creation(sender, instance, created, **kwargs):
+def post_save(sender, instance, created, **kwargs):
     if created:
         instance.assign_permission_to_spoc()
+        update_quota(instance.billing_group)
+    if instance._need_update:
+        update_quota(instance._old_billing_group)
+        update_quota(instance.billing_group)
 
+
+def update_quota(billing_group):
+    if billing_group is not None:
+        for binding in billing_group.quota_bindings.all():
+            binding.update_consumed()

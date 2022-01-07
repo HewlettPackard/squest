@@ -29,7 +29,7 @@ def resource_pool_create(request):
         {'text': 'Create a new resource pool', 'url': ""},
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_pool/resource-pool-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -66,6 +66,14 @@ def resource_pool_delete(request, resource_pool_id):
     context = {'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs}
     return render(request, 'resource_tracking/resource_pool/resource-pool-delete.html', context)
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_refresh_consumption(request, resource_pool_id):
+    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
+    resource_pool.update_all_consumed_and_produced()
+    return redirect(request.META['HTTP_REFERER'])
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_attribute_create(request, resource_pool_id):
     resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
@@ -85,7 +93,7 @@ def resource_pool_attribute_create(request, resource_pool_id):
         {'text': 'Create a new attribute', 'url': ""},
     ]
     context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_pool/attributes/attribute-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -125,7 +133,7 @@ def resource_pool_attribute_edit(request, resource_pool_id, attribute_id):
     ]
     context = {'form': form, 'attribute': attribute, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs,
                'action': 'edit'}
-    return render(request, 'resource_tracking/resource_pool/attributes/attribute-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

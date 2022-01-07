@@ -54,12 +54,12 @@
                     <!-- validate button -->
                     {% if icon_button and text_button and color_button %}
                         <button class="btn btn-{{ color_button }}" type="submit">
-                            <i class="fas {{ icon_button }}"></i>
+                            <i class="{{ icon_button }}"></i>
                             {{ text_button }}
                         </button>
                     {% elif action == "edit" %}
                         <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-plus"></i>
+                            <i class="fas fa-save"></i>
                             Update
                         </button>
                     {% elif action == "create" %}

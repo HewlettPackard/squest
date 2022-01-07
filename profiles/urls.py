@@ -3,10 +3,8 @@ from django.urls import path
 
 from Squest import settings
 from . import views
-from .views.billing_group_list_view import BillingGroupListView
 from .views.group_list_view import GroupListView
 from .views.team_list_view import TeamListView
-from .views.user_by_billing_group_list_view import UserByBillingGroupListView
 from .views.user_by_group_list_view import UserByGroupListView
 from .views.user_list_view import UserListView
 
@@ -32,22 +30,30 @@ urlpatterns = [
     path('group/<int:group_id>/delete/', views.group_delete, name='group_delete'),
 
     # billing group URLs
-    path('billing-group/<int:billing_group_id>/users/', UserByBillingGroupListView.as_view(),
-         name='user_by_billing_group_list'),
     path('billing-group/<int:billing_group_id>/users/update/', views.user_in_billing_group_update,
          name='user_in_billing_group_update'),
     path('billing-group/<int:billing_group_id>/users/remove/<int:user_id>/',
          views.user_in_billing_group_remove, name='user_in_billing_group_remove'),
-    path('billing-group/', BillingGroupListView.as_view(), name='billing_group_list'),
+    path('billing-group/', views.billing_group_list, name='billing_group_list'),
     path('billing-group/create/', views.billing_group_create, name='billing_group_create'),
     path('billing-group/<int:billing_group_id>/edit/', views.billing_group_edit, name='billing_group_edit'),
     path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
+    path('billing-group/<int:billing_group_id>/refresh_quota/', views.billing_group_refresh_quota, name='billing_group_refresh_quota'),
+
+    # Quota Binding
+    path('billing-group/<int:billing_group_id>/quota_attribute/<int:quota_binding_id>/edit/', views.quota_binding_edit,
+         name='quota_binding_edit'),
+    path('billing-group/<int:billing_group_id>/quota_attribute/<int:quota_binding_id>/delete/',
+         views.quota_binding_delete, name='quota_binding_delete'),
+    path('billing-group/<int:billing_group_id>/quota_attribute/edit/', views.quota_binding_edit_all,
+         name='quota_binding_edit_all'),
+    path('billing-group/<int:billing_group_id>/quota_attribute/edit-limits/', views.quota_binding_set_limits,
+         name='quota_binding_set_limits'),
 
     # notifications
     path('notification/switch/', views.notification_switch, name='notification_switch'),
     path('notification/add_service/', views.notification_add_service, name='notification_add_service'),
-    path('notification/remove_service/<int:service_id>/',
-         views.notification_remove_service,
+    path('notification/remove_service/<int:service_id>/', views.notification_remove_service,
          name='notification_remove_service'),
 
     # team URLs
@@ -65,6 +71,14 @@ urlpatterns = [
     path('role/ajax/get-teams-with-role/', views.ajax_get_teams_with_role, name='get_teams_with_role'),
 
     path('role/ajax/update-roles/', views.ajax_team_role_binding_form_update_roles, name='ajax_update_roles'),
-    path('role/ajax/update-objects/', views.ajax_team_role_binding_form_update_objects, name='ajax_update_objects')
+    path('role/ajax/update-objects/', views.ajax_team_role_binding_form_update_objects, name='ajax_update_objects'),
+
+    # Quota Attribute Definition
+    path('quota-attribute/', views.QuotaAttributeDefinitionListView.as_view(), name='quota_attribute_definition_list'),
+    path('quota-attribute/create/', views.quota_attribute_definition_create, name='quota_attribute_definition_create'),
+    path('quota-attribute/<int:quota_attribute_definition_id>/edit/', views.quota_attribute_definition_edit,
+         name='quota_attribute_definition_edit'),
+    path('quota-attribute/<int:quota_attribute_definition_id>/delete/', views.quota_attribute_definition_delete,
+         name='quota_attribute_definition_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

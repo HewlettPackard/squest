@@ -5,7 +5,7 @@ from guardian.mixins import LoginRequiredMixin
 
 from resource_tracker.filters.resource_filter import ResourceFilter
 from resource_tracker.models import Resource
-from resource_tracker.tables.resource_tables import ResourceTable
+from resource_tracker.tables.resource_table import ResourceTable
 
 
 class ResourceListView(LoginRequiredMixin, SingleTableMixin, FilterView):

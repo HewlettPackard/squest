@@ -6,11 +6,11 @@
         <div class="float-right">
             <a href="{% url 'service_catalog:instance_edit' instance.id %}"
                class="btn btn-primary">
-                <i class="fas fa-wrench"></i> Edit
+                <i class="fas fa-pencil-alt"></i>
             </a>
             <a href="{% url 'service_catalog:instance_delete' instance.id %}"
                class="btn btn-danger">
-                <i class="fas fa-trash"></i> Delete
+                <i class="fas fa-trash"></i>
             </a>
         </div>
     {% endif %}
@@ -46,11 +46,21 @@
                                     class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Billing group</b> <a class="float-right">{{ instance.billing_group.name }}</a>
+                                <b>Billing group</b> {% if instance.billing_group %}<a href="{% url 'profiles:billing_group_list' %}?id={{ instance.billing_group.id }}#quota{{ instance.billing_group.id }}" class="float-right">{{ instance.billing_group.name }}</a>{% endif %}
                             </li>
                             <li class="list-group-item">
                                 <b>SPOC</b> <a class="float-right">{{ instance.spoc.username }}</a>
                             </li>
+                            {% if request.user.is_superuser %}
+                                <li class="list-group-item">
+                                    <b>Resources</b>
+                                    {% for resource in instance.resources.all %}
+                                        <a class="float-right" href="{% url 'resource_tracker:resource_group_resource_edit' resource.resource_group.id resource.id %}">
+                                            {{ resource.name }}
+                                        </a> <br>
+                                    {% endfor %}
+                                </li>
+                            {% endif %}
                             <li class="list-group-item border-bottom-0">
                                 <b>Docs</b>
                                 {% for doc in instance.service.docs.all %}

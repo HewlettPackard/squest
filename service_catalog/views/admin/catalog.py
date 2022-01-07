@@ -23,8 +23,8 @@ def add_service(request):
         {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
         {'text': 'Create a new service', 'url': ""},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'service_catalog/admin/service/service-create.html', context)
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create', 'multipart': True}
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -60,8 +60,7 @@ def edit_service(request, service_id):
         {'text': target_service.name, 'url': ""},
     ]
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
-    return render(request,
-                  'service_catalog/admin/service/service-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -84,8 +83,7 @@ def add_service_operation(request, service_id):
         {'text': 'Create a new operation', 'url': ""},
     ]
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request,
-                  'service_catalog/admin/service/operation/operation-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -134,8 +132,7 @@ def edit_service_operation(request, service_id, operation_id):
                'breadcrumbs': breadcrumbs,
                'action': 'edit'
                }
-    return render(request,
-                  'service_catalog/admin/service/operation/operation-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

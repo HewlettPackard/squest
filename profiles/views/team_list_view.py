@@ -1,22 +1,11 @@
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django_tables2 import tables, TemplateColumn, LinkColumn
-from django_tables2.utils import A
 from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 
 from profiles.filters.team_filter import TeamFilter
 from profiles.models.team import Team
-
-
-class TeamTable(tables.Table):
-    name = LinkColumn("profiles:team_details", args=[A("id")])
-    actions = TemplateColumn(template_name='custom_columns/team_actions.html', orderable=False)
-
-    class Meta:
-        model = Team
-        attrs = {"id": "team_table", "class": "table squest-pagination-tables "}
-        fields = ("name", "actions")
+from profiles.tables.team_table import TeamTable
 
 
 class TeamListView(LoginRequiredMixin, SingleTableMixin, FilterView):

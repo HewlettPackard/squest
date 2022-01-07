@@ -1,184 +1,161 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
 
-{% block content %}
-    <div class="content-wrapper">
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">User details</h1>
-                    </div>
-                </div>
+{% block main %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a href="#details" data-toggle="tab" class="nav-link active">Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tokens" data-toggle="tab" class="nav-link">Tokens</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#notifications" data-toggle="tab" class="nav-link">Notifications</a>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a href="#details" data-toggle="tab" {% if current_tab == 'details' %}class="nav-link active" {% else %}class="nav-link"{% endif %}>Details
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#tokens" data-toggle="tab" {% if current_tab == 'tokens' %} class="nav-link active" {% else %}class="nav-link"{% endif %}>Tokens
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#notifications" data-toggle="tab" {% if current_tab == 'notifications' %} class="nav-link active" {% else %}class="nav-link"{% endif %}>Notifications
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div id="details" {% if current_tab == 'details' %}class="active tab-pane" {% else %}class="tab-pane"{% endif %}>
-                                <dl class="row">
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Username</dt>
-                                        <dd class="col-sm-8">{{ user.get_username }}</dd>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Email</dt>
-                                        <dd class="col-sm-8">{{ user.email }}</dd>
-                                    </div>
-                                </dl>
-                                <dl class="row">
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">First name</dt>
-                                        <dd class="col-sm-8">{{ user.get_short_name }}</dd>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Last Name</dt>
-                                        <dd class="col-sm-8">{{ user.last_name }}</dd>
-                                    </div>
-                                </dl>
-                                <dl class="row">
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Last login</dt>
-                                        <dd class="col-sm-8">{{ user.last_login }}</dd>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Created</dt>
-                                        <dd class="col-sm-8">{{ user.date_joined }}</dd>
-                                    </div>
-                                </dl>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div id="details" class="tab-pane active">
+                        <dl class="row">
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Username</dt>
+                                <dd class="col-sm-8">{{ user.get_username }}</dd>
                             </div>
-                            <div id="tokens"
-                                    {% if current_tab == 'tokens' %}
-                                 class="active tab-pane"
-                                    {% else %}
-                                 class="tab-pane"
-                                    {% endif %}
-                            >
-                                <a title="Create a new token" class="btn btn-success float-sm-right mb-2"
-                                   href="{% url "profiles:token_create" %}">
-                                    <i class="fas fa-plus"></i> Add token
-                                </a>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th>Created date</th>
-                                        <th>Expiration date</th>
-                                        <th>Key</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for token in tokens %}
-                                        <tr>
-                                            <td class="align-middle">{{ token.description }}</td>
-                                            <td class="align-middle">{{ token.created }}</td>
-                                            <td class="align-middle">{{ token.expires }}</td>
-                                            <td class="align-middle">{{ token }}</td>
-                                            <td class="align-middle">
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">{{ user.email }}</dd>
+                            </div>
+                        </dl>
+                        <dl class="row">
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">First name</dt>
+                                <dd class="col-sm-8">{{ user.get_short_name }}</dd>
+                            </div>
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Last Name</dt>
+                                <dd class="col-sm-8">{{ user.last_name }}</dd>
+                            </div>
+                        </dl>
+                        <dl class="row">
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Last login</dt>
+                                <dd class="col-sm-8">{{ user.last_login }}</dd>
+                            </div>
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Created</dt>
+                                <dd class="col-sm-8">{{ user.date_joined }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div id="tokens" class="tab-pane">
+                        <a title="Create a new token" class="btn btn-success float-sm-right mb-2"
+                           href="{% url "profiles:token_create" %}">
+                            <i class="fas fa-plus"></i> Add token
+                        </a>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Created date</th>
+                                <th>Expiration date</th>
+                                <th>Key</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for token in tokens %}
+                                <tr>
+                                    <td class="align-middle">{{ token.description }}</td>
+                                    <td class="align-middle">{{ token.created }}</td>
+                                    <td class="align-middle">{{ token.expires }}</td>
+                                    <td class="align-middle">{{ token }}</td>
+                                    <td class="align-middle">
                                                 <span title="Show key"
                                                       data-toggle="modal" data-target="#tokenDialog"
                                                       data-token="{{ token.key }}"
                                                       class="btn btn-secondary showButton">
                                                     <i class="fas fa-eye"></i>
                                                 </span>
-                                                <a title="Generate another key"
-                                                   class="btn btn-info"
-                                                   href="{% url "profiles:token_generate" token.id %}">
-                                                    <i class="fas fa-sync-alt"></i>
+                                        <a title="Generate another key"
+                                           class="btn btn-info"
+                                           href="{% url "profiles:token_generate" token.id %}">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </a>
+                                        <a title="Edit"
+                                           class="btn btn-primary"
+                                           href="{% url "profiles:token_edit" token.id %}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <a title="Delete"
+                                           class="btn btn-danger"
+                                           href="{% url "profiles:token_delete" token.id %}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="notifications" class="tab-pane">
+                        <dl class="row">
+                            <div class="col-md-6">
+                                <dt class="col-sm-4">Notifications</dt>
+                                <dd class="col-sm-8">
+                                    {% if user.profile.notification_enabled %}
+                                        <blockquote class="quote-success">
+                                            <p class="text-success"><i class="fas fa-bell"></i> Enabled</p>
+                                            <small>
+                                                <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
+                                                    <i class="fas fa-bell-slash"></i> Disable
                                                 </a>
-                                                <a title="Edit"
-                                                   class="btn btn-primary"
-                                                   href="{% url "profiles:token_edit" token.id %}">
-                                                    <i class="fas fa-pencil-alt"></i>
+                                            </small>
+                                        </blockquote>
+                                    {% else %}
+                                        <blockquote class="quote-secondary">
+                                            <p class="text-secondary"><i class="fas fa-bell-slash"></i> Disabled</p>
+                                            <small>
+                                                <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
+                                                    <i class="fas fa-bell"></i> Enable
                                                 </a>
-                                                <a title="Delete"
-                                                   class="btn btn-danger"
-                                                   href="{% url "profiles:token_delete" token.id %}">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                                            </small>
+                                        </blockquote>
+                                    {% endif %}
+                                </dd>
                             </div>
-                            <div id="notifications" {% if current_tab == 'notifications' %}class="active tab-pane" {% else %}class="tab-pane"{% endif %}>
-                                <dl class="row">
-                                    <div class="col-md-6">
-                                        <dt class="col-sm-4">Notifications</dt>
-                                        <dd class="col-sm-8">
-                                            {% if user.profile.notification_enabled %}
-                                                <blockquote class="quote-success">
-                                                    <p class="text-success"><i class="fas fa-bell"></i> Enabled</p>
-                                                    <small>
-                                                        <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
-                                                            <i class="fas fa-bell-slash"></i> Disable
-                                                        </a>
-                                                    </small>
-                                                </blockquote>
-                                            {% else %}
-                                                <blockquote class="quote-secondary">
-                                                    <p class="text-secondary"><i class="fas fa-bell-slash"></i> Disabled</p>
-                                                    <small>
-                                                        <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
-                                                            <i class="fas fa-bell"></i> Enable
-                                                        </a>
-                                                    </small>
-                                                </blockquote>
-                                            {% endif %}
-
-                                        </dd>
-                                    </div>
-                                </dl>
-                                {% if request.user.is_superuser %}
-                                    <a title="Subscribe notification of a particular service" class="btn btn-default mb-2"
-                                       href="{% url "profiles:notification_add_service" %}">
-                                        <i class="fas fa-plus"></i> Subscribe to a particular service
-                                    </a>
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>Service</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for service in request.user.profile.subscribed_services_notification.all %}
-                                            <tr>
-                                                <td class="align-middle">{{ service.name }}</td>
-                                                <td class="align-middle">
-                                                    <a title="Delete"
-                                                       class="btn btn-danger"
-                                                       href="{% url "profiles:notification_remove_service" service.id %}">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                {% endif %}
-                            </div>
-                        </div>
+                        </dl>
+                        {% if request.user.is_superuser %}
+                            <a title="Subscribe notification of a particular service" class="btn btn-default mb-2"
+                               href="{% url "profiles:notification_add_service" %}">
+                                <i class="fas fa-plus"></i> Subscribe to a particular service
+                            </a>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for service in request.user.profile.subscribed_services_notification.all %}
+                                    <tr>
+                                        <td class="align-middle">{{ service.name }}</td>
+                                        <td class="align-middle">
+                                            <a title="Delete"
+                                               class="btn btn-danger"
+                                               href="{% url "profiles:notification_remove_service" service.id %}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -220,5 +197,4 @@
             });
         });
     </script>
-
 {% endblock %}
