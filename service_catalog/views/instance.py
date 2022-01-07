@@ -127,8 +127,9 @@ def instance_new_support(request, instance_id):
             return redirect('service_catalog:instance_details', target_instance.id)
     else:
         form = SupportRequestForm(request.user, **parameters)
-    context = {'form': form, 'instance': target_instance, 'breadcrumbs': breadcrumbs}
-    return render(request, 'service_catalog/common/support-create.html', context)
+    context = {'form': form, 'instance': target_instance, 'breadcrumbs': breadcrumbs, 'color_button': 'success',
+               'text_button': 'Open new support', 'icon_button': 'fas fa-plus'}
+    return render(request, 'generics/generic_form.html', context)
 
 
 @login_required

@@ -10,7 +10,7 @@ from guardian.mixins import LoginRequiredMixin
 from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker.forms import ResourceGroupForm
 from resource_tracker.models import ResourceGroup
-from resource_tracker.tables.resource_group_tables import ResourceGroupTable
+from resource_tracker.tables.resource_group_table import ResourceGroupTable
 
 
 @method_decorator(login_required, name='dispatch')
@@ -29,6 +29,9 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Resource groups"
+        context['app_name'] = "resource_tracker"
+        context['object_name'] = "resource_group"
+        context['html_button_path'] = "generics/buttons/generic_add_button.html"
         return context
 
 
@@ -62,7 +65,7 @@ def resource_group_create(request):
         {'text': 'Create a new resource group', 'url': ""},
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_group/resource-group-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

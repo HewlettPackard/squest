@@ -23,8 +23,8 @@ def notification_add_service(request):
     else:
         form = NotificationServiceForm(request.user)
 
-    context = {'form': form, 'action': 'create'}
-    return render(request, 'profiles/notification-service-add.html', context)
+    context = {'title': "Subscribe to a service notifications", 'form': form, 'action': 'create'}
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

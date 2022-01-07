@@ -1,5 +1,6 @@
-from django_tables2 import CheckBoxColumn, TemplateColumn, Column
+from django_tables2 import CheckBoxColumn, TemplateColumn, Column, LinkColumn
 from django_tables2.columns import BoundColumns
+from django_tables2.utils import A
 
 from resource_tracker.models import Resource
 from Squest.utils.squest_table import SquestTable
@@ -25,11 +26,12 @@ class ResourceTable(SquestTable):
                 for attribute in resource.text_attributes.all():
                     if attribute.text_attribute_type.name not in text_attribute_names:
                         text_attribute_names.append(attribute.text_attribute_type.name)
-            sequence = [*["selection", "name"], *attribute_names, *text_attribute_names, *["operations"]]
+            sequence = [*["selection", "name", "service_catalog_instance"], *attribute_names, *text_attribute_names, *["operations"]]
             self.Meta.fields = tuple(sequence)
             self.sequence = sequence
             type(self).base_columns["selection"] = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
             type(self).base_columns["name"] = Column()
+            type(self).base_columns["service_catalog_instance"] = LinkColumn("service_catalog:instance_details", args=[A("service_catalog_instance__id")], verbose_name="Instance")
             for attribute_name in attribute_names:
                 type(self).base_columns[attribute_name] = TemplateColumn(
                     template_name='custom_columns/attribute_value.html',

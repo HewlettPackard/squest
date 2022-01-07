@@ -27,7 +27,7 @@ def resource_group_attribute_create(request, resource_group_id):
         {'text': 'Create a new attribute', 'url': ""},
     ]
     context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'resource_tracking/resource_group/attributes/attribute-create.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -58,7 +58,7 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     ]
     context = {'form': form, 'attribute': attribute, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs,
                'action': 'edit'}
-    return render(request, 'resource_tracking/resource_group/attributes/attribute-edit.html', context)
+    return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

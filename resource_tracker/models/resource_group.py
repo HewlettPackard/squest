@@ -1,8 +1,9 @@
 from django.db import models
 from taggit.managers import TaggableManager
 
-from resource_tracker.models import ResourceGroupAttributeDefinition, ExceptionResourceTracker, \
-    ResourceGroupTextAttributeDefinition
+from resource_tracker.models.resource_group_attribute_definition import ResourceGroupAttributeDefinition
+from resource_tracker.models.exceptions import ExceptionResourceTracker
+from resource_tracker.models.resource_group_text_attribute_definition import ResourceGroupTextAttributeDefinition
 
 
 class ResourceGroup(models.Model):
