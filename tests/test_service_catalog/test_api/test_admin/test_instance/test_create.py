@@ -29,7 +29,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "spoc": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
-            "billing_group": None,
+            "billing_group": self.test_billing_group.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"
@@ -41,7 +41,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': self.service_test_2.id,
                     'spoc': self.standard_user_2.id,
                     'resources': [],
-                    'billing_group': None}
+                    'billing_group': self.test_billing_group.id}
         self._assert_created(data, expected)
 
     def test_instance_create_spec_empty_dict(self):
