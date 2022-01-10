@@ -8,7 +8,7 @@ from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
 from service_catalog.models import Request, Service, OperationType, Operation, Instance
 from service_catalog.serializers.dynamic_survey_serializer import DynamicSurveySerializer
-from service_catalog.serializers.instance_serializer import InstanceSerializer
+from service_catalog.serializers.instance_serializer import InstanceReadSerializer
 
 
 class ServiceRequestSerializer(ModelSerializer):
@@ -104,7 +104,7 @@ class RequestSerializer(ModelSerializer):
         exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
         read_only = True
 
-    instance = InstanceSerializer(read_only=True)
+    instance = InstanceReadSerializer(read_only=True)
     user = UserSerializer(read_only=True)
 
 
@@ -113,5 +113,5 @@ class AdminRequestSerializer(ModelSerializer):
         model = Request
         exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
 
-    instance = InstanceSerializer(read_only=True)
+    instance = InstanceReadSerializer(read_only=True)
     user = UserSerializer(read_only=True)
