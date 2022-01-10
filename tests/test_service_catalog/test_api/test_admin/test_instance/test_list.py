@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 from service_catalog.models import Instance
-from service_catalog.serializers.instance_serializer import InstanceSerializer
+from service_catalog.serializers.instance_serializer import InstanceReadSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -16,7 +16,7 @@ class TestInstanceList(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Instance.objects.all().count(), len(response.data))
         all_instances = Instance.objects.all()
-        serializer = InstanceSerializer(all_instances, many=True)
+        serializer = InstanceReadSerializer(all_instances, many=True)
         self.assertEqual(response.data, serializer.data)
 
     def test_standard_user_cannot_list_instances(self):
