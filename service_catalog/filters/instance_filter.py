@@ -18,6 +18,7 @@ class InstanceFilter(SquestFilter):
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
 
     no_billing_groups = BooleanFilter(method='no_billing_group', label="No billing group", widget=CheckboxInput())
+    no_spocs = BooleanFilter(method='no_spoc', label="No SPOC", widget=CheckboxInput())
 
     def __init__(self, *args, **kwargs):
         super(InstanceFilter, self).__init__(*args, **kwargs)
@@ -29,4 +30,9 @@ class InstanceFilter(SquestFilter):
     def no_billing_group(self, queryset, name, value):
         if not value:
             return queryset
-        return Instance.objects.filter(billing_group=None)
+        return queryset.filter(billing_group=None)
+
+    def no_spoc(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(spoc=None)
