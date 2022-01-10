@@ -101,7 +101,8 @@ class Instance(RoleManager):
 
     def get_roles_of_users(self):
         roles = super(Instance, self).get_roles_of_users()
-        roles[self.spoc.id].append("SPOC")
+        if self.spoc:
+            roles[self.spoc.id].append("SPOC")
         return roles
 
     def remove_user_in_role(self, user, role_name=None):

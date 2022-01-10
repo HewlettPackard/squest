@@ -40,6 +40,8 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.assertEqual(302, response.status_code)
 
     def test_admin_can_get_details(self):
+        self.test_instance.spoc = None
+        self.test_instance.save()
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
