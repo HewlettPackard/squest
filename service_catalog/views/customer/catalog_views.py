@@ -26,5 +26,6 @@ def customer_service_request(request, service_id):
         {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': ""},
     ]
-    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'icon_button': "fas fa-shopping-cart", 'text_button': "Request the service", 'color_button': "success"}
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs,
+               'icon_button': "fas fa-shopping-cart", 'text_button': "Request the service", 'color_button': "success"}
     return render(request, 'generics/generic_form.html', context)
