@@ -98,3 +98,28 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.assertEqual(request_count + offset, Request.objects.count())
         if status_expected is None:
             self.assertEqual(response.data, self.expected)
+
+    def test_can_create_with_comment(self):
+        self.client.force_login(user=self.standard_user)
+        self.data = {
+            'instance_name': 'instance test',
+            'billing_group': None,
+            'fill_in_survey': {
+                'text_variable': 'my text'
+            },
+            "comment": "here_is_a_comment"
+        }
+        self.expected = {
+            'instance_name': 'instance test',
+            'billing_group': None,
+            'fill_in_survey': OrderedDict([
+                ('text_variable', 'my text')
+            ]),
+            "comment": "here_is_a_comment"
+        }
+
+        self._check_create()
+        created_request = Request.objects.latest('id')
+        self.assertEqual(created_request.comments.count(), 1)
+        self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
+        self.assertEqual(created_request.comments.first().sender, self.standard_user)

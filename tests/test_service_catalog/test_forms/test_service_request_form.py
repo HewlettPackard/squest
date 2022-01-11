@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from django.urls import reverse
 
 from service_catalog.forms import FormUtils
@@ -43,5 +41,4 @@ class TestServiceRequestForm(BaseTest):
         response = self.client.post(
             url, data={"text_variable": "value"}
         )
-
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(200, response.status_code)
