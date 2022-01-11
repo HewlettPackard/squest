@@ -6,7 +6,7 @@ from rest_framework.serializers import ModelSerializer, CharField, ValidationErr
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
-from service_catalog.models import Request, Service, OperationType, Operation, Instance
+from service_catalog.models import Request, Service, OperationType, Operation, Instance, RequestMessage
 from service_catalog.serializers.dynamic_survey_serializer import DynamicSurveySerializer
 from service_catalog.serializers.instance_serializer import InstanceReadSerializer
 
@@ -14,11 +14,16 @@ from service_catalog.serializers.instance_serializer import InstanceReadSerializ
 class ServiceRequestSerializer(ModelSerializer):
     class Meta:
         model = Request
-        fields = ['instance_name', 'billing_group', 'fill_in_survey']
+        fields = ['instance_name', 'billing_group', 'comment', 'fill_in_survey']
 
     instance_name = CharField(
         label="Squest instance name",
         help_text="Help to identify the requested service in the 'Instances' view"
+    )
+    comment = CharField(
+        label="Comment",
+        help_text="Add a comment to your request",
+        required=False
     )
     billing_group = PrimaryKeyRelatedField(label='billing group id', allow_null=True, default=None, required=False,
                                            queryset=BillingGroup.objects.all(),
@@ -65,6 +70,11 @@ class ServiceRequestSerializer(ModelSerializer):
                                              operation=self.create_operation,
                                              fill_in_survey=self.validated_data["fill_in_survey"],
                                              user=self.request.user)
+
+        # save the comment
+        if "comment" in self.validated_data and self.validated_data["comment"] is not None:
+            comment = self.validated_data["comment"]
+            RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
         return new_request
 
 

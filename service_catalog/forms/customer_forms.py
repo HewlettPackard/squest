@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from profiles.models import BillingGroup
 from service_catalog.forms.utils import get_fields_from_survey
-from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage
+from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage, RequestMessage
 from service_catalog.models.operations import OperationType
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -37,6 +37,11 @@ class ServiceRequestForm(forms.Form):
     instance_name = forms.CharField(label="Squest instance name",
                                     help_text="Help to identify the requested service in the 'Instances' view",
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    request_comment = forms.CharField(label="Comment",
+                                      help_text="Add a comment to your request",
+                                      widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+                                      required=False)
 
     billing_group_id = forms.ChoiceField(
         label="Billing group",
@@ -69,7 +74,7 @@ class ServiceRequestForm(forms.Form):
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
                                                        operation_survey=self.create_operation.enabled_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey))
-        self.fields['instance_name'].form_title = "1. Squest fields"
+        self.fields['instance_name'].form_title = "1. Request fields"
 
     def save(self):
         user_provided_survey_fields = dict()
@@ -87,6 +92,12 @@ class ServiceRequestForm(forms.Form):
                                              operation=self.create_operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
+
+        # save the comment
+        request_comment = self.cleaned_data["request_comment"] if self.cleaned_data["request_comment"] else None
+        if request_comment is not None:
+            RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
+
         return new_request
 
     def clean_billing_group_id(self):
