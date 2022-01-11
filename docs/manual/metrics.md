@@ -169,3 +169,31 @@ E.g:
 ```
 squest_billing_group_total 3.0
 ```
+
+### squest_quota_consumed
+
+Consumption of quota per billing group and attribute
+
+E.g:
+```
+squest_quota_consumed{billing_group="5G",quota_attribute="CPU"} 22.0
+squest_quota_consumed{billing_group="5G",quota_attribute="Memory"} 45.0
+squest_quota_consumed{billing_group="Assurance",quota_attribute="CPU"} 20.0
+squest_quota_consumed{billing_group="Assurance",quota_attribute="Memory"} 23.0
+```
+
+### squest_quota_limit
+
+Limit of quota per billing group and attribute
+
+```
+squest_quota_limit{billing_group="5G",quota_attribute="CPU"} 100.0
+squest_quota_limit{billing_group="5G",quota_attribute="Memory"} 50.0
+squest_quota_limit{billing_group="Assurance",quota_attribute="CPU"} 45.0
+squest_quota_limit{billing_group="Assurance",quota_attribute="Memory"} 12.0)
+```
+
+A percentage of consumption can be calculated by using `squest_quota_consumed` and `squest_quota_limit`. PromQL example:
+```
+round((squest_quota_consumed / squest_quota_limit) * 100)
+```
