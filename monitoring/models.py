@@ -5,7 +5,7 @@ from django.db.models import Count
 from prometheus_client import Summary
 from prometheus_client.metrics_core import GaugeMetricFamily
 
-from profiles.models import Team, BillingGroup
+from profiles.models import Team, BillingGroup, QuotaBinding
 from service_catalog.models import Instance, Support, Request
 
 
@@ -26,6 +26,8 @@ class ComponentCollector(object):
         yield self.get_total_users()
         yield self.get_total_teams()
         yield self.get_total_billing_group()
+        yield self.get_quota_consumed()
+        yield self.get_quota_limit()
 
     @staticmethod
     def get_total_squest_instance_per_service_name():
@@ -132,4 +134,32 @@ class ComponentCollector(object):
             gauge.add_metric([request["instance__service__name"],
                               request["state"]],
                              request["total_count"])
+        return gauge
+
+    @staticmethod
+    def get_quota_consumed():
+        """
+        squest_quota_consumed{billing_group="5G", quota_attribute='cpu'}  34
+        """
+        gauge = GaugeMetricFamily("squest_quota_consumed",
+                                  'Consumption of quota per billing group and attribute',
+                                  labels=['billing_group', 'quota_attribute'])
+        for quota_binding in QuotaBinding.objects.all():
+            gauge.add_metric([quota_binding.billing_group.name,
+                              quota_binding.quota_attribute_definition.name],
+                             quota_binding.consumed)
+        return gauge
+
+    @staticmethod
+    def get_quota_limit():
+        """
+        squest_quota_limit{billing_group="5G", quota_attribute='cpu'}  34
+        """
+        gauge = GaugeMetricFamily("squest_quota_limit",
+                                  'Limit of quota per billing group and attribute',
+                                  labels=['billing_group', 'quota_attribute'])
+        for quota_binding in QuotaBinding.objects.all():
+            gauge.add_metric([quota_binding.billing_group.name,
+                              quota_binding.quota_attribute_definition.name],
+                             quota_binding.limit)
         return gauge
