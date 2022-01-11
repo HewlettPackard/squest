@@ -14,13 +14,6 @@
             <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent"
                 data-widget="treeview" role="menu">
                 <li class="nav-header">Service catalog</li>
-                <li class="nav-item">
-                    <a href="{% url 'service_catalog:dashboards' %}"
-                       class="nav-link {% if '/dashboards/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-chart-pie"></i>
-                        <p>Dashboards</p>
-                    </a>
-                </li>
                 {% if user.is_superuser %}
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:list_tower' %}"
