@@ -33,7 +33,6 @@ def dashboards(request):
     context = dict()
     now = timezone.now()
     context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
-    context['title'] = "Dashboard"
     if request.user.is_superuser:
         context['total_request'] = Request.objects.filter(state=RequestState.SUBMITTED).count()
         context['total_instance'] = Instance.objects.filter(state='AVAILABLE').count()
