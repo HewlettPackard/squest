@@ -15,7 +15,7 @@ def get_choices_from_string(string_with_anti_slash_n):
     return returned_list
 
 
-def get_fields_from_survey(survey, enable_fields=None):
+def get_fields_from_survey(survey, enable_fields=None, form_title="2. Service fields"):
     fields = {}
     for survey_field in survey["spec"]:
         if survey_field["type"] == "text":
@@ -91,7 +91,7 @@ def get_fields_from_survey(survey, enable_fields=None):
                                                                       enable_fields=enable_fields)
     if fields:
         fields[next(iter(fields))].separator = True
-        fields[next(iter(fields))].form_title = "2. Service fields"
+        fields[next(iter(fields))].form_title = form_title
     return fields
 
 

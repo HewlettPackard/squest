@@ -14,13 +14,13 @@ from service_catalog.serializers.instance_serializer import InstanceReadSerializ
 class ServiceRequestSerializer(ModelSerializer):
     class Meta:
         model = Request
-        fields = ['instance_name', 'billing_group', 'comment', 'fill_in_survey']
+        fields = ['instance_name', 'billing_group', 'request_comment', 'fill_in_survey']
 
     instance_name = CharField(
         label="Squest instance name",
         help_text="Help to identify the requested service in the 'Instances' view"
     )
-    comment = CharField(
+    request_comment = CharField(
         label="Comment",
         help_text="Add a comment to your request",
         required=False
@@ -72,16 +72,23 @@ class ServiceRequestSerializer(ModelSerializer):
                                              user=self.request.user)
 
         # save the comment
-        if "comment" in self.validated_data and self.validated_data["comment"] is not None:
-            comment = self.validated_data["comment"]
+        if "request_comment" in self.validated_data and self.validated_data["request_comment"] is not None:
+            comment = self.validated_data["request_comment"]
             RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
         return new_request
 
 
 class OperationRequestSerializer(ModelSerializer):
+
     class Meta:
         model = Request
-        fields = ['fill_in_survey']
+        fields = ['request_comment', 'fill_in_survey']
+
+    request_comment = CharField(
+        label="Comment",
+        help_text="Add a comment to your request",
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', None)
@@ -105,6 +112,10 @@ class OperationRequestSerializer(ModelSerializer):
                                              operation=self.target_operation,
                                              fill_in_survey=self.validated_data["fill_in_survey"],
                                              user=self.request.user)
+        # save the comment
+        if "request_comment" in self.validated_data and self.validated_data["request_comment"] is not None:
+            comment = self.validated_data["request_comment"]
+            RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
         return new_request
 
 
