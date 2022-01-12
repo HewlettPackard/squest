@@ -72,3 +72,27 @@ class TestApiOperationRequestCreate(BaseTestRequest):
         self.data['fill_in_survey']['wrong_field_name'] = self.data['fill_in_survey'].pop('text_variable')
         response = self.client.post(self.url, data=self.data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_can_create_with_comment(self):
+        self.client.force_login(user=self.standard_user)
+        self.data = {
+            'fill_in_survey': {
+                'text_variable': 'my text'
+            },
+            "request_comment": "here_is_a_comment"
+        }
+        self.expected = {
+            'fill_in_survey': {
+                'text_variable': 'my text'
+            },
+            "request_comment": "here_is_a_comment"
+        }
+
+        request_count = Request.objects.count()
+        response = self.client.post(self.url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(request_count + 1, Request.objects.count())
+        created_request = Request.objects.latest('id')
+        self.assertEqual(created_request.comments.count(), 1)
+        self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
+        self.assertEqual(created_request.comments.first().sender, self.standard_user)

@@ -17,8 +17,7 @@ def customer_service_request(request, service_id):
     if request.method == 'POST':
         form = ServiceRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
-            new_request = form.save()
-            send_mail_request_update(target_request=new_request, user_applied_state=request.user)
+            form.save()
             return redirect('service_catalog:request_list')
     else:
         form = ServiceRequestForm(request.user, **parameters)

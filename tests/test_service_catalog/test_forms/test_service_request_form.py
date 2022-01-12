@@ -32,13 +32,3 @@ class TestServiceRequestForm(BaseTest):
         self.assertEqual(expected_result,
                           FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
                                                          operation_survey=self.create_operation_test.enabled_survey_fields))
-
-    def test_create_request(self):
-        url_args = {
-            'service_id': self.service_test.id,
-        }
-        url = reverse('service_catalog:customer_service_request', kwargs=url_args)
-        response = self.client.post(
-            url, data={"text_variable": "value"}
-        )
-        self.assertEqual(200, response.status_code)
