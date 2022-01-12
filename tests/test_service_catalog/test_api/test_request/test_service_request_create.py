@@ -107,7 +107,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             'fill_in_survey': {
                 'text_variable': 'my text'
             },
-            "comment": "here_is_a_comment"
+            "request_comment": "here_is_a_comment"
         }
         self.expected = {
             'instance_name': 'instance test',
@@ -115,7 +115,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             'fill_in_survey': OrderedDict([
                 ('text_variable', 'my text')
             ]),
-            "comment": "here_is_a_comment"
+            "request_comment": "here_is_a_comment"
         }
 
         self._check_create()

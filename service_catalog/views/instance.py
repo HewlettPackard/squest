@@ -87,8 +87,15 @@ def instance_request_new_operation(request, instance_id, operation_id):
             return redirect('service_catalog:request_list')
     else:
         form = OperationRequestForm(request.user, **parameters)
-    context = {'form': form, 'operation': operation, 'instance': instance}
-    return render(request, 'service_catalog/customer/instance/instance-request-operation.html', context)
+    breadcrumbs = [
+        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+        {'text': f"{instance.name} ({instance.id})",
+         'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        {'text': f"Operation - {operation.name}", 'url': ''}
+    ]
+    context = {'form': form, 'operation': operation, 'instance': instance, 'breadcrumbs': breadcrumbs,
+               'icon_button': "fas fa-shopping-cart", 'text_button': "Request the operation", 'color_button': "success"}
+    return render(request, 'generics/generic_form.html', context)
 
 
 @login_required

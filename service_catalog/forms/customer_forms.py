@@ -11,6 +11,8 @@ from service_catalog.models.operations import OperationType
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
+
 
 class FormUtils:
 
@@ -74,7 +76,7 @@ class ServiceRequestForm(forms.Form):
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
                                                        operation_survey=self.create_operation.enabled_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey))
-        self.fields['instance_name'].form_title = "1. Request fields"
+        self.fields['instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
     def save(self):
         user_provided_survey_fields = dict()
@@ -110,6 +112,11 @@ class ServiceRequestForm(forms.Form):
 
 class OperationRequestForm(forms.Form):
 
+    request_comment = forms.CharField(label="Comment",
+                                      help_text="Add a comment to your request",
+                                      widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+                                      required=False)
+
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
         self.user = user
@@ -123,7 +130,8 @@ class OperationRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
                                                        operation_survey=self.operation.enabled_survey_fields)
-        self.fields = get_fields_from_survey(purged_survey)
+        self.fields.update(get_fields_from_survey(purged_survey, form_title="2. Operation fields"))
+        self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
     def save(self):
         user_provided_survey_fields = dict()
@@ -134,7 +142,12 @@ class OperationRequestForm(forms.Form):
                                              operation=self.operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
-        # TODO: send notification to admins
+
+        # save the comment
+        request_comment = self.cleaned_data["request_comment"] if self.cleaned_data["request_comment"] else None
+        if request_comment is not None:
+            RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
+
         return new_request
 
 
