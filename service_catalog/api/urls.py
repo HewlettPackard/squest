@@ -1,6 +1,6 @@
 from django.urls import path
 
-from service_catalog.api.admin.instance_api_views import InstanceList, InstanceDetails
+from service_catalog.api.instance_api_views import InstanceList, InstanceDetails
 from service_catalog.api.admin.job_template_api_views import JobTemplateDetails, JobTemplateList, \
     TowerServerJobTemplateList
 from service_catalog.api.admin.tower_server_api_views import TowerServerList, TowerServerDetails
@@ -11,8 +11,8 @@ from service_catalog.api.service_api_views import ServiceListCreate, ServiceDeta
 
 urlpatterns = [
     # admin urls
-    path('admin/instance/', InstanceList.as_view(), name='api_admin_instance_list'),
-    path('admin/instance/<int:pk>/', InstanceDetails.as_view(), name='api_admin_instance_details'),
+    path('instance/', InstanceList.as_view(), name='api_instance_list'),
+    path('instance/<int:pk>/', InstanceDetails.as_view(), name='api_instance_details'),
     path('instance/<int:instance_id>/operation/', InstanceOperationList.as_view(),
          name='api_instance_operation_list'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/request/', OperationRequestCreate.as_view(),
