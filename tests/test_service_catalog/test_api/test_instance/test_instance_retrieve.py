@@ -8,11 +8,9 @@ class TestInstanceRetrieve(BaseTestRequest):
 
     def setUp(self):
         super(TestInstanceRetrieve, self).setUp()
-        self.url = reverse('api_admin_instance_details', args=[self.test_instance.id])
+        self.url = reverse('api_instance_details', args=[self.test_instance.id])
 
-    def test_get_details(self):
-        response = self.client.get(self.url, format='json')
-
+    def _assert_can_get_details(self, response):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("id" in response.json())
         self.assertTrue("name" in response.json())
@@ -31,7 +29,21 @@ class TestInstanceRetrieve(BaseTestRequest):
         self.assertEqual(response.data['billing_group'], self.test_instance.billing_group)
         self.assertEqual(response.data['resources'],  list(self.test_instance.resources.all()))
 
-    def test_standard_user_cannot_get_details(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
+    def test_get_details_as_admin(self):
+        response = self.client.get(self.url, format='json')
+        self._assert_can_get_details(response)
+
+    def test_get_details_as_instance_owner(self):
+        self.client.force_login(user=self.standard_user)
+        response = self.client.get(self.url, format='json')
+        self._assert_can_get_details(response)
+
+    def test_cannot_get_details_when_not_owner(self):
+        self.client.force_login(user=self.standard_user_2)
+        response = self.client.get(self.url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_cannot_retrieve_instance_details_when_logout(self):
+        self.client.logout()
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
