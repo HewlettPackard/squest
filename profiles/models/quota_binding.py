@@ -3,12 +3,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from profiles.models import BillingGroup
-from profiles.models.quota_attribute_definition import QuotaAttributeDefinition
+from profiles.models.quota import Quota
 
 
 class QuotaBinding(Model):
     class Meta:
-        unique_together = ('billing_group', 'quota_attribute_definition',)
+        unique_together = ('billing_group', 'quota',)
     limit = FloatField(default=0)
     consumed = FloatField(default=0)
     billing_group = ForeignKey(
@@ -18,8 +18,8 @@ class QuotaBinding(Model):
         on_delete=CASCADE,
         related_name='quota_bindings'
     )
-    quota_attribute_definition = ForeignKey(
-        to=QuotaAttributeDefinition,
+    quota = ForeignKey(
+        to=Quota,
         blank=False,
         null=False,
         on_delete=CASCADE,
@@ -42,13 +42,13 @@ class QuotaBinding(Model):
         for instance in self.billing_group.instances.all():
             for resource in instance.resources.all():
                 for attribute in resource.attributes.all():
-                    if attribute.attribute_type in self.quota_attribute_definition.attribute_definitions.all():
+                    if attribute.attribute_type in self.quota.attribute_definitions.all():
                         consumed += attribute.value
         self.consumed = consumed
         self.save()
 
     def __str__(self):
-        return f"{self.quota_attribute_definition.name} = {self.consumed} (limit: {self.limit})"
+        return f"{self.quota.name} = {self.consumed} (limit: {self.limit})"
 
 
 @receiver(post_save, sender=QuotaBinding)

@@ -1,12 +1,11 @@
 from guardian.shortcuts import get_objects_for_user
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from rest_framework.response import Response
-from service_catalog.serializers.instance_serializer import InstanceWriteSerializer, InstanceReadSerializer
+from service_catalog.serializers.instance_serializer import InstanceWriteSerializer, InstanceSerializer
 
 
 class InstanceList(generics.ListCreateAPIView):
-    serializer_class = InstanceReadSerializer
+    serializer_class = InstanceSerializer
 
     def get_permissions(self):
         if self.request.method in ["POST"]:
@@ -22,7 +21,7 @@ class InstanceList(generics.ListCreateAPIView):
 
 
 class InstanceDetails(generics.RetrieveUpdateAPIView):
-    serializer_class = InstanceReadSerializer
+    serializer_class = InstanceSerializer
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "PUT"]:
@@ -32,7 +31,7 @@ class InstanceDetails(generics.RetrieveUpdateAPIView):
     def get_serializer_class(self):
         if self.request.user.is_superuser:
             return InstanceWriteSerializer
-        return InstanceReadSerializer
+        return InstanceSerializer
 
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'service_catalog.view_instance')

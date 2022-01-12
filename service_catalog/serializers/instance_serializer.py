@@ -5,7 +5,7 @@ from resource_tracker.api.serializers.resource_group.resource_serializers import
 from service_catalog.models import Instance, InstanceState
 
 
-class InstanceReadSerializer(serializers.ModelSerializer):
+class InstanceSerializer(serializers.ModelSerializer):
     state = serializers.ChoiceField(choices=InstanceState.choices)
     resources = ResourceSerializer(many=True, read_only=True)
     billing_group = BillingGroupSerializer(read_only=True)

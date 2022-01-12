@@ -2,7 +2,7 @@ from guardian.shortcuts import get_objects_for_user
 from rest_framework import status
 from rest_framework.reverse import reverse
 from service_catalog.models import Instance
-from service_catalog.serializers.instance_serializer import InstanceReadSerializer
+from service_catalog.serializers.instance_serializer import InstanceSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -17,7 +17,7 @@ class TestInstanceList(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Instance.objects.all().count(), len(response.data))
         all_instances = Instance.objects.all()
-        serializer = InstanceReadSerializer(all_instances, many=True)
+        serializer = InstanceSerializer(all_instances, many=True)
         self.assertEqual(response.data, serializer.data)
 
     def test_standard_user_can_list_his_own_instances(self):

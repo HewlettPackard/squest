@@ -146,7 +146,7 @@ class ComponentCollector(object):
                                   labels=['billing_group', 'quota_attribute'])
         for quota_binding in QuotaBinding.objects.all():
             gauge.add_metric([quota_binding.billing_group.name,
-                              quota_binding.quota_attribute_definition.name],
+                              quota_binding.quota.name],
                              quota_binding.consumed)
         return gauge
 
@@ -160,6 +160,6 @@ class ComponentCollector(object):
                                   labels=['billing_group', 'quota_attribute'])
         for quota_binding in QuotaBinding.objects.all():
             gauge.add_metric([quota_binding.billing_group.name,
-                              quota_binding.quota_attribute_definition.name],
+                              quota_binding.quota.name],
                              quota_binding.limit)
         return gauge
