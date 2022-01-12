@@ -11,7 +11,7 @@ class TestInstanceUpdate(BaseTestRequest):
 
     def setUp(self):
         super(TestInstanceUpdate, self).setUp()
-        self.url = reverse('api_admin_instance_details', args=[self.test_instance.id])
+        self.url = reverse('api_instance_details', args=[self.test_instance.id])
         self.update_data = {
             "name": "new_name",
             "service": self.service_test_2.id,
@@ -47,9 +47,19 @@ class TestInstanceUpdate(BaseTestRequest):
         self.assertEqual(self.test_instance.name, old_name)
 
     def test_update_instance_with_empty_dict_spec(self):
-        self.update_data['spec'] = {}
+        self.update_data['spec'] = dict()
         response = self.client.put(self.url, data=self.update_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.test_instance.refresh_from_db()
         self.assertDictEqual(self.test_instance.spec, {})
         self.assertEqual(self.test_instance.name, "new_name")
+
+    def test_non_admin_cannot_update(self):
+        self.client.force_login(user=self.standard_user)
+        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_update_when_logout(self):
+        self.client.logout()
+        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

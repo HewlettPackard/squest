@@ -9,7 +9,7 @@ class TestInstanceCreate(BaseTestRequest):
 
     def setUp(self):
         super(TestInstanceCreate, self).setUp()
-        self.url = reverse('api_admin_instance_list')
+        self.url = reverse('api_instance_list')
 
     def _assert_created(self, data, expected):
         instance_count = Instance.objects.count()
@@ -80,3 +80,19 @@ class TestInstanceCreate(BaseTestRequest):
                     'resources': [],
                     'billing_group': None}
         self._assert_created(data, expected)
+
+    def test_non_admin_cannot_create_instance(self):
+        self.client.force_login(user=self.standard_user)
+        data = {
+            "name": "instance_create_test_1",
+            "service": self.service_test_2.id,
+            "spoc": self.standard_user_2.id,
+            "state": InstanceState.AVAILABLE,
+            "billing_group": self.test_billing_group.id,
+            "spec": {
+                "key1": "val1",
+                "key2": "val2"
+            }
+        }
+        response = self.client.post(self.url, data=data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

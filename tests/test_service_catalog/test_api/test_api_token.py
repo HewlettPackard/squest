@@ -9,7 +9,7 @@ class TestAPIToken(BaseTestRequest):
 
     def setUp(self):
         super(TestAPIToken, self).setUp()
-        self.url = reverse('api_admin_instance_list')
+        self.url = reverse('api_admin_job_template_list')
         self.api_token = Token.objects.create(user=self.superuser)
         self.api_token.save()
         self.api_token_user = Token.objects.create(user=self.standard_user)
