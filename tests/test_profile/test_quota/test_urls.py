@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from profiles.models import QuotaBinding, QuotaAttributeDefinition
+from profiles.models import QuotaBinding, Quota
 from tests.test_profile.test_quota.base_test_quota import BaseTestQuota
 
 
@@ -15,9 +15,9 @@ class TestQuotaUrls(BaseTestQuota):
         self.args_quota_binding = {
             'quota_binding_id': self.test_quota_binding.id
         }
-        self.test_quota_attribute = self.test_billing_group.quota_bindings.first().quota_attribute_definition
+        self.test_quota_attribute = self.test_billing_group.quota_bindings.first().quota
         self.args_quota_attribute = {
-            'quota_attribute_definition_id': self.test_quota_attribute.id
+            'quota_id': self.test_quota_attribute.id
         }
 
     def test_quota_binding_edit(self):
@@ -46,7 +46,7 @@ class TestQuotaUrls(BaseTestQuota):
         url = reverse('profiles:quota_binding_edit_all', kwargs=self.args_billing)
         self._check_get_page(url)
         self.assertEqual(2, self.test_billing_group.quota_bindings.count())
-        self._check_post_page(url, data={'quota_attribute_definition': [self.test_quota_attribute_cpu.id]})
+        self._check_post_page(url, data={'quota': [self.test_quota_attribute_cpu.id]})
         self.assertEqual(1, self.test_billing_group.quota_bindings.count())
         self.client.logout()
         self._check_get_page(url, 302)
@@ -56,56 +56,56 @@ class TestQuotaUrls(BaseTestQuota):
         self._check_get_page(url)
         self._check_post_page(url, data={self.test_quota_attribute_cpu.name: 50}, status=200)
         self._check_post_page(reverse('profiles:quota_binding_edit_all', kwargs=self.args_billing),
-                              data={'quota_attribute_definition': [self.test_quota_attribute_cpu.id]})
+                              data={'quota': [self.test_quota_attribute_cpu.id]})
         self._check_post_page(url, data={self.test_quota_attribute_cpu.name: 50})
-        binding = self.test_billing_group.quota_bindings.get(quota_attribute_definition=self.test_quota_attribute_cpu)
+        binding = self.test_billing_group.quota_bindings.get(quota=self.test_quota_attribute_cpu)
         self.assertEqual(binding.limit, 50)
         self.client.logout()
         self._check_get_page(url, 302)
 
-    def test_quota_attribute_definition_list(self):
-        url = reverse('profiles:quota_attribute_definition_list')
+    def test_quota_list(self):
+        url = reverse('profiles:quota_list')
         response = self._check_get_page(url)
-        self.assertNotEqual(QuotaAttributeDefinition.objects.count(), 0)
-        self.assertEqual(QuotaAttributeDefinition.objects.count(), len(response.context["table"].data.data))
+        self.assertNotEqual(Quota.objects.count(), 0)
+        self.assertEqual(Quota.objects.count(), len(response.context["table"].data.data))
         self.client.logout()
         self._check_get_page(url, 302)
 
-    def test_quota_attribute_definition_create(self):
-        url = reverse('profiles:quota_attribute_definition_create')
+    def test_quota_create(self):
+        url = reverse('profiles:quota_create')
         self._check_get_page(url)
-        self.assertEqual(0, QuotaAttributeDefinition.objects.filter(name='new name').count())
-        count = QuotaAttributeDefinition.objects.count()
+        self.assertEqual(0, Quota.objects.filter(name='new name').count())
+        count = Quota.objects.count()
         self._check_post_page(
             url,
-            data={'name': 'new name', 'quota_attribute_definition': [self.test_quota_attribute_cpu.id]}
+            data={'name': 'new name', 'quota': [self.test_quota_attribute_cpu.id]}
         )
-        self.assertEqual(count + 1, QuotaAttributeDefinition.objects.count())
-        self.assertNotEqual(0, QuotaAttributeDefinition.objects.filter(name='new name').count())
+        self.assertEqual(count + 1, Quota.objects.count())
+        self.assertNotEqual(0, Quota.objects.filter(name='new name').count())
         self.client.logout()
         self._check_get_page(url, 302)
 
-    def test_quota_attribute_definition_edit(self):
-        url = reverse('profiles:quota_attribute_definition_edit', kwargs=self.args_quota_attribute)
+    def test_quota_edit(self):
+        url = reverse('profiles:quota_edit', kwargs=self.args_quota_attribute)
         self._check_get_page(url)
-        self.assertEqual(0, QuotaAttributeDefinition.objects.filter(name='new name').count())
+        self.assertEqual(0, Quota.objects.filter(name='new name').count())
         self._check_post_page(
             url,
-            data={'name': 'new name', 'quota_attribute_definition': [self.test_quota_attribute_cpu.id]}
+            data={'name': 'new name', 'quota': [self.test_quota_attribute_cpu.id]}
         )
-        self.assertEqual(1, QuotaAttributeDefinition.objects.filter(name='new name').count())
+        self.assertEqual(1, Quota.objects.filter(name='new name').count())
         self.client.logout()
         self._check_get_page(url, 302)
 
-    def test_quota_attribute_definition_delete(self):
-        url = reverse('profiles:quota_attribute_definition_delete', kwargs=self.args_quota_attribute)
+    def test_quota_delete(self):
+        url = reverse('profiles:quota_delete', kwargs=self.args_quota_attribute)
         self._check_get_page(url)
         quota_attribute_id = self.test_quota_binding.id
-        self.assertNotEqual(0, QuotaAttributeDefinition.objects.filter(id=quota_attribute_id).count())
-        count = QuotaAttributeDefinition.objects.count()
+        self.assertNotEqual(0, Quota.objects.filter(id=quota_attribute_id).count())
+        count = Quota.objects.count()
         self._check_post_page(url)
-        self.assertEqual(0, QuotaAttributeDefinition.objects.filter(id=quota_attribute_id).count())
-        self.assertEqual(count - 1, QuotaAttributeDefinition.objects.count())
+        self.assertEqual(0, Quota.objects.filter(id=quota_attribute_id).count())
+        self.assertEqual(count - 1, Quota.objects.count())
         self.client.logout()
         self._check_get_page(url, 302)
 

@@ -26,7 +26,7 @@ class ResourceAttribute(models.Model):
 def on_change(sender, instance, created, **kwargs):
     if instance.attribute_type is not None:
         instance.attribute_type.calculate_total_resource()
-        for quota_attribute_definition in instance.attribute_type.quota_attribute_definitions.all():
-            for binding in quota_attribute_definition.quota_bindings.all():
+        for quota in instance.attribute_type.quota.all():
+            for binding in quota.quota_bindings.all():
                 binding.update_consumed()
 

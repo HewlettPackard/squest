@@ -6,10 +6,10 @@ class QuotaBindingLimitForm(Form):
         self.billing_group = kwargs.pop('billing_group')
         super(QuotaBindingLimitForm, self).__init__(*args, **kwargs)
         for binding in self.billing_group.quota_bindings.all():
-            self.fields[binding.quota_attribute_definition.name] = FloatField(initial=binding.limit, help_text=f"Define the limit for {binding.quota_attribute_definition.name}")
-            self.fields[binding.quota_attribute_definition.name].widget.attrs['class'] = 'form-control'
+            self.fields[binding.quota.name] = FloatField(initial=binding.limit, help_text=f"Define the limit for {binding.quota.name}")
+            self.fields[binding.quota.name].widget.attrs['class'] = 'form-control'
 
     def save(self):
         for binding in self.billing_group.quota_bindings.all():
-            binding.limit = self.cleaned_data.get(binding.quota_attribute_definition.name)
+            binding.limit = self.cleaned_data.get(binding.quota.name)
             binding.save()

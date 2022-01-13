@@ -20,7 +20,7 @@ def quota_binding_edit(request, billing_group_id, quota_binding_id):
         {'text': 'Billing Groups', 'url': reverse('profiles:billing_group_list')},
         {'text': billing_group.name,
          'url': reverse("profiles:billing_group_list") + f"?id={billing_group.id}#quota{billing_group.id}"},
-        {'text': quota_binding.quota_attribute_definition.name, 'url': ""},
+        {'text': quota_binding.quota.name, 'url': ""},
     ]
     context = {'form': form, 'billing_group': billing_group, 'object_name': "billing_group", 'breadcrumbs': breadcrumbs,
                'action': "edit"}
@@ -42,12 +42,12 @@ def quota_binding_delete(request, billing_group_id, quota_binding_id):
         {'text': 'Billing Groups', 'url': reverse('profiles:billing_group_list')},
         {'text': billing_group.name,
          'url': reverse("profiles:billing_group_list") + f"?id={billing_group.id}#quota{billing_group.id}"},
-        {'text': quota_binding.quota_attribute_definition.name, 'url': ""},
+        {'text': quota_binding.quota.name, 'url': ""},
     ]
     context = {
         'breadcrumbs': breadcrumbs,
         'confirm_text': mark_safe(
-            f"Confirm deletion of <strong>{quota_binding.quota_attribute_definition.name}</strong> in {billing_group.name}?"),
+            f"Confirm deletion of <strong>{quota_binding.quota.name}</strong> in {billing_group.name}?"),
         'action_url': reverse('profiles:quota_binding_delete', kwargs=args),
         'button_text': 'Delete',
         'details': None,

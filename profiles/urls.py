@@ -74,11 +74,11 @@ urlpatterns = [
     path('role/ajax/update-objects/', views.ajax_team_role_binding_form_update_objects, name='ajax_update_objects'),
 
     # Quota Attribute Definition
-    path('quota-attribute/', views.QuotaAttributeDefinitionListView.as_view(), name='quota_attribute_definition_list'),
-    path('quota-attribute/create/', views.quota_attribute_definition_create, name='quota_attribute_definition_create'),
-    path('quota-attribute/<int:quota_attribute_definition_id>/edit/', views.quota_attribute_definition_edit,
-         name='quota_attribute_definition_edit'),
-    path('quota-attribute/<int:quota_attribute_definition_id>/delete/', views.quota_attribute_definition_delete,
-         name='quota_attribute_definition_delete'),
+    path('quota-attribute/', views.QuotaListView.as_view(), name='quota_list'),
+    path('quota-attribute/create/', views.quota_create, name='quota_create'),
+    path('quota-attribute/<int:quota_id>/edit/', views.quota_edit,
+         name='quota_edit'),
+    path('quota-attribute/<int:quota_id>/delete/', views.quota_delete,
+         name='quota_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
