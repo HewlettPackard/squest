@@ -1,11 +1,10 @@
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from service_catalog.serializers.instance_serializer import InstanceWriteSerializer, InstanceSerializer
+from service_catalog.serializers.instance_serializer import InstanceSerializer, InstanceReadSerializer
 
 
 class InstanceList(generics.ListCreateAPIView):
-    serializer_class = InstanceSerializer
 
     def get_permissions(self):
         if self.request.method in ["POST"]:
@@ -15,13 +14,14 @@ class InstanceList(generics.ListCreateAPIView):
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'service_catalog.view_instance')
 
-    def create(self, request, *args, **kwargs):
-        self.serializer_class = InstanceWriteSerializer
-        return super(InstanceList, self).create(request, *args, **kwargs)
+    def get_serializer_class(self):
+        if self.request.method in ["POST"]:
+            return InstanceSerializer
+        return InstanceReadSerializer
 
 
 class InstanceDetails(generics.RetrieveUpdateAPIView):
-    serializer_class = InstanceSerializer
+    serializer_class = InstanceReadSerializer
 
     def get_permissions(self):
         if self.request.method in ["PATCH", "PUT"]:
@@ -30,16 +30,8 @@ class InstanceDetails(generics.RetrieveUpdateAPIView):
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
-            return InstanceWriteSerializer
-        return InstanceSerializer
+            return InstanceSerializer
+        return InstanceReadSerializer
 
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'service_catalog.view_instance')
-
-    def put(self, request, *args, **kwargs):
-        self.serializer_class = InstanceWriteSerializer
-        return super(InstanceDetails, self).put(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        self.serializer_class = InstanceWriteSerializer
-        return super(InstanceDetails, self).patch(request, *args, **kwargs)
