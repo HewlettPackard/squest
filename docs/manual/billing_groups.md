@@ -52,8 +52,6 @@ Quota can be used to:
 - Track consumption of resources per billing group
 - Create an auto approval request process by using them through [global hooks](../settings/#global-hooks) and the [squest API](api.md)
 
->**Note:** The API does not fully support billing group quota.
-
 ### Quota and attributes
 
 A quota is a group of resource group attributes that you consider being of the same type.

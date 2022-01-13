@@ -5,5 +5,5 @@ from profiles.views.team_views import *
 from profiles.views.common import *
 from profiles.views.token_views import *
 from profiles.views.notification_views import *
-from profiles.views.quota_attribute_definition_views import *
+from profiles.views.quota_views import *
 from profiles.views.quota_binding_views import *
