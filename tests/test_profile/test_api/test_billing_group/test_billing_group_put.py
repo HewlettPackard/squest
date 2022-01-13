@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers.billing_group_serializers import BillingGroupWriteSerializer
+from profiles.api.serializers.billing_group_serializers import BillingGroupSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
 
@@ -18,7 +18,7 @@ class TestApiBillingGroupPatch(BaseTestRequest):
             'pk': self.test_billing_group.id
         }
         self.get_billing_group_details_url = reverse('api_billing_group_details', kwargs=self.kwargs)
-        self.expected_data = BillingGroupWriteSerializer(self.test_billing_group).data
+        self.expected_data = BillingGroupSerializer(self.test_billing_group).data
         self.expected_data['name'] = "My new billing group"
         self.expected_data['user_set'] = [self.standard_user.id, self.standard_user_2.id]
 

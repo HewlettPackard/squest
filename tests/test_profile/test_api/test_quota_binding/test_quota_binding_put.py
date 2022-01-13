@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers.quota_binding_serializers import QuotaBindingWriteSerializer
+from profiles.api.serializers.quota_binding_serializers import QuotaBindingSerializer
 from tests.test_profile.test_quota.base_test_quota import BaseTestQuota
 from tests.utils import check_data_in_dict
 
@@ -19,7 +19,7 @@ class TestApiQuotaBindingPatch(BaseTestQuota):
             'pk': self.test_quota_binding.id
         }
         self.get_quota_details_url = reverse('api_quota_binding_details', kwargs=self.kwargs)
-        self.expected_data = QuotaBindingWriteSerializer(self.test_quota_binding).data
+        self.expected_data = QuotaBindingSerializer(self.test_quota_binding).data
         self.expected_data['billing_group'] = self.test_billing_group.id
         self.expected_data['quota'] = self.test_quota_attribute_cpu.id
         self.expected_data['limit'] = 50

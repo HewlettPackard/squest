@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers.quota_binding_serializers import QuotaBindingSerializer
+from profiles.api.serializers.quota_binding_serializers import QuotaBindingReadSerializer
 from tests.test_profile.test_quota.base_test_quota import BaseTestQuota
 from tests.utils import check_data_in_dict
 
@@ -15,7 +15,7 @@ class TestApiQuotaBindingDetails(BaseTestQuota):
         }
         self.get_quota_details_url = reverse('api_quota_binding_details', kwargs=self.kwargs)
         self.test_quota_binding.refresh_from_db()
-        self.expected_data = QuotaBindingSerializer(self.test_quota_binding).data
+        self.expected_data = QuotaBindingReadSerializer(self.test_quota_binding).data
         self.expected_data_list = [self.expected_data]
 
     def test_admin_get_quota_detail(self):
