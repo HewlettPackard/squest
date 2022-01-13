@@ -12,7 +12,7 @@ class TestApiTowerServerList(BaseTestRequest):
         self.kwargs = {
             'tower_server_id': self.tower_server_test.id
         }
-        self.tower_server_url = reverse('api_tower_server_job_template_list', kwargs=self.kwargs)
+        self.tower_server_url = reverse('api_job_template_list', kwargs=self.kwargs)
 
     def test_admin_get_job_template_of_tower_server(self):
         response = self.client.get(self.tower_server_url)
