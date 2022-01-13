@@ -33,14 +33,14 @@
                 <li class="nav-item menu-close">
                     <a href="{% url 'service_catalog:request_list' %}"
                        class="nav-link {% if '/request/' in request.path and '/service/' not in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-list"></i>
+                        <i class="nav-icon fas fa-tasks"></i>
                         <p>Requests <span class="badge badge-info right">{% submitted_request user %}</span></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'service_catalog:instance_list' %}"
                        class="nav-link {% if '/instance/' in request.path and not request.GET.state %}active{% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
+                        <i class="nav-icon fas fa-list"></i>
                         <p>Instances</p>
                     </a>
                 </li>
@@ -65,7 +65,7 @@
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker:resource_pool_list' %}"
                            class="nav-link {% if '/resource_tracker/resource_pool/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-poll"></i>
+                            <i class="nav-icon far fa-object-group"></i>
                             <p>Resource pools</p>
                         </a>
                     </li>
@@ -102,7 +102,7 @@
                             <li class="nav-item">
                                 <a href="{% url 'profiles:billing_group_list' %}"
                                    class="nav-link {% if '/billing-group/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-users"></i>
+                                    <i class="nav-icon fas fa-chart-bar"></i>
                                     <p>Groups</p>
                                 </a>
                             </li>
@@ -120,18 +120,19 @@
                             <p>Users</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'profiles:group_list' %}"
-                           class="nav-link {% if '/group/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Groups</p>
-                        </a>
-                    </li>
+                    {#  disable as not used yet. We'll be added back when implementing RBAC #}
+{#                    <li class="nav-item">#}
+{#                        <a href="{% url 'profiles:group_list' %}"#}
+{#                           class="nav-link {% if '/group/' in request.path %}active{% endif %}">#}
+{#                            <i class="nav-icon fas fa-users"></i>#}
+{#                            <p>Groups</p>#}
+{#                        </a>#}
+{#                    </li>#}
                 {% endif %}
                 <li class="nav-item">
                     <a href="{% url 'profiles:team_list' %}"
                        class="nav-link {% if '/team/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-users-cog"></i>
+                        <i class="nav-icon fas fa-user-friends"></i>
                         <p>Teams</p>
                     </a>
                 </li>
