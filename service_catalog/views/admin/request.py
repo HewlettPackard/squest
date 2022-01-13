@@ -1,12 +1,13 @@
 import logging
 
 import requests
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
+from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
 from service_catalog.mail_utils import send_mail_request_update
@@ -187,10 +188,10 @@ def admin_request_process(request, request_id):
     return render(request, "service_catalog/admin/request/request-process.html", context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def admin_request_details(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
-
+@login_required
+def request_details(request, request_id):
+    request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
+    target_request = get_object_or_404(request_list, id=request_id)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -198,7 +199,7 @@ def admin_request_details(request, request_id):
     context = {'target_request': target_request,
                'breadcrumbs': breadcrumbs,
                }
-    return render(request, 'service_catalog/admin/request/request-details.html', context=context)
+    return render(request, 'service_catalog/common/request-details.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
