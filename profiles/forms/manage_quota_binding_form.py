@@ -4,20 +4,20 @@ from profiles.models import Quota, QuotaBinding
 
 
 class ManageQuotaBindingForm(Form):
-    quota = MultipleChoiceField(label="Quota attributes",
-                                                     required=False,
-                                                     choices=[],
-                                                     widget=SelectMultiple(
-                                                         attrs={'class': 'selectpicker', 'data-live-search': "true"}
-                                                     )
-                                                     )
+    quota = MultipleChoiceField(label="Quota",
+                                required=False,
+                                choices=[],
+                                widget=SelectMultiple(
+                                    attrs={'class': 'selectpicker', 'data-live-search': "true"}
+                                )
+                                )
 
     def __init__(self, *args, **kwargs):
         self.billing_group = kwargs.pop('billing_group')
         self.initial_attribute = [binding.quota for binding in self.billing_group.quota_bindings.all()]
         super(ManageQuotaBindingForm, self).__init__(*args, **kwargs)
         self.fields['quota'].choices = [(billing_group.id, billing_group.name) for billing_group in
-                                                             Quota.objects.all()]
+                                        Quota.objects.all()]
         self.fields['quota'].initial = [billing_group.id for billing_group in self.initial_attribute]
 
     def save(self):

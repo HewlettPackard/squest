@@ -30,7 +30,7 @@ class QuotaListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['title'] = "Quota attributes"
+        context['title'] = "Quota"
         context['html_button_path'] = "generics/buttons/generic_add_button.html"
         context['app_name'] = "profiles"
         context['object_name'] = "quota"
@@ -45,7 +45,7 @@ def quota_edit(request, quota_id):
         form.save()
         return redirect("profiles:quota_list")
     breadcrumbs = [
-        {'text': 'Quota attributes', 'url': reverse('profiles:quota_list')},
+        {'text': 'Quota', 'url': reverse('profiles:quota_list')},
         {'text': quota.name, 'url': ""},
     ]
     context = {'form': form, 'quota': quota,
@@ -63,8 +63,8 @@ def quota_create(request):
     else:
         form = QuotaForm()
     breadcrumbs = [
-        {'text': 'Quota attributes', 'url': reverse('profiles:quota_list')},
-        {'text': 'Create a new quota attribute', 'url': ""},
+        {'text': 'Quota', 'url': reverse('profiles:quota_list')},
+        {'text': 'Create a new quota', 'url': ""},
     ]
     context = {'form': form, 'object_name': "quota", 'breadcrumbs': breadcrumbs,
                'action': "create"}
@@ -81,7 +81,7 @@ def quota_delete(request, quota_id):
         "quota_id": quota_id,
     }
     breadcrumbs = [
-        {'text': 'Quota attributes', 'url': reverse('profiles:quota_list')},
+        {'text': 'Quota', 'url': reverse('profiles:quota_list')},
         {'text': quota.name, 'url': ""}
     ]
     context = {
@@ -89,7 +89,7 @@ def quota_delete(request, quota_id):
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{quota.name}</strong>?"),
         'action_url': reverse('profiles:quota_delete', kwargs=args),
         'button_text': 'Delete',
-        'details': {'warning_sentence': 'This quota attribute was linked to the following billing groups:',
+        'details': {'warning_sentence': 'This quota was linked to the following billing groups:',
                     'details_list': [binding.billing_group.name for binding in
                                      quota.quota_bindings.all()]} if
         quota.attribute_definitions.all() else None,
