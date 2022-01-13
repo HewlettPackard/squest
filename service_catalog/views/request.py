@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
-from service_catalog.forms.common_forms import RequestMessageForm
+from service_catalog.forms import RequestMessageForm
 from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
 from ..mail_utils import send_email_request_canceled

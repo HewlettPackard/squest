@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.shortcuts import get_objects_for_user
 
-from service_catalog.forms import MessageOnRequestForm, AcceptRequestForm
+from service_catalog.forms import RequestMessageForm, AcceptRequestForm
 from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Request
 
@@ -24,7 +24,7 @@ def admin_request_need_info(request, request_id):
         'message_required': True
     }
     if request.method == "POST":
-        form = MessageOnRequestForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.user, request.POST, **parameters)
         if form.is_valid():
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
@@ -36,7 +36,7 @@ def admin_request_need_info(request, request_id):
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
     else:
-        form = MessageOnRequestForm(request.user, **parameters)
+        form = RequestMessageForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -57,7 +57,7 @@ def admin_request_re_submit(request, request_id):
         'message_required': False
     }
     if request.method == "POST":
-        form = MessageOnRequestForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.user, request.POST, **parameters)
         if form.is_valid():
             if not can_proceed(target_request.re_submit):
                 raise PermissionDenied
@@ -67,7 +67,7 @@ def admin_request_re_submit(request, request_id):
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
     else:
-        form = MessageOnRequestForm(request.user, **parameters)
+        form = RequestMessageForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -88,7 +88,7 @@ def admin_request_reject(request, request_id):
         'message_required': True
     }
     if request.method == "POST":
-        form = MessageOnRequestForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.user, request.POST, **parameters)
         if form.is_valid():
             if not can_proceed(target_request.reject):
                 raise PermissionDenied
@@ -99,7 +99,7 @@ def admin_request_reject(request, request_id):
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
     else:
-        form = MessageOnRequestForm(request.user, **parameters)
+        form = RequestMessageForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},

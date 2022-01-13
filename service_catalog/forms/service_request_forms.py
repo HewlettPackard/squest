@@ -1,38 +1,17 @@
-import copy
 
 import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 
 from profiles.models import BillingGroup
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.forms.utils import get_fields_from_survey
-from service_catalog.models import Service, Operation, Instance, Request, Support, SupportMessage, RequestMessage
+from service_catalog.models import Service, Operation, Instance, Request, RequestMessage
 from service_catalog.models.operations import OperationType
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-
-
-class FormUtils:
-
-    @classmethod
-    def get_available_fields(cls, job_template_survey, operation_survey):
-        """
-        Return survey fields from the job template that are active in the operation
-        :return: survey dict
-        :rtype dict
-        """
-        # copy the dict
-        returned_dict = copy.copy(job_template_survey)
-        # cleanup the list
-        returned_dict["spec"] = list()
-        # loop the original survey
-        if "spec" in job_template_survey:
-            for survey_filed in job_template_survey["spec"]:
-                if operation_survey[survey_filed["variable"]]:
-                    returned_dict["spec"].append(survey_filed)
-        return returned_dict
 
 
 class ServiceRequestForm(forms.Form):
@@ -108,70 +87,3 @@ class ServiceRequestForm(forms.Form):
 
     def clean(self):
         super(ServiceRequestForm, self).clean()
-
-
-class OperationRequestForm(forms.Form):
-
-    request_comment = forms.CharField(label="Comment",
-                                      help_text="Add a comment to your request",
-                                      widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-                                      required=False)
-
-    def __init__(self, user, *args, **kwargs):
-        # get arguments from instance
-        self.user = user
-        operation_id = kwargs.pop('operation_id', None)
-        instance_id = kwargs.pop('instance_id', None)
-        super(OperationRequestForm, self).__init__(*args, **kwargs)
-
-        self.operation = Operation.objects.get(id=operation_id)
-        self.instance = Instance.objects.get(id=instance_id)
-
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
-                                                       operation_survey=self.operation.enabled_survey_fields)
-        self.fields.update(get_fields_from_survey(purged_survey, form_title="2. Operation fields"))
-        self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
-
-    def save(self):
-        user_provided_survey_fields = dict()
-        for field_key, value in self.cleaned_data.items():
-            user_provided_survey_fields[field_key] = value
-
-        new_request = Request.objects.create(instance=self.instance,
-                                             operation=self.operation,
-                                             fill_in_survey=user_provided_survey_fields,
-                                             user=self.user)
-
-        # save the comment
-        request_comment = self.cleaned_data["request_comment"] if self.cleaned_data["request_comment"] else None
-        if request_comment is not None:
-            RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
-
-        return new_request
-
-
-class SupportRequestForm(forms.Form):
-    title = forms.CharField(label="Title",
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    content = forms.CharField(label="Add a comment",
-                              help_text="Markdown supported",
-                              widget=forms.Textarea(attrs={'class': 'form-control'}))
-
-    def __init__(self, user, *args, **kwargs):
-        # get arguments from instance
-        self.user = user
-        instance_id = kwargs.pop('instance_id', None)
-        super(SupportRequestForm, self).__init__(*args, **kwargs)
-        self.instance = Instance.objects.get(id=instance_id)
-
-    def save(self):
-        title = self.cleaned_data["title"]
-        content = self.cleaned_data["content"]
-        # open a new support case
-        new_support = Support.objects.create(title=title,
-                                             instance=self.instance,
-                                             user_open=self.user)
-
-        SupportMessage.objects.create(content=content, sender=self.user, support=new_support)
