@@ -1,0 +1,50 @@
+import urllib3
+from django import forms
+from service_catalog.forms.form_utils import FormUtils
+from service_catalog.forms.utils import get_fields_from_survey
+from service_catalog.models import Operation, Instance, Request, RequestMessage
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
+
+
+class OperationRequestForm(forms.Form):
+
+    request_comment = forms.CharField(label="Comment",
+                                      help_text="Add a comment to your request",
+                                      widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+                                      required=False)
+
+    def __init__(self, user, *args, **kwargs):
+        # get arguments from instance
+        self.user = user
+        operation_id = kwargs.pop('operation_id', None)
+        instance_id = kwargs.pop('instance_id', None)
+        super(OperationRequestForm, self).__init__(*args, **kwargs)
+
+        self.operation = Operation.objects.get(id=operation_id)
+        self.instance = Instance.objects.get(id=instance_id)
+
+        # get all field that are not disabled by the admin
+        purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
+                                                       operation_survey=self.operation.enabled_survey_fields)
+        self.fields.update(get_fields_from_survey(purged_survey, form_title="2. Operation fields"))
+        self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
+
+    def save(self):
+        user_provided_survey_fields = dict()
+        for field_key, value in self.cleaned_data.items():
+            user_provided_survey_fields[field_key] = value
+
+        new_request = Request.objects.create(instance=self.instance,
+                                             operation=self.operation,
+                                             fill_in_survey=user_provided_survey_fields,
+                                             user=self.user)
+
+        # save the comment
+        request_comment = self.cleaned_data["request_comment"] if self.cleaned_data["request_comment"] else None
+        if request_comment is not None:
+            RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
+
+        return new_request
+

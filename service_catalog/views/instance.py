@@ -12,8 +12,7 @@ from profiles.forms import UserRoleForObjectForm, TeamRoleForObjectForm
 from profiles.models import Role, Team
 from profiles.tables import TeamsByObjectTable
 from profiles.tables import UserByObjectTable
-from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm
-from service_catalog.forms.common_forms import SupportMessageForm
+from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
 from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
