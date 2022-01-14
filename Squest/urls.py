@@ -22,6 +22,7 @@ from rest_framework import permissions
 from django.conf import settings
 
 #  drf-yasg
+from api.celery_tasks_views import CeleryTaskView
 from service_catalog.views import markdown_uploader
 
 schema_view = get_schema_view(
@@ -43,6 +44,7 @@ urlpatterns = [
     path('api/service_catalog/', include('service_catalog.api.urls')),
     path('api/resource_tracker/', include('resource_tracker.api.urls')),
     path('api/profiles/', include('profiles.api.urls')),
+    path('api/tasks/<int:task_id>/', CeleryTaskView.as_view(), name='get_task_result'),
     path('profiles/', include('profiles.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
