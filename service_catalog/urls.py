@@ -24,6 +24,7 @@ urlpatterns = [
     path('request/', RequestListView.as_view(), name='request_list'),
     path('request/archived/', RequestArchivedListView.as_view(), name='request_archived_list'),
     path('request/<int:request_id>/', views.request_details, name='request_details'),
+    path('request/<int:request_id>/edit/', views.request_edit, name='request_edit'),
     path('request/<int:request_id>/cancel/', views.request_cancel, name='request_cancel'),
     path('request/<int:request_id>/comment/', views.request_comment, name='request_comment'),
     path('request/<int:request_id>/need-info/', views.admin_request_need_info, name='admin_request_need_info'),

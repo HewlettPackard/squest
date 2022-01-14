@@ -1,5 +1,7 @@
 
-from django.forms import ModelForm, Select, CheckboxInput, CheckboxSelectMultiple, RadioSelect, FileInput
+from django.forms import ModelForm, Select, CheckboxInput, CheckboxSelectMultiple, RadioSelect, FileInput, DateTimeInput
+from django.utils import timezone
+from tempus_dominus.widgets import DateTimePicker
 
 
 class SquestModelForm(ModelForm):
@@ -18,5 +20,15 @@ class SquestModelForm(ModelForm):
                 current_field.widget.attrs['class'] = "disable_list_style"
             elif isinstance(current_field.widget, FileInput):
                 current_field.widget.attrs['class'] = ""
+            elif isinstance(current_field.widget, DateTimeInput):
+                current_field.widget = DateTimePicker(
+                    options={
+                        'timeZone': str(timezone.get_current_timezone()),
+                        'collapse': False,
+                    }, attrs={
+                        'append': 'fa fa-calendar',
+                        'icon_toggle': True,
+                    }
+                )
             else:
                 current_field.widget.attrs['class'] = 'form-control'

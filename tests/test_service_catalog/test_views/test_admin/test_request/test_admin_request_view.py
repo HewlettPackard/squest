@@ -429,3 +429,40 @@ class AdminRequestViewTest(BaseTestRequest):
         url = reverse('service_catalog:request_archived_list')
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
+
+    def test_admin_can_edit_request(self):
+        self._edit_request()
+
+    def test_customer_cannot_edit_request(self):
+        self.client.force_login(self.standard_user)
+        self._edit_request(302)
+
+    def test_cannot_edit_request_when_logout(self):
+        self.client.logout()
+        self._edit_request(302)
+
+    def _edit_request(self, status_code=200):
+        args = {
+            'request_id': self.test_request.id
+        }
+        data = {
+            "fill_in_survey": "{}",
+            "instance": self.test_instance.id,
+            "operation": self.create_operation_test.id,
+            "user": self.standard_user.id,
+            "date_complete": "",
+            "date_archived": "",
+            "tower_job_id": "",
+            "state": "FAILED",
+            "periodic_task": "",
+            "periodic_task_date_expire": "",
+            "failure_message": ""
+        }
+        url = reverse('service_catalog:request_edit', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(status_code, response.status_code)
+        if status_code == 200:
+            response = self.client.post(url, data=data)
+            self.assertEqual(response.status_code, 302)
+
+
