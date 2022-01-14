@@ -2,49 +2,63 @@
 {% block header_button %}
     <div class="float-right">
         {%  if request.user.is_superuser %}
+            <a href="{% url 'service_catalog:request_edit' target_request.id %}"
+               title="Edit"
+               class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
             <a class="btn btn-danger"
+               title="Delete"
                href="{% url 'service_catalog:request_delete' target_request.id %}">
-                <i class="fas fa-trash"></i> Delete
+                <i class="fas fa-trash"></i>
             </a>
             {% if target_request.state == "COMPLETE" %}
                 <a class="btn btn-default {{ target_request.id |is_action_dropdown_disabled:'archive' }}"
+                   title="Archive"
                    href="{% url 'service_catalog:admin_request_archive_toggle' target_request.id %}">
-                    <i class="fas fa-archive"></i> Archive
+                    <i class="fas fa-archive"></i>
                 </a>
             {% endif %}
             {% if target_request.state == "ARCHIVED" %}
                 <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'unarchive' }}"
+                   title="Unarchive"
                    href="{% url 'service_catalog:admin_request_archive_toggle' target_request.id %}">
-                    <i class="fas fa-box-open"></i> Unarchive
+                    <i class="fas fa-box-open"></i>
                 </a>
             {% endif %}
             {% if target_request.state == "NEED_INFO" %}
                 <a class="btn btn-info {{ target_request.id |is_action_dropdown_disabled:'re_submit' }}"
+                   title="Reset to submitted"
                    href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
-                    <i class="fas fa-redo"></i> Reset to  submitted
+                    <i class="fas fa-redo"></i>
                 </a>
             {% endif %}
         {% endif %}
         <a class="btn btn-secondary {{ target_request.id |is_action_dropdown_disabled:'cancel' }}"
+           title="Cancel"
            href="{% url 'service_catalog:request_cancel' target_request.id %}">
-            <i class="fas fa-window-close"></i> Cancel
+            <i class="fas fa-window-close"></i>
         </a>
         {%  if request.user.is_superuser %}
             <a class="btn btn-warning {{ target_request.id |is_action_dropdown_disabled:'need_info' }}"
+               title="Ask more info"
                href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">
-                <i class="fas fa-info-circle"></i> Ask more info
+                <i class="fas fa-info-circle"></i>
             </a>
             <a class="btn btn-danger {{ target_request.id |is_action_dropdown_disabled:'reject' }}"
+               title="Reject"
                href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
-                <i class="fas fa-ban"></i> Reject
+                <i class="fas fa-ban"></i>
             </a>
             <a class="btn btn-primary {{ target_request.id |is_action_dropdown_disabled:'accept' }}"
+               title="Review"
                href="{% url 'service_catalog:admin_request_accept' target_request.id %}">
-                <i class="fas fa-clipboard-check"></i> Review
+                <i class="fas fa-clipboard-check"></i>
             </a>
             <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'process' }}"
+               title="Process"
                href="{% url 'service_catalog:admin_request_process' target_request.id %}">
-                <i class="fas fa-play"></i> Process
+                <i class="fas fa-play"></i>
             </a>
         {% endif %}
     </div>
@@ -83,6 +97,16 @@
                             <li class="list-group-item">
                                 <b>Requester</b><span class="float-right">{{ target_request.user.username }}</span>
                             </li>
+                            <li class="list-group-item">
+                                <b>Date submitted</b><span class="float-right">{{ target_request.date_submitted }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Date complete</b><span class="float-right">{{ target_request.date_complete }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Date archived</b><span class="float-right">{{ target_request.date_archived }}</span>
+                            </li>
+
                             {%  if request.user.is_superuser %}
                                 <li class="list-group-item border-bottom-0">
                                     <b>Tower job</b>

@@ -31,8 +31,8 @@ def instance_edit(request, instance_id):
         {'text': f"{instance.name} ({instance.id})",
          'url': reverse('service_catalog:instance_details', args=[instance_id])},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs}
-    return render(request, 'service_catalog/admin/instance/instance-edit.html', context)
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'object_name': 'instance'}
+    return render(request, 'generics/edit-sensitive-object.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)

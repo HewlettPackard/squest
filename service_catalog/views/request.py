@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -9,6 +9,7 @@ from guardian.decorators import permission_required_or_403
 from service_catalog.forms import RequestMessageForm
 from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
+from ..forms.request_forms import RequestForm
 from ..mail_utils import send_email_request_canceled
 
 
@@ -67,3 +68,19 @@ def request_comment(request, request_id):
         'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/common/request-comment.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_edit(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    form = RequestForm(request.POST or None, request.FILES or None, instance=target_request)
+    if form.is_valid():
+        form.save()
+        return redirect('service_catalog:request_details', target_request.id)
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': f"{target_request.id}",
+         'url': reverse('service_catalog:request_details', args=[request_id])},
+    ]
+    context = {'form': form, 'breadcrumbs': breadcrumbs, 'object_name': 'request'}
+    return render(request, 'generics/edit-sensitive-object.html', context)
