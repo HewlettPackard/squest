@@ -10,6 +10,11 @@
                     aria-haspopup="true" aria-expanded="false">
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item btn btn-danger"
+                   href="{% url 'service_catalog:request_delete' record.id %}">
+                    <span class="text-danger fas fa-trash"></span> Delete
+
+                </a>
                 {% if record.state == "COMPLETE" %}
                     <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'archive' }}"
                        href="{% url 'service_catalog:admin_request_archive_toggle' record.id %}">

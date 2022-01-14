@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class Request(RoleManager):
-    fill_in_survey = models.JSONField(default=dict)
+    fill_in_survey = models.JSONField(default=dict, blank=True)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
