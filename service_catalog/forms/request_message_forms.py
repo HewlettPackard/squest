@@ -16,4 +16,5 @@ class RequestMessageForm(SquestModelForm):
         message = super(RequestMessageForm, self).save(commit=False)
         message.request = self.request
         message.sender = self.sender
-        return message.save()
+        message.save()
+        return message

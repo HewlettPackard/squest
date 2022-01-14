@@ -30,7 +30,7 @@ class GlobalHook(models.Model):
     model = models.CharField(max_length=100, choices=HookModel.choices)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
-    extra_vars = models.JSONField(default=dict)
+    extra_vars = models.JSONField(default=dict, blank=True)
 
 
 class HookManager(object):

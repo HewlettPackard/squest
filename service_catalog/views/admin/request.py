@@ -19,24 +19,19 @@ logger = logging.getLogger(__name__)
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_need_info(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    parameters = {
-        'request_id': target_request.id,
-        'message_required': True
-    }
     if request.method == "POST":
-        form = RequestMessageForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
         if form.is_valid():
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
                 raise PermissionDenied
-            form.save()
+            message = form.save()
             target_request.need_info()
             target_request.save()
-            message = form.cleaned_data['message']
-            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
+            send_mail_request_update(target_request, user_applied_state=request.user, message=message.content)
             return redirect('service_catalog:request_list')
     else:
-        form = RequestMessageForm(request.user, **parameters)
+        form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -52,12 +47,8 @@ def admin_request_need_info(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_re_submit(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    parameters = {
-        'request_id': target_request.id,
-        'message_required': False
-    }
     if request.method == "POST":
-        form = RequestMessageForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
         if form.is_valid():
             if not can_proceed(target_request.re_submit):
                 raise PermissionDenied
@@ -67,7 +58,7 @@ def admin_request_re_submit(request, request_id):
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
     else:
-        form = RequestMessageForm(request.user, **parameters)
+        form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
@@ -83,23 +74,18 @@ def admin_request_re_submit(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_reject(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    parameters = {
-        'request_id': target_request.id,
-        'message_required': True
-    }
     if request.method == "POST":
-        form = RequestMessageForm(request.user, request.POST, **parameters)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
         if form.is_valid():
             if not can_proceed(target_request.reject):
                 raise PermissionDenied
-            form.save()
+            message = form.save()
             target_request.reject()
             target_request.save()
-            message = form.cleaned_data['message']
-            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
+            send_mail_request_update(target_request, user_applied_state=request.user, message=message.content)
             return redirect('service_catalog:request_list')
     else:
-        form = RequestMessageForm(request.user, **parameters)
+        form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
