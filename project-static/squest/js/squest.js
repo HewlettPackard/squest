@@ -81,7 +81,7 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
     const sync_button_id = "tower_" + tower_id;
     const job_template_count = "job_template_count_" + tower_id;
     $.ajax({
-        url: `/tasks/${taskID}/`,
+        url: `/api/tasks/${taskID}/`,
         method: 'GET',
         data: {
             csrfmiddlewaretoken: csrf_token
@@ -185,7 +185,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
     const icon_id = "icon_" + job_template_id;
     const html_name = $("#job_template_"+job_template_id+" td.job_template_name");
     $.ajax({
-        url: `/tasks/${taskID}/`,
+        url: `/api/tasks/${taskID}/`,
         method: 'GET',
         data: {
             csrfmiddlewaretoken: csrf_token

@@ -8,8 +8,6 @@ from django_celery_results.models import TaskResult
 from service_catalog import tasks
 from service_catalog.forms import TowerServerForm
 from service_catalog.models import TowerServer, JobTemplate, Operation, OperationType
-from service_catalog.serializers import TaskResultSerializer
-
 
 
 @login_required
@@ -31,7 +29,6 @@ def add_tower(request):
     return render(request, 'generics/generic_form.html', context)
 
 
-
 @login_required
 @permission_required('service_catalog.change_towerserver')
 def sync_tower(request, tower_id, job_template_id=None):
@@ -40,15 +37,6 @@ def sync_tower(request, tower_id, job_template_id=None):
         task_result = TaskResult(task_id=task.task_id)
         task_result.save()
         return JsonResponse({"task_id": task_result.id}, status=202)
-
-
-
-@login_required
-@permission_required('service_catalog.view_taskresult')
-def get_task_result(request, task_id):
-    task_result = TaskResult.objects.get(id=task_id)
-    serialized_task = TaskResultSerializer(task_result)
-    return JsonResponse(serialized_task.data, status=202)
 
 
 @login_required
@@ -67,7 +55,6 @@ def delete_tower(request, tower_id):
         'breadcrumbs': breadcrumbs
     }
     return render(request, "service_catalog/admin/tower/tower-delete.html", context)
-
 
 
 @login_required
@@ -105,7 +92,6 @@ def delete_job_template(request, tower_id, job_template_id):
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
-
 @login_required
 @permission_required('service_catalog.view_jobtemplate')
 def job_template_details(request, tower_id, job_template_id):
@@ -141,7 +127,6 @@ def job_template_compliancy(request, tower_id, job_template_id):
         'compliancy_details': job_template.get_compliancy_details(),
     }
     return render(request, "service_catalog/admin/tower/job_templates/job-template-compliancy.html", context)
-
 
 
 @login_required
