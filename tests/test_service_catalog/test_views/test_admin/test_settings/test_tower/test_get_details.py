@@ -84,18 +84,6 @@ class AdminTowerGetViewsTest(BaseTestTower):
             self.assertEqual(302, response.status_code)
             mock_sync.assert_not_called()
 
-    def test_get_task_result(self):
-        args = {
-            'task_id': self.test_task_result.id
-        }
-        url = reverse('service_catalog:get_task_result', kwargs=args)
-        response = self.client.post(url)
-        self.assertEqual(202, response.status_code)
-        data = json.loads(response.content)
-        self.assertTrue("status" in data)
-        self.assertTrue("id" in data)
-        self.assertTrue("meta" in data)
-
     def test_tower_job_templates_list(self):
         url = reverse('service_catalog:tower_job_templates_list', kwargs=self.args)
         response = self.client.get(url)
