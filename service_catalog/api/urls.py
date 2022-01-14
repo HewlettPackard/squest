@@ -7,6 +7,7 @@ from service_catalog.api.operation_api_views import OperationListCreate, Operati
 from service_catalog.api.request_api_views import RequestList, RequestDetails, ServiceRequestCreate, \
     OperationRequestCreate
 from service_catalog.api.service_api_views import ServiceListCreate, ServiceDetails
+from .admin.job_template_sync import JobTemplateSync
 
 urlpatterns = [
     # admin urls
@@ -27,6 +28,10 @@ urlpatterns = [
     path('tower/<int:pk>/', TowerServerDetails.as_view(), name='api_tower_server_details'),
     path('tower/<int:tower_server_id>/job_template/', JobTemplateList.as_view(),
          name='api_job_template_list'),
+    path('tower/<int:tower_server_id>/job_template/sync/', JobTemplateSync.as_view(),
+         name='api_job_template_sync_all'),
     path('tower/<int:tower_server_id>/job_template/<int:pk>/', JobTemplateDetails.as_view(),
          name='api_job_template_details'),
+    path('tower/<int:tower_server_id>/job_template/<int:job_template_id>/sync/', JobTemplateSync.as_view(),
+         name='api_job_template_sync'),
 ]

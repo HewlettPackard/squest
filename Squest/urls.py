@@ -22,7 +22,7 @@ from rest_framework import permissions
 from django.conf import settings
 
 #  drf-yasg
-from api.celery_tasks_views import CeleryTaskView
+from Squest.api.celery_tasks_views import CeleryTaskView
 from service_catalog.views import markdown_uploader
 
 schema_view = get_schema_view(
