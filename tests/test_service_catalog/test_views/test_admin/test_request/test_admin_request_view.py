@@ -28,7 +28,7 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:admin_request_need_info', kwargs=args)
         data = {
-            "message": "admin message"
+            "content": "admin message"
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
@@ -60,10 +60,11 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
+        data = {'content': 're-submited'}
         url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        response = self.client.post(url)
+        response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, RequestState.SUBMITTED)
@@ -72,13 +73,14 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
+        data = {'content': 're-submited'}
         url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
                             RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.SUBMITTED]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
-            response = self.client.post(url)
+            response = self.client.post(url, data=data)
             self.assertEqual(403, response.status_code)
 
     def test_admin_request_reject(self):
@@ -87,7 +89,7 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:admin_request_reject', kwargs=args)
         data = {
-            "message": "admin message"
+            "content": "admin message"
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
