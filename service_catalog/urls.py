@@ -21,10 +21,6 @@ app_name = 'service_catalog'
 urlpatterns = [
     path('', views.dashboards, name='home'),
 
-    path('dashboards/', views.dashboards, name='dashboards'),
-
-    path('tasks/<int:task_id>/', views.get_task_result, name='get_task_result'),
-
     path('request/', RequestListView.as_view(), name='request_list'),
     path('request/archived/', RequestArchivedListView.as_view(), name='request_archived_list'),
     path('request/<int:request_id>/', views.admin_request_details, name='admin_request_details'),
