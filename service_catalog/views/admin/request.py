@@ -25,10 +25,10 @@ def admin_request_need_info(request, request_id):
             # check that we can ask for info the request
             if not can_proceed(target_request.need_info):
                 raise PermissionDenied
-            message = form.save()
+            message = form.save(send_notification=False)
             target_request.need_info()
             target_request.save()
-            send_mail_request_update(target_request, user_applied_state=request.user, message=message.content)
+            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
@@ -52,10 +52,10 @@ def admin_request_re_submit(request, request_id):
         if form.is_valid():
             if not can_proceed(target_request.re_submit):
                 raise PermissionDenied
-            form.save()
+            message = form.save(send_notification=False)
             target_request.re_submit()
             target_request.save()
-            send_mail_request_update(target_request, user_applied_state=request.user)
+            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
@@ -79,10 +79,10 @@ def admin_request_reject(request, request_id):
         if form.is_valid():
             if not can_proceed(target_request.reject):
                 raise PermissionDenied
-            message = form.save()
+            message = form.save(send_notification=False)
             target_request.reject()
             target_request.save()
-            send_mail_request_update(target_request, user_applied_state=request.user, message=message.content)
+            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)

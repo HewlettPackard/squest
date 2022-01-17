@@ -2,14 +2,17 @@
 <br lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Request update</title>
 </head>
-<h2>Request state update: #{{ request.id }}</h2>
+{% if request.state == 'SUBMITTED' %}
+    <h2>New request submitted: #{{ request.id }}</h2>
+{% else %}
+    <h2>Request state update: #{{ request.id }}</h2>
+{% endif %}
 
 <li>New request state: <b>{{ request.state }}</b></li>
 {% if user_applied_state is not none %}<li>Applied by: <b>{{ user_applied_state.username }}</b></li>{% endif %}
 {% if message is not None %}
-<li>Message: <b>{{ message }}</b></li>
+    <li>Message: <b>{{ message.content }}</b></li>
 {%  endif %}
 <br>
 <br>
@@ -21,6 +24,14 @@ Request details:<br>
 <li>Operation name: <b>{{ request.operation.name }}</b></li>
 <br>
 <br>
+{% if request.state == 'SUBMITTED' %}
+    Configuration:<br>
+    <ul style="list-style-type:circle">
+        {% for variable_name, variable_value in request.fill_in_survey.items %}
+            <li><b>{{ variable_name }}:</b> {{ variable_value }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% if request.state == 'COMPLETE' %}
     You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
 {% else %}

@@ -44,8 +44,9 @@ class OperationRequestForm(forms.Form):
 
         # save the comment
         request_comment = self.cleaned_data["request_comment"] if self.cleaned_data["request_comment"] else None
+        message = None
         if request_comment is not None:
-            RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
-
+            message = RequestMessage.objects.create(request=new_request, sender=self.user, content=request_comment)
+        from service_catalog.mail_utils import send_mail_request_update
+        send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
-

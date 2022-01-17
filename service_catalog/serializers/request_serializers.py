@@ -72,9 +72,12 @@ class ServiceRequestSerializer(ModelSerializer):
                                              user=self.request.user)
 
         # save the comment
+        message = None
         if "request_comment" in self.validated_data and self.validated_data["request_comment"] is not None:
             comment = self.validated_data["request_comment"]
-            RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
+            message = RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
+        from service_catalog.mail_utils import send_mail_request_update
+        send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
 
 
@@ -113,9 +116,12 @@ class OperationRequestSerializer(ModelSerializer):
                                              fill_in_survey=self.validated_data["fill_in_survey"],
                                              user=self.request.user)
         # save the comment
+        message = None
         if "request_comment" in self.validated_data and self.validated_data["request_comment"] is not None:
             comment = self.validated_data["request_comment"]
-            RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
+            message = RequestMessage.objects.create(request=new_request, sender=self.request.user, content=comment)
+        from service_catalog.mail_utils import send_mail_request_update
+        send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
 
 
