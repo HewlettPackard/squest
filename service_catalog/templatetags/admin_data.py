@@ -17,5 +17,9 @@ def submitted_request(user):
 
 
 @register.simple_tag
-def opened_support():
-    return Support.objects.filter(state='OPENED').count()
+def opened_support(user):
+    if user.is_superuser:
+        return Support.objects.filter(state='OPENED').count()
+    else:
+        instances = get_objects_for_user(user, 'service_catalog.request_support_on_instance').distinct()
+        return Support.objects.filter(instance__in=instances, state='OPENED').count()

@@ -24,6 +24,8 @@ class BaseTestRequest(BaseTest):
         self.test_instance_2 = Instance.objects.create(name="test_instance_2",
                                                        service=self.service_test,
                                                        spoc=self.standard_user_2)
+        self.support_test2 = Support.objects.create(title="support_2", instance=self.test_instance_2)
+
 
         self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
         self.rg_physical_servers_cpu_attribute = self.rg_physical_servers.add_attribute_definition(name="CPU")

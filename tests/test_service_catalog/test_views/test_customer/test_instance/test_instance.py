@@ -94,6 +94,16 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.assertTrue("support" in response.context)
         self.assertEqual(self.support_test.title, response.context["support"].title)
 
+    def test_get_customer_instance_support_details_non_owned_instance(self):
+        self.client.login(username=self.standard_user_2, password=self.common_password)
+        args = {
+            "instance_id": self.test_instance.id,
+            "support_id": self.support_test.id
+        }
+        url = reverse('service_catalog:instance_support_details', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(403, response.status_code)
+
     def test_close_instance_support(self):
         args = {
             "instance_id": self.test_instance.id,
