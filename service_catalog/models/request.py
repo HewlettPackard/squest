@@ -41,11 +41,6 @@ class Request(RoleManager):
     periodic_task_date_expire = models.DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = models.TextField(blank=True, null=True)
 
-    def __init__(self, *args, **kwargs):
-        from service_catalog.mail_utils import send_mail_request_update
-        super().__init__(*args, **kwargs)
-        send_mail_request_update(target_request=self, user_applied_state=self.user)
-
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
 

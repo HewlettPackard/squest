@@ -260,6 +260,12 @@ SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(os.environ.get('SQUEST_EMAIL_NOT
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 
+print(f"SQUEST_HOST: {SQUEST_HOST}")
+print(f"SQUEST_EMAIL_HOST: {SQUEST_EMAIL_HOST}")
+print(f"SQUEST_EMAIL_NOTIFICATION_ENABLED: {SQUEST_EMAIL_NOTIFICATION_ENABLED}")
+print(f"EMAIL_HOST: {EMAIL_HOST}")
+print(f"EMAIL_PORT: {EMAIL_PORT}")
+
 # -----------------------------------------
 # Martor CONFIG https://github.com/agusmakmun/django-markdown-editor
 # -----------------------------------------

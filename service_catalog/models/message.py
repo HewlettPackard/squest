@@ -12,7 +12,7 @@ class Message(models.Model):
 
     sender = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     date_message = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(null=True, blank=True)
+    content = models.TextField(null=True, blank=True, verbose_name="Message")
 
     class Meta:
         abstract = True
@@ -27,12 +27,6 @@ class RequestMessage(Message):
                                 )
 
 
-@receiver(post_save, sender=RequestMessage)
-def send_email_new_support_message(sender, instance, created, **kwargs):
-    if created:
-        send_mail_new_comment_on_request(instance)
-
-
 class SupportMessage(Message):
     support = models.ForeignKey(Support,
                                 blank=True,
@@ -41,9 +35,3 @@ class SupportMessage(Message):
                                 related_name='supports',
                                 related_query_name='support'
                                 )
-
-
-@receiver(post_save, sender=SupportMessage)
-def send_email_new_support_message(sender, instance, created, **kwargs):
-    if created:
-        send_mail_new_support_message(instance)
