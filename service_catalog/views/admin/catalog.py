@@ -59,7 +59,7 @@ def edit_service(request, service_id):
         {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
         {'text': target_service.name, 'url': ""},
     ]
-    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'edit', 'multipart': True}
     return render(request, 'generics/generic_form.html', context)
 
 
