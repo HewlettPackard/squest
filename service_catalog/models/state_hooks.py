@@ -2,6 +2,7 @@ import logging
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from service_catalog.models import Service, JobTemplate
 
@@ -22,7 +23,11 @@ class ServiceStateHook(models.Model):
     model = models.CharField(max_length=100, choices=HookModel.choices)
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
-    extra_vars = models.JSONField(default=dict)
+    extra_vars = models.JSONField(default=dict, blank=True)
+
+    def clean(self):
+        if self.extra_vars is None:
+            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
 
 class GlobalHook(models.Model):
@@ -31,6 +36,10 @@ class GlobalHook(models.Model):
     state = models.CharField(max_length=100)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     extra_vars = models.JSONField(default=dict, blank=True)
+
+    def clean(self):
+        if self.extra_vars is None:
+            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
 
 class HookManager(object):

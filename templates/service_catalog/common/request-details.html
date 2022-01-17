@@ -100,13 +100,16 @@
                             <li class="list-group-item">
                                 <b>Date submitted</b><span class="float-right">{{ target_request.date_submitted }}</span>
                             </li>
-                            <li class="list-group-item">
-                                <b>Date complete</b><span class="float-right">{{ target_request.date_complete }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Date archived</b><span class="float-right">{{ target_request.date_archived }}</span>
-                            </li>
-
+                            {% if target_request.date_complete %}
+                                <li class="list-group-item">
+                                    <b>Date complete</b><span class="float-right">{{ target_request.date_complete }}</span>
+                                </li>
+                            {% endif %}
+                            {% if target_request.date_archived %}
+                                <li class="list-group-item">
+                                    <b>Date archived</b><span class="float-right">{{ target_request.date_archived }}</span>
+                                </li>
+                            {% endif %}
                             {%  if request.user.is_superuser %}
                                 <li class="list-group-item border-bottom-0">
                                     <b>Tower job</b>

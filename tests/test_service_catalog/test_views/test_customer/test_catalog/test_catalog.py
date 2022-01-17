@@ -68,5 +68,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
 
         created_request = Request.objects.latest('id')
         self.assertEqual(created_request.comments.count(), 1)
+        self.assertNotIn("billing_group_id", created_request.fill_in_survey.keys())
+        self.assertNotIn("request_comment", created_request.fill_in_survey.keys())
         self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
         self.assertEqual(created_request.comments.first().sender, self.standard_user)

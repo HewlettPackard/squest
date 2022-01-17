@@ -12,6 +12,7 @@ from service_catalog.models.operations import OperationType
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
+EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "instance_name"]
 
 
 class ServiceRequestForm(forms.Form):
@@ -60,7 +61,8 @@ class ServiceRequestForm(forms.Form):
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            user_provided_survey_fields[field_key] = value
+            if field_key not in EXCLUDED_SURVEY_FIELDS:
+                user_provided_survey_fields[field_key] = value
         # create the instance
         instance_name = self.cleaned_data["instance_name"]
         billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data[
@@ -82,8 +84,10 @@ class ServiceRequestForm(forms.Form):
         return new_request
 
     def clean_billing_group_id(self):
-        if self.service.billing_group_is_selectable and not self.fields["billing_group_id"].choices:
+        if self.service.billing_group_is_selectable and (not self.fields["billing_group_id"].choices or not self.cleaned_data['billing_group_id']):
             raise ValidationError('You must be in a billing group to request this service')
+        billing_group_id = self.cleaned_data['billing_group_id']
+        return billing_group_id
 
     def clean(self):
         super(ServiceRequestForm, self).clean()
