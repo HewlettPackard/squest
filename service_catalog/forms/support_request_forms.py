@@ -30,4 +30,6 @@ class SupportRequestForm(forms.Form):
                                              instance=self.instance,
                                              user_open=self.user)
 
-        SupportMessage.objects.create(content=content, sender=self.user, support=new_support)
+        message = SupportMessage.objects.create(content=content, sender=self.user, support=new_support)
+        from service_catalog.mail_utils import send_mail_new_support_message
+        send_mail_new_support_message(message)

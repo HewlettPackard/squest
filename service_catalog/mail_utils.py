@@ -71,20 +71,15 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
         return
 
     subject = _get_subject(target_request)
-    if target_request.state == RequestState.SUBMITTED:
-        template_name = "service_catalog/mails/request_submitted.html"
-        plain_text = f"Request update for service: {target_request.instance.name}"
-        context = {'request': target_request,
-                   'user_applied_state': user_applied_state,
-                   'current_site': settings.SQUEST_HOST}
-    else:
-        template_name = "service_catalog/mails/request_state_update.html"
-        plain_text = f"Request state update: {target_request.state}"
-        context = {'request': target_request,
-                   'user_applied_state': user_applied_state,
-                   'current_site': settings.SQUEST_HOST,
-                   'message': message}
+    template_name = "service_catalog/mails/request_state_update.html"
 
+    context = {'request': target_request,
+               'user_applied_state': user_applied_state,
+               'current_site': settings.SQUEST_HOST,
+               'message': message}
+    plain_text = f"Request state update: {target_request.state}"
+    if target_request.state == RequestState.SUBMITTED:
+        plain_text = f"Request update for service: {target_request.instance.name}"
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins

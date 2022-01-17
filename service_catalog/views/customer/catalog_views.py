@@ -3,7 +3,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from service_catalog.forms import ServiceRequestForm
-from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Service
 
 
