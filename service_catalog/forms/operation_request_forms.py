@@ -6,6 +6,7 @@ from service_catalog.models import Operation, Instance, Request, RequestMessage
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
+EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "instance_name"]
 
 
 class OperationRequestForm(forms.Form):
@@ -34,8 +35,8 @@ class OperationRequestForm(forms.Form):
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            user_provided_survey_fields[field_key] = value
-
+            if field_key not in EXCLUDED_SURVEY_FIELDS:
+                user_provided_survey_fields[field_key] = value
         new_request = Request.objects.create(instance=self.instance,
                                              operation=self.operation,
                                              fill_in_survey=user_provided_survey_fields,

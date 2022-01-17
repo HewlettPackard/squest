@@ -32,6 +32,10 @@ class TestAnnouncementUrls(BaseTest):
         for url in urls_list:
             response = self.client.get(url)
             self.assertEqual(200, response.status_code)
+        self.client.force_login(self.standard_user)
+        for url in urls_list:
+            response = self.client.get(url)
+            self.assertIn(response.status_code, [403, 302])
         self.client.logout()
         for url in urls_list:
             response = self.client.get(url)

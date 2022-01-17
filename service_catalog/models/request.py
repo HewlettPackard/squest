@@ -7,9 +7,11 @@ import requests
 import towerlib
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
 
@@ -46,6 +48,10 @@ class Request(RoleManager):
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
+
+    def clean(self):
+        if self.fill_in_survey is None:
+            raise ValidationError({'fill_in_survey': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
     def can_process(self):
         if self.instance.state in [InstanceState.AVAILABLE, InstanceState.PENDING, InstanceState.UPDATE_FAILED,

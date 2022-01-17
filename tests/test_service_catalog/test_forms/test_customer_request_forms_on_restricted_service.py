@@ -9,14 +9,13 @@ class TestRequestForm(BaseTest):
 
     def setUp(self):
         super(TestRequestForm, self).setUp()
-        self.billing_group_test = BillingGroup.objects.create(name="test")
         self.service_test.billing_groups_are_restricted = True
         self.service_test.billing_group_is_selectable = True
         self.service_test.billing_group_is_shown = True
         self.service_test.billing_group_id = None
         self.service_test.save()
 
-    def test_create_request_without_billing_group_on_restricted_billing(self):
+    def test_cannot_create_request_without_billing_group_on_restricted_billing(self):
         parameters = {
             'service_id': self.service_test.id
         }
@@ -28,18 +27,39 @@ class TestRequestForm(BaseTest):
         self.assertRaises(ValidationError, form.clean_billing_group_id)
 
     def test_create_request_with_billing_group_on_restricted_billing(self):
-        self.billing_group_test.user_set.add(self.standard_user)
+        self.test_billing_group.user_set.add(self.standard_user)
         parameters = {
             'service_id': self.service_test.id
         }
+        instance_name = "instance test"
+        text_var = "text"
         data = {
-            "instance_name": "instance test",
-            "billing_group_id": self.billing_group_test.id,
-            "text_variable": "text"
+            "instance_name": instance_name,
+            "billing_group_id": self.test_billing_group.id,
+            "text_variable": text_var
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
-        self.assertEqual([(self.billing_group_test.id, self.billing_group_test.name)], form.fields['billing_group_id'].choices)
+        self.assertEqual([(self.test_billing_group.id, self.test_billing_group.name)], form.fields['billing_group_id'].choices)
         self.assertTrue(form.is_valid())
+        request = form.save()
+        self.assertEqual(request.instance.name, instance_name)
+        self.assertEqual(request.instance.billing_group_id, self.test_billing_group.id)
+        self.assertEqual(request.fill_in_survey["text_variable"], text_var)
+
+    def test_create_request_with_non_owned_billing_group_on_restricted_billing(self):
+        parameters = {
+            'service_id': self.service_test.id
+        }
+        instance_name = "instance test"
+        text_var = "text"
+        data = {
+            "instance_name": instance_name,
+            "billing_group_id": self.test_billing_group.id,
+            "text_variable": text_var
+        }
+        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertEqual([], form.fields['billing_group_id'].choices)
+        self.assertFalse(form.is_valid())
 
     def test_create_request_with_billing_group_on_non_restricted_billing(self):
         self.service_test.billing_groups_are_restricted = False
@@ -49,7 +69,7 @@ class TestRequestForm(BaseTest):
         }
         data = {
             "instance_name": "instance test",
-            "billing_group_id": self.billing_group_test.id,
+            "billing_group_id": self.test_billing_group.id,
             "text_variable": "text"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
