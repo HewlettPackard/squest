@@ -6,7 +6,7 @@
 </head>
 <h2>New message on {{ message.support }}</h2>
 
-<li>Instance: <b>{{ message.support.instance }}</b></li>
+<li>Instance: <a href="{{ current_site }}/instance/{{ message.request.instance.id }}/"><b>{{ message.request.instance.name }}</b></a></li>
 <li>SPOC: <b>{{ message.support.instance.spoc.username }}</b></li>
 <li>Sender: <b>{{ message.sender.username }}</b></li>
 <br>

@@ -111,9 +111,14 @@
                                 </li>
                             {% endif %}
                             {%  if request.user.is_superuser %}
-                                <li class="list-group-item border-bottom-0">
+                                <li class="list-group-item">
                                     <b>Tower job</b>
                                     <a href="{{ target_request.tower_job_url }}" class="float-right">{{ target_request.tower_job_id }}</a>
+                                </li>
+                            {% endif %}
+                            {% if target_request.state == "FAILED" %}
+                                <li class="list-group-item border-bottom-0">
+                                    <b>Failure message</b><span class="float-right">{{ target_request.failure_message }}</span>
                                 </li>
                             {% endif %}
                         </ul>
