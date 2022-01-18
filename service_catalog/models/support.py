@@ -17,7 +17,7 @@ class Support(models.Model):
     title = models.CharField(max_length=100)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True, blank=True, related_name="supports",
                                  related_query_name="support")
-    user_open = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    opened_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     state = FSMField(default=SupportState.OPENED, choices=SupportState.choices)
     date_opened = models.DateTimeField(auto_now=True, blank=True, null=True)
     date_closed = models.DateTimeField(auto_now=False, blank=True, null=True)
