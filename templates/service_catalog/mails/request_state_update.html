@@ -3,39 +3,36 @@
 <head>
     <meta charset="UTF-8">
 </head>
-{% if request.state == 'SUBMITTED' %}
-    <h2>New request submitted: #{{ request.id }}</h2>
-{% else %}
-    <h2>Request state update: #{{ request.id }}</h2>
+<h2>Request: <a href="{{ current_site }}/request/{{ request.id }}/">#{{ request.id }}</a></h2>
+<h4>Request details</h4>
+<li>State: <b>{{ request.state }}</b></li>
+{% if user_applied_state is not none %}
+    <li>Applied by: <b>{{ user_applied_state.username }}</b></li>
 {% endif %}
-
-<li>New request state: <b>{{ request.state }}</b></li>
-{% if user_applied_state is not none %}<li>Applied by: <b>{{ user_applied_state.username }}</b></li>{% endif %}
-{% if message is not None %}
-    <li>Message: <b>{{ message.content }}</b></li>
-{%  endif %}
-<br>
-<br>
-Request details:<br>
 <li>Requester: <b>{{ request.user.username }}</b></li>
 <li>Service: <b>{{ request.operation.service.name }}</b></li>
-<li>Instance: <b>{{ request.instance.name }}</b></li>
+<li>Instance: <a href="{{ current_site }}/instance/{{ request.instance.id }}/"><b>{{ request.instance.name }}</b></a></li>
 <li>Operation type: <b>{{ request.operation.type }}</b></li>
 <li>Operation name: <b>{{ request.operation.name }}</b></li>
-<br>
-<br>
+{% if request.tower_job_id is not None %}
+<li>Tower job id: <a href="{{ request.tower_job_url }}"><b> {{ request.tower_job_id }}</b></a></li>
+{%  endif %}
+{% if message is not None %}
+    <h4>Message</h4>
+    <p>{{ message.content }}</p>
+{%  endif %}
 {% if request.state == 'SUBMITTED' %}
-    Configuration:<br>
-    <ul style="list-style-type:circle">
-        {% for variable_name, variable_value in request.fill_in_survey.items %}
-            <li><b>{{ variable_name }}:</b> {{ variable_value }}</li>
-        {% endfor %}
-    </ul>
+    <h4>Configuration</h4>
+    {% for variable_name, variable_value in request.fill_in_survey.items %}
+        <li><b>{{ variable_name }}:</b> {{ variable_value }}</li>
+    {% endfor %}
+    <br>
+    <br>
 {% endif %}
 {% if request.state == 'COMPLETE' %}
     You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
-{% else %}
-    Retrieve this request on <a href="{{ current_site }}/request/">Squest portal</a>.
+    <br>
 {% endif %}
+Retrieve this request on <a href="{{ current_site }}/request/{{ request.id }}/">Squest portal</a>.
 </body>
 </html>

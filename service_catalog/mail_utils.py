@@ -154,25 +154,3 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
                                receivers=receiver_email_list,
                                reply_to=receiver_email_list,
                                headers=_get_headers(subject))
-
-
-def send_email_request_error(target_request, error_message):
-    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
-        return
-    subject = _get_subject(target_request)
-    plain_text = f"Request #{target_request.id} - ERROR"
-    template_name = "service_catalog/mails/request_error.html"
-    context = {'request': target_request,
-               'user_applied_state': DEFAULT_FROM_EMAIL,
-               'error_message': error_message,
-               'current_site': settings.SQUEST_HOST}
-
-    html_template = get_template(template_name)
-    html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
-    if target_request.user.profile.notification_enabled:
-        receiver_email_list.append(target_request.user.email)  # email sent to the requester
-    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                           receivers=receiver_email_list,
-                           reply_to=receiver_email_list,
-                           headers=_get_headers(subject))

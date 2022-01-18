@@ -29,6 +29,11 @@ class TowerServer(models.Model):
             job_template = JobTemplateLocal.objects.get(id=job_template_id)
             self._update_job_template_from_tower(tower.get_job_template_by_id(job_template.tower_id))
 
+    @property
+    def url(self):
+        protocol = "https" if self.secure else "http"
+        return f"{protocol}://{self.host}"
+
     def get_tower_instance(self):
         return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)
 

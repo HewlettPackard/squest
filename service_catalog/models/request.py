@@ -55,12 +55,10 @@ class Request(RoleManager):
         logger.debug(f"Request][process] instance {self.id} is not available or pending")
         return False
 
+    # TODO: add the job id (url of tower and axw are different)
     @property
     def tower_job_url(self):
-        if self.tower_job_id is not None:
-            protocol = "https" if self.operation.job_template.tower_server.secure else "http"
-            return f"{protocol}://{self.operation.job_template.tower_server.host}/#/jobs/playbook/{self.tower_job_id}"
-        return ""
+        return f"{self.operation.job_template.tower_server.url}/#/jobs"
 
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
     def need_info(self):
@@ -174,7 +172,7 @@ class Request(RoleManager):
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def check_job_status(self):
-        from ..mail_utils import send_mail_request_update, send_email_request_error
+        from ..mail_utils import send_mail_request_update
         if self.tower_job_id is None:
             logger.warning(
                 f"[Request][check_job_status] no tower job id for request id {self.id}. Check job status skipped")
@@ -207,12 +205,11 @@ class Request(RoleManager):
             send_mail_request_update(target_request=self)
 
         if job_object.status in ["canceled", "failed"]:
-            error_message = f"Tower job '{self.tower_job_id}' status is '{job_object.status}'"
+            error_message = f"Tower job {self.tower_job_id} status is '{job_object.status}'"
             self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()
-            send_email_request_error(target_request=self,
-                                     error_message=error_message)
+            send_mail_request_update(target_request=self)
 
     @classmethod
     def add_permission(cls, sender, instance, created, *args, **kwargs):

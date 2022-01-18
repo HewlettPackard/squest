@@ -205,10 +205,7 @@ class TestRequest(BaseTestRequest):
         self._process_timeout_with_expected_state(expected_instance_state)
 
     def test_tower_job_url(self):
-        self.assertEqual("", self.test_request.tower_job_url)
-        self.test_request.tower_job_id = 123
-        self.test_request.save()
-        self.assertEqual("https://localhost/#/jobs/playbook/123", self.test_request.tower_job_url)
+       self.assertEqual("https://localhost/#/jobs", self.test_request.tower_job_url)
 
     def test_delete_request_also_delete_periodic_task(self):
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
@@ -273,7 +270,7 @@ class TestRequest(BaseTestRequest):
         self.test_instance.save()
         with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
             tower_mock.return_value.get_unified_job_by_id.return_value.status = job_status
-            with mock.patch("service_catalog.mail_utils.send_email_request_error") as mock_email:
+            with mock.patch("service_catalog.mail_utils.send_mail_request_update") as mock_email:
                 self.test_request.check_job_status()
                 self.test_request.refresh_from_db()
                 mock_email.assert_called()

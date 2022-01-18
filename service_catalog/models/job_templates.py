@@ -15,8 +15,7 @@ class JobTemplate(models.Model):
 
     @property
     def tower_url(self):
-        protocol = "https" if self.tower_server.secure else "http"
-        return f"{protocol}://{self.tower_server.host}/#/templates/job_template/{self.tower_id}"
+        return f"{self.tower_server.url}/#/templates/job_template/{self.tower_id}"
 
     class Meta:
         unique_together = ('tower_id', 'tower_server',)
