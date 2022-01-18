@@ -28,7 +28,7 @@ class SupportRequestForm(forms.Form):
         # open a new support case
         new_support = Support.objects.create(title=title,
                                              instance=self.instance,
-                                             user_open=self.user)
+                                             opened_by=self.user)
 
         message = SupportMessage.objects.create(content=content, sender=self.user, support=new_support)
         from service_catalog.mail_utils import send_mail_new_support_message

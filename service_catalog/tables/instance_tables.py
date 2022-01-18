@@ -12,12 +12,6 @@ class InstanceTable(SquestTable):
                                           verbose_name="Opened support")
     name = LinkColumn("service_catalog:instance_details", args=[A("id")], verbose_name="Name")
 
-    def before_render(self, request):
-        if request.user.is_superuser:
-            self.columns.show('opened_support_count')
-        else:
-            self.columns.hide('opened_support_count')
-
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
