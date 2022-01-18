@@ -44,6 +44,7 @@ def on_delete(sender, instance, **kwargs):
     """
     If a resource is deleted, the linked resource pool consumption is updated.
     """
+    update_quota(instance.service_catalog_instance)
     if instance.resource_group_id:
         if ResourceGroup.objects.filter(id=instance.resource_group_id).exists():
             target_resource_group = ResourceGroup.objects.get(id=instance.resource_group_id)
