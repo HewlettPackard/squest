@@ -128,6 +128,30 @@ class TestQuotaModel(BaseTestQuota):
         self.assertEqual(old_consumed_memory, instance.billing_group.quota_bindings.get(
             quota=self.test_quota_attribute_memory).consumed)
 
+    def test_consumed_updated_after_remove_resource(self):
+        instance_list = Instance.objects.exclude(billing_group=None)
+        instance = instance_list.first()
+        resource_count = instance.resources.count()
+        resource = instance.resources.first()
+        resource_cpu = 0
+        resource_memory = 0
+        for attribute in resource.attributes.all():
+            if attribute.attribute_type in self.test_quota_attribute_cpu.attribute_definitions.all():
+                resource_cpu += attribute.value
+        for attribute in resource.attributes.all():
+            if attribute.attribute_type in self.test_quota_attribute_memory.attribute_definitions.all():
+                resource_memory += attribute.value
+        old_consumed_cpu = instance.billing_group.quota_bindings.get(
+            quota=self.test_quota_attribute_cpu).consumed
+        old_consumed_memory = instance.billing_group.quota_bindings.get(
+            quota=self.test_quota_attribute_memory).consumed
+        resource.delete()
+        self.assertEqual(resource_count - 1, instance.resources.count())
+        self.assertEqual(old_consumed_cpu - resource_cpu, instance.billing_group.quota_bindings.get(
+            quota=self.test_quota_attribute_cpu).consumed)
+        self.assertEqual(old_consumed_memory - resource_memory, instance.billing_group.quota_bindings.get(
+            quota=self.test_quota_attribute_memory).consumed)
+
     def test_consumed_updated_after_attribute_definitions_changed_in_quota_attribute(self):
         quota_binding = self.test_quota_attribute_cpu.quota_bindings.first()
         old_consumed = quota_binding.consumed
