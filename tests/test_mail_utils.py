@@ -70,7 +70,7 @@ class TestMailUtils(BaseTest):
         self.superuser.profile.subscribed_services_notification.add(self.service_test)
         new_support = Support.objects.create(title="title",
                                              instance=self.test_instance,
-                                             user_open=self.standard_user)
+                                             opened_by=self.standard_user)
         support_message = SupportMessage.objects.create(content="message content", sender=self.standard_user,
                                                         support=new_support)
         receivers = _get_receivers_for_support_message(support_message)
