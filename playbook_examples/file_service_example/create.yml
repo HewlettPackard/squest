@@ -37,10 +37,14 @@
         content: "{{ file_content }}"
         dest: "{{ file_path }}/{{ file_name }}"
 
+    - name: Get squest api url from Squest sent metadata
+      set_fact:
+        squest_api_url: "{{ squest.squest_host }}/api"
+
     - name: Update squest with info
       uri:
         validate_certs: no
-        url: "{{ squest_api_url }}/service_catalog/admin/instance/{{ squest['request']['instance']['id'] }}/"
+        url: "{{ squest_api_url }}/service_catalog/instance/{{ squest['request']['instance']['id'] }}/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: PATCH
