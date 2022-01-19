@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
-
 from profiles.models.role import Role
 from profiles.models.user_role_binding import UserRoleBinding
 
@@ -93,3 +92,7 @@ class RoleManager(Model):
         for binding in bindings:
             binding.delete()
 
+    def remove_all_bindings(self):
+        from profiles.models import TeamRoleBinding
+        TeamRoleBinding.objects.filter(role__in=self.roles, object_id=self.id).delete()
+        UserRoleBinding.objects.filter(role__in=self.roles, object_id=self.id).delete()

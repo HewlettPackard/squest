@@ -1,10 +1,9 @@
 import logging
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
 from profiles.models import BillingGroup
@@ -153,6 +152,11 @@ def post_save(sender, instance, created, **kwargs):
     if instance._need_update:
         update_quota(instance._old_billing_group)
         update_quota(instance.billing_group)
+
+
+@receiver(pre_delete, sender=Instance)
+def pre_delete(sender, instance, **kwargs):
+    instance.remove_all_bindings()
 
 
 def update_quota(billing_group):

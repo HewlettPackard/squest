@@ -284,17 +284,7 @@ def team_in_instance_update(request, instance_id):
     form = TeamRoleForObjectForm(request.POST or None, user=request.user, object=instance)
     if request.method == 'POST':
         if form.is_valid():
-            teams_id = form.cleaned_data.get('teams')
-            role_id = int(form.cleaned_data.get('roles'))
-            role = Role.objects.get(id=role_id)
-            current_teams = instance.get_teams_in_role(role.name)
-            selected_teams = [Team.objects.get(id=team_id) for team_id in teams_id]
-            to_remove = list(set(current_teams) - set(selected_teams))
-            to_add = list(set(selected_teams) - set(current_teams))
-            for team in to_add:
-                instance.add_team_in_role(team, role.name)
-            for team in to_remove:
-                instance.remove_team_in_role(team, role.name)
+            form.save()
             return redirect("service_catalog:instance_details", instance_id=instance_id)
     breadcrumbs = [
         {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},

@@ -72,19 +72,10 @@ def billing_group_delete(request, billing_group_id):
 @user_passes_test(lambda u: u.is_superuser)
 def user_in_billing_group_update(request, billing_group_id):
     group = get_object_or_404(BillingGroup, id=billing_group_id)
-    form = AddUserForm(request.POST or None, current_users=group.user_set.all())
+    form = AddUserForm(request.POST or None, group=group)
     if request.method == 'POST':
         if form.is_valid():
-            users_id = form.cleaned_data.get('users')
-            current_users = group.user_set.all()
-            selected_users = [User.objects.get(id=user_id) for user_id in users_id]
-            to_remove = list(set(current_users) - set(selected_users))
-            to_add = list(set(selected_users) - set(current_users))
-            for user in to_remove:
-                group.user_set.remove(user)
-            for user in to_add:
-                group.user_set.add(user)
-
+            form.save()
             return redirect(reverse("profiles:billing_group_list") + f"?id={billing_group_id}#quota{billing_group_id}")
     breadcrumbs = [
         {'text': 'Billing groups', 'url': reverse('profiles:billing_group_list')},

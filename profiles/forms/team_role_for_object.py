@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.forms import Form, MultipleChoiceField, SelectMultiple, ChoiceField, Select
 
-from profiles.models import Team, TeamRoleBinding, UserRoleBinding
+from profiles.models import Team, TeamRoleBinding, UserRoleBinding, Role
 
 
 class TeamRoleForObjectForm(Form):
@@ -33,3 +33,16 @@ class TeamRoleForObjectForm(Form):
                                 choices=[],
                                 widget=SelectMultiple(attrs={'class': 'selectpicker', 'data-live-search': "true"})
                                 )
+
+    def save(self):
+        teams_id = self.cleaned_data.get('teams')
+        role_id = int(self.cleaned_data.get('roles'))
+        role = Role.objects.get(id=role_id)
+        current_teams = self.object.get_teams_in_role(role.name)
+        selected_teams = [Team.objects.get(id=team_id) for team_id in teams_id]
+        to_remove = list(set(current_teams) - set(selected_teams))
+        to_add = list(set(selected_teams) - set(current_teams))
+        for team in to_add:
+            self.object.add_team_in_role(team, role.name)
+        for team in to_remove:
+            self.object.remove_team_in_role(team, role.name)

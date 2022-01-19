@@ -33,8 +33,11 @@ def ajax_get_teams_with_role(request):
         raise PermissionDenied
     bindings = TeamRoleBinding.objects.filter(role__id=role_id, content_type__id=content_type_id, object_id=object_id)
     selected = [binding.user.id for binding in bindings]
+    teams = [Team.objects.get(id=binding.object_id) for binding in
+                 UserRoleBinding.objects.filter(user=request.user,
+                                                content_type=ContentType.objects.get_for_model(Team))]
     return render(request, 'profiles/role/teams-dropdown-list.html',
-                  {'teams': Team.objects.all(), 'selected': selected})
+                  {'teams': teams, 'selected': selected})
 
 
 def get_objects_of_user_from_content_type(user, content_type_id):
