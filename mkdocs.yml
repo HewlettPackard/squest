@@ -43,6 +43,7 @@ nav:
     - Teams: manual/teams.md
     - REST API: manual/api.md
     - Prometheus metrics: manual/metrics.md
+    - Notifications: manual/notifications.md
   - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md

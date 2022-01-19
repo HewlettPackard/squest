@@ -103,59 +103,61 @@
                     </div>
                     <div id="notifications" class="tab-pane">
                         <dl class="row">
-                            <div class="col-md-6">
-                                <dt class="col-sm-4">Notifications</dt>
+                            <div class="col-md-12">
                                 <dd class="col-sm-8">
                                     {% if user.profile.notification_enabled %}
-                                        <blockquote class="quote-success">
-                                            <p class="text-success"><i class="fas fa-bell"></i> Enabled</p>
-                                            <small>
-                                                <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
-                                                    <i class="fas fa-bell-slash"></i> Disable
-                                                </a>
-                                            </small>
-                                        </blockquote>
+                                        <p class="text-success"><i class="fas fa-bell"></i> Notifications are enabled</p>
+                                        <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
+                                            <i class="fas fa-bell-slash"></i> Disable
+                                        </a>
                                     {% else %}
-                                        <blockquote class="quote-secondary">
-                                            <p class="text-secondary"><i class="fas fa-bell-slash"></i> Disabled</p>
-                                            <small>
-                                                <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
-                                                    <i class="fas fa-bell"></i> Enable
-                                                </a>
-                                            </small>
-                                        </blockquote>
+                                        <p class="text-secondary"><i class="fas fa-bell-slash"></i> Notifications are disabled</p>
+                                        <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
+                                            <i class="fas fa-bell"></i> Enable
+                                        </a>
                                     {% endif %}
                                 </dd>
                             </div>
                         </dl>
-                        {% if request.user.is_superuser %}
-                            <a title="Subscribe notification of a particular service" class="btn btn-default mb-2"
-                               href="{% url "profiles:notification_add_service" %}">
-                                <i class="fas fa-plus"></i> Subscribe to a particular service
-                            </a>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Service</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for service in request.user.profile.subscribed_services_notification.all %}
-                                    <tr>
-                                        <td class="align-middle">{{ service.name }}</td>
-                                        <td class="align-middle">
-                                            <a title="Delete"
-                                               class="btn btn-danger"
-                                               href="{% url "profiles:notification_remove_service" service.id %}">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        {% endif %}
+                        <div class="row">
+                            <div class="col-12">
+                                {% if request.user.is_superuser %}
+                                    <a title="Subscribe service notification" class="btn btn-default mb-2"
+                                       href="{% url "profiles:notification_add_service" %}">
+                                        <i class="fas fa-plus"></i> Subscribe to a particular service
+                                    </a>
+                                    {% if request.user.profile.subscribed_services_notification.count == 0 %}
+                                            <div class="callout callout-info">
+                                                <h5><i class="fas fa-info"></i> Note:</h5>
+                                                You haven't subscribed to any service yet. No notification will be sent.
+                                            </div>
+                                    {%  else %}
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Service</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for service in request.user.profile.subscribed_services_notification.all %}
+                                                <tr>
+                                                    <td class="align-middle">{{ service.name }}</td>
+                                                    <td class="align-middle">
+                                                        <a title="Delete"
+                                                           class="btn btn-danger"
+                                                           href="{% url "profiles:notification_remove_service" service.id %}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
