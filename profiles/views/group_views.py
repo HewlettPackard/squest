@@ -68,18 +68,10 @@ def group_delete(request, group_id):
 @user_passes_test(lambda u: u.is_superuser)
 def user_in_group_update(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    form = AddUserForm(request.POST or None, current_users=group.user_set.all())
+    form = AddUserForm(request.POST or None, group=group)
     if request.method == 'POST':
         if form.is_valid():
-            users_id = form.cleaned_data.get('users')
-            current_users = group.user_set.all()
-            selected_users = [User.objects.get(id=user_id) for user_id in users_id]
-            to_remove = list(set(current_users) - set(selected_users))
-            to_add = list(set(selected_users) - set(current_users))
-            for user in to_remove:
-                group.user_set.remove(user)
-            for user in to_add:
-                group.user_set.add(user)
+            form.save()
             return redirect("profiles:user_by_group_list", group_id=group_id)
     breadcrumbs = [
         {'text': 'Groups', 'url': reverse('profiles:group_list')},
