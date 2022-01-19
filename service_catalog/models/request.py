@@ -266,6 +266,12 @@ class Request(RoleManager):
         HookManager.trigger_hook(sender=sender, instance=instance, name=name, source=source, target=target,
                                  *args, **kwargs)
 
+    @classmethod
+    def on_create_call_hook_manager(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            HookManager.trigger_hook(sender=sender, instance=instance, name="create", source="create",
+                                     target=RequestState.SUBMITTED, *args, **kwargs)
+
 
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
@@ -276,3 +282,4 @@ post_save.connect(Request.add_permission, sender=Request)
 post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
 post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
+post_save.connect(Request.on_create_call_hook_manager, sender=Request)

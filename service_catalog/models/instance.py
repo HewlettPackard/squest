@@ -133,8 +133,15 @@ class Instance(RoleManager):
         """
         HookManager.trigger_hook(sender, instance, name, source, target, *args, **kwargs)
 
+    @classmethod
+    def on_create_call_hook_manager(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            HookManager.trigger_hook(sender=sender, instance=instance, name="create", source="create",
+                                     target=InstanceState.PENDING, *args, **kwargs)
+
 
 post_transition.connect(Instance.trigger_hook_handler, sender=Instance)
+post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
 
 
 @receiver(pre_save, sender=Instance)
