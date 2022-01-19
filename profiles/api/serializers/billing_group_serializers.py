@@ -12,7 +12,8 @@ class BillingGroupReadSerializer(serializers.ModelSerializer):
 class BillingGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingGroup
-        fields = ['name', 'user_set']
+        fields = ['id', 'name', 'user_set']
+        read_only_fields = ['id']
 
 
 class BillingGroupInstanceReadSerializer(serializers.ModelSerializer):

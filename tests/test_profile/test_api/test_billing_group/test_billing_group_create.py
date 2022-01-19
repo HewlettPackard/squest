@@ -20,6 +20,9 @@ class TestApiBillingGroupCreate(BaseTestRequest):
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         check_data_in_dict(self, [self.post_data], [response.data])
+        self.assertIn("id", response.data)
+        self.assertIn("name", response.data)
+        self.assertIn("user_set", response.data)
 
     def _create_billing_group_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_billing_group_url, data=self.post_data,
