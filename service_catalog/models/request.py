@@ -258,6 +258,14 @@ class Request(RoleManager):
                     instance.perform_processing()
                     instance.save()
 
+    @classmethod
+    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
+        """
+        Proxy method. Cannot be mocked for testing
+        """
+        HookManager.trigger_hook(sender=sender, instance=instance, name=name, source=source, target=target,
+                                 *args, **kwargs)
+
 
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
@@ -267,4 +275,4 @@ def pre_delete(sender, instance, **kwargs):
 post_save.connect(Request.add_permission, sender=Request)
 post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
 post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
-post_transition.connect(HookManager.trigger_hook_handler, sender=Request)
+post_transition.connect(Request.trigger_hook_handler, sender=Request)

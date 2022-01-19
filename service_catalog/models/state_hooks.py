@@ -45,13 +45,6 @@ class GlobalHook(models.Model):
 class HookManager(object):
 
     @classmethod
-    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
-        """
-        Proxy method. Cannot be mocked for testing
-        """
-        cls.trigger_hook(cls, sender, instance, name, source, target, *args, **kwargs)
-
-    @classmethod
     def trigger_hook(cls, sender, instance, name, source, target, *args, **kwargs):
         """
         Method called when Instance or Request change state

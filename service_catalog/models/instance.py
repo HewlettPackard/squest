@@ -126,8 +126,15 @@ class Instance(RoleManager):
     def remove_permission_to_spoc(self):
         self.remove_user_in_role(self.spoc, "Admin")
 
+    @classmethod
+    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
+        """
+        Proxy method. Cannot be mocked for testing
+        """
+        HookManager.trigger_hook(sender, instance, name, source, target, *args, **kwargs)
 
-post_transition.connect(HookManager.trigger_hook_handler, sender=Instance)
+
+post_transition.connect(Instance.trigger_hook_handler, sender=Instance)
 
 
 @receiver(pre_save, sender=Instance)
