@@ -1,7 +1,6 @@
 from django.db.models import CharField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-
 from profiles.models.role_manager import RoleManager
 
 
@@ -32,3 +31,4 @@ def unset_permission(sender, instance, **kwargs):
     from profiles.models import TeamRoleBinding
     for binding in TeamRoleBinding.objects.filter(team=instance):
         binding.remove_permissions()
+    instance.remove_all_bindings()
