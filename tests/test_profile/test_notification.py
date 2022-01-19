@@ -6,46 +6,89 @@ class TestNotification(BaseTest):
 
     def setUp(self):
         super(TestNotification, self).setUp()
+        self.add_service_url = reverse('profiles:notification_add_service')
+        self.switch_notif_url = reverse('profiles:notification_switch')
 
     def test_notification_switch(self):
-        url = reverse('profiles:notification_switch')
         # by default notification are enabled
         self.assertTrue(self.superuser.profile.notification_enabled)
         # switch to disabled
-        response = self.client.get(url)
+        response = self.client.get(self.switch_notif_url)
         self.assertEqual(302, response.status_code)
         self.superuser.refresh_from_db()
         self.assertFalse(self.superuser.profile.notification_enabled)
         # switch back to enabled
-        response = self.client.get(url)
+        response = self.client.get(self.switch_notif_url)
         self.assertEqual(302, response.status_code)
         self.superuser.refresh_from_db()
         self.assertTrue(self.superuser.profile.notification_enabled)
 
     def test_notification_add_service(self):
-        url = reverse('profiles:notification_add_service')
-        response = self.client.get(url)
+        response = self.client.get(self.add_service_url)
         self.assertEqual(200, response.status_code)
 
         data = {
-            "service": self.service_test.id
+            "service": [self.service_test.id]
         }
-        self.assertTrue(self.service_test not in self.superuser.profile.subscribed_services_notification.all())
-        response = self.client.post(url, data=data)
+        self.assertNotIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
+        response = self.client.post(self.add_service_url, data=data)
         self.assertEqual(302, response.status_code)
         self.superuser.refresh_from_db()
-        self.assertTrue(self.service_test in self.superuser.profile.subscribed_services_notification.all())
+        self.assertIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
 
-        # check cannot ad the same service
-        response = self.client.post(url, data=data)
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, "You have already subscribed to this service")
+    def test_notification_keep_service(self):
+        self.superuser.profile.subscribed_services_notification.add(self.service_test)
+        data = {
+            "service": [self.service_test.id]
+        }
+        response = self.client.post(self.add_service_url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
 
-        # add non existing service
+    def test_notification_add_2_time_service(self):
+        data = {
+            "service": [self.service_test.id, self.service_test.id]
+        }
+        response = self.client.post(self.add_service_url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
+
+    def test_notification_change_service(self):
+        self.superuser.profile.subscribed_services_notification.add(self.service_test)
+        data = {
+            "service": [self.service_test_2.id]
+        }
+        data["service"] = [self.service_test_2.id]
+        response = self.client.post(self.add_service_url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.assertNotIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
+        self.assertIn(self.service_test_2, self.superuser.profile.subscribed_services_notification.all())
+
+    def test_notification_add_another_service(self):
+        self.superuser.profile.subscribed_services_notification.add(self.service_test)
+        data = {
+            "service": [self.service_test_2.id]
+        }
+        data["service"].append(self.service_test.id)
+        response = self.client.post(self.add_service_url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
+        self.assertIn(self.service_test_2, self.superuser.profile.subscribed_services_notification.all())
+
+    def test_notification_add_several_service(self):
+        data = {
+            "service": [self.service_test.id, self.service_test_2.id]
+        }
+        response = self.client.post(self.add_service_url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())
+        self.assertIn(self.service_test_2, self.superuser.profile.subscribed_services_notification.all())
+
+    def test_notification_cannot_add_non_existing_service(self):
         data = {
             "service": 999999
         }
-        response = self.client.post(url, data=data)
+        response = self.client.post(self.add_service_url, data=data)
         self.assertEqual(200, response.status_code)
         self.assertContains(response, "Select a valid choice")
 
