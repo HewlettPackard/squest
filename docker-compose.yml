@@ -29,6 +29,8 @@ services:
   django: &django
     image: quay.io/hewlettpackardenterprise/squest:latest
     env_file: docker/environment_variables/squest.env
+    environment:
+      WAIT_HOSTS: db:3306,rabbitmq:5672
     volumes:
       - django_static:/app/static
       - django_media:/app/media
@@ -62,6 +64,8 @@ services:
       - db
       - rabbitmq
     ports: []
+    environment:
+      WAIT_HOSTS: db:3306,rabbitmq:5672,django:8000
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker -l info"
@@ -72,6 +76,8 @@ services:
       - db
       - rabbitmq
     ports: []
+    environment:
+      WAIT_HOSTS: db:3306,rabbitmq:5672,django:8000
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker --beat -l info"
