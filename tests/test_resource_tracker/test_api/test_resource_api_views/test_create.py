@@ -20,6 +20,11 @@ class TestResourceCreate(BaseTestAPI):
                          Resource.objects.filter(resource_group=self.rg_physical_servers).count())
         self.assertEqual(response.data['name'], 'new_resource')
         self.assertTrue("service_catalog_instance" in response.data)
+        self.assertTrue("is_deleted_on_instance_deletion" in response.data)
+        if "is_deleted_on_instance_deletion" in data:
+            self.assertEqual(response.data["is_deleted_on_instance_deletion"], data["is_deleted_on_instance_deletion"])
+        else:
+            self.assertEqual(response.data["is_deleted_on_instance_deletion"], True)
         self.assertEqual(len(response.data['attributes']), executed_attribute_length)
         self.assertEqual(len(response.data['text_attributes']), executed_text_attribute_length)
 
@@ -39,6 +44,26 @@ class TestResourceCreate(BaseTestAPI):
                     "value": "My description"
                 }
             ]
+        }
+        self._check_resource_created(data=data, executed_attribute_length=1, executed_text_attribute_length=1)
+
+    def test_create_valid_resource_with_auto_resource_deletion_false(self):
+        data = {
+            "name": "new_resource",
+            "service_catalog_instance": None,
+            "attributes": [
+                {
+                    "name": "CPU",
+                    "value": "12"
+                }
+            ],
+            "text_attributes": [
+                {
+                    "name": "Description",
+                    "value": "My description"
+                }
+            ],
+            "is_deleted_on_instance_deletion": False
         }
         self._check_resource_created(data=data, executed_attribute_length=1, executed_text_attribute_length=1)
 

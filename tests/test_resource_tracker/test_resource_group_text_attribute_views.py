@@ -191,7 +191,6 @@ class TestResourceGroupTextAttributeViews(BaseTestResourceTracker):
         self.assertTrue(ResourceGroupTextAttributeDefinition.objects.filter(name="new_text_attribute_name_2",
                                                                             resource_group=self.rg_physical_servers).exists())
 
-
         url = reverse('resource_tracker:resource_group_resource_create', kwargs=args)
         data = {
             "name": "new resource"
