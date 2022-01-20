@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from resource_tracker.api.serializers.resource_group.attribute_definition_serializers import AttributeCreateSerializer
+from resource_tracker.api.serializers.resource_group.resource_attribute_serializers import ResourceAttributeSerializer
+from resource_tracker.api.serializers.resource_group.resource_text_attribute_serializers import \
+    ResourceTextAttributeSerializer
 from resource_tracker.api.serializers.resource_group.text_attribute_definition_serializers import \
     TextAttributeCreateSerializer
 from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAttribute, \
@@ -9,28 +12,10 @@ from resource_tracker.models import Resource, ResourceAttribute, ResourceTextAtt
 from service_catalog.models import Instance
 
 
-class ResourceAttributeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ResourceAttribute
-        fields = ["name", "resource", "value"]
-        read_ony_fields = ["resource"]
-
-    name = serializers.CharField(source="attribute_type.name")
-
-
-class ResourceTextAttributeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ResourceTextAttribute
-        fields = ["name", "resource", "value"]
-        read_ony_fields = ["resource"]
-
-    name = serializers.CharField(source="text_attribute_type.name")
-
-
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = ["id", "resource_group", "name", "service_catalog_instance", "attributes", "text_attributes"]
+        fields = ["id", "resource_group", "name", "service_catalog_instance", "attributes", "text_attributes", "is_deleted_on_instance_deletion"]
         read_ony_fields = ["resource_group"]
 
     attributes = ResourceAttributeSerializer(many=True)
@@ -80,6 +65,7 @@ class ResourceCreateSerializer(serializers.Serializer):
     text_attributes = TextAttributeCreateSerializer(many=True)
     service_catalog_instance = PrimaryKeyRelatedField(queryset=Instance.objects.all(),
                                                       allow_null=True)
+    is_deleted_on_instance_deletion = serializers.BooleanField(default=True)
 
     def validate_attributes(self, attributes):
         seen = set()
@@ -113,7 +99,11 @@ class ResourceCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         resource_group = self.context.get('resource_group')
         # create the resource
-        new_resource = Resource.objects.create(name=validated_data['name'], resource_group=resource_group)
+        new_resource = Resource.objects.create(
+            name=validated_data['name'],
+            resource_group=resource_group,
+            is_deleted_on_instance_deletion=validated_data['is_deleted_on_instance_deletion']
+        )
         if validated_data['service_catalog_instance'] is not None:
             new_resource.service_catalog_instance = validated_data['service_catalog_instance']
             new_resource.save()

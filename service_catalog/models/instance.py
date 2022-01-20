@@ -81,7 +81,7 @@ class Instance(RoleManager):
 
     @transition(field=state, source=InstanceState.DELETING, target=InstanceState.DELETED)
     def deleted(self):
-        pass
+        self.delete_linked_resources()
 
     @transition(field=state, source=InstanceState.DELETED, target=InstanceState.ARCHIVED)
     def archive(self):
@@ -125,6 +125,11 @@ class Instance(RoleManager):
 
     def remove_permission_to_spoc(self):
         self.remove_user_in_role(self.spoc, "Admin")
+
+    def delete_linked_resources(self):
+        for resource in self.resources.all():
+            if resource.is_deleted_on_instance_deletion:
+                resource.delete()
 
     @classmethod
     def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
@@ -171,6 +176,7 @@ def post_save(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
     instance.remove_all_bindings()
+    instance.delete_linked_resources()
 
 
 def update_quota(billing_group):

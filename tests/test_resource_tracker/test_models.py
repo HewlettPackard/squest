@@ -1,9 +1,12 @@
+from copy import copy
 from random import randint
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourcePool, ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
+from service_catalog.models import Service, Instance, InstanceState
 from tests.utils import skip_auto_calculation
 
 
@@ -363,3 +366,31 @@ class TestCalculation(TestCase):
         server_group.delete()
         vcenter_pool_vcpu_att.refresh_from_db()
         self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
+
+    def _prepare_service_catalog(self):
+        self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', 'password')
+        self.service_test = Service.objects.create(name="service-test", description="description-of-service-test")
+        self.test_instance = Instance.objects.create(name="test_instance_1",
+                                                     service=self.service_test,
+                                                     spoc=self.standard_user)
+        self.resource_id_to_delete = copy(self.vm1.id)
+        self.vm1.service_catalog_instance = self.test_instance
+        self.vm1.save()
+
+    def test_resource_deleted_on_instance_deletion(self):
+        self._create_simple_testing_stack()
+        self._prepare_service_catalog()
+        # delete the instance
+        self.assertTrue(Resource.objects.filter(id=self.resource_id_to_delete).exists())
+        self.test_instance.delete()
+        self.assertFalse(Resource.objects.filter(id=self.resource_id_to_delete).exists())
+
+    def test_resource_deleted_on_instance_state_deleted(self):
+        self._create_simple_testing_stack()
+        self._prepare_service_catalog()
+        # delete the instance
+        self.assertTrue(Resource.objects.filter(id=self.resource_id_to_delete).exists())
+        self.test_instance.state = InstanceState.DELETING
+        self.test_instance.save()
+        self.test_instance.deleted()
+        self.assertFalse(Resource.objects.filter(id=self.resource_id_to_delete).exists())

@@ -21,9 +21,13 @@ class Resource(models.Model):
                                                  on_delete=models.SET_NULL,
                                                  related_name='resources',
                                                  related_query_name='resource',
-                                                 null=True)
+                                                 null=True,
+                                                 blank=True)
 
     tags = TaggableManager()
+
+    is_deleted_on_instance_deletion = models.BooleanField(default=True,
+                                                          verbose_name="Delete this resource on instance deletion")
 
     def __str__(self):
         return self.name
