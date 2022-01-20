@@ -8,7 +8,7 @@ Following tools need to be installed on your workstation:
 
 - Docker
 - Docker-compose
-- Python 3.8
+- Python 3.9
 - Python virtualenv
 - [Poetry](https://python-poetry.org/)
 - npm
@@ -17,12 +17,12 @@ Following tools need to be installed on your workstation:
 
 Ubuntu based OS:
 ```bash
-sudo apt-get install libmysqlclient-dev graphviz default-mysql-client
+sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev
 ```
 
 CentOS/RedHat/Fedora
 ```bash
-sudo yum install mysql-devel graphviz mysql
+sudo yum install mysql-devel graphviz mysql libsq3-devel
 ```
 
 ## Start a development environment
