@@ -1,3 +1,36 @@
+# 1.4.0 2022-01-20
+
+## Breaking changes
+
+- API: Move job template URL behind Tower URLs
+
+## Fix
+
+- Fix collect static in Docker image
+- Service image upload on edit service
+- Fix global hooks execution
+- Instance details page was not displayed when the SPOC was not defined
+- Several fix in UI
+- Fix email notifications
+- Fix team deletion. Old role bindings are deleted
+
+## Enhancement
+
+- Auto deletion of resource from resource group when instance from service catalog is deleted
+- Celery containers wait for Squest app to be ready before starting
+- Admin can manually edit requests
+- End user can access request details page
+- Comment field for each request
+- Instance list: add some filter
+- Request details page for end users
+
+## Feature
+
+- Resource quota per billing group
+- Prometheus metrics
+- Support list for end users
+- API: Job Template sync
+
 # v1.3.1 2021-12-20
 
 ## Fix
