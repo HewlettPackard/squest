@@ -1,30 +1,23 @@
 from taggit.forms import *
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourceTextAttribute, ResourceGroupTextAttributeDefinition
-from service_catalog.models import Instance
 from Squest.utils.squest_model_form import SquestModelForm
+
 
 class ResourceForm(SquestModelForm):
     class Meta:
         model = Resource
-        fields = ["name", "service_catalog_instance"]
-
-    name = forms.CharField(label="Name",
-                           widget=forms.TextInput())
-
-    service_catalog_instance = forms.ModelChoiceField(queryset=Instance.objects.all(),
-                                                      label="Service catalog instance",
-                                                      required=False,
-                                                      widget=forms.Select())
+        fields = ["name", "service_catalog_instance", "is_deleted_on_instance_deletion"]
 
     def __init__(self, *args, **kwargs):
         resource_group_id = kwargs.pop('resource_group_id', None)
         self.resource_group = ResourceGroup.objects.get(id=resource_group_id)
         super(ResourceForm, self).__init__(*args, **kwargs)
+        # self.fields["service_catalog_instance"].required = False
         self._newly_created = kwargs.get('instance') is None
         self.attributes_name_list = list()
         self.text_attributes_name_list = list()
-
+        first_field = True
         for attribute in self.resource_group.attribute_definitions.all():
             initial_value = None
             if self.instance is not None:
@@ -41,6 +34,11 @@ class ResourceForm(SquestModelForm):
                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
             self.fields[attribute.name] = new_field
             self.attributes_name_list.append(attribute.name)
+            if first_field:
+                self.fields[attribute.name].separator = True
+                self.fields[attribute.name].form_title = "Attributes"
+            first_field = False
+        first_field = True
         for text_attribute in self.resource_group.text_attribute_definitions.all():
             initial_value = None
             if self.instance is not None:
@@ -57,6 +55,9 @@ class ResourceForm(SquestModelForm):
                                         widget=forms.TextInput(attrs={'class': 'form-control'}))
 
             self.fields[text_attribute.name] = new_field
+            if first_field:
+                self.fields[text_attribute.name].separator = True
+                self.fields[text_attribute.name].form_title = "Text attributes"
             self.text_attributes_name_list.append(text_attribute.name)
 
     def save(self, **kwargs):

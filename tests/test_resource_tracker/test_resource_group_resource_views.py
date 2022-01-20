@@ -81,7 +81,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         data = {
             "name": "new_resource",
             "CPU": "",
-            "Memory": 12
+            "Memory": 12,
+            "is_deleted_on_instance_deletion": True
         }
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
@@ -159,7 +160,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "name": "new_resource",
             "CPU": 12,
             "Memory": 12,
-            "Description": "text"
+            "Description": "text",
+            "is_deleted_on_instance_deletion": True
         }
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
@@ -187,8 +189,8 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
             "name": "updated_name",
             "CPU": 1,
             "Memory": 2,
-            "Description": "text modified"
-
+            "Description": "text modified",
+            "is_deleted_on_instance_deletion": True
         }
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
