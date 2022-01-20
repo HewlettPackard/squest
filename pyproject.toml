@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "squest"
-version = "1.1.0"
+version = "1.5b"
 description = "Service catalog on top of Ansible Tower"
-authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>"]
+authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>", "Elias Boulharts <elias.boulharts@hpe.com", "Anthony Belhadj <anthony.belhadj@hpe.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 Django = "^3.2.7"
 djangorestframework = "^3.12.4"
 Markdown = "^3.3.4"
