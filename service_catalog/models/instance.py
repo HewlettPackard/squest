@@ -21,6 +21,7 @@ class Instance(RoleManager):
     spoc = models.ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
                              on_delete=models.SET_NULL)
     state = FSMField(default=InstanceState.PENDING)
+    date_available = models.DateTimeField(null=True, blank=True)
     billing_group = models.ForeignKey(
         BillingGroup,
         blank=True,

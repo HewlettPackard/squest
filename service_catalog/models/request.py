@@ -95,9 +95,9 @@ class Request(RoleManager):
         # the instance now switch depending of the operation type
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
-        if self.operation.type == OperationType.UPDATE:
+        elif self.operation.type == OperationType.UPDATE:
             self.instance.updating()
-        if self.operation.type == OperationType.DELETE:
+        elif self.operation.type == OperationType.DELETE:
             self.instance.deleting()
         self.instance.save()
 
@@ -147,9 +147,9 @@ class Request(RoleManager):
             self.failure_message = reason
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning_has_failed()
-        if self.operation.type == OperationType.UPDATE:
+        elif self.operation.type == OperationType.UPDATE:
             self.instance.update_has_failed()
-        if self.operation.type == OperationType.DELETE:
+        elif self.operation.type == OperationType.DELETE:
             self.instance.delete_has_failed()
         self.instance.save()
 
@@ -195,9 +195,11 @@ class Request(RoleManager):
             self.save()
             self.periodic_task.delete()
             if self.operation.type in [OperationType.CREATE, OperationType.UPDATE]:
+                if self.operation.type == OperationType.CREATE:
+                    self.instance.date_available = timezone.now()
                 self.instance.available()
                 self.instance.save()
-            if self.operation.type == OperationType.DELETE:
+            elif self.operation.type == OperationType.DELETE:
                 self.instance.deleted()
                 self.instance.save()
             # notify owner and admins that the request is complete
