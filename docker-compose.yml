@@ -66,6 +66,7 @@ services:
     ports: []
     environment:
       WAIT_HOSTS: db:3306,rabbitmq:5672,django:8000
+      WAIT_TIMEOUT: 60
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker -l info"
@@ -78,6 +79,7 @@ services:
     ports: []
     environment:
       WAIT_HOSTS: db:3306,rabbitmq:5672,django:8000
+      WAIT_TIMEOUT: 60
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker --beat -l info"
