@@ -2,6 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
+from profiles.models import BillingGroup
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -123,14 +124,17 @@ class AdminRequestViewTest(BaseTestRequest):
         if custom_data:
             data = custom_data
         else:
-            data = {'text_variable': 'my_var',
-                    'multiplechoice_variable': 'choice1',
-                    'multiselect_var': 'multiselect_1',
-                    'textarea_var': '2',
-                    'password_var': 'pass',
-                    'integer_var': '1',
-                    'float_var': '0.6'
-                    }
+            data = {
+                'instance_name': self.test_request.instance.name,
+                'billing_group_id': '',
+                'text_variable': 'my_var',
+                'multiplechoice_variable': 'choice1',
+                'multiselect_var': 'multiselect_1',
+                'textarea_var': '2',
+                'password_var': 'pass',
+                'integer_var': '1',
+                'float_var': '0.6'
+            }
 
         url = reverse('service_catalog:admin_request_accept', kwargs=args)
         response = self.client.get(url)
@@ -141,6 +145,8 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEqual(self.test_request.state, expected_request_state)
         self.test_instance.refresh_from_db()
         self.assertEqual(self.test_instance.state, expected_instance_state)
+        billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id
+        self.assertEqual(data['billing_group_id'], billing_group_id)
 
     def test_admin_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
@@ -149,9 +155,15 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_accepted_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
+        self.test_instance.billing_group = self.test_billing_group
+        self.test_instance.save()
         self.test_request.refresh_from_db()
         old_survey = self.test_request.fill_in_survey
+        billing_group = BillingGroup.objects.exclude(id=self.test_request.instance.billing_group.id).first()
+        new_instance_name = f"{self.test_request.instance.name} modified by admin"
         data = {
+            'instance_name': new_instance_name,
+            'billing_group_id': billing_group.id,
             'text_variable': 'var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -172,6 +184,8 @@ class AdminRequestViewTest(BaseTestRequest):
             'integer_var': 2,
             'float_var': 0.8
         }
+        self.assertEqual(self.test_request.instance.name, new_instance_name)
+        self.assertEqual(self.test_request.instance.billing_group, billing_group)
         self.assertDictEqual(self.test_request.fill_in_survey, data_expected)
         self.assertNotEqual(self.test_request.fill_in_survey, old_survey)
 

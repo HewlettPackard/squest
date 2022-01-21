@@ -35,23 +35,27 @@ class TestServiceRequestForm(BaseTest):
             'float_var': False,
             'integer_var': False
         }
-        expected_result = "1. User"
+        expected_result = "User fields"
         self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
         field_name = 'multiplechoice_variable'
-        expected_result = "2. Admin"
+        expected_result = "Admin fields"
         self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
     def test_accept_forms_field_count(self):
         parameters = {
-            'request_id': self.test_request.id
+            'request': self.test_request
         }
-        data = {'multiselect_var': ['multiselect_2', 'multiselect_3'],
-                'text_var': ['text_val'],
-                'textarea_var': ['text_area'],
-                'password_var': ['aa'],
-                'choice_var': ['choice_2'],
-                'integer_var': ['1'],
-                'float_var': ['1.5']}
+        data = {
+            'instance_name': self.test_request.instance.name,
+            'billing_group_id': self.test_request.instance.billing_group_id,
+            'multiselect_var': ['multiselect_2', 'multiselect_3'],
+            'text_var': ['text_val'],
+            'textarea_var': ['text_area'],
+            'password_var': ['aa'],
+            'choice_var': ['choice_2'],
+            'integer_var': ['1'],
+            'float_var': ['1.5']
+        }
         form = AcceptRequestForm(self.superuser, data, **parameters)
-        self.assertEqual(len(self.test_request.fill_in_survey), len(form.fields))
+        self.assertEqual(len(self.test_request.fill_in_survey), len(form.fields) - 2)
