@@ -102,7 +102,7 @@ def admin_request_reject(request, request_id):
 def admin_request_accept(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
     parameters = {
-        'request_id': request_id
+        'request': target_request
     }
     if request.method == 'POST':
         form = AcceptRequestForm(request.user, request.POST, **parameters)
