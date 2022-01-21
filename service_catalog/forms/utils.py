@@ -3,8 +3,8 @@ from django import forms
 
 def _get_field_group(field_name, enable_fields):
     if enable_fields[field_name]:
-        return "1. User"
-    return "2. Admin"
+        return "User fields"
+    return "Admin fields"
 
 
 def get_choices_from_string(string_with_anti_slash_n):
