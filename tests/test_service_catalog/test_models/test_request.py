@@ -246,7 +246,9 @@ class TestRequest(BaseTestRequest):
         self._prepare_base_request_for_test()
         self.test_instance.state = InstanceState.PROVISIONING
         self.test_instance.save()
+        self.assertIsNone(self.test_request.instance.date_available)
         self._check_request_complete(expected_instance_state=InstanceState.AVAILABLE)
+        self.assertIsNotNone(self.test_request.instance.date_available)
 
     def test_check_job_status_successful_operation_update(self):
         self._prepare_base_request_for_test()

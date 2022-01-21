@@ -18,9 +18,9 @@ class InstanceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
         if self.request.user.is_superuser:
-            return Instance.objects.all().distinct() & filtered
+            return Instance.objects.all().distinct().order_by("-date_available") & filtered
         else:
-            return get_objects_for_user(self.request.user, 'service_catalog.view_instance').distinct() & filtered
+            return get_objects_for_user(self.request.user, 'service_catalog.view_instance').distinct().order_by("-date_available") & filtered
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
