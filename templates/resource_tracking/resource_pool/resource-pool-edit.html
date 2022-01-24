@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load render_table from django_tables2 %}
 {% block content %}
     <div class="content-wrapper" style="min-height: 278px;">
         <!-- Content Header (Page header) -->
@@ -34,35 +34,9 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table sortable text-center data_table_lite">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Over commitment for producers</th>
-                                <th>Over commitment for consumers</th>
-                                <th>Operations</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for attribute in resource_pool.attribute_definitions.all %}
-                                <tr>
-                                    <td class="align-middle">{{ attribute.name }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_producers | floatformat:2 }}</td>
-                                    <td class="align-middle">{{ attribute.over_commitment_consumers | floatformat:2 }}</td>
-                                    <td class="align-middle">
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_edit' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
-                                           class="btn btn-primary btn-sm">
-                                            <i class="fas fa-pencil-alt"></i> Edit
-                                        </a>
-                                        <a href="{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}"
-                                           class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        {% with parent_id=resource_pool.id %}
+                            {% render_table attribute_table %}
+                        {% endwith %}
                     </div>
                 </div>
 
