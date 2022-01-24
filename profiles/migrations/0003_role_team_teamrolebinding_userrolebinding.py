@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-from profiles.migrations import _rbac as rbac
 
 
 class Migration(migrations.Migration):
@@ -62,6 +61,4 @@ class Migration(migrations.Migration):
                 'unique_together': {('team', 'content_type', 'object_id', 'role')},
             },
         ),
-        migrations.RunPython(rbac.create_roles),
-        migrations.RunPython(rbac.init_spoc_role),
     ]
