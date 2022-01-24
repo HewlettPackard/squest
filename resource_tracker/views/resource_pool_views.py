@@ -5,6 +5,7 @@ from django.urls import reverse
 from resource_tracker.filters.resource_pool_filter import ResourcePoolFilter
 from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
 from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinition
+from resource_tracker.tables.resource_pool_attribute_definition_table import ResourcePoolAttributeDefinitionTable
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -39,11 +40,12 @@ def resource_pool_edit(request, resource_pool_id):
     if form.is_valid():
         form.save()
         return redirect("resource_tracker:resource_pool_list")
+    attribute_table = ResourcePoolAttributeDefinitionTable(resource_pool.attribute_definitions.all())
     breadcrumbs = [
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': resource_pool.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_pool': resource_pool, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {'form': form, 'resource_pool': resource_pool, 'attribute_table': attribute_table, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request, 'resource_tracking/resource_pool/resource-pool-edit.html', context)
 
 
