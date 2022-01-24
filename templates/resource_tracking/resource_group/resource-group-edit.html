@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load render_table from django_tables2 %}
 {% block header_button %}
     <a class="btn btn-primary float-right"
        href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
@@ -26,41 +27,9 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table data_table_lite">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Consume from</th>
-                                <th>Produce for</th>
-                                <th>
-                                    <div class="float-right">
-                                        Operations
-                                    </div>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for attribute in resource_group.attribute_definitions.all %}
-                                <tr>
-                                    <td class="align-middle">{{ attribute.name }}</td>
-                                    <td class="align-middle">{{ attribute.consume_from }}</td>
-                                    <td class="align-middle">{{ attribute.produce_for }}</td>
-                                    <td class="align-middle">
-                                        <div class="float-right">
-                                            <a href="{% url 'resource_tracker:resource_group_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                               class="btn btn-primary bg-sm">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <a href="{% url 'resource_tracker:resource_group_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                               class="btn btn-danger bg-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        {% with parent_id=resource_group.id %}
+                            {% render_table attribute_table %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -76,37 +45,9 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table data_table_lite">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>
-                                    <div class="float-right">
-                                        Operations
-                                    </div>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for attribute in resource_group.text_attribute_definitions.all %}
-                                <tr>
-                                    <td class="align-middle">{{ attribute.name }}</td>
-                                    <td class="align-middle">
-                                        <div class="float-right">
-                                            <a href="{% url 'resource_tracker:resource_group_text_attribute_edit' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                               class="btn btn-primary bg-sm">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <a href="{% url 'resource_tracker:resource_group_text_attribute_delete' resource_group_id=resource_group.id attribute_id=attribute.id %}"
-                                               class="btn btn-danger bg-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        {% with parent_id=resource_group.id %}
+                            {% render_table text_attribute_table %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>

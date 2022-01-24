@@ -8,8 +8,8 @@ class ResourceGroupTable(SquestTable):
     class Meta:
         model = ResourceGroup
         attrs = {"id": "resource_group_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "tags")
+        fields = ("name", "tags", "resources", "operation")
 
     tags = TemplateColumn(template_name='custom_columns/tags.html', orderable=False)
     resources = TemplateColumn(template_name='custom_columns/resource_group_resource.html', orderable=False)
-    Operations = TemplateColumn(template_name='custom_columns/resource_group_operations.html', orderable=False)
+    operations = TemplateColumn(template_name='custom_columns/resource_group_operations.html', orderable=False)

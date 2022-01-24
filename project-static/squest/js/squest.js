@@ -1,15 +1,4 @@
 $(document).ready(function () {
-    var params = {"order": [], "columnDefs": [{"targets": 'no-sort', "orderable": false,}]};
-    $('#service_list').DataTable(params);
-    var params_lite = {
-        "info": false,
-        "paging": false,
-        "lengthChange": false,
-        "order": [],
-        "columnDefs": [{"targets": 'no-sort', "orderable": false}]
-    };
-    $('.data_table_lite').DataTable(params_lite);
-
     $('[data-toggle="popover"]').popover({
         placement: 'top',
         trigger: 'hover'

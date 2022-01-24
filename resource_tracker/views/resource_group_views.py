@@ -10,7 +10,10 @@ from guardian.mixins import LoginRequiredMixin
 from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker.forms import ResourceGroupForm
 from resource_tracker.models import ResourceGroup
+from resource_tracker.tables.resource_group_attribute_definition_table import ResourceGroupAttributeDefinitionTable
 from resource_tracker.tables.resource_group_table import ResourceGroupTable
+from resource_tracker.tables.resource_group_text_attribute_definition_table import \
+    ResourceGroupTextAttributeDefinitionTable
 
 
 @method_decorator(login_required, name='dispatch')
@@ -42,11 +45,14 @@ def resource_group_edit(request, resource_group_id):
     if form.is_valid():
         form.save()
         return redirect("resource_tracker:resource_group_list")
+    attribute_table = ResourceGroupAttributeDefinitionTable(resource_group.attribute_definitions.all())
+    text_attribute_table = ResourceGroupTextAttributeDefinitionTable(resource_group.text_attribute_definitions.all())
     breadcrumbs = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_group': resource_group, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {'form': form, 'resource_group': resource_group, 'attribute_table': attribute_table,
+               'text_attribute_table': text_attribute_table, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
     return render(request,
                   'resource_tracking/resource_group/resource-group-edit.html', context)
 
