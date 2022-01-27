@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_need_info(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
+    if not can_proceed(target_request.need_info):
+        raise PermissionDenied
     if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
+                                  target_request=target_request)
         if form.is_valid():
-            # check that we can ask for info the request
-            if not can_proceed(target_request.need_info):
-                raise PermissionDenied
             message = form.save(send_notification=False)
             target_request.need_info()
             target_request.save()
@@ -47,11 +47,12 @@ def admin_request_need_info(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_re_submit(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
+    if not can_proceed(target_request.re_submit):
+        raise PermissionDenied
     if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
+                                  target_request=target_request)
         if form.is_valid():
-            if not can_proceed(target_request.re_submit):
-                raise PermissionDenied
             message = form.save(send_notification=False)
             target_request.re_submit()
             target_request.save()
@@ -74,11 +75,12 @@ def admin_request_re_submit(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_reject(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
+    if not can_proceed(target_request.reject):
+        raise PermissionDenied
     if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user, target_request=target_request)
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
+                                  target_request=target_request)
         if form.is_valid():
-            if not can_proceed(target_request.reject):
-                raise PermissionDenied
             message = form.save(send_notification=False)
             target_request.reject()
             target_request.save()
@@ -101,6 +103,8 @@ def admin_request_reject(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_accept(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
+    if not can_proceed(target_request.accept):
+        raise PermissionDenied
     parameters = {
         'request': target_request
     }
@@ -128,39 +132,12 @@ def admin_request_accept(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_process(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    error = False
+    if not can_proceed(target_request.process):
+        raise PermissionDenied
     error_message = ""
     if request.method == "POST":
-        if not can_proceed(target_request.process):
-            raise PermissionDenied
-        import towerlib
-        try:
-            # switch the state to processing before trying to execute the process
-            target_request.process()
-            target_request.save()
-            target_request.perform_processing()
-            target_request.save()
-        except towerlib.towerlibexceptions.AuthFailed:
-            error = True
-            logger.error(
-                f"[admin_request_process] Fail to authenticate with provided token when trying to process request "
-                f"id '{target_request.id}'")
-            error_message = "Fail to authenticate with provided token"
-        except requests.exceptions.SSLError:
-            error = True
-            error_message = "Certificate verify failed"
-            logger.error(
-                f"[admin_request_process] Certificate verify failed when trying to process request "
-                f"id '{target_request.id}'")
-        except requests.exceptions.ConnectionError:
-            error = True
-            error_message = "Unable to connect to remote server"
-            logger.error(
-                f"[admin_request_process] Unable to connect to remote server when trying to process request "
-                f"id '{target_request.id}'")
-        if not error:
-            target_request.save()
-            send_mail_request_update(target_request, user_applied_state=request.user)
+        error_message = process_request(request.user, target_request)
+        if not error_message:
             return redirect('service_catalog:request_list')
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
@@ -189,14 +166,21 @@ def request_details(request, request_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def admin_request_archive_toggle(request, request_id):
+def admin_request_archive(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if can_proceed(target_request.archive):
-        target_request.archive()
-    elif can_proceed(target_request.unarchive):
-        target_request.unarchive()
-    else:
+    if not can_proceed(target_request.archive):
         raise PermissionDenied
+    target_request.archive()
+    target_request.save()
+    return redirect('service_catalog:request_list')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_request_unarchive(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    if not can_proceed(target_request.unarchive):
+        raise PermissionDenied
+    target_request.unarchive()
     target_request.save()
     return redirect('service_catalog:request_list')
 
@@ -222,3 +206,31 @@ def request_delete(request, request_id):
         'button_text': 'Delete'
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
+
+
+def process_request(user, target_request):
+    from towerlib.towerlibexceptions import AuthFailed
+    try:
+        # switch the state to processing before trying to execute the process
+        target_request.process()
+        target_request.save()
+        target_request.perform_processing()
+        target_request.save()
+    except AuthFailed:
+        logger.error(
+            f"[admin_request_process] Fail to authenticate with provided token when trying to process request "
+            f"id '{target_request.id}'")
+        return "Fail to authenticate with provided token"
+    except requests.exceptions.SSLError:
+        logger.error(
+            f"[admin_request_process] Certificate verify failed when trying to process request "
+            f"id '{target_request.id}'")
+        return "Certificate verify failed"
+    except requests.exceptions.ConnectionError:
+        logger.error(
+            f"[admin_request_process] Unable to connect to remote server when trying to process request "
+            f"id '{target_request.id}'")
+        return "Unable to connect to remote server"
+    target_request.save()
+    send_mail_request_update(target_request, user_applied_state=user)
+    return ""

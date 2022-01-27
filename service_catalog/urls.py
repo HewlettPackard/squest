@@ -32,7 +32,8 @@ urlpatterns = [
     path('request/<int:request_id>/reject/', views.admin_request_reject, name='admin_request_reject'),
     path('request/<int:request_id>/accept/', views.admin_request_accept, name='admin_request_accept'),
     path('request/<int:request_id>/process/', views.admin_request_process, name='admin_request_process'),
-    path('request/<int:request_id>/archive/', views.admin_request_archive_toggle, name='admin_request_archive_toggle'),
+    path('request/<int:request_id>/archive/', views.admin_request_archive, name='admin_request_archive'),
+    path('request/<int:request_id>/unarchive/', views.admin_request_unarchive, name='admin_request_unarchive'),
     path('request/<int:request_id>/delete/', views.request_delete, name='request_delete'),
 
     path('service/', views.service_list, name='service_list'),

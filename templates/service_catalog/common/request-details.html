@@ -15,14 +15,14 @@
             {% if target_request.state == "COMPLETE" %}
                 <a class="btn btn-default {{ target_request.id |is_action_dropdown_disabled:'archive' }}"
                    title="Archive"
-                   href="{% url 'service_catalog:admin_request_archive_toggle' target_request.id %}">
+                   href="{% url 'service_catalog:admin_request_archive' target_request.id %}">
                     <i class="fas fa-archive"></i>
                 </a>
             {% endif %}
             {% if target_request.state == "ARCHIVED" %}
                 <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'unarchive' }}"
                    title="Unarchive"
-                   href="{% url 'service_catalog:admin_request_archive_toggle' target_request.id %}">
+                   href="{% url 'service_catalog:admin_request_unarchive' target_request.id %}">
                     <i class="fas fa-box-open"></i>
                 </a>
             {% endif %}

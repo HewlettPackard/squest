@@ -17,13 +17,13 @@
                 </a>
                 {% if record.state == "COMPLETE" %}
                     <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'archive' }}"
-                       href="{% url 'service_catalog:admin_request_archive_toggle' record.id %}">
+                       href="{% url 'service_catalog:admin_request_archive' record.id %}">
                         <span class="{{ record.id |get_action_text_class:"archive" }} fas fa-archive"></span> Archive
                     </a>
                 {% endif %}
                 {% if record.state == "ARCHIVED" %}
                     <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'unarchive' }}"
-                       href="{% url 'service_catalog:admin_request_archive_toggle' record.id %}">
+                       href="{% url 'service_catalog:admin_request_unarchive' record.id %}">
                         <span class="{{ record.id |get_action_text_class:"unarchive" }} fas fa-box-open"></span> Unarchive
                     </a>
                 {% endif %}

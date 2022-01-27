@@ -55,10 +55,7 @@ class TestNotification(BaseTest):
 
     def test_notification_change_service(self):
         self.superuser.profile.subscribed_services_notification.add(self.service_test)
-        data = {
-            "service": [self.service_test_2.id]
-        }
-        data["service"] = [self.service_test_2.id]
+        data = {"service": [self.service_test_2.id]}
         response = self.client.post(self.add_service_url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertNotIn(self.service_test, self.superuser.profile.subscribed_services_notification.all())

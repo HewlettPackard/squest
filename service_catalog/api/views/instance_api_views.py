@@ -1,7 +1,7 @@
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from service_catalog.serializers.instance_serializer import InstanceSerializer, InstanceReadSerializer
+from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer
 
 
 class InstanceList(generics.ListCreateAPIView):

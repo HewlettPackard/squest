@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAdminUser
 from service_catalog.models import TowerServer
-from service_catalog.serializers.tower_server_serializer import TowerServerSerializer, TowerServerCreateSerializer
+from service_catalog.api.serializers import TowerServerSerializer, TowerServerCreateSerializer
 
 
 class TowerServerList(ListCreateAPIView):

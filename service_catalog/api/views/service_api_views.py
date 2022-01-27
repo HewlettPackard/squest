@@ -2,8 +2,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from service_catalog.models import Service
-from service_catalog.serializers.service_serializers import ServiceSerializer, AdminServiceSerializer, \
-    CreateServiceSerializer
+from service_catalog.api.serializers import ServiceSerializer, AdminServiceSerializer, CreateServiceSerializer
 
 
 class ServiceListCreate(ListCreateAPIView):

@@ -190,7 +190,7 @@ class BaseTest(TestCase):
                     "required": True,
                     "type": "password",
                     "variable": "password_var",
-                    "min": 0,
+                    "min": 8,
                     "max": 1024,
                     "default": "password_val",
                     "choices": "",
@@ -206,7 +206,7 @@ class BaseTest(TestCase):
                 {
                     "question_name": "integer",
                     "question_description": "integer_des",
-                    "required": True,
+                    "required": False,
                     "type": "integer",
                     "variable": "integer_var",
                     "min": 0,

@@ -33,7 +33,6 @@ class TestRequest(BaseTestRequest):
             self.test_request.perform_processing()
             self.assertTrue(PeriodicTask.objects.filter(name=self.expected_created_periodic_task_name).exists())
             expected_extra_vars = {
-                'instance_name': 'test instance',
                 'text_variable': 'my_var',
             }
             expected_request = {
