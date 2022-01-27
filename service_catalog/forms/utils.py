@@ -2,9 +2,14 @@ from django import forms
 
 
 def _get_field_group(field_name, enable_fields):
+    offset = 0
+    for is_enable_field in enable_fields.values():
+        if is_enable_field:
+            offset = 1
+            break
     if enable_fields[field_name]:
-        return "User fields"
-    return "Admin fields"
+        return "2. User fields"
+    return f"{2 + offset}. Admin fields"
 
 
 def get_choices_from_string(string_with_anti_slash_n):
@@ -100,3 +105,4 @@ def prefill_form_with_user_values(fields: dict, fill_in_survey: dict):
     for field, value in fill_in_survey.items():
         if field not in skipping_fields:
             fields.get(field).initial = value
+            fields.get(field).default = value

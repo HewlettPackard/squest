@@ -7,8 +7,7 @@ from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
 from service_catalog.models import Request, Service, OperationType, Operation, Instance, RequestMessage
-from service_catalog.serializers.dynamic_survey_serializer import DynamicSurveySerializer
-from service_catalog.serializers.instance_serializer import InstanceReadSerializer
+from service_catalog.api.serializers import DynamicSurveySerializer, InstanceReadSerializer
 
 
 class ServiceRequestSerializer(ModelSerializer):

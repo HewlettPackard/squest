@@ -4,8 +4,8 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from service_catalog.models import Service, OperationType, Operation
-from service_catalog.serializers.operation_serializers import OperationSerializer, AdminOperationSerializer
+from service_catalog.models import Service, OperationType
+from service_catalog.api.serializers import OperationSerializer, AdminOperationSerializer
 
 
 class OperationListCreate(ListCreateAPIView):

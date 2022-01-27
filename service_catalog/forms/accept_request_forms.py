@@ -12,7 +12,6 @@ class AcceptRequestForm(forms.Form):
         self.target_request = kwargs.pop('request', None)
         super(AcceptRequestForm, self).__init__(*args, **kwargs)
         self.fields["instance_name"] = forms.CharField(label="Name", initial=self.target_request.instance.name, widget=forms.TextInput(attrs={"class": "form-control"}))
-        self.fields["instance_name"].group = "Instance"
         self.fields["billing_group_id"] = forms.ModelChoiceField(
             label="Billing group",
             initial=self.target_request.instance.billing_group,
@@ -20,7 +19,8 @@ class AcceptRequestForm(forms.Form):
             required=False,
             widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
         )
-        self.fields["billing_group_id"].group = "Instance"
+        self.fields["instance_name"].group = "1. Instance"
+        self.fields["billing_group_id"].group = "1. Instance"
         # load user provided fields and add admin field if exist
         if "spec" in self.target_request.operation.job_template.survey:
             self.fields.update(get_fields_from_survey(self.target_request.operation.job_template.survey,

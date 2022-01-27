@@ -3,10 +3,8 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-
 from service_catalog.models import RequestState, Service
-from service_catalog.serializers.request_serializers import RequestSerializer, AdminRequestSerializer, \
-    OperationRequestSerializer, ServiceRequestSerializer
+from service_catalog.api.serializers import RequestSerializer, AdminRequestSerializer, OperationRequestSerializer, ServiceRequestSerializer
 
 
 class RequestList(ListAPIView):
@@ -44,6 +42,9 @@ class RequestDetails(RetrieveUpdateDestroyAPIView):
 
 
 class OperationRequestCreate(CreateAPIView):
+    """
+    Archive the request : change the state of the request to 'ARCHIVED'.
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = OperationRequestSerializer
 
