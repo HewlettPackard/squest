@@ -27,12 +27,12 @@
         <li><b>{{ variable_name }}:</b> {{ variable_value }}</li>
     {% endfor %}
     <br>
-    <br>
 {% endif %}
 {% if request.state == 'COMPLETE' %}
-    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
     <br>
+    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
 {% endif %}
+<br>
 Retrieve this request on <a href="{{ current_site }}/request/{{ request.id }}/">Squest portal</a>.
 </body>
 </html>

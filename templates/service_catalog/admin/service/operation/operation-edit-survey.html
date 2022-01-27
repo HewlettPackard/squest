@@ -29,7 +29,7 @@
                         {% endif %}
                         <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
                             <fieldset>
-                             <legend>User can edit:</legend>
+                             <legend>User fields:</legend>
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
                                     <div class="custom-control custom-switch">

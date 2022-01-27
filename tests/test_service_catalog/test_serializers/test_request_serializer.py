@@ -1,8 +1,5 @@
-from django.test import TestCase
-
-from profiles.models import BillingGroup
 from service_catalog.models import Instance, Request
-from service_catalog.serializers.request_serializers import RequestSerializer
+from service_catalog.api.serializers import RequestSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 

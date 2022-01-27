@@ -35,12 +35,23 @@ class TestServiceRequestForm(BaseTest):
             'float_var': False,
             'integer_var': False
         }
-        expected_result = "User fields"
+        expected_result = "2. User fields"
+        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
+        field_name = 'multiplechoice_variable'
+        expected_result = "3. Admin fields"
+        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
+        enabled_field = {
+            'text_variable': False,
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
+        }
+        expected_result = "2. Admin fields"
         self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
-        field_name = 'multiplechoice_variable'
-        expected_result = "Admin fields"
-        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
 
     def test_accept_forms_field_count(self):
         parameters = {

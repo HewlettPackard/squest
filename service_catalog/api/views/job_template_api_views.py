@@ -2,7 +2,7 @@ from rest_framework.generics import get_object_or_404, ListAPIView, RetrieveUpda
 from rest_framework.permissions import IsAdminUser
 
 from service_catalog.models import JobTemplate, TowerServer
-from service_catalog.serializers.job_template_serializer import JobTemplateSerializer
+from service_catalog.api.serializers import JobTemplateSerializer
 
 
 class JobTemplateDetails(RetrieveUpdateAPIView):

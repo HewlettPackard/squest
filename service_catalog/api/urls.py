@@ -1,13 +1,6 @@
 from django.urls import path
 
-from service_catalog.api.instance_api_views import InstanceList, InstanceDetails
-from service_catalog.api.admin.job_template_api_views import JobTemplateDetails, JobTemplateList
-from service_catalog.api.admin.tower_server_api_views import TowerServerList, TowerServerDetails
-from service_catalog.api.operation_api_views import OperationListCreate, OperationDetails, InstanceOperationList
-from service_catalog.api.request_api_views import RequestList, RequestDetails, ServiceRequestCreate, \
-    OperationRequestCreate
-from service_catalog.api.service_api_views import ServiceListCreate, ServiceDetails
-from .admin.job_template_sync import JobTemplateSync
+from service_catalog.api.views import *
 
 urlpatterns = [
     # admin urls
@@ -19,6 +12,22 @@ urlpatterns = [
          name='api_operation_request_create'),
     path('request/', RequestList.as_view(), name='api_request_list'),
     path('request/<int:pk>/', RequestDetails.as_view(), name='api_request_details'),
+    path('request/<int:pk>/accept/', RequestStateMachine.as_view({'post': 'accept', 'get': 'get_survey'}),
+         name='api_request_accept'),
+    path('request/<int:pk>/reject/', RequestStateMachine.as_view({'post': 'reject'}),
+         name='api_request_reject'),
+    path('request/<int:pk>/process/', RequestStateMachine.as_view({'post': 'process'}),
+         name='api_request_process'),
+    path('request/<int:pk>/re-submit/', RequestStateMachine.as_view({'post': 're_submit'}),
+         name='api_request_re_submit'),
+    path('request/<int:pk>/archive', RequestStateMachine.as_view({'post': 'archive'}),
+         name='api_request_archive'),
+    path('request/<int:pk>/unarchive/', RequestStateMachine.as_view({'post': 'unarchive'}),
+         name='api_request_unarchive'),
+    path('request/<int:pk>/need-info/', RequestStateMachine.as_view({'post': 'need_info'}),
+         name='api_request_need_info'),
+    path('request/<int:pk>/cancel/', RequestStateMachine.as_view({'post': 'cancel'}),
+         name='api_request_cancel'),
     path('service/', ServiceListCreate.as_view(), name='api_service_list_create'),
     path('service/<int:pk>/', ServiceDetails.as_view(), name='api_service_details'),
     path('service/<int:service_id>/operation/', OperationListCreate.as_view(), name='api_operation_list_create'),
