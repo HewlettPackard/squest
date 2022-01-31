@@ -1,8 +1,2 @@
-<a href="{% url 'resource_tracker:resource_group_resource_edit' resource_group_id=record.resource_group.id resource_id=record.id %}"
-   class="btn btn-primary bg-sm">
-    <i class="fas fa-pencil-alt"></i>
-</a>
-<a href="{% url 'resource_tracker:resource_group_resource_delete' resource_group_id=record.resource_group.id resource_id=record.id %}"
-   class="btn btn-danger bg-smv ml-1">
-    <i class="fas fa-trash"></i>
-</a>
+{% include 'resource_tracking/resource_group/resources/resource-edit-button.html' with resource=record%}
+{% include 'resource_tracking/resource_group/resources/resource-delete-button.html' with resource=record%}

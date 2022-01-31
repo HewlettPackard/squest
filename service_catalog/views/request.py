@@ -78,12 +78,14 @@ def request_edit(request, request_id):
     if form.is_valid():
         form.save()
         return redirect('service_catalog:request_details', target_request.id)
-    breadcrumbs = [
+    context = dict()
+    context['breadcrumbs'] = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': f"{target_request.id}",
          'url': reverse('service_catalog:request_details', args=[request_id])},
     ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'object_name': 'request'}
+    context['object_name'] = 'request'
+    context['form'] = form
     return render(request, 'generics/edit-sensitive-object.html', context)
 
 
