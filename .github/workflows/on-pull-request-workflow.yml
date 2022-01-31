@@ -38,9 +38,6 @@ jobs:
           poetry install
 
       - name: Run Tests
-        env:
-          MYSQL_USER: "root"
-          MYSQL_PASSWORD: "p@ssw0rd"
         run: |
           poetry run coverage run --source='.' manage.py test
 
@@ -52,8 +49,18 @@ jobs:
         run: |
           poetry run coverage html
 
+      - name: Generate lcov report
+        run: |
+          poetry run coverage lcov
+
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
           name: htmlcov
           path: htmlcov
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
