@@ -11,6 +11,7 @@ from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
 from ..forms.request_forms import RequestForm
 from ..mail_utils import send_email_request_canceled
+from django.contrib import messages
 
 
 @login_required
@@ -84,3 +85,31 @@ def request_edit(request, request_id):
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'object_name': 'request'}
     return render(request, 'generics/edit-sensitive-object.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_bulk_delete_confirm(request):
+
+    context = {
+        'confirm_text': mark_safe(f"Confirm deletion of the following requests?"),
+        'action_url': reverse('service_catalog:request_bulk_delete'),
+        'button_text': 'Delete',
+        'breadcrumbs': [
+            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+            {'text': "Delete multiple", 'url': ""}
+        ]}
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        context['object_list'] = Request.objects.filter(pk__in=pks)
+        if context['object_list']:
+            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+    messages.warning(request, 'No requests were selected for deletion.')
+    return redirect('service_catalog:request_list')
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_bulk_delete(request):
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        selected_requests = Request.objects.filter(pk__in=pks)
+        selected_requests.delete()
+    return redirect("service_catalog:request_list")
