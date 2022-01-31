@@ -26,6 +26,9 @@ class RequestArchivedListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_superuser:
+            context['html_button_path'] = 'generics/buttons/delete_button.html'
+            context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
         context['breadcrumbs'] = [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
             {'text': 'Archived requests', 'url': ""}
