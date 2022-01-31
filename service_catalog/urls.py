@@ -22,6 +22,8 @@ urlpatterns = [
     path('', views.dashboards, name='home'),
 
     path('request/', RequestListView.as_view(), name='request_list'),
+    path('request/delete-confirm/', views.request_bulk_delete_confirm, name='request_bulk_delete_confirm'),
+    path('request/delete-force/', views.request_bulk_delete, name='request_bulk_delete'),
     path('request/archived/', RequestArchivedListView.as_view(), name='request_archived_list'),
     path('request/<int:request_id>/', views.request_details, name='request_details'),
     path('request/<int:request_id>/edit/', views.request_edit, name='request_edit'),

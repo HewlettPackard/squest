@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -9,25 +10,27 @@ from resource_tracker.models import ResourceGroup, Resource
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
+    context = {
+        'breadcrumbs': [
+            {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': 'Resources', 'url': reverse('resource_tracker:resource_group_resource_list',
+                                                 kwargs={'resource_group_id': resource_group_id})},
+            {'text': "Delete multiple", 'url': ""}
+        ],
+        'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
+        'action_url': reverse('resource_tracker:resource_group_resource_bulk_delete', kwargs={
+            "resource_group_id": resource_group_id
+        }),
+        'button_text': 'Delete',
+    }
+
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_resources = Resource.objects.filter(pk__in=pks)
-        args = {
-            "resource_group_id": resource_group_id
-        }
-        breadcrumbs = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
-            {'text': 'Resources', 'url': reverse('resource_tracker:resource_group_resource_list', kwargs={'resource_group_id': resource_group_id})},
-            {'text': "Delete multiple", 'url': ""}
-        ]
-        context = {
-            'breadcrumbs': breadcrumbs,
-            'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
-            'action_url': reverse('resource_tracker:resource_group_resource_bulk_delete', kwargs=args),
-            'object_list': selected_resources,
-            'button_text': 'Delete',
-        }
-        return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+        context['object_list'] = Resource.objects.filter(pk__in=pks)
+        if context['object_list']:
+            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+    messages.warning(request, 'No resources were selected for deletion.')
+    return redirect('resource_tracker:resource_group_resource_list', resource_group_id=resource_group_id)
 
 
 @user_passes_test(lambda u: u.is_superuser)

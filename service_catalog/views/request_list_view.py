@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
@@ -27,4 +28,6 @@ class RequestListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Requests"
         context['html_button_path'] = "generics/buttons/request-archived-list.html"
+        if self.request.user.is_superuser:
+            context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
         return context
