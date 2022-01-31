@@ -100,12 +100,17 @@ def resource_group_resource_edit(request, resource_group_id, resource_id):
             return redirect("resource_tracker:resource_group_resource_list", resource_group.id)
     else:
         form = ResourceForm(instance=resource, **parameters)
-    breadcrumbs = [
+    context = dict()
+    context['breadcrumbs'] = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
         {'text': resource_group.name,
          'url': reverse('resource_tracker:resource_group_resource_list', args=[resource_group_id])},
         {'text': resource.name, 'url': ""},
     ]
-    context = {'resource_group': resource_group, 'resource': resource, 'form': form, 'breadcrumbs': breadcrumbs,
-               'action': 'edit'}
+    context['html_button_path'] = 'resource_tracking/resource_group/resources/resource-delete-button.html'
+    context['resource_group'] = resource_group,
+    context['resource'] = resource
+    context['form'] = form
+    context['action'] = 'edit'
+
     return render(request, 'generics/generic_form.html', context)
