@@ -135,7 +135,11 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="survey">
-                                <pre><code class="language-json">{{ target_request.fill_in_survey | pretty_json}}</code></pre>
+                                {% if request.user.is_superuser %}
+                                    <pre><code class="language-json">{{ target_request.full_survey | pretty_json}}</code></pre>
+                                {% else %}
+                                    <pre><code class="language-json">{{ target_request.fill_in_survey | pretty_json}}</code></pre>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

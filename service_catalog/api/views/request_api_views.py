@@ -11,8 +11,12 @@ class RequestList(ListAPIView):
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'service_catalog.view_request')
 
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return AdminRequestSerializer
+        return RequestSerializer
+
     permission_classes = [IsAuthenticated]
-    serializer_class = RequestSerializer
 
 
 class RequestDetails(RetrieveUpdateDestroyAPIView):

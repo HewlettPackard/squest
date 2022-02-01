@@ -34,7 +34,7 @@ class AcceptRequestForm(forms.Form):
             if value != '' and field_key not in ['instance_name', 'billing_group_id']:
                 user_provided_survey_fields[field_key] = value
         # update the request
-        self.target_request.fill_in_survey = user_provided_survey_fields
+        self.target_request.set_fill_in_survey(user_provided_survey_fields)
         self.target_request.accept()
         self.target_request.save()
         # reset the instance state if it was failed (in case of resetting the state)

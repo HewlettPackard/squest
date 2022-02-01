@@ -10,6 +10,7 @@ class AcceptRequestSerializer(DynamicSurveySerializer):
         super(AcceptRequestSerializer, self).__init__(*args, **kwargs)
         if self.read_only_form:
             self._set_initial_and_default(self.target_request.fill_in_survey)
+            self._set_initial_and_default(self.target_request.admin_fill_in_survey)
 
     def save(self, **kwargs):
         if not self.read_only_form:
@@ -19,7 +20,7 @@ class AcceptRequestSerializer(DynamicSurveySerializer):
                 if value != '':
                     user_provided_survey_fields[field_key] = str(value)
             # update the request
-            self.target_request.fill_in_survey = user_provided_survey_fields
+            self.target_request.set_fill_in_survey(user_provided_survey_fields)
             self.target_request.accept()
             self.target_request.save()
             # reset the instance state if it was failed (in case of resetting the state)
