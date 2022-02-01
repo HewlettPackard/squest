@@ -82,3 +82,6 @@ def on_change(sender, instance: Operation, **kwargs):
         previous = Operation.objects.get(id=instance.id)
         if previous.job_template != instance.job_template:
             instance.update_survey(save=False)
+        if previous.enabled_survey_fields != instance.enabled_survey_fields:
+            for request in instance.request_set.all():
+                request.set_fill_in_survey(request.full_survey, instance.enabled_survey_fields)

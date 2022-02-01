@@ -13,6 +13,15 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def setUp(self):
         super(AdminRequestViewTest, self).setUp()
+        self.test_request.admin_fill_in_survey = {
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': ["multiselect_3", "multiselect_2"],
+            'textarea_var': "textarea_val",
+            'password_var': "password_val",
+            'float_var': 1.5,
+            'integer_var': 1
+        }
+        self.test_request.save()
 
     def test_request_cancel(self):
         args = {
@@ -117,7 +126,7 @@ class AdminRequestViewTest(BaseTestRequest):
             response = self.client.post(url, data=data)
             self.assertEqual(403, response.status_code)
 
-    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None):
+    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None, status=302):
         args = {
             'request_id': self.test_request.id
         }
@@ -140,17 +149,48 @@ class AdminRequestViewTest(BaseTestRequest):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(status, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, expected_request_state)
         self.test_instance.refresh_from_db()
         self.assertEqual(self.test_instance.state, expected_instance_state)
-        billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id
-        self.assertEqual(data['billing_group_id'], billing_group_id)
+        if response.status_code == 302:
+            billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id
+            self.assertEqual(data['billing_group_id'], billing_group_id)
 
     def test_admin_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
+
+    def test_admin_request_accept_pending_instance_missing_not_required_field(self):
+        data = {
+            'instance_name': self.test_request.instance.name,
+            'billing_group_id': '',
+            'text_variable': 'my_var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': 'multiselect_1',
+            'textarea_var': '2',
+            'password_var': 'password1234',
+            'float_var': '0.6'
+        }
+        self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
+                                                 expected_instance_state=InstanceState.PENDING,
+                                                 custom_data=data)
+
+    def test_admin_request_cannot_accept_pending_instance_missing_required_field(self):
+        data = {
+            'instance_name': self.test_request.instance.name,
+            'billing_group_id': '',
+            'text_variable': 'my_var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': 'multiselect_1',
+            'textarea_var': '2',
+            'password_var': 'password1234'
+        }
+        self._accept_request_with_expected_state(expected_request_state=self.test_request.state,
+                                                 expected_instance_state=self.test_instance.state,
+                                                 custom_data=data,
+                                                 status=200)
 
     def test_admin_request_accept_accepted_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
@@ -186,7 +226,7 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         self.assertEqual(self.test_request.instance.name, new_instance_name)
         self.assertEqual(self.test_request.instance.billing_group, billing_group)
-        self.assertDictEqual(self.test_request.fill_in_survey, data_expected)
+        self.assertDictEqual(self.test_request.full_survey, data_expected)
         self.assertNotEqual(self.test_request.fill_in_survey, old_survey)
 
     def test_admin_request_accept_failed_update(self):
@@ -234,6 +274,12 @@ class AdminRequestViewTest(BaseTestRequest):
             self.assertEqual(self.test_request.state, expected_request_state)
             expected_extra_vars = {
                 'text_variable': 'my_var',
+                'multiplechoice_variable': "choice1",
+                'multiselect_var': ["multiselect_3", "multiselect_2"],
+                'textarea_var': "textarea_val",
+                'password_var': "password_val",
+                'float_var': 1.5,
+                'integer_var': 1
             }
             expected_request = {
                 'id': self.test_request.id,
@@ -280,6 +326,62 @@ class AdminRequestViewTest(BaseTestRequest):
                         self.assertEqual(val_var, data[key_var])
 
     def test_admin_request_process_new_instance(self):
+        self.test_request.state = RequestState.ACCEPTED
+        self.test_request.save()
+        self._process_with_expected_instance_state(InstanceState.PROVISIONING)
+
+    def test_admin_request_process_new_instance_full_survey_enabled(self):
+        self.test_request.operation.enabled_survey_fields = {
+            'text_variable': True,
+            'multiplechoice_variable': True,
+            'multiselect_var': True,
+            'textarea_var': True,
+            'password_var': True,
+            'float_var': True,
+            'integer_var': True
+        }
+        full_survey = {
+            'text_variable': 'my_var',
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': ["multiselect_3", "multiselect_2"],
+            'textarea_var': "textarea_val",
+            'password_var': "password_val",
+            'float_var': 1.5,
+            'integer_var': 1
+        }
+        self.test_request.operation.save()
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_request.admin_fill_in_survey, {})
+        self.assertEqual(self.test_request.fill_in_survey, full_survey)
+        self.assertEqual(self.test_request.full_survey, full_survey)
+        self.test_request.state = RequestState.ACCEPTED
+        self.test_request.save()
+        self._process_with_expected_instance_state(InstanceState.PROVISIONING)
+
+    def test_admin_request_process_new_instance_full_survey_disabled(self):
+        self.test_request.operation.enabled_survey_fields = {
+            'text_variable': False,
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
+        }
+        full_survey = {
+            'text_variable': 'my_var',
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': ["multiselect_3", "multiselect_2"],
+            'textarea_var': "textarea_val",
+            'password_var': "password_val",
+            'float_var': 1.5,
+            'integer_var': 1
+        }
+        self.test_request.operation.save()
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_request.fill_in_survey, {})
+        self.assertEqual(self.test_request.admin_fill_in_survey, full_survey)
+        self.assertEqual(self.test_request.full_survey, full_survey)
         self.test_request.state = RequestState.ACCEPTED
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)

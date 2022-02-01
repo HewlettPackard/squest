@@ -49,7 +49,7 @@
                                 <b>Billing group</b> {% if instance.billing_group %}<a href="{% url 'profiles:billing_group_list' %}?id={{ instance.billing_group.id }}#quota{{ instance.billing_group.id }}" class="float-right">{{ instance.billing_group.name }}</a>{% endif %}
                             </li>
                             <li class="list-group-item">
-                                <b>SPOC</b> <a class="float-right">{{ instance.spoc.username }}</a>
+                                <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}" class="float-right">{{ instance.spoc.username }}</a>
                             </li>
                             {% if request.user.is_superuser %}
                                 <li class="list-group-item">

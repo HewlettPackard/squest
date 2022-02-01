@@ -1,7 +1,7 @@
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, CharField, ValidationError
+from rest_framework.serializers import ModelSerializer, CharField, ValidationError, ListSerializer
 
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
@@ -39,8 +39,9 @@ class ServiceRequestSerializer(ModelSerializer):
             # get the create operation of this service
             self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
             # get all field that are not disabled by the admin
-            purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
-                                                           operation_survey=self.create_operation.enabled_survey_fields)
+            purged_survey = FormUtils.get_available_fields(
+                job_template_survey=self.create_operation.job_template.survey,
+                operation_survey=self.create_operation.enabled_survey_fields)
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def validate_billing_group(self, value):
@@ -81,7 +82,6 @@ class ServiceRequestSerializer(ModelSerializer):
 
 
 class OperationRequestSerializer(ModelSerializer):
-
     class Meta:
         model = Request
         fields = ['request_comment', 'fill_in_survey']
@@ -100,13 +100,15 @@ class OperationRequestSerializer(ModelSerializer):
         instance_id = self.view.kwargs.get('instance_id', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
         if operation_id is not None and instance_id is not None:
-            self.target_operation = get_object_or_404(Operation.objects.exclude(type=OperationType.CREATE), id=operation_id)
+            self.target_operation = get_object_or_404(Operation.objects.exclude(type=OperationType.CREATE),
+                                                      id=operation_id)
             self.target_instance = get_object_or_404(
                 get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=instance_id)
 
             # get all field that are not disabled by the admin
-            purged_survey = FormUtils.get_available_fields(job_template_survey=self.target_operation.job_template.survey,
-                                                           operation_survey=self.target_operation.enabled_survey_fields)
+            purged_survey = FormUtils.get_available_fields(
+                job_template_survey=self.target_operation.job_template.survey,
+                operation_survey=self.target_operation.enabled_survey_fields)
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def save(self, **kwargs):
@@ -127,7 +129,7 @@ class OperationRequestSerializer(ModelSerializer):
 class RequestSerializer(ModelSerializer):
     class Meta:
         model = Request
-        exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
+        exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message', 'admin_fill_in_survey']
         read_only = True
 
     instance = InstanceReadSerializer(read_only=True)
