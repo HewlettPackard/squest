@@ -50,15 +50,16 @@ class TestApiRequestAccept(BaseTestRequest):
             request.refresh_from_db()
             for key in data.keys():
                 if isinstance(data[key], list):
-                    self.assertEqual(str(set(data[key])), request.fill_in_survey[key])
+                    self.assertEqual(str(set(data[key])), request.full_survey[key])
                 else:
-                    self.assertEqual(str(data[key]), request.fill_in_survey[key])
+                    self.assertEqual(str(data[key]), request.full_survey[key])
             self.assertEqual(RequestState.ACCEPTED, request.state)
 
     def test_admin_can_accept_request(self):
         for state in AUTHORIZED_STATES:
             self.test_request.state = state
             self.test_request.fill_in_survey = {'text_variable': 'my_var'}
+            self.test_request.admin_fill_in_survey = {}
             self.test_request.save()
             self._get_form()
             self._accept()
@@ -74,6 +75,7 @@ class TestApiRequestAccept(BaseTestRequest):
         for state in AUTHORIZED_STATES:
             self.test_request.state = state
             self.test_request.fill_in_survey = {'text_variable': 'my_var'}
+            self.test_request.admin_fill_in_survey = {}
             self.test_request.save()
             self._get_form(request=test_request, excepted={})
             self._accept(data={}, request=test_request)
@@ -90,6 +92,7 @@ class TestApiRequestAccept(BaseTestRequest):
         for state in AUTHORIZED_STATES:
             self.test_request.state = state
             self.test_request.fill_in_survey = {'text_variable': 'my_var'}
+            self.test_request.admin_fill_in_survey = {}
             self.test_request.save()
             self._get_form()
             self._accept(data=data)

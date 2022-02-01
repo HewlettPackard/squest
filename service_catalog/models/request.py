@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 class Request(RoleManager):
     fill_in_survey = models.JSONField(default=dict, blank=True)
+    admin_fill_in_survey = models.JSONField(default=dict, blank=True)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True)
     operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
@@ -42,6 +43,23 @@ class Request(RoleManager):
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
+
+    @property
+    def full_survey(self):
+        return {**self.fill_in_survey, **self.admin_fill_in_survey}
+
+    def set_fill_in_survey(self, survey, enabled_fields=None):
+        self.fill_in_survey = {}
+        self.admin_fill_in_survey = {}
+        if not isinstance(enabled_fields, dict):
+            enabled_fields = self.operation.enabled_survey_fields
+        for field_name, is_enabled in enabled_fields.items():
+            if field_name in survey.keys():
+                if is_enabled:
+                    self.fill_in_survey[field_name] = survey[field_name]
+                else:
+                    self.admin_fill_in_survey[field_name] = survey[field_name]
+        self.save()
 
     def clean(self):
         if self.fill_in_survey is None:
@@ -104,13 +122,13 @@ class Request(RoleManager):
     @transition(field=state, source=RequestState.PROCESSING)
     def perform_processing(self):
         # run Tower job
-        tower_extra_vars = copy.copy(self.fill_in_survey)
+        tower_extra_vars = copy.copy(self.full_survey)
         # add the current instance to extra vars
-        from service_catalog.api.serializers.request_serializers import RequestSerializer
+        from service_catalog.api.serializers.request_serializers import AdminRequestSerializer
         from django.conf import settings
         tower_extra_vars["squest"] = {
             "squest_host": settings.SQUEST_HOST,
-            "request": RequestSerializer(self).data
+            "request": AdminRequestSerializer(self).data
         }
         tower_job_id = None
         try:

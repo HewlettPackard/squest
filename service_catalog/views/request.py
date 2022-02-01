@@ -5,13 +5,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
+
 from guardian.decorators import permission_required_or_403
+from guardian.shortcuts import get_objects_for_user
+
 from service_catalog.forms import RequestMessageForm
 from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
-from ..forms.request_forms import RequestForm
-from ..mail_utils import send_email_request_canceled
-from django.contrib import messages
+from service_catalog.mail_utils import send_email_request_canceled
 
 
 @login_required
@@ -71,47 +72,14 @@ def request_comment(request, request_id):
     return render(request, "service_catalog/common/request-comment.html", context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def request_edit(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
-    form = RequestForm(request.POST or None, request.FILES or None, instance=target_request)
-    if form.is_valid():
-        form.save()
-        return redirect('service_catalog:request_details', target_request.id)
-    context = dict()
-    context['breadcrumbs'] = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': f"{target_request.id}",
-         'url': reverse('service_catalog:request_details', args=[request_id])},
-    ]
-    context['object_name'] = 'request'
-    context['form'] = form
-    return render(request, 'generics/edit-sensitive-object.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def request_bulk_delete_confirm(request):
-
-    context = {
-        'confirm_text': mark_safe(f"Confirm deletion of the following requests?"),
-        'action_url': reverse('service_catalog:request_bulk_delete'),
-        'button_text': 'Delete',
-        'breadcrumbs': [
-            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': "Delete multiple", 'url': ""}
-        ]}
-    if request.method == "POST":
-        pks = request.POST.getlist("selection")
-        context['object_list'] = Request.objects.filter(pk__in=pks)
-        if context['object_list']:
-            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
-    messages.warning(request, 'No requests were selected for deletion.')
-    return redirect('service_catalog:request_list')
-
-@user_passes_test(lambda u: u.is_superuser)
-def request_bulk_delete(request):
-    if request.method == "POST":
-        pks = request.POST.getlist("selection")
-        selected_requests = Request.objects.filter(pk__in=pks)
-        selected_requests.delete()
-    return redirect("service_catalog:request_list")
+@login_required
+def request_details(request, request_id):
+    request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
+    target_request = get_object_or_404(request_list, id=request_id)
+    context = {'target_request': target_request,
+               'breadcrumbs': [
+                   {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+                   {'text': request_id, 'url': ""},
+               ],
+               }
+    return render(request, 'service_catalog/common/request-details.html', context=context)

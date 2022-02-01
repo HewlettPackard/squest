@@ -26,9 +26,9 @@ class TestMailUtils(BaseTest):
                                                    operation=self.create_operation_test,
                                                    user=self.standard_user)
         self.test_request_2 = Request.objects.create(fill_in_survey=data,
-                                                   instance=self.test_instance_2,
-                                                   operation=self.create_operation_test,
-                                                   user=self.standard_user)
+                                                     instance=self.test_instance_2,
+                                                     operation=self.create_operation_test,
+                                                     user=self.standard_user)
 
     def test_get_admin_emails(self):
         # Test 1 - admin disabled notification

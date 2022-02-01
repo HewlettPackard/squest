@@ -13,24 +13,28 @@ class TestApiRequestDetails(BaseTestRequest):
         super(TestApiRequestDetails, self).setUp()
         self.test_request_standard_user_1 = Request.objects.create(
             fill_in_survey={},
+            admin_fill_in_survey={'float_var': 1.8},
             instance=self.test_instance,
             operation=self.create_operation_test,
             user=self.standard_user
         )
         Request.objects.create(
             fill_in_survey={},
+            admin_fill_in_survey={'float_var': 1.8},
             instance=self.test_instance,
             operation=self.update_operation_test,
             user=self.standard_user
         )
         self.test_request_standard_user_2 = Request.objects.create(
             fill_in_survey={},
+            admin_fill_in_survey={'float_var': 1.8},
             instance=self.test_instance_2,
             operation=self.create_operation_test,
             user=self.standard_user_2
         )
         Request.objects.create(
             fill_in_survey={},
+            admin_fill_in_survey={'float_var': 1.8},
             instance=self.test_instance_2,
             operation=self.update_operation_test,
             user=self.standard_user_2
@@ -64,6 +68,7 @@ class TestApiRequestDetails(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data_list = [response.data, response.data.get('instance', None)]
         check_data_in_dict(self, self.expected_data_list, data_list)
+        self.assertIn('admin_fill_in_survey', response.data.keys())
 
     def test_customer_get_his_request_detail(self):
         self.client.force_login(user=self.standard_user)
@@ -71,6 +76,7 @@ class TestApiRequestDetails(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data_list = [response.data, response.data.get('instance', None)]
         check_data_in_dict(self, self.expected_data_list, data_list)
+        self.assertNotIn('admin_fill_in_survey', response.data.keys())
 
     def test_customer_cannot_get_non_own_request_detail(self):
         self.client.force_login(user=self.standard_user)

@@ -1,5 +1,5 @@
 from service_catalog.models import Instance, Request
-from service_catalog.api.serializers import RequestSerializer
+from service_catalog.api.serializers import RequestSerializer, AdminRequestSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -19,10 +19,10 @@ class TestRequestSerializer(BaseTestRequest):
                                                          user=self.standard_user)
 
     def test_contains_expected_fields(self):
-        serializer = RequestSerializer(instance=self.local_test_request)
+        serializer = AdminRequestSerializer(instance=self.local_test_request)
         self.assertEqual(set(serializer.data.keys()),
-                         {'id', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
-                          'instance', 'operation', 'state', 'tower_job_id', 'user'})
+                         {'id', 'fill_in_survey', 'admin_fill_in_survey', 'date_submitted', 'date_complete',
+                          'date_archived', 'instance', 'operation', 'state', 'tower_job_id', 'user'})
 
     def test_request_serializer_field_content(self):
         serializer = RequestSerializer(instance=self.local_test_request)

@@ -1,15 +1,17 @@
 import logging
 
 import requests
+
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
-from guardian.shortcuts import get_objects_for_user
 
 from service_catalog.forms import RequestMessageForm, AcceptRequestForm
+from service_catalog.forms.request_forms import RequestForm
 from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Request
 
@@ -151,20 +153,6 @@ def admin_request_process(request, request_id):
     return render(request, "service_catalog/admin/request/request-process.html", context)
 
 
-@login_required
-def request_details(request, request_id):
-    request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
-    target_request = get_object_or_404(request_list, id=request_id)
-    breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
-    ]
-    context = {'target_request': target_request,
-               'breadcrumbs': breadcrumbs,
-               }
-    return render(request, 'service_catalog/common/request-details.html', context=context)
-
-
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_archive(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
@@ -234,3 +222,49 @@ def process_request(user, target_request):
     target_request.save()
     send_mail_request_update(target_request, user_applied_state=user)
     return ""
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_edit(request, request_id):
+    target_request = get_object_or_404(Request, id=request_id)
+    form = RequestForm(request.POST or None, request.FILES or None, instance=target_request)
+    if form.is_valid():
+        form.save()
+        return redirect('service_catalog:request_details', target_request.id)
+    context = dict()
+    context['breadcrumbs'] = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': f"{target_request.id}",
+         'url': reverse('service_catalog:request_details', args=[request_id])},
+    ]
+    context['object_name'] = 'request'
+    context['form'] = form
+    return render(request, 'generics/edit-sensitive-object.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_bulk_delete_confirm(request):
+    context = {
+        'confirm_text': mark_safe(f"Confirm deletion of the following requests?"),
+        'action_url': reverse('service_catalog:request_bulk_delete'),
+        'button_text': 'Delete',
+        'breadcrumbs': [
+            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+            {'text': "Delete multiple", 'url': ""}
+        ]}
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        context['object_list'] = Request.objects.filter(pk__in=pks)
+        if context['object_list']:
+            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+    messages.warning(request, 'No requests were selected for deletion.')
+    return redirect('service_catalog:request_list')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def request_bulk_delete(request):
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        selected_requests = Request.objects.filter(pk__in=pks)
+        selected_requests.delete()
+    return redirect("service_catalog:request_list")
