@@ -1,3 +1,27 @@
+# 1.4.1 2022-02-02
+
+## Breaking changes
+
+- API: Split between admin survey and user survey
+
+## Fix
+
+- Fix Celery wait timeout when starting Docker compose
+
+## Enhancement
+
+- Admin accept request form can now update billing group and instance name
+- Add date available on successfully processed instance
+- Custom 404 page
+- Bulk delete on request page as admin
+- Added delete button on resource details page
+- Hide admin filled fields from the end user survey
+
+## Feature
+
+- API: request state machine management
+- Added "user spec" field to instance. Spec are now only visible by admin.
+
 # 1.4.0 2022-01-20
 
 ## Breaking changes
