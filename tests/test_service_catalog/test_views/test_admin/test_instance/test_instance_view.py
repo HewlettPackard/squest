@@ -24,7 +24,8 @@ class TestAdminInstanceViews(BaseTestRequest):
             "spoc": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
             "billing_group": "",
-            "spec": json.dumps(self.json_spec)
+            "spec": json.dumps(self.json_spec),
+            "user_spec": json.dumps(self.json_spec),
         }
 
     def test_get_instance_list(self):
@@ -115,7 +116,19 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.test_instance.refresh_from_db()
         self.assertEqual(self.test_instance.spec, old_spec)
         self.assertEqual(response.context['form'].errors['spec'][0],
-                          'Please enter a valid JSON. Empty value is {} for JSON.')
+                         'Please enter a valid JSON. Empty value is {} for JSON.')
+
+        old_user_spec = copy(self.test_instance.spec)
+        self.edit_instance_data['spec'] = json.dumps(self.json_spec)
+        self.edit_instance_data['user_spec'] = ''
+        response = self.client.post(url, data=self.edit_instance_data)
+        self.assertEqual(200, response.status_code)
+        self.test_instance.refresh_from_db()
+        self.assertEqual(self.test_instance.spec, old_spec)
+        self.assertEqual(response.context['form'].errors['user_spec'][0],
+                         'Please enter a valid JSON. Empty value is {} for JSON.')
+
+        self.assertEqual(self.test_instance.user_spec, old_user_spec)
 
     def test_instance_edit_with_empty_dict_spec(self):
         url = reverse('service_catalog:instance_edit', kwargs=self.args)

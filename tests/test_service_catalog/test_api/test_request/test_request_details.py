@@ -52,6 +52,7 @@ class TestApiRequestDetails(BaseTestRequest):
             'state': self.test_request_standard_user_1.instance.state,
             'name': self.test_request_standard_user_1.instance.name,
             'spec': self.test_request_standard_user_1.instance.spec,
+            'user_spec': self.test_request_standard_user_1.instance.user_spec,
             'service': self.test_request_standard_user_1.instance.service.id,
             'spoc': self.test_request_standard_user_1.instance.spoc.id,
             'billing_group': self.test_request_standard_user_1.instance.billing_group.id if self.test_request_standard_user_1.instance.billing_group else None
