@@ -80,7 +80,8 @@
                             <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a>
                             </li>
                             <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Spec</a></li>
+                            {% if request.user.is_superuser %}<li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a></li>{% endif %}
+                            <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
                             <li class="nav-item"><a class="nav-link" href="#users" data-toggle="tab">Users</a>
                             <li class="nav-item"><a class="nav-link" href="#teams" data-toggle="tab">Teams</a>
@@ -99,8 +100,13 @@
                                 </a>
                                 {% render_table supports_table %}
                             </div>
+                            {% if request.user.is_superuser %}
                             <div class="tab-pane" id="spec">
                                 <pre><code class="language-json">{{ instance.spec | pretty_json }}</code></pre>
+                            </div>
+                            {% endif %}
+                            <div class="tab-pane" id="user-spec">
+                                <pre><code class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
                             </div>
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}

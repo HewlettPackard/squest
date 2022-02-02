@@ -6,6 +6,8 @@ urlpatterns = [
     # admin urls
     path('instance/', InstanceList.as_view(), name='api_instance_list'),
     path('instance/<int:pk>/', InstanceDetails.as_view(), name='api_instance_details'),
+    path('instance/<int:pk>/spec/', SpecDetailsAPIView.as_view(), name='api_instance_spec_details'),
+    path('instance/<int:pk>/user-spec/', UserSpecDetailsAPIView.as_view(), name='api_instance_user_spec_details'),
     path('instance/<int:instance_id>/operation/', InstanceOperationList.as_view(),
          name='api_instance_operation_list'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/request/', OperationRequestCreate.as_view(),
