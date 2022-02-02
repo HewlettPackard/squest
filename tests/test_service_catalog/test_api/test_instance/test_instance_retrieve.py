@@ -10,19 +10,24 @@ class TestInstanceRetrieve(BaseTestRequest):
         super(TestInstanceRetrieve, self).setUp()
         self.url = reverse('api_instance_details', args=[self.test_instance.id])
 
-    def _assert_can_get_details(self, response):
+    def _assert_can_get_details(self, response, is_admin=True):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("id" in response.json())
         self.assertTrue("name" in response.json())
-        self.assertTrue("spec" in response.json())
         self.assertTrue("state" in response.json())
         self.assertTrue("billing_group" in response.json())
         self.assertTrue("service" in response.json())
-        self.assertTrue("spec" in response.json())
+        self.assertTrue("user_spec" in response.json())
+        if is_admin:
+            self.assertTrue("spec" in response.json())
+        else:
+            self.assertFalse("spec" in response.json())
         self.assertTrue("resources" in response.json())
         self.assertEqual(response.data['id'], self.test_instance.id)
         self.assertEqual(response.data['name'], self.test_instance.name)
-        self.assertEqual(response.data['spec'], self.test_instance.spec)
+        self.assertEqual(response.data['user_spec'], self.test_instance.user_spec)
+        if is_admin:
+            self.assertEqual(response.data['spec'], self.test_instance.spec)
         self.assertEqual(response.data['state'], self.test_instance.state)
         self.assertEqual(response.data['service'], self.test_instance.service.id)
         self.assertEqual(response.data['spoc'], self.test_instance.spoc.id)
@@ -36,7 +41,7 @@ class TestInstanceRetrieve(BaseTestRequest):
     def test_get_details_as_instance_owner(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.get(self.url, format='json')
-        self._assert_can_get_details(response)
+        self._assert_can_get_details(response, is_admin=False)
 
     def test_cannot_get_details_when_not_owner(self):
         self.client.force_login(user=self.standard_user_2)

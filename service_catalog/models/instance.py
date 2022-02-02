@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 class Instance(RoleManager):
     name = models.CharField(verbose_name="Instance name", max_length=100)
-    spec = models.JSONField(default=dict, blank=True)
+    spec = models.JSONField(default=dict, blank=True, verbose_name="Admin spec")
+    user_spec = models.JSONField(default=dict, blank=True, verbose_name="User spec")
     service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
     spoc = models.ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
                              on_delete=models.SET_NULL)
@@ -35,6 +36,8 @@ class Instance(RoleManager):
         return f"{self.name} (#{self.id})"
 
     def clean(self):
+        if self.user_spec is None:
+            raise ValidationError({'user_spec': _("Please enter a valid JSON. Empty value is {} for JSON.")})
         if self.spec is None:
             raise ValidationError({'spec': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
