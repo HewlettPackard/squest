@@ -32,7 +32,7 @@ class ResourceGroupSerializer(TaggitSerializer, serializers.ModelSerializer):
         attribute_definitions_data = validated_data.pop('attribute_definitions')
         text_attribute_definitions_data = validated_data.pop('text_attribute_definitions')
         resource_group = ResourceGroup.objects.create(**validated_data)
-        resource_group.tags.set(*tags)
+        resource_group.tags.set(tags)
         for attribute_definition in attribute_definitions_data:
             resource_group.add_attribute_definition(**attribute_definition)
         for text_attribute_definition in text_attribute_definitions_data:

@@ -6,6 +6,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Jquery -->
+    <script src="{% static 'jquery/dist/jquery.js' %}"></script>
+    <!-- Bootstrap JS -->
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.js' %}"></script>
+    <!-- adminlte -->
+    <script src="{% static 'admin-lte/dist/js/adminlte.js' %}"></script>
+    <!-- Font Awesome Free -->
+    <script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}"></script>
+    <!-- Bootstrap select -->
+    <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.js' %}"></script>
+    <!-- highlightjs -->
+    <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
+    <script>hljs.highlightAll();</script>
+    <!-- Tower Service Catalog -->
+    <script src="{% static 'squest/js/squest.js' %}"></script>
+
     <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="{% static 'admin-lte/dist/css/adminlte.css' %}">
     <!-- Bootstrap select -->
@@ -31,8 +47,6 @@
     {% include 'sidebar.html' %}
 {% endif %}
 
-<!-- Jquery -->
-<script src="{% static 'jquery/dist/jquery.js' %}"></script>
 {% block content %}
     {% block start_content %}{% endblock %}
     <div class="content-wrapper" style="min-height: 278px;">
@@ -86,19 +100,5 @@
         <div class="float-right d-none d-sm-inline">v{% app_version %}</div>
     </footer>
 {% endif %}
-
-<!-- Bootstrap -->
-<script src="{% static 'bootstrap/dist/js/bootstrap.bundle.js' %}"></script>
-<!-- adminlte -->
-<script src="{% static 'admin-lte/dist/js/adminlte.js' %}"></script>
-<!-- Font Awesome Free -->
-<script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}"></script>
-<!-- Bootstrap select -->
-<script src="{% static 'bootstrap-select/dist/js/bootstrap-select.js' %}"></script>
-<!-- highlightjs -->
-<script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
-<script>hljs.highlightAll();</script>
-<!-- Tower Service Catalog -->
-<script src="{% static 'squest/js/squest.js' %}"></script>
 </body>
 </html>
