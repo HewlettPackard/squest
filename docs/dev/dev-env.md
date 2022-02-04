@@ -11,7 +11,7 @@ Following tools need to be installed on your workstation:
 - Python 3.9
 - Python virtualenv
 - [Poetry](https://python-poetry.org/)
-- npm
+- npm 8
 
 ### System packages
 
