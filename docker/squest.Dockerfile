@@ -14,8 +14,8 @@ FROM python:3.9-slim-bullseye
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE=Squest.settings
-ENV POETRY_VERSION=1.1.5
-ENV NODE_VERSION=12.22.6
+ENV POETRY_VERSION=1.1.12
+ENV NODE_VERSION=16.13.2
 ENV NVM_VERSION=v0.38.0
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"

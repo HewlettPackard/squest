@@ -18,7 +18,7 @@ class ResourcePoolSerializer(TaggitSerializer, serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         attribute_definitions_data = validated_data.pop('attribute_definitions', [])
         resource_pool = ResourcePool.objects.create(**validated_data)
-        resource_pool.tags.set(*tags)
+        resource_pool.tags.set(tags)
         for attribute_definition in attribute_definitions_data:
             resource_pool.add_attribute_definition(**attribute_definition)
         return resource_pool

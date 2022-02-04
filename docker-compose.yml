@@ -12,7 +12,7 @@ services:
       - "3306:3306"
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.1.0
+    image: phpmyadmin/phpmyadmin:5.1.1
     env_file: docker/environment_variables/phpmyadmin.env
     ports:
       - "8082:80"
@@ -28,6 +28,7 @@ services:
 
   django: &django
     image: quay.io/hewlettpackardenterprise/squest:latest
+#    image: squest:latest
     env_file: docker/environment_variables/squest.env
     environment:
       WAIT_HOSTS: db:3306,rabbitmq:5672
