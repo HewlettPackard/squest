@@ -6,7 +6,7 @@ class TestHome(BaseTestResourceTracker):
 
     def setUp(self):
         super(TestHome, self).setUp()
-        self.url = reverse('service_catalog:home')
+        self.url = reverse('home')
 
     def test_admin_get_home(self):
         expected_context_list = ['total_request', 'total_instance', 'total_support_opened',

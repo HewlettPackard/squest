@@ -176,8 +176,8 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = 'service_catalog:home'
-LOGOUT_REDIRECT_URL = 'service_catalog:home'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
 # -----------------------------------------
 # Static files https://docs.djangoproject.com/en/3.1/howto/static-files/

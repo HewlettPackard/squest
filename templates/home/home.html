@@ -15,9 +15,9 @@
         {% endfor %}
         <div class="row">
             {% if request.user.is_superuser %}
-                {% include 'service_catalog/admin/dashboard.html' %}
+                {% include 'home/admin.html' %}
             {% else %}
-                {% include 'service_catalog/customer/dashboard.html' %}
+                {% include 'home/customer.html' %}
             {% endif %}
         </div>
     </div>
