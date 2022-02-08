@@ -4,49 +4,21 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from guardian.shortcuts import get_objects_for_user
 from martor.utils import LazyEncoder
-
 from service_catalog.models import Doc
-from service_catalog.models import Request, Instance, Support, Service
-from service_catalog.models.announcement import Announcement
-from service_catalog.models.instance import InstanceState
-from service_catalog.models.request import RequestState
+from service_catalog.models import Service
 from .color import random_color
 
 
 def get_color_from_string(string):
     return list(random_color.values())[hash(string) % len(random_color)]
-
-
-@login_required
-def dashboards(request):
-    context = dict()
-    now = timezone.now()
-    context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
-    if request.user.is_superuser:
-        context['total_request'] = Request.objects.filter(state=RequestState.SUBMITTED).count()
-        context['total_instance'] = Instance.objects.filter(state='AVAILABLE').count()
-        context['total_support_opened'] = Support.objects.filter(state='OPENED').count()
-        context['total_user_without_billing_groups'] = User.objects.filter(billing_groups=None).count()
-        context['total_user'] = User.objects.all().count()
-    else:
-        context['total_request'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
-                state=RequestState.SUBMITTED).count()
-        context['total_request_need_info'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
-            state=RequestState.NEED_INFO).count()
-        context['total_instance'] = get_objects_for_user(request.user, 'service_catalog.view_instance').filter(
-                state=InstanceState.AVAILABLE).count()
-    return render(request, 'service_catalog/common/dashboard.html', context=context)
 
 
 @login_required

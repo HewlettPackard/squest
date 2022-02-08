@@ -20,6 +20,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from django.conf import settings
+from .views import *
 
 #  drf-yasg
 from Squest.api.celery_tasks_views import CeleryTaskView
@@ -37,15 +38,16 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('ui/', home, name='home'),
     path('admin/', admin.site.urls),
-    path('', include('service_catalog.urls')),
-    path('resource_tracker/', include('resource_tracker.urls')),
+    path('ui/service_catalog/', include('service_catalog.urls')),
+    path('ui/resource_tracker/', include('resource_tracker.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/service_catalog/', include('service_catalog.api.urls')),
     path('api/resource_tracker/', include('resource_tracker.api.urls')),
     path('api/profiles/', include('profiles.api.urls')),
     path('api/tasks/<int:task_id>/', CeleryTaskView.as_view(), name='get_task_result'),
-    path('profiles/', include('profiles.urls')),
+    path('ui/profiles/', include('profiles.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
