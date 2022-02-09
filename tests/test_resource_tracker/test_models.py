@@ -7,7 +7,7 @@ from django.test import TestCase
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourcePool, ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Service, Instance, InstanceState
-from tests.utils import skip_auto_calculation
+from Squest.utils.disconnect_signals import skip_auto_calculation
 
 
 class TestCalculation(TestCase):

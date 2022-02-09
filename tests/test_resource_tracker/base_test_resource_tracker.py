@@ -3,7 +3,7 @@ import time
 
 from resource_tracker.models import ResourcePool, ResourceGroup
 from tests.test_service_catalog.base import BaseTest
-from tests.utils import skip_auto_calculation
+from Squest.utils.disconnect_signals import skip_auto_calculation
 
 
 class BaseTestResourceTracker(BaseTest):
