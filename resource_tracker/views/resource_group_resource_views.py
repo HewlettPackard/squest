@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 
 from resource_tracker.forms import ResourceForm
 from resource_tracker.models import ResourceGroup, Resource
+from Squest.utils.disconnect_signals import skip_auto_calculation
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -33,12 +34,19 @@ def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
     return redirect('resource_tracker:resource_group_resource_list', resource_group_id=resource_group_id)
 
 
+@skip_auto_calculation
 @user_passes_test(lambda u: u.is_superuser)
 def resource_group_resource_bulk_delete(request, resource_group_id):
+    resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
     if request.method == "POST":
         pks = request.POST.getlist("selection")
         selected_resources = Resource.objects.filter(pk__in=pks)
+        billing_group_list = [resource.billing_group for resource in selected_resources]
         selected_resources.delete()
+        resource_group.calculate_total_resource_of_attributes()
+        for billing_group in billing_group_list:
+            if billing_group:
+                billing_group.update_quota()
     return redirect("resource_tracker:resource_group_resource_list", resource_group_id)
 
 

@@ -29,6 +29,13 @@ class Resource(models.Model):
     is_deleted_on_instance_deletion = models.BooleanField(default=True,
                                                           verbose_name="Delete this resource on instance deletion")
 
+    @property
+    def billing_group(self):
+        if self.service_catalog_instance:
+            if self.service_catalog_instance.billing_group:
+                return self.service_catalog_instance.billing_group
+        return None
+
     def __str__(self):
         return self.name
 
@@ -52,8 +59,7 @@ def on_delete(sender, instance, **kwargs):
     if instance.resource_group_id:
         if ResourceGroup.objects.filter(id=instance.resource_group_id).exists():
             target_resource_group = ResourceGroup.objects.get(id=instance.resource_group_id)
-            for resource_attribute in target_resource_group.attribute_definitions.all():
-                resource_attribute.calculate_total_resource()
+            target_resource_group.calculate_total_resource_of_attributes()
 
 
 @receiver(pre_save, sender=Resource)
