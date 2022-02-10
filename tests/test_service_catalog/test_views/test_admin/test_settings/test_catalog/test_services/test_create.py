@@ -20,6 +20,7 @@ class ServiceCreateTestCase(BaseTest):
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,
+            "job_template_timeout": 60,
             "billing": "defined",
             "billing_group_id": "",
             "billing_group_is_shown": "on"
@@ -44,6 +45,7 @@ class ServiceCreateTestCase(BaseTest):
             "name": "new_service_with_image",
             "description": "a new service",
             "job_template": self.job_template_test.id,
+            "job_template_timeout": 60,
             "billing": "defined",
             "billing_group_id": "",
             "billing_group_is_shown": "on",
