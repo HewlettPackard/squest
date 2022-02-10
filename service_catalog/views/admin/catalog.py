@@ -13,8 +13,7 @@ def add_service(request):
     if request.method == 'POST':
         form = ServiceForm(request.POST, request.FILES)
         if form.is_valid():
-            new_service = form.save()
-            new_service.create_provisioning_operation(form.cleaned_data['job_template'])
+            form.save()
             return redirect('service_catalog:service_list')
     else:
         form = ServiceForm()

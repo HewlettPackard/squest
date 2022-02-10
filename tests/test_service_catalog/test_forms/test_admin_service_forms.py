@@ -14,6 +14,7 @@ class TestServiceForm(BaseTest):
                 "name": "new_service",
                 "description": "a new service",
                 "job_template": self.job_template_test.id,
+                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -22,6 +23,7 @@ class TestServiceForm(BaseTest):
                 "name": "new_service_2",
                 "description": "a new service 2",
                 "job_template": self.job_template_test.id,
+                "job_template_timeout": 250,
                 "billing": "all_billing_groups",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -31,6 +33,7 @@ class TestServiceForm(BaseTest):
                 "name": "new_service_3",
                 "description": "a new service 3",
                 "job_template": self.job_template_test.id,
+                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": self.billing_group_1.id
 
@@ -39,6 +42,7 @@ class TestServiceForm(BaseTest):
                 "name": "new_service_4",
                 "description": "a new service 4",
                 "job_template": self.job_template_test.id,
+                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": self.billing_group_1.id + 1
 
@@ -47,6 +51,7 @@ class TestServiceForm(BaseTest):
                 "name": "new_service_5",
                 "description": "a new service 5",
                 "job_template": self.job_template_test.id,
+                "job_template_timeout": 60,
                 "billing": "restricted_billing_groups",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -60,6 +65,11 @@ class TestServiceForm(BaseTest):
             if form.is_valid():
                 new_service = form.save()
                 test_list = self.get_test_list(data, new_service)
+                test_list.append(
+                    {'name': "job_template_timeout",
+                     'value': new_service.operations.filter(type=OperationType.CREATE).first().process_timeout_second,
+                     'expected': data['job_template_timeout']}
+                )
                 for test in test_list:
                     self.assertEqual(test['value'], test['expected'])
             else:

@@ -22,6 +22,8 @@ class ServiceForm(SquestModelForm):
     job_template = forms.ModelChoiceField(queryset=JobTemplate.objects.all(),
                                           widget=forms.Select())
 
+    job_template_timeout = forms.IntegerField(initial=60, required=True)
+
     auto_accept = forms.BooleanField(label="Auto accept",
                                      required=False,
                                      widget=forms.CheckboxInput())
@@ -85,7 +87,10 @@ class ServiceForm(SquestModelForm):
         else:
             self.instance.billing_group_is_selectable = False
             self.instance.billing_groups_are_restricted = False
-        return super(ServiceForm, self).save()
+        new_service = super(ServiceForm, self).save()
+        new_service.create_provisioning_operation(self.cleaned_data['job_template'],
+                                                  self.cleaned_data['job_template_timeout'])
+        return new_service
 
     class Meta:
         model = Service

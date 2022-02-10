@@ -23,12 +23,13 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
-    def create_provisioning_operation(self, job_template):
+    def create_provisioning_operation(self, job_template, job_template_timeout=60):
         if self.operations.filter(type=OperationType.CREATE):
             raise Exception({"Provisionning operation": "A service can have only one 'CREATE' operation"})
         from service_catalog.models import Operation
         Operation.objects.create(name=f"Create {self.name}",
                                  service=self,
-                                 job_template=job_template
+                                 job_template=job_template,
+                                 process_timeout_second=job_template_timeout
                                  )
         self.save()
