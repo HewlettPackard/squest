@@ -41,9 +41,10 @@ class AttributeDefinitionList(generics.ListCreateAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
-    def create(self, request, *args, **kwargs):
-        request.data['resource_group'] = self.kwargs.get('pk', None)
-        return super(AttributeDefinitionList, self).create(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('pk', None)
+        return super(AttributeDefinitionList, self).get_serializer(*args, **kwargs)
 
 
 class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
@@ -55,9 +56,10 @@ class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
-    def update(self, request, *args, **kwargs):
-        request.data['resource_group'] = self.kwargs.get('pk', None)
-        return super(AttributeDefinitionDetails, self).update(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('pk', None)
+        return super(AttributeDefinitionDetails, self).get_serializer(*args, **kwargs)
 
 
 class TextAttributeDefinitionList(generics.ListCreateAPIView):
@@ -68,9 +70,10 @@ class TextAttributeDefinitionList(generics.ListCreateAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
-    def create(self, request, *args, **kwargs):
-        request.data['resource_group'] = self.kwargs.get('pk', None)
-        return super(TextAttributeDefinitionList, self).create(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('pk', None)
+        return super(TextAttributeDefinitionList, self).get_serializer(*args, **kwargs)
 
 
 class TextAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
@@ -82,6 +85,7 @@ class TextAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourceGroupTextAttributeDefinition.objects.filter(resource_group_id=resource_group_id)
 
-    def update(self, request, *args, **kwargs):
-        request.data['resource_group'] = self.kwargs.get('pk', None)
-        return super(TextAttributeDefinitionDetails, self).update(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('pk', None)
+        return super(TextAttributeDefinitionDetails, self).get_serializer(*args, **kwargs)
