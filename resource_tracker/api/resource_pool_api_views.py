@@ -36,9 +36,10 @@ class PoolAttributeDefinitionList(generics.ListCreateAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourcePoolAttributeDefinition.objects.filter(resource_pool_id=resource_group_id)
 
-    def create(self, request, *args, **kwargs):
-        request.data['resource_pool'] = self.kwargs.get('pk', None)
-        return super(PoolAttributeDefinitionList, self).create(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_pool'] = self.kwargs.get('pk', None)
+        return super(PoolAttributeDefinitionList, self).get_serializer(*args, **kwargs)
 
 
 class PoolAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
@@ -50,6 +51,7 @@ class PoolAttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
         resource_group_id = self.kwargs.get("pk")
         return ResourcePoolAttributeDefinition.objects.filter(resource_pool_id=resource_group_id)
 
-    def update(self, request, *args, **kwargs):
-        request.data['resource_pool'] = self.kwargs.get('pk', None)
-        return super(PoolAttributeDefinitionDetails, self).update(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_pool'] = self.kwargs.get('pk', None)
+        return super(PoolAttributeDefinitionDetails, self).get_serializer(*args, **kwargs)

@@ -1,8 +1,8 @@
 from guardian.shortcuts import get_objects_for_user
+from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.response import Response
 
 from service_catalog.models import Service, OperationType
 from service_catalog.api.serializers import OperationSerializer, AdminOperationSerializer
@@ -10,6 +10,11 @@ from service_catalog.api.serializers import OperationSerializer, AdminOperationS
 
 class OperationListCreate(ListCreateAPIView):
     serializer_class = OperationSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['service'] = self.kwargs.get('service_id', None)
+        return super(OperationListCreate, self).get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         service_id = self.kwargs.get('service_id', None)
@@ -20,10 +25,6 @@ class OperationListCreate(ListCreateAPIView):
         if self.request.method == "POST":
             return [IsAdminUser()]
         return [IsAuthenticated()]
-
-    def create(self, request, *args, **kwargs):
-        request.data['service'] = self.kwargs.get('service_id', None)
-        return super(OperationListCreate, self).create(request, *args, **kwargs)
 
 
 class OperationDetails(RetrieveUpdateDestroyAPIView):
