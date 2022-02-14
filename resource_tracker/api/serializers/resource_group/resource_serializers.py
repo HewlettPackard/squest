@@ -27,7 +27,7 @@ class ResourceSerializer(serializers.ModelSerializer):
                                                                instance.service_catalog_instance)
         instance.save()
 
-        attributes = validated_data.get('attributes')
+        attributes = validated_data.get('attributes', list())
         for attribute in attributes:
             attribute_item_name = attribute["attribute_type"].get('name', None)
             try:
@@ -41,7 +41,7 @@ class ResourceSerializer(serializers.ModelSerializer):
                     attribute_item_name: f'Not a valid attribute of the resource group {instance.resource_group.name}'
                 })
 
-        text_attributes = validated_data.get('text_attributes')
+        text_attributes = validated_data.get('text_attributes', list())
         for text_attribute in text_attributes:
             text_attribute_item_name = text_attribute["text_attribute_type"].get('name', None)
             try:

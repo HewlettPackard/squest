@@ -65,7 +65,7 @@ class TestResourceUpdate(BaseTestAPI):
         self.assertEqual("new-description-2", self.resource_to_update.text_attributes
                          .get(text_attribute_type=self.rg_physical_servers_text).value)
 
-    def test_update_resource_missing_attribute(self):
+    def test_update_resource_missing_an_attribute(self):
         """
         Current behavior is the same as a "patch". If an attribute is missing we keep the previous value
         """
