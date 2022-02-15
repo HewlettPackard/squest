@@ -154,6 +154,7 @@ def team_details(request, team_id):
         'object': team,
         'group_id': team_id,
         'object_id': team_id,
+        'parent_id': team_id,
         'users_table': users_table,
         'roles_table': roles_table
     }
@@ -162,7 +163,7 @@ def team_details(request, team_id):
 
 @login_required
 @permission_required_or_403('profiles.change_team', (Team, 'id', 'team_id'))
-def create_team_binding(request, team_id):
+def team_role_binding_create(request, team_id):
     team = get_object_or_404(Team, id=team_id)
     content_types = list()
     for role in Role.objects.all():
@@ -180,7 +181,7 @@ def create_team_binding(request, team_id):
             role = Role.objects.get(id=form.cleaned_data.get('role'))
             object_id = form.cleaned_data.get('object')
             TeamRoleBinding.objects.create(team=team, content_type=content_type, role=role, object_id=object_id)
-            return redirect("profiles:team_details", team_id=team_id)
+            return redirect(reverse("profiles:team_details", args=[team_id]) + "#roles")
     breadcrumbs = [
         {'text': 'Teams', 'url': reverse('profiles:team_list')},
         {'text': team.name, 'url': reverse('profiles:team_details', args=[team_id])},
@@ -188,6 +189,31 @@ def create_team_binding(request, team_id):
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs}
     return render(request, 'profiles/role/create-team-role-binding-for-object-form.html', context)
+
+
+@login_required
+@permission_required_or_403('profiles.change_team', (Team, 'id', 'team_id'))
+def team_role_binding_delete(request, team_id, team_role_binding_id):
+    team = get_object_or_404(Team, id=team_id)
+    team_role_binding = get_object_or_404(TeamRoleBinding, id=team_role_binding_id)
+    if request.method == 'POST':
+        team_role_binding.delete()
+        return redirect(reverse("profiles:team_details", args=[team_id]) + "#roles")
+    context = {
+        'breadcrumbs': [
+            {'text': "Teams", 'url': reverse('profiles:team_list')},
+            {'text': team.name, 'url': reverse('profiles:team_details', args=[team.id])},
+        ],
+        'confirm_text': mark_safe(f"Confirm deletion of <strong>{team_role_binding.role.name}</strong> role for the "
+                                  f"team <strong>{team.name}</strong> on the {team_role_binding.content_type.name} "
+                                  f"<strong>{team_role_binding.content_object}</strong>?"),
+        'action_url': reverse('profiles:team_role_binding_delete',
+                              kwargs={'team_id': team_id, 'team_role_binding_id': team_role_binding_id}),
+        'button_text': 'Delete',
+        'object_name': "team_role_binding"
+    }
+    return render(request, 'generics/confirm-delete-template.html', context=context)
+
 
 
 @login_required

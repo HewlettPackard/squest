@@ -40,7 +40,7 @@
                             </div>
                             <div class="tab-pane" id="roles">
                                 <a class="btn btn-success float-sm-right{% if "change_team" not in object_perms %} disabled{% endif %}"
-                                href="{% url "profiles:create_team_role_binding" object.id %}">
+                                href="{% url "profiles:team_role_binding_create" object.id %}">
                                     <i class="fas fa-plus"></i> Add
                                 </a>
                                 {% render_table roles_table %}
@@ -51,4 +51,7 @@
             </section>
         </div>
     </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
 {% endblock %}

@@ -9,7 +9,6 @@ from .views.user_by_group_list_view import UserByGroupListView
 from .views.user_list_view import UserListView
 
 app_name = 'profiles'
-
 urlpatterns = [
     # common URLs
     path('profile/', views.profile, name='profile'),
@@ -64,7 +63,9 @@ urlpatterns = [
     path('team/<int:team_id>/', views.team_details, name='team_details'),
     path('team/<int:team_id>/edit/', views.team_edit, name='team_edit'),
     path('team/<int:team_id>/delete/', views.team_delete, name='team_delete'),
-    path('team/<int:team_id>/details/create-role/', views.create_team_binding, name='create_team_role_binding'),
+    path('team/<int:team_id>/role/create/', views.team_role_binding_create, name='team_role_binding_create'),
+    path('team/<int:team_id>/role/<int:team_role_binding_id>/delete/', views.team_role_binding_delete,
+         name='team_role_binding_delete'),
 
     # User Role Binding URLs
     path('role/ajax/get-users-with-role/', views.ajax_get_users_with_role, name='get_users_with_role'),
@@ -82,3 +83,4 @@ urlpatterns = [
          name='quota_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
