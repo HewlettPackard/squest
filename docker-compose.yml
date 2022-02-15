@@ -26,6 +26,16 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  redis-cache:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    command:
+    - sh
+    - -c
+    - redis-server --requirepass $$REDIS_PASSWORD  ## $$ because of docker-compose
+    env_file: docker/environment_variables/redis.env
+
   django: &django
     image: quay.io/hewlettpackardenterprise/squest:latest
 #    image: squest:latest
@@ -41,6 +51,7 @@ services:
       - rabbitmq
       - celery-worker
       - celery-beat
+      - redis-cache
 
   nginx:
     command: nginx -c /etc/nginx/squest/nginx.conf
