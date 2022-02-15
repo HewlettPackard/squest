@@ -33,7 +33,7 @@ services:
     command:
     - sh
     - -c
-    - redis-server --requirepass $$REDIS_PASSWORD  ## $$ because of docker-compose
+    - redis-server --maxmemory-policy allkeys-lru --requirepass $$REDIS_PASSWORD  ## $$ because of docker-compose
     env_file: docker/environment_variables/redis.env
 
   django: &django
