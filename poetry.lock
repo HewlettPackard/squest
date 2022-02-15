@@ -270,6 +270,17 @@ Django = ">=2.2"
 python-ldap = ">=3.1"
 
 [[package]]
+name = "django-cachalot"
+version = "2.5.0"
+description = "Caches your Django ORM queries and automatically invalidates them."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=2.2,<4.1"
+
+[[package]]
 name = "django-celery-beat"
 version = "2.2.1"
 description = "Database-backed Periodic Tasks."
@@ -1054,7 +1065,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "98109de87e6778b27872d3fbaeff70f2b73db8ec02df46b0bec60bafdeb82074"
+content-hash = "0734e06873023375f5b08bfc1fa222461da04b906cde1f30da576756f0fb6ac3"
 
 [metadata.files]
 amqp = [
@@ -1175,6 +1186,10 @@ django = [
 django-auth-ldap = [
     {file = "django-auth-ldap-4.0.0.tar.gz", hash = "sha256:276f79e624ce083ce13f161387f65ff1c0efe83ef8a42f2b9830d43317b15239"},
     {file = "django_auth_ldap-4.0.0-py3-none-any.whl", hash = "sha256:94119c94981809124d3dc4bed974f71c7a980666896df626f556a88a5fe0b59c"},
+]
+django-cachalot = [
+    {file = "django-cachalot-2.5.0.tar.gz", hash = "sha256:1682d902842998236f8579541db491bb82f68510587f74e417455667f564c891"},
+    {file = "django_cachalot-2.5.0-py3-none-any.whl", hash = "sha256:0fb35d1dba1efb6198c1fdbb6786a4d1bf7e99965ac24a78dab2bc76f67bc6fd"},
 ]
 django-celery-beat = [
     {file = "django-celery-beat-2.2.1.tar.gz", hash = "sha256:97ae5eb309541551bdb07bf60cc57cadacf42a74287560ced2d2c06298620234"},
