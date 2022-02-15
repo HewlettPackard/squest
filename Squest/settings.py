@@ -34,6 +34,9 @@ BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
 BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
 DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
 DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
+REDIS_CACHE_PASSWORD = os.environ.get('REDIS_PASSWORD', 'redis_secret_password')
+REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
+REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
 
 # -------------------------------
 # SQUEST CONFIG
@@ -84,6 +87,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,6 +95,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'Squest.urls'
@@ -422,6 +427,26 @@ if TESTING:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': ':memory:',
+        }
+    }
+
+# -----------------------------------------
+# Cache https://github.com/jazzband/django-redis
+# -----------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_CACHE_HOST}:{REDIS_CACHE_PORT}/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": REDIS_CACHE_PASSWORD
+        }
+    }
+}
+if TESTING:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         }
     }
 
