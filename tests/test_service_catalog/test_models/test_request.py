@@ -298,3 +298,30 @@ class TestRequest(BaseTestRequest):
             self.test_request.instance.state = state
             self.test_request.instance.save()
             self.assertTrue(can_proceed(self.test_request.process))
+
+    def test_get_full_survey(self):
+        fields_in_survey = ['text_variable', 'multiplechoice_variable', 'multiselect_var', 'textarea_var',
+                            'password_var', 'float_var']
+        fields_not_in_survey = ['integer_var']
+        self.test_request.admin_fill_in_survey = {
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': [],
+            'textarea_var': "",
+            'password_var': "password_val",
+            'float_var': 0,
+            'integer_var': None
+        }
+        for field_name in fields_in_survey:
+            self.assertIn(field_name, self.test_request.full_survey.keys())
+        for field_name in fields_not_in_survey:
+            self.assertNotIn(field_name, self.test_request.full_survey.keys())
+        self.test_request.admin_fill_in_survey['integer_var'] = 1
+        self.test_request.fill_in_survey['text_variable'] = None
+        fields_not_in_survey.remove('integer_var')
+        fields_in_survey.append('integer_var')
+        fields_in_survey.remove('text_variable')
+        fields_not_in_survey.append('text_variable')
+        for field_name in fields_in_survey:
+            self.assertIn(field_name, self.test_request.full_survey.keys())
+        for field_name in fields_not_in_survey:
+            self.assertNotIn(field_name, self.test_request.full_survey.keys())
