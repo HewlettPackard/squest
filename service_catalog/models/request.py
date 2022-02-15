@@ -46,7 +46,7 @@ class Request(RoleManager):
 
     @property
     def full_survey(self):
-        return {**self.fill_in_survey, **self.admin_fill_in_survey}
+        return {k: v for k, v in {**self.fill_in_survey, **self.admin_fill_in_survey}.items() if v is not None}
 
     def set_fill_in_survey(self, survey, enabled_fields=None):
         self.fill_in_survey = {}
@@ -141,11 +141,11 @@ class Request(RoleManager):
             self.has_failed(reason="requests.exceptions.ConnectionError")
         except ExceptionServiceCatalog.JobTemplateNotFound as e:
             self.has_failed(reason=e)
-
-        if tower_job_id is not None:
+        except Exception as e:
+            self.has_failed(reason=e)
+        if isinstance(tower_job_id, int):
             self.tower_job_id = tower_job_id
             logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {tower_job_id}")
-
             # create a periodic task to check the status until job is complete
             schedule, created = IntervalSchedule.objects.get_or_create(every=10,
                                                                        period=IntervalSchedule.SECONDS)
