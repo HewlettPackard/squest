@@ -127,10 +127,10 @@
                                         <i class="fas fa-plus"></i> Subscribe to a particular service
                                     </a>
                                     {% if request.user.profile.subscribed_services_notification.count == 0 %}
-                                            <div class="callout callout-info">
-                                                <h5><i class="fas fa-info"></i> Note:</h5>
-                                                You haven't subscribed to any service yet. No notification will be sent.
-                                            </div>
+                                        <div class="callout callout-info">
+                                            <h5><i class="fas fa-info"></i> Note:</h5>
+                                            You haven't subscribed to any service yet. No notification will be sent.
+                                        </div>
                                     {%  else %}
                                         <table class="table">
                                             <thead>
@@ -182,21 +182,14 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block custom_script %}
     <script>
         $('#tokenDialog').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             var recipient = button.data('token')
             $('#tokenKey').text(recipient)
         });
-        // method used to make the active tab placed in the URL as parameter
-        $(function(){
-            var hash = window.location.hash;
-            hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show');
-            $('ul.nav.nav-pills a').click(function (e) {
-                $(this).tab('show');
-                var scrollmem = $('body').scrollTop();
-                window.location.hash = this.hash;
-            });
-        });
+        add_tab_management();
     </script>
 {% endblock %}

@@ -10,6 +10,16 @@ $(document).ready(function () {
     $('.ajax_sync_job_template').click(sync_job_template);
 });
 
+function add_tab_management() {
+    var hash = window.location.hash;
+    hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show');
+    $('ul.nav.nav-pills a').click(function (e) {
+        $(this).tab('show');
+        var scrollmem = $('body').scrollTop();
+        window.location.hash = this.hash;
+    });
+}
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
