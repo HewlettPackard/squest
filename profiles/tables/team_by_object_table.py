@@ -3,7 +3,7 @@ from profiles.models.team import Team
 
 
 class TeamsByObjectTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/user_by_group_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='custom_columns/team_by_group_actions.html', orderable=False)
     role = TemplateColumn(template_name='custom_columns/role_object.html', orderable=False)
 
     class Meta:

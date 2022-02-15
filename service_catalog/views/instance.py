@@ -26,12 +26,14 @@ def instance_edit(request, instance_id):
     if form.is_valid():
         form.save()
         return redirect('service_catalog:instance_details', instance.id)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{instance.name} ({instance.id})",
-         'url': reverse('service_catalog:instance_details', args=[instance_id])},
-    ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'object_name': 'instance'}
+    context = {
+        'form': form,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{instance.name} ({instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        ],
+        'object_name': 'instance'}
     return render(request, 'generics/edit-sensitive-object.html', context)
 
 
@@ -44,14 +46,13 @@ def instance_delete(request, instance_id):
     args = {
         "instance_id": instance_id,
     }
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{instance.name} ({instance.id})",
-         'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': 'Delete', 'url': ''}
-    ]
     context = {
-        'breadcrumbs': breadcrumbs,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{instance.name} ({instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': 'Delete', 'url': ''}
+        ],
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{instance.name}</strong>?"),
         'action_url': reverse('service_catalog:instance_delete', kwargs=args),
         'button_text': 'Delete',
@@ -86,14 +87,20 @@ def instance_request_new_operation(request, instance_id, operation_id):
             return redirect('service_catalog:request_list')
     else:
         form = OperationRequestForm(request.user, **parameters)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{instance.name} ({instance.id})",
-         'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': f"Operation - {operation.name}", 'url': ''}
-    ]
-    context = {'form': form, 'operation': operation, 'instance': instance, 'breadcrumbs': breadcrumbs,
-               'icon_button': "fas fa-shopping-cart", 'text_button': "Request the operation", 'color_button': "success"}
+    context = {
+        'form': form,
+        'operation': operation,
+        'instance': instance,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{instance.name} ({instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': f"Operation - {operation.name}", 'url': ''}
+        ],
+        'icon_button': "fas fa-shopping-cart",
+        'text_button': "Request the operation",
+        'color_button': "success"
+    }
     return render(request, 'generics/generic_form.html', context)
 
 
@@ -118,11 +125,6 @@ def instance_archive(request, instance_id):
 @permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
 def instance_new_support(request, instance_id):
     target_instance = get_object_or_404(Instance, id=instance_id)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{target_instance.name} ({target_instance.id})",
-         'url': reverse('service_catalog:instance_details', args=[instance_id])},
-    ]
     parameters = {
         'instance_id': instance_id
     }
@@ -130,11 +132,20 @@ def instance_new_support(request, instance_id):
         form = SupportRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
-            return redirect('service_catalog:instance_details', target_instance.id)
+            return redirect(reverse('service_catalog:instance_details', args=[target_instance.id]) + "#support")
     else:
         form = SupportRequestForm(request.user, **parameters)
-    context = {'form': form, 'instance': target_instance, 'breadcrumbs': breadcrumbs, 'color_button': 'success',
-               'text_button': 'Open new support', 'icon_button': 'fas fa-plus'}
+    context = {
+        'form': form,
+        'instance': target_instance,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{target_instance.name} ({target_instance.id})", 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+        ],
+        'color_button': 'success',
+        'text_button': 'Open new support',
+        'icon_button': 'fas fa-plus'
+    }
     return render(request, 'generics/generic_form.html', context)
 
 
@@ -144,13 +155,6 @@ def instance_support_details(request, instance_id, support_id):
     instance = get_object_or_404(Instance, id=instance_id)
     support = get_object_or_404(Support, id=support_id)
     messages = SupportMessage.objects.filter(support=support)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{instance.name} ({instance.id})",
-         'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': 'Support', 'url': ""},
-        {'text': support.title, 'url': ""},
-    ]
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, sender=request.user, support=support)
         if "btn_close" in request.POST:
@@ -174,7 +178,13 @@ def instance_support_details(request, instance_id, support_id):
         "instance": instance,
         "messages": messages,
         "support": support,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{instance.name} ({instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': 'Support', 'url': ""},
+            {'text': support.title, 'url': ""},
+        ]
     }
     return render(request, "service_catalog/common/instance-support-details.html", context)
 
@@ -194,10 +204,6 @@ def instance_details(request, instance_id):
 
     users_table = UserByObjectTable(instance.get_all_users())
     teams_table = TeamsByObjectTable(instance.get_all_teams())
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': f"{instance.name} ({instance.id})", 'url': ""},
-    ]
     context = {'instance': instance,
                'operations_table': operations_table,
                'requests_table': requests_table,
@@ -210,7 +216,10 @@ def instance_details(request, instance_id):
                'object': instance,
                'object_name': 'instance',
                'object_id': instance.id,
-               'breadcrumbs': breadcrumbs,
+               'breadcrumbs': [
+                   {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+                   {'text': f"{instance.name} ({instance.id})", 'url': ""},
+               ],
                }
     return render(request, 'service_catalog/common/instance-details.html', context=context)
 
@@ -238,14 +247,17 @@ def user_in_instance_update(request, instance_id):
                     instance.add_user_in_role(user, role.name)
                 for user in to_remove:
                     instance.remove_user_in_role(user, role.name)
-                return redirect("service_catalog:instance_details", instance_id=instance_id)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': "Users", 'url': ""}
-    ]
-    context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Instance).id, 'object_id': instance.id,
-               'breadcrumbs': breadcrumbs}
+                return redirect(reverse("service_catalog:instance_details", args=[instance_id]) + "#users")
+    context = {
+        'form': form,
+        'content_type_id': ContentType.objects.get_for_model(Instance).id,
+        'object_id': instance.id,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': "Users", 'url': ""}
+        ]
+    }
     return render(request, 'profiles/role/user-role-for-object-form.html', context)
 
 
@@ -255,22 +267,22 @@ def user_in_instance_remove(request, instance_id, user_id):
     instance = get_object_or_404(Instance, id=instance_id)
     user = User.objects.get(id=user_id)
     if user == instance.spoc:
-        return redirect('service_catalog:instance_details', instance_id=instance_id)
+        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#users")
     if request.method == 'POST':
         instance.remove_user_in_role(user)
-        return redirect('service_catalog:instance_details', instance_id=instance_id)
+        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#users")
     args = {
         "instance_id": instance_id,
         "user_id": user_id
     }
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': "Users", 'url': ""}
-    ]
     context = {
-        'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm to remove the user <strong>{user.username}</strong> from {instance}?"),
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': "Users", 'url': ""}
+        ],
+        'confirm_text': mark_safe(f"Confirm to remove all roles of the user <strong>{user.username}</strong> from "
+                                  f"{instance}?"),
         'action_url': reverse('service_catalog:user_in_instance_remove', kwargs=args),
         'button_text': 'Remove'
     }
@@ -285,14 +297,17 @@ def team_in_instance_update(request, instance_id):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            return redirect("service_catalog:instance_details", instance_id=instance_id)
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': "Teams", 'url': ""}
-    ]
-    context = {'form': form, 'content_type_id': ContentType.objects.get_for_model(Instance).id, 'object_id': instance.id,
-               'breadcrumbs': breadcrumbs}
+            return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#teams")
+    context = {
+        'form': form,
+        'content_type_id': ContentType.objects.get_for_model(Instance).id,
+        'object_id': instance.id,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': "Teams", 'url': ""}
+        ]
+    }
     return render(request, 'profiles/role/team-role-for-object-form.html', context)
 
 
@@ -301,23 +316,21 @@ def team_in_instance_update(request, instance_id):
 def team_in_instance_remove(request, instance_id, team_id):
     instance = get_object_or_404(Instance, id=instance_id)
     team = Team.objects.get(id=team_id)
-    if team == instance.spoc:
-        return redirect('service_catalog:instance_details', instance_id=instance_id)
     if request.method == 'POST':
         instance.remove_team_in_role(team)
-        return redirect('service_catalog:instance_details', instance_id=instance_id)
+        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#teams")
     args = {
         "instance_id": instance_id,
         "team_id": team_id
     }
-    breadcrumbs = [
-        {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-        {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        {'text': "Teams", 'url': ""}
-    ]
     context = {
-        'breadcrumbs': breadcrumbs,
-        'confirm_text': mark_safe(f"Confirm to remove the team <strong>{team.teamname}</strong> from {instance}?"),
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': "Teams", 'url': ""}
+        ],
+        'confirm_text': mark_safe(f"Confirm to remove all roles of the team <strong>{team.name}</strong> on "
+                                  f"{instance}?"),
         'action_url': reverse('service_catalog:team_in_instance_remove', kwargs=args),
         'button_text': 'Remove'
     }
