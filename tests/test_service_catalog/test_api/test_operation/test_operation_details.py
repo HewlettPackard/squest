@@ -19,7 +19,6 @@ class TestApiOperationDetails(BaseTestRequest):
             'name': self.create_operation_test.name,
             'description': self.create_operation_test.description,
             'type': self.create_operation_test.type,
-            'enabled_survey_fields': self.create_operation_test.enabled_survey_fields,
             'auto_accept': self.create_operation_test.auto_accept,
             'auto_process': self.create_operation_test.auto_process,
             'process_timeout_second': self.create_operation_test.process_timeout_second,

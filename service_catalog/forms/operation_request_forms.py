@@ -28,7 +28,7 @@ class OperationRequestForm(forms.Form):
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
-                                                       operation_survey=self.operation.enabled_survey_fields)
+                                                       operation_survey=self.operation.tower_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey, form_title="2. Operation fields"))
         self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 

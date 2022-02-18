@@ -78,13 +78,10 @@ class TestTowerServer(BaseTest):
         updated_template = JobTemplate.objects.get(id=self.job_template_test.id,
                                                    tower_server=self.tower_server_test)
         self.assertDictEqual(self.new_survey, updated_template.survey)
-        # check that the operation enabled_survey_fields has been updated
-        expected_dict = {
-            'updated_text_variable': True,
-            'text_variable': True
-        }
+        # check that the operation tower_survey_fields has been updated
         updated_operation = Operation.objects.get(id=self.create_operation_test.id)
-        self.assertDictEqual(expected_dict, updated_operation.enabled_survey_fields)
+        for field in updated_template.survey["spec"]:
+            self.assertTrue(updated_operation.tower_survey_fields.filter(name=field["variable"], enabled=True).exists())
 
     @patch('service_catalog.models.tower_server.TowerServer._update_job_template_from_tower')
     @patch('towerlib.towerlib.Tower.get_job_template_by_id')

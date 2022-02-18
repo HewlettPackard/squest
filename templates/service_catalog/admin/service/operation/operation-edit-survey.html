@@ -16,30 +16,24 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
+                <div class="callout callout-info">
+                    <h5>Operation survey</h5>
+                    <p><strong>Enabled:</strong> fields are displayed into the end user survey</p>
+                    <p><strong>Default:</strong> can be a string or a jinja template string. E.g: <code>&#123;&#123; user_spec.key &#125;&#125;</code></p>
+                </div>
                 <div class="card">
                     <div class="card-body">
-                        {% if form.errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for field in form %}
-                                    {% if field.errors %}
-                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                         <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
-                            <fieldset>
-                             <legend>User fields:</legend>
-                            {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <div class="custom-control custom-switch">
-                                        {{ field }}
-                                        <label for="{{field.name}}" class="custom-control-label" for="customSwitch1">{{ field.label }}</label>
-                                    </div>
-                                </div>
+                            {{ formset.management_form }}
+                            {% for form in formset %}
+                                <fieldset>
+                                    <legend class="text-info"><strong>{{  form.instance.name }}</strong></legend>
+                                    {{ form.as_p }}
+                                </fieldset>
+                                {% if not forloop.last %}
+                                    <hr class="mt-2 mb-3"/>
+                                {%  endif %}
                             {% endfor %}
-                            </fieldset>
-
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <!-- validate button -->
@@ -51,8 +45,7 @@
                             </div>
                         </form>
                     </div>
-
-                </div><!-- end container fluid -->
+                </div>
             </div>
         </div>
     </div>

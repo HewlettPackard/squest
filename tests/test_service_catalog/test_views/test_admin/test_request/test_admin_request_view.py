@@ -331,7 +331,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
     def test_admin_request_process_new_instance_full_survey_enabled(self):
-        self.test_request.operation.enabled_survey_fields = {
+        enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': True,
             'multiselect_var': True,
@@ -340,6 +340,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'float_var': True,
             'integer_var': True
         }
+        self.test_request.operation.switch_tower_fields_enable_from_dict(enabled_survey_fields)
         full_survey = {
             'text_variable': 'my_var',
             'multiplechoice_variable': "choice1",
@@ -359,7 +360,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
     def test_admin_request_process_new_instance_full_survey_disabled(self):
-        self.test_request.operation.enabled_survey_fields = {
+        enabled_survey_fields = {
             'text_variable': False,
             'multiplechoice_variable': False,
             'multiselect_var': False,
@@ -368,6 +369,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'float_var': False,
             'integer_var': False
         }
+        self.test_request.operation.switch_tower_fields_enable_from_dict(enabled_survey_fields)
         full_survey = {
             'text_variable': 'my_var',
             'multiplechoice_variable': "choice1",
@@ -597,5 +599,3 @@ class AdminRequestViewTest(BaseTestRequest):
         if status_code == 200:
             response = self.client.post(url, data=data)
             self.assertEqual(response.status_code, 302)
-
-

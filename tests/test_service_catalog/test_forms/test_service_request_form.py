@@ -31,4 +31,4 @@ class TestServiceRequestForm(BaseTest):
 
         self.assertEqual(expected_result,
                           FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
-                                                         operation_survey=self.create_operation_test.enabled_survey_fields))
+                                                         operation_survey=self.create_operation_test.tower_survey_fields))

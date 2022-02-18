@@ -24,8 +24,9 @@ class AcceptRequestForm(forms.Form):
         # load user provided fields and add admin field if exist
         if "spec" in self.target_request.operation.job_template.survey:
             self.fields.update(get_fields_from_survey(self.target_request.operation.job_template.survey,
-                                                      self.target_request.operation.enabled_survey_fields))
-            prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey)
+                                                      self.target_request.operation.tower_survey_fields))
+            prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey,
+                                          self.target_request.admin_fill_in_survey)
 
     def save(self):
         user_provided_survey_fields = dict()
@@ -34,7 +35,7 @@ class AcceptRequestForm(forms.Form):
             if value != '' and field_key not in ['instance_name', 'billing_group_id']:
                 user_provided_survey_fields[field_key] = value
         # update the request
-        self.target_request.set_fill_in_survey(user_provided_survey_fields)
+        self.target_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
         self.target_request.accept()
         self.target_request.save()
         # reset the instance state if it was failed (in case of resetting the state)

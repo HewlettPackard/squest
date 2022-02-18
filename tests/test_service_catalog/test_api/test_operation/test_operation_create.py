@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models import OperationType
+from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
 
@@ -15,15 +16,6 @@ class TestApiOperationCreate(BaseTestRequest):
             'name': "My new name",
             'description': "My new description",
             'type': OperationType.UPDATE,
-            'enabled_survey_fields': {
-                'float_var': True,
-                'integer_var': True,
-                'multiplechoice_variable': True,
-                'multiselect_var': True,
-                'password_var': True,
-                'text_variable': True,
-                'textarea_var': True
-            },
             'auto_accept': False,
             'auto_process': False,
             'process_timeout_second': 60,
@@ -32,10 +24,14 @@ class TestApiOperationCreate(BaseTestRequest):
         self.get_operation_details_url = reverse('api_operation_list_create', kwargs=self.kwargs)
 
     def test_admin_post_operation(self):
+        number_tower_survey_field_before = TowerSurveyField.objects.all().count()
         response = self.client.post(self.get_operation_details_url, data=self.post_data,
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         check_data_in_dict(self, [self.post_data], [response.data])
+        number_field_in_survey = len(self.job_template_test.survey["spec"])
+        self.assertEqual(number_tower_survey_field_before + number_field_in_survey,
+                         TowerSurveyField.objects.all().count())
 
     def test_service_cannot_have_several_create_operation(self):
         self.post_data['type'] = OperationType.CREATE
