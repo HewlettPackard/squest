@@ -3,7 +3,7 @@ from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 class TestTowerSurveyField(BaseTestRequest):
 
-    def test_fillin_survey_updated(self):
+    def test_fill_in_survey_updated(self):
         admin_fill_in_survey = {
             'multiplechoice_variable': "choice1",
             'multiselect_var': [],

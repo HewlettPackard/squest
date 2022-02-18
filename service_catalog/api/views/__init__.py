@@ -6,3 +6,4 @@ from service_catalog.api.views.request_api_views import *
 from service_catalog.api.views.request_state_machine_api_view import *
 from service_catalog.api.views.service_api_views import *
 from service_catalog.api.views.tower_server_api_views import *
+from service_catalog.api.views.operation_survey_api_views import *

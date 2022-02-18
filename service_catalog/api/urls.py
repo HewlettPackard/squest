@@ -34,6 +34,8 @@ urlpatterns = [
     path('service/<int:pk>/', ServiceDetails.as_view(), name='api_service_details'),
     path('service/<int:service_id>/operation/', OperationListCreate.as_view(), name='api_operation_list_create'),
     path('service/<int:service_id>/operation/<int:pk>/', OperationDetails.as_view(), name='api_operation_details'),
+    path('service/<int:service_id>/operation/<int:pk>/survey/', OperationSurveyAPI.as_view(),
+         name='api_operation_survey_list_update'),
     path('service/<int:pk>/request/', ServiceRequestCreate.as_view(), name='api_service_request_create'),
     path('tower/', TowerServerList.as_view(), name='api_tower_server_list_create'),
     path('tower/<int:pk>/', TowerServerDetails.as_view(), name='api_tower_server_details'),
