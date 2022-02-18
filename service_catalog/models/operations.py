@@ -1,5 +1,3 @@
-import copy
-
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -20,7 +18,6 @@ class Operation(models.Model):
         default=OperationType.CREATE,
         verbose_name="Operation type"
     )
-    enabled_survey_fields = models.JSONField(default=dict)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
                                 related_query_name="operation")
     job_template = models.ForeignKey(JobTemplate, null=True, on_delete=models.SET_NULL)
@@ -36,31 +33,35 @@ class Operation(models.Model):
                         if self.service.operations.filter(type=OperationType.CREATE).first().id != self.id:
                             raise ValidationError({'service': _("A service can have only one 'CREATE' operation")})
 
-    def update_survey(self, save=True):
-        new_end_user_survey = dict()
-        old_enabled_survey_fields = copy.copy(self.enabled_survey_fields)
+    def update_survey(self):
         if self.job_template is not None:
-            for survey_field in self.job_template.survey.get("spec", []):
-                field_id = survey_field["variable"]
-                if field_id not in old_enabled_survey_fields:
-                    new_end_user_survey[field_id] = True
-                else:
-                    new_end_user_survey[field_id] = old_enabled_survey_fields[field_id]
-        self.enabled_survey_fields = new_end_user_survey
-        if save:
-            self.save()
+            spec_list = self.job_template.survey.get("spec", [])
+            list_of_field_to_have = [survey_spec["variable"] for survey_spec in spec_list]
+            list_current_field = [tower_field.name for tower_field in self.tower_survey_fields.all()]
+            to_add = list(set(list_of_field_to_have) - set(list_current_field))
+            to_remove = list(set(list_current_field) - set(list_of_field_to_have))
+
+            from service_catalog.models.tower_survey_field import TowerSurveyField
+            for field_name in to_add:
+                TowerSurveyField.objects.create(name=field_name, enabled=True, operation=self)
+            for field_name in to_remove:
+                TowerSurveyField.objects.get(name=field_name, operation=self).delete()
+
+    def switch_tower_fields_enable_from_dict(self, dict_of_field):
+        for key, enabled in dict_of_field.items():
+            field = self.tower_survey_fields.get(name=key)
+            field.enabled = enabled
+            field.save()
 
     @classmethod
     def add_job_template_survey_as_default_survey(cls, sender, instance, created, *args, **kwargs):
+        from service_catalog.models.tower_survey_field import TowerSurveyField
         if created:
             # copy the default survey and add a flag 'is_visible'
             default_survey = instance.job_template.survey
-            end_user_survey = dict()
             if "spec" in default_survey:
                 for survey_field in default_survey["spec"]:
-                    end_user_survey[survey_field["variable"]] = True
-            instance.enabled_survey_fields = end_user_survey
-            instance.save()
+                    TowerSurveyField.objects.create(name=survey_field["variable"], enabled=True, operation=instance)
 
     @classmethod
     def update_survey_after_job_template_update(cls, job_template):
@@ -75,13 +76,11 @@ post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Op
 
 @receiver(pre_save, sender=Operation)
 def on_change(sender, instance: Operation, **kwargs):
+    # disable the service if no more job template linked to a create operation
     if instance.job_template is None and instance.type == OperationType.CREATE:
         instance.service.enabled = False
         instance.service.save()
     if instance.id is not None:
         previous = Operation.objects.get(id=instance.id)
         if previous.job_template != instance.job_template:
-            instance.update_survey(save=False)
-        if previous.enabled_survey_fields != instance.enabled_survey_fields:
-            for request in instance.request_set.all():
-                request.set_fill_in_survey(request.full_survey, instance.enabled_survey_fields)
+            instance.update_survey()

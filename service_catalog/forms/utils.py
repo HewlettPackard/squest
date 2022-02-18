@@ -1,15 +1,18 @@
 from django import forms
 
 
-def _get_field_group(field_name, enable_fields):
-    offset = 0
-    for is_enable_field in enable_fields.values():
-        if is_enable_field:
-            offset = 1
-            break
-    if enable_fields[field_name]:
+def _get_field_group(field_name, operation_survey):
+    all_fields_for_admin = operation_survey.filter(enabled=False).count() == operation_survey.all().count()
+    if all_fields_for_admin:
+        return "2. Admin fields"
+    all_fields_for_user = operation_survey.filter(enabled=True).count() == operation_survey.all().count()
+    if all_fields_for_user:
         return "2. User fields"
-    return f"{2 + offset}. Admin fields"
+
+    if operation_survey.get(name=field_name).enabled:
+        return "3. User fields"
+    else:
+        return "2. Admin fields"
 
 
 def get_choices_from_string(string_with_anti_slash_n):
@@ -20,7 +23,7 @@ def get_choices_from_string(string_with_anti_slash_n):
     return returned_list
 
 
-def get_fields_from_survey(survey, enable_fields=None, form_title="2. Service fields"):
+def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Service fields"):
     fields = {}
     for survey_field in survey["spec"]:
         if survey_field["type"] == "text":
@@ -91,18 +94,22 @@ def get_fields_from_survey(survey, enable_fields=None, form_title="2. Service fi
                            min_value=None if not survey_field['min'] else float(survey_field['min']),
                            max_value=None if not survey_field['max'] else float(survey_field['max']),
                            widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
-        if enable_fields:
+        if tower_survey_fields:
             fields[survey_field['variable']].group = _get_field_group(field_name=survey_field['variable'],
-                                                                      enable_fields=enable_fields)
+                                                                      operation_survey=tower_survey_fields)
     if fields:
         fields[next(iter(fields))].separator = True
         fields[next(iter(fields))].form_title = form_title
     return fields
 
 
-def prefill_form_with_user_values(fields: dict, fill_in_survey: dict):
-    skipping_fields = ['instance_name', 'billing_group_id']
+def prefill_form_with_user_values(fields: dict, fill_in_survey: dict, admin_fill_in_survey: dict):
+    skipped_fields = ['instance_name', 'billing_group_id']
     for field, value in fill_in_survey.items():
-        if field not in skipping_fields:
+        if field not in skipped_fields:
+            fields.get(field).initial = value
+            fields.get(field).default = value
+    for field, value in admin_fill_in_survey.items():
+        if field not in skipped_fields:
             fields.get(field).initial = value
             fields.get(field).default = value

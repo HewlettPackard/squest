@@ -1,7 +1,7 @@
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, CharField, ValidationError, ListSerializer
+from rest_framework.serializers import ModelSerializer, CharField, ValidationError
 
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
@@ -41,7 +41,7 @@ class ServiceRequestSerializer(ModelSerializer):
             # get all field that are not disabled by the admin
             purged_survey = FormUtils.get_available_fields(
                 job_template_survey=self.create_operation.job_template.survey,
-                operation_survey=self.create_operation.enabled_survey_fields)
+                operation_survey=self.create_operation.tower_survey_fields)
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def validate_billing_group(self, value):
@@ -108,7 +108,7 @@ class OperationRequestSerializer(ModelSerializer):
             # get all field that are not disabled by the admin
             purged_survey = FormUtils.get_available_fields(
                 job_template_survey=self.target_operation.job_template.survey,
-                operation_survey=self.target_operation.enabled_survey_fields)
+                operation_survey=self.target_operation.tower_survey_fields)
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def save(self, **kwargs):

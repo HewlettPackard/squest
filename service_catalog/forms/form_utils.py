@@ -18,7 +18,6 @@ class FormUtils:
         # loop the original survey
         if "spec" in job_template_survey:
             for survey_filed in job_template_survey["spec"]:
-                if operation_survey[survey_filed["variable"]]:
+                if operation_survey.get(name=survey_filed["variable"]).enabled:
                     returned_dict["spec"].append(survey_filed)
         return returned_dict
-

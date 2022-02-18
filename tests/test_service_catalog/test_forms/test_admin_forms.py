@@ -25,6 +25,7 @@ class TestServiceRequestForm(BaseTest):
                                                    user=self.standard_user)
 
     def test_get_field_group(self):
+        # test 1 - one field is admin
         field_name = 'text_variable'
         enabled_field = {
             'text_variable': True,
@@ -35,11 +36,15 @@ class TestServiceRequestForm(BaseTest):
             'float_var': False,
             'integer_var': False
         }
-        expected_result = "2. User fields"
-        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
+        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_field)
+        expected_result = "3. User fields"
+        self.assertEqual(expected_result, _get_field_group(field_name,
+                                                           self.test_request.operation.tower_survey_fields.all()))
         field_name = 'multiplechoice_variable'
-        expected_result = "3. Admin fields"
-        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
+        expected_result = "2. Admin fields"
+        self.assertEqual(expected_result, _get_field_group(field_name,
+                                                           self.test_request.operation.tower_survey_fields.all()))
+        # test 2 - all field for admin
         enabled_field = {
             'text_variable': False,
             'multiplechoice_variable': False,
@@ -49,9 +54,24 @@ class TestServiceRequestForm(BaseTest):
             'float_var': False,
             'integer_var': False
         }
+        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_field)
         expected_result = "2. Admin fields"
-        self.assertEqual(expected_result, _get_field_group(field_name, enabled_field))
+        self.assertEqual(expected_result, _get_field_group(field_name, self.test_request.operation.tower_survey_fields.all()))
 
+        # test 3 - all field user
+        enabled_field = {
+            'text_variable': True,
+            'multiplechoice_variable': True,
+            'multiselect_var': True,
+            'textarea_var': True,
+            'password_var': True,
+            'float_var': True,
+            'integer_var': True
+        }
+        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_field)
+        expected_result = "2. User fields"
+        self.assertEqual(expected_result,
+                         _get_field_group(field_name, self.test_request.operation.tower_survey_fields.all()))
 
     def test_accept_forms_field_count(self):
         parameters = {

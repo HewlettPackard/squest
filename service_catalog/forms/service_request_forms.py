@@ -54,7 +54,7 @@ class ServiceRequestForm(forms.Form):
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
-                                                       operation_survey=self.create_operation.enabled_survey_fields)
+                                                       operation_survey=self.create_operation.tower_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey))
         self.fields['instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 

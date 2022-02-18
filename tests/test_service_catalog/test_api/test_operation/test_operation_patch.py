@@ -23,7 +23,6 @@ class TestApiOperationPatch(BaseTestRequest):
             'name': "My new name",
             'description': "My new description",
             'type': self.create_operation_test.type,
-            'enabled_survey_fields': self.create_operation_test.enabled_survey_fields,
             'auto_accept': self.create_operation_test.auto_accept,
             'auto_process': self.create_operation_test.auto_process,
             'process_timeout_second': self.create_operation_test.process_timeout_second,
@@ -52,8 +51,8 @@ class TestApiOperationPatch(BaseTestRequest):
     def test_unset_job_template_of_create_operation_disable_the_service(self):
         self.assertTrue(self.service_test.enabled)
         self.patch_data['job_template'] = None
-        response = self.client.patch(self.get_operation_details_url, data=self.patch_data,
-                                     content_type="application/json")
+        self.client.patch(self.get_operation_details_url, data=self.patch_data,
+                          content_type="application/json")
         self.service_test.refresh_from_db()
         self.assertFalse(self.service_test.asert_create_operation_have_job_template())
         self.assertFalse(self.service_test.enabled)

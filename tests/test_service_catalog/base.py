@@ -265,8 +265,7 @@ class BaseTest(TestCase):
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               process_timeout_second=20)
-
-        self.create_operation_test.enabled_survey_fields = {
+        enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': False,
             'multiselect_var': False,
@@ -275,21 +274,12 @@ class BaseTest(TestCase):
             'float_var': False,
             'integer_var': False
         }
-        self.create_operation_test.save()
+        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
         self.update_operation_test = Operation.objects.create(name="update test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               type=OperationType.UPDATE)
-        self.update_operation_test.enabled_survey_fields = {
-            'text_variable': True,
-            'multiplechoice_variable': False,
-            'multiselect_var': False,
-            'textarea_var': False,
-            'password_var': False,
-            'float_var': False,
-            'integer_var': False
-        }
-        self.update_operation_test.save()
+        self.update_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
         self.delete_operation_test = Operation.objects.create(name="delete test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
@@ -305,30 +295,15 @@ class BaseTest(TestCase):
         self.create_operation_test_2 = Operation.objects.create(name="create test",
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test)
-        self.create_operation_test_2.enabled_survey_fields = {
-            'text_variable': True,
-            'multiplechoice_variable': False,
-            'multiselect_var': False,
-            'textarea_var': False,
-            'password_var': False,
-            'float_var': False,
-            'integer_var': False
-        }
-        self.create_operation_test_2.save()
+
+        self.create_operation_test_2.switch_tower_fields_enable_from_dict(enabled_survey_fields)
         self.update_operation_test_2 = Operation.objects.create(name="update test",
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test,
                                                                 type=OperationType.UPDATE)
-        self.update_operation_test_2.enabled_survey_fields = {
-            'text_variable': True,
-            'multiplechoice_variable': False,
-            'multiselect_var': False,
-            'textarea_var': False,
-            'password_var': False,
-            'float_var': False,
-            'integer_var': False
-        }
-        self.update_operation_test_2.save()
+
+        self.update_operation_test_2.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+
         self.delete_operation_test_2 = Operation.objects.create(name="delete test",
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test,

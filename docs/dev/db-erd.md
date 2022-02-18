@@ -20,7 +20,6 @@ erDiagram
         string name
         string description
         enum type
-        json enabled_survey_fields
         bool auto_accept
         bool auto_process
         int process_timeout_second
