@@ -19,8 +19,7 @@ class AcceptRequestSerializer(DynamicSurveySerializer):
                 # tower doesnt allow empty value for choices fields
                 if value != '':
                     user_provided_survey_fields[field_key] = str(value)
-            # update the request
-            self.target_request.set_fill_in_survey(user_provided_survey_fields)
+            self.target_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
             self.target_request.accept()
             self.target_request.save()
             # reset the instance state if it was failed (in case of resetting the state)

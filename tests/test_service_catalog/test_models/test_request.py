@@ -204,7 +204,7 @@ class TestRequest(BaseTestRequest):
         self._process_timeout_with_expected_state(expected_instance_state)
 
     def test_tower_job_url(self):
-       self.assertEqual("https://localhost/#/jobs", self.test_request.tower_job_url)
+        self.assertEqual("https://localhost/#/jobs", self.test_request.tower_job_url)
 
     def test_delete_request_also_delete_periodic_task(self):
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
@@ -325,3 +325,55 @@ class TestRequest(BaseTestRequest):
             self.assertIn(field_name, self.test_request.full_survey.keys())
         for field_name in fields_not_in_survey:
             self.assertNotIn(field_name, self.test_request.full_survey.keys())
+
+    def test_update_fill_in_surveys_accept_request(self):
+        new_survey_config = {
+            'text_variable': True,
+            'textarea_var': True,
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': False
+        }
+        self.test_request.operation.switch_tower_fields_enable_from_dict(new_survey_config)
+        self.test_request.fill_in_survey = {
+            'text_variable': "value",
+            'textarea_var': "textarea_value",
+        }
+        self.test_request.admin_fill_in_survey = {
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': [],
+            'password_var': "password_val",
+            'float_var': 0,
+            'integer_var': 12
+        }
+        self.test_request.save()
+
+        admin_accept_survey = {
+            'text_variable': "value_updated",
+            'textarea_var': "textarea_value_updated",
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': [],
+            'password_var': "password_val_updated",
+            'float_var': 1,
+            'integer_var': 14
+        }
+
+        self.test_request.update_fill_in_surveys_accept_request(admin_accept_survey)
+        self.test_request.refresh_from_db()
+
+        expected_fill_in_survey = {
+            'text_variable': "value_updated",
+            'textarea_var': "textarea_value_updated",
+        }
+
+        expected_admin_fill_in_survey = {
+            'multiplechoice_variable': "choice1",
+            'multiselect_var': [],
+            'password_var': "password_val_updated",
+            'float_var': 1,
+            'integer_var': 14
+        }
+        self.assertDictEqual(self.test_request.fill_in_survey, expected_fill_in_survey)
+        self.assertDictEqual(self.test_request.admin_fill_in_survey, expected_admin_fill_in_survey)

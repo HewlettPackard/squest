@@ -48,22 +48,17 @@ class Request(RoleManager):
     def full_survey(self):
         return {k: v for k, v in {**self.fill_in_survey, **self.admin_fill_in_survey}.items() if v is not None}
 
-    def set_fill_in_survey(self, survey, enabled_fields=None):
-        self.fill_in_survey = {}
-        self.admin_fill_in_survey = {}
-        if not isinstance(enabled_fields, dict):
-            enabled_fields = self.operation.enabled_survey_fields
-        for field_name, is_enabled in enabled_fields.items():
-            if field_name in survey.keys():
-                if is_enabled:
-                    self.fill_in_survey[field_name] = survey[field_name]
-                else:
-                    self.admin_fill_in_survey[field_name] = survey[field_name]
-        self.save()
-
     def clean(self):
         if self.fill_in_survey is None:
             raise ValidationError({'fill_in_survey': _("Please enter a valid JSON. Empty value is {} for JSON.")})
+
+    def update_fill_in_surveys_accept_request(self, admin_provided_survey_fields):
+        for key, value in admin_provided_survey_fields.items():
+            if self.operation.tower_survey_fields.filter(enabled=True, name=key).exists():
+                self.fill_in_survey[key] = value
+            if self.operation.tower_survey_fields.filter(enabled=False, name=key).exists():
+                self.admin_fill_in_survey[key] = value
+        self.save()
 
     def can_process(self):
         if self.instance.state in [InstanceState.AVAILABLE, InstanceState.PENDING, InstanceState.UPDATE_FAILED,

@@ -142,35 +142,25 @@ class OperationEditTestCase(BaseTest):
         }
         url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
         data = {
-            'text_variable': True,
-            'multiplechoice_variable': True
-        }
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
-        response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
-        self.update_operation_test.refresh_from_db()
-        self.assertTrue("text_variable" in self.update_operation_test.enabled_survey_fields)
-        self.assertTrue(self.update_operation_test.enabled_survey_fields["text_variable"])
-        self.assertTrue("multiplechoice_variable" in self.update_operation_test.enabled_survey_fields)
-        self.assertTrue(self.update_operation_test.enabled_survey_fields["multiplechoice_variable"])
+            'form-0-id': self.update_operation_test.tower_survey_fields.get(name="text_variable").id,
+            # 'form-0-enabled': "off",  not set means set to off
+            'form-0-default': "default_var",
+            'form-1-id': self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").id,
+            'form-1-enabled': "on",
+            'form-1-default': "default_var",
+            'form-TOTAL_FORMS': 2,
+            'form-INITIAL_FORMS': 2
 
-    def test_service_operation_edit_survey_edit_only_one_filed(self):
-        args = {
-            'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id,
-        }
-        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
-        data = {
-            'text_variable': True,
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="text_variable").enabled)
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").enabled)
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.update_operation_test.refresh_from_db()
-        self.assertTrue("text_variable" in self.update_operation_test.enabled_survey_fields)
-        self.assertTrue(self.update_operation_test.enabled_survey_fields["text_variable"])
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="text_variable").enabled)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").enabled)
 
     def test_service_operation_edit_survey_non_existing_flag(self):
         args = {
@@ -179,16 +169,16 @@ class OperationEditTestCase(BaseTest):
         }
         url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
         data = {
-            'non_existing': True,
-            'non_existing_2': True
+            'form-0-id': 125,
+            'form-0-enabled': "on",
+            'form-0-default': "default_var",
+            'form-TOTAL_FORMS': 1,
+            'form-INITIAL_FORMS': 2
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
-        self.update_operation_test.refresh_from_db()
-        self.assertTrue("non_existing" not in self.update_operation_test.enabled_survey_fields)
-        self.assertTrue("non_existing_2" not in self.update_operation_test.enabled_survey_fields)
+        self.assertEqual(200, response.status_code)
 
     def test_update_survey_when_job_template_on_operation_changed(self):
         args = {
@@ -206,27 +196,23 @@ class OperationEditTestCase(BaseTest):
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertEqual({}, self.create_operation_empty_survey_test.enabled_survey_fields)
+        self.assertEqual(0, self.create_operation_empty_survey_test.tower_survey_fields.all().count())
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.create_operation_empty_survey_test.refresh_from_db()
         self.assertEqual("updated", self.create_operation_empty_survey_test.name)
         self.assertEqual("updated description", self.create_operation_empty_survey_test.description)
         self.assertEqual(self.job_template_test, self.create_operation_empty_survey_test.job_template)
-        self.assertEqual(
-            set(_get_keys_from_survey(self.job_template_test.survey)),
-            set(self.create_operation_empty_survey_test.enabled_survey_fields.keys())
-        )
+        for key in _get_keys_from_survey(self.job_template_test.survey):
+            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(name=key).exists())
 
         data["job_template"] = self.job_template_small_survey_test.id
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.create_operation_empty_survey_test.refresh_from_db()
         self.assertEqual(self.job_template_small_survey_test, self.create_operation_empty_survey_test.job_template)
-        self.assertEqual(
-            set(_get_keys_from_survey(self.job_template_small_survey_test.survey)),
-            set(self.create_operation_empty_survey_test.enabled_survey_fields.keys())
-        )
+        for key in _get_keys_from_survey(self.job_template_small_survey_test.survey):
+            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(name=key).exists())
 
 
 def _get_keys_from_survey(survey):

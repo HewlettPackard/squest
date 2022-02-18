@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from service_catalog.api.serializers import AcceptRequestSerializer, RequestSerializer, MessageSerializer, \
-    RequestMessageSerializer
+    RequestMessageSerializer, AdminRequestSerializer
 from service_catalog.mail_utils import send_mail_request_update, send_email_request_canceled
 from service_catalog.models import Request
 from service_catalog.views import process_request
@@ -25,7 +25,7 @@ class RequestStateMachine(ViewSet):
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
-    @swagger_auto_schema(request_body=AcceptRequestSerializer, responses={200: RequestSerializer()})
+    @swagger_auto_schema(request_body=AcceptRequestSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def accept(self, request, pk=None):
         """
@@ -39,7 +39,7 @@ class RequestStateMachine(ViewSet):
         if serializer.is_valid():
             target_request = serializer.save()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+            return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
         return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(responses={200: 'Survey in JSON'})
@@ -49,11 +49,10 @@ class RequestStateMachine(ViewSet):
         Get the survey prefilled by user/admin.
         """
         target_request = get_object_or_404(Request, id=pk)
-        serializer = AcceptRequestSerializer(target_request.fill_in_survey, target_request=target_request, user=request.user, read_only_form=True)
+        serializer = AcceptRequestSerializer(target_request.full_survey, target_request=target_request, user=request.user, read_only_form=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    @swagger_auto_schema(request_body=MessageSerializer, responses={200: RequestSerializer()})
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def reject(self, request, pk=None):
         """
@@ -71,9 +70,9 @@ class RequestStateMachine(ViewSet):
         target_request.reject()
         target_request.save()
         send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=MessageSerializer, responses={200: RequestSerializer()})
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def re_submit(self, request, pk=None):
         """
@@ -91,9 +90,9 @@ class RequestStateMachine(ViewSet):
         target_request.re_submit()
         target_request.save()
         send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=MessageSerializer, responses={200: RequestSerializer()})
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def need_info(self, request, pk=None):
         """
@@ -111,9 +110,9 @@ class RequestStateMachine(ViewSet):
         target_request.need_info()
         target_request.save()
         send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=MessageSerializer, responses={200: RequestSerializer()})
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def process(self, request, pk=None):
         """
@@ -125,7 +124,7 @@ class RequestStateMachine(ViewSet):
         message = process_request(request.user, target_request)
         if message:
             return Response(message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: RequestSerializer()})
     @action(detail=True)
@@ -142,9 +141,11 @@ class RequestStateMachine(ViewSet):
         send_email_request_canceled(target_request,
                                     user_applied_state=request.user,
                                     request_owner_user=target_request.user)
+        if request.user.is_superuser:
+            return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
         return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: RequestSerializer()})
+    @swagger_auto_schema(responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def archive(self, request, pk=None):
         """
@@ -155,9 +156,9 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         target_request.archive()
         target_request.save()
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: RequestSerializer()})
+    @swagger_auto_schema(responses={200: AdminRequestSerializer()})
     @action(detail=True)
     def unarchive(self, request, pk=None):
         """
@@ -168,4 +169,4 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         target_request.unarchive()
         target_request.save()
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
