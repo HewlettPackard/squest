@@ -131,7 +131,8 @@ def edit_service_operation(request, service_id, operation_id):
                'service': target_service,
                'operation': target_operation,
                'breadcrumbs': breadcrumbs,
-               'action': 'edit'
+               'action': 'edit',
+               'html_button_path': 'service_catalog/admin/service/operation/operation-button-edit-survey.html'
                }
     return render(request, 'generics/generic_form.html', context)
 
