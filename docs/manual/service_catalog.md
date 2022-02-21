@@ -10,8 +10,8 @@ A service has at least one operation of type `CREATE` that allows to provision t
 
 A service can have then multiple operation of type `UPDATE` and `DELETE` that allow to manage the lifecycle of instances that have been created via the `CREATE` operation.
 
->**Note:** Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX. 
-Squest can only disable the ones that you don't want to be filled by your end users. 
+>**Note:** Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX.
+Squest can only disable the ones that you don't want to be filled by your end users.
 Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
 
 
@@ -41,7 +41,7 @@ sequenceDiagram
     Squest->>User: Notify service ready
 ```
 
-The playbook will receive a `squest` extra variable that contains information of to the pending instance linked to the request 
+The playbook will receive a `squest` extra variable that contains information of to the pending instance linked to the request
 in addition to all extra variables which come from the survey of the job template.
 
 Example of extra variables sent by Squest:
@@ -59,10 +59,10 @@ squest:
       spoc: 2
 ```
 
-Specs related to the created instance are important in order to be sent later to a playbook in charge of updating 
+Specs related to the created instance are important in order to be sent later to a playbook in charge of updating
 this particular instance.
 
-Sent specs must contain unique IDs that allow to identify precisely the instance. 
+Sent specs must contain unique IDs that allow to identify precisely the instance.
 (E.g: `uuid` of a VMware VM, `namespace` and `cluster_api_url` for an Openshift project)
 
 
@@ -79,7 +79,7 @@ The playbook will:
   hosts: localhost
   connection: local
   gather_facts: false
-  
+
   vars:
     squest_token: 48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744
     squest_bearer_token: "Bearer {{ squest_token }}"
@@ -121,7 +121,7 @@ Day 2 operations are operations that **update** or **delete** existing resources
 
 > **Note:** By default, recent version of AWX/Tower drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the Tower/AWX API.
 
-When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest` 
+When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest`
 that contains the instance spec sent by the playbook used to provision at first the resource.
 
 The playbook used to update the instance need to use info placed in `squest` variable to retrieve the real resource that need to be updated or deleted.
@@ -156,14 +156,14 @@ squest:
       id: 1
       name: test-instance
       service: 1
-      spec: 
+      spec:
         file_name: foo.conf
       spoc: 2
       state: UPDATING
 string_to_place_in_file: "this is a string"
 ```
 
-In the example below, the update job template survey ask for a `string_to_place_in_file` variable. 
+In the example below, the update job template survey ask for a `string_to_place_in_file` variable.
 The playbook receive as well all information that help to retrieve the resource to update. In this example the resource is the `file_name`.
 ```yaml
 - name: Update content of a file
@@ -186,3 +186,200 @@ The playbook receive as well all information that help to retrieve the resource 
         line: "{{ string_to_place_in_file }}"
         create: yes
 ```
+
+## Operation survey
+
+The survey of an operation can be edited to change the behavior of the generated form of a request.
+
+### Enabled fields
+
+An **enabled** field is displayed into the end user survey.
+By default, all fields are enabled when creating a new operation.
+
+>**Note:** If the field is set as **required** into the Tower/AWX job template survey config then the administrator
+will have to fill it in any case during the review of the request.
+
+### Default value
+
+
+When set, the default value is pre-filled into the final form. It takes precedence over the default value set in Tower/AWX job template survey config.
+
+Default value precedence: 
+
+ 1. Default from Tower/AWX
+ 2. Default from Squest value
+ 3. User's input
+ 4. Admin's input
+
+>**Note:** When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the Tower/AWX survey field options.
+
+#### Hard coded string
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": "linux"
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td>My hard coded value</td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td> My hard coded value </td>
+    </tr>
+</table>
+
+#### With spec variable
+
+Jinja templating can be used to load a value with the content of the instance spec or user spec.
+Use variables `spec` and/or `user_spec` like with Ansible.
+
+>**Note:** `spec` and `user_spec` variables are only usable on **Update** or **Delete** operations as the pending instance does not contain any spec before its provisioning.
+
+>**Note:** If the given variable key doesn't exist, the default value will be set to an empty string.
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": "linux"
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td> {{ spec.os }} </td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td>linux</td>
+    </tr>
+</table>
+
+#### String and spec variable
+
+Like with Ansible, a string can be concatenated to a spec variable.
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": "linux"
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td>My hard coded value with {{ spec.os }}</td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td>My hard coded value with linux</td>
+    </tr>
+</table>
+
+#### Spec dict access
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": {
+                        "linux": "ubuntu"
+                    }
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td>{{ spec.os['linux'] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td>ubuntu</td>
+    </tr>
+</table>
+
+#### Spec list access
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": ["linux", "windows"]
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td>{{ spec.os[1] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td>windows</td>
+    </tr>
+</table>
+
+#### Jinja filters
+
+Jinja filters can also be used to transform spec variables.
+
+For example, the 'multiple select multiple' field type requires a list of string separated with a carriage return marker (`\n`).
+
+<table>
+    <tr>
+        <td><strong>Instance JSON spec</strong></td>
+        <td>
+            ```json
+            {
+                "spec": {
+                    "os": ["linux", "windows"]
+                },
+                "user_spec": {}
+            }
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Default config</strong></td>
+        <td>{{ spec.os | join('\n') }}</td>
+    </tr>
+    <tr>
+        <td><strong>Result</strong></td>
+        <td>linux\nwindows</td>
+    </tr>
+</table>

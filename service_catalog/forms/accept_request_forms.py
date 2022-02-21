@@ -2,6 +2,7 @@ import urllib3
 from django import forms
 
 from profiles.models import BillingGroup
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.forms.utils import get_fields_from_survey, prefill_form_with_user_values
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -23,7 +24,13 @@ class AcceptRequestForm(forms.Form):
         self.fields["billing_group_id"].group = "1. Instance"
         # load user provided fields and add admin field if exist
         if "spec" in self.target_request.operation.job_template.survey:
-            self.fields.update(get_fields_from_survey(self.target_request.operation.job_template.survey,
+
+            purged_survey_with_default = FormUtils.apply_spec_template_to_survey(job_template_survey=self.target_request.operation.job_template.survey,
+                                                                                 operation_survey=self.target_request.operation.tower_survey_fields,
+                                                                                 admin_spec=self.target_request.instance.spec,
+                                                                                 user_spec=self.target_request.instance.user_spec
+                                                                                 )
+            self.fields.update(get_fields_from_survey(purged_survey_with_default,
                                                       self.target_request.operation.tower_survey_fields))
             prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey,
                                           self.target_request.admin_fill_in_survey)

@@ -19,6 +19,7 @@ class OperationTable(SquestTable):
 
 
 class OperationTableFromInstanceDetails(SquestTable):
+    name = TemplateColumn(template_name='custom_columns/operation_name.html')
     type = TemplateColumn(template_name='custom_columns/operation_type.html')
     request = TemplateColumn(template_name='custom_columns/operation_request.html', orderable=False)
 
