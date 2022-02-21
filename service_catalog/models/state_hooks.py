@@ -34,6 +34,7 @@ class GlobalHook(models.Model):
     name = models.CharField(unique=True, max_length=100)
     model = models.CharField(max_length=100, choices=HookModel.choices)
     state = models.CharField(max_length=100)
+    service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True, blank=True, default=None)
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     extra_vars = models.JSONField(default=dict, blank=True)
 
@@ -68,11 +69,15 @@ class HookManager(object):
         if global_hook_set:
             # serialize the instance
             serialized_data = dict()
+            service = None
             if isinstance(instance, Instance):
+                service = instance.service
                 serialized_data = InstanceReadSerializer(instance).data
             if isinstance(instance, Request):
+                service = instance.instance.service
                 serialized_data = RequestSerializer(instance).data
             for global_hook in global_hook_set.all():
-                extra_vars = global_hook.extra_vars
-                extra_vars["squest"] = serialized_data
-                global_hook.job_template.execute(extra_vars=extra_vars)
+                if global_hook.service is None or service == global_hook.service:
+                    extra_vars = global_hook.extra_vars
+                    extra_vars["squest"] = serialized_data
+                    global_hook.job_template.execute(extra_vars=extra_vars)
