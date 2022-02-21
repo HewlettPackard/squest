@@ -29,7 +29,11 @@ class OperationRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
                                                        operation_survey=self.operation.tower_survey_fields)
-        self.fields.update(get_fields_from_survey(purged_survey, form_title="2. Operation fields"))
+        purged_survey_with_default = FormUtils.apply_spec_template_to_survey(job_template_survey=purged_survey,
+                                                                             operation_survey=self.operation.tower_survey_fields,
+                                                                             admin_spec=self.instance.spec,
+                                                                             user_spec=self.instance.user_spec)
+        self.fields.update(get_fields_from_survey(purged_survey_with_default, form_title="2. Operation fields"))
         self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
     def save(self):
