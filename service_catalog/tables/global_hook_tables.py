@@ -11,4 +11,4 @@ class GlobalHookTable(SquestTable):
     class Meta:
         model = GlobalHook
         attrs = {"id": "global_hook_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "model", "state", "job_template", "actions")
+        fields = ("name", "model", "service", "state", "job_template", "actions")

@@ -38,4 +38,4 @@ class GlobalHookForm(SquestModelForm):
 
     class Meta:
         model = GlobalHook
-        fields = ["name", "model", "state", "job_template", "extra_vars"]
+        fields = ["name", "model", "service", "state", "job_template", "extra_vars"]
