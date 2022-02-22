@@ -9,7 +9,9 @@ A team can be created by any logged user. The creator become the default adminis
 - add users
 - set permissions
 
->**Notes:** A team can have multiple admins but needs to have at least one admin
+!!! note
+
+    A team can have multiple admins but needs to have at least one admin
 
 ## Team roles
 

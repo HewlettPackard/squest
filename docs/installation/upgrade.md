@@ -1,10 +1,14 @@
 # Squest upgrade
 
 This documentation aims at explaining how to perform an upgrade of squest on new release.
+ 
+!!! note
 
-> **Note:** Read the changelog of the version before performing any update to know what are the breaking changes or specific requirements of the new release.
+    Read the changelog of the version before performing any update to know what are the breaking changes or specific requirements of the new release.
 
-> **Note:** We recommend performing a manual backup before any upgrade. See the dedicated [backup doc](backup.md)
+!!! note
+
+    We recommend performing a manual backup before any upgrade. See the dedicated [backup doc](backup.md)
 
 Stop all containers that use the Squest image
 ```bash

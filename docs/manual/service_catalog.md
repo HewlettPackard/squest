@@ -10,11 +10,6 @@ A service has at least one operation of type `CREATE` that allows to provision t
 
 A service can have then multiple operation of type `UPDATE` and `DELETE` that allow to manage the lifecycle of instances that have been created via the `CREATE` operation.
 
->**Note:** Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX.
-Squest can only disable the ones that you don't want to be filled by your end users.
-Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
-
-
 ## Provisioning a service
 
 When a user request for the first time a service, an instance is created automatically and set to "pending" state on Squest.
@@ -119,7 +114,9 @@ The playbook will:
 
 Day 2 operations are operations that **update** or **delete** existing resources.
 
-> **Note:** By default, recent version of AWX/Tower drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the Tower/AWX API.
+!!! note
+
+    By default, recent version of AWX/Tower drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the Tower/AWX API.
 
 When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest`
 that contains the instance spec sent by the playbook used to provision at first the resource.
@@ -191,13 +188,21 @@ The playbook receive as well all information that help to retrieve the resource 
 
 The survey of an operation can be edited to change the behavior of the generated form of a request.
 
+!!! note
+
+    Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX.
+    Squest can only disable the ones that you don't want to be filled by your end users.
+    Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
+
 ### Enabled fields
 
 An **enabled** field is displayed into the end user survey.
 By default, all fields are enabled when creating a new operation.
 
->**Note:** If the field is set as **required** into the Tower/AWX job template survey config then the administrator
-will have to fill it in any case during the review of the request.
+!!! note
+
+    If the field is set as **required** into the Tower/AWX job template survey config then the administrator
+    will have to fill it in any case during the review of the request.
 
 ### Default value
 
@@ -211,7 +216,9 @@ Default value precedence:
  3. User's input
  4. Admin's input
 
->**Note:** When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the Tower/AWX survey field options.
+!!! note
+
+    When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the Tower/AWX survey field options.
 
 #### Hard coded string
 
@@ -244,9 +251,13 @@ Default value precedence:
 Jinja templating can be used to load a value with the content of the instance spec or user spec.
 Use variables `spec` and/or `user_spec` like with Ansible.
 
->**Note:** `spec` and `user_spec` variables are only usable on **Update** or **Delete** operations as the pending instance does not contain any spec before its provisioning.
+!!! note
 
->**Note:** If the given variable key doesn't exist, the default value will be set to an empty string.
+    The `spec` and `user_spec` variables are only usable on **Update** or **Delete** operations as the pending instance does not contain any spec before its provisioning.
+
+!!! note
+
+    If the given variable key doesn't exist, the default value will be set to an empty string.
 
 <table>
     <tr>
