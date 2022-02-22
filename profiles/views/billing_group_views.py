@@ -10,6 +10,7 @@ from profiles.forms.billing_group_forms import BillingGroupForm
 from profiles.models.billing_group import BillingGroup
 from profiles.tables.quota_binding_table import QuotaBindingTable
 from profiles.tables.user_by_billing_group_table import UserByBillingGroupTable
+from service_catalog import tasks
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -134,6 +135,5 @@ def billing_group_list(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def billing_group_refresh_quota(request, billing_group_id):
-    group = get_object_or_404(BillingGroup, id=billing_group_id)
-    group.update_quota()
+    tasks.billing_update_quota.delay(billing_group_id)
     return redirect(request.META['HTTP_REFERER'])

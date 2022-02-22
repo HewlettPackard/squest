@@ -10,6 +10,7 @@ from profiles.models import BillingGroup
 from profiles.models.role_manager import RoleManager
 from . import Service, InstanceState
 from .state_hooks import HookManager
+from .. import tasks
 
 logger = logging.getLogger(__name__)
 
@@ -131,9 +132,8 @@ class Instance(RoleManager):
         self.remove_user_in_role(self.spoc, "Admin")
 
     def delete_linked_resources(self):
-        for resource in self.resources.all():
-            if resource.is_deleted_on_instance_deletion:
-                resource.delete()
+        for resource in self.resources.filter(is_deleted_on_instance_deletion=True):
+            resource.delete()
 
     @classmethod
     def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
@@ -171,19 +171,14 @@ def pre_save(sender, instance, **kwargs):
 def post_save(sender, instance, created, **kwargs):
     if created:
         instance.assign_permission_to_spoc()
-        update_quota(instance.billing_group)
     if instance._need_update:
-        update_quota(instance._old_billing_group)
-        update_quota(instance.billing_group)
+        billing_group_id = instance.billing_group.id if instance.billing_group else None
+        old_billing_group_id = instance._old_billing_group.id if instance._old_billing_group else None
+        tasks.instance_update_quota_on_billing_group_change.delay(instance_id=instance.id, billing_id_to_remove=old_billing_group_id,
+                                          billing_id_to_add=billing_group_id)
 
 
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
     instance.remove_all_bindings()
     instance.delete_linked_resources()
-
-
-def update_quota(billing_group):
-    if billing_group is not None:
-        for binding in billing_group.quota_bindings.all():
-            binding.update_consumed()

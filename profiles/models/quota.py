@@ -2,6 +2,7 @@ from django.db.models import Model, CharField, ManyToManyField
 from django.db.models.signals import m2m_changed
 
 from resource_tracker.models.resource_group_attribute_definition import ResourceGroupAttributeDefinition
+from service_catalog import tasks
 
 
 class Quota(Model):
@@ -17,8 +18,7 @@ class Quota(Model):
 
 
 def attribute_definitions_changed(sender, instance, **kwargs):
-    for binding in instance.quota_bindings.all():
-        binding.update_consumed()
+    tasks.quota_update_consumed.delay(instance.id)
 
 
 m2m_changed.connect(attribute_definitions_changed, sender=Quota.attribute_definitions.through)

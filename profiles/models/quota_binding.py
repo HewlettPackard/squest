@@ -4,6 +4,7 @@ from django.dispatch import receiver
 
 from profiles.models import BillingGroup
 from profiles.models.quota import Quota
+from service_catalog import tasks
 
 
 class QuotaBinding(Model):
@@ -37,14 +38,17 @@ class QuotaBinding(Model):
         percent_consumed = (self.consumed * 100) / self.limit
         return round(percent_consumed)
 
-    def update_consumed(self):
-        consumed = 0
-        for instance in self.billing_group.instances.all():
-            for resource in instance.resources.all():
-                for attribute in resource.attributes.all():
-                    if attribute.attribute_type in self.quota.attribute_definitions.all():
-                        consumed += attribute.value
-        self.consumed = consumed
+    def update_consumed(self, delta=None):
+        if delta is None:
+            consumed = 0
+            for instance in self.billing_group.instances.all():
+                for resource in instance.resources.all():
+                    for attribute in resource.attributes.all():
+                        if attribute.attribute_type in self.quota.attribute_definitions.all():
+                            consumed += attribute.value
+            self.consumed = consumed
+        else:
+            self.consumed += delta
         self.save()
 
     def __str__(self):
@@ -54,4 +58,4 @@ class QuotaBinding(Model):
 @receiver(post_save, sender=QuotaBinding)
 def get_consumed(sender, instance, created, **kwargs):
     if created:
-        instance.update_consumed()
+        tasks.quota_binding_update_consumed.delay(instance.id, None)
