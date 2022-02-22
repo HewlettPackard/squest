@@ -51,13 +51,16 @@ class ResourceGroupResourceBulkDeleteTest(BaseTestResourceTracker):
         self.assertEqual(response.status_code, 302)
 
     def test_admin_can_bulk_delete(self):
-        with mock.patch("profiles.models.billing_group.BillingGroup.update_quota") as mock_quota:
+        with mock.patch("service_catalog.tasks.resource_attribute_update_consumed.delay") as mock_quota:
             with mock.patch("resource_tracker.models.resource_group.ResourceGroup.calculate_total_resource_of_attributes") as mock_calculate:
+                count = 0
+                for resource_id in self.resource_to_delete_list:
+                    count += Resource.objects.get(id=resource_id).attributes.count()
                 self.assertEqual(Resource.objects.filter(id__in=self.resource_to_delete_list).count(), 5)
                 response = self.client.post(self.url_delete, data=self.data)
                 self.assertEqual(response.status_code, 302)
                 mock_calculate.assert_called_once()
-                mock_quota.assert_called_once()
+                self.assertEqual(mock_quota.call_count, count)
                 self.assertEqual(Resource.objects.filter(id__in=self.resource_to_delete_list).count(), 0)
 
     def test_admin_get_message_on_bulk_delete_with_empty_data(self):

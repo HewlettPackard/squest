@@ -17,7 +17,3 @@ class BillingGroup(models.Model):
 
     def __str__(self):
         return self.name
-
-    def update_quota(self):
-        for binding in self.quota_bindings.all():
-            binding.update_consumed()
