@@ -66,8 +66,10 @@ BACKUP_ENABLED=True
 
 By default, backup is performed every day at 1 AM.
 
->**Note**: Follow the full [configuration documentation](../configuration/squest_settings.md) to know all available flags
- for the backup service.
+!!! note
+  
+    Follow the full [configuration documentation](../configuration/squest_settings.md) to know all available flags
+    for the backup service.
 
 
 ## Restore
@@ -98,5 +100,7 @@ docker-compose exec celery-beat python manage.py dbrestore
 docker-compose exec celery-beat python manage.py mediarestore 
 ```
 
->**Note:** Get more info on dbrestore and mediarestore command arguments on the 
- [official doc](https://django-dbbackup.readthedocs.io/en/master/commands.html#).
+!!! note
+
+    Get more info on dbrestore and mediarestore command arguments on the 
+    [official doc](https://django-dbbackup.readthedocs.io/en/master/commands.html#).

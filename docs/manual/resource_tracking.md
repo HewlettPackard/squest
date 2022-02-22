@@ -7,9 +7,11 @@ services on underlying layers.
 
 The resource tracking feature allows to monitor reserved resources and highlight available resource in an infrastructure.
 
-> **Note:** This feature is not a real time monitoring. It does not connect to you infrastructure to check the real 
-consumption but help to follow what resources have been reserved to avoid overallocation when accepting new request 
-from the service catalog.
+!!! note
+
+    This feature is not a real time monitoring. It does not connect to you infrastructure to check the real 
+    consumption but help to follow what resources have been reserved to avoid overallocation when accepting new request 
+    from the service catalog.
 
 ## Concept
 
@@ -189,14 +191,14 @@ modified at any time.
 
 Examples:
 
-Tag input string       |    Resulting tags                |    Notes
------------------------|----------------------------------|-----------------------------------------------
-apple ball cat         | ``["apple", "ball", "cat"]``     | No commas, so space delimited
-apple, ball cat        | ``["apple", "ball cat"]``        | Comma present, so comma delimited
-"apple, ball" cat dog  | ``["apple, ball", "cat", "dog"]``| All commas are quoted, so space delimited
-"apple, ball", cat dog | ``["apple, ball", "cat dog"]``   | Contains an unquoted comma, so comma delimited
-apple "ball cat" dog   | ``["apple", "ball cat", "dog"]`` | No commas, so space delimited
-"apple" "ball dog      | ``["apple", "ball", "dog"]``     | Unclosed double quote is ignored
+| Tag input string       | Resulting tags                    | Notes                                          |
+|------------------------|-----------------------------------|------------------------------------------------|
+| apple ball cat         | ``["apple", "ball", "cat"]``      | No commas, so space delimited                  |
+| apple, ball cat        | ``["apple", "ball cat"]``         | Comma present, so comma delimited              |
+| "apple, ball" cat dog  | ``["apple, ball", "cat", "dog"]`` | All commas are quoted, so space delimited      |
+| "apple, ball", cat dog | ``["apple, ball", "cat dog"]``    | Contains an unquoted comma, so comma delimited |
+| apple "ball cat" dog   | ``["apple", "ball cat", "dog"]``  | No commas, so space delimited                  |
+| "apple" "ball dog      | ``["apple", "ball", "dog"]``      | Unclosed double quote is ignored               |
 
 ## Over commitment
 
