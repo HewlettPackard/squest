@@ -6,7 +6,9 @@ Squest current notification system only support emails.
 
 By default, notifications are enabled. You can disable all notifications from your profile page by accessing the user details page in the top right corner of the Squest application.
 
->**Note:** Administrators will not receive any notification without subscribing to some services. See below.
+!!! note
+
+    Administrators will not receive any notification without subscribing to some services. See below.
 
 ## Subscribe to service notifications (admin)
 

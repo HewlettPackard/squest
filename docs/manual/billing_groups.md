@@ -1,10 +1,12 @@
 # Billing groups
 
-> **Note: ** Billing groups is an optional feature.
-
 Billing groups are linked to users and allow Squest administrator to visualize who is consuming what.
 
 ![billing_group_quota](../images/billing_group_quota.png)
+
+!!! note
+
+      Billing groups is an optional feature.
 
 ## Create billing groups
 
@@ -38,7 +40,9 @@ The billing group will not be asked neither shown in the end user form when requ
 
 Administrators let the end user choose from his billing group when he sends an instance request.
 
-> **Note:** users without billing groups can not request this service.
+!!! note
+
+      Users without billing groups can not request this service.
 
 #### From all billing group
 
@@ -67,7 +71,9 @@ Each service create a resources in 3 different resource group of the resource tr
 The simplified graph view of resource group would be the following:
 ![quota_resource_graph_example](../images/quota_resource_graph_example.png)
 
-> **Note:** All attributes are not represented. For a complete example of resource group and resource pool attribute link refer to the [resource tracking doc](resource_tracking.md)
+!!! note
+
+      All attributes are not represented. For a complete example of resource group and resource pool attribute link refer to the [resource tracking doc](resource_tracking.md)
 
 No matter what service will be provisioned from the service catalog, we want to track for example our global consumption of CPU.
 The global CPU is actually linkable to:
@@ -85,8 +91,10 @@ So we would create a quota named "CPU" and link it to all resource group attribu
 Once quota are defined, you can link them to each billing group and set a **limit**.
 Squest will then calculate the consumption by retrieving each instance that are linked to tracked resource attributes.
 
->**Note:** The limit does not block any request from the service catalog. This field is used to give the administrator information about consumptions.
-The total consumption can exceed limit if the administrator provision services anyway.
+!!! note
+
+      The limit does not block any request from the service catalog. This field is used to give the administrator information about consumptions.
+      The total consumption can exceed limit if the administrator provision services anyway.
 
 Consumed quota and limits are exposed as [Prometheus metrics](../metrics/#squest_quota_consumed). 
 You can then create your own Grafana dashboard from them to visualize percentage consumption of each attribute per billing group.
