@@ -12,7 +12,9 @@ class AcceptRequestForm(forms.Form):
         self.user = user
         self.target_request = kwargs.pop('request', None)
         super(AcceptRequestForm, self).__init__(*args, **kwargs)
-        self.fields["instance_name"] = forms.CharField(label="Name", initial=self.target_request.instance.name, widget=forms.TextInput(attrs={"class": "form-control"}))
+        self.fields["instance_name"] = forms.CharField(label="Name",
+                                                       initial=self.target_request.instance.name,
+                                                       widget=forms.TextInput(attrs={"class": "form-control"}))
         self.fields["billing_group_id"] = forms.ModelChoiceField(
             label="Billing group",
             initial=self.target_request.instance.billing_group,
@@ -38,8 +40,7 @@ class AcceptRequestForm(forms.Form):
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            # tower doesnt allow empty value for choices fields
-            if value != '' and field_key not in ['instance_name', 'billing_group_id']:
+            if field_key not in ['instance_name', 'billing_group_id']:
                 user_provided_survey_fields[field_key] = value
         # update the request
         self.target_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
@@ -50,3 +51,4 @@ class AcceptRequestForm(forms.Form):
         self.target_request.instance.billing_group = self.cleaned_data["billing_group_id"]
         self.target_request.instance.name = self.cleaned_data["instance_name"]
         self.target_request.instance.save()
+        return self.target_request
