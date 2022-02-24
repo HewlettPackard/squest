@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 from resource_tracker.models.resource_attribute import ResourceAttribute
@@ -30,6 +30,14 @@ class ResourceGroupAttributeDefinition(models.Model):
     def __str__(self):
         return f"{self.resource_group} - {self.name}"
 
+    def calculate_resource(self, delta):
+        self.total_resource += delta
+        if self.consume_from is not None:
+            self.consume_from.calculate_consumed(delta)
+        if self.produce_for is not None:
+            self.produce_for.calculate_produced(delta)
+        self.save()
+
     def calculate_total_resource(self):
         total = 0
         for resource in self.resource_group.resources.all():
@@ -38,12 +46,12 @@ class ResourceGroupAttributeDefinition(models.Model):
             except ResourceAttribute.DoesNotExist:
                 pass
         self.total_resource = total
-        self.save()
         # sync pool attributes
         if self.consume_from is not None:
             self.consume_from.calculate_total_consumed()
         if self.produce_for is not None:
             self.produce_for.calculate_total_produced()
+        self.save()
 
     def edit(self, name, produce_for, consume_from, help_text):
         self.name = name
@@ -56,23 +64,17 @@ class ResourceGroupAttributeDefinition(models.Model):
         unique_together = ('name', 'resource_group',)
 
 
-@receiver(post_delete, sender=ResourceGroupAttributeDefinition)
-def on_delete(sender, instance, **kwargs):
-    if instance.consume_from is not None:
-        instance.consume_from.calculate_total_consumed()
-
-    if instance.produce_for is not None:
-        instance.produce_for.calculate_total_produced()
-
-
-def after_change(sender, instance, created, **kwargs):
-    post_save.disconnect(after_change, sender=sender)  # prevent post save recursion
-    if instance.consume_from is not None:
-        instance.consume_from.calculate_total_consumed()
-
-    if instance.produce_for is not None:
-        instance.produce_for.calculate_total_produced()
-    post_save.connect(after_change, sender=sender)
-
-
-post_save.connect(after_change, sender=ResourceGroupAttributeDefinition)
+@receiver(pre_save, sender=ResourceGroupAttributeDefinition)
+def on_change(sender, instance, **kwargs):
+    if instance.id:  # if edit
+        old = ResourceGroupAttributeDefinition.objects.get(id=instance.id)
+        if instance.consume_from != old.consume_from:
+            if instance.consume_from:
+                instance.consume_from.calculate_consumed(instance.total_resource)
+            if old.consume_from:
+                old.consume_from.calculate_consumed(-old.total_resource)
+        if instance.produce_for != old.produce_for:
+            if instance.produce_for:
+                instance.produce_for.calculate_produced(instance.total_resource)
+            if old.produce_for:
+                old.produce_for.calculate_produced(-old.total_resource)

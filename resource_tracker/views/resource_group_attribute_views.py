@@ -34,8 +34,6 @@ def resource_group_attribute_create(request, resource_group_id):
 def resource_group_attribute_edit(request, resource_group_id, attribute_id):
     resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
     attribute = get_object_or_404(ResourceGroupAttributeDefinition, id=attribute_id)
-    consume_from_before = attribute.consume_from
-    produce_for_before = attribute.produce_for
     form = ResourceGroupAttributeDefinitionForm(request.POST or None, instance=attribute)
     form.resource_group = resource_group
     if form.is_valid():
@@ -44,11 +42,6 @@ def resource_group_attribute_edit(request, resource_group_id, attribute_id):
                                                  produce_for=form.cleaned_data["produce_for"],
                                                  consume_from=form.cleaned_data["consume_from"],
                                                  help_text=form.cleaned_data["help_text"])
-        # if the new pool attribute to produce or consume has changed, we need to update it
-        if consume_from_before is not None and consume_from_before.id != form.cleaned_data["consume_from"]:
-            consume_from_before.calculate_total_consumed()
-        if produce_for_before is not None and produce_for_before.id != form.cleaned_data["produce_for"]:
-            produce_for_before.calculate_total_produced()
         return redirect("resource_tracker:resource_group_edit", resource_group.id)
     breadcrumbs = [
         {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
