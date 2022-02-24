@@ -172,10 +172,10 @@ def post_save(sender, instance, created, **kwargs):
     if created:
         instance.assign_permission_to_spoc()
     if instance._need_update:
-        billing_group_id = instance.billing_group.id if instance.billing_group else None
-        old_billing_group_id = instance._old_billing_group.id if instance._old_billing_group else None
-        tasks.instance_update_quota_on_billing_group_change.delay(instance_id=instance.id, billing_id_to_remove=old_billing_group_id,
-                                          billing_id_to_add=billing_group_id)
+        if instance.billing_group:
+            tasks.async_quota_bindings_add_instance.delay(instance_id=instance.id, billing_id=instance.billing_group.id)
+        if instance._old_billing_group:
+            tasks.async_quota_bindings_remove_instance.delay(instance_id=instance.id, billing_id=instance._old_billing_group.id)
 
 
 @receiver(pre_delete, sender=Instance)

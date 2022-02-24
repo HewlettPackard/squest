@@ -17,3 +17,25 @@ class BillingGroup(models.Model):
 
     def __str__(self):
         return self.name
+
+    def quota_bindings_update_consumed(self):
+        for binding in self.quota_bindings.all():
+            binding.refresh_consumed()
+
+    def quota_bindings_remove_instance(self, instance):
+        for resource in instance.resources.all():
+            self.quota_bindings_remove_resource(resource)
+
+    def quota_bindings_add_instance(self, instance):
+        for resource in instance.resources.all():
+            self.quota_bindings_add_resource(resource)
+
+    def quota_bindings_remove_resource(self, resource):
+        for binding in self.quota_bindings.all():
+            for attribute in resource.attributes.filter(attribute_type__in=binding.quota.attribute_definitions.all()):
+                binding.calculate_consumed(-attribute.value)
+
+    def quota_bindings_add_resource(self, resource):
+        for binding in self.quota_bindings.all():
+            for attribute in resource.attributes.filter(attribute_type__in=binding.quota.attribute_definitions.all()):
+                binding.calculate_consumed(attribute.value)

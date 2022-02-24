@@ -2,12 +2,10 @@ from profiles.models import Quota, BillingGroup, QuotaBinding
 from resource_tracker.models import ResourceGroupAttributeDefinition, Resource
 from service_catalog.models import Instance
 from tests.test_resource_tracker.base_test_resource_tracker import BaseTestResourceTracker
-from Squest.utils.disconnect_signals import skip_auto_calculation
 
 
 class BaseTestQuota(BaseTestResourceTracker):
 
-    @skip_auto_calculation
     def setUp(self):
         super(BaseTestQuota, self).setUp()
         self.cpu_attributes = ResourceGroupAttributeDefinition.objects.filter(name__icontains='cpu')

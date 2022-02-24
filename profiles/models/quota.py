@@ -16,9 +16,13 @@ class Quota(Model):
         verbose_name="Attribute Definition"
     )
 
+    def quota_bindings_update_consumed(self):
+        for quota_binding in self.quota_bindings.all():
+            quota_binding.refresh_consumed()
+
 
 def attribute_definitions_changed(sender, instance, **kwargs):
-    tasks.quota_update_consumed.delay(instance.id)
+    tasks.async_quota_bindings_update_consumed.delay(instance.id)
 
 
 m2m_changed.connect(attribute_definitions_changed, sender=Quota.attribute_definitions.through)
