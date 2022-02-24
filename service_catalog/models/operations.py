@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-
 from service_catalog.models import JobTemplate, OperationType
 from service_catalog.models import Service
 
@@ -24,6 +23,9 @@ class Operation(models.Model):
     auto_accept = models.BooleanField(default=False)
     auto_process = models.BooleanField(default=False)
     process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
+
+    def __str__(self):
+        return f"{self.name} ({self.service})"
 
     def clean(self):
         if hasattr(self, 'service'):
