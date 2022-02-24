@@ -1,19 +1,22 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django_celery_results.models import TaskResult
 
 from resource_tracker.filters.resource_pool_filter import ResourcePoolFilter
 from resource_tracker.forms import ResourcePoolForm, ResourcePoolAttributeDefinitionForm
 from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinition
 from resource_tracker.tables.resource_pool_attribute_definition_table import ResourcePoolAttributeDefinitionTable
+from service_catalog.tasks import async_update_all_consumed_and_produced
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_list(request):
+    task_id = request.session.pop('task_id', None)
     resource_pool_list = ResourcePool.objects.all()
     resource_pool_filtered = ResourcePoolFilter(request.GET, queryset=resource_pool_list)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
-                  {'resource_pools': resource_pool_filtered, 'title': "Resource pools"})
+                  {'resource_pools': resource_pool_filtered, 'title': "Resource pools", "task_id": task_id})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -71,9 +74,13 @@ def resource_pool_delete(request, resource_pool_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_refresh_consumption(request, resource_pool_id):
-    resource_pool = get_object_or_404(ResourcePool, id=resource_pool_id)
-    resource_pool.update_all_consumed_and_produced()
-    return redirect(request.META['HTTP_REFERER'])
+    task = async_update_all_consumed_and_produced.delay(resource_pool_id)
+    task_result = TaskResult(task_id=task.task_id)
+    task_result.save()
+    request.session['task_id'] = task_result.id
+    if 'HTTP_REFERER' in request.META:
+        return redirect(request.META['HTTP_REFERER'])
+    return redirect(reverse('resource_tracker:resource_pool_list'))
 
 
 @user_passes_test(lambda u: u.is_superuser)

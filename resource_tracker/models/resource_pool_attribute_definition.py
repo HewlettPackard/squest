@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from resource_tracker.models import ResourceGroupAttributeDefinition, ResourceAttribute
 
 
@@ -24,24 +25,16 @@ class ResourcePoolAttributeDefinition(models.Model):
         return f"{self.resource_pool.name} - {self.name}"
 
     def add_producers(self, resource: ResourceGroupAttributeDefinition):
-        previous_producer = None
-        if resource.produce_for is not None:
-            previous_producer = resource.produce_for
         resource.produce_for = self
         resource.save()
-        self.calculate_total_produced()
-        if previous_producer is not None:
-            previous_producer.calculate_total_produced()
 
     def add_consumers(self, resource: ResourceGroupAttributeDefinition):
-        previous_consumer = None
-        if resource.consume_from is not None:
-            previous_consumer = resource.consume_from
         resource.consume_from = self
         resource.save()
-        self.calculate_total_consumed()
-        if previous_consumer is not None:
-            previous_consumer.calculate_total_consumed()
+
+    def calculate_produced(self, delta):
+        self.total_produced += delta * self.over_commitment_producers
+        self.save()
 
     def calculate_total_produced(self):
         total_produced = 0
@@ -54,6 +47,10 @@ class ResourcePoolAttributeDefinition(models.Model):
                 except ResourceAttribute.DoesNotExist:
                     pass
         self.total_produced = total_produced * self.over_commitment_producers
+        self.save()
+
+    def calculate_consumed(self, delta):
+        self.total_consumed += delta * self.over_commitment_consumers
         self.save()
 
     def calculate_total_consumed(self):
@@ -75,11 +72,7 @@ class ResourcePoolAttributeDefinition(models.Model):
     def get_percent_consumed(self):
         if self.total_produced == 0:
             return "N/A"
-        percent_consumed = 0
-        try:
-            percent_consumed = (self.total_consumed * 100) / self.total_produced
-        except ZeroDivisionError:
-            pass
+        percent_consumed = (self.total_consumed * 100) / self.total_produced
         return round(percent_consumed)
 
     def get_total_produced_by(self, producer):
@@ -111,12 +104,11 @@ class ResourcePoolAttributeDefinition(models.Model):
             consumer.save()
 
 
-def on_change(sender, instance, created, **kwargs):
-    post_save.disconnect(on_change, sender=sender)  # prevent post save recursion
-    instance.calculate_total_consumed()
-    instance.calculate_total_produced()
-    instance.save()
-    post_save.connect(on_change, sender=sender)
-
-
-post_save.connect(on_change, sender=ResourcePoolAttributeDefinition)
+@receiver(pre_save, sender=ResourcePoolAttributeDefinition)
+def on_change(sender, instance, **kwargs):
+    if instance.id:  # if edit
+        old = ResourcePoolAttributeDefinition.objects.get(id=instance.id)
+        if instance.over_commitment_consumers != old.over_commitment_consumers:
+            instance.total_consumed = (instance.total_consumed/old.over_commitment_consumers) * instance.over_commitment_consumers
+        if instance.over_commitment_producers != old.over_commitment_producers:
+            instance.total_produced = (instance.total_produced/old.over_commitment_producers) * instance.over_commitment_producers

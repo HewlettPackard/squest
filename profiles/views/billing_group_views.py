@@ -135,5 +135,5 @@ def billing_group_list(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def billing_group_refresh_quota(request, billing_group_id):
-    tasks.billing_update_quota.delay(billing_group_id)
+    tasks.async_billing_group_quota_bindings_update_consumed.delay(billing_group_id)
     return redirect(request.META['HTTP_REFERER'])

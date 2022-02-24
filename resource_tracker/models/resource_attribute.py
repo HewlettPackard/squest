@@ -23,6 +23,13 @@ class ResourceAttribute(models.Model):
     def __str__(self):
         return str(self.value)
 
+    def quota_bindings_update_consumed(self, delta):
+        if self.resource.billing_group:
+            for quota in self.attribute_type.quota.all():
+                for binding in quota.quota_bindings.filter(
+                        billing_group=self.resource.billing_group):
+                    binding.calculate_consumed(delta)
+
 
 @receiver(pre_save, sender=ResourceAttribute)
 def on_change(sender, instance, **kwargs):
@@ -31,14 +38,15 @@ def on_change(sender, instance, **kwargs):
         delta = instance.value - old.value
         # if value changed
         if instance.attribute_type is not None:
-            instance.attribute_type.calculate_total_resource()
             if delta != 0:
-                tasks.resource_attribute_update_consumed.delay(instance.id, delta)
+                instance.attribute_type.calculate_resource(delta)
+                tasks.async_resource_attribute_quota_bindings_update_consumed.delay(instance.id, delta)
 
 
 @receiver(pre_delete, sender=ResourceAttribute)
 def pre_delete(sender, instance, **kwargs):
-    if instance.resource.billing_group and instance.attribute_type:
-        instance.attribute_type.calculate_total_resource()
-        delta = - instance.value
-        tasks.resource_attribute_update_consumed.delay(instance.id, delta)
+    delta = - instance.value
+    if instance.attribute_type:
+        instance.attribute_type.calculate_resource(delta)
+        if instance.resource.billing_group:
+            tasks.async_resource_attribute_quota_bindings_update_consumed.delay(instance.id, delta)

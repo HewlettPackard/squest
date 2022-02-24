@@ -38,18 +38,33 @@ class QuotaBinding(Model):
         percent_consumed = (self.consumed * 100) / self.limit
         return round(percent_consumed)
 
-    def update_consumed(self, delta=None):
-        if delta is None:
-            consumed = 0
-            for instance in self.billing_group.instances.all():
-                for resource in instance.resources.all():
-                    for attribute in resource.attributes.all():
-                        if attribute.attribute_type in self.quota.attribute_definitions.all():
-                            consumed += attribute.value
-            self.consumed = consumed
-        else:
-            self.consumed += delta
+    def refresh_consumed(self):
+        consumed = 0
+        for instance in self.billing_group.instances.all():
+            for resource in instance.resources.all():
+                for attribute in resource.attributes.all():
+                    if attribute.attribute_type in self.quota.attribute_definitions.all():
+                        consumed += attribute.value
+        self.consumed = consumed
         self.save()
+
+    def calculate_consumed(self, delta):
+        self.consumed += delta
+        self.save()
+
+    def update_consumed_with_resources(self, resources_to_add=None, resources_to_remove=None):
+        delta = 0
+        if resources_to_add:
+            for resource in resources_to_add:
+                for attribute in resource.attributes.all():
+                    if attribute.attribute_type in self.quota.attribute_definitions.all():
+                        delta += attribute.value
+        if resources_to_remove:
+            for resource in resources_to_remove:
+                for attribute in resource.attributes.all():
+                    if attribute.attribute_type in self.quota.attribute_definitions.all():
+                        delta -= attribute.value
+        self.calculate_consumed(delta)
 
     def __str__(self):
         return f"{self.quota.name} = {self.consumed} (limit: {self.limit})"
@@ -58,4 +73,4 @@ class QuotaBinding(Model):
 @receiver(post_save, sender=QuotaBinding)
 def get_consumed(sender, instance, created, **kwargs):
     if created:
-        tasks.quota_binding_update_consumed.delay(instance.id, None)
+        tasks.async_quota_binding_calculate_consumed.delay(instance.id, None)

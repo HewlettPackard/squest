@@ -1,25 +1,21 @@
 from copy import copy
 from random import randint
-
 from django.contrib.auth.models import User
 from django.test import TestCase
 
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, Resource, ResourceAttribute, \
     ResourcePool, ExceptionResourceTracker, ResourceGroupTextAttributeDefinition
 from service_catalog.models import Service, Instance, InstanceState
-from Squest.utils.disconnect_signals import skip_auto_calculation
 
 
 class TestCalculation(TestCase):
 
-    @skip_auto_calculation
     def _create_simple_testing_stack(self):
         # create a group of server that produce into the vcenter pool
         self.server_group = ResourceGroup.objects.create(name="server-group")
-        server_cpu_attribute_def = self.server_group.add_attribute_definition(name='CPU')
+        self.server_cpu_attribute_def = self.server_group.add_attribute_definition(name='CPU')
         self.server = self.server_group.create_resource(name=f"server-group1")
-        self.server.set_attribute(server_cpu_attribute_def, 100)
-        self.server_group.calculate_total_resource_of_attributes()
+        self.server.set_attribute(self.server_cpu_attribute_def, 100)
         # create a big server group
         self.big_server_group = ResourceGroup.objects.create(name="big-server-group")
         self.big_server_group_cpu = self.big_server_group.add_attribute_definition(name='CPU')
@@ -30,10 +26,9 @@ class TestCalculation(TestCase):
             value = randint(10, 150)
             resource.set_attribute(self.big_server_group_cpu, value)
             self.big_server_group_cpu_count += value
-        self.big_server_group.calculate_total_resource_of_attributes()
 
         self.vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
-        self.vcenter_pool.add_attribute_definition(name='vCPU')
+        self.vcpu_pool_ad = self.vcenter_pool.add_attribute_definition(name='vCPU')
         self.vcenter_pool.attribute_definitions.get(name='vCPU') \
             .add_producers(self.server_group.attribute_definitions.get(name='CPU'))
         self.assertEqual(100, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_produced)
@@ -50,7 +45,6 @@ class TestCalculation(TestCase):
         self.vm1.set_attribute(vm_vcpu_attribute, 25)
         vm2 = self.vm_group.create_resource(name=f"vm2")
         vm2.set_attribute(vm_vcpu_attribute, 25)
-        self.vm_group.calculate_total_resource_of_attributes()
         self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
 
     def _create_vcenter_pool_with_one_server(self):
@@ -142,12 +136,11 @@ class TestCalculation(TestCase):
     def test_get_attribute_on_resource_group(self):
         self._create_testing_server_group()
         self.assertEqual(len(self.cpu_list), self.server_group.resources.count())
-        self.assertEqual(sum(self.cpu_list), self.server_group.get_sum_value_by_attribute(self.cpu_attribute))
 
     def test_link_resource_group_attribute_definition_to_a_resource_pool(self):
         self._create_testing_server_group()
         vcenter_pool = ResourcePool.objects.create(name="vcenter-pool")
-        vcenter_cpu_attribute = vcenter_pool.add_attribute_definition(name='vCPU')
+        vcenter_pool.add_attribute_definition(name='vCPU')
 
         # Link
         vcenter_pool.attribute_definitions.get(name='vCPU') \
@@ -356,13 +349,15 @@ class TestCalculation(TestCase):
         server_group = ResourceGroup.objects.create(name="server-group")
         server_cpu_attribute_def = server_group.add_attribute_definition(name='CPU')
         server = server_group.create_resource(name=f"server-group1")
+        self.assertEqual(0, server_cpu_attribute_def.total_resource)
         server.set_attribute(server_cpu_attribute_def, 100)
         vcenter_pool.attribute_definitions.get(name='vCPU') \
             .add_producers(server_group.attribute_definitions.get(name='CPU'))
         vcenter_pool_vcpu_att.refresh_from_db()
+        server_cpu_attribute_def.refresh_from_db()
+        self.assertEqual(100, server_cpu_attribute_def.total_resource)
         self.assertEqual(100, vcenter_pool_vcpu_att.total_produced)
-
-        # delete RP
+        # delete RG
         server_group.delete()
         vcenter_pool_vcpu_att.refresh_from_db()
         self.assertEqual(0, vcenter_pool_vcpu_att.total_produced)
@@ -394,3 +389,36 @@ class TestCalculation(TestCase):
         self.test_instance.save()
         self.test_instance.deleted()
         self.assertFalse(Resource.objects.filter(id=self.resource_id_to_delete).exists())
+
+    def test_calculate_produced(self):
+        self._create_simple_testing_stack()
+        self.vcpu_pool_ad.refresh_from_db()
+        self.assertEqual(self.vcpu_pool_ad.total_produced, 100)
+        self.vcpu_pool_ad.calculate_produced(50)
+        self.assertEqual(self.vcpu_pool_ad.total_produced, 150)
+        self.vcpu_pool_ad.calculate_produced(-100)
+        self.assertEqual(self.vcpu_pool_ad.total_produced, 50)
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.total_produced, 100)
+
+    def test_calculate_consumed(self):
+        self._create_simple_testing_stack()
+        self.vcpu_pool_ad.refresh_from_db()
+        self.assertEqual(self.vcpu_pool_ad.total_consumed, 50)
+        self.vcpu_pool_ad.calculate_consumed(50)
+        self.assertEqual(self.vcpu_pool_ad.total_consumed, 100)
+        self.vcpu_pool_ad.calculate_consumed(-100)
+        self.assertEqual(self.vcpu_pool_ad.total_consumed, 0)
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.assertEqual(self.vcpu_pool_ad.total_consumed, 50)
+
+    def test_calculate_resource(self):
+        self._create_simple_testing_stack()
+        self.server_cpu_attribute_def.refresh_from_db()
+        self.assertEqual(self.server_cpu_attribute_def.total_resource, 100)
+        self.server_cpu_attribute_def.calculate_resource(150)
+        self.assertEqual(self.server_cpu_attribute_def.total_resource, 250)
+        self.server_cpu_attribute_def.calculate_resource(-50)
+        self.assertEqual(self.server_cpu_attribute_def.total_resource, 200)
+        self.server_cpu_attribute_def.calculate_total_resource()
+        self.assertEqual(self.server_cpu_attribute_def.total_resource, 100)
