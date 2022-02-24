@@ -15,6 +15,21 @@ COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851
           'transparent': '#ffffff00', 'secondary': '#6c757d'}
 
 
+def get_graph_name(resource) -> str:
+    '''
+    Prefix ResourcePool's and ResouceGroup's name to prevent name collision in Graph
+    :param resource: ResourcePool or ResourceGroup
+    :return: str
+    '''
+    prefix = ''
+    if isinstance(resource, ResourcePool):
+        prefix = 'RP_'
+    elif isinstance(resource, ResourceGroup):
+        prefix = 'RG_'
+    return f'{prefix}{resource.name}'.replace(':', '_') # ':' is a special keyword in Dot
+
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def resource_tracker_graph(request):
     dot = Digraph(comment='Graph')
@@ -36,18 +51,18 @@ def resource_tracker_graph(request):
         resource_group_queryset = ResourceGroup.objects.all()
 
     for resource_pool in resource_pool_queryset:
-        dot.node(resource_pool.name, label=create_resource_pool_svg(resource_pool))
+        dot.node(f'{get_graph_name(resource_pool)}', label=create_resource_pool_svg(resource_pool))
         display_graph = True
     for resource_group in resource_group_queryset:
         display_graph = True
-        dot.node(resource_group.name, label=create_resource_group_svg(resource_group))
+        dot.node(f'{get_graph_name(resource_group)}', label=create_resource_group_svg(resource_group))
         for attribute in resource_group.attribute_definitions.filter():
-            rg = f"{resource_group.name}:{attribute.name}"
+            rg = f'{get_graph_name(resource_group)}:{attribute.name}'
             if attribute.consume_from:
-                dot.edge(f"{attribute.consume_from.resource_pool.name}:{attribute.consume_from.name}", rg,
+                dot.edge(f'{get_graph_name(attribute.consume_from.resource_pool)}:{attribute.consume_from.name}', rg,
                          color=COLORS['provider'])
             if attribute.produce_for:
-                dot.edge(rg, f"{attribute.produce_for.resource_pool.name}:{attribute.produce_for.name}",
+                dot.edge(rg, f'{get_graph_name(attribute.produce_for.resource_pool)}:{attribute.produce_for.name}',
                          color=COLORS['consumer'])
 
     dot.format = 'svg'
