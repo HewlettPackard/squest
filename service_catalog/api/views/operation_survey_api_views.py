@@ -1,4 +1,5 @@
 from django.http import Http404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import get_object_or_404
@@ -29,6 +30,7 @@ class OperationSurveyAPI(APIView):
             self.get_object(operation_id=operation_id, obj_name=name)
         return True
 
+    @swagger_auto_schema(responses={200: TowerSurveyFieldSerializer(many=True)})
     def get(self, request, service_id, pk):
         service = get_object_or_404(Service, id=service_id)
         try:
@@ -38,6 +40,7 @@ class OperationSurveyAPI(APIView):
         serializer = TowerSurveyFieldSerializer(TowerSurveyField.objects.filter(operation=operation), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(responses={200: TowerSurveyFieldSerializer(many=True)})
     def put(self, request, service_id, pk, *args, **kwargs):
         service = get_object_or_404(Service, id=service_id)
         try:
