@@ -1,3 +1,31 @@
+# 1.5.0 2022-02-28
+
+## Breaking changes
+
+- API: Service and Operation creation split.
+
+## Fix
+
+- Patch a resource without "text_attribute" field filled.
+- Fix Squest logo not shown in maintenance page for non-root URLs.
+- Resource group and Resource pool with the same name was not displayed in the graph.
+- Add missing swagger doc for operation survey.
+
+## Enhancement
+
+- Performance: cache + calculation + asynchronous call.
+- API : Create a Service return full Service Serializer.
+- Catch all Tower exceptions when processing a request.
+- Remove role binding from team details.
+- Global hook can be linked to a service.
+- Admin can set to blank a non required field with default value in Tower survey.
+- Split Service and Operation form.
+- API: Split Service and Operation serializer.
+
+## Feature
+
+- Jinja template on survey default field value.
+
 # 1.4.1 2022-02-02
 
 ## Breaking changes
