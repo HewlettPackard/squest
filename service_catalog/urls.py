@@ -1,7 +1,5 @@
-from django.conf.urls.static import static
 from django.urls import path
 
-from Squest import settings
 from . import views
 from .views.announcement_list_view import AnnouncementListView
 from .views.doc_list_view import DocListView
@@ -100,4 +98,4 @@ urlpatterns = [
     path('tool/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
     path('tool/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

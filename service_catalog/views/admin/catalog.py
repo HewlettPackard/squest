@@ -4,7 +4,7 @@ from django.forms import modelformset_factory, TextInput, CheckboxInput
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from service_catalog.forms import ServiceForm, AddServiceOperationForm, EditServiceForm
+from service_catalog.forms import ServiceForm, ServiceOperationForm, ServiceForm
 from service_catalog.models import Service, Operation
 from service_catalog.models.operations import OperationType
 from service_catalog.models.tower_survey_field import TowerSurveyField
@@ -15,8 +15,8 @@ def add_service(request):
     if request.method == 'POST':
         form = ServiceForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('service_catalog:service_list')
+            service = form.save()
+            return redirect(reverse('service_catalog:add_service_operation', kwargs={"service_id": service.id}))
     else:
         form = ServiceForm()
     breadcrumbs = [
@@ -51,7 +51,7 @@ def delete_service(request, service_id):
 def edit_service(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
 
-    form = EditServiceForm(request.POST or None, request.FILES or None, instance=target_service)
+    form = ServiceForm(request.POST or None, request.FILES or None, instance=target_service)
     if form.is_valid():
         form.save()
         return redirect('service_catalog:manage_services')
@@ -68,15 +68,12 @@ def edit_service(request, service_id):
 def add_service_operation(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
     if request.method == 'POST':
-        form = AddServiceOperationForm(request.POST)
+        form = ServiceOperationForm(request.POST, service=target_service)
         if form.is_valid():
-            form.service_id = target_service.id
-            new_operation = form.save(commit=False)
-            new_operation.service = target_service
-            new_operation.save()
+            form.save()
             return redirect('service_catalog:service_operations', service_id=target_service.id)
     else:
-        form = AddServiceOperationForm()
+        form = ServiceOperationForm(service=target_service)
     breadcrumbs = [
         {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
         {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
@@ -91,9 +88,6 @@ def add_service_operation(request, service_id):
 def delete_service_operation(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
-    if target_operation.type == OperationType.CREATE:
-        # cannot delete a create type operation
-        raise PermissionDenied
     if request.method == "POST":
         target_operation.delete()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
@@ -117,7 +111,7 @@ def edit_service_operation(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
 
-    form = AddServiceOperationForm(request.POST or None, instance=target_operation)
+    form = ServiceOperationForm(request.POST or None, instance=target_operation, service=target_service)
     if form.is_valid():
         form.save()
         return redirect('service_catalog:service_operations', service_id=target_service.id)

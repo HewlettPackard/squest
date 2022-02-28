@@ -2,13 +2,7 @@
    class="btn btn-default bg-sm">
     <i class="fas fa-pencil-alt"></i>
 </a>
-{% if  record.type != "CREATE" %}
-    <a href="{% url 'service_catalog:delete_service_operation' service_id=service_id operation_id=record.id %}"
-       class="btn btn-danger bg-sm">
-        <i class="fas fa-trash"></i>
-    </a>
-{% else %}
-    <a href="" class="btn btn-danger bg-sm disabled">
-        <i class="fas fa-trash"></i>
-    </a>
-{% endif %}
+<a href="{% url 'service_catalog:delete_service_operation' service_id=service_id operation_id=record.id %}"
+   class="btn btn-danger bg-sm">
+    <i class="fas fa-trash"></i>
+</a>

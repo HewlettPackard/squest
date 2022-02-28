@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -20,8 +20,8 @@ class Operation(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
                                 related_query_name="operation")
     job_template = models.ForeignKey(JobTemplate, null=True, on_delete=models.SET_NULL)
-    auto_accept = models.BooleanField(default=False)
-    auto_process = models.BooleanField(default=False)
+    auto_accept = models.BooleanField(default=False, blank=True)
+    auto_process = models.BooleanField(default=False, blank=True)
     process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
 
     def __str__(self):
@@ -59,6 +59,9 @@ class Operation(models.Model):
     def add_job_template_survey_as_default_survey(cls, sender, instance, created, *args, **kwargs):
         from service_catalog.models.tower_survey_field import TowerSurveyField
         if created:
+            if instance.type == OperationType.CREATE and instance.service:
+                instance.service.enabled = True
+                instance.service.save()
             # copy the default survey and add a flag 'is_visible'
             default_survey = instance.job_template.survey
             if "spec" in default_survey:
@@ -86,3 +89,10 @@ def on_change(sender, instance: Operation, **kwargs):
         previous = Operation.objects.get(id=instance.id)
         if previous.job_template != instance.job_template:
             instance.update_survey()
+
+@receiver(post_delete, sender=Operation)
+def on_delete(sender, instance: Operation, **kwargs):
+    # disable the service if no more job template linked to a create operation
+    if instance.type == OperationType.CREATE:
+        instance.service.enabled = False
+        instance.service.save()

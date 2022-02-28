@@ -1,5 +1,4 @@
-from django.core.exceptions import ValidationError
-from django.forms import Form, ModelChoiceField, SelectMultiple
+from django.forms import Form, SelectMultiple
 from django_filters.fields import ModelMultipleChoiceField
 
 from service_catalog.models import Service

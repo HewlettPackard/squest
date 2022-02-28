@@ -17,9 +17,11 @@ class OperationDeleteTestCase(BaseTest):
         }
         url = reverse('service_catalog:delete_service_operation', kwargs=args)
         response = self.client.get(url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(200, response.status_code)
         response = self.client.post(url)
-        self.assertRaises(PermissionDenied)
+        self.assertEqual(302, response.status_code)
+        self.service_test.refresh_from_db()
+        self.assertEqual(self.service_test.enabled, False)
 
         # delete an "UPDATE" type operation
         args = {
