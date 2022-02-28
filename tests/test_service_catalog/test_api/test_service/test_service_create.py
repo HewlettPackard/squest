@@ -17,15 +17,13 @@ class TestApiServiceCreate(BaseTestRequest):
             'billing_group_is_shown': True,
             'billing_group_is_selectable': True,
             'billing_groups_are_restricted': False,
-            'enabled': True,
-            'job_template': self.job_template_test.id
+            'enabled': False,
         }
         self.get_service_details_url = reverse('api_service_list_create')
 
     def test_admin_post_service(self):
         response = self.client.post(self.get_service_details_url, data=self.post_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.post_data.pop('job_template')
         check_data_in_dict(self, [self.post_data], [response.data])
         service = Service.objects.last()
         self.assertEqual(service.name, self.post_data['name'])
@@ -33,30 +31,6 @@ class TestApiServiceCreate(BaseTestRequest):
         self.assertEqual(service.billing_group_is_selectable, self.post_data['billing_group_is_selectable'])
         self.assertEqual(service.billing_groups_are_restricted, self.post_data['billing_groups_are_restricted'])
         self.assertEqual(service.billing_group_id, self.post_data['billing_group_id'])
-        self.assertEqual(service.operations.filter(type=OperationType.CREATE).count(), 1)
-
-    def test_admin_post_service_with_specific_timeout(self):
-        self.post_data['job_template_timeout'] = 250
-        response = self.client.post(self.get_service_details_url, data=self.post_data, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.post_data.pop('job_template')
-        timeout = self.post_data.pop('job_template_timeout')
-        check_data_in_dict(self, [self.post_data], [response.data])
-        service = Service.objects.last()
-        self.assertEqual(service.operations.filter(type=OperationType.CREATE).count(), 1)
-        self.assertEqual(service.operations.filter(type=OperationType.CREATE).first().process_timeout_second,
-                         timeout)
-        self.assertEqual(service.name, self.post_data['name'])
-        self.assertEqual(service.billing_group_is_shown, self.post_data['billing_group_is_shown'])
-        self.assertEqual(service.billing_group_is_selectable, self.post_data['billing_group_is_selectable'])
-        self.assertEqual(service.billing_groups_are_restricted, self.post_data['billing_groups_are_restricted'])
-        self.assertEqual(service.billing_group_id, self.post_data['billing_group_id'])
-        self.assertEqual(service.operations.filter(type=OperationType.CREATE).count(), 1)
-
-    def test_admin_cannot_post_on_service_without_job_template(self):
-        self.post_data.pop('job_template')
-        response = self.client.post(self.get_service_details_url, data=self.post_data, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_admin_cannot_post_on_service_not_full(self):
         self.post_data.pop('name')

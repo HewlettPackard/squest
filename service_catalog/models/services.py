@@ -1,4 +1,8 @@
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from service_catalog.models import OperationType
 
@@ -11,9 +15,9 @@ class Service(models.Model):
     billing_group_is_shown = models.BooleanField(default=False)
     billing_group_is_selectable = models.BooleanField(default=False)
     billing_groups_are_restricted = models.BooleanField(default=True)
-    enabled = models.BooleanField(default=True)
+    enabled = models.BooleanField(default=False, blank=True)
 
-    def asert_create_operation_have_job_template(self):
+    def can_be_enabled(self):
         operation_create = self.operations.filter(type=OperationType.CREATE)
         if operation_create.count() == 1:
             if operation_create.first().job_template is not None:
@@ -23,13 +27,13 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
-    def create_provisioning_operation(self, job_template, job_template_timeout=60):
-        if self.operations.filter(type=OperationType.CREATE):
-            raise Exception({"Provisionning operation": "A service can have only one 'CREATE' operation"})
-        from service_catalog.models import Operation
-        Operation.objects.create(name=f"Create {self.name}",
-                                 service=self,
-                                 job_template=job_template,
-                                 process_timeout_second=job_template_timeout
-                                 )
-        self.save()
+    def clean(self):
+        if self.enabled and not self.can_be_enabled():
+            raise ValidationError({'enabled': _("Service cannot be enabled if its 'CREATE' operation is not valid.")})
+
+
+@receiver(pre_save, sender=Service)
+def service_pre_save(sender, instance, **kwargs):
+    if instance.enabled and not instance.can_be_enabled():
+        instance.enabled = False
+        instance.save()

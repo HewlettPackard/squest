@@ -1,5 +1,5 @@
 from profiles.models import BillingGroup
-from service_catalog.forms import ServiceForm, EditServiceForm
+from service_catalog.forms import ServiceForm, ServiceForm
 from service_catalog.models import OperationType
 from tests.test_service_catalog.base import BaseTest
 
@@ -13,8 +13,6 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service",
                 "description": "a new service",
-                "job_template": self.job_template_test.id,
-                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -22,8 +20,6 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service_2",
                 "description": "a new service 2",
-                "job_template": self.job_template_test.id,
-                "job_template_timeout": 250,
                 "billing": "all_billing_groups",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -32,8 +28,6 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service_3",
                 "description": "a new service 3",
-                "job_template": self.job_template_test.id,
-                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": self.billing_group_1.id
 
@@ -41,8 +35,6 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service_4",
                 "description": "a new service 4",
-                "job_template": self.job_template_test.id,
-                "job_template_timeout": 60,
                 "billing": "defined",
                 "billing_group_id": self.billing_group_1.id + 1
 
@@ -50,8 +42,6 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service_5",
                 "description": "a new service 5",
-                "job_template": self.job_template_test.id,
-                "job_template_timeout": 60,
                 "billing": "restricted_billing_groups",
                 "billing_group_id": "",
                 "billing_group_is_shown": "on"
@@ -65,11 +55,6 @@ class TestServiceForm(BaseTest):
             if form.is_valid():
                 new_service = form.save()
                 test_list = self.get_test_list(data, new_service)
-                test_list.append(
-                    {'name': "job_template_timeout",
-                     'value': new_service.operations.filter(type=OperationType.CREATE).first().process_timeout_second,
-                     'expected': data['job_template_timeout']}
-                )
                 for test in test_list:
                     self.assertEqual(test['value'], test['expected'])
             else:
@@ -77,7 +62,7 @@ class TestServiceForm(BaseTest):
 
     def test_edit_service(self):
         for data in self.data_list:
-            form = EditServiceForm(data, instance=self.service_test)
+            form = ServiceForm(data, instance=self.service_test)
             if form.is_valid():
                 form.save()
                 test_list = self.get_test_list(data, self.service_test)
@@ -92,20 +77,20 @@ class TestServiceForm(BaseTest):
         create_operation.save()
         self.service_test.save()
         data = self.data_list[0]
-        form = EditServiceForm(data, instance=self.service_test)
+        form = ServiceForm(data, instance=self.service_test)
         self.assertEqual(True, form.fields['enabled'].disabled)
-        self.assertEqual("To enable this service, please link a job template to the 'CREATE' operation.", form.fields['enabled'].help_text)
+        self.assertEqual("'CREATE' operation with a job template is required to enable this service.", form.fields['enabled'].help_text)
 
     def test_edit_service_on_restricted_billing_group_selectable(self):
         self.service_test.billing_group_is_selectable = True
         self.service_test.save()
         data = self.data_list[0]
-        form = EditServiceForm(data, instance=self.service_test)
+        form = ServiceForm(data, instance=self.service_test)
         self.assertEqual('restricted_billing_groups', form.fields['billing'].initial)
 
     def test_edit_service_on_restricted_billing_group_non_selectable(self):
         data = self.data_list[0]
-        form = EditServiceForm(data, instance=self.service_test)
+        form = ServiceForm(data, instance=self.service_test)
         self.assertEqual('defined', form.fields['billing'].initial)
 
     def test_edit_service_on_non_restricted_billing_group_selectable(self):
@@ -113,7 +98,7 @@ class TestServiceForm(BaseTest):
         self.service_test.billing_groups_are_restricted = False
         self.service_test.save()
         data = self.data_list[0]
-        form = EditServiceForm(data, instance=self.service_test)
+        form = ServiceForm(data, instance=self.service_test)
         self.assertEqual('all_billing_groups', form.fields['billing'].initial)
 
     @staticmethod

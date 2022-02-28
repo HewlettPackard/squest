@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
@@ -58,14 +58,9 @@ urlpatterns = [
         r'^api/uploader/$',
         markdown_uploader, name='markdown_uploader_page'
     ),
-]
+] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.METRICS_ENABLED:
     urlpatterns += [
         path('metrics/', include('monitoring.urls')),
     ]
-
-# if settings.DEBUG:
-#     # static files (images, css, javascript, etc.)
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
