@@ -54,5 +54,5 @@ class TestApiOperationPatch(BaseTestRequest):
         self.client.patch(self.get_operation_details_url, data=self.patch_data,
                           content_type="application/json")
         self.service_test.refresh_from_db()
-        self.assertFalse(self.service_test.asert_create_operation_have_job_template())
+        self.assertFalse(self.service_test.can_be_enabled())
         self.assertFalse(self.service_test.enabled)

@@ -4,14 +4,11 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from service_catalog.models import Service
-from service_catalog.api.serializers import ServiceSerializer, AdminServiceSerializer, CreateServiceSerializer
+from service_catalog.api.serializers import ServiceSerializer, AdminServiceSerializer
 
 
 class ServiceListCreate(ListCreateAPIView):
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return CreateServiceSerializer
-        return ServiceSerializer
+    serializer_class = ServiceSerializer
 
     def get_queryset(self):
         if self.request.user.is_superuser:

@@ -69,9 +69,9 @@ class OperationEditTestCase(BaseTest):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.create_operation_test.refresh_from_db()
-        self.assertEqual("CREATE", self.create_operation_test.type)
+        self.assertEqual("UPDATE", self.create_operation_test.type)
 
     def test_cannot_edit_service_operation_when_logout(self):
         self.client.logout()
