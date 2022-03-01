@@ -1,3 +1,13 @@
+# 1.5.1 2022-03-01
+
+## Fix
+
+- Calculate total resources of a resource group was not called when creating a resource from the API
+
+## Enhancement
+
+- Added a button to re calculate total of a resource group
+
 # 1.5.0 2022-02-28
 
 ## Breaking changes
