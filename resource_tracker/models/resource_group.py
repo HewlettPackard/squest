@@ -75,3 +75,7 @@ class ResourceGroup(models.Model):
             for attribute in self.text_attribute_definitions.all():
                 resource.text_attributes.create(text_attribute_type=attribute)
         return resource
+
+    def recalculate_total_resources(self):
+        for attribute_definition in self.attribute_definitions:
+            attribute_definition.calculate_total_resource()
