@@ -13,6 +13,8 @@ urlpatterns = [
          name='resource_group_edit'),
     path('resource_group/<int:resource_group_id>/delete/', views.resource_group_delete,
          name='resource_group_delete'),
+    path('resource_group/<int:resource_group_id>/refresh/', views.resource_group_recalculate_total_resources,
+         name='resource_group_recalculate_total_resources'),
 
     #computed attributes
 
