@@ -126,13 +126,15 @@ def async_quota_binding_calculate_consumed(quota_binding_id, delta=None):
 
 @shared_task
 def async_resource_attribute_quota_bindings_update_consumed(resource_attribute_id, delta):
-    logger.info(f"[async_resource_attribute_quota_bindings_update_consumed] start: resource_attribute_id: {resource_attribute_id}, delta: "
-                f"{delta}")
+    logger.info(
+        f"[async_resource_attribute_quota_bindings_update_consumed] start: resource_attribute_id: {resource_attribute_id}, delta: "
+        f"{delta}")
     from resource_tracker.models import ResourceAttribute
     resource_attribute = ResourceAttribute.objects.get(id=resource_attribute_id)
     resource_attribute.quota_bindings_update_consumed(delta)
-    logger.info(f"[async_resource_attribute_quota_bindings_update_consumed] end: resource_attribute_id: {resource_attribute_id}, delta: "
-                f"{delta}")
+    logger.info(
+        f"[async_resource_attribute_quota_bindings_update_consumed] end: resource_attribute_id: {resource_attribute_id}, delta: "
+        f"{delta}")
 
 
 @shared_task
@@ -142,3 +144,12 @@ def async_update_all_consumed_and_produced(resource_pool_id):
     resource_pool = ResourcePool.objects.get(id=resource_pool_id)
     resource_pool.update_all_consumed_and_produced()
     logger.info(f"[async_update_all_consumed_and_produced] end: resource_pool_id: {resource_pool_id}")
+
+
+@shared_task
+def async_recalculate_total_resources(resource_group_id):
+    logger.info(f"[async_recalculate_total_resources] start: resource_group_id: {resource_group_id}")
+    from resource_tracker.models import ResourceGroup
+    resource_group = ResourceGroup.objects.get(id=resource_group_id)
+    resource_group.recalculate_total_resources()
+    logger.info(f"[async_recalculate_total_resources] end: resource_group_id: {resource_group_id}")

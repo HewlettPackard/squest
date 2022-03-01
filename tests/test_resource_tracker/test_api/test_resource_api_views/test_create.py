@@ -13,9 +13,17 @@ class TestResourceCreate(BaseTestAPI):
         self.url = reverse('api_resource_list_create', args=[self.rg_physical_servers.id])
 
     def _check_resource_created(self, data, executed_attribute_length, executed_text_attribute_length=0):
+        self.rg_physical_servers_cpu_attribute.refresh_from_db()
+        old_count = self.rg_physical_servers_cpu_attribute.total_resource
         number_resource_before = Resource.objects.filter(resource_group=self.rg_physical_servers).count()
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.rg_physical_servers_cpu_attribute.refresh_from_db()
+        cpu = 0
+        for dictionary in data["attributes"]:
+            if dictionary['name'] == 'CPU':
+                cpu = int(dictionary['value'])
+        self.assertEqual(old_count + cpu, self.rg_physical_servers_cpu_attribute.total_resource)
         self.assertEqual(number_resource_before + 1,
                          Resource.objects.filter(resource_group=self.rg_physical_servers).count())
         self.assertEqual(response.data['name'], 'new_resource')

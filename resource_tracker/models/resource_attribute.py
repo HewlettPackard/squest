@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import pre_save, pre_delete
+from django.db.models.signals import pre_save, pre_delete, post_save
 from django.dispatch import receiver
 
 from service_catalog import tasks
@@ -41,6 +41,13 @@ def on_change(sender, instance, **kwargs):
             if delta != 0:
                 instance.attribute_type.calculate_resource(delta)
                 tasks.async_resource_attribute_quota_bindings_update_consumed.delay(instance.id, delta)
+
+
+@receiver(post_save, sender=ResourceAttribute)
+def on_create(sender, instance, created, **kwargs):
+    if created and instance.value:
+        instance.attribute_type.calculate_resource(instance.value)
+        tasks.async_resource_attribute_quota_bindings_update_consumed.delay(instance.id, instance.value)
 
 
 @receiver(pre_delete, sender=ResourceAttribute)

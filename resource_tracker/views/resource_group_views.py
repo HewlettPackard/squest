@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django_celery_results.models import TaskResult
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
@@ -14,6 +15,7 @@ from resource_tracker.tables.resource_group_attribute_definition_table import Re
 from resource_tracker.tables.resource_group_table import ResourceGroupTable
 from resource_tracker.tables.resource_group_text_attribute_definition_table import \
     ResourceGroupTextAttributeDefinitionTable
+from service_catalog.tasks import async_recalculate_total_resources
 
 
 @method_decorator(login_required, name='dispatch')
@@ -92,3 +94,14 @@ def resource_group_delete(request, resource_group_id):
     context = {'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
     return render(request,
                   'resource_tracking/resource_group/resource-group-delete.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_group_recalculate_total_resources(request, resource_group_id):
+    task = async_recalculate_total_resources.delay(resource_group_id)
+    task_result = TaskResult(task_id=task.task_id)
+    task_result.save()
+    request.session['task_id'] = task_result.id
+    if 'HTTP_REFERER' in request.META:
+        return redirect(request.META['HTTP_REFERER'])
+    return redirect(reverse('resource_tracker:resource_group_list'))
