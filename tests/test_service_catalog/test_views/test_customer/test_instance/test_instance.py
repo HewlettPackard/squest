@@ -148,20 +148,83 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.support_test.refresh_from_db()
         self.assertEqual(self.support_test.state, SupportState.OPENED)
 
-    def test_add_message_to_existing_support(self):
+    def _create_message(self, instance_id, support_id, message):
         args = {
-            "instance_id": self.test_instance.id,
-            "support_id": self.support_test.id
+            "instance_id": instance_id,
+            "support_id": support_id
         }
         url = reverse('service_catalog:instance_support_details', kwargs=args)
         data = {
-            "content": "new message"
+            "content": message
         }
+        return self.client.post(url, data=data)
+
+    def _edit_message(self, instance_id, support_id, message_id, message):
+        args = {
+            "instance_id": instance_id,
+            "support_id": support_id,
+            "message_id": message_id
+        }
+        url = reverse('service_catalog:support_message_edit', kwargs=args)
+        data = {
+            "content": message
+        }
+        return self.client.post(url, data=data)
+
+    def test_add_message_to_existing_support(self):
         number_message_before = SupportMessage.objects.filter(support=self.support_test).count()
-        response = self.client.post(url, data=data)
+        response = self._create_message(self.test_instance.id, self.support_test.id, "new message")
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_message_before + 1,
                          SupportMessage.objects.filter(support=self.support_test).count())
+
+    def test_sender_can_edit_message(self):
+        self._create_message(self.test_instance.id, self.support_test.id, "new message")
+        message = SupportMessage.objects.last()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
+        response = self._edit_message(self.test_instance.id, self.support_test.id, message.id, "message edited")
+        self.assertEqual(302, response.status_code)
+        message.refresh_from_db()
+        self.assertEqual(message.content, "message edited")
+        self.assertEqual(message.sender, self.standard_user)
+
+
+    def test_admin_can_edit_message(self):
+        self._create_message(self.test_instance.id, self.support_test.id, "new message")
+        message = SupportMessage.objects.last()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
+        self.client.force_login(self.superuser)
+        response = self._edit_message(self.test_instance.id, self.support_test.id, message.id, "message edited")
+        self.assertEqual(302, response.status_code)
+        message.refresh_from_db()
+        self.assertEqual(message.content, "message edited")
+        self.assertEqual(message.sender, self.standard_user)
+
+    def test_non_sender_cannot_edit_message(self):
+        self._create_message(self.test_instance.id, self.support_test.id, "new message")
+        message = SupportMessage.objects.last()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
+        self.client.force_login(self.standard_user_2)
+        response = self._edit_message(self.test_instance.id, self.support_test.id, message.id, "message edited")
+        self.assertEqual(403, response.status_code)
+        message.refresh_from_db()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
+
+    def test_cannot_edit_message_when_logout(self):
+        self._create_message(self.test_instance.id, self.support_test.id, "new message")
+        message = SupportMessage.objects.last()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
+        self.client.logout()
+        response = self._edit_message(self.test_instance.id, self.support_test.id, message.id, "message edited")
+        self.assertEqual(302, response.status_code)
+        message.refresh_from_db()
+        self.assertEqual(message.content, "new message")
+        self.assertEqual(message.sender, self.standard_user)
 
     def test_archive_instance(self):
         self.test_instance.state = InstanceState.DELETED
