@@ -9,16 +9,21 @@ class CustomerRequestCommentTest(BaseTestRequest):
     def setUp(self):
         super(CustomerRequestCommentTest, self).setUp()
         # add one comment
-        RequestMessage.objects.create(sender=self.standard_user,
+        self.comment = RequestMessage.objects.create(sender=self.standard_user,
                                       request=self.test_request,
                                       content="first test message")
-        args = {
+        request = {
             'request_id': self.test_request.id
         }
-        self.url = reverse('service_catalog:request_comment', kwargs=args)
+        comment = {
+            'comment_id': self.comment.id
+        }
+        self.data_to_edit = {"content": "comment edited"}
+        self.create_url = reverse('service_catalog:request_comment', kwargs=request)
+        self.edit_url = reverse('service_catalog:request_comment_edit', kwargs={**request, **comment})
 
     def _assert_can_list_comment(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.create_url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("messages" in response.context)
         self.assertEqual(1, len(response.context["messages"]))
@@ -28,14 +33,14 @@ class CustomerRequestCommentTest(BaseTestRequest):
         data = {
             "content": "new message"
         }
-        response = self.client.post(self.url, data=data)
+        response = self.client.post(self.create_url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_message_before + 1,
                           RequestMessage.objects.filter(request=self.test_request).count())
 
     def test_cannot_get_comment_list_when_logout(self):
         self.client.logout()
-        response = self.client.get(self.url)
+        response = self.client.get(self.create_url)
         self.assertEqual(302, response.status_code)
 
     def test_admin_can_list_request_comment(self):
@@ -66,5 +71,37 @@ class CustomerRequestCommentTest(BaseTestRequest):
         data = {
             "content": "new message"
         }
-        response = self.client.post(self.url, data=data)
+        response = self.client.post(self.create_url, data=data)
         self.assertEqual(403, response.status_code)
+
+    def test_sender_can_edit_comment(self):
+        response = self.client.post(self.edit_url, data=self.data_to_edit)
+        self.assertEqual(302, response.status_code)
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.content, "comment edited")
+        self.assertEqual(self.comment.sender, self.standard_user)
+
+
+    def test_admin_can_edit_comment(self):
+        self.client.force_login(self.superuser)
+        response = self.client.post(self.edit_url, data=self.data_to_edit)
+        self.assertEqual(302, response.status_code)
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.content, "comment edited")
+        self.assertEqual(self.comment.sender, self.standard_user)
+
+    def test_non_sender_cannot_edit_comment(self):
+        self.client.force_login(self.standard_user_2)
+        response = self.client.post(self.edit_url, data=self.data_to_edit)
+        self.assertEqual(403, response.status_code)
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.content, "first test message")
+        self.assertEqual(self.comment.sender, self.standard_user)
+
+    def test_cannot_edit_comment_when_logout(self):
+        self.client.logout()
+        response = self.client.post(self.edit_url, data=self.data_to_edit)
+        self.assertEqual(302, response.status_code)
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.content, "first test message")
+        self.assertEqual(self.comment.sender, self.standard_user)

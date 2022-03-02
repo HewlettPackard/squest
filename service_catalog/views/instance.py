@@ -190,6 +190,38 @@ def instance_support_details(request, instance_id, support_id):
 
 
 @login_required
+@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
+def support_message_edit(request, instance_id, support_id, message_id):
+    if request.user.is_superuser:
+        support_message = get_object_or_404(SupportMessage, id=message_id)
+    else:
+        support_message = get_object_or_404(SupportMessage, id=message_id, sender=request.user)
+    if request.method == "POST":
+        form = SupportMessageForm(request.POST or None, request.FILES or None, sender=support_message.sender,
+                                  support=support_message.support, instance=support_message)
+        if form.is_valid():
+            form.save()
+            return redirect('service_catalog:instance_support_details', support_message.support.instance.id,
+                            support_message.support.id)
+    else:
+        form = SupportMessageForm(sender=support_message.sender, support=support_message.support, instance=support_message)
+    context = {
+        'form': form,
+        'breadcrumbs': [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{support_message.support.instance.name} ({support_message.support.instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': 'Support', 'url': ""},
+            {'text': support_message.support.title,
+             'url': reverse('service_catalog:instance_support_details',
+                            kwargs={'instance_id': instance_id, 'support_id': support_id})},
+        ],
+        'action': 'edit'
+    }
+    return render(request, "generics/generic_form.html", context)
+
+
+@login_required
 @permission_required_or_403('service_catalog.view_instance', (Instance, 'id', 'instance_id'))
 def instance_details(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)

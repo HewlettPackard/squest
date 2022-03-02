@@ -73,6 +73,33 @@ def request_comment(request, request_id):
 
 
 @login_required
+@permission_required_or_403('service_catalog.comment_request', (Request, 'id', 'request_id'))
+def request_comment_edit(request, request_id, comment_id):
+    if request.user.is_superuser:
+        request_comment = get_object_or_404(RequestMessage, id=comment_id)
+    else:
+        request_comment = get_object_or_404(RequestMessage, id=comment_id, sender=request.user)
+    if request.method == "POST":
+        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request_comment.sender,
+                                  target_request=request_comment.request, instance=request_comment)
+        if form.is_valid():
+            form.save()
+            return redirect('service_catalog:request_comment', request_id)
+    else:
+        form = RequestMessageForm(sender=request_comment.sender, target_request=request_comment.request, instance=request_comment)
+    context = {
+        'form': form,
+        'breadcrumbs': [
+            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+            {'text': request_id, 'url': reverse('service_catalog:request_details',
+                                                kwargs={'request_id': request_id})},
+        ],
+        'action': 'edit'
+    }
+    return render(request, "generics/generic_form.html", context)
+
+
+@login_required
 def request_details(request, request_id):
     request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
     target_request = get_object_or_404(request_list, id=request_id)

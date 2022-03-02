@@ -55,12 +55,12 @@ erDiagram
     }
     
     REQUEST_MESSAGE {
-        date date_message
+        date creation_date
         string content
     }
     
     SUPPORT_MESSAGE {
-        date date_message
+        date creation_date
         string content
     }
     
