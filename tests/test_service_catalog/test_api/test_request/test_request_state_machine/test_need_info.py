@@ -19,7 +19,7 @@ class TestApiRequestNeedInfo(BaseTestRequest):
         if status == 200:
             self.test_request.refresh_from_db()
             self.assertEqual(self.test_request.state, RequestState.NEED_INFO)
-            last_message = self.test_request.comments.order_by("-date_message").first()
+            last_message = self.test_request.comments.order_by("-creation_date").first()
             if data:
                 self.assertEqual(data["content"], last_message.content)
                 self.assertEqual(response.wsgi_request.user, last_message.sender)
