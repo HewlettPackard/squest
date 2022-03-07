@@ -2,6 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
@@ -293,7 +294,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'state': str(expected_instance_state),
                 'service': self.test_request.operation.service.id,
                 'billing_group': None,
-                'spoc': self.test_request.instance.spoc.id
+                'spoc': UserSerializer(self.test_request.instance.spoc).data
             }
             self.test_instance.refresh_from_db()
             self.assertEqual(self.test_instance.state, expected_instance_state)
