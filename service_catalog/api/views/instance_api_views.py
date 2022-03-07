@@ -37,8 +37,10 @@ class InstanceDetails(generics.RetrieveUpdateAPIView):
         return [IsAuthenticated()]
 
     def get_serializer_class(self):
-        if self.request.user.is_superuser:
+        if self.request.method in ["PATCH", "PUT"]:
             return InstanceSerializer
+        if self.request.user.is_superuser:
+            return InstanceReadSerializer
         return RestrictedInstanceReadSerializer
 
     def get_queryset(self):

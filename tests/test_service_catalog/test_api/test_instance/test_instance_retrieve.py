@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.api.serializers.user_serializers import UserSerializer
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -30,7 +31,7 @@ class TestInstanceRetrieve(BaseTestRequest):
             self.assertEqual(response.data['spec'], self.test_instance.spec)
         self.assertEqual(response.data['state'], self.test_instance.state)
         self.assertEqual(response.data['service'], self.test_instance.service.id)
-        self.assertEqual(response.data['spoc'], self.test_instance.spoc.id)
+        self.assertEqual(response.data['spoc'].get('id'), self.test_instance.spoc.id)
         self.assertEqual(response.data['billing_group'], self.test_instance.billing_group)
         self.assertEqual(response.data['resources'],  list(self.test_instance.resources.all()))
 
