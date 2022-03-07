@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Request comment</title>
 </head>
-<h2>New comment on <a href="{{ current_site }}/request/{{ message.request.id }}/">Request</a> {{ message.request }}</h2>
+<h2>New comment on <a href="{{ current_site }}{% url 'service_catalog:request_details' message.request.id %}">Request</a> {{ message.request }}</h2>
 
-<li>Instance: <a href="{{ current_site }}/instance/{{ message.request.instance.id }}/"><b>{{ message.request.instance.name }}</b></a></li>
+<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.request.instance.id %}"><b>{{ message.request.instance.name }}</b></a></li>
 <li>Operation type: <b>{{ message.request.operation.type }}</b></li>
 <li>Operation name: <b>{{ message.request.operation.name }}</b></li>
 <li>SPOC: <b>{{ message.request.instance.spoc.username }}</b></li>
@@ -17,6 +17,6 @@
 <br>
 <br>
 
-Retrieve this comment on <a href="{{ current_site }}/request/{{ message.request.id }}/comment/">Squest portal</a>.
+Retrieve this comment on <a href="{{ current_site }}{% url 'service_catalog:request_comment' message.request.id %}">Squest portal</a>.
 </body>
 </html>

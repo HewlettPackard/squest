@@ -6,7 +6,7 @@
 </head>
 <h2>New message on {{ message.support }}</h2>
 
-<li>Instance: <a href="{{ current_site }}/instance/{{ message.request.instance.id }}/"><b>{{ message.request.instance.name }}</b></a></li>
+<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.support.instance.id %}"><b>{{ message.request.instance.name }}</b></a></li>
 <li>SPOC: <b>{{ message.support.instance.spoc.username }}</b></li>
 <li>Sender: <b>{{ message.sender.username }}</b></li>
 <br>
@@ -15,6 +15,6 @@
 <br>
 <br>
 
-Retrieve this support on <a href="{{ current_site }}/instance/{{ message.support.instance.id }}/support/{{ message.support.id }}/">Squest portal</a>.
+Retrieve this support on <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.support.instance.id %}">Squest portal</a>.
 </body>
 </html>

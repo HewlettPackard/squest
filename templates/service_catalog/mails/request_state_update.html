@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 </head>
-<h2>Request: <a href="{{ current_site }}/request/{{ request.id }}/">#{{ request.id }}</a></h2>
+<h2>Request: <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">#{{ request.id }}</a></h2>
 <h4>Request details</h4>
 <li>State: <b>{{ request.state }}</b></li>
 {% if user_applied_state is not none %}
@@ -11,7 +11,7 @@
 {% endif %}
 <li>Requester: <b>{{ request.user.username }}</b></li>
 <li>Service: <b>{{ request.operation.service.name }}</b></li>
-<li>Instance: <a href="{{ current_site }}/instance/{{ request.instance.id }}/"><b>{{ request.instance.name }}</b></a></li>
+<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}"><b>{{ request.instance.name }}</b></a></li>
 <li>Operation type: <b>{{ request.operation.type }}</b></li>
 <li>Operation name: <b>{{ request.operation.name }}</b></li>
 {% if request.tower_job_id is not None %}
@@ -30,9 +30,9 @@
 {% endif %}
 {% if request.state == 'COMPLETE' %}
     <br>
-    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}/instance/{{ request.instance.id }}/">Squest portal</a>.
+    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}">Squest portal</a>.
 {% endif %}
 <br>
-Retrieve this request on <a href="{{ current_site }}/request/{{ request.id }}/">Squest portal</a>.
+Retrieve this request on <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">Squest portal</a>.
 </body>
 </html>
