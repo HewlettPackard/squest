@@ -63,7 +63,7 @@ class ResourceForm(SquestModelForm):
     def save(self, **kwargs):
         resource_name = self.cleaned_data["name"]
         if self._newly_created:
-            self.instance = super(ResourceForm, self).save()
+            self.instance = super(ResourceForm, self).save(commit=False)
             self.instance.resource_group = self.resource_group
         else:
             self.instance.name = resource_name

@@ -42,9 +42,13 @@ class ResourceGetDelete(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourceSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('resource_group_id', None)
+        return super(ResourceGetDelete, self).get_serializer(*args, **kwargs)
+
     def get_object(self):
         resource_group_id = self.kwargs.get('resource_group_id')
-        resource_id = self.kwargs.get('resource_id')
-        resource = get_object_or_404(Resource, id=resource_id,
-                                     resource_group_id=resource_group_id)
+        resource_id = self.kwargs.get('pk')
+        resource = get_object_or_404(Resource, id=resource_id, resource_group_id=resource_group_id)
         return resource
