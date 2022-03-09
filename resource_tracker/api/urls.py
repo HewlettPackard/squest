@@ -23,7 +23,7 @@ urlpatterns = [
          name='api_text_attribute_definition_retrieve_update_delete'),
     path('resource_group/<int:resource_group_id>/resources/', ResourceListCreate.as_view(),
          name='api_resource_list_create'),
-    path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/', ResourceGetDelete.as_view(),
+    path('resource_group/<int:resource_group_id>/resources/<int:pk>/', ResourceGetDelete.as_view(),
          name='api_resource_retrieve_delete'),
     # resource pool
     path('resource_pool/', ResourcePoolList.as_view(), name='api_resource_pool_list_create'),

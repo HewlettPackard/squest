@@ -9,13 +9,11 @@ from service_catalog.models.instance import Instance
 
 class Resource(models.Model):
     name = models.CharField(max_length=100,
-                            blank=False,
-                            unique=True)
+                            blank=False)
     resource_group = models.ForeignKey('ResourceGroup',
                                        on_delete=models.CASCADE,
                                        related_name='resources',
-                                       related_query_name='resource',
-                                       null=True)
+                                       related_query_name='resource')
 
     service_catalog_instance = models.ForeignKey(Instance,
                                                  on_delete=models.SET_NULL,
@@ -28,6 +26,9 @@ class Resource(models.Model):
 
     is_deleted_on_instance_deletion = models.BooleanField(default=True,
                                                           verbose_name="Delete this resource on instance deletion")
+
+    class Meta:
+        unique_together = ('name', 'resource_group')
 
     @property
     def billing_group(self):
@@ -71,4 +72,5 @@ def post_save(sender, instance, created, **kwargs):
         if instance.billing_group:
             tasks.async_quota_bindings_add_resource.delay(resource_id=instance.id, billing_id=instance.billing_group.id)
         if instance._old_billing:
-            tasks.async_quota_bindings_remove_resource.delay(resource_id=instance.id, billing_id=instance._old_billing.id)
+            tasks.async_quota_bindings_remove_resource.delay(resource_id=instance.id,
+                                                             billing_id=instance._old_billing.id)
