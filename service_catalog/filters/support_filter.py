@@ -8,7 +8,7 @@ from Squest.utils.squest_filter import SquestFilter
 class SupportFilter(SquestFilter):
     class Meta:
         model = Support
-        fields = ['title', 'instance__id', 'instance__name', 'opened_by__username', 'state']
+        fields = ['title', 'instance__id', 'instance__name', 'instance__service', 'opened_by__username', 'state']
 
     state = MultipleChoiceFilter(
         choices=SupportState.choices,
@@ -17,5 +17,6 @@ class SupportFilter(SquestFilter):
     def __init__(self, *args, **kwargs):
         super(SupportFilter, self).__init__(*args, **kwargs)
         self.filters['instance__name'].field.label = "Instance"
+        self.filters['instance__service'].field.label = "Service"
         self.filters['instance__id'].field.widget = HiddenInput()
         self.filters['opened_by__username'].field.label = "User open"
