@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:global_hook_create' %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}">{% csrf_token %}
+                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:global_hook_create' %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}" data-operation-url="{% url 'service_catalog:ajax_load_service_operations' %}">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
@@ -62,6 +62,13 @@
         // by default we load Request Model
         $(document).ready( function () {
             load_state("Request");
+        });
+        $("#id_service").change(function () {
+            load_operation($(this).val());
+        });
+        // by default None operation
+        $(document).ready( function () {
+            load_operation('0');
         });
     </script>
 {% endblock %}

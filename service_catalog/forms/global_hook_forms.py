@@ -6,7 +6,6 @@ from django.forms import ChoiceField
 from service_catalog.models import GlobalHook
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
-from service_catalog.models.state_hooks import HookModel
 from Squest.utils.squest_model_form import SquestModelForm
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -14,7 +13,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class GlobalHookForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(GlobalHookForm, self).__init__(*args, **kwargs)
-        self.fields['model'].widget.attrs['class'] = 'form-control'
+        self.fields['operation'].widget.attrs['class'] = 'form-control'
         self.fields['state'] = ChoiceField(label="State",
                                            choices=InstanceState.choices + RequestState.choices,
                                            error_messages={'required': 'At least you must select one state'},
@@ -38,4 +37,4 @@ class GlobalHookForm(SquestModelForm):
 
     class Meta:
         model = GlobalHook
-        fields = ["name", "model", "service", "state", "job_template", "extra_vars"]
+        fields = ["name", "model", "service", "operation", "state", "job_template", "extra_vars"]
