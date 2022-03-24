@@ -29,6 +29,14 @@ class TestStateHook(BaseTestRequest):
                                                       job_template=self.job_template_test,
                                                       extra_vars={"key3": "value3"})
 
+        self.global_hook4 = GlobalHook.objects.create(name="global-hook4",
+                                                      model="Request",
+                                                      state=RequestState.COMPLETE,
+                                                      service=self.service_test,
+                                                      operation=self.service_test.operations.first(),
+                                                      job_template=self.job_template_test,
+                                                      extra_vars={"key3": "value3"})
+
     def test_hook_manager_called(self):
         with mock.patch("service_catalog.models.state_hooks.HookManager.trigger_hook") as mock_trigger_hook:
             self.test_request.accept()
@@ -100,9 +108,41 @@ class TestStateHook(BaseTestRequest):
             mock_job_template_execute_2.assert_not_called()
 
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute_3:
-            # test with correct wrong service and correct target state. Hook not executed
+            # test with wrong service and correct target state. Hook not executed
             instance.service = self.service_test_2
             instance.save()
             HookManager.trigger_hook(sender=Instance, instance=instance,
                                      name="delete", source=InstanceState.AVAILABLE, target=InstanceState.DELETING)
+            mock_job_template_execute_3.assert_not_called()
+
+    def test_hook_manager_execute_job_template_on_selected_operation(self):
+        instance = Instance.objects.create(
+            name="test_instance_1",
+            service=self.service_test,
+            spoc=self.standard_user
+        )
+        request = Request.objects.create(
+            instance=instance,
+            operation=self.service_test.operations.first(),
+            user=self.standard_user,
+            state=RequestState.PROCESSING
+        )
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute_1:
+            # test with correct service and target state. Hook executed
+            HookManager.trigger_hook(sender=Request, instance=request,
+                                     name="complete", source=RequestState.PROCESSING, target=RequestState.COMPLETE)
+            mock_job_template_execute_1.assert_called()
+
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute_2:
+            # test with correct service and wrong  target state. Hook not executed
+            HookManager.trigger_hook(sender=Request, instance=request,
+                                     name="accept", source=RequestState.PROCESSING, target=RequestState.FAILED)
+            mock_job_template_execute_2.assert_not_called()
+
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute_3:
+            # test with wrong operation and correct target state. Hook not executed
+            request.operation = self.service_test.operations.last()
+            request.save()
+            HookManager.trigger_hook(sender=Request, instance=request,
+                                     name="complete", source=RequestState.PROCESSING, target=RequestState.COMPLETE)
             mock_job_template_execute_3.assert_not_called()

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from service_catalog.forms import GlobalHookForm
-from service_catalog.models import GlobalHook
+from service_catalog.models import GlobalHook, Service
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
@@ -68,5 +68,17 @@ def ajax_load_model_state(request):
         options = InstanceState.choices
     if model == "Request":
         options = RequestState.choices
+    return render(request, 'service_catalog/settings/global_hooks/state-dropdown-list-option.html',
+                  {'options': options})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def ajax_load_service_operations(request):
+    service_id = int(request.GET.get('service'))
+    options = [('', '----------')]
+    if service_id != 0:
+        services = Service.objects.filter(id=service_id)
+        if services.count() == 1:
+            options = [(operation.id, operation.name) for operation in services[0].operations.all()]
     return render(request, 'service_catalog/settings/global_hooks/state-dropdown-list-option.html',
                   {'options': options})
