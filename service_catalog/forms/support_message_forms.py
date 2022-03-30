@@ -23,4 +23,7 @@ class SupportMessageForm(SquestModelForm):
         message = super(SupportMessageForm, self).save(commit=False)
         message.support = self.support
         message.sender = self.sender
+        from service_catalog.mail_utils import send_mail_new_support_message
+        send_mail_new_support_message(message)
         return message.save()
+
