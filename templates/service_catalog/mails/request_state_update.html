@@ -30,7 +30,7 @@
 {% endif %}
 {% if request.state == 'COMPLETE' %}
     <br>
-    You may find attached documentation and on-boarding information for the requested service in your instance details on <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}">Squest portal</a>.
+    You may find attached documentation and on-boarding information for the requested service in your <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}">instance details</a>.
 {% endif %}
 <br>
 Retrieve this request on <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">Squest portal</a>.

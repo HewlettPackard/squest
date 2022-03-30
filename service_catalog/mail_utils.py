@@ -11,6 +11,18 @@ DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_EMAIL_HOST}"
 EMAIL_TITLE_PREFIX = "[Squest]"
 
 
+def _add_user_in_user_list(user, user_list):
+    if user.profile.notification_enabled and user.email and user.email not in user_list:
+        user_list.append(user.email)
+    return user_list
+
+
+def _remove_user_in_user_list(user, user_list):
+    if user.profile.notification_enabled and user.email and user.email in user_list:
+        user_list.remove(user.email)
+    return user_list
+
+
 def _get_subject(target_object):
     return f"{EMAIL_TITLE_PREFIX} {target_object.__class__.__name__} #{target_object.id} - {target_object}"
 
@@ -41,19 +53,15 @@ def _get_admin_emails(service):
 
 def _get_receivers_for_request_message(request_message):
     receiver_email_list = _get_admin_emails(service=request_message.request.instance.service)
-    if request_message.request.user.profile.notification_enabled and request_message.request.user.email:
-        receiver_email_list.append(request_message.request.user.email)
-    if request_message.sender.email in receiver_email_list:
-        receiver_email_list.remove(request_message.sender.email)
+    receiver_email_list = _add_user_in_user_list(request_message.request.user, receiver_email_list)
+    receiver_email_list = _remove_user_in_user_list(request_message.sender, receiver_email_list)
     return receiver_email_list
 
 
 def _get_receivers_for_support_message(support_message):
     receiver_email_list = _get_admin_emails(service=support_message.support.instance.service)
-    if support_message.support.instance.spoc.profile.notification_enabled and support_message.support.instance.spoc.email:
-        receiver_email_list.append(support_message.support.instance.spoc.email)
-    if support_message.sender.email in receiver_email_list:
-        receiver_email_list.remove(support_message.sender.email)
+    receiver_email_list = _add_user_in_user_list(support_message.support.instance.spoc, receiver_email_list)
+    receiver_email_list = _remove_user_in_user_list(support_message.sender, receiver_email_list)
     return receiver_email_list
 
 
@@ -87,8 +95,7 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
         receiver_email_list.append(target_request.user.email)  # email sent to the requester
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               receivers=receiver_email_list,
-                               reply_to=receiver_email_list,
+                               bcc=receiver_email_list,
                                headers=_get_headers(subject))
 
 
@@ -104,8 +111,7 @@ def send_mail_new_support_message(message):
     receiver_email_list = _get_receivers_for_support_message(message)
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               receivers=receiver_email_list,
-                               reply_to=receiver_email_list,
+                               bcc=receiver_email_list,
                                headers=_get_headers(subject))
 
 
@@ -121,8 +127,7 @@ def send_mail_new_comment_on_request(message):
     receiver_email_list = _get_receivers_for_request_message(message)
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               receivers=receiver_email_list,
-                               reply_to=receiver_email_list,
+                               bcc=receiver_email_list,
                                headers=_get_headers(subject))
 
 
@@ -151,6 +156,5 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
         receiver_email_list.append(request_owner_user.email)  # email sent to the requester
     if len(receiver_email_list) > 0:
         tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               receivers=receiver_email_list,
-                               reply_to=receiver_email_list,
+                               bcc=receiver_email_list,
                                headers=_get_headers(subject))

@@ -29,13 +29,22 @@ def check_tower_job_status_task(request_id):
 
 
 @shared_task()
-def send_email(subject, plain_text, html_template, from_email, receivers, reply_to, headers=None):
+def send_email(subject, plain_text, html_template, from_email, receivers=None, bcc=None, reply_to=None, headers=None):
     """
     Pass-through method so we use Celery async
     """
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, receivers, reply_to=reply_to, headers=headers)
+    logger.info(f"[send_email] celery task executed - subject: '{subject}',"
+                f" from_email: {from_email},"
+                f" receivers: '{receivers}',"
+                f" reply_to: '{reply_to}',"
+                f" bcc: '{bcc}'")
+    msg = EmailMultiAlternatives(subject, plain_text, from_email, to=receivers,
+                                 bcc=bcc,
+                                 reply_to=reply_to,
+                                 headers=headers)
     msg.attach_alternative(html_template, "text/html")
     msg.send()
+    logger.info(f"[send_email] email sent")
 
 
 @shared_task
