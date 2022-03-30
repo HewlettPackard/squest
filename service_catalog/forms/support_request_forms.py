@@ -33,3 +33,4 @@ class SupportRequestForm(forms.Form):
         message = SupportMessage.objects.create(content=content, sender=self.user, support=new_support)
         from service_catalog.mail_utils import send_mail_new_support_message
         send_mail_new_support_message(message)
+        return message
