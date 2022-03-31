@@ -33,6 +33,14 @@ class TestApiOperationRequestCreate(BaseTestRequest):
         self.assertEqual(request_count + 1, Request.objects.count())
         self.assertEqual(response.data, self.expected)
 
+    def test_cannot_create_with_disabled_operation(self):
+        self.update_operation_test.enabled = False
+        self.update_operation_test.save()
+        request_count = Request.objects.count()
+        response = self.client.post(self.url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(request_count, Request.objects.count())
+
     def test_cannot_create_on_provisioning_operation(self):
         self.kwargs = {
             "instance_id": self.test_instance.id,

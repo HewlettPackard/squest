@@ -23,6 +23,7 @@ class Operation(models.Model):
     auto_accept = models.BooleanField(default=False, blank=True)
     auto_process = models.BooleanField(default=False, blank=True)
     process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
+    enabled = models.BooleanField(default=True, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.service})"
@@ -81,8 +82,8 @@ post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Op
 
 @receiver(pre_save, sender=Operation)
 def on_change(sender, instance: Operation, **kwargs):
-    # disable the service if no more job template linked to a create operation
-    if instance.job_template is None and instance.type == OperationType.CREATE:
+    # disable the service if no more job template linked or operation is disabled to a create operation
+    if (instance.job_template is None or not instance.enabled) and instance.type == OperationType.CREATE:
         instance.service.enabled = False
         instance.service.save()
     if instance.id is not None:

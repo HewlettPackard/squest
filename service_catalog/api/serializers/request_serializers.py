@@ -100,8 +100,9 @@ class OperationRequestSerializer(ModelSerializer):
         instance_id = self.view.kwargs.get('instance_id', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
         if operation_id is not None and instance_id is not None:
-            self.target_operation = get_object_or_404(Operation.objects.exclude(type=OperationType.CREATE),
-                                                      id=operation_id)
+            allowed_operations = Operation.objects.filter(enabled=True,
+                                                          type__in=[OperationType.UPDATE, OperationType.DELETE])
+            self.target_operation = get_object_or_404(allowed_operations, id=operation_id)
             self.target_instance = get_object_or_404(
                 get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=instance_id)
 

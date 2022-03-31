@@ -46,9 +46,6 @@ class RequestDetails(RetrieveUpdateDestroyAPIView):
 
 
 class OperationRequestCreate(CreateAPIView):
-    """
-    Archive the request : change the state of the request to 'ARCHIVED'.
-    """
     permission_classes = [IsAuthenticated]
     serializer_class = OperationRequestSerializer
 

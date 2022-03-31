@@ -14,3 +14,11 @@ class TestOperation(BaseTest):
                                                  process_timeout_second=20)
         for field in self.job_template_test.survey["spec"]:
             self.assertTrue(new_operation.tower_survey_fields.filter(name=field["variable"], enabled=True).exists())
+
+    def test_service_is_disabled_when_the_create_operation_disabled(self):
+        self.assertTrue(self.create_operation_test.service.enabled)
+        self.assertTrue(self.create_operation_test.enabled)
+        self.create_operation_test.enabled = False
+        self.create_operation_test.save()
+        self.assertFalse(self.create_operation_test.service.enabled)
+        self.assertFalse(self.create_operation_test.enabled)

@@ -18,7 +18,7 @@ class Service(models.Model):
     enabled = models.BooleanField(default=False, blank=True)
 
     def can_be_enabled(self):
-        operation_create = self.operations.filter(type=OperationType.CREATE)
+        operation_create = self.operations.filter(type=OperationType.CREATE, enabled=True)
         if operation_create.count() == 1:
             if operation_create.first().job_template is not None:
                 return True
