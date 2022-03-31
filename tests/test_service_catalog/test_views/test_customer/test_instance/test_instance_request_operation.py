@@ -28,6 +28,20 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         self.assertEqual(self.test_instance.state, InstanceState.AVAILABLE)
         self.assertEqual(expected_request_number, Request.objects.all().count())
 
+    def test_cannot_request_disabled_operation(self):
+        current_request_number = Request.objects.all().count()
+        args = {
+            'instance_id': self.test_instance.id,
+            'operation_id': self.update_operation_test.id
+        }
+        self.update_operation_test.enabled = False
+        self.update_operation_test.save()
+        data = {'text_variable': 'my_var'}
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
+        response = self.client.post(url, data=data)
+        self.assertEqual(403, response.status_code)
+        self.assertEqual(current_request_number, Request.objects.all().count())
+
     def test_cannot_request_non_valid_operation(self):
         # operation belong to another service
         args = {

@@ -5,6 +5,7 @@ from Squest.utils.squest_table import SquestTable
 
 
 class OperationTable(SquestTable):
+    enabled = TemplateColumn(template_name='custom_columns/operation_boolean.html')
     type = TemplateColumn(template_name='custom_columns/operation_type.html')
     auto_accept = TemplateColumn(template_name='custom_columns/operation_boolean.html')
     auto_process = TemplateColumn(template_name='custom_columns/operation_boolean.html')
@@ -14,7 +15,7 @@ class OperationTable(SquestTable):
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
+        fields = ("enabled", "name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
                   "actions")
 
 
