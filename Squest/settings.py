@@ -368,9 +368,16 @@ REST_FRAMEWORK = {
 # -----------------------------------------
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
 
+
 # -----------------------------------------
 # django-dbbackup https://django-dbbackup.readthedocs.io/en/master/index.html
 # -----------------------------------------
+def backup_filename(databasename, servername, datetime, extension, content_type):
+    return f"{content_type}-{datetime}.{extension}"
+
+
+DBBACKUP_FILENAME_TEMPLATE = backup_filename
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = backup_filename
 DBBACKUP_CLEANUP_KEEP = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
 DBBACKUP_CLEANUP_KEEP_MEDIA = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -415,6 +422,7 @@ METRICS_AUTHORIZATION_PASSWORD = os.environ.get('METRICS_AUTHORIZATION_PASSWORD'
 # -----------------------------------------
 if TESTING:
     import logging
+
     logging.disable(logging.CRITICAL)
     DEBUG = False
     TEMPLATE_DEBUG = False
