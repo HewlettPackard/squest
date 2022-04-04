@@ -1,3 +1,22 @@
+# 1.5.2 2022-04-04
+
+## Fix
+
+- Remove hardcoded url in email template
+- Mails were not send to user after receiving a new message
+
+## Enhancement
+
+- Instance serializer used User serializer instead of id
+- Supports list can be filtered by Service
+- Global hook can be linked to an operation
+- Instance can be deleted by an admin from API
+
+## Feature
+
+- Message can be edited
+- Operations can be disabled
+
 # 1.5.1 2022-03-01
 
 ## Fix
