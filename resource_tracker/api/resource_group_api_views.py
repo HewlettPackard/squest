@@ -7,24 +7,16 @@ from resource_tracker.api.serializers.resource_group.resource_group_serializers 
     ResourceGroupSerializerRead
 from resource_tracker.api.serializers.resource_group.text_attribute_definition_serializers import \
     ResourceGroupTextAttributeDefinitionSerializer
+from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, \
     ResourceGroupTextAttributeDefinition
 
 
 class ResourceGroupList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
+    queryset = ResourceGroup.objects.all()
     serializer_class = ResourceGroupSerializer
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned resource group to a given name,
-        by filtering against a `name` query parameter in the URL.
-        """
-        queryset = ResourceGroup.objects.all()
-        name = self.request.query_params.get('name')
-        if name is not None:
-            queryset = queryset.filter(name=name)
-        return queryset
+    filterset_class = ResourceGroupFilter
 
 
 class ResourceGroupDetails(generics.RetrieveUpdateDestroyAPIView):

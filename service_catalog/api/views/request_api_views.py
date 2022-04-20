@@ -3,11 +3,15 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+
+from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.models import RequestState, Service
 from service_catalog.api.serializers import RequestSerializer, AdminRequestSerializer, OperationRequestSerializer, ServiceRequestSerializer
 
 
 class RequestList(ListAPIView):
+    filterset_class = RequestFilter
+
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'service_catalog.view_request')
 
