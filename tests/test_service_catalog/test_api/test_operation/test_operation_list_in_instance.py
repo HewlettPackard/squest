@@ -34,5 +34,5 @@ class TestApiOperationListInInstance(BaseTestRequest):
         response = self.client.get(self.get_operation_list_url)
         self.assertEqual(response.status_code, response_status)
         if response_status == status.HTTP_200_OK:
-            self.assertEqual(len(response.data),
+            self.assertEqual(response.data['count'],
                              self.test_instance.service.operations.exclude(type=OperationType.CREATE).count())
