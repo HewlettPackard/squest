@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from service_catalog.models import Service, OperationType
+from service_catalog.models import Service, OperationType, Instance
 from service_catalog.api.serializers import OperationSerializer, AdminOperationSerializer
 
 
@@ -17,6 +17,8 @@ class OperationListCreate(ListCreateAPIView):
         return super(OperationListCreate, self).get_serializer(*args, **kwargs)
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Service.objects.none()
         service_id = self.kwargs.get('service_id', None)
         queryset = Service.objects.get(id=service_id).operations.all()
         return queryset
@@ -55,6 +57,8 @@ class OperationDetails(RetrieveUpdateDestroyAPIView):
 
 class InstanceOperationList(ListAPIView):
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Instance.objects.none()
         instance = get_object_or_404(get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=self.kwargs.get('instance_id', None))
         return instance.service.operations.exclude(type=OperationType.CREATE)
 
