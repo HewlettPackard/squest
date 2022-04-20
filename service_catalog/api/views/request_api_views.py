@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
@@ -58,6 +59,10 @@ class ServiceRequestCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ServiceRequestSerializer
     queryset = Service.objects.all()
+
+    @swagger_auto_schema(responses={201: RequestSerializer()})
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
