@@ -17,7 +17,7 @@ class TestApiTowerServerList(BaseTestRequest):
     def test_admin_get_job_template_of_tower_server(self):
         response = self.client.get(self.tower_server_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), JobTemplate.objects.filter(tower_server=self.tower_server_test).count())
+        self.assertEqual(response.data['count'], JobTemplate.objects.filter(tower_server=self.tower_server_test).count())
 
     def test_customer_cannot_get_job_template_of_tower_server(self):
         self.client.force_login(user=self.standard_user)

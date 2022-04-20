@@ -14,8 +14,8 @@ class TestApiTowerServerList(BaseTestRequest):
     def test_admin_get_tower_server(self):
         response = self.client.get(self.tower_server_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertNotIn("token", response.data[0])
-        self.assertEqual(len(response.data), TowerServer.objects.count())
+        self.assertNotIn("token", response.data['results'][0])
+        self.assertEqual(response.data['count'], TowerServer.objects.count())
 
     def test_customer_cannot_get_tower_server(self):
         self.client.force_login(user=self.standard_user)

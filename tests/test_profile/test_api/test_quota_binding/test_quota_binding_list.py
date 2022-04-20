@@ -14,7 +14,7 @@ class TestApiQuotaBindingList(BaseTestQuota):
     def test_get_all_quota(self):
         response = self.client.get(self.get_quota_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), QuotaBinding.objects.count())
+        self.assertEqual(response.data['count'], QuotaBinding.objects.count())
 
     def test_customer_cannot_get_quota_list(self):
         self.client.force_login(user=self.standard_user)

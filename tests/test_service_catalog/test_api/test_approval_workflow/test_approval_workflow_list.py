@@ -14,7 +14,7 @@ class TestApiApprovalWorkflowList(BaseApproval):
     def test_get_all_approval_workflows(self):
         response = self.client.get(self.get_approval_workflow_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), ApprovalWorkflow.objects.count())
+        self.assertEqual(response.data['count'], ApprovalWorkflow.objects.count())
 
     def test_customer_cannot_get_approval_workflow_list(self):
         self.client.force_login(user=self.standard_user)

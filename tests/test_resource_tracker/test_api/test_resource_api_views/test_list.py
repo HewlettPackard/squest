@@ -15,7 +15,7 @@ class TestResourceList(BaseTestAPI):
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 4)
-        for resource in response.json():
+        for resource in response.json()['results']:
             self.assertTrue("id" in resource)
             self.assertTrue("name" in resource)
             self.assertTrue("service_catalog_instance" in resource)
@@ -28,12 +28,12 @@ class TestResourceList(BaseTestAPI):
         url = reverse('api_resource_list_create',  args=[self.rg_physical_servers.id]) + f"?name={testing_resource.name}"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(1, len(response.data))
+        self.assertEqual(1, response.data['count'])
         serializer = ResourceSerializer(testing_resource)
-        self.assertEqual(response.data,  [serializer.data])
+        self.assertEqual(response.data['results'],  [serializer.data])
 
         # test non existing name
         url = reverse('api_resource_list_create',  args=[self.rg_physical_servers.id]) + f"?name=do_not_exist"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(0, len(response.data))
+        self.assertEqual(0, response.data['count'])

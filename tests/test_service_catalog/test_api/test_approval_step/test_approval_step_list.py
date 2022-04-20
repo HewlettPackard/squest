@@ -15,7 +15,7 @@ class TestApiApprovalStepList(BaseApproval):
     def test_get_all_approval_steps(self):
         response = self.client.get(self.get_approval_step_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), ApprovalStep.objects.count())
+        self.assertEqual(response.data['count'], ApprovalStep.objects.count())
 
     def test_customer_cannot_get_approval_step_list(self):
         self.client.force_login(user=self.standard_user)

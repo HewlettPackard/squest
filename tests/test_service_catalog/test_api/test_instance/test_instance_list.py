@@ -15,10 +15,10 @@ class TestInstanceList(BaseTestRequest):
     def test_list_instance(self):
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Instance.objects.all().count(), len(response.data))
+        self.assertEqual(Instance.objects.all().count(), response.data['count'])
         all_instances = Instance.objects.all()
         serializer = InstanceReadSerializer(all_instances, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_standard_user_can_list_his_own_instances(self):
         self.client.login(username=self.standard_user, password=self.common_password)
@@ -26,10 +26,10 @@ class TestInstanceList(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(
-            len(response.data),
+            response.data['count'],
             get_objects_for_user(self.standard_user, 'service_catalog.view_instance').count()
         )
-        instance_id_list = [request['id'] for request in response.data].sort()
+        instance_id_list = [request['id'] for request in response.data['results']].sort()
         instance_id_list_db = [instance.id for instance in
                                get_objects_for_user(self.standard_user, 'service_catalog.view_instance')].sort()
         self.assertEqual(instance_id_list, instance_id_list_db)
