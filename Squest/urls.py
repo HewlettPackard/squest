@@ -32,10 +32,11 @@ schema_view = get_schema_view(
         title="Squest API",
         default_version='v1',
         description="Test description",
-        license=openapi.License(name="Apache-2.0 License"),
+        license=openapi.License(name="Apache-2.0 License")
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    url=settings.SQUEST_HOST
 )
 
 urlpatterns = [

@@ -456,5 +456,18 @@ if TESTING:
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         }
     }
-
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'Bearer (format: Bearer <token>)': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'bearerFormat': 'Bearer',
+            'scheme': 'bearer'
+      }
+   }
+}
 print('[Settings] loaded')

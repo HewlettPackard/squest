@@ -17,11 +17,10 @@ class ResourceListCreate(generics.ListCreateAPIView):
     filterset_class = ResourceFilter
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Resource.objects.none()
         resource_group_id = self.kwargs['resource_group_id']
         queryset = Resource.objects.filter(resource_group_id=resource_group_id)
-        name = self.request.query_params.get('name')
-        if name is not None:
-            queryset = queryset.filter(name=name)
         return queryset
 
     def create(self, request, **kwargs):
