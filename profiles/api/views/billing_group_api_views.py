@@ -2,6 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAdminUser
 
 from profiles.api.serializers.billing_group_serializers import BillingGroupReadSerializer, BillingGroupSerializer
+from profiles.filters.billing_group_filter import BillingGroupFilter
 from profiles.models import BillingGroup
 
 
@@ -18,6 +19,7 @@ class BillingGroupDetails(RetrieveUpdateDestroyAPIView):
 class BillingGroupListCreate(ListCreateAPIView):
     permission_classes = [IsAdminUser]
     queryset = BillingGroup.objects.all()
+    filterset_class = BillingGroupFilter
 
     def get_serializer_class(self):
         if self.request.method in ["POST"]:

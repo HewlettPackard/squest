@@ -6,10 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer, RestrictedInstanceReadSerializer
+from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.models import Instance
 
 
 class InstanceList(ListCreateAPIView):
+    filterset_class = InstanceFilter
 
     def get_permissions(self):
         if self.request.method in ["POST"]:

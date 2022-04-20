@@ -7,12 +7,14 @@ from rest_framework.response import Response
 
 from resource_tracker.api.serializers.resource_group.resource_serializers import ResourceSerializer, \
     ResourceCreateSerializer
+from resource_tracker.filters.resource_filter import ResourceFilter
 from resource_tracker.models import Resource, ResourceGroup
 
 
 class ResourceListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourceSerializer
+    filterset_class = ResourceFilter
 
     def get_queryset(self):
         resource_group_id = self.kwargs['resource_group_id']
