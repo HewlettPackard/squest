@@ -14,7 +14,7 @@ class TestApiUserList(BaseTestRequest):
     def test_get_all_users(self):
         response = self.client.get(self.get_user_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), User.objects.count())
+        self.assertEqual(response.data['count'], User.objects.count())
 
     def test_customer_cannot_get_user_list(self):
         self.client.force_login(user=self.standard_user)

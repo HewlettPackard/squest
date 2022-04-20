@@ -16,13 +16,13 @@ class TestApiServiceList(BaseTestRequest):
     def test_admin_get_all_services(self):
         response = self.client.get(self.get_service_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), Service.objects.count())
+        self.assertEqual(response.data['count'], Service.objects.count())
 
     def test_customer_get_enabled_services(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.get(self.get_service_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), Service.objects.filter(enabled=True).count())
+        self.assertEqual(response.data['count'], Service.objects.filter(enabled=True).count())
 
     def test_cannot_get_service_list_when_logout(self):
         self.client.logout()
