@@ -22,12 +22,8 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
                 'text_variable': 'my text'
             }
         }
-        self.expected = {
-            'instance_name': 'instance test',
-            'billing_group': None,
-            'fill_in_survey': OrderedDict([
-                ('text_variable', 'my text')
-            ])}
+        self.expected = ['id', 'instance', 'user','fill_in_survey', 'date_submitted', 'date_complete', 'date_archived', 'tower_job_id', 'state', 'operation']
+        self.expected.sort()
 
     def test_can_create(self):
         self._check_create()
@@ -57,7 +53,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.service_test.save()
         self.test_billing_group.user_set.add(self.superuser)
         self.data['billing_group'] = self.test_billing_group.id
-        self.expected['billing_group'] = self.test_billing_group.id
         self._check_create()
         self.client.force_login(user=self.standard_user)
         self._check_create(status.HTTP_400_BAD_REQUEST)
@@ -75,7 +70,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.service_test.billing_groups_are_restricted = False
         self.service_test.save()
         self.data['billing_group'] = self.test_billing_group.id
-        self.expected['billing_group'] = self.test_billing_group.id
         self._check_create()
         self.data['billing_group'] = self.test_billing_group2.id
         self._check_create()
@@ -97,7 +91,9 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.assertEqual(instance_count + offset, Instance.objects.count())
         self.assertEqual(request_count + offset, Request.objects.count())
         if status_expected is None:
-            self.assertEqual(response.data, self.expected)
+            keys = list(response.data.keys())
+            keys.sort()
+            self.assertEqual(self.expected, keys)
 
     def test_can_create_with_comment(self):
         self.client.force_login(user=self.standard_user)
@@ -109,15 +105,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             },
             "request_comment": "here_is_a_comment"
         }
-        self.expected = {
-            'instance_name': 'instance test',
-            'billing_group': None,
-            'fill_in_survey': OrderedDict([
-                ('text_variable', 'my text')
-            ]),
-            "request_comment": "here_is_a_comment"
-        }
-
         self._check_create()
         created_request = Request.objects.latest('id')
         self.assertEqual(created_request.comments.count(), 1)
