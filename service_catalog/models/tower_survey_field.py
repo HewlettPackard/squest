@@ -2,7 +2,7 @@ import ast
 import logging
 
 from django import forms
-from django.db import models
+from django.db.models import Model, CharField, BooleanField, ForeignKey, CASCADE
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.forms import SelectMultiple
@@ -14,12 +14,12 @@ from Squest.utils.squest_model_form import SquestModelForm
 logger = logging.getLogger(__name__)
 
 
-class TowerSurveyField(models.Model):
-    name = models.CharField(null=False, blank=False, max_length=200, verbose_name="Field name")
-    enabled = models.BooleanField(default=True, null=False, blank=False)
-    default = models.CharField(null=True, blank=True, max_length=200, verbose_name="Default value")
-    operation = models.ForeignKey(Operation,
-                                  on_delete=models.CASCADE,
+class TowerSurveyField(Model):
+    name = CharField(null=False, blank=False, max_length=200, verbose_name="Field name")
+    enabled = BooleanField(default=True, null=False, blank=False)
+    default = CharField(null=True, blank=True, max_length=200, verbose_name="Default value")
+    operation = ForeignKey(Operation,
+                                  on_delete=CASCADE,
                                   related_name="tower_survey_fields",
                                   related_query_name="tower_survey_field")
     validators = models.CharField(null=True, blank=True, max_length=200, verbose_name="Field validators")

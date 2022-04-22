@@ -1,13 +1,13 @@
-from django.db import models
+from django.db.models import Model, CharField, ManyToManyField
 from martor.models import MartorField
 
 from . import Service
 
 
-class Doc(models.Model):
-    title = models.CharField(max_length=100)
+class Doc(Model):
+    title = CharField(max_length=100)
     content = MartorField()
-    services = models.ManyToManyField(
+    services = ManyToManyField(
         Service,
         blank=True,
         help_text="Services linked to this doc.",

@@ -2,7 +2,7 @@ import logging
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
@@ -16,19 +16,19 @@ logger = logging.getLogger(__name__)
 
 
 class Instance(RoleManager):
-    name = models.CharField(verbose_name="Instance name", max_length=100)
-    spec = models.JSONField(default=dict, blank=True, verbose_name="Admin spec")
-    user_spec = models.JSONField(default=dict, blank=True, verbose_name="User spec")
-    service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL)
-    spoc = models.ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
-                             on_delete=models.SET_NULL)
+    name = CharField(verbose_name="Instance name", max_length=100)
+    spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
+    user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
+    service = ForeignKey(Service, blank=True, null=True, on_delete=SET_NULL)
+    spoc = ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
+                             on_delete=SET_NULL)
     state = FSMField(default=InstanceState.PENDING)
-    date_available = models.DateTimeField(null=True, blank=True)
-    billing_group = models.ForeignKey(
+    date_available = DateTimeField(null=True, blank=True)
+    billing_group = ForeignKey(
         BillingGroup,
         blank=True,
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=SET_NULL,
         related_name='instances',
         related_query_name='instance'
     )
