@@ -1,8 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from django.db import models
+from django.db.models import TextChoices
 
 
-class InstanceState(models.TextChoices):
+class InstanceState(TextChoices):
     PENDING = 'PENDING', _('PENDING')
     PROVISION_FAILED = 'PROVISION_FAILED', _('PROVISION_FAILED')
     PROVISIONING = 'PROVISIONING', _('PROVISIONING')

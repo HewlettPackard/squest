@@ -1,29 +1,30 @@
-from django.db import models
+from django.db.models import Model, CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from service_catalog.models import JobTemplate, OperationType
-from service_catalog.models import Service
+from service_catalog.models.job_templates import JobTemplate
+from service_catalog.models.operation_type import OperationType
+from service_catalog.models.services import Service
 
 
-class Operation(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Operation name")
-    description = models.CharField(max_length=500, blank=True, null=True)
-    type = models.CharField(
+class Operation(Model):
+    name = CharField(max_length=100, verbose_name="Operation name")
+    description = CharField(max_length=500, blank=True, null=True)
+    type = CharField(
         max_length=10,
         choices=OperationType.choices,
         default=OperationType.CREATE,
         verbose_name="Operation type"
     )
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="operations",
-                                related_query_name="operation")
-    job_template = models.ForeignKey(JobTemplate, null=True, on_delete=models.SET_NULL)
-    auto_accept = models.BooleanField(default=False, blank=True)
-    auto_process = models.BooleanField(default=False, blank=True)
-    process_timeout_second = models.IntegerField(default=60, verbose_name="Process timeout (s)")
-    enabled = models.BooleanField(default=True, blank=True)
+    service = ForeignKey(Service, on_delete=CASCADE, related_name="operations",
+                         related_query_name="operation")
+    job_template = ForeignKey(JobTemplate, null=True, on_delete=SET_NULL)
+    auto_accept = BooleanField(default=False, blank=True)
+    auto_process = BooleanField(default=False, blank=True)
+    process_timeout_second = IntegerField(default=60, verbose_name="Process timeout (s)")
+    enabled = BooleanField(default=True, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.service})"
@@ -90,6 +91,7 @@ def on_change(sender, instance: Operation, **kwargs):
         previous = Operation.objects.get(id=instance.id)
         if previous.job_template != instance.job_template:
             instance.update_survey()
+
 
 @receiver(post_delete, sender=Operation)
 def on_delete(sender, instance: Operation, **kwargs):

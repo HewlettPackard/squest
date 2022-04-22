@@ -2,25 +2,25 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from django.db import models
+from django.db.models import TextChoices, Model, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL
 from django_fsm import FSMField, transition
 
 from service_catalog.models import Instance
 
 
-class SupportState(models.TextChoices):
+class SupportState(TextChoices):
     OPENED = 'OPENED', _('OPENED')
     CLOSED = 'CLOSED', _('CLOSED')
 
 
-class Support(models.Model):
-    title = models.CharField(max_length=100)
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True, blank=True, related_name="supports",
+class Support(Model):
+    title = CharField(max_length=100)
+    instance = ForeignKey(Instance, on_delete=CASCADE, null=True, blank=True, related_name="supports",
                                  related_query_name="support")
-    opened_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    opened_by = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     state = FSMField(default=SupportState.OPENED, choices=SupportState.choices)
-    date_opened = models.DateTimeField(auto_now=True, blank=True, null=True)
-    date_closed = models.DateTimeField(auto_now=False, blank=True, null=True)
+    date_opened = DateTimeField(auto_now=True, blank=True, null=True)
+    date_closed = DateTimeField(auto_now=False, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} (#{self.id})"

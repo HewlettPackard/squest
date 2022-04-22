@@ -1,8 +1,8 @@
-from django.db import models
+from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
 
-class BootstrapType(models.TextChoices):
+class BootstrapType(TextChoices):
     SUCCESS = 'SUCCESS', _('SUCCESS')
     DANGER = 'DANGER', _('DANGER')
     WARNING = 'WARNING', _('WARNING')

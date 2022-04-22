@@ -1,8 +1,8 @@
-from django.db import models
+from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
 
-class RequestState(models.TextChoices):
+class RequestState(TextChoices):
     SUBMITTED = 'SUBMITTED', _('SUBMITTED')
     NEED_INFO = 'NEED_INFO', _('NEED_INFO')
     REJECTED = 'REJECTED', _('REJECTED')

@@ -1,17 +1,17 @@
-from django.db import models
+from django.db.models import Model, CharField, IntegerField, JSONField, ForeignKey, CASCADE, BooleanField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from . import BootstrapType, ExceptionServiceCatalog, TowerServer
 
 
-class JobTemplate(models.Model):
-    name = models.CharField(max_length=100)
-    tower_id = models.IntegerField()
-    survey = models.JSONField(default=dict)
-    tower_server = models.ForeignKey(TowerServer, on_delete=models.CASCADE)
-    tower_job_template_data = models.JSONField(default=dict)
-    is_compliant = models.BooleanField(default=False)
+class JobTemplate(Model):
+    name = CharField(max_length=100)
+    tower_id = IntegerField()
+    survey = JSONField(default=dict)
+    tower_server = ForeignKey(TowerServer, on_delete=CASCADE)
+    tower_job_template_data = JSONField(default=dict)
+    is_compliant = BooleanField(default=False)
 
     @property
     def tower_url(self):
