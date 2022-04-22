@@ -7,7 +7,7 @@ import towerlib
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -17,6 +17,7 @@ from django_fsm import FSMField, transition, post_transition
 from profiles.models.user_role_binding import UserRoleBinding
 from profiles.models.team_role_binding import TeamRoleBinding
 from profiles.models.role_manager import RoleManager
+from service_catalog.models import ApprovalGroup
 from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.request_state import RequestState
@@ -27,19 +28,20 @@ logger = logging.getLogger(__name__)
 
 
 class Request(RoleManager):
-    fill_in_survey = models.JSONField(default=dict, blank=True)
-    admin_fill_in_survey = models.JSONField(default=dict, blank=True)
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True)
-    operation = models.ForeignKey(Operation, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    date_submitted = models.DateTimeField(auto_now=True, blank=True, null=True)
-    date_complete = models.DateTimeField(auto_now=False, blank=True, null=True)
-    date_archived = models.DateTimeField(auto_now=False, blank=True, null=True)
-    tower_job_id = models.IntegerField(blank=True, null=True)
+    fill_in_survey = JSONField(default=dict, blank=True)
+    admin_fill_in_survey = JSONField(default=dict, blank=True)
+    instance = ForeignKey(Instance, on_delete=CASCADE, null=True)
+    operation = ForeignKey(Operation, on_delete=CASCADE)
+    user = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
+    date_submitted = DateTimeField(auto_now=True, blank=True, null=True)
+    date_complete = DateTimeField(auto_now=False, blank=True, null=True)
+    date_archived = DateTimeField(auto_now=False, blank=True, null=True)
+    tower_job_id = IntegerField(blank=True, null=True)
     state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
-    periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
-    periodic_task_date_expire = models.DateTimeField(auto_now=False, blank=True, null=True)
-    failure_message = models.TextField(blank=True, null=True)
+    periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
+    periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
+    failure_message = TextField(blank=True, null=True)
+    current_approval_group = ForeignKey(ApprovalGroup, on_delete=SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"

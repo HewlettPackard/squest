@@ -1,13 +1,13 @@
-from django.db import models
+from django.db.models import Model, CharField, BooleanField
 from towerlib import Tower
 
 
-class TowerServer(models.Model):
-    name = models.CharField(max_length=100)
-    host = models.CharField(max_length=200, unique=True)
-    token = models.CharField(max_length=200)
-    secure = models.BooleanField(default=True)
-    ssl_verify = models.BooleanField(default=False)
+class TowerServer(Model):
+    name = CharField(max_length=100)
+    host = CharField(max_length=200, unique=True)
+    token = CharField(max_length=200)
+    secure = BooleanField(default=True)
+    ssl_verify = BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} ({self.host})"

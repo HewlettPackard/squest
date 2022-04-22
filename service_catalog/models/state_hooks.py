@@ -1,43 +1,45 @@
 import logging
 
-from django.db import models
+from django.db.models import TextChoices, Model, ForeignKey, CASCADE, CharField, JSONField, SET_NULL
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from service_catalog.models import Service, JobTemplate, Operation
+from service_catalog.models.services import Service
+from service_catalog.models.job_templates import JobTemplate
+from service_catalog.models.operations import Operation
 
 logger = logging.getLogger(__name__)
 
 
-class HookModel(models.TextChoices):
+class HookModel(TextChoices):
     Request = 'Request', _('Request')
     Instance = 'Instance', _('Instance')
 
 
-class ServiceStateHook(models.Model):
-    instance = models.ForeignKey(Service,
-                                 on_delete=models.CASCADE,
+class ServiceStateHook(Model):
+    instance = ForeignKey(Service,
+                                 on_delete=CASCADE,
                                  related_name='instances',
                                  related_query_name='instance',
                                  null=True)
-    model = models.CharField(max_length=100, choices=HookModel.choices)
-    state = models.CharField(max_length=100)
-    job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
-    extra_vars = models.JSONField(default=dict, blank=True)
+    model = CharField(max_length=100, choices=HookModel.choices)
+    state = CharField(max_length=100)
+    job_template = ForeignKey(JobTemplate, on_delete=CASCADE)
+    extra_vars = JSONField(default=dict, blank=True)
 
     def clean(self):
         if self.extra_vars is None:
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
 
-class GlobalHook(models.Model):
-    name = models.CharField(unique=True, max_length=100)
-    model = models.CharField(max_length=100, choices=HookModel.choices)
-    state = models.CharField(max_length=100)
-    service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True, blank=True, default=None)
-    operation = models.ForeignKey(Operation, on_delete=models.SET_NULL, null=True, blank=True, default=None)
-    job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
-    extra_vars = models.JSONField(default=dict, blank=True)
+class GlobalHook(Model):
+    name = CharField(unique=True, max_length=100)
+    model = CharField(max_length=100, choices=HookModel.choices)
+    state = CharField(max_length=100)
+    service = ForeignKey(Service, on_delete=SET_NULL, null=True, blank=True, default=None)
+    operation = ForeignKey(Operation, on_delete=SET_NULL, null=True, blank=True, default=None)
+    job_template = ForeignKey(JobTemplate, on_delete=CASCADE)
+    extra_vars = JSONField(default=dict, blank=True)
 
     def clean(self):
         if self.operation and not self.service:

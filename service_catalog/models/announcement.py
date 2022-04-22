@@ -1,23 +1,23 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db.models import Model, CharField, DateTimeField, ForeignKey, SET_NULL
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from service_catalog.models import BootstrapType
 
 
-class Announcement(models.Model):
+class Announcement(Model):
     class Meta:
         ordering = ['-date_created']
 
-    title = models.CharField(max_length=200)
-    message = models.CharField(max_length=1000, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    date_start = models.DateTimeField(auto_now_add=False, auto_now=False)
-    date_stop = models.DateTimeField(auto_now_add=False, auto_now=False)
-    type = models.CharField(max_length=10, choices=BootstrapType.choices, default=BootstrapType.INFO)
-    created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, verbose_name='Owner')
+    title = CharField(max_length=200)
+    message = CharField(max_length=1000, blank=True)
+    date_created = DateTimeField(auto_now_add=True, auto_now=False)
+    date_start = DateTimeField(auto_now_add=False, auto_now=False)
+    date_stop = DateTimeField(auto_now_add=False, auto_now=False)
+    type = CharField(max_length=10, choices=BootstrapType.choices, default=BootstrapType.INFO)
+    created_by = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL, verbose_name='Owner')
 
     def clean(self):
         if self.date_start > self.date_stop:
