@@ -4,12 +4,14 @@ from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+from service_catalog.filters.operation_filter import OperationFilter
 from service_catalog.models import Service, OperationType, Instance
 from service_catalog.api.serializers import OperationSerializer, AdminOperationSerializer
 
 
 class OperationListCreate(ListCreateAPIView):
     serializer_class = OperationSerializer
+    filterset_class = OperationFilter
 
     def get_serializer(self, *args, **kwargs):
         if 'data' in kwargs:

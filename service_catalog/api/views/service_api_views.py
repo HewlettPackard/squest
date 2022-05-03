@@ -3,12 +3,14 @@ from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.models import Service
 from service_catalog.api.serializers import ServiceSerializer, AdminServiceSerializer
 
 
 class ServiceListCreate(ListCreateAPIView):
     serializer_class = ServiceSerializer
+    filterset_class = ServiceFilter
 
     def get_queryset(self):
         if self.request.user.is_superuser:
