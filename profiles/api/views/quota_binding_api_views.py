@@ -2,6 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAdminUser
 
 from profiles.api.serializers.quota_binding_serializers import QuotaBindingReadSerializer, QuotaBindingSerializer
+from profiles.filters.quota_binding_filter import QuotaBindingFilter
 from profiles.models import QuotaBinding
 
 
@@ -18,6 +19,7 @@ class QuotaBindingDetails(RetrieveUpdateDestroyAPIView):
 class QuotaBindingListCreate(ListCreateAPIView):
     permission_classes = [IsAdminUser]
     queryset = QuotaBinding.objects.all()
+    filterset_class = QuotaBindingFilter
 
     def get_serializer_class(self):
         if self.request.method in ["POST"]:

@@ -1,6 +1,7 @@
 from rest_framework.generics import get_object_or_404, ListAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
 
+from service_catalog.filters.job_template_filter import JobTemplateFilter
 from service_catalog.models import JobTemplate, TowerServer
 from service_catalog.api.serializers import JobTemplateSerializer
 
@@ -20,6 +21,7 @@ class JobTemplateDetails(RetrieveUpdateAPIView):
 class JobTemplateList(ListAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = JobTemplateSerializer
+    filterset_class = JobTemplateFilter
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
