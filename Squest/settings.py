@@ -37,6 +37,7 @@ DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *") 
 REDIS_CACHE_PASSWORD = os.environ.get('REDIS_PASSWORD', 'redis_secret_password')
 REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
 REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
+DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
 
 # -------------------------------
 # SQUEST CONFIG

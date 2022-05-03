@@ -46,6 +46,12 @@ Mysql database port.
 
 Set to `True` to enable LDAP based authentication. [See configuration doc](../installation/ldap.md).  
 
+### DEFAULT_ADMIN_TOKEN
+
+**Default:** `None`
+
+Set an API token that will be linked to the admin user when starting Squest.
+
 ## Squest
 
 ### SQUEST_HOST
