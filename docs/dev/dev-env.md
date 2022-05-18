@@ -17,7 +17,7 @@ Following tools need to be installed on your workstation:
 
 Ubuntu based OS:
 ```bash
-sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev
+sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev libsasl2-dev python3-dev libldap2-dev libssl-dev
 ```
 
 CentOS/RedHat/Fedora

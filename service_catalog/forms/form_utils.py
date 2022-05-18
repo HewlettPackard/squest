@@ -21,9 +21,9 @@ class FormUtils:
         returned_dict["spec"] = list()
         # loop the original survey
         if "spec" in job_template_survey:
-            for survey_filed in job_template_survey["spec"]:
-                if operation_survey.get(name=survey_filed["variable"]).enabled:
-                    returned_dict["spec"].append(survey_filed)
+            for survey_filled in job_template_survey["spec"]:
+                if operation_survey.get(name=survey_filled["variable"]).enabled:
+                    returned_dict["spec"].append(survey_filled)
         return returned_dict
 
     @classmethod
@@ -41,10 +41,19 @@ class FormUtils:
             "user_spec": user_spec
         }
         if "spec" in job_template_survey:
-            for survey_filed in job_template_survey["spec"]:   # loop all survey config from tower
-                target_tower_field = operation_survey.get(name=survey_filed["variable"])
+            for survey_filled in job_template_survey["spec"]:   # loop all survey config from tower
+                target_tower_field = operation_survey.get(name=survey_filled["variable"])
                 if target_tower_field.default is not None and target_tower_field.default != "":
-                    survey_filed["default"] = cls.template_field(target_tower_field.default, spec_config)
+                    survey_filled["default"] = cls.template_field(target_tower_field.default, spec_config)
+        return job_template_survey
+
+    @classmethod
+    def apply_user_validator_to_survey(cls, job_template_survey, operation_survey):
+        for survey_filled in job_template_survey["spec"]:  # loop all survey config from tower
+            target_tower_field = operation_survey.get(name=survey_filled["variable"])
+            survey_filled["validators"] = list()
+            if target_tower_field.validators is not None:
+                survey_filled["validators"] = target_tower_field.validators.split(",")
         return job_template_survey
 
     @classmethod

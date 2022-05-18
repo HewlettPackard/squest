@@ -471,4 +471,10 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+# -----------------------------------------
+# Plugins
+# -----------------------------------------
+FIELD_VALIDATOR_PATH = "plugins/field_validators"
+
 print('[Settings] loaded')

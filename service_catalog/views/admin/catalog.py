@@ -1,13 +1,11 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.forms import modelformset_factory, TextInput, CheckboxInput
+from django.forms import modelformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from service_catalog.forms import ServiceForm, ServiceOperationForm, ServiceForm
+from service_catalog.forms import ServiceOperationForm, ServiceForm
 from service_catalog.models import Service, Operation
-from service_catalog.models.operations import OperationType
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.tower_survey_field import TowerSurveyField, TowerSurveyFieldForm
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -135,15 +133,13 @@ def edit_service_operation(request, service_id, operation_id):
 def service_operation_edit_survey(request, service_id, operation_id):
     target_service = get_object_or_404(Service, id=service_id)
     target_operation = get_object_or_404(Operation, id=operation_id)
-    SurveySelectorFormSet = modelformset_factory(TowerSurveyField,
-                                                 fields=("enabled", "default"),
-                                                 extra=0,
-                                                 widgets={"default": TextInput(attrs={"class": "form-control"}),
-                                                          "enabled": CheckboxInput()})
-    formset = SurveySelectorFormSet(queryset=target_operation.tower_survey_fields.all())
+    survey_selector_form_set = modelformset_factory(TowerSurveyField,
+                                                    form=TowerSurveyFieldForm,
+                                                    extra=0)
+    formset = survey_selector_form_set(queryset=target_operation.tower_survey_fields.all())
 
     if request.method == 'POST':
-        formset = SurveySelectorFormSet(request.POST)
+        formset = survey_selector_form_set(request.POST)
         if formset.is_valid():
             formset.save()
             return redirect('service_catalog:service_operations', service_id=target_service.id)

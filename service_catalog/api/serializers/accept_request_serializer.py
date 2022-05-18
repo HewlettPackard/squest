@@ -1,4 +1,5 @@
 from service_catalog.api.serializers.dynamic_survey_serializer import DynamicSurveySerializer
+from service_catalog.forms import FormUtils
 
 
 class AcceptRequestSerializer(DynamicSurveySerializer):
@@ -6,7 +7,9 @@ class AcceptRequestSerializer(DynamicSurveySerializer):
         self.target_request = kwargs.pop('target_request')
         self.user = kwargs.pop('user')
         self.read_only_form = kwargs.get('read_only_form', False)
-        kwargs['fill_in_survey'] = self.target_request.operation.job_template.survey
+        kwargs['fill_in_survey'] = FormUtils.apply_user_validator_to_survey(
+            job_template_survey=self.target_request.operation.job_template.survey,
+            operation_survey= self.target_request.operation.tower_survey_fields)
         super(AcceptRequestSerializer, self).__init__(*args, **kwargs)
         if self.read_only_form:
             self._set_initial_and_default(self.target_request.fill_in_survey)

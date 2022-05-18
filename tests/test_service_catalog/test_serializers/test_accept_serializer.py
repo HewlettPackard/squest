@@ -1,6 +1,8 @@
 from service_catalog.api.serializers import AcceptRequestSerializer
 from service_catalog.models import RequestState
+from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
+from django.test import override_settings
 
 
 class TestAcceptRequestSerializer(BaseTestRequest):
@@ -48,3 +50,24 @@ class TestAcceptRequestSerializer(BaseTestRequest):
         serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
                                              read_only_form=False)
         self.assertFalse(serializer.is_valid())
+
+    @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
+    def test_field_validators(self):
+        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field.validators = "even_number,superior_to_10"
+        target_field.save()
+
+        self.data["text_variable"] = "9"
+        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
+                                             read_only_form=False)
+        self.assertFalse(serializer.is_valid())
+
+        self.data["text_variable"] = "13"
+        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
+                                             read_only_form=False)
+        self.assertFalse(serializer.is_valid())
+
+        self.data["text_variable"] = "12"
+        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
+                                             read_only_form=False)
+        self.assertTrue(serializer.is_valid())
