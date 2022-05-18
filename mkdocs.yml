@@ -50,6 +50,8 @@ nav:
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
     - Database ERD: dev/db-erd.md
+    - Plugins:
+      - Field validator:  dev/plugins/validators.md
   - Contribute:
       - Code: contribute/code.md
       - Documentation: contribute/documentation.md

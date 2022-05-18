@@ -1,4 +1,10 @@
+import logging
+
 from django import forms
+
+from Squest.utils.plugin_controller import PluginController
+
+logger = logging.getLogger(__name__)
 
 
 def _get_field_group(field_name, operation_survey):
@@ -94,6 +100,17 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
                            min_value=None if not survey_field['min'] else float(survey_field['min']),
                            max_value=None if not survey_field['max'] else float(survey_field['max']),
                            widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
+
+        if survey_field["validators"] is not None and len(survey_field["validators"]) > 0:
+            list_validator_def = list()
+            for validator_file in survey_field["validators"]:
+                # load dynamically the user provided validator
+                loaded_class_plugin = PluginController.get_ui_field_validator_def(validator_file)
+                if loaded_class_plugin is not None:
+                    list_validator_def.append(loaded_class_plugin)
+                    logger.info(f"[Form utils] User validator plugin loaded: {validator_file}")
+            fields[survey_field['variable']].validators = list_validator_def
+
         if tower_survey_fields:
             fields[survey_field['variable']].group = _get_field_group(field_name=survey_field['variable'],
                                                                       operation_survey=tower_survey_fields)

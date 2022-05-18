@@ -38,7 +38,8 @@ class TestOperationSurveyPut(BaseTestRequest):
     def test_admin_can_partially_update_survey(self):
         data = [
             {'name': 'text_variable', 'enabled': False, 'default': "text_variable_default"},
-            {'name': 'multiplechoice_variable', 'enabled': True, 'default': "multiplechoice_variable_default"}
+            {'name': 'multiplechoice_variable', 'enabled': True, 'default': "multiplechoice_variable_default",
+             "validators": "even_number"}
         ]
         response = self.client.put(self.get_operation_survey_put_url, data=data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)

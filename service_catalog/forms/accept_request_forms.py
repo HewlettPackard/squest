@@ -32,7 +32,10 @@ class AcceptRequestForm(forms.Form):
                                                                                  admin_spec=self.target_request.instance.spec,
                                                                                  user_spec=self.target_request.instance.user_spec
                                                                                  )
-            self.fields.update(get_fields_from_survey(purged_survey_with_default,
+            purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
+                job_template_survey=purged_survey_with_default,
+                operation_survey=self.target_request.operation.tower_survey_fields)
+            self.fields.update(get_fields_from_survey(purged_survey_with_validator,
                                                       self.target_request.operation.tower_survey_fields))
             prefill_form_with_user_values(self.fields, self.target_request.fill_in_survey,
                                           self.target_request.admin_fill_in_survey)

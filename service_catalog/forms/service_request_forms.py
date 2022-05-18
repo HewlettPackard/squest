@@ -57,7 +57,9 @@ class ServiceRequestForm(forms.Form):
                                                        operation_survey=self.create_operation.tower_survey_fields)
         purged_survey_with_default = FormUtils.apply_spec_template_to_survey(job_template_survey=purged_survey,
                                                                              operation_survey=self.create_operation.tower_survey_fields)
-        self.fields.update(get_fields_from_survey(purged_survey_with_default))
+        purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(job_template_survey=purged_survey_with_default,
+                                                                                operation_survey=self.create_operation.tower_survey_fields)
+        self.fields.update(get_fields_from_survey(purged_survey_with_validator))
         self.fields['instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
     def save(self):
