@@ -44,7 +44,10 @@ class ServiceRequestSerializer(ModelSerializer):
             purged_survey = FormUtils.get_available_fields(
                 job_template_survey=self.create_operation.job_template.survey,
                 operation_survey=self.create_operation.tower_survey_fields)
-            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
+            purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
+                job_template_survey=purged_survey,
+                operation_survey=self.create_operation.tower_survey_fields)
+            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey_with_validator)
             if not purged_survey.get('spec'):
                 self.fields['fill_in_survey'].required = False
 
@@ -115,7 +118,10 @@ class OperationRequestSerializer(ModelSerializer):
             purged_survey = FormUtils.get_available_fields(
                 job_template_survey=self.target_operation.job_template.survey,
                 operation_survey=self.target_operation.tower_survey_fields)
-            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
+            purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
+                job_template_survey=purged_survey,
+                operation_survey=self.target_operation.tower_survey_fields)
+            self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey_with_validator)
 
     def save(self, **kwargs):
         fill_in_survey = dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder)

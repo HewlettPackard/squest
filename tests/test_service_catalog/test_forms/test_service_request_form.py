@@ -1,4 +1,6 @@
-from service_catalog.forms import FormUtils
+from django.test import override_settings
+
+from service_catalog.forms import FormUtils, ServiceRequestForm
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base import BaseTest
 
@@ -297,3 +299,84 @@ class TestServiceRequestForm(BaseTest):
         expected_result = "value1\nvalue2"
         self.assertEqual(expected_result,
                          FormUtils.template_field(default_template_config, spec_config))
+
+    def test_apply_user_validator_to_survey(self):
+        self.job_template_test.survey = {
+            "name": "test-survey",
+            "description": "test-survey-description",
+            "spec": [
+                {
+                    "choices": "",
+                    "default": "",
+                    "max": 1024,
+                    "min": 0,
+                    "new_question": True,
+                    "question_description": "",
+                    "question_name": "String variable",
+                    "required": True,
+                    "type": "text",
+                    "variable": "text_variable"
+                }
+            ]
+        }
+        self.job_template_test.save()
+        # test with en empty string
+        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field.validators = "even_number,superior_to_10"
+        target_field.save()
+        expected_result = {
+            "name": "test-survey",
+            "description": "test-survey-description",
+            "spec": [
+                {
+                    "choices": "",
+                    "default": "",
+                    "max": 1024,
+                    "min": 0,
+                    "new_question": True,
+                    "question_description": "",
+                    "question_name": "String variable",
+                    "required": True,
+                    "type": "text",
+                    "variable": "text_variable",
+                    "validators": ["even_number", "superior_to_10"]
+                }
+            ],
+        }
+        self.maxDiff = None
+        self.assertEqual(expected_result,
+                         FormUtils.apply_user_validator_to_survey(job_template_survey=self.job_template_test.survey,
+                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
+
+    @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
+    def test_service_request_form_with_validators(self):
+        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field.validators = "even_number,superior_to_10"
+        target_field.save()
+        parameters = {
+            'service_id': self.service_test.id
+        }
+
+        # not valid because not even number
+        data = {
+            "instance_name": "instance test",
+            "text_variable": "3"
+        }
+        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertFalse(form.is_valid())
+
+        # not valid because not superior to 10
+        data = {
+            "instance_name": "instance test",
+            "text_variable": "9"
+        }
+        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertFalse(form.is_valid())
+
+        # valid because superior to 10 and even number
+        data = {
+            "instance_name": "instance test",
+            "text_variable": "12"
+        }
+        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        self.assertTrue(form.is_valid())

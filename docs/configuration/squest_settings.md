@@ -196,3 +196,11 @@ Django language. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#langu
 **Default:** `Europe/Paris`
 
 Time zone of the server that host Squest service. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-TIME_ZONE)
+
+## Plugins
+
+### FIELD_VALIDATOR_PATH
+
+Path to form field validation modules.
+
+**Default:** `plugins/field_validators`

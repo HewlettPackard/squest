@@ -58,6 +58,8 @@ class OperationSurveyAPI(APIView):
             if serializer.is_valid():
                 obj.enabled = tower_survey_field['enabled']
                 obj.default = tower_survey_field['default']
+                if "validators" in tower_survey_field:
+                    obj.validators = tower_survey_field['validators']
                 obj.save()
                 instances.append(obj)
             else:

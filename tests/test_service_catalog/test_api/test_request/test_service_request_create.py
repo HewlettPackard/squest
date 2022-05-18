@@ -1,7 +1,11 @@
+import json
+
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models import Request, Instance
+from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -110,3 +114,45 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.kwargs['pk'] = self.service_empty_survey_test.id
         self.data.pop('fill_in_survey')
         self._check_create()
+
+    @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
+    def test_cannot_create_with_validator(self):
+        url = reverse('api_service_request_create', kwargs=self.kwargs)
+        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field.validators = "even_number,superior_to_10"
+        target_field.save()
+        self.client.force_login(user=self.standard_user)
+
+        self.data = {
+            'instance_name': 'instance test',
+            'billing_group': None,
+            'fill_in_survey': {
+                "text_variable": "13"
+            },
+        }
+        response = self.client.post(url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        loaded_content = json.loads(response.content)
+        self.assertTrue('This field must be an even number.' in loaded_content["fill_in_survey"]["text_variable"])
+
+        self.data = {
+            'instance_name': 'instance test',
+            'billing_group': None,
+            'fill_in_survey': {
+                "text_variable": "8"
+            },
+        }
+        response = self.client.post(url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        loaded_content = json.loads(response.content)
+        self.assertTrue('Must be superior to 10' in loaded_content["fill_in_survey"]["text_variable"])
+
+        self.data = {
+            'instance_name': 'instance test',
+            'billing_group': None,
+            'fill_in_survey': {
+                "text_variable": "12"
+            },
+        }
+        response = self.client.post(url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
