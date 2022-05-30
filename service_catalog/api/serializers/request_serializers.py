@@ -1,8 +1,10 @@
+from json import dumps
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField, ValidationError
 
+from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
@@ -24,7 +26,7 @@ class ServiceRequestSerializer(ModelSerializer):
         help_text="Add a comment to your request",
         required=False
     )
-    billing_group = PrimaryKeyRelatedField(label='billing group id', allow_null=True, default=None, required=False,
+    billing_group = PrimaryKeyRelatedField(label='billing group', allow_null=True, default=None, required=False,
                                            queryset=BillingGroup.objects.all(),
                                            help_text="Billing group id")
 
@@ -43,6 +45,8 @@ class ServiceRequestSerializer(ModelSerializer):
                 job_template_survey=self.create_operation.job_template.survey,
                 operation_survey=self.create_operation.tower_survey_fields)
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
+            if not purged_survey.get('spec'):
+                self.fields['fill_in_survey'].required = False
 
     def validate_billing_group(self, value):
         if not self.service.billing_group_is_selectable:
@@ -65,10 +69,11 @@ class ServiceRequestSerializer(ModelSerializer):
 
         new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
                                                spoc=self.request.user)
+        fill_in_survey = dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
                                              operation=self.create_operation,
-                                             fill_in_survey=self.validated_data["fill_in_survey"],
+                                             fill_in_survey=fill_in_survey,
                                              user=self.request.user)
 
         # save the comment
@@ -113,9 +118,10 @@ class OperationRequestSerializer(ModelSerializer):
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey)
 
     def save(self, **kwargs):
+        fill_in_survey = dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder)
         new_request = Request.objects.create(instance=self.target_instance,
                                              operation=self.target_operation,
-                                             fill_in_survey=self.validated_data["fill_in_survey"],
+                                             fill_in_survey=fill_in_survey,
                                              user=self.request.user)
         # save the comment
         message = None
