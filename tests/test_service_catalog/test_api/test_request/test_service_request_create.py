@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from rest_framework import status
 from rest_framework.reverse import reverse
 
@@ -14,7 +12,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.kwargs = {
             "pk": self.service_test.id,
         }
-        self.url = reverse('api_service_request_create', kwargs=self.kwargs)
         self.data = {
             'instance_name': 'instance test',
             'billing_group': None,
@@ -22,7 +19,8 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
                 'text_variable': 'my text'
             }
         }
-        self.expected = ['id', 'instance', 'user','fill_in_survey', 'date_submitted', 'date_complete', 'date_archived', 'tower_job_id', 'state', 'operation']
+        self.expected = ['id', 'instance', 'user', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
+                         'tower_job_id', 'state', 'operation']
         self.expected.sort()
 
     def test_can_create(self):
@@ -45,7 +43,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
     def test_cannot_create_on_non_existing_service(self):
         self.kwargs['pk'] = 9999999
-        self.url = reverse('api_service_request_create', kwargs=self.kwargs)
         self._check_create(status.HTTP_404_NOT_FOUND)
 
     def test_cannot_create_with_non_own_billing_group(self):
@@ -56,7 +53,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self._check_create()
         self.client.force_login(user=self.standard_user)
         self._check_create(status.HTTP_400_BAD_REQUEST)
-
 
     def test_cannot_create_with_non_existing_billing_group(self):
         self.service_test.billing_group_is_selectable = True
@@ -86,7 +82,8 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             response_status = status.HTTP_201_CREATED
         instance_count = Instance.objects.count()
         request_count = Request.objects.count()
-        response = self.client.post(self.url, data=self.data, content_type="application/json")
+        url = reverse('api_service_request_create', kwargs=self.kwargs)
+        response = self.client.post(url, data=self.data, content_type="application/json")
         self.assertEqual(response.status_code, response_status)
         self.assertEqual(instance_count + offset, Instance.objects.count())
         self.assertEqual(request_count + offset, Request.objects.count())
@@ -97,16 +94,19 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
     def test_can_create_with_comment(self):
         self.client.force_login(user=self.standard_user)
-        self.data = {
-            'instance_name': 'instance test',
-            'billing_group': None,
-            'fill_in_survey': {
-                'text_variable': 'my text'
-            },
-            "request_comment": "here_is_a_comment"
-        }
+        self.data["request_comment"] = "here_is_a_comment"
         self._check_create()
         created_request = Request.objects.latest('id')
         self.assertEqual(created_request.comments.count(), 1)
         self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
         self.assertEqual(created_request.comments.first().sender, self.standard_user)
+
+    def test_can_create_with_multi_select_field(self):
+        self.data['fill_in_survey']['multiselect_var'] = ["multiselect_3", "multiselect_1"]
+        self.create_operation_test.switch_tower_fields_enable_from_dict({'multiselect_var': True})
+        self._check_create()
+
+    def test_can_create_without_survey(self):
+        self.kwargs['pk'] = self.service_empty_survey_test.id
+        self.data.pop('fill_in_survey')
+        self._check_create()
