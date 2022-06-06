@@ -122,6 +122,22 @@ def send_mail_new_support_message(message):
                                headers=_get_headers(subject))
 
 
+def send_mail_support_is_closed(support):
+    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
+        return
+    subject = _get_subject(support)
+    template_name = "service_catalog/mails/closed_support.html"
+    plain_text = f"Support closed on Instance #{support.instance.id} (#{support.id})"
+    context = {'support': support, 'current_site': settings.SQUEST_HOST}
+    html_template = get_template(template_name)
+    html_content = html_template.render(context)
+    receiver_email_list = [intervenant.email for intervenant in support.get_all_intervenants()]
+    if len(receiver_email_list) > 0:
+        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                               bcc=receiver_email_list,
+                               headers=_get_headers(subject))
+
+
 def send_mail_new_comment_on_request(message):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
