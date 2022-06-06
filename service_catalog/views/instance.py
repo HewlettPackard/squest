@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
@@ -367,3 +368,31 @@ def team_in_instance_remove(request, instance_id, team_id):
         'button_text': 'Remove'
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def instance_bulk_delete_confirm(request):
+    context = {
+        'confirm_text': mark_safe(f"Confirm deletion of the following instances?"),
+        'action_url': reverse('service_catalog:instance_bulk_delete'),
+        'button_text': 'Delete',
+        'breadcrumbs': [
+            {'text': 'Instance', 'url': reverse('service_catalog:instance_list')},
+            {'text': "Delete multiple", 'url': ""}
+        ]}
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        context['object_list'] = Instance.objects.filter(pk__in=pks)
+        if context['object_list']:
+            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+    messages.warning(request, 'No instances were selected for deletion.')
+    return redirect('service_catalog:instance_list')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def instance_bulk_delete(request):
+    if request.method == "POST":
+        pks = request.POST.getlist("selection")
+        selected_instances = Instance.objects.filter(pk__in=pks)
+        selected_instances.delete()
+    return redirect("service_catalog:instance_list")
