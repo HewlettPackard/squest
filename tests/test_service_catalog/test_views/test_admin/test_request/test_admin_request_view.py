@@ -135,7 +135,7 @@ class AdminRequestViewTest(BaseTestRequest):
             data = custom_data
         else:
             data = {
-                'instance_name': self.test_request.instance.name,
+                'squest_instance_name': self.test_request.instance.name,
                 'billing_group_id': '',
                 'text_variable': 'my_var',
                 'multiplechoice_variable': 'choice1',
@@ -165,7 +165,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_request_accept_pending_instance_missing_not_required_field(self):
         data = {
-            'instance_name': self.test_request.instance.name,
+            'squest_instance_name': self.test_request.instance.name,
             'billing_group_id': '',
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
@@ -180,7 +180,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_request_cannot_accept_pending_instance_missing_required_field(self):
         data = {
-            'instance_name': self.test_request.instance.name,
+            'squest_instance_name': self.test_request.instance.name,
             'billing_group_id': '',
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
@@ -203,7 +203,7 @@ class AdminRequestViewTest(BaseTestRequest):
         billing_group = BillingGroup.objects.exclude(id=self.test_request.instance.billing_group.id).first()
         new_instance_name = f"{self.test_request.instance.name} modified by admin"
         data = {
-            'instance_name': new_instance_name,
+            'squest_instance_name': new_instance_name,
             'billing_group_id': billing_group.id,
             'text_variable': 'var',
             'multiplechoice_variable': 'choice1',

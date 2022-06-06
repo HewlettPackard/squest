@@ -43,7 +43,7 @@ class TestAcceptRequestForm(BaseTest):
             'request': self.test_request
         }
         data = {
-            'instance_name': self.test_request.instance.name,
+            'squest_instance_name': self.test_request.instance.name,
             'billing_group_id': None,
             'text_variable': '',
         }

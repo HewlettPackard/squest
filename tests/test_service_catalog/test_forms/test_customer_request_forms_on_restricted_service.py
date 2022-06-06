@@ -20,7 +20,7 @@ class TestRequestForm(BaseTest):
             'service_id': self.service_test.id
         }
         data = {
-            "instance_name": "instance test",
+            "squest_instance_name": "instance test",
             "text_variable": "text"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
@@ -34,7 +34,7 @@ class TestRequestForm(BaseTest):
         instance_name = "instance test"
         text_var = "text"
         data = {
-            "instance_name": instance_name,
+            "squest_instance_name": instance_name,
             "billing_group_id": self.test_billing_group.id,
             "text_variable": text_var
         }
@@ -53,7 +53,7 @@ class TestRequestForm(BaseTest):
         instance_name = "instance test"
         text_var = "text"
         data = {
-            "instance_name": instance_name,
+            "squest_instance_name": instance_name,
             "billing_group_id": self.test_billing_group.id,
             "text_variable": text_var
         }
@@ -68,7 +68,7 @@ class TestRequestForm(BaseTest):
             'service_id': self.service_test.id
         }
         data = {
-            "instance_name": "instance test",
+            "squest_instance_name": "instance test",
             "billing_group_id": self.test_billing_group.id,
             "text_variable": "text"
         }

@@ -29,7 +29,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:customer_service_request', kwargs=args)
 
         data = {
-            "instance_name": "instance_1",
+            "squest_instance_name": "instance_1",
             "text_variable": "text_value_1",
             "multiplechoice_variable": "text_value_2"
         }
@@ -54,7 +54,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:customer_service_request', kwargs=args)
 
         data = {
-            "instance_name": "instance_1",
+            "squest_instance_name": "instance_1",
             "text_variable": "text_value_1",
             "multiplechoice_variable": "text_value_2",
             "request_comment": "here_is_a_comment"
