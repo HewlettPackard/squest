@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
@@ -20,9 +21,14 @@ class InstanceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         if self.request.user.is_superuser:
             return Instance.objects.all().distinct().order_by("-date_available") & filtered
         else:
-            return get_objects_for_user(self.request.user, 'service_catalog.view_instance').distinct().order_by("-date_available") & filtered
+            return get_objects_for_user(
+                self.request.user,
+                'service_catalog.view_instance').distinct().order_by("-date_available") & filtered
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Instances"
+        if self.request.user.is_superuser:
+            context['html_button_path'] = 'generics/buttons/delete_button.html'
+            context['action_url'] = reverse('service_catalog:instance_bulk_delete_confirm')
         return context
