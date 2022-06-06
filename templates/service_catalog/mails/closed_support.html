@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support</title>
+</head>
+<h2>Support closed ({{ support.id }})</h2>
+
+<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' support.instance.id %}"><b>{{ support.instance.name }}</b></a></li>
+<li>SPOC: <b>{{ support.instance.spoc.username }}</b></li>
+<br>
+<br>
+
+Retrieve supports on <a href="{{ current_site }}{% url 'service_catalog:instance_details' support.instance.id %}#support">Squest portal</a>.
+</body>
+</html>
