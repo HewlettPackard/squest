@@ -121,7 +121,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
 
 def prefill_form_with_user_values(fields: dict, fill_in_survey: dict, admin_fill_in_survey: dict):
-    skipped_fields = ['instance_name', 'billing_group_id']
+    skipped_fields = ['squest_instance_name', 'billing_group_id']
     for field, value in fill_in_survey.items():
         if field not in skipped_fields:
             fields.get(field).initial = value

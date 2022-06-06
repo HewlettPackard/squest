@@ -16,7 +16,7 @@ class RequestApprovalStepViewTest(BaseApproval):
         }
         if data is None:
             data = {
-                'instance_name': self.test_request.instance.name,
+                'squest_instance_name': self.test_request.instance.name,
                 'billing_group_id': '',
                 'text_variable': 'my_var',
                 'multiplechoice_variable': 'choice1',

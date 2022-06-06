@@ -6,7 +6,7 @@ from service_catalog.models import Operation, Instance, Request, RequestMessage
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "instance_name"]
+EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "squest_instance_name"]
 
 
 class OperationRequestForm(forms.Form):
