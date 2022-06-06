@@ -17,7 +17,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             "pk": self.service_test.id,
         }
         self.data = {
-            'instance_name': 'instance test',
+            'squest_instance_name': 'instance test',
             'billing_group': None,
             'fill_in_survey': {
                 'text_variable': 'my text'
@@ -124,7 +124,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.client.force_login(user=self.standard_user)
 
         self.data = {
-            'instance_name': 'instance test',
+            'squest_instance_name': 'instance test',
             'billing_group': None,
             'fill_in_survey': {
                 "text_variable": "13"
@@ -136,7 +136,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.assertTrue('This field must be an even number.' in loaded_content["fill_in_survey"]["text_variable"])
 
         self.data = {
-            'instance_name': 'instance test',
+            'squest_instance_name': 'instance test',
             'billing_group': None,
             'fill_in_survey': {
                 "text_variable": "8"
@@ -148,7 +148,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.assertTrue('Must be superior to 10' in loaded_content["fill_in_survey"]["text_variable"])
 
         self.data = {
-            'instance_name': 'instance test',
+            'squest_instance_name': 'instance test',
             'billing_group': None,
             'fill_in_survey': {
                 "text_variable": "12"

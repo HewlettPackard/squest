@@ -12,7 +12,7 @@ class AcceptRequestForm(forms.Form):
         self.user = user
         self.target_request = kwargs.pop('request', None)
         super(AcceptRequestForm, self).__init__(*args, **kwargs)
-        self.fields["instance_name"] = forms.CharField(label="Name",
+        self.fields["squest_instance_name"] = forms.CharField(label="Name",
                                                        initial=self.target_request.instance.name,
                                                        widget=forms.TextInput(attrs={"class": "form-control"}))
         self.fields["billing_group_id"] = forms.ModelChoiceField(
@@ -22,7 +22,7 @@ class AcceptRequestForm(forms.Form):
             required=False,
             widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
         )
-        self.fields["instance_name"].group = "1. Instance"
+        self.fields["squest_instance_name"].group = "1. Instance"
         self.fields["billing_group_id"].group = "1. Instance"
         # load user provided fields and add admin field if exist
         if "spec" in self.target_request.operation.job_template.survey:
@@ -43,7 +43,7 @@ class AcceptRequestForm(forms.Form):
     def save(self):
         user_provided_survey_fields = dict()
         for field_key, value in self.cleaned_data.items():
-            if field_key not in ['instance_name', 'billing_group_id']:
+            if field_key not in ['squest_instance_name', 'billing_group_id']:
                 user_provided_survey_fields[field_key] = value
         # update the request
         self.target_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
@@ -51,6 +51,6 @@ class AcceptRequestForm(forms.Form):
         # reset the instance state if it was failed (in case of resetting the state)
         self.target_request.instance.reset_to_last_stable_state()
         self.target_request.instance.billing_group = self.cleaned_data["billing_group_id"]
-        self.target_request.instance.name = self.cleaned_data["instance_name"]
+        self.target_request.instance.name = self.cleaned_data["squest_instance_name"]
         self.target_request.instance.save()
         return self.target_request

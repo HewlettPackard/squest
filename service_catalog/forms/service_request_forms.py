@@ -12,11 +12,11 @@ from service_catalog.models.operations import OperationType
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "instance_name"]
+EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "squest_instance_name"]
 
 
 class ServiceRequestForm(forms.Form):
-    instance_name = forms.CharField(label="Squest instance name",
+    squest_instance_name = forms.CharField(label="Squest instance name",
                                     help_text="Help to identify the requested service in the 'Instances' view",
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -60,7 +60,7 @@ class ServiceRequestForm(forms.Form):
         purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(job_template_survey=purged_survey_with_default,
                                                                                 operation_survey=self.create_operation.tower_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey_with_validator))
-        self.fields['instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
+        self.fields['squest_instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
     def save(self):
         user_provided_survey_fields = dict()
@@ -68,7 +68,7 @@ class ServiceRequestForm(forms.Form):
             if field_key not in EXCLUDED_SURVEY_FIELDS:
                 user_provided_survey_fields[field_key] = value
         # create the instance
-        instance_name = self.cleaned_data["instance_name"]
+        instance_name = self.cleaned_data["squest_instance_name"]
         billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data[
             "billing_group_id"] else self.service.billing_group_id
         billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None

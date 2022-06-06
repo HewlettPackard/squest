@@ -15,9 +15,9 @@ from service_catalog.api.serializers import DynamicSurveySerializer, InstanceRea
 class ServiceRequestSerializer(ModelSerializer):
     class Meta:
         model = Request
-        fields = ['instance_name', 'billing_group', 'request_comment', 'fill_in_survey']
+        fields = ['squest_instance_name', 'billing_group', 'request_comment', 'fill_in_survey']
 
-    instance_name = CharField(
+    squest_instance_name = CharField(
         label="Squest instance name",
         help_text="Help to identify the requested service in the 'Instances' view"
     )
@@ -65,7 +65,7 @@ class ServiceRequestSerializer(ModelSerializer):
 
     def save(self):
         # create the instance
-        instance_name = self.validated_data["instance_name"]
+        instance_name = self.validated_data["squest_instance_name"]
         billing_group = None
         if self.validated_data["billing_group"]:
             billing_group = self.validated_data["billing_group"]
