@@ -24,18 +24,18 @@ class Message(Model):
 
 class RequestMessage(Message):
     request = ForeignKey(Request,
-                                blank=True, null=True,
-                                on_delete=CASCADE,
-                                related_name='comments',
-                                related_query_name='comment'
-                                )
+                         blank=True, null=True,
+                         on_delete=CASCADE,
+                         related_name='comments',
+                         related_query_name='comment'
+                         )
 
 
 class SupportMessage(Message):
     support = ForeignKey(Support,
-                                blank=True,
-                                null=True,
-                                on_delete=CASCADE,
-                                related_name='supports',
-                                related_query_name='support'
-                                )
+                         blank=True,
+                         null=True,
+                         on_delete=CASCADE,
+                         related_name='messages',
+                         related_query_name='message'
+                         )

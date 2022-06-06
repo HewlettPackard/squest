@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import TextChoices, Model, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL
 from django_fsm import FSMField, transition
 
+from service_catalog.mail_utils import send_mail_support_is_closed
 from service_catalog.models import Instance
 
 
@@ -28,7 +29,14 @@ class Support(Model):
     @transition(field=state, source=SupportState.OPENED, target=SupportState.CLOSED)
     def do_close(self):
         self.date_closed = datetime.now()
+        send_mail_support_is_closed(self)
 
     @transition(field=state, source=SupportState.CLOSED, target=SupportState.OPENED)
     def do_open(self):
         pass
+
+    def get_all_intervenants(self):
+        intervenant_list = set()
+        for message in self.messages.all():
+            intervenant_list.add(message.sender)
+        return list(intervenant_list)
