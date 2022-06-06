@@ -54,6 +54,8 @@ urlpatterns = [
          views.service_operation_edit_survey, name='service_operation_edit_survey'),
 
     path('instance/', InstanceListView.as_view(), name='instance_list'),
+    path('instance/delete-confirm/', views.instance_bulk_delete_confirm, name='instance_bulk_delete_confirm'),
+    path('instance/delete-force/', views.instance_bulk_delete, name='instance_bulk_delete'),
     path('instance/<int:instance_id>/', views.instance_details, name='instance_details'),
     path('instance/<int:instance_id>/new-support/', views.instance_new_support,
          name='instance_new_support'),
