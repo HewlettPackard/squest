@@ -57,6 +57,8 @@
                             <i class="{{ icon_button }}"></i>
                             {{ text_button }}
                         </button>
+                    {% elif custom_buttons_html %}
+                        {% include custom_buttons_html %}
                     {% elif action == "edit" %}
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-save"></i>

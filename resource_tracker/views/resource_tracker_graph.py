@@ -26,8 +26,7 @@ def get_graph_name(resource) -> str:
         prefix = 'RP_'
     elif isinstance(resource, ResourceGroup):
         prefix = 'RG_'
-    return f'{prefix}{resource.name}'.replace(':', '_') # ':' is a special keyword in Dot
-
+    return f'{prefix}{resource.name}'.replace(':', '_')  # ':' is a special keyword in Dot
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -105,7 +104,7 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'available': {
-                'display': f"{round(attribute.total_produced - attribute.total_consumed)} "
+                'display': f"{round(attribute.total_produced - attribute.total_consumed)}"
                            f"{attribute.get_percent_available_human_readable()}",
                 'color': get_progress_bar_color(attribute.get_percent_consumed())},
         }

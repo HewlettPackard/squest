@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block main %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <section class="col-lg-9 connectedSortable ui-sortable">
+                    <div class="timeline">
+                        <div class="time-label">
+                            <span class="bg-gray px-3">Start</span>
+                        </div>
+                        {% for approval_step in approval_steps %}
+                            <div class="mb-0">
+                                {% if approval_step.type == "ALL_OF_THEM" %}
+                                    <i class="fas fa-solid fa-users bg-purple"></i>
+                                {% elif approval_step.type == "AT_LEAST_ONE" %}
+                                    <i class="fas fa-solid fa-user bg-teal"></i>
+                                {% endif %}
+                                <div class="timeline-item">
+                                    <span class="time">
+                                        <a href="{% url 'service_catalog:approval_step_edit' approval_workflow_id approval_step.id %}"
+                                           class="btn btn-tool">
+                                            <i class="fas fa-pencil-alt text-primary"></i>
+                                        </a>
+                                        <a href="{% url 'service_catalog:approval_step_delete' approval_workflow_id approval_step.id %}"
+                                           class="btn btn-tool text-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </span>
+                                    <h3 class="timeline-header">
+                                        <strong>{{ approval_step.name }}</strong>
+                                    </h3>
+
+                                    <div class="timeline-body card">
+                                        <div class="card-body p-0" style="display: block;">
+                                            <ul class="nav nav-pills flex-column">
+                                                {% for team in approval_step.teams.all %}
+                                                    <li class="nav-item">{{ team.name }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-label mb-5">
+                                <a href="{% url 'service_catalog:approval_step_create' approval_workflow_id %}?previous_id={{ approval_step.id }}">
+                                    <i
+                                            class="fas fa-solid fa-plus bg-success squest-timeline-icon"
+                                            style="
+                                                padding: 7px;
+                                                border-radius: 50%;
+                                                font-size: 16px;
+                                                height: 30px;
+                                                left: 18px;
+                                                line-height: 30px;
+                                                position: absolute;
+                                                text-align: center;
+                                                top: 0;
+                                                width: 30px;
+                                    ">
+                                    </i>
+                                </a>
+                            </div>
+                        {% endfor %}
+                        <div class="time-label">
+                            <span class="bg-green">Approved</span>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-3">
+                    <div class="info-box shadow-none">
+                        <span class="info-box-icon bg-purple"><i class="fas fa-solid fa-users"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">All of them</span>
+                        </div>
+                    </div>
+                    <div class="info-box shadow-none">
+                        <span class="info-box-icon bg-teal"><i class="fas fa-solid fa-user"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">One of them</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('body').css({'background-color': '#F4F6F9'});
+        });
+    </script>
+{% endblock %}

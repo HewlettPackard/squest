@@ -65,7 +65,8 @@ def _get_receivers_for_support_message(support_message):
     return receiver_email_list
 
 
-def send_mail_request_update(target_request, user_applied_state=None, message=None):
+def send_mail_request_update(target_request, user_applied_state=None, message=None, receiver_email_list=None,
+                             plain_text=None):
     """
     Notify users that a request has been updated
     :param message: A message to add to the email
@@ -73,6 +74,10 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     :type user_applied_state: User
     :param target_request:
     :type target_request: service_catalog.models.request.Request
+    :param receiver_email_list: email diffusion list
+    :type receiver_email_list: List
+    :param plain_text: text displayed in the mail
+    :type plain_text: String
     :return:
     """
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
@@ -85,12 +90,14 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
                'user_applied_state': user_applied_state,
                'current_site': settings.SQUEST_HOST,
                'message': message}
-    plain_text = f"Request state update: {target_request.state}"
-    if target_request.state == RequestState.SUBMITTED:
-        plain_text = f"Request update for service: {target_request.instance.name}"
+    if plain_text is None:
+        plain_text = f"Request state update: {target_request.state}"
+        if target_request.state == RequestState.SUBMITTED:
+            plain_text = f"Request update for service: {target_request.instance.name}"
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
+    if receiver_email_list is None:
+        receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
     if target_request.user.profile.notification_enabled:
         receiver_email_list.append(target_request.user.email)  # email sent to the requester
     if len(receiver_email_list) > 0:

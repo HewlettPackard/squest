@@ -1,4 +1,3 @@
-import ast
 import logging
 
 from django import forms
@@ -22,7 +21,7 @@ class TowerSurveyField(Model):
                                   on_delete=CASCADE,
                                   related_name="tower_survey_fields",
                                   related_query_name="tower_survey_field")
-    validators = models.CharField(null=True, blank=True, max_length=200, verbose_name="Field validators")
+    validators = CharField(null=True, blank=True, max_length=200, verbose_name="Field validators")
 
     def __str__(self):
         return self.name

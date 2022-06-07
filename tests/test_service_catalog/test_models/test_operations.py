@@ -1,4 +1,8 @@
-from service_catalog.models import Operation
+from django.core.exceptions import ValidationError
+
+from service_catalog.models import Operation, ApprovalWorkflow, OperationType
+from service_catalog.models.approval_step import ApprovalStep
+from service_catalog.models.approval_step_type import ApprovalStepType
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -22,3 +26,67 @@ class TestOperation(BaseTest):
         self.create_operation_test.save()
         self.assertFalse(self.create_operation_test.service.enabled)
         self.assertFalse(self.create_operation_test.enabled)
+
+    def test_can_create_operation_with_approval_workflow(self):
+        approval_workflow = ApprovalWorkflow.objects.create(
+            name="WF",
+        )
+        approval_step = ApprovalStep.objects.create(
+            name="First",
+            type=ApprovalStepType.AT_LEAST_ONE,
+            approval_workflow=approval_workflow
+        )
+        approval_workflow.entry_point = approval_step
+        approval_workflow.save()
+        operation = Operation.objects.create(
+            name="new test",
+            service=self.service_test,
+            type=OperationType.UPDATE,
+            job_template=self.job_template_test,
+            process_timeout_second=20,
+            approval_workflow=approval_workflow
+        )
+        is_raise = False
+        try:
+            operation.clean()
+        except ValidationError:
+            is_raise = True
+        self.assertEqual(is_raise, False)
+
+    def test_cannot_create_operation_with_approval_workflow_and_auto_accept(self):
+        approval_workflow = ApprovalWorkflow.objects.create(
+            name="WF",
+        )
+        approval_step = ApprovalStep.objects.create(
+            name="First",
+            type=ApprovalStepType.AT_LEAST_ONE,
+            approval_workflow=approval_workflow
+        )
+        approval_workflow.entry_point = approval_step
+        approval_workflow.save()
+        operation = Operation.objects.create(
+            name="new test",
+            service=self.service_test,
+            type=OperationType.UPDATE,
+            job_template=self.job_template_test,
+            process_timeout_second=20,
+            approval_workflow=approval_workflow,
+            auto_accept=True
+        )
+        self.assertRaises(ValidationError, operation.clean)
+
+    def test_cannot_create_operation_with_approval_workflow_without_entry_point(self):
+        approval_workflow = ApprovalWorkflow.objects.create(
+            name="WF",
+        )
+        operation = Operation.objects.create(
+            name="new test",
+            service=self.service_test,
+            type=OperationType.UPDATE,
+            job_template=self.job_template_test,
+            process_timeout_second=20,
+            approval_workflow=approval_workflow,
+            auto_accept=True
+        )
+        self.assertRaises(ValidationError, operation.clean)
+

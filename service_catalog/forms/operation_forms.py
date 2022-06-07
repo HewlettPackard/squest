@@ -23,5 +23,5 @@ class ServiceOperationForm(SquestModelForm):
 
     class Meta:
         model = Operation
-        fields = ["name", "description", "job_template", "type", "process_timeout_second", "auto_accept",
-                  "auto_process", "enabled"]
+        fields = ["name", "description", "job_template", "type", "approval_workflow", "process_timeout_second",
+                  "auto_accept", "auto_process", "enabled"]
