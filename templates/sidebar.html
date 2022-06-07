@@ -59,6 +59,13 @@
                     </a>
                 </li>
                 {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a href="{% url 'service_catalog:approval_workflow_list' %}"
+                       class="nav-link {% if '/approval-workflow/' in request.path %}active{% endif %}">
+                        <i class="nav-icon far fa-thumbs-up"></i>
+                        <p>Approvals</p>
+                    </a>
+                </li>
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker:resource_pool_list' %}"

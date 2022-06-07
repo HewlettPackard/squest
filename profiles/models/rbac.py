@@ -69,5 +69,17 @@ roles_config = {
                     "view_request"
                 ]
             }
+        },
+    "service_catalog.approvalstep":
+        {
+            "Approver": {
+                "description": "An approver of the approval step can approve requests related to it.",
+                "permissions": [
+                    "change_approvalstep",
+                    "delete_approvalstep",
+                    "view_approvalstep",
+                    "approve_request_approvalstep",
+                ]
+            }
         }
 }

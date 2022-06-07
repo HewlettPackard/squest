@@ -25,11 +25,23 @@ class Operation(Model):
     auto_process = BooleanField(default=False, blank=True)
     process_timeout_second = IntegerField(default=60, verbose_name="Process timeout (s)")
     enabled = BooleanField(default=True, blank=True)
+    approval_workflow = ForeignKey(
+        "service_catalog.ApprovalWorkflow",
+        blank=True,
+        null=True,
+        on_delete=SET_NULL,
+        related_name='operation',
+        related_query_name='operation'
+    )
 
     def __str__(self):
         return f"{self.name} ({self.service})"
 
     def clean(self):
+        if self.approval_workflow and not self.approval_workflow.entry_point:
+            raise ValidationError({'approval_workflow': _("You cannot use an approval workflow without entrypoint.")})
+        if self.auto_accept and self.approval_workflow:
+            raise ValidationError({'auto_accept': _("Auto accept cannot be set with an approval step.")})
         if hasattr(self, 'service'):
             if self.type == OperationType.CREATE:
                 if self.service:

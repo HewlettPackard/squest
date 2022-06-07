@@ -8,8 +8,9 @@ from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
 from profiles.models import BillingGroup
 from profiles.models.role_manager import RoleManager
-from . import Service, InstanceState
-from .state_hooks import HookManager
+from service_catalog.models.services import Service
+from service_catalog.models.instance_state import InstanceState
+from service_catalog.models.state_hooks import HookManager
 from .. import tasks
 
 logger = logging.getLogger(__name__)

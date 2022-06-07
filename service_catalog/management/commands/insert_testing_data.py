@@ -5,7 +5,7 @@ import random
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
-from profiles.models import BillingGroup
+from profiles.models import BillingGroup, Team
 from resource_tracker.models import ResourceGroup, ResourcePool
 from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request
 from service_catalog.models.operations import OperationType
@@ -31,6 +31,8 @@ class Command(BaseCommand):
                 users[username] = User.objects.get(username=username, password="admin")
             except User.DoesNotExist:
                 users[username] = User.objects.create_user(username=username, password="admin")
+            team = Team.objects.create(name=username)
+            team.add_user_in_role(users[username], "Admin")
             logger.info(f"Get or create '{users[username]}'")
         anthony_token = os.environ['AWX_TOKEN']
         tower, _ = TowerServer.objects.get_or_create(name=r'AWX HPE', host=r'awx.gre.hpecorp.net:8043',

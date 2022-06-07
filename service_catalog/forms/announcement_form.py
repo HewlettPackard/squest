@@ -6,6 +6,7 @@ from service_catalog.models.bootstrap_type import BootstrapType
 from service_catalog.models.announcement import Announcement
 from Squest.utils.squest_model_form import SquestModelForm
 
+
 class AnnouncementForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super(AnnouncementForm, self).__init__(*args, **kwargs)

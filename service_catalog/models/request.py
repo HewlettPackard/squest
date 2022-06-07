@@ -8,16 +8,20 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition
+
+from profiles.models import Team
 from profiles.models.user_role_binding import UserRoleBinding
 from profiles.models.team_role_binding import TeamRoleBinding
 from profiles.models.role_manager import RoleManager
-from service_catalog.models import ApprovalGroup
+from service_catalog.models.approval_step import ApprovalStep
+from service_catalog.models.approval_step_state import ApprovalStepState
+from service_catalog.models.approval_state import ApprovalState
 from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.request_state import RequestState
@@ -41,7 +45,14 @@ class Request(RoleManager):
     periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
     periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = TextField(blank=True, null=True)
-    current_approval_group = ForeignKey(ApprovalGroup, on_delete=SET_NULL, null=True, blank=True)
+    approval_step = ForeignKey(
+        ApprovalStep,
+        blank=True,
+        null=True,
+        on_delete=SET_NULL,
+        related_name='requests',
+        related_query_name='request'
+    )
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
@@ -95,19 +106,21 @@ class Request(RoleManager):
 
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
-    def reject(self):
-        pass
+    def reject(self, user):
+        self.state = self.get_state_from_approval_step(user, ApprovalState.REJECTED)
+        self.save()
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
-                target=RequestState.ACCEPTED)
-    def accept(self):
-        pass
+                target=RequestState.ACCEPTED, permission='service_catalog.approve_request_approvalstep')
+    def accept(self, user):
+        self.state = self.get_state_from_approval_step(user, ApprovalState.APPROVED)
+        self.save()
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
                 conditions=[can_process])
     def process(self):
         logger.info(f"[Request][process] trying to start processing request '{self.id}'")
-        # the instance now switch depending of the operation type
+        # the instance now switch depending on the operation type
         if self.operation.type == OperationType.CREATE:
             self.instance.provisioning()
         elif self.operation.type == OperationType.UPDATE:
@@ -227,6 +240,64 @@ class Request(RoleManager):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
+    def get_state_from_approval_step(self, user, target_approval_step_state):
+        """
+        This method return the calculated status from approval step states
+        """
+        if self.operation.approval_workflow is None and self.approval_step is None:
+            if target_approval_step_state == ApprovalState.APPROVED:
+                return RequestState.ACCEPTED
+            elif target_approval_step_state == ApprovalState.REJECTED:
+                return RequestState.REJECTED
+            else:
+                raise NotImplementedError
+        bindings = UserRoleBinding.objects.filter(
+            content_type=ContentType.objects.get(app_label="profiles", model="team"),
+            user=user
+        )
+        teams = Team.objects.filter(id__in=[binding.object_id for binding in bindings])
+        for approval_step_state in ApprovalStepState.objects.filter(team__in=teams, request=self,
+                                                                    approval_step=self.approval_step):
+            approval_step_state.set_state(user, target_approval_step_state)
+        state = self.approval_step.get_request_approval_state(self)
+        if state == ApprovalState.REJECTED:
+            return RequestState.REJECTED
+        elif state == ApprovalState.APPROVED:
+            self.approval_step = self.approval_step.next
+            if self.approval_step:
+                from service_catalog.mail_utils import send_mail_request_update
+                send_mail_request_update(
+                    self,
+                    plain_text=f"Request need your approval",
+                    receiver_email_list=self.approval_step.get_approvers_emails()
+                )
+        if self.operation.approval_workflow and self.approval_step is None and self.state == RequestState.SUBMITTED:
+            return RequestState.ACCEPTED
+        return self.state
+
+    @classmethod
+    def set_default_approval_step(cls, sender, instance, *args, **kwargs):
+        if not instance.id and instance.operation.approval_workflow:
+            instance.approval_step = instance.operation.approval_workflow.entry_point
+
+    @classmethod
+    def create_approval_step_states_when_approval_step_changed(cls, sender, instance, *args, **kwargs):
+        if instance.id:
+            old = Request.objects.get(id=instance.id)
+            if old.approval_step != instance.approval_step:
+                if instance.approval_step:
+                    for team in instance.approval_step.teams.all():
+                        ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
+                                                         team=team)
+
+    @classmethod
+    def create_approval_step_states(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            if instance.approval_step:
+                for team in instance.approval_step.teams.all():
+                    ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
+                                                     team=team)
+
     @classmethod
     def add_permission(cls, sender, instance, created, *args, **kwargs):
         if created:
@@ -256,7 +327,7 @@ class Request(RoleManager):
         """
         if created:
             if instance.operation.auto_accept:
-                instance.accept()
+                instance.accept(None)
                 instance.save()
 
     @classmethod
@@ -295,6 +366,9 @@ def pre_delete(sender, instance, **kwargs):
     instance.remove_all_bindings()
 
 
+pre_save.connect(Request.set_default_approval_step, sender=Request)
+pre_save.connect(Request.create_approval_step_states_when_approval_step_changed, sender=Request)
+post_save.connect(Request.create_approval_step_states, sender=Request)
 post_save.connect(Request.add_permission, sender=Request)
 post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
 post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)

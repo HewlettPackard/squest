@@ -14,3 +14,5 @@ from service_catalog.models.support import Support
 from service_catalog.models.state_hooks import ServiceStateHook, GlobalHook
 from service_catalog.models.documentation import Doc
 from service_catalog.models.announcement import Announcement
+from service_catalog.models.approval_workflow import ApprovalWorkflow
+from service_catalog.models.approval_step import ApprovalStep

@@ -1,8 +1,13 @@
+import logging
+
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
+logger = logging.getLogger(__name__)
+
 
 def create_roles(sender, **kwargs):
+    logger.info("create_roles method called")
     from django.contrib.auth.models import Permission
     from profiles.models import Role
     from django.contrib.contenttypes.models import ContentType
