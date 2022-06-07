@@ -5,10 +5,10 @@ from Squest.utils.squest_table import SquestTable
 
 
 class OperationTable(SquestTable):
-    enabled = TemplateColumn(template_name='custom_columns/operation_boolean.html')
+    enabled = TemplateColumn(template_name='custom_columns/generic_boolean.html')
     type = TemplateColumn(template_name='custom_columns/operation_type.html')
-    auto_accept = TemplateColumn(template_name='custom_columns/operation_boolean.html')
-    auto_process = TemplateColumn(template_name='custom_columns/operation_boolean.html')
+    auto_accept = TemplateColumn(template_name='custom_columns/generic_boolean.html')
+    auto_process = TemplateColumn(template_name='custom_columns/generic_boolean.html')
     survey = TemplateColumn(template_name='custom_columns/operation_survey.html', orderable=False)
     actions = TemplateColumn(template_name='custom_columns/operation_actions.html', orderable=False)
 

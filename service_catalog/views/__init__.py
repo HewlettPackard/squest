@@ -8,4 +8,5 @@ from .admin.hook_views import *
 from .customer.catalog_views import *
 from .filters import *
 from .admin.announcements_views import *
-
+from .approval_workflow_views import *
+from .approval_step_views import *

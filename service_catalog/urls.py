@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 from .views.announcement_list_view import AnnouncementListView
+from .views.approval_workflow_list_view import ApprovalWorkflowListView
 from .views.doc_list_view import DocListView
 from .views.global_hook_list_view import GlobalHookListView
 from .views.instance_list_view import InstanceListView
@@ -14,6 +15,7 @@ from .views.support_list_view import SupportListView
 from .views.tower_server_list_view import TowerServerListView
 
 app_name = 'service_catalog'
+
 
 
 urlpatterns = [
@@ -103,5 +105,21 @@ urlpatterns = [
     path('tool/announcement/create/', views.announcement_create, name='announcement_create'),
     path('tool/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
     path('tool/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
+
+    path('approval-workflow/', ApprovalWorkflowListView.as_view(), name='approval_workflow_list'),
+    path('approval-workflow/create/', views.approval_workflow_create, name='approval_workflow_create'),
+    path('approval-workflow/<int:approval_workflow_id>/edit/', views.approval_workflow_edit,
+         name='approval_workflow_edit'),
+    path('approval-workflow/<int:approval_workflow_id>/delete/', views.approval_workflow_delete,
+         name='approval_workflow_delete'),
+
+    path('approval-workflow/<int:approval_workflow_id>/approval-step/create/', views.approval_step_create,
+         name='approval_step_create'),
+    path('approval-workflow/<int:approval_workflow_id>/approval-step/<int:approval_step_id>/edit/',
+         views.approval_step_edit, name='approval_step_edit'),
+    path('approval-workflow/<int:approval_workflow_id>/approval-step/<int:approval_step_id>/delete/',
+         views.approval_step_delete, name='approval_step_delete'),
+    path('approval-workflow/<int:approval_workflow_id>/approval-step/', views.approval_step_graph,
+         name='approval_step_graph'),
 
 ]

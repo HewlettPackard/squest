@@ -38,6 +38,7 @@ class RequestStateMachine(ViewSet):
                                              read_only_form=False)
         if serializer.is_valid():
             target_request = serializer.save()
+            target_request.accept(request.user)
             send_mail_request_update(target_request, user_applied_state=request.user)
             return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
         return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
@@ -67,7 +68,7 @@ class RequestStateMachine(ViewSet):
         message = RequestMessageSerializer(data=data)
         if message.is_valid():
             message.save()
-        target_request.reject()
+        target_request.reject(request.user)
         target_request.save()
         send_mail_request_update(target_request, user_applied_state=request.user, message=message)
         return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)

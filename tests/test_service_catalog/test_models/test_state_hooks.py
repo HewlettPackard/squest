@@ -39,7 +39,7 @@ class TestStateHook(BaseTestRequest):
 
     def test_hook_manager_called(self):
         with mock.patch("service_catalog.models.state_hooks.HookManager.trigger_hook") as mock_trigger_hook:
-            self.test_request.accept()
+            self.test_request.accept(self.superuser)
             self.test_request.save()
             self.assertEqual(mock_trigger_hook.call_count, 1)
 

@@ -3,7 +3,7 @@ import logging
 import requests
 
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -77,14 +77,14 @@ def admin_request_re_submit(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_reject(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if not can_proceed(target_request.reject):
+    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) or not can_proceed(target_request.reject):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
                                   target_request=target_request)
         if form.is_valid():
             message = form.save(send_notification=False)
-            target_request.reject()
+            target_request.reject(request.user)
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect('service_catalog:request_list')
@@ -105,7 +105,7 @@ def admin_request_reject(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_accept(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if not can_proceed(target_request.accept):
+    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) or not can_proceed(target_request.accept):
         raise PermissionDenied
     parameters = {
         'request': target_request
@@ -114,6 +114,7 @@ def admin_request_accept(request, request_id):
         form = AcceptRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
+            target_request.accept(request.user)
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
             return redirect('service_catalog:request_list')
