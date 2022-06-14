@@ -17,7 +17,7 @@ class SupportState(TextChoices):
 class Support(Model):
     title = CharField(max_length=100)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True, blank=True, related_name="supports",
-                                 related_query_name="support")
+                          related_query_name="support")
     opened_by = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     state = FSMField(default=SupportState.OPENED, choices=SupportState.choices)
     date_opened = DateTimeField(auto_now=True, blank=True, null=True)

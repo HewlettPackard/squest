@@ -240,6 +240,28 @@ class Request(RoleManager):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
+    def get_approval_workflow_status(self):
+        if not self.operation.approval_workflow:
+            return list()
+        approval_steps = self.operation.approval_workflow.approval_step_list.order_by("position")
+        approval_workflow = list()
+        for approval_step in approval_steps:
+            approval_workflow.append({
+                'name': approval_step.name,
+                'type': approval_step.type,
+                'status': approval_step.get_request_approval_state(self),
+                'teams': [
+                    {
+                        'name': team.name,
+                        'status': ApprovalStepState.objects.get(request=self, team=team,
+                                                                approval_step=approval_step).state if ApprovalStepState.objects.filter(
+                            request=self, team=team, approval_step=approval_step).exists() else None
+                    }
+                    for team in approval_step.teams.all()
+                ]
+            })
+        return approval_workflow
+
     def get_state_from_approval_step(self, user, target_approval_step_state):
         """
         This method return the calculated status from approval step states
@@ -287,8 +309,20 @@ class Request(RoleManager):
             if old.approval_step != instance.approval_step:
                 if instance.approval_step:
                     for team in instance.approval_step.teams.all():
-                        ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
-                                                         team=team)
+                        approval_step_state, created = ApprovalStepState.objects.get_or_create(
+                            request=instance,
+                            approval_step=instance.approval_step,
+                            team=team
+                        )
+                        if instance.approval_step:
+                            instance.state = RequestState.SUBMITTED
+                            next_approval_steps = instance.approval_step.approval_workflow.approval_step_list.filter(
+                                position__gte=instance.approval_step.position
+                            )
+                            ApprovalStepState.objects.filter(
+                                request=instance,
+                                approval_step__in=next_approval_steps
+                            ).update(**{"state": ApprovalState.PENDING})
 
     @classmethod
     def create_approval_step_states(cls, sender, instance, created, *args, **kwargs):

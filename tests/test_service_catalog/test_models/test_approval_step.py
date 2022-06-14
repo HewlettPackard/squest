@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 
 from service_catalog.models import ApprovalStep, ApprovalWorkflow
+from service_catalog.models.approval_state import ApprovalState
 from service_catalog.models.approval_step_type import ApprovalStepType
 from tests.test_service_catalog.base_approval import BaseApproval
 
@@ -90,4 +91,6 @@ class TestApprovalStep(BaseApproval):
         self.assertIsNone(self.test_request.approval_step)
         self.assertIsNone(self.test_approval_workflow.entry_point)
 
-
+    def test_get_request_approval_state_when_none_state(self):
+        result = self.test_request.approval_step.next.get_request_approval_state(self.test_request)
+        self.assertEqual(ApprovalState.PENDING, result)

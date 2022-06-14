@@ -4,6 +4,9 @@ from service_catalog.models.approval_state import ApprovalState
 
 
 class ApprovalStepState(Model):
+    class Meta:
+        unique_together = ('request', 'approval_step', 'team')
+
     request = ForeignKey(
         "service_catalog.Request",
         blank=False,

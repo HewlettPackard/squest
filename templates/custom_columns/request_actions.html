@@ -16,40 +16,58 @@
 
                 </a>
                 {% if record.state == "COMPLETE" %}
-                    <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'archive' }}"
-                       href="{% url 'service_catalog:admin_request_archive' record.id %}">
+                    {% with args_filter="archive,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                        <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                           href="{% url 'service_catalog:admin_request_archive' record.id %}">
                         <span class="{{ record.id |get_action_text_class:"archive" }} fas fa-archive"></span> Archive
-                    </a>
+                    {% endwith %}
+                </a>
                 {% endif %}
                 {% if record.state == "ARCHIVED" %}
-                    <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:'unarchive' }}"
-                       href="{% url 'service_catalog:admin_request_unarchive' record.id %}">
-                        <span class="{{ record.id |get_action_text_class:"unarchive" }} fas fa-box-open"></span> Unarchive
-                    </a>
+                    {% with args_filter="unarchive,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                        <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                           href="{% url 'service_catalog:admin_request_unarchive' record.id %}">
+                        <span class="{{ record.id |get_action_text_class:"unarchive" }} fas fa-box-open"></span>
+                        Unarchive
+                    {% endwith %}
+                </a>
                 {% endif %}
                 {% if record.state == "NEED_INFO" %}
-                    <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"re_submit" }}"
-                       href="{% url 'service_catalog:admin_request_re_submit' record.id %}"><span
+                    {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                        <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                           href="{% url 'service_catalog:admin_request_re_submit' record.id %}"><span
                             class="{{ record.id |get_action_text_class:"re_submit" }} fas fa-redo"></span> Reset to
-                        submitted</a>
+                    {% endwith %}
+                submitted</a>
                 {% endif %}
-                <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"cancel" }}"
-                   href="{% url 'service_catalog:request_cancel' record.id %}"><span
-                        class="{{ record.id |get_action_text_class:"cancel" }} fas fa-window-close"></span> Cancel</a>
-                <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"need_info" }}"
-                   href="{% url 'service_catalog:admin_request_need_info' record.id %}"><span
+                {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                    <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                       href="{% url 'service_catalog:request_cancel' record.id %}"><span
+                            class="{{ record.id |get_action_text_class:"cancel" }} fas fa-window-close"></span>
+                        Cancel</a>
+                {% endwith %}
+                {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                    <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                       href="{% url 'service_catalog:admin_request_need_info' record.id %}"><span
                         class="{{ record.id |get_action_text_class:"need_info" }} fas fa-info-circle"></span> Ask more
-                    info</a>
-                <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"reject" }}"
-                   href="{% url 'service_catalog:admin_request_reject' record.id %}"><span
-                        class="{{ record.id |get_action_text_class:"reject" }} fas fa-ban"></span> Reject</a>
-                <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"accept" }}"
-                   href="{% url 'service_catalog:admin_request_accept' record.id %}"><span
+                {% endwith %}
+                info</a>
+                {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                    <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                       href="{% url 'service_catalog:admin_request_reject' record.id %}"><span
+                            class="{{ record.id |get_action_text_class:"reject" }} fas fa-ban"></span> Reject</a>
+                {% endwith %}
+                {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                    <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                       href="{% url 'service_catalog:admin_request_accept' record.id %}"><span
                         class="{{ record.id |get_action_text_class:"accept" }} fas fa-clipboard-check"></span>
-                    Review</a>
-                <a class="dropdown-item {{ record.id |is_action_dropdown_disabled:"process" }}"
-                   href="{% url 'service_catalog:admin_request_process' record.id %}"><span
-                        class="{{ record.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
+                {% endwith %}
+                Review</a>
+                {% with args_filter="process,"|addstr:request.user.id|addstr:","|addstr:record.id %}
+                    <a class="dropdown-item {{ args_filter |is_action_dropdown_disabled }}"
+                       href="{% url 'service_catalog:admin_request_process' record.id %}"><span
+                            class="{{ record.id |get_action_text_class:"process" }} fas fa-play"></span> Process</a>
+                {% endwith %}
             </div>
         </div>
 
