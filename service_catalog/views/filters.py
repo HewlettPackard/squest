@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import User
 from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
@@ -50,8 +51,10 @@ def map_color_to_icon(value):
 
 
 @register.filter(name='is_action_dropdown_disabled')
-def is_action_dropdown_disabled(request_id, target_action):
-    target_request = Request.objects.get(id=request_id)
+def is_action_dropdown_disabled(args):
+    target_action = args.split(',')[0]
+    user = User.objects.get(id=int(args.split(',')[1]))
+    target_request = Request.objects.get(id=args.split(',')[2])
     if target_action == "cancel":
         if not can_proceed(target_request.cancel):
             return "disabled"
@@ -59,10 +62,10 @@ def is_action_dropdown_disabled(request_id, target_action):
         if not can_proceed(target_request.need_info):
             return "disabled"
     if target_action == "reject":
-        if not can_proceed(target_request.reject):
+        if not can_proceed(target_request.reject) or target_request.approval_step and user not in target_request.approval_step.get_approvers():
             return "disabled"
     if target_action == "accept":
-        if not can_proceed(target_request.accept):
+        if not can_proceed(target_request.accept) or target_request.approval_step and user not in target_request.approval_step.get_approvers():
             return "disabled"
     if target_action == "process":
         if not can_proceed(target_request.process):
@@ -143,3 +146,9 @@ def map_support_state(value):
 @register.filter(name="pretty_json")
 def pretty_json(value):
     return json.dumps(value, indent=4)
+
+
+@register.filter
+def addstr(arg1, arg2):
+    """concatenate arg1 & arg2"""
+    return str(arg1) + str(arg2)
