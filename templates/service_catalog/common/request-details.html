@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block header_button %}
     <div class="float-right">
-        {%  if request.user.is_superuser %}
+        {% if request.user.is_superuser %}
             <a href="{% url 'service_catalog:request_edit' target_request.id %}"
                title="Edit"
                class="btn btn-primary">
@@ -13,53 +13,69 @@
                 <i class="fas fa-trash"></i>
             </a>
             {% if target_request.state == "COMPLETE" %}
-                <a class="btn btn-default {{ target_request.id |is_action_dropdown_disabled:'archive' }}"
-                   title="Archive"
-                   href="{% url 'service_catalog:admin_request_archive' target_request.id %}">
-                    <i class="fas fa-archive"></i>
-                </a>
+                {% with args_filter="archive,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                    <a class="btn btn-default {{ args_filter |is_action_dropdown_disabled }}"
+                       title="Archive"
+                       href="{% url 'service_catalog:admin_request_archive' target_request.id %}">
+                        <i class="fas fa-archive"></i>
+                    </a>
+                {% endwith %}
             {% endif %}
             {% if target_request.state == "ARCHIVED" %}
-                <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'unarchive' }}"
-                   title="Unarchive"
-                   href="{% url 'service_catalog:admin_request_unarchive' target_request.id %}">
-                    <i class="fas fa-box-open"></i>
-                </a>
+                {% with args_filter="unarchive,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                    <a class="btn btn-success {{ args_filter |is_action_dropdown_disabled }}"
+                       title="Unarchive"
+                       href="{% url 'service_catalog:admin_request_unarchive' target_request.id %}">
+                        <i class="fas fa-box-open"></i>
+                    </a>
+                {% endwith %}
             {% endif %}
             {% if target_request.state == "NEED_INFO" %}
-                <a class="btn btn-info {{ target_request.id |is_action_dropdown_disabled:'re_submit' }}"
-                   title="Reset to submitted"
-                   href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
-                    <i class="fas fa-redo"></i>
-                </a>
+                {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                    <a class="btn btn-info {{ args_filter |is_action_dropdown_disabled }}"
+                       title="Reset to submitted"
+                       href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                {% endwith %}
             {% endif %}
         {% endif %}
-        <a class="btn btn-secondary {{ target_request.id |is_action_dropdown_disabled:'cancel' }}"
-           title="Cancel"
-           href="{% url 'service_catalog:request_cancel' target_request.id %}">
-            <i class="fas fa-window-close"></i>
-        </a>
-        {%  if request.user.is_superuser %}
-            <a class="btn btn-warning {{ target_request.id |is_action_dropdown_disabled:'need_info' }}"
-               title="Ask more info"
-               href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">
-                <i class="fas fa-info-circle"></i>
+        {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+            <a class="btn btn-secondary {{ args_filter |is_action_dropdown_disabled }}"
+               title="Cancel"
+               href="{% url 'service_catalog:request_cancel' target_request.id %}">
+                <i class="fas fa-window-close"></i>
             </a>
-            <a class="btn btn-danger {{ target_request.id |is_action_dropdown_disabled:'reject' }}"
-               title="Reject"
-               href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
-                <i class="fas fa-ban"></i>
-            </a>
-            <a class="btn btn-primary {{ target_request.id |is_action_dropdown_disabled:'accept' }}"
-               title="Review"
-               href="{% url 'service_catalog:admin_request_accept' target_request.id %}">
-                <i class="fas fa-clipboard-check"></i>
-            </a>
-            <a class="btn btn-success {{ target_request.id |is_action_dropdown_disabled:'process' }}"
-               title="Process"
-               href="{% url 'service_catalog:admin_request_process' target_request.id %}">
-                <i class="fas fa-play"></i>
-            </a>
+        {% endwith %}
+        {% if request.user.is_superuser %}
+            {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                <a class="btn btn-warning {{ args_filter |is_action_dropdown_disabled }}"
+                   title="Ask more info"
+                   href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">
+                    <i class="fas fa-info-circle"></i>
+                </a>
+            {% endwith %}
+            {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                <a class="btn btn-danger {{ args_filter |is_action_dropdown_disabled }}"
+                   title="Reject"
+                   href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
+                    <i class="fas fa-ban"></i>
+                </a>
+            {% endwith %}
+            {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                <a class="btn btn-primary {{ args_filter |is_action_dropdown_disabled }}"
+                   title="Review"
+                   href="{% url 'service_catalog:admin_request_accept' target_request.id %}">
+                    <i class="fas fa-clipboard-check"></i>
+                </a>
+            {% endwith %}
+            {% with args_filter="process,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                <a class="btn btn-success {{ args_filter |is_action_dropdown_disabled }}"
+                   title="Process"
+                   href="{% url 'service_catalog:admin_request_process' target_request.id %}">
+                    <i class="fas fa-play"></i>
+                </a>
+            {% endwith %}
         {% endif %}
     </div>
 {% endblock %}
@@ -77,48 +93,59 @@
                                 <b>ID</b><span class="float-right">{{ target_request.id }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Instance</b><a href="{% url 'service_catalog:instance_details' target_request.instance.id %}" class="float-right">{{ target_request.instance.name }}</a>
+                                <b>Instance</b><a
+                                    href="{% url 'service_catalog:instance_details' target_request.instance.id %}"
+                                    class="float-right">{{ target_request.instance.name }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Service</b><span class="float-right">{{ target_request.operation.service.name }}</span>
+                                <b>Service</b><span
+                                    class="float-right">{{ target_request.operation.service.name }}</span>
                             </li>
                             <li class="list-group-item">
                                 <b>Operation</b><span class="float-right">{{ target_request.operation.name }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Operation type</b><strong class="float-right text-{{ target_request.operation.type |map_operation_type }}">{{ target_request.operation.type }}</strong>
+                                <b>Operation type</b><strong
+                                    class="float-right text-{{ target_request.operation.type |map_operation_type }}">{{ target_request.operation.type }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Request state</b><strong class="float-right text-{{ target_request.state |map_request_state }}">{{ target_request.state }}</strong>
+                                <b>Request state</b><strong
+                                    class="float-right text-{{ target_request.state |map_request_state }}">{{ target_request.state }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Instance state</b><strong class="float-right text-{{ target_request.instance.state |map_instance_state }}">{{ target_request.instance.state }}</strong>
+                                <b>Instance state</b><strong
+                                    class="float-right text-{{ target_request.instance.state |map_instance_state }}">{{ target_request.instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
                                 <b>Requester</b><span class="float-right">{{ target_request.user.username }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Date submitted</b><span class="float-right">{{ target_request.date_submitted }}</span>
+                                <b>Date submitted</b><span
+                                    class="float-right">{{ target_request.date_submitted }}</span>
                             </li>
                             {% if target_request.date_complete %}
                                 <li class="list-group-item">
-                                    <b>Date complete</b><span class="float-right">{{ target_request.date_complete }}</span>
+                                    <b>Date complete</b><span
+                                        class="float-right">{{ target_request.date_complete }}</span>
                                 </li>
                             {% endif %}
                             {% if target_request.date_archived %}
                                 <li class="list-group-item">
-                                    <b>Date archived</b><span class="float-right">{{ target_request.date_archived }}</span>
+                                    <b>Date archived</b><span
+                                        class="float-right">{{ target_request.date_archived }}</span>
                                 </li>
                             {% endif %}
-                            {%  if request.user.is_superuser %}
+                            {% if request.user.is_superuser %}
                                 <li class="list-group-item">
                                     <b>Tower job</b>
-                                    <a href="{{ target_request.tower_job_url }}" class="float-right">{{ target_request.tower_job_id }}</a>
+                                    <a href="{{ target_request.tower_job_url }}"
+                                       class="float-right">{{ target_request.tower_job_id }}</a>
                                 </li>
                             {% endif %}
                             {% if target_request.state == "FAILED" %}
                                 <li class="list-group-item border-bottom-0">
-                                    <b>Failure message</b><span class="float-right">{{ target_request.failure_message }}</span>
+                                    <b>Failure message</b><span
+                                        class="float-right">{{ target_request.failure_message }}</span>
                                 </li>
                             {% endif %}
                         </ul>
@@ -129,17 +156,65 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a>
+                            </li>
+                            {% if approval_steps %}
+                                <li class="nav-item"><a class="nav-link" href="#approval" data-toggle="tab">Approval
+                                    workflow</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="survey">
                                 {% if request.user.is_superuser %}
-                                    <pre><code class="language-json">{{ target_request.full_survey | pretty_json}}</code></pre>
+                                    <pre><code
+                                            class="language-json">{{ target_request.full_survey | pretty_json }}</code></pre>
                                 {% else %}
-                                    <pre><code class="language-json">{{ target_request.fill_in_survey | pretty_json}}</code></pre>
+                                    <pre><code
+                                            class="language-json">{{ target_request.fill_in_survey | pretty_json }}</code></pre>
                                 {% endif %}
+                            </div>
+                            <div class="tab-pane" id="approval">
+                                <div class="timeline">
+                                    <div class="time-label">
+                                        <span class="bg-default px-3 border">Start</span>
+                                    </div>
+                                    {% for approval_step in approval_steps %}
+                                        <div class="mb-0">
+                                            {% if approval_step.type == "ALL_OF_THEM" %}
+                                                <i class="fas fa-solid fa-users {% if approval_step.status == "APPROVED" %}bg-green{% elif approval_step.name == target_request.approval_step.name %}bg-primary{% endif %}"></i>
+                                            {% elif approval_step.type == "AT_LEAST_ONE" %}
+                                                <i class="fas fa-solid fa-user {% if approval_step.status == "APPROVED" %}bg-green{% elif approval_step.name == target_request.approval_step.name %}bg-primary{% endif %}"></i>
+                                            {% endif %}
+                                            <div class="timeline-item">
+                                                <span class="time">
+                                                    <small class="badge badge-light">{{ approval_step.status }}</small>
+                                                </span>
+                                                <h3 class="timeline-header{% if approval_step.status == "APPROVED" %} bg-green{% elif approval_step.status == "REJECTED" %} bg-red{% elif approval_step.name == target_request.approval_step.name %} bg-primary{% endif %}">
+                                                    <strong>{{ approval_step.name }}</strong>
+                                                </h3>
+
+                                                <div class="timeline-body card">
+                                                    <div class="card-body p-0" style="display: block;">
+                                                        <ul class="nav nav-pills flex-column">
+                                                            {% for team in approval_step.teams %}
+                                                                <li title="{{ team.status }}"
+                                                                    class="nav-item{% if team.status == "APPROVED" %} text-green{% elif team.status == "REJECTED" %} text-red{% endif %}">{{ team.name }}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    <div class="time-label">
+                                        <span class="{% if target_request.state == "ACCEPTED" %}bg-green{% elif target_request.state == "REJECTED" %}bg-red{% else %}bg-gray{% endif %}">
+                                            {% if target_request.state == "REJECTED" %}Rejected{% else %}
+                                                Approved{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

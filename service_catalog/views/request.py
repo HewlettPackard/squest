@@ -104,6 +104,7 @@ def request_details(request, request_id):
     request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
     target_request = get_object_or_404(request_list, id=request_id)
     context = {'target_request': target_request,
+               'approval_steps': target_request.get_approval_workflow_status(),
                'breadcrumbs': [
                    {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
                    {'text': request_id, 'url': ""},

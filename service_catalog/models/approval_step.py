@@ -93,6 +93,8 @@ class ApprovalStep(RoleManager):
         """
         approval_state_list = self.approval_step_states.filter(request=request)
         state_list = [approval_state.state for approval_state in approval_state_list]
+        if not state_list:
+            return ApprovalState.PENDING
         if ApprovalState.REJECTED in state_list:
             return ApprovalState.REJECTED
         elif self.type == ApprovalStepType.ALL_OF_THEM:
