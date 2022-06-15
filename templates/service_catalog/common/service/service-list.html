@@ -37,7 +37,7 @@
                                 <p class="card-text">{{ service.description }}</p>
                             </div>
                             <div class="card-footer">
-                                <a href="{% url 'service_catalog:customer_service_request' service.id %}" class="btn btn-primary">Order</a>
+                                <a href="{% url 'service_catalog:create_operation_list' service.id %}" class="btn btn-primary">Order</a>
                             </div>
                         </div>
                     </div>

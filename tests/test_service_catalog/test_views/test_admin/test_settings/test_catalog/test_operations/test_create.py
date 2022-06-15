@@ -13,24 +13,6 @@ class OperationCreateTestCase(BaseTest):
         }
         self.url = reverse('service_catalog:add_service_operation', kwargs=args)
 
-    def test_cannot_create_a_second_create_service_operation(self):
-        self.service_test.refresh_from_db()
-        self.assertTrue(self.service_test.operations.filter(type=OperationType.CREATE).exists())
-        data = {
-            "name": "new_service",
-            "description": "a new service",
-            "job_template": self.job_template_test.id,
-            "type": "CREATE",
-            "process_timeout_second": 60
-        }
-        response = self.client.get(self.url)
-        self.assertEqual(200, response.status_code)
-        number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
-        response = self.client.post(self.url, data=data)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(number_operation_before,
-                          Operation.objects.filter(service=self.service_test.id).count())
-
     def test_create_a_create_service_operation(self):
         self.service_test.operations.filter(type=OperationType.CREATE).delete()
         data = {
@@ -80,13 +62,13 @@ class OperationCreateTestCase(BaseTest):
         self.assertEqual(number_operation_before + 1,
                           Operation.objects.filter(service=self.service_test.id).count())
 
-    def test_create_a_create_service_operation(self):
+    def test_can_create_a_create_service_operation(self):
         """
-        Only one create operation per service, it will fail
+        Can add several 'CREATE' operation
         """
         data = {
-            "name": "new_service",
-            "description": "a new service",
+            "name": "new_create_operation",
+            "description": "a new create operation",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
             "process_timeout_second": 60
@@ -95,8 +77,8 @@ class OperationCreateTestCase(BaseTest):
         self.assertEqual(200, response.status_code)
         number_operation_before = Operation.objects.filter(service=self.service_test.id).count()
         response = self.client.post(self.url, data=data)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(number_operation_before,
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(number_operation_before + 1,
                           Operation.objects.filter(service=self.service_test.id).count())
 
     def test_cannot_add_service_operation_when_logout(self):

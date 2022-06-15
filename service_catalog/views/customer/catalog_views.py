@@ -3,14 +3,19 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from service_catalog.forms import ServiceRequestForm
-from service_catalog.models import Service
+from service_catalog.models import Service, OperationType
 
 
 @login_required
-def customer_service_request(request, service_id):
+def customer_service_request(request, service_id, operation_id):
+    target_service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
+    create_operation_list = target_service.operations.filter(type=OperationType.CREATE)
+    create_operation = get_object_or_404(create_operation_list, id=operation_id)
+
     target_service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
     parameters = {
-        'service_id': service_id
+        'service_id': service_id,
+        'operation_id': operation_id
     }
 
     if request.method == 'POST':

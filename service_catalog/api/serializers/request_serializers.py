@@ -33,13 +33,15 @@ class ServiceRequestSerializer(ModelSerializer):
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', None)
         self.view = context.get('view', None)
-        self.service_id = self.view.kwargs.get('pk', None)
+        self.service_id = self.view.kwargs.get('service_id', None)
+        self.operation_id = self.view.kwargs.get('pk', None)
         self.request = context.get('request', None)
         super(ServiceRequestSerializer, self).__init__(*args, **kwargs)
         if self.service_id is not None:
             self.service = get_object_or_404(Service.objects.filter(enabled=True), id=self.service_id)
             # get the create operation of this service
-            self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
+            create_operation_list = self.service.operations.filter(type=OperationType.CREATE)
+            self.create_operation = get_object_or_404(create_operation_list, id=self.operation_id)
             # get all field that are not disabled by the admin
             purged_survey = FormUtils.get_available_fields(
                 job_template_survey=self.create_operation.job_template.survey,

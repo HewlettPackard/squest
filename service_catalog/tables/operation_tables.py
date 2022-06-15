@@ -15,8 +15,9 @@ class OperationTable(SquestTable):
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("enabled", "name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
-                  "actions")
+        fields = (
+        "enabled", "name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
+        "actions")
 
 
 class OperationTableFromInstanceDetails(SquestTable):
@@ -28,3 +29,13 @@ class OperationTableFromInstanceDetails(SquestTable):
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
         fields = ("name", "description", "type", "request")
+
+
+class CreateOperationTable(SquestTable):
+    name = TemplateColumn(template_name='custom_columns/operation_name.html')
+    request = TemplateColumn(template_name='custom_columns/create_operation_request.html', orderable=False)
+
+    class Meta:
+        model = Operation
+        attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
+        fields = ("name", "description", "request")

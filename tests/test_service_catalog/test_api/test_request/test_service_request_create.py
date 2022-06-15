@@ -4,7 +4,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from service_catalog.models import Request, Instance
+from service_catalog.models import Request, Instance, OperationType
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -14,7 +14,8 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
     def setUp(self):
         super(TestApiServiceRequestListCreate, self).setUp()
         self.kwargs = {
-            "pk": self.service_test.id,
+            "service_id": self.service_test.id,
+            "pk": self.create_operation_test.id,
         }
         self.data = {
             'squest_instance_name': 'instance test',
@@ -111,7 +112,8 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self._check_create()
 
     def test_can_create_without_survey(self):
-        self.kwargs['pk'] = self.service_empty_survey_test.id
+        self.kwargs['service_id'] = self.service_empty_survey_test.id
+        self.kwargs['pk'] = self.create_operation_empty_survey_test.id
         self.data.pop('fill_in_survey')
         self._check_create()
 

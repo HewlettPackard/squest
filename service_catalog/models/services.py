@@ -18,10 +18,11 @@ class Service(Model):
     enabled = BooleanField(default=False, blank=True)
 
     def can_be_enabled(self):
-        operation_create = self.operations.filter(type=OperationType.CREATE, enabled=True)
-        if operation_create.count() == 1:
-            if operation_create.first().job_template is not None:
-                return True
+        operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)
+        if operation_create_list.exists():
+            for operation in operation_create_list:
+                if operation.job_template is not None and operation.enabled == True:
+                    return True
         return False
 
     def __str__(self):
@@ -29,11 +30,14 @@ class Service(Model):
 
     def clean(self):
         if self.enabled and not self.can_be_enabled():
-            raise ValidationError({'enabled': _("Service cannot be enabled if its 'CREATE' operation is not valid.")})
+            raise ValidationError({'enabled': _("Service cannot be enabled if at least one 'CREATE' operation is not "
+                                                "valid.")})
 
 
 @receiver(pre_save, sender=Service)
 def service_pre_save(sender, instance, **kwargs):
+    if not instance.enabled:
+        instance.operations.filter(type=OperationType.CREATE).update(**{"enabled": False})
     if instance.enabled and not instance.can_be_enabled():
         instance.enabled = False
         instance.save()

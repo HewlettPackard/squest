@@ -1,13 +1,13 @@
 from django.urls import reverse
 
-from service_catalog.models import Operation, Service, OperationType
+from service_catalog.models import Service
 from tests.test_service_catalog.base import BaseTest
 
 
-class ServiceDeleteTestCase(BaseTest):
+class ServiceEditTestCase(BaseTest):
 
     def setUp(self):
-        super(ServiceDeleteTestCase, self).setUp()
+        super(ServiceEditTestCase, self).setUp()
         args = {
             "service_id": self.service_test.id
         }
@@ -51,6 +51,6 @@ class ServiceDeleteTestCase(BaseTest):
         response = self.client.get(reverse("service_catalog:service_list"))
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.context["services"].count(), service_count - 1)
-        response = self.client.get(reverse("service_catalog:customer_service_request",
+        response = self.client.get(reverse("service_catalog:create_operation_list",
                                            kwargs={'service_id': self.service_test.id}))
-        self.assertEqual(404, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 0)

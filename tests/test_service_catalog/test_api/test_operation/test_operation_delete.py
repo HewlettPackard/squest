@@ -23,18 +23,6 @@ class TestApiOperationDelete(BaseTestRequest):
         self.assertEqual(operation_count - 1, Operation.objects.count())
         self.assertFalse(Operation.objects.filter(id=self.operation_to_delete_id).exists())
 
-    def test_admin_cannot_delete_create_operation(self):
-        operation_count = Operation.objects.count()
-        self.kwargs = {
-            'service_id': self.service_test.id,
-            'pk': self.create_operation_test.id
-        }
-        self.get_operation_details_url = reverse('api_operation_details', kwargs=self.kwargs)
-        response = self.client.delete(self.get_operation_details_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(operation_count, Operation.objects.count())
-        self.assertTrue(Operation.objects.filter(id=self.create_operation_test.id).exists())
-
     def test_customer_cannot_delete_operation(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.delete(self.get_operation_details_url)

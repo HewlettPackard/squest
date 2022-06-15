@@ -7,13 +7,9 @@ class ServiceOperationForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         self.service = kwargs.pop("service")
         super(ServiceOperationForm, self).__init__(*args, **kwargs)
-        choice_type_others = [('UPDATE', 'Update'),
-                              ('DELETE', 'Delete')]
-        choice_type_creation = [('CREATE', 'Create')]
+        choice_type = [('CREATE', 'Create'), ('UPDATE', 'Update'), ('DELETE', 'Delete')]
         # Default behavior
-        self.fields['type'].choices = choice_type_others
-        if not self.service.operations.filter(type=OperationType.CREATE).exists() or (self.instance.id and self.instance.type == OperationType.CREATE):
-            self.fields['type'].choices = [*choice_type_creation, *choice_type_others]
+        self.fields['type'].choices = choice_type
         self.fields['type'].initial = self.fields['type'].choices[0]
 
     def save(self, commit=True):

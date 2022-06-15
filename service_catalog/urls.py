@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .views.announcement_list_view import AnnouncementListView
 from .views.approval_workflow_list_view import ApprovalWorkflowListView
+from .views.create_operation_list_view import CreateOperationListView
 from .views.doc_list_view import DocListView
 from .views.global_hook_list_view import GlobalHookListView
 from .views.instance_list_view import InstanceListView
@@ -40,7 +41,8 @@ urlpatterns = [
 
     path('service/', views.service_list, name='service_list'),
     path('service/manage/', ServiceListView.as_view(), name='manage_services'),
-    path('service/<int:service_id>/request/', views.customer_service_request, name='customer_service_request'),
+    path('service/<int:service_id>/operation/<int:operation_id>/request/', views.customer_service_request, name='customer_service_request'),
+    path('service/<int:service_id>/operation/request/', CreateOperationListView.as_view(), name='create_operation_list'),
     path('service/add_service/', views.add_service, name='create_service'),
     path('service/<int:service_id>/delete/', views.delete_service, name='delete_service'),
     path('service/<int:service_id>/edit/', views.edit_service, name='edit_service'),
