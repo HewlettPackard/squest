@@ -36,8 +36,10 @@ class ServiceRequestForm(forms.Form):
         # get arguments from instance
         self.user = user
         service_id = kwargs.pop('service_id', None)
+        operation_id = kwargs.pop('operation_id', None)
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
         self.service = Service.objects.get(id=service_id)
+        self.create_operation = Operation.objects.get(id=operation_id)
         if self.service.billing_groups_are_restricted:
             self.fields['billing_group_id'].choices = [(g.id, g.name) for g in self.user.billing_groups.all()]
         else:
@@ -49,8 +51,6 @@ class ServiceRequestForm(forms.Form):
         if not self.service.billing_group_is_shown:
             self.fields['billing_group_id'].label = ""
             self.fields['billing_group_id'].widget = forms.HiddenInput()
-        # get the create operation of this service
-        self.create_operation = Operation.objects.get(service=self.service, type=OperationType.CREATE)
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,

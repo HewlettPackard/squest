@@ -354,7 +354,8 @@ class TestServiceRequestForm(BaseTest):
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         parameters = {
-            'service_id': self.service_test.id
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id
         }
 
         # not valid because not even number

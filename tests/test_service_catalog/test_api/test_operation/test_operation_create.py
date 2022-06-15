@@ -33,13 +33,6 @@ class TestApiOperationCreate(BaseTestRequest):
         self.assertEqual(number_tower_survey_field_before + number_field_in_survey,
                          TowerSurveyField.objects.all().count())
 
-    def test_service_cannot_have_several_create_operation(self):
-        self.post_data['type'] = OperationType.CREATE
-        response = self.client.post(self.get_operation_details_url, data=self.post_data,
-                                    content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(self.service_test.operations.filter(type=OperationType.CREATE).count(), 1)
-
     def test_admin_cannot_post_on_operation_not_full(self):
         self.post_data.pop('name')
         response = self.client.post(self.get_operation_details_url, data=self.post_data,

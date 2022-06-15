@@ -51,13 +51,6 @@ class OperationDetails(RetrieveUpdateDestroyAPIView):
             return [IsAdminUser()]
         return [IsAuthenticated()]
 
-    def delete(self, request, *args, **kwargs):
-        operation = Service.objects.get(id=self.kwargs['service_id']).operations.all().get(id=self.kwargs['pk'])
-        if operation.type == OperationType.CREATE:
-            return Response({"Error": "You cannot delete a create operation of a service."},
-                            status=status.HTTP_403_FORBIDDEN)
-        return super(OperationDetails, self).delete(request, *args, **kwargs)
-
 
 class InstanceOperationList(ListAPIView):
     def get_queryset(self):

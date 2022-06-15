@@ -24,7 +24,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
 
     def test_customer_service_request(self):
         args = {
-            "service_id": self.service_test.id
+            "service_id": self.service_test.id,
+            "operation_id": self.create_operation_test.id
         }
         url = reverse('service_catalog:customer_service_request', kwargs=args)
 
@@ -40,7 +41,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
 
     def test_customer_service_request_without_survey(self):
         args = {
-            "service_id": self.service_empty_survey_test.id
+            "service_id": self.service_test.id,
+            "operation_id": self.create_operation_test.id
         }
         url = reverse('service_catalog:customer_service_request', kwargs=args)
         response = self.client.get(url)
@@ -49,7 +51,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_create_request_with_a_comment(self):
         self.client.force_login(user=self.standard_user)
         args = {
-            "service_id": self.service_test.id
+            "service_id": self.service_test.id,
+            "operation_id": self.create_operation_test.id
         }
         url = reverse('service_catalog:customer_service_request', kwargs=args)
 

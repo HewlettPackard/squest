@@ -17,7 +17,8 @@ class TestRequestForm(BaseTest):
 
     def test_cannot_create_request_without_billing_group_on_restricted_billing(self):
         parameters = {
-            'service_id': self.service_test.id
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id
         }
         data = {
             "squest_instance_name": "instance test",
@@ -29,7 +30,8 @@ class TestRequestForm(BaseTest):
     def test_create_request_with_billing_group_on_restricted_billing(self):
         self.test_billing_group.user_set.add(self.standard_user)
         parameters = {
-            'service_id': self.service_test.id
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id
         }
         instance_name = "instance test"
         text_var = "text"
@@ -48,7 +50,8 @@ class TestRequestForm(BaseTest):
 
     def test_create_request_with_non_owned_billing_group_on_restricted_billing(self):
         parameters = {
-            'service_id': self.service_test.id
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id
         }
         instance_name = "instance test"
         text_var = "text"
@@ -65,7 +68,8 @@ class TestRequestForm(BaseTest):
         self.service_test.billing_groups_are_restricted = False
         self.service_test.save()
         parameters = {
-            'service_id': self.service_test.id
+            'service_id': self.service_test.id,
+            'operation_id': self.create_operation_test.id
         }
         data = {
             "squest_instance_name": "instance test",
