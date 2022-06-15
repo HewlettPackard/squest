@@ -42,12 +42,6 @@ class Operation(Model):
             raise ValidationError({'approval_workflow': _("You cannot use an approval workflow without entrypoint.")})
         if self.auto_accept and self.approval_workflow:
             raise ValidationError({'auto_accept': _("Auto accept cannot be set with an approval step.")})
-        if hasattr(self, 'service'):
-            if self.type == OperationType.CREATE:
-                if self.service:
-                    if self.service.operations.filter(type=OperationType.CREATE).count() != 0:
-                        if self.service.operations.filter(type=OperationType.CREATE).first().id != self.id:
-                            raise ValidationError({'service': _("A service can have only one 'CREATE' operation")})
 
     def update_survey(self):
         if self.job_template is not None:
@@ -95,19 +89,26 @@ post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Op
 
 @receiver(pre_save, sender=Operation)
 def on_change(sender, instance: Operation, **kwargs):
-    # disable the service if no more job template linked or operation is disabled to a create operation
-    if (instance.job_template is None or not instance.enabled) and instance.type == OperationType.CREATE:
-        instance.service.enabled = False
-        instance.service.save()
     if instance.id is not None:
         previous = Operation.objects.get(id=instance.id)
         if previous.job_template != instance.job_template:
             instance.update_survey()
+        if instance.type == OperationType.CREATE and instance.enabled and previous.enabled != instance.enabled and instance.service.can_be_enabled():
+            instance.service.enabled = True
+            instance.service.save()
+
+
+@receiver(post_save, sender=Operation)
+def disable_service(sender, instance: Operation, **kwargs):
+    # disable the service if no more job template linked or operation is disabled to a create operation
+    if instance.type == OperationType.CREATE and not instance.service.can_be_enabled():
+        instance.service.enabled = False
+        instance.service.save()
 
 
 @receiver(post_delete, sender=Operation)
 def on_delete(sender, instance: Operation, **kwargs):
-    # disable the service if no more job template linked to a create operation
-    if instance.type == OperationType.CREATE:
+    # disable the service if no more 'CREATE' operation
+    if instance.type == OperationType.CREATE and not instance.service.can_be_enabled():
         instance.service.enabled = False
         instance.service.save()
