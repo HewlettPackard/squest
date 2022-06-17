@@ -25,20 +25,14 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <section class="col-lg-9 connectedSortable ui-sortable pt-5">
-                        {% if display_graph %}
-                            {{ svg }}
-                        {% else %}
-                            Nothing to display
-                        {% endif %}
-                    </section>
-                    <section class="col-lg-3 connectedSortable ui-sortable">
-                        <div class="card collapsed-card">
+                    <div class="col-sm-12">
+                        <div class="card collapsed-card float-sm-right">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
                                 <div class="card-tools">
                                     <!-- Collapse Button -->
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                            class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                             <!-- /.card-header -->
@@ -49,7 +43,16 @@
                                 </form>
                             </div>
                         </div>
-                    </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% if display_graph %}
+                            {{ svg }}
+                        {% else %}
+                            Nothing to display
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
