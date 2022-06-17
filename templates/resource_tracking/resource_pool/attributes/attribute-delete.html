@@ -1,31 +1,20 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
-        <!-- Main content -->
-        <div class="content">
-            <div class="container-fluid">
-                <div class="card card-danger">
-                    <div class="card-body">
-                        <form action='{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}' method='POST'>{% csrf_token %}
-
-                            {%  if  attribute.consumers.all|length > 0 %}
-                                <div class="row">
+{% block main %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card card-danger">
+                <div class="card-body">
+                    <form action='{% url 'resource_tracker:resource_pool_attribute_delete' resource_pool_id=resource_pool.id attribute_id=attribute.id %}'
+                          method='POST'>{% csrf_token %}
+                        {% if  attribute.consumers.all|length > 0 %}
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title"><i class="icon fas fa-exclamation-triangle text-yellow"></i> Linked <strong>consumer</strong> resource group attribute </h3>
+                                            <h3 class="card-title"><i
+                                                    class="icon fas fa-exclamation-triangle text-yellow"></i> Linked
+                                                <strong>consumer</strong> resource group attribute </h3>
                                         </div>
                                         <div class="card-body p-0">
                                             <table class="table">
@@ -38,8 +27,12 @@
                                                 <tbody>
                                                 {% for consumer in attribute.consumers.all %}
                                                     <tr>
-                                                        <td><a href="{% url "resource_tracker:resource_group_edit" consumer.resource_group.id %}">{{ consumer.resource_group.name }}</a></td>
-                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=consumer.resource_group.id attribute_id=consumer.id %}">{{ consumer.name }}</a></td>
+                                                        <td>
+                                                            <a href="{% url "resource_tracker:resource_group_edit" consumer.resource_group.id %}">{{ consumer.resource_group.name }}</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=consumer.resource_group.id attribute_id=consumer.id %}">{{ consumer.name }}</a>
+                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                                 </tbody>
@@ -47,41 +40,47 @@
                                         </div>
                                     </div>
                                 </div>
-                            {%  endif %}
-                            {%  if  attribute.producers.all|length > 0 %}
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h3 class="card-title"><i class="icon fas fa-exclamation-triangle text-yellow"></i> Linked <strong>producer</strong> resource group attribute </h3>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <table class="table">
-                                                <thead>
+                            </div>
+                        {% endif %}
+                        {% if  attribute.producers.all|length > 0 %}
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><i
+                                                class="icon fas fa-exclamation-triangle text-yellow"></i> Linked
+                                            <strong>producer</strong> resource group attribute </h3>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Resource group</th>
+                                                <th>Attribute</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for producer in attribute.producers.all %}
                                                 <tr>
-                                                    <th>Resource group</th>
-                                                    <th>Attribute</th>
+                                                    <td>
+                                                        <a href="{% url "resource_tracker:resource_group_edit" producer.resource_group.id %}">{{ producer.resource_group.name }}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=producer.resource_group.id attribute_id=producer.id %}">{{ producer.name }}</a>
+                                                    </td>
                                                 </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for producer in attribute.producers.all %}
-                                                    <tr>
-                                                        <td><a href="{% url "resource_tracker:resource_group_edit" producer.resource_group.id %}">{{ producer.resource_group.name }}</a></td>
-                                                        <td><a href="{% url "resource_tracker:resource_group_attribute_edit" resource_group_id=producer.resource_group.id attribute_id=producer.id %}">{{ producer.name }}</a></td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                </div>
-                            {%  endif %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}">Cancel</a>
-                        </form>
-                    </div>
-                </div><!-- end container fluid -->
-            </div>
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <a class="btn btn-default"
+                           href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}">Cancel</a>
+                    </form>
+                </div>
+            </div><!-- end container fluid -->
         </div>
     </div>
 {% endblock %}
