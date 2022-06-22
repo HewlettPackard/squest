@@ -2,6 +2,29 @@
 
 {% block main %}
     <div class="container-fluid">
+        <div class="card  collapsed-card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-code"></i> Current specs</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <strong>User spec</strong>
+                        <pre><code class="language-json">{{ target_request.instance.user_spec | pretty_json }}</code></pre>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <strong>Admin spec</strong>
+                        <pre><code class="language-json">{{ target_request.instance.spec | pretty_json }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 {% if form.errors %}
