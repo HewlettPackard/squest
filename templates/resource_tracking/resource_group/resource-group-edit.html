@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% load render_table from django_tables2 %}
 {% block header_button %}
-    <a class="btn btn-primary float-right"
+    <a class="btn btn-danger float-right mr-1"
+       href="{% url 'resource_tracker:resource_group_delete' resource_group_id=resource_group.id %}">
+        <i class="fas fa-trash"></i>
+    </a>
+    <a class="btn btn-primary float-right mr-1"
        href="{% url 'resource_tracker:resource_group_resource_list' resource_group.id %}">
         Resources
         <span class="badge badge-light">{{ resource_group.resources.all|length }}</span>

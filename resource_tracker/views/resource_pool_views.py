@@ -48,7 +48,14 @@ def resource_pool_edit(request, resource_pool_id):
         {'text': 'Resource pools', 'url': reverse('resource_tracker:resource_pool_list')},
         {'text': resource_pool.name, 'url': ""},
     ]
-    context = {'form': form, 'resource_pool': resource_pool, 'attribute_table': attribute_table, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
+    context = {
+        'form': form,
+        'resource_pool': resource_pool,
+        'attribute_table': attribute_table,
+        'breadcrumbs': breadcrumbs,
+        'action': 'edit',
+        'html_button_path': 'resource_tracking/resource_pool/resource-pool-delete-button.html'
+    }
     return render(request, 'resource_tracking/resource_pool/resource-pool-edit.html', context)
 
 
