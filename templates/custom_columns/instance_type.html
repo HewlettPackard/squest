@@ -1,5 +1,5 @@
 {% if request.user.is_superuser %}
-<a href="{% url 'service_catalog:edit_service' record.id %}?instance={{ record.name }}">
+<a href="{% url 'service_catalog:edit_service' record.service.id %}">
     {{ record.service.name }}
 </a>
 {% else %}

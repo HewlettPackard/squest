@@ -30,8 +30,8 @@ class Service(Model):
 
     def clean(self):
         if self.enabled and not self.can_be_enabled():
-            raise ValidationError({'enabled': _("Service cannot be enabled if at least one 'CREATE' operation is not "
-                                                "valid.")})
+            raise ValidationError({'enabled': _("At least one 'CREATE' operation with a valid job template is required "
+                                                "to enable the service")})
 
 
 @receiver(pre_save, sender=Service)

@@ -25,15 +25,10 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card collapsed-card float-sm-right">
+                    <div class="col-sm-2">
+                        <div class="card float-sm-left">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
-                                <div class="card-tools">
-                                    <!-- Collapse Button -->
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
-                                            class="fas fa-plus"></i></button>
-                                </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -44,9 +39,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-10">
                         {% if display_graph %}
                             {{ svg }}
                         {% else %}
@@ -54,6 +47,7 @@
                         {% endif %}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

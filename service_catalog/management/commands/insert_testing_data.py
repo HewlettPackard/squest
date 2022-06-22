@@ -24,7 +24,6 @@ class Command(BaseCommand):
         print("[insert_testing_data] Start")
 
     def handle(self, *args, **options):
-        # create resource pools
         users_name = ['Elias', 'Nicolas', 'Anthony', 'Mathijs', 'Jeff', 'Mark']
         users = {}
         for username in users_name:
