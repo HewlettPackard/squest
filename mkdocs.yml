@@ -38,6 +38,7 @@ nav:
     - Tower: configuration/tower_settings.md
   - Manual:
     - Service catalog: manual/service_catalog.md
+    - Approval: manual/approval.md
     - Resource tracking: manual/resource_tracking.md
     - Settings: manual/settings.md
     - Billing groups: manual/billing_groups.md
