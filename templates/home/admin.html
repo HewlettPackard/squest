@@ -1,78 +1,127 @@
-<div class="col-lg col">
-    <!-- small card -->
-    <div class="small-box bg-info">
-        <div class="inner">
-            <h3>{{ total_request }}</h3>
-            <p>New Request</p>
+{% load static %}
+<div class="row">
+    <div class="col-lg col">
+        <!-- small card -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ total_request }}</h3>
+                <p>New Request</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED"
+               class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
         </div>
-        <div class="icon">
-            <i class="fas fa-shopping-cart"></i>
+    </div>
+    <div class="col-lg col">
+        <!-- small card -->
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ total_instance }}</h3>
+                <p>Available instances</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-th"></i>
+            </div>
+            <a href="{% url 'service_catalog:instance_list' %}?state=AVAILABLE"
+               class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
         </div>
-        <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED"
-           class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-        </a>
+    </div>
+    <div class="col-lg col">
+        <!-- small card -->
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ total_support_opened }}</h3>
+                <p>Opened support</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-medkit"></i>
+            </div>
+            <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
+               class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg col">
+        <!-- small card -->
+        <div class="small-box bg-default">
+            <div class="inner">
+                <h3>{{ total_user }}</h3>
+                <p>Users</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <a href="{% url 'profiles:user_list' %}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg col">
+        <!-- small card -->
+        <div class="small-box bg-pink">
+            <div class="inner">
+                <h3>{{ total_user_without_billing_groups }}</h3>
+                <p>Users without billing groups</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users-slash"></i>
+            </div>
+            <a href="{% url 'profiles:user_list' %}?no_billing_groups=on" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
     </div>
 </div>
-<div class="col-lg col">
-    <!-- small card -->
-    <div class="small-box bg-success">
-        <div class="inner">
-            <h3>{{ total_instance }}</h3>
-            <p>Active instances</p>
+<div class="row mt-5">
+    {%  for service in service_details.values %}
+        <div class="col-auto flex-shrink-1">
+            <div class="card card-widget widget-user-2 shadow-sm">
+
+                <div class="widget-user-header bg-white">
+                    <div class="widget-user-image">
+                        <img class="img elevation-2" src="{% if service.service.image %}{{ service.service.image.url }}{% else %}{%  static '/squest/img/no_image.png' %}{% endif %}" alt="User Avatar">
+                    </div>
+                    <h3 class="widget-user-desc">{{ service.service.name }}</h3>
+                    <p class="widget-user-username" title="Available instances">Instances: <strong class="text-success">{{ service.instances }}</strong></p>
+                </div>
+                <div class="card-footer p-2">
+                    <div class="d-flex justify-content-around">
+                        <div class="row">
+                            <div class="col-4">
+                                <a class="btn btn-app m-0" href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&instance__service__id={{ service.service.id }}" title="New submitted requests">
+                                    {% if service.submitted_request > 0 %}
+                                        <span class="badge bg-info">{{ service.submitted_request }}</span>
+                                    {%  endif %}
+                                    <i class="{% if service.submitted_request > 0 %}text-info{%  endif %} fas fa-clipboard-check"></i> Requests
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a class="btn btn-app m-0" href="{% url 'service_catalog:support_list' %}?state=OPENED&instance__service={{ service.service.id }}" title="Opened support">
+                                    {% if service.opened_supports > 0 %}
+                                        <span class="badge bg-warning">{{ service.opened_supports }}</span>
+                                    {%  endif %}
+                                    <i class="{% if service.opened_supports > 0 %}text-warning{%  endif %} fas fa-briefcase-medical"></i> Support
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a class="btn btn-app m-0" href="{% url 'service_catalog:request_list' %}?state=FAILED&instance__service__id={{ service.service.id }}" title="Requests failed">
+                                    {% if service.failed_requests > 0 %}
+                                        <span class="badge bg-danger">{{ service.failed_requests }}</span>
+                                    {%  endif %}
+                                    <i class="{% if service.failed_requests > 0 %}text-danger{%  endif %} fas fa-exclamation-triangle"></i> Failed
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="icon">
-            <i class="fas fa-th"></i>
-        </div>
-        <a href="{% url 'service_catalog:instance_list' %}?state=AVAILABLE"
-           class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
-</div>
-<div class="col-lg col">
-    <!-- small card -->
-    <div class="small-box bg-warning">
-        <div class="inner">
-            <h3>{{ total_support_opened }}</h3>
-            <p>Opened support</p>
-        </div>
-        <div class="icon">
-            <i class="fas fa-medkit"></i>
-        </div>
-        <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
-           class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
-</div>
-<div class="col-lg col">
-    <!-- small card -->
-    <div class="small-box bg-default">
-        <div class="inner">
-            <h3>{{ total_user }}</h3>
-            <p>Users</p>
-        </div>
-        <div class="icon">
-            <i class="fas fa-user-plus"></i>
-        </div>
-        <a href="{% url 'profiles:user_list' %}" class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
-</div>
-<div class="col-lg col">
-    <!-- small card -->
-    <div class="small-box bg-pink">
-        <div class="inner">
-            <h3>{{ total_user_without_billing_groups }}</h3>
-            <p>Users without billing groups</p>
-        </div>
-        <div class="icon">
-            <i class="fas fa-users-slash"></i>
-        </div>
-        <a href="{% url 'profiles:user_list' %}?no_billing_groups=on" class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
+    {% endfor %}
 </div>
