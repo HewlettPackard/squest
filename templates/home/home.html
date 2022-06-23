@@ -13,12 +13,11 @@
                 </div>
             </div>
         {% endfor %}
-        <div class="row">
-            {% if request.user.is_superuser %}
-                {% include 'home/admin.html' %}
-            {% else %}
-                {% include 'home/customer.html' %}
-            {% endif %}
-        </div>
+        {% if request.user.is_superuser %}
+            {% include 'home/admin.html' %}
+        {% else %}
+            {% include 'home/customer.html' %}
+        {% endif %}
+
     </div>
 {% endblock %}
