@@ -1,9 +1,38 @@
+# 1.6.0 2022-06-23
+
+## Breaking changes
+
+- API: Pagination added to all GET list of objects
+
+## Fix
+
+- API: ID was not given when new request created
+- Format issue with fill in survey
+- instance_name variable can be used in the tower survey 
+
+## Enhancement
+
+- Swagger page support bearer auth
+- Send email when support is closed
+- show specs on accept/review page
+- Add pending request for each service in the admin dashboard
+
+## Feature
+
+- API: Add filters
+- Default API admin token can be added to the settings
+- Python script based validator for form field
+- Approval workflow
+- Bulk delete for Instances
+- Allow several create operations
+
 # 1.5.2 2022-04-04
 
 ## Fix
 
 - Remove hardcoded url in email template
 - Mails were not send to user after receiving a new message
+- Right part of the graph was not clickable with large graph
 
 ## Enhancement
 
