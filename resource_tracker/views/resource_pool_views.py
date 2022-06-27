@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -10,11 +12,34 @@ from resource_tracker.tables.resource_pool_attribute_definition_table import Res
 from service_catalog.tasks import async_update_all_consumed_and_produced
 
 
+logger = logging.getLogger(__name__)
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def resource_pool_list(request):
     task_id = request.session.pop('task_id', None)
-    resource_pool_list = ResourcePool.objects.all()
-    resource_pool_filtered = ResourcePoolFilter(request.GET, queryset=resource_pool_list)
+
+    tag_session_key = f'{request.path}__tags'
+    filter_button_used = "tag_redirect" in request.GET
+    tags_from_session = request.session.get(tag_session_key, [])
+
+    if len(tags_from_session) > 0 and not filter_button_used:
+        logger.info(f"Using tags loaded from session: {tags_from_session}")
+        string_tag = "?"
+        for tag in tags_from_session:
+            string_tag += f"tag={tag}&"
+        string_tag += "tag_redirect="  # in order to stop the redirect
+        return redirect(reverse("resource_tracker:resource_pool_list") + string_tag)
+    elif "tag" in request.GET:
+        tag_list = request.GET.getlist("tag")
+        resource_pool_list_queryset = ResourcePool.objects.filter(tags__name__in=tag_list)
+        logger.info(f"Settings tags from URL in session: {tag_list}")
+        request.session[tag_session_key] = tag_list
+    else:
+        resource_pool_list_queryset = ResourcePool.objects.all()
+        request.session[tag_session_key] = []
+
+    resource_pool_filtered = ResourcePoolFilter(request.GET, queryset=resource_pool_list_queryset)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
                   {'resource_pools': resource_pool_filtered, 'title': "Resource pools", "task_id": task_id})
 
