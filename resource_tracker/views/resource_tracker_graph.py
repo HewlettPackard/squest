@@ -1,5 +1,7 @@
+import logging
+
 from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import Context
 from django.template.loader import get_template
 from django.urls import reverse
@@ -9,6 +11,8 @@ from taggit.models import Tag
 
 from resource_tracker.filters.graph_filter import GraphFilter
 from resource_tracker.models import ResourceGroup, ResourcePool
+
+logger = logging.getLogger(__name__)
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
           'available': '#ffc107', "bg-green": "#28a745", "bg-yellow": "#ffc107", "bg-red": "#dc3545",
@@ -38,16 +42,30 @@ def resource_tracker_graph(request):
 
     tags = Tag.objects.all()
     resource_graph_filtered = GraphFilter(request.GET, queryset=tags)
-
     display_graph = False
 
-    if "tag" in request.GET:
+    tag_session_key = f'{request.path}__tags'
+
+    filter_button_used = "tag_redirect" in request.GET
+    tags_from_session = request.session.get(tag_session_key, [])
+    if len(tags_from_session) > 0 and not filter_button_used:
+        logger.info(f"Using tags loaded from session: {tags_from_session}")
+        string_tag = "?"
+        for tag in tags_from_session:
+            string_tag += f"tag={tag}&"
+        string_tag += "tag_redirect="  # in order to stop the redirect
+        return redirect(reverse("resource_tracker:resource_tracker_graph") + string_tag)
+
+    elif "tag" in request.GET:
         tag_list = request.GET.getlist("tag")
         resource_pool_queryset = ResourcePool.objects.filter(tags__name__in=tag_list)
         resource_group_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
+        logger.info(f"Settings tags from URL in session: {tag_list}")
+        request.session[tag_session_key] = tag_list
     else:
         resource_pool_queryset = ResourcePool.objects.all()
         resource_group_queryset = ResourceGroup.objects.all()
+        request.session[tag_session_key] = []
 
     for resource_pool in resource_pool_queryset:
         dot.node(f'{get_graph_name(resource_pool)}', label=create_resource_pool_svg(resource_pool))
