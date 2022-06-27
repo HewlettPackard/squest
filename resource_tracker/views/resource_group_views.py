@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
@@ -17,6 +19,8 @@ from resource_tracker.tables.resource_group_text_attribute_definition_table impo
     ResourceGroupTextAttributeDefinitionTable
 from service_catalog.tasks import async_recalculate_total_resources
 
+logger = logging.getLogger(__name__)
+
 
 @method_decorator(login_required, name='dispatch')
 class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
@@ -29,6 +33,17 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_superuser:
             raise PermissionDenied
+
+        tag_session_key = f'{self.request.path}__tags'
+        filter_button_used = "tag_redirect" in self.request.GET
+        tags_from_session = self.request.session.get(tag_session_key, [])
+        if len(tags_from_session) > 0 and not filter_button_used:
+            logger.info(f"Using tags loaded from session: {tags_from_session}")
+            string_tag = "?"
+            for tag in tags_from_session:
+                string_tag += f"tag={tag}&"
+            string_tag += "tag_redirect="  # in order to stop the redirect
+            return redirect(reverse("resource_tracker:resource_group_list") + string_tag)
         return super(ResourceGroupListView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -38,6 +53,19 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context['object_name'] = "resource_group"
         context['html_button_path'] = "generics/buttons/generic_add_button.html"
         return context
+
+    def get_queryset(self):
+        filter_button_used = "tag_redirect" in self.request.GET
+        tag_session_key = f'{self.request.path}__tags'
+        if "tag" in self.request.GET and not filter_button_used:
+            tag_list = self.request.GET.getlist("tag")
+            resource_group_list_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
+            logger.info(f"Settings tags from URL in session: {tag_list}")
+            self.request.session[tag_session_key] = tag_list
+        else:
+            resource_group_list_queryset = ResourceGroup.objects.all()
+            self.request.session[tag_session_key] = []
+        return resource_group_list_queryset
 
 
 @user_passes_test(lambda u: u.is_superuser)
