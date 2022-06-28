@@ -15,7 +15,7 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         arg = {
             "resource_group_id": self.rg_physical_servers.id
         }
-        columns = ['selection', 'name', 'CPU', 'Memory', 'Description', 'Another text', 'operations']
+        columns = ['selection', 'name', 'CPU', 'Memory', 'Description', 'Another text', 'actions']
         url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
