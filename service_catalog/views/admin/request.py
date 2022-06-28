@@ -13,7 +13,7 @@ from django_fsm import can_proceed
 from service_catalog.forms import RequestMessageForm, AcceptRequestForm
 from service_catalog.forms.request_forms import RequestForm
 from service_catalog.mail_utils import send_mail_request_update
-from service_catalog.models import Request
+from service_catalog.models import Request, RequestMessage
 
 logger = logging.getLogger(__name__)
 
@@ -124,10 +124,12 @@ def admin_request_accept(request, request_id):
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
+    comment_messages = RequestMessage.objects.filter(request=target_request)
     context = {
         'form': form,
         'target_request': target_request,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'comment_messages': comment_messages
     }
     return render(request, 'service_catalog/admin/request/request-accept.html', context=context)
 
