@@ -26,7 +26,7 @@ class ResourceTable(SquestTable):
                 for attribute in resource.text_attributes.all():
                     if attribute.text_attribute_type.name not in text_attribute_names:
                         text_attribute_names.append(attribute.text_attribute_type.name)
-            sequence = [*["selection", "name", "service_catalog_instance"], *attribute_names, *text_attribute_names, *["operations"]]
+            sequence = [*["selection", "name", "service_catalog_instance"], *attribute_names, *text_attribute_names, *["actions"]]
             self.Meta.fields = tuple(sequence)
             self.sequence = sequence
             type(self).base_columns["selection"] = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
@@ -44,5 +44,6 @@ class ResourceTable(SquestTable):
                     extra_context={'attribute_name': attribute_name},
                     orderable=False
                 )
-            type(self).base_columns["operations"] = TemplateColumn(template_name='custom_columns/resource_operations.html', orderable=False)
+            type(self).base_columns["actions"] = TemplateColumn(template_name='custom_columns/resource_operations.html',
+                                                                orderable=False)
             self.columns = BoundColumns(self, type(self).base_columns)
