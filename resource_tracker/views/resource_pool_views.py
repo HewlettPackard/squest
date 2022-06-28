@@ -20,10 +20,10 @@ def resource_pool_list(request):
     task_id = request.session.pop('task_id', None)
 
     tag_session_key = f'{request.path}__tags'
-    filter_button_used = "tag_redirect" in request.GET
+    tag_redirect_flag = "tag_redirect" in request.GET
     tags_from_session = request.session.get(tag_session_key, [])
 
-    if len(tags_from_session) > 0 and not filter_button_used:
+    if len(tags_from_session) > 0 and not tag_redirect_flag:
         logger.info(f"Using tags loaded from session: {tags_from_session}")
         string_tag = "?"
         for tag in tags_from_session:

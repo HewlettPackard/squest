@@ -35,9 +35,9 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
             raise PermissionDenied
 
         tag_session_key = f'{self.request.path}__tags'
-        filter_button_used = "tag_redirect" in self.request.GET
+        tag_redirect_flag = "tag_redirect" in self.request.GET
         tags_from_session = self.request.session.get(tag_session_key, [])
-        if len(tags_from_session) > 0 and not filter_button_used:
+        if len(tags_from_session) > 0 and not tag_redirect_flag:
             logger.info(f"Using tags loaded from session: {tags_from_session}")
             string_tag = "?"
             for tag in tags_from_session:
@@ -55,9 +55,9 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         return context
 
     def get_queryset(self):
-        filter_button_used = "tag_redirect" in self.request.GET
+        tag_redirect_flag = "tag_redirect" in self.request.GET
         tag_session_key = f'{self.request.path}__tags'
-        if "tag" in self.request.GET and not filter_button_used:
+        if "tag" in self.request.GET and not tag_redirect_flag:
             tag_list = self.request.GET.getlist("tag")
             resource_group_list_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
             logger.info(f"Settings tags from URL in session: {tag_list}")
