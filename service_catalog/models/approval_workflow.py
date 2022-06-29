@@ -4,9 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class ApprovalWorkflow(Model):
-    class Meta:
-        ordering = ['operation']
-
     name = CharField(max_length=100, blank=False, unique=True)
     entry_point = ForeignKey(
         "service_catalog.ApprovalStep",
