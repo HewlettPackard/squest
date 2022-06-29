@@ -96,6 +96,10 @@ def on_change(sender, instance: Operation, **kwargs):
         if instance.type == OperationType.CREATE and instance.enabled and previous.enabled != instance.enabled and instance.service.can_be_enabled():
             instance.service.enabled = True
             instance.service.save()
+        if previous.approval_workflow != instance.approval_workflow:
+            approval_step = instance.approval_workflow.entry_point if instance.approval_workflow else None
+            instance.request_set.update(**{"approval_step": approval_step})
+
 
 
 @receiver(post_save, sender=Operation)
