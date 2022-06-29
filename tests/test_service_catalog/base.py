@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from profiles.models import BillingGroup
-from service_catalog.models import TowerServer, JobTemplate, Operation, Service
+from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
 
@@ -254,6 +254,17 @@ class BaseTest(TestCase):
                                                               tower_server=self.tower_server_test_2,
                                                               tower_job_template_data=self.job_template_testing_data)
 
+        # ---------------------------------------------------
+        # Portfolio test 1
+        # ---------------------------------------------------
+        self.portfolio_test_1 = Portfolio.objects.create(name="my-testing-portfolio")
+        self.portfolio_test_1.image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        self.portfolio_test_1.save()
+        # ---------------------------------------------------
+        # Portfolio test 1
+        # ---------------------------------------------------
+        self.portfolio_test_2 = Portfolio.objects.create(name="my-testing-portfolio",
+                                                         parent_portfolio=self.portfolio_test_1)
         # ---------------------------------------------------
         # Service test 1
         # ---------------------------------------------------

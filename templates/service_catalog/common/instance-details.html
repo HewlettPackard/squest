@@ -27,12 +27,8 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            {% if instance.service.image %}
-                                <img class="card-img-top" src="{{ instance.service.image.url }}"
-                                     alt="User profile picture">
-                            {% else %}
-                                <img class="card-img-top" src="{% static '/squest/img/no_image.png' %}" alt="">
-                            {% endif %}
+                            <img class="card-img-top" src="{% if instance.service.image %}{{ instance.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                 alt="Service image">
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
                             <li class="list-group-item">

@@ -39,8 +39,11 @@ urlpatterns = [
     path('request/<int:request_id>/unarchive/', views.admin_request_unarchive, name='admin_request_unarchive'),
     path('request/<int:request_id>/delete/', views.request_delete, name='request_delete'),
 
-    path('service/', views.service_list, name='service_list'),
-    path('service/manage/', ServiceListView.as_view(), name='manage_services'),
+    path('portfolio/', views.portfolio_list, name='portfolio_list'),
+    path('portfolio/create/', views.portfolio_create, name='portfolio_create'),
+    path('portfolio/<int:portfolio_id>/edit/', views.portfolio_edit, name='portfolio_edit'),
+    path('portfolio/<int:portfolio_id>/delete/', views.portfolio_delete, name='portfolio_delete'),
+    path('service/', ServiceListView.as_view(), name='service_list'),
     path('service/<int:service_id>/operation/<int:operation_id>/request/', views.customer_service_request, name='customer_service_request'),
     path('service/<int:service_id>/operation/request/', CreateOperationListView.as_view(), name='create_operation_list'),
     path('service/add_service/', views.add_service, name='create_service'),

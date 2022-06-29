@@ -1,5 +1,5 @@
 {% with kwargs=kwargs|default:"" %}
-    <a href="{% url app_name|add:":"|add:object_name|add:"_edit"|add:kwargs record.id %}" class="btn btn-primary bg-sm">
+    <a href="{% url app_name|add:":"|add:object_name|add:"_edit"|add:kwargs record.id %}" class="btn btn-primary bg-sm" title="Edit">
         <i class="fas fa-pencil-alt"></i>
     </a>
 {% endwith %}

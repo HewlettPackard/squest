@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from tests.test_service_catalog.base import BaseTest

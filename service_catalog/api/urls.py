@@ -53,4 +53,6 @@ urlpatterns = [
          name='api_approval_step_list_create'),
     path('approval-workflow/<int:approval_workflow_id>/approval-step/<int:pk>/', ApprovalStepDetails.as_view(),
          name='api_approval_step_details'),
+    path('portfolio/', PortfolioListCreate.as_view(), name='api_portfolio_list_create'),
+    path('portfolio/<int:pk>/', PortfolioDetails.as_view(), name='api_portfolio_details'),
 ]
