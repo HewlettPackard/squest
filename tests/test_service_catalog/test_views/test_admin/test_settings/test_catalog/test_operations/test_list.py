@@ -1,6 +1,5 @@
 from django.urls import reverse
 
-from service_catalog.models import OperationType
 from tests.test_service_catalog.base import BaseTest
 
 

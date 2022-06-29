@@ -29,7 +29,7 @@ class CreateOperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         service_id = self.kwargs.get('service_id')
         context['service_id'] = service_id
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+            {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
             {'text': Service.objects.get(id=service_id).name, 'url': ""},
             {'text': 'Create operations', 'url': ""},
         ]

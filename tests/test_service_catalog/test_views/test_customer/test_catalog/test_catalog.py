@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Request, Service, RequestMessage
+from service_catalog.models import Request, Service, RequestMessage, Portfolio
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -10,17 +10,34 @@ class TestCustomerCatalogViews(BaseTestRequest):
         super(TestCustomerCatalogViews, self).setUp()
         self.client.login(username=self.standard_user, password=self.common_password)
 
-    def test_customer_list_service(self):
+    def test_customer_list_service_in_root(self):
+        url = reverse('service_catalog:portfolio_list')
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertTrue("service_list" in response.context)
+        self.assertEqual(len(response.context["service_list"]), Service.objects.filter(enabled=True).count())
+        self.assertEqual(len(response.context["portfolio_list"]),
+                         Portfolio.objects.filter(parent_portfolio=None).count())
+
+    def test_customer_list_service_in_a_portfolio(self):
+        self.service_test.parent_portfolio = self.portfolio_test_1
+        self.service_test.save()
+        url = reverse('service_catalog:portfolio_list') + f"?parent_portfolio={self.portfolio_test_1.id}"
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertTrue("service_list" in response.context)
+        self.assertEqual(len(response.context["service_list"]),
+                         Service.objects.filter(enabled=True, parent_portfolio=self.portfolio_test_1).count())
+        self.assertEqual(len(response.context["portfolio_list"]),
+                         Portfolio.objects.filter(parent_portfolio=self.portfolio_test_1.id).count())
+        
+    def test_customer_can_list_enabled_service(self):
+        self.service_test.enabled = False
+        self.service_test.save()
         url = reverse('service_catalog:service_list')
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("services" in response.context)
-        self.assertEqual(len(response.context["services"]), Service.objects.filter(enabled=True).count())
-
-    def test_customer_cannot_manage_service(self):
-        url = reverse('service_catalog:manage_services')
-        response = self.client.get(url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), Service.objects.filter(enabled=True).count())
 
     def test_customer_service_request(self):
         args = {

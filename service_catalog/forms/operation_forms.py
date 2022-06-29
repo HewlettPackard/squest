@@ -1,5 +1,4 @@
 from service_catalog.models import Operation
-from service_catalog.models.operations import OperationType
 from Squest.utils.squest_model_form import SquestModelForm
 
 

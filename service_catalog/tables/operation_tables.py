@@ -1,4 +1,4 @@
-from django_tables2 import TemplateColumn
+from django_tables2 import TemplateColumn, Column
 
 from service_catalog.models import Operation
 from Squest.utils.squest_table import SquestTable
@@ -11,13 +11,13 @@ class OperationTable(SquestTable):
     auto_process = TemplateColumn(template_name='custom_columns/generic_boolean.html')
     survey = TemplateColumn(template_name='custom_columns/operation_survey.html', orderable=False)
     actions = TemplateColumn(template_name='custom_columns/operation_actions.html', orderable=False)
+    approval_workflow__name = Column(verbose_name="Approval")
 
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = (
-        "enabled", "name", "type", "job_template", "auto_accept", "auto_process", "process_timeout_second", "survey",
-        "actions")
+        fields = ("enabled", "name", "type", "job_template", "approval_workflow__name", "auto_accept", "auto_process",
+                  "process_timeout_second", "survey", "actions")
 
 
 class OperationTableFromInstanceDetails(SquestTable):

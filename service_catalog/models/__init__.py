@@ -1,3 +1,4 @@
+from service_catalog.models.portfolio import Portfolio
 from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.request_state import RequestState
