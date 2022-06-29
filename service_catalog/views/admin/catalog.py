@@ -18,8 +18,8 @@ def add_service(request):
     else:
         form = ServiceForm()
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': 'Create a new service', 'url': ""},
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create', 'multipart': True}
@@ -31,10 +31,10 @@ def delete_service(request, service_id):
     target_service = get_object_or_404(Service, id=service_id)
     if request.method == "POST":
         target_service.delete()
-        return redirect('service_catalog:manage_services')
+        return redirect('service_catalog:service_list')
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': ""},
     ]
     context = {
@@ -52,10 +52,10 @@ def edit_service(request, service_id):
     form = ServiceForm(request.POST or None, request.FILES or None, instance=target_service)
     if form.is_valid():
         form.save()
-        return redirect('service_catalog:manage_services')
+        return redirect('service_catalog:service_list')
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': ""},
     ]
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs, 'action': 'edit', 'multipart': True}
@@ -73,8 +73,8 @@ def add_service_operation(request, service_id):
     else:
         form = ServiceOperationForm(service=target_service)
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
         {'text': 'Create a new operation', 'url': ""},
     ]
@@ -90,8 +90,8 @@ def delete_service_operation(request, service_id, operation_id):
         target_operation.delete()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
         {'text': target_operation.name, 'url': ""},
     ]
@@ -114,8 +114,8 @@ def edit_service_operation(request, service_id, operation_id):
         form.save()
         return redirect('service_catalog:service_operations', service_id=target_service.id)
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
         {'text': target_operation.name, 'url': ""},
     ]
@@ -145,8 +145,8 @@ def service_operation_edit_survey(request, service_id, operation_id):
             return redirect('service_catalog:service_operations', service_id=target_service.id)
 
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
-        {'text': 'Manage services', 'url': reverse('service_catalog:manage_services')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+        {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
         {'text': target_operation.name, 'url': ""},
     ]

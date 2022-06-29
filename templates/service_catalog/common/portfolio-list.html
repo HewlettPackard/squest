@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block header_button %}
+    <a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:service_list' %}">
+        <i class="fas fa-list"></i> All services
+    </a>
+{% endblock %}
+{% block main %}
+    <div class="row">
+        <div class="col-md-3">
+            {% if request.user.is_superuser %}
+                <a class="btn btn-success btn-block mb-3" title="Create a portfolio"
+                   href="{% url 'service_catalog:portfolio_create' %}{% if current_portfolio %}?parent_portfolio={{ current_portfolio.id }}{% endif %}">
+                    <i class="fas fa-plus"></i> Create a portfolio
+                </a>
+            {% endif %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        {% if current_portfolio %}
+                            <img class="img" style="width: 65px; height: 65px;"
+                                 src="{% if current_portfolio.image %}{{ current_portfolio.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                 alt="Parent portfolio image">
+                        {% endif %}
+                        <h3 class="col" data-toggle="tooltip" data-placement="bottom"
+                            title="{{ current_portfolio.description }}">
+                            {% if current_portfolio %}
+                                {{ current_portfolio.name }}
+                            {% else %}
+                                Portfolio
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="card-body p-0" style="display: block;">
+                    <ul class="nav nav-pills flex-column">
+                        {% for portfolio in portfolio_list %}
+                            <li class="nav-item active">
+                                <div class="row justify-content-between align-items-center px-2">
+                                    <div class="d-flex align-items-center">
+                                        <img class="img m-2" style="width: 40px; height: 40px;"
+                                             src="{% if portfolio.image %}{{ portfolio.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                             alt="Portfolio image">
+                                        <a href="{% url 'service_catalog:portfolio_list' %}?parent_portfolio={{ portfolio.id }}"
+                                           class="text-lg text-primary" data-toggle="tooltip" data-placement="bottom"
+                                           title="{{ portfolio.description }}"
+                                        >{{ portfolio.name }}</a>
+                                    </div>
+                                    <div>
+                                        {% if request.user.is_superuser %}
+                                            <a href="{% url 'service_catalog:portfolio_delete' portfolio.id %}"
+                                               title="Delete"
+                                               class="text-danger float-right btn-tool">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            <a href="{% url 'service_catalog:portfolio_edit' portfolio.id %}"
+                                               title="Edit"
+                                               class="text-primary float-right btn-tool ">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                {% for service in service_list %}
+                    <div class="col-lg-3 col-sm-3 mb-4">
+                        <div class="card">
+                            <img class="card-img-top" src="{% if service.image %}{{ service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                 alt="Service image">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ service.name }}
+                                </h5>
+                                <p class="card-text">{{ service.description }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{% url 'service_catalog:create_operation_list' service.id %}"
+                                   class="btn btn-primary">Order</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

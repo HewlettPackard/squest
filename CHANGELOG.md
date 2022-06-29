@@ -16,6 +16,7 @@
 - Send email when support is closed
 - show specs on accept/review page
 - Add pending request for each service in the admin dashboard
+- Save tags in session
 
 ## Feature
 
@@ -25,6 +26,7 @@
 - Approval workflow
 - Bulk delete for Instances
 - Allow several create operations
+- Portfolio
 
 # 1.5.2 2022-04-04
 

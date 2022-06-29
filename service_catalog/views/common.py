@@ -22,12 +22,6 @@ def get_color_from_string(string):
 
 
 @login_required
-def service_list(request):
-    services = Service.objects.filter(enabled=True)
-    return render(request, 'service_catalog/common/service/service-list.html', {'services': services})
-
-
-@login_required
 def markdown_uploader(request):
     """
     Makdown image upload for locale storage

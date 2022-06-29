@@ -11,14 +11,14 @@ class TestApiRequestAccept(BaseTestRequest):
     def setUp(self):
         super(TestApiRequestAccept, self).setUp()
 
-    def _get_form(self, status=200, request=None, excepted=None):
+    def _get_form(self, status=200, request=None, expected=None):
         if request is None:
             request = self.test_request
         response = self.client.get(reverse('api_request_accept', kwargs={'pk': request.id}))
         self.assertEqual(response.status_code, status)
         if status == 200:
-            if excepted is None:
-                excepted = {
+            if expected is None:
+                expected = {
                     'text_variable': "my_var",
                     'multiplechoice_variable': "choice1",
                     'multiselect_var': set(["multiselect_3", "multiselect_2"]),
@@ -27,9 +27,9 @@ class TestApiRequestAccept(BaseTestRequest):
                     'float_var': 1.5,
                     'integer_var': 1
                 }
-            for key in excepted.keys():
+            for key in expected.keys():
                 if key != 'multiselect_var':
-                    self.assertEqual(response.data[key], excepted[key])
+                    self.assertEqual(response.data[key], expected[key])
 
     def _accept(self, data=None, request=None, status=200):
         if request is None:
@@ -77,7 +77,7 @@ class TestApiRequestAccept(BaseTestRequest):
             self.test_request.fill_in_survey = {'text_variable': 'my_var'}
             self.test_request.admin_fill_in_survey = {}
             self.test_request.save()
-            self._get_form(request=test_request, excepted={})
+            self._get_form(request=test_request, expected={})
             self._accept(data={}, request=test_request)
 
     def test_admin_can_accept_request_with_missing_non_required_field(self):

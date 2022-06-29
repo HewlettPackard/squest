@@ -1,3 +1,4 @@
+from .portfolio_form import *
 from .accept_request_forms import *
 from .announcement_form import *
 from .doc_forms import *

@@ -26,7 +26,7 @@ def customer_service_request(request, service_id, operation_id):
     else:
         form = ServiceRequestForm(request.user, **parameters)
     breadcrumbs = [
-        {'text': 'Service catalog', 'url': reverse('service_catalog:service_list')},
+        {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
         {'text': target_service.name, 'url': ""},
     ]
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs,

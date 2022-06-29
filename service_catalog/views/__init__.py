@@ -1,3 +1,4 @@
+from .portfolio_view import *
 from .common import *
 from .request import *
 from .admin.tower import *

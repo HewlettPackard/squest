@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField
+from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField, ForeignKey, SET_NULL
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -16,6 +16,14 @@ class Service(Model):
     billing_group_is_selectable = BooleanField(default=False)
     billing_groups_are_restricted = BooleanField(default=True)
     enabled = BooleanField(default=False, blank=True)
+    parent_portfolio = ForeignKey(
+        "service_catalog.Portfolio",
+        blank=True,
+        null=True,
+        on_delete=SET_NULL,
+        related_name="service_list",
+        related_query_name="service_list",
+    )
 
     def can_be_enabled(self):
         operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)

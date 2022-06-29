@@ -10,6 +10,14 @@ class ServiceTable(SquestTable):
     operations = TemplateColumn(template_name='custom_columns/service_operations.html',
                                 verbose_name="Operations", orderable=False)
 
+    def before_render(self, request):
+        if request.user.is_superuser:
+            self.columns.show('enabled')
+            self.columns.show('operations')
+        else:
+            self.columns.hide('enabled')
+            self.columns.hide('operations')
+
     class Meta:
         model = Service
         attrs = {"id": "service_table", "class": "table squest-pagination-tables"}

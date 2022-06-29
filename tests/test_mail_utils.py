@@ -48,14 +48,14 @@ class TestMailUtils(BaseTest):
         self.assertEquals(1, len(_get_admin_emails(service=self.service_test)))
 
     def test_get_headers(self):
-        excepted_list = ["Message-ID", "In-Reply-To", "References"]
+        expected_list = ["Message-ID", "In-Reply-To", "References"]
         subject = _get_subject(self.test_instance)
         headers = _get_headers(subject)
         subject = _get_subject(self.test_instance_2)
         headers_2 = _get_headers(subject)
-        for excepted_key in excepted_list:
-            self.assertIn(excepted_key, headers)
-            self.assertNotEqual(headers[excepted_key], headers_2[excepted_key])
+        for expected_key in expected_list:
+            self.assertIn(expected_key, headers)
+            self.assertNotEqual(headers[expected_key], headers_2[expected_key])
 
     def test_get_subject(self):
         subject_instance = _get_subject(self.test_instance)
