@@ -290,8 +290,7 @@ class Request(RoleManager):
                 from service_catalog.mail_utils import send_mail_request_update
                 send_mail_request_update(
                     self,
-                    plain_text=f"Request need your approval",
-                    receiver_email_list=self.approval_step.get_approvers_emails()
+                    plain_text=f"Request need your approval"
                 )
         if self.operation.approval_workflow and self.approval_step is None and self.state == RequestState.SUBMITTED:
             return RequestState.ACCEPTED
