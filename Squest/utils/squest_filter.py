@@ -10,6 +10,8 @@ class SquestFilter(django_filters.FilterSet):
             if isinstance(current_filter.field.widget, forms.TextInput):
                 current_filter.field.widget.attrs['class'] = 'form-control'
                 current_filter.lookup_expr = 'icontains'
+                if self.request and '/api/' in self.request.path:
+                    current_filter.lookup_expr = 'exact'
             elif isinstance(current_filter.field.widget, forms.Select):
                 current_filter.field.widget.attrs['class'] = 'form-control selectpicker'
             elif isinstance(current_filter.field.widget, forms.CheckboxInput):
