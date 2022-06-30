@@ -20,7 +20,7 @@
 
 ## Feature
 
-- API: Add filters
+- API: Add filters (filter by exact name in API vs contains in UI)
 - Default API admin token can be added to the settings
 - Python script based validator for form field
 - Approval workflow
