@@ -63,7 +63,11 @@ class ApprovalStep(RoleManager):
         return queryset
 
     def get_approvers_emails(self):
-        return [user.email for user in self.get_approvers()]
+        email_list = list()
+        for user in self.get_approvers():
+            if user.email:
+                email_list.append(user.email)
+        return email_list
 
     def _assert_no_loop(self):
         workflow_list = list()

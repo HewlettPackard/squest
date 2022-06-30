@@ -96,6 +96,8 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
             plain_text = f"Request update for service: {target_request.instance.name}"
     html_template = get_template(template_name)
     html_content = html_template.render(context)
+    if target_request.approval_step:
+        receiver_email_list = target_request.approval_step.get_approvers_emails()
     if receiver_email_list is None:
         receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
     if target_request.user.profile.notification_enabled:
