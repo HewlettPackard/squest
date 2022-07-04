@@ -35,7 +35,7 @@
                                 <b>Name</b> <a class="float-right">{{ instance.name }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Service</b> <a class="float-right">{{ instance.service.name }}</a>
+                                <b>Service</b> {% if request.user.is_superuser %}<a href="{% url 'service_catalog:edit_service' instance.service.id %}" class="float-right">{{ instance.service.name }}</a>{% else %}<a class="float-right">{{ instance.service.name }}</a>{% endif %}
                             </li>
                             <li class="list-group-item">
                                 <b>State</b> <strong
@@ -90,16 +90,23 @@
                                 {% render_table operations_table %}
                             </div>
                             <div class="tab-pane" id="support">
-                                <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
-                                   class="float-right btn btn-success">
-                                    <i class="fas fa-plus"></i> Open new support
-                                </a>
-                                {% render_table supports_table %}
+                                {%  if instance.service.external_support_url is not None and instance.service.external_support_url != '' %}
+                                    <p class="text-muted">Supports for this service are redirected to an external tool</p>
+                                    <a class="btn btn-success" href="{% url 'service_catalog:instance_new_support' instance.id %}">
+                                        <i class="fas fa-link"></i> Open new support
+                                    </a>
+                                {%  else %}
+                                    <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
+                                       class="float-right btn btn-success">
+                                        <i class="fas fa-plus"></i> Open new support
+                                    </a>
+                                    {% render_table supports_table %}
+                                {% endif %}
                             </div>
                             {% if request.user.is_superuser %}
-                            <div class="tab-pane" id="spec">
-                                <pre><code class="language-json">{{ instance.spec | pretty_json }}</code></pre>
-                            </div>
+                                <div class="tab-pane" id="spec">
+                                    <pre><code class="language-json">{{ instance.spec | pretty_json }}</code></pre>
+                                </div>
                             {% endif %}
                             <div class="tab-pane" id="user-spec">
                                 <pre><code class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
