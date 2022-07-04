@@ -70,6 +70,41 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_support_before + 1, Support.objects.all().count())
 
+    def test_create_new_support_on_instance_with_external_url(self):
+        # add a url
+        self.test_instance.service.external_support_url = "http://external_service"
+        self.test_instance.service.save()
+        args = {
+            "instance_id": self.test_instance.id
+        }
+        url = reverse('service_catalog:instance_new_support', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(self.test_instance.service.external_support_url, response.url)
+
+        # test with URL that use a valid jinja
+        self.test_instance.service.external_support_url = "http://external_service?instance_id={{ instance.id }}"
+        self.test_instance.service.save()
+        response = self.client.get(url)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(f"http://external_service?instance_id={self.test_instance.id}", response.url)
+
+        # test with a non-existing instance flag
+        self.test_instance.service.external_support_url = "http://external_service?instance_id={{ instance.unknown_flag }}"
+        self.test_instance.service.save()
+        response = self.client.get(url)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual("http://external_service?instance_id=", response.url)
+
+        # test with non-existing object
+        self.test_instance.service.external_support_url = "http://external_service?instance_id={{ unknown_object.id }}"
+        self.test_instance.service.save()
+        response = self.client.get(url)
+        self.assertEqual(302, response.status_code)
+        # we return the url with jinja parsed
+        expected = "http://external_service?instance_id=%7B%7B%20unknown_object.id%20%7D%7D"
+        self.assertEqual(expected, response.url)
+
     def test_cannot_create_new_support_on_non_owned_instance(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         args = {

@@ -56,6 +56,11 @@ class ServiceForm(SquestModelForm):
         widget=forms.CheckboxInput()
     )
 
+    external_support_url = forms.CharField(label="External support URL",
+                                           help_text="Redirect support button to the given URL",
+                                           widget=forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+                                           required=False)
+
     def clean_billing_group_id(self):
         if not self.cleaned_data['billing_group_id']:
             return None
@@ -80,4 +85,4 @@ class ServiceForm(SquestModelForm):
     class Meta:
         model = Service
         fields = ["name", "description", "image", "billing", "billing_group_id", "billing_group_is_shown", "enabled",
-                  "parent_portfolio"]
+                  "parent_portfolio", "external_support_url"]
