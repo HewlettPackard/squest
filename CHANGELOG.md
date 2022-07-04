@@ -1,3 +1,13 @@
+# 1.6.1 2022-07-04
+
+## Fix
+
+- Pagination navigation was not working with https scheme
+
+## Feature
+
+- Add support of external tool as support URL
+
 # 1.6.0 2022-06-30
 
 ## Breaking changes
