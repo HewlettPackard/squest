@@ -368,6 +368,11 @@ REST_FRAMEWORK = {
 }
 
 # -----------------------------------------
+# TLS FORWARDED
+# -----------------------------------------
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# -----------------------------------------
 # DJANGO TABLES2 TEMPLATE
 # -----------------------------------------
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
