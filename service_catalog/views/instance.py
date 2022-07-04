@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
+from jinja2 import UndefinedError
 
 from profiles.forms import UserRoleForObjectForm, TeamRoleForObjectForm
 from profiles.models import Role, Team
@@ -129,6 +130,21 @@ def instance_new_support(request, instance_id):
     parameters = {
         'instance_id': instance_id
     }
+
+    if target_instance.service.external_support_url is not None and target_instance.service.external_support_url != '':
+        from jinja2 import Template
+        spec_config = {
+            "instance": target_instance,
+        }
+        template_url = Template(target_instance.service.external_support_url)
+        try:
+            template_url_rendered = template_url.render(spec_config)
+        except UndefinedError:
+            # in case of any error we just use the given URL with the jinja so the admin can see the templating error
+            template_url_rendered = target_instance.service.external_support_url
+
+        return redirect(template_url_rendered)
+
     if request.method == 'POST':
         form = SupportRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():

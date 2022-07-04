@@ -10,6 +10,7 @@ from service_catalog.models import OperationType
 class Service(Model):
     name = CharField(verbose_name="Service name", max_length=100)
     description = CharField(max_length=500, blank=True)
+    external_support_url = CharField(max_length=2000, blank=True)
     image = ImageField(upload_to='service_image', blank=True)
     billing_group_id = IntegerField(null=True, default=None)
     billing_group_is_shown = BooleanField(default=False)
