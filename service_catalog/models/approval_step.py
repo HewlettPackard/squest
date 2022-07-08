@@ -8,7 +8,7 @@ from profiles.models import RoleManager
 from profiles.models.team import Team
 from service_catalog.models import RequestState
 from service_catalog.models.approval_step_type import ApprovalStepType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from service_catalog.models.approval_state import ApprovalState
 

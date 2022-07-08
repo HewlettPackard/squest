@@ -16,7 +16,8 @@ class AdminTowerCreateViewsTest(BaseTestTower):
         self.data = {
             "name": "tower1",
             "host": "tower.domain.local",
-            "token": "xxxx"
+            "token": "xxxx",
+            "extra_vars": "{}"
         }
 
         self.number_tower_before = TowerServer.objects.all().count()

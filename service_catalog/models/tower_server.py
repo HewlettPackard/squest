@@ -1,5 +1,7 @@
+from django.core.exceptions import ValidationError
 from django.db.models import Model, CharField, BooleanField, JSONField
 from towerlib import Tower
+from django.utils.translation import gettext_lazy as _
 
 
 class TowerServer(Model):
@@ -12,6 +14,10 @@ class TowerServer(Model):
 
     def __str__(self):
         return f"{self.name} ({self.host})"
+
+    def clean(self):
+        if self.extra_vars is None:
+            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
     def sync(self, job_template_id=None):
         """
