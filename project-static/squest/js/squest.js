@@ -104,7 +104,7 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
                     csrfmiddlewaretoken: csrf_token
                 },
             }).done((res) => {
-                document.getElementById(job_template_count).innerText = res.length;
+                document.getElementById(job_template_count).innerText = res.count;
             }).fail((err) => {
                 document.getElementById(sync_button_id).classList.remove('disabled');
             });
