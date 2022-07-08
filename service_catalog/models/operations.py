@@ -2,7 +2,7 @@ from django.db.models import Model, CharField, ForeignKey, BooleanField, Integer
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operation_type import OperationType
@@ -43,6 +43,8 @@ class Operation(Model):
             raise ValidationError({'approval_workflow': _("You cannot use an approval workflow without entrypoint.")})
         if self.auto_accept and self.approval_workflow:
             raise ValidationError({'auto_accept': _("Auto accept cannot be set with an approval step.")})
+        if self.extra_vars is None:
+            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
     def update_survey(self):
         if self.job_template is not None:

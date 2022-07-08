@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField, ForeignKey, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -42,6 +42,9 @@ class Service(Model):
         if self.enabled and not self.can_be_enabled():
             raise ValidationError({'enabled': _("At least one 'CREATE' operation with a valid job template is required "
                                                 "to enable the service")})
+
+        if self.extra_vars is None:
+            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
 
 @receiver(pre_save, sender=Service)
