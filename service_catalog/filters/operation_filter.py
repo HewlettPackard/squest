@@ -13,3 +13,9 @@ class OperationFilter(SquestFilter):
     type = MultipleChoiceFilter(
         choices=OperationType.choices,
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
+
+
+class OperationFilterLimited(SquestFilter):
+    class Meta:
+        model = Operation
+        fields = ['name']

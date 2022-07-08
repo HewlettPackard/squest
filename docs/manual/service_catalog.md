@@ -395,6 +395,20 @@ For example, the 'multiple select multiple' field type requires a list of string
     </tr>
 </table>
 
+## Extra vars
+
+Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
+
+These extra variables are added automatically when processing a request and so executing a job template.
+
+If an extra variable is set with the same name in different places, the variable will be overridden following a certain order.
+Squest will apply the following variable precedence:
+
+```mermaid
+flowchart LR
+    survey(Request survey) --> Tower(Tower) --> Service(Service)  --> Operation(Operation)
+```
+
 ## External support URL
 
 Squest has an integrated support management. End user can open a support ticket on available instances.

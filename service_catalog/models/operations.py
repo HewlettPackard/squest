@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL
+from django.db.models import Model, CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
@@ -33,6 +33,7 @@ class Operation(Model):
         related_name='operation',
         related_query_name='operation'
     )
+    extra_vars = JSONField(default=dict, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.service})"

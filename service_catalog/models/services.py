@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField, ForeignKey, SET_NULL
+from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField, ForeignKey, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -25,6 +25,7 @@ class Service(Model):
         related_name="service_list",
         related_query_name="service_list",
     )
+    extra_vars = JSONField(default=dict, blank=True)
 
     def can_be_enabled(self):
         operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)

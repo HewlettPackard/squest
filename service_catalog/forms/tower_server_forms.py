@@ -64,4 +64,4 @@ class TowerServerForm(SquestModelForm):
 
     class Meta:
         model = TowerServer
-        fields = ["name", "host", "token", "secure", "ssl_verify"]
+        fields = ["name", "host", "token", "secure", "ssl_verify", "extra_vars"]

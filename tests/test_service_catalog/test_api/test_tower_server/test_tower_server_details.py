@@ -18,7 +18,8 @@ class TestApiTowerServerDetails(BaseTestRequest):
             'name': self.tower_server_test.name,
             'host': self.tower_server_test.host,
             'secure': self.tower_server_test.secure,
-            'ssl_verify': self.tower_server_test.ssl_verify
+            'ssl_verify': self.tower_server_test.ssl_verify,
+            'extra_vars': dict()
         }
         self.expected_data_list = [self.expected_data]
 
