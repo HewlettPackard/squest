@@ -377,3 +377,60 @@ class TestRequest(BaseTestRequest):
         }
         self.assertDictEqual(self.test_request.fill_in_survey, expected_fill_in_survey)
         self.assertDictEqual(self.test_request.admin_fill_in_survey, expected_admin_fill_in_survey)
+
+    def test_request_extra_vars(self):
+        self.test_request.process()
+        self.test_request.save()
+
+        # add extra vars on tower server
+        self.tower_server_test.extra_vars = {
+            "tower_server_extra_var_key1": "tower_server_extra_var_value1",
+            "tower_server_extra_var_key2": "tower_server_extra_var_value2"
+        }
+        self.service_test.extra_vars = {
+            "service_extra_var_key1": "service_extra_var_value1",
+            "service_extra_var_key2": "service_extra_var_value2"
+        }
+        self.create_operation_test.extra_vars = {
+            "operation_extra_var_key": "operation_extra_var_value"
+        }
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            self.test_request.perform_processing()
+            args, executed_extra_vars = mock_job_execute.call_args
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
+                             "tower_server_extra_var_value1")
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
+                             "tower_server_extra_var_value2")
+            self.assertEqual(executed_extra_vars["extra_vars"]["service_extra_var_key1"], "service_extra_var_value1")
+            self.assertEqual(executed_extra_vars["extra_vars"]["service_extra_var_key2"], "service_extra_var_value2")
+            self.assertEqual(executed_extra_vars["extra_vars"]["operation_extra_var_key"], "operation_extra_var_value")
+            mock_job_execute.assert_called()
+
+        # ----------------------------
+        # check service override server config
+        # ----------------------------
+        self.service_test.extra_vars = {
+            "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_service1",
+            "tower_server_extra_var_key2": "tower_server_extra_var_overridden_by_service2"
+        }
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            self.test_request.perform_processing()
+            args, executed_extra_vars = mock_job_execute.call_args
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
+                             "tower_server_extra_var_overridden_by_service1")
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
+                             "tower_server_extra_var_overridden_by_service2")
+
+        # ----------------------------
+        # check operation override server config
+        # ----------------------------
+        self.create_operation_test.extra_vars = {
+            "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_operation"
+        }
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            self.test_request.perform_processing()
+            args, executed_extra_vars = mock_job_execute.call_args
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
+                             "tower_server_extra_var_overridden_by_operation")
+            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
+                             "tower_server_extra_var_overridden_by_service2")

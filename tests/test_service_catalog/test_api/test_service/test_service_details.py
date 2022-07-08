@@ -22,7 +22,8 @@ class TestApiServiceDetails(BaseTestRequest):
             'billing_group_is_shown': self.service_test.billing_group_is_shown,
             'billing_group_is_selectable': self.service_test.billing_group_is_selectable,
             'billing_groups_are_restricted': self.service_test.billing_groups_are_restricted,
-            'enabled': self.service_test.enabled
+            'enabled': self.service_test.enabled,
+            'extra_vars': dict()
         }
         self.expected_data_list = [self.expected_data]
         self.service_test_2.enabled = False

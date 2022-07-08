@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, BooleanField
+from django.db.models import Model, CharField, BooleanField, JSONField
 from towerlib import Tower
 
 
@@ -8,6 +8,7 @@ class TowerServer(Model):
     token = CharField(max_length=200)
     secure = BooleanField(default=True)
     ssl_verify = BooleanField(default=False)
+    extra_vars = JSONField(default=dict, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.host})"
