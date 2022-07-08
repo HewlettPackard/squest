@@ -131,8 +131,14 @@ class Request(RoleManager):
 
     @transition(field=state, source=RequestState.PROCESSING)
     def perform_processing(self):
-        # run Tower job
+        # get the survey with variables set by the end user and admin
         tower_extra_vars = copy.copy(self.full_survey)
+        # add tower server extra vars
+        tower_extra_vars.update(self.operation.job_template.tower_server.extra_vars)
+        # add service extra vars
+        tower_extra_vars.update(self.operation.service.extra_vars)
+        # add operation extra vars
+        tower_extra_vars.update(self.operation.extra_vars)
         # add the current instance to extra vars
         from service_catalog.api.serializers.request_serializers import AdminRequestSerializer
         from django.conf import settings
