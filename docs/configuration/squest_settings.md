@@ -54,6 +54,17 @@ Set an API token that will be linked to the admin user when starting Squest.
 
 ## Squest
 
+### MAINTENANCE_MODE_ENABLED
+
+**Default:** False
+
+When enabled, only administrators can access squest UI and API. 
+This can be used for example to block new requests by end users from the service catalog. So an administrator can perform operations against the API like migrating instance specs.
+
+!!! note
+
+    This can also be set on the fly from the admin panel (top right corner of the UI) in the object `Squest settings`.
+
 ### SQUEST_HOST
 
 **Default:** `http://squest.domain.local`

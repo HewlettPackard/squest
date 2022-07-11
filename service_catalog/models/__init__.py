@@ -17,3 +17,4 @@ from service_catalog.models.documentation import Doc
 from service_catalog.models.announcement import Announcement
 from service_catalog.models.approval_workflow import ApprovalWorkflow
 from service_catalog.models.approval_step import ApprovalStep
+from service_catalog.models.squest_settings import SquestSettings
