@@ -4,10 +4,12 @@ from django.db.models import Count, QuerySet, F
 from django.utils import timezone
 from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
+
 from service_catalog.models.announcement import Announcement
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from service_catalog.models import Request, Instance, Support, Service
+from service_catalog.models.squest_settings import SquestSettings
 from service_catalog.models.support import SupportState
 
 
@@ -16,6 +18,7 @@ def home(request):
     context = dict()
     now = timezone.now()
     context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
+    context['squest_settings'] = SquestSettings.load()
     if request.user.is_superuser:
         context['total_request'] = Request.objects.filter(state=RequestState.SUBMITTED).count()
         context['total_instance'] = Instance.objects.filter(state='AVAILABLE').count()

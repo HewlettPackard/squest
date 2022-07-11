@@ -38,6 +38,7 @@ REDIS_CACHE_PASSWORD = os.environ.get('REDIS_PASSWORD', 'redis_secret_password')
 REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
 REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
 DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
+MAINTENANCE_MODE_ENABLED = os.environ.get('MAINTENANCE_MODE_ENABLED', False)
 
 # -------------------------------
 # SQUEST CONFIG
@@ -96,6 +97,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Squest.middleware.maintenance.MaintenanceMiddleware'
 ]
 
 ROOT_URLCONF = 'Squest.urls'
