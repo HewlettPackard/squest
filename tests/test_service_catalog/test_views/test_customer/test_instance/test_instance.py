@@ -47,6 +47,34 @@ class TestCustomerInstanceViews(BaseTestRequest):
         self.assertTrue("instance" in response.context)
         self.assertEqual(self.test_instance.name, response.context["instance"].name)
 
+    def test_operation_list_is_filtered(self):
+        self.test_instance.state = InstanceState.AVAILABLE
+        self.test_instance.save()
+        args = {
+            "instance_id": self.test_instance.id
+        }
+        url = reverse('service_catalog:instance_details', kwargs=args)
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data),
+                         Operation.objects.filter(service=self.test_instance.service, type__in=[OperationType.UPDATE, OperationType.DELETE]).count())
+
+        # set an operation to be admin only
+        self.update_operation_test.is_admin_operation = True
+        self.update_operation_test.save()
+
+        # as an admin I still have the full list
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), Operation.objects.filter(service=self.test_instance.service, type__in=[OperationType.UPDATE, OperationType.DELETE]).count())
+
+        # user does not see the admin operation
+        self.client.force_login(user=self.standard_user)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), Operation.objects.filter(service=self.test_instance.service, type__in=[OperationType.UPDATE, OperationType.DELETE]).count() - 1)
+
     def test_non_owner_user_cannot_get_details(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         args = {

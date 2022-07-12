@@ -38,10 +38,9 @@ nav:
     - Tower: configuration/tower_settings.md
   - Manual:
     - Service catalog: manual/service_catalog.md
-    - Approval: manual/approval.md
     - Resource tracking: manual/resource_tracking.md
     - Settings: manual/settings.md
-    - Billing groups: manual/billing_groups.md
+    - Quota: manual/quota.md
     - Teams: manual/teams.md
     - REST API: manual/api.md
     - Prometheus metrics: manual/metrics.md
