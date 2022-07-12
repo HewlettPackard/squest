@@ -1,53 +1,16 @@
-# Billing groups
+# Quota
+
+## Billing groups
 
 Billing groups are linked to users and allow Squest administrator to visualize who is consuming what.
+As an administrator you can create multiple billing group and place user in them.
+A user can belong to multiple billing group.
 
 ![billing_group_quota](../images/billing_group_quota.png)
 
 !!! note
 
       Billing groups is an optional feature.
-
-## Create billing groups
-
-As an administrator you can create multiple billing group and place user in them.
-A user can belong to multiple billing group.
-
-## Configure billing group in the service catalog
-
-By default, Squest services are not linked to any billing group.
-
-Administrators can configure how the billing of the service will be predefined.
-
-Through the service form, choices are:
-
-- [Administrator defined billing group](#administrator-defined-billing-group)
-- User defined billing group:
-      - [From his billing group](#from-his-billing-group)
-      - [From all billing group](#from-his-billing-group)
-
-### Administrator defined billing group
-
-Administrators select a fixed billing group (can be none). 
-Each created instance will be linked to this billing group.
-
-Administrators can also hide the billing from the end users. 
-The billing group will not be asked neither shown in the end user form when requesting the service.
-
-### User defined billing group
-
-#### From his billing group
-
-Administrators let the end user choose from his billing group when he sends an instance request.
-
-!!! note
-
-      Users without billing groups can not request this service.
-
-#### From all billing group
-
-Administrators let the end user choose from all available billing group when he requests a service.
-
 
 ## Quota
 

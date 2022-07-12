@@ -1,6 +1,6 @@
 # Lifecycle management
 
-## Populate the service catalog
+## Concept
 
 Once Squest is linked to a Tower/AWX server, "services" can be added into the catalog.
 
@@ -10,7 +10,7 @@ A service has at least one operation of type `CREATE` that allows to provision t
 
 A service can have then multiple operation of type `UPDATE` and `DELETE` that allow to manage the lifecycle of instances that have been created via the `CREATE` operation.
 
-## Provisioning a service
+### Provisioning a service
 
 When a user request for the first time a service, an instance is created automatically and set to "pending" state on Squest.
 Once approved by the administrator, the request is sent to Tower to execute the linked job template.
@@ -61,7 +61,7 @@ Sent specs must contain unique IDs that allow to identify precisely the instance
 (E.g: `uuid` of a VMware VM, `namespace` and `cluster_api_url` for an Openshift project)
 
 
-### Playbook example
+**Playbook example:**
 
 In the example below, we've configured a job template with a survey that ask for a variable named `file_name`.
 The playbook will:
@@ -110,7 +110,7 @@ The playbook will:
         body_format: json
 ```
 
-## Day 2 operations
+### Day 2 operations
 
 Day 2 operations are operations that **update** or **delete** existing resources.
 
@@ -142,7 +142,7 @@ sequenceDiagram
     Squest->>User: Notify service updated
 ```
 
-### Playbook example
+**Playbook example:**
 
 Example of extra vars sent by squest:
 ```yaml
@@ -184,7 +184,139 @@ The playbook receive as well all information that help to retrieve the resource 
         create: yes
 ```
 
-## Operation survey
+## Service
+
+### Configuration
+
+| Name                 | Description                                             |
+|----------------------|---------------------------------------------------------|
+| Name                 | Short name of the service                               |
+| Description          | Small description of the operation                      |
+| Image                | Image used into the catalog                             |
+| Billing              | Define the billing behavior when requesting the service |
+| Enabled              | If set to `True` the service is visible in the catalog  |
+| External support URL | Define an external support  tool URL                    |
+| Extra vars           | Set of extra vars as JSON                               |
+
+
+### Billing group
+
+By default, Squest services are not linked to any billing group.
+
+Administrators can configure how the billing of the service will be predefined.
+
+Through the service form, choices are:
+
+  - Administrator defined billing group
+  - User defined billing group:
+    - From his billing group
+    - From all billing group
+
+**Administrator defined billing group**
+
+Administrators select a fixed billing group (can be none).
+Each created instance will be linked to this billing group.
+
+Administrators can also hide the billing from the end users.
+The billing group will not be asked neither shown in the end user form when requesting the service.
+
+**User defined billing group**
+
+- **From his billing group:** Administrators let the end user choose from his billing group when he sends an instance request.
+- **From all billing group:** Administrators let the end user choose from all available billing group when he requests a service.
+
+### Extra vars
+
+Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
+
+These extra variables are added automatically when processing a request and so executing a job template.
+
+If an extra variable is set with the same name in different places, the variable will be overridden following a certain order.
+Squest will apply the following variable precedence:
+
+```mermaid
+flowchart LR
+    survey(Request survey) --> Tower(Tower) --> Service(Service)  --> Operation(Operation)
+```
+
+### External support URL
+
+Squest has an integrated support management. End user can open a support ticket on available instances.
+An external url can be defined as support tool in each service configuration. This allows to configure for example a redirection to services like GitHub issues or Jira.
+
+The external support URL support jinja templating to insert the current instance metadata as query parameters.
+
+E.g:
+```
+http://my_external_tool.domain.local/?instance_name={{ instance.name }}?instance_id={{ instance.id }}?vm_os={{ instance.spec.vm_os }}
+```
+
+Example with [Github issue query parameters](https://docs.github.com/en/enterprise-server@3.1/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-url-query):
+```
+https://github.com/HewlettPackard/squest/issues/new?title=Templated+Github+issue&body=Instance%3A+{{ instance.name }}
+```
+
+!!! note
+
+    Special characters need to be converted into a format that can be transmitted over the Internet. URLs can only be sent over the Internet using the ASCII character-set.
+
+## Operation
+
+### Configuration
+
+| Name               | Description                                                                                               |
+|--------------------|-----------------------------------------------------------------------------------------------------------|
+| Name               | Short name of the operation                                                                               |
+| Description        | Small description of the operation                                                                        |
+| Job template       | Executed job template in the backend Tower/AWX server                                                     |
+| Operation type     | Type of operation (Create, update, delete). Change the state of he instance after executing the operation |
+| Approval workflow  | Define an optional [approval workflow](#approval)                                                         |
+| Process timeout    | Number of second to wait for a successful return from the executed job template                           |
+| Auto accept        | If set to `True` a submitted request for this operation will be automatically accepted                    |
+| Auto process       | If set to `True` an accepted request for this operation will be automatically processed                   |
+| Enabled            | If set to `True` the operation can be requested from the UI and API                                       |
+| Is admin operation | If set to `True` the operation is only visible and can be only requested by administrators                |
+| Extra vars         | Set of extra vars as JSON                                                                                 |
+
+### Approval
+
+By default, _Requests_ can be approved by any administrator when
+_Approval Workflow_ is not defined in the _Operation_. After being approved, the _Request_ is in 'ACCEPTED' state and can be
+processed.
+
+#### Approval Workflow
+
+An _Approval Workflow_ is composed by one or multiple [_Approval Step_](#approval-step).
+_Approval Steps_ of the Workflow must be approved one by one following the order. After accepting the last one, the
+request witch to 'ACCEPTED' state and can be processed.
+
+!!! note
+
+      The auto-accept option can not be set in the _Operation_ with an Approval Workflow.
+
+#### Approval Step
+
+An _Approval Step_ can only be approved by its _Teams_ members. It is approved when all _Teams_ approved the _Request_ or at
+least one depending on the [Type](#type).
+
+!!! note
+
+      Approval Steps are linked to Teams and not users. It means that any member can approved for his Team.
+
+| Name  | Description                                                            |
+|-------|------------------------------------------------------------------------|
+| Name  | Unique identifier of the _Approval Step_ in the _Approval Workflow_.   |
+| Type  | Defined how the _Approval Step_ is Approved. See supported types below |
+| Teams | List of Teams that can approve the Approval Step.                      |
+
+
+**Type**
+
+- **At least one:** At least one team must approve the _Approval Step_ to move to the next one.
+- **All of them:** All teams of the _Approval Step_ must approve to move to the next one.
+
+
+### Survey
 
 The survey of an operation can be edited to change the behavior of the generated form of a request.
 
@@ -194,7 +326,7 @@ The survey of an operation can be edited to change the behavior of the generated
     Squest can only disable the ones that you don't want to be filled by your end users.
     Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
 
-### Enabled fields
+#### Enabled fields
 
 An **enabled** field is displayed into the end user survey.
 By default, all fields are enabled when creating a new operation.
@@ -204,23 +336,23 @@ By default, all fields are enabled when creating a new operation.
     If the field is set as **required** into the Tower/AWX job template survey config then the administrator
     will have to fill it in any case during the review of the request.
 
-### Default value
+#### Default value
 
 
 When set, the default value is pre-filled into the final form. It takes precedence over the default value set in Tower/AWX job template survey config.
 
-Default value precedence: 
+Default value precedence:
 
- 1. Default from Tower/AWX
- 2. Default from Squest value
- 3. User's input
- 4. Admin's input
+1. Default from Tower/AWX
+2. Default from Squest value
+3. User's input
+4. Admin's input
 
 !!! note
 
     When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the Tower/AWX survey field options.
 
-#### Hard coded string
+**Hard coded string**
 
 <table>
     <tr>
@@ -246,7 +378,7 @@ Default value precedence:
     </tr>
 </table>
 
-#### With spec variable
+**With spec variable**
 
 Jinja templating can be used to load a value with the content of the instance spec or user spec.
 Use variables `spec` and/or `user_spec` like with Ansible.
@@ -283,7 +415,7 @@ Use variables `spec` and/or `user_spec` like with Ansible.
     </tr>
 </table>
 
-#### String and spec variable
+**String and spec variable**
 
 Like with Ansible, a string can be concatenated to a spec variable.
 
@@ -311,7 +443,7 @@ Like with Ansible, a string can be concatenated to a spec variable.
     </tr>
 </table>
 
-#### Spec dict access
+**Spec dict access**
 
 <table>
     <tr>
@@ -339,7 +471,7 @@ Like with Ansible, a string can be concatenated to a spec variable.
     </tr>
 </table>
 
-#### Spec list access
+**Spec list access**
 
 <table>
     <tr>
@@ -365,7 +497,7 @@ Like with Ansible, a string can be concatenated to a spec variable.
     </tr>
 </table>
 
-#### Jinja filters
+**Jinja filters**
 
 Jinja filters can also be used to transform spec variables.
 
@@ -394,38 +526,3 @@ For example, the 'multiple select multiple' field type requires a list of string
         <td>linux\nwindows</td>
     </tr>
 </table>
-
-## Extra vars
-
-Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
-
-These extra variables are added automatically when processing a request and so executing a job template.
-
-If an extra variable is set with the same name in different places, the variable will be overridden following a certain order.
-Squest will apply the following variable precedence:
-
-```mermaid
-flowchart LR
-    survey(Request survey) --> Tower(Tower) --> Service(Service)  --> Operation(Operation)
-```
-
-## External support URL
-
-Squest has an integrated support management. End user can open a support ticket on available instances.
-An external url can be defined as support tool in each service configuration. This allows to configure for example a redirection to services like GitHub issues or Jira. 
-
-The external support URL support jinja templating to insert the current instance metadata as query parameters.
-
-E.g: 
-```
-http://my_external_tool.domain.local/?instance_name={{ instance.name }}?instance_id={{ instance.id }}?vm_os={{ instance.spec.vm_os }}
-```
-
-Example with [Github issue query parameters](https://docs.github.com/en/enterprise-server@3.1/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-url-query):
-```
-https://github.com/HewlettPackard/squest/issues/new?title=Templated+Github+issue&body=Instance%3A+{{ instance.name }}
-```
-
-!!! note
-
-    Special characters need to be converted into a format that can be transmitted over the Internet. URLs can only be sent over the Internet using the ASCII character-set.

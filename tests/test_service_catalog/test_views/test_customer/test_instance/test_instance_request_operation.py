@@ -53,6 +53,20 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEqual(403, response.status_code)
 
+    def test_customer_cannot_request_admin_operation(self):
+        # set an operation to be admin only
+        self.update_operation_test.is_admin_operation = True
+        self.update_operation_test.save()
+        args = {
+            'instance_id': self.test_instance.id,
+            'operation_id': self.update_operation_test.id
+        }
+        data = {'text_variable': 'my_var'}
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
+        self.client.force_login(user=self.standard_user)
+        response = self.client.post(url, data=data)
+        self.assertEqual(403, response.status_code)
+
     def test_cannot_request_non_available_instance(self):
         for state in [InstanceState.PENDING, InstanceState.PROVISIONING, InstanceState.DELETING, InstanceState.DELETED]:
             self.test_instance.state = state

@@ -76,6 +76,8 @@ def instance_request_new_operation(request, instance_id, operation_id):
     operation = get_object_or_404(Operation, id=operation_id)
     allowed_operations = Operation.objects.filter(service=instance.service, enabled=True,
                                                   type__in=[OperationType.UPDATE, OperationType.DELETE])
+    if operation.is_admin_operation and not request.user.is_superuser:
+        raise PermissionDenied
     if operation not in allowed_operations:
         raise PermissionDenied
     parameters = {
@@ -243,8 +245,13 @@ def support_message_edit(request, instance_id, support_id, message_id):
 def instance_details(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
     supports = Support.objects.filter(instance=instance)
-    operations = Operation.objects.filter(service=instance.service,
-                                          type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True)
+    if request.user.is_superuser:
+        operations = Operation.objects.filter(service=instance.service,
+                                              type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True)
+    else:
+        operations = Operation.objects.filter(service=instance.service,
+                                              type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True,
+                                              is_admin_operation=False)
     requests = Request.objects.filter(instance=instance)
     operations_table = OperationTableFromInstanceDetails(operations)
     requests_table = RequestTable(requests,

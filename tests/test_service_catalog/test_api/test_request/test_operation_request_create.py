@@ -41,6 +41,15 @@ class TestApiOperationRequestCreate(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(request_count, Request.objects.count())
 
+    def test_customer_cannot_create_an_admin_operation(self):
+        self.client.force_login(self.standard_user)
+        self.update_operation_test.is_admin_operation = True
+        self.update_operation_test.save()
+        request_count = Request.objects.count()
+        response = self.client.post(self.url, data=self.data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(request_count, Request.objects.count())
+
     def test_cannot_create_on_provisioning_operation(self):
         self.kwargs = {
             "instance_id": self.test_instance.id,
