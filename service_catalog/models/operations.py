@@ -34,6 +34,7 @@ class Operation(Model):
         related_query_name='operation'
     )
     extra_vars = JSONField(default=dict, blank=True)
+    is_admin_operation = BooleanField(default=False, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.service})"

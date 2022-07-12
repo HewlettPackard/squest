@@ -31,11 +31,10 @@ If you want an idea of what you can do with Squest, click on the image below.
 
 - Service catalog:
   - Add services to your catalog based on job templates you have in your Tower/AWX instance
-  - Manage requests for services (review, update and approve)
-  - Provision a service
+  - Manage requests for services (review, update, approve and process)
   - Manage lifecycle of each instance of a service
-  - Support page
-  - Billing group of resource consumption
+  - Integrated of external support page
+  - Link billing group and track resource consumption
   - Quota
   - Auto approval
 - Reserved resource tracking

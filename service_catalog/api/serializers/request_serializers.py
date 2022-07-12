@@ -1,5 +1,6 @@
 from json import dumps
 from guardian.shortcuts import get_objects_for_user
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField, ValidationError
@@ -113,6 +114,8 @@ class OperationRequestSerializer(ModelSerializer):
             allowed_operations = Operation.objects.filter(enabled=True,
                                                           type__in=[OperationType.UPDATE, OperationType.DELETE])
             self.target_operation = get_object_or_404(allowed_operations, id=operation_id)
+            if self.target_operation.is_admin_operation and not self.request.user.is_superuser:
+                raise PermissionDenied
             self.target_instance = get_object_or_404(
                 get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=instance_id)
 
