@@ -5,7 +5,6 @@ from django.urls import reverse
 
 from profiles.forms.notification_filter_forms import NotificationFilterForm
 from profiles.models import NotificationFilter
-from service_catalog.models import Service
 
 
 @login_required
@@ -25,8 +24,15 @@ def notification_filter_create(request):
     else:
         form = NotificationFilterForm(request.user)
 
-    context = {'title': "Add a new notification filter", 'form': form, 'action': 'create',
-               'form_header': 'profiles/forms/form_headers/notification_filter_header.html'}
+    context = {
+        'breadcrumbs': [
+            {'text': 'Profile', 'url': reverse('profiles:profile') + '#notifications'},
+            {'text': 'Create a new notification filter', 'url': ""},
+        ],
+        'form': form,
+        'action': 'create',
+        'form_header': 'profiles/forms/form_headers/notification_filter_header.html'
+    }
     return render(request, 'generics/generic_form.html', context)
 
 
@@ -46,10 +52,14 @@ def notification_filter_edit(request, notification_filter_id):
     if form.is_valid():
         form.save()
         return redirect(reverse('profiles:profile') + '#notifications')
-    breadcrumbs = [
-        {'text': 'Quota', 'url': reverse('profiles:profile') + '#notifications'},
-        {'text': notification_filter.name, 'url': ""},
-    ]
-    context = {'form': form, 'notification_filter': notification_filter,
-               'object_name': "notification_filter", 'breadcrumbs': breadcrumbs, 'action': "edit"}
+    context = {
+        'form': form,
+        'notification_filter': notification_filter,
+        'object_name': "notification_filter",
+        'breadcrumbs': [
+            {'text': 'Profile', 'url': reverse('profiles:profile') + '#notifications'},
+            {'text': notification_filter.name, 'url': ""},
+        ],
+        'action': "edit"
+    }
     return render(request, 'generics/generic_form.html', context)

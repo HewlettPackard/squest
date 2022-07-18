@@ -15,7 +15,7 @@ On Tower, go in Application menu and create a new app with the following configu
 
 On Tower/AWX:
 
-- Go in your **User Details** page (top right corner), go into the tokens section
+- Go in your **Profile** page (top right corner), go into the tokens section
 - Click add button
 - Search for the "squest" application created previously and select it
 - Give a scope "write"

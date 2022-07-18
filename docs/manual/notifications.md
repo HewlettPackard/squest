@@ -6,7 +6,7 @@
 
 ## Enable or disable notifications
 
-By default, notifications are enabled. You can disable all notifications from your profile page by accessing the user details page in the top right corner of the Squest application.
+By default, notifications are enabled. You can disable all notifications from your profile page by accessing the profile page in the top right corner of the Squest application.
 
 !!! note
 

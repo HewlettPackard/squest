@@ -10,7 +10,7 @@ def profile(request):
     tokens = Token.objects.filter(user=request.user)
     context = {
         'tokens': tokens,
-        'title': 'User details',
+        'title': 'Profile',
         'table': NotificationFilterTable(request.user.profile.notification_filters.all()),
         'app_name': 'profiles',
         'object_name': 'notification_filter'
