@@ -32,19 +32,19 @@
                     {% endif %}
                 </div>
             {% else %}
-                {% if not field.is_hidden %}
-                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    {% if not field.is_hidden %}
                         <label for="{{ field.id_for_label }}" class="control-label">
                             {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                         </label>
-                        <div class="col-sm-12">
-                            {{ field }}
-                            {% if field.help_text %}
-                                <small class="form-text text-muted">{{ field.help_text|safe }}</small>
-                            {% endif %}
-                        </div>
+                    {% endif %}
+                    <div class="col-sm-12">
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             {% endif %}
         {% endfor %}
 

@@ -33,8 +33,11 @@ def send_email(subject, plain_text, html_template, from_email, receivers=None, b
     """
     Pass-through method so we use Celery async
     """
+    if not receivers and not bcc and not reply_to:
+        logger.info(f"[send_email] no receivers for the email. Email not sent.")
+        return
     logger.info(f"[send_email] celery task executed - subject: '{subject}',"
-                f" from_email: {from_email},"
+                f" from_email: '{from_email}',"
                 f" receivers: '{receivers}',"
                 f" reply_to: '{reply_to}',"
                 f" bcc: '{bcc}'")

@@ -12,7 +12,7 @@ EMAIL_TITLE_PREFIX = "[Squest]"
 
 
 def _add_user_in_user_list(user, user_list):
-    if user.profile.notification_enabled and user.email and user.email not in user_list:
+    if user.email and user.profile.notification_enabled and user.email not in user_list:
         user_list.append(user.email)
     return user_list
 
@@ -36,7 +36,7 @@ def _get_headers(subject):
     return headers
 
 
-def _get_admin_emails(service):
+def _get_admin_emails(instance=None, request=None):
     """
     Return a list of admin (is_staff) email if notification is enabled and target service subscribed
     :return:
@@ -45,21 +45,20 @@ def _get_admin_emails(service):
     # create a list of email
     email_admins = list()
     for admin in admins:
-        if admin.profile.notification_enabled:
-            if service in admin.profile.subscribed_services_notification.all():
-                email_admins.append(admin.email)
+        if admin.email and admin.profile.notification_enabled and admin.profile.is_notification_authorized(instance, request):
+            email_admins.append(admin.email)
     return email_admins
 
 
 def _get_receivers_for_request_message(request_message):
-    receiver_email_list = _get_admin_emails(service=request_message.request.instance.service)
+    receiver_email_list = _get_admin_emails(instance=request_message.request.instance, request=request_message.request)
     receiver_email_list = _add_user_in_user_list(request_message.request.user, receiver_email_list)
     receiver_email_list = _remove_user_in_user_list(request_message.sender, receiver_email_list)
     return receiver_email_list
 
 
 def _get_receivers_for_support_message(support_message):
-    receiver_email_list = _get_admin_emails(service=support_message.support.instance.service)
+    receiver_email_list = _get_admin_emails(instance=support_message.support.instance)
     receiver_email_list = _add_user_in_user_list(support_message.support.instance.spoc, receiver_email_list)
     receiver_email_list = _remove_user_in_user_list(support_message.sender, receiver_email_list)
     return receiver_email_list
@@ -99,13 +98,12 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     if target_request.approval_step:
         receiver_email_list = target_request.approval_step.get_approvers_emails()
     if receiver_email_list is None:
-        receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
-    if target_request.user.profile.notification_enabled:
+        receiver_email_list = _get_admin_emails(instance=target_request.instance, request=target_request)  # email sent to all admins
+    if target_request.user.profile.notification_enabled and target_request.user.email:
         receiver_email_list.append(target_request.user.email)  # email sent to the requester
-    if len(receiver_email_list) > 0:
-        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               bcc=receiver_email_list,
-                               headers=_get_headers(subject))
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=receiver_email_list,
+                           headers=_get_headers(subject))
 
 
 def send_mail_new_support_message(message):
@@ -118,10 +116,9 @@ def send_mail_new_support_message(message):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_support_message(message)
-    if len(receiver_email_list) > 0:
-        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               bcc=receiver_email_list,
-                               headers=_get_headers(subject))
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=receiver_email_list,
+                           headers=_get_headers(subject))
 
 
 def send_mail_support_is_closed(support):
@@ -134,10 +131,9 @@ def send_mail_support_is_closed(support):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = [intervenant.email for intervenant in support.get_all_intervenants()]
-    if len(receiver_email_list) > 0:
-        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               bcc=receiver_email_list,
-                               headers=_get_headers(subject))
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=receiver_email_list,
+                           headers=_get_headers(subject))
 
 
 def send_mail_new_comment_on_request(message):
@@ -150,10 +146,9 @@ def send_mail_new_comment_on_request(message):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_request_message(message)
-    if len(receiver_email_list) > 0:
-        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               bcc=receiver_email_list,
-                               headers=_get_headers(subject))
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=receiver_email_list,
+                           headers=_get_headers(subject))
 
 
 def send_email_request_canceled(target_request, user_applied_state=None, request_owner_user=None):
@@ -176,10 +171,9 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
                'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(service=target_request.instance.service)  # email sent to all admins
-    if request_owner_user.profile.notification_enabled:
+    receiver_email_list = _get_admin_emails(request=target_request)  # email sent to all admins
+    if request_owner_user.profile.notification_enabled and request_owner_user.email:
         receiver_email_list.append(request_owner_user.email)  # email sent to the requester
-    if len(receiver_email_list) > 0:
-        tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
-                               bcc=receiver_email_list,
-                               headers=_get_headers(subject))
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=receiver_email_list,
+                           headers=_get_headers(subject))
