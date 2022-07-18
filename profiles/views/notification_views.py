@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
-from profiles.forms.notification_forms import NotificationServiceForm
+from profiles.forms.notification_filter_forms import NotificationFilterForm
+from profiles.models import NotificationFilter
 from service_catalog.models import Service
 
 
@@ -14,22 +16,40 @@ def notification_switch(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def notification_add_service(request):
+def notification_filter_create(request):
     if request.method == 'POST':
-        form = NotificationServiceForm(request.user, request.POST)
+        form = NotificationFilterForm(request.user, request.POST)
         if form.is_valid():
             form.save()
             return redirect(reverse('profiles:profile') + '#notifications')
     else:
-        form = NotificationServiceForm(request.user)
+        form = NotificationFilterForm(request.user)
 
-    context = {'title': "Subscribe to a service notifications", 'form': form, 'action': 'create'}
+    context = {'title': "Add a new notification filter", 'form': form, 'action': 'create',
+               'form_header': 'profiles/forms/form_headers/notification_filter_header.html'}
     return render(request, 'generics/generic_form.html', context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def notification_remove_service(request, service_id):
-    service = get_object_or_404(Service, id=service_id)
-    request.user.profile.subscribed_services_notification.remove(service)
-    request.user.save()
+def notification_filter_delete(request, notification_filter_id):
+    notification_filter = get_object_or_404(NotificationFilter, id=notification_filter_id)
+    if notification_filter in request.user.profile.notification_filters.all():
+        notification_filter.delete()
+    else:
+        raise PermissionDenied
     return redirect(reverse('profiles:profile') + '#notifications')
+
+
+def notification_filter_edit(request, notification_filter_id):
+    notification_filter = get_object_or_404(NotificationFilter, id=notification_filter_id)
+    form = NotificationFilterForm(request.user, request.POST or None, instance=notification_filter)
+    if form.is_valid():
+        form.save()
+        return redirect(reverse('profiles:profile') + '#notifications')
+    breadcrumbs = [
+        {'text': 'Quota', 'url': reverse('profiles:profile') + '#notifications'},
+        {'text': notification_filter.name, 'url': ""},
+    ]
+    context = {'form': form, 'notification_filter': notification_filter,
+               'object_name': "notification_filter", 'breadcrumbs': breadcrumbs, 'action': "edit"}
+    return render(request, 'generics/generic_form.html', context)

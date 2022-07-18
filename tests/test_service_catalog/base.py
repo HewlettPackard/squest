@@ -18,6 +18,7 @@ class BaseTest(TestCase):
         self.common_password = "p@ssw0rd"
         # staff user (default user for all tests)
         self.superuser = User.objects.create_superuser('admi1234', 'admin@hpe.com', self.common_password)
+        self.superuser_2 = User.objects.create_superuser('admin_2', 'admin_2@hpe.com', self.common_password)
         self.client.login(username=self.superuser.username, password=self.common_password)
         # standard user
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)

@@ -34,18 +34,15 @@ class TestMailUtils(BaseTest):
         # Test 1 - admin disabled notification
         self.superuser.profile.notification_enabled = False
         self.superuser.save()
-        self.assertEquals(0, len(_get_admin_emails(service=self.service_test)))
+        self.superuser_2.profile.notification_enabled = False
+        self.superuser_2.save()
+        self.assertEquals(0, len(_get_admin_emails(request=self.test_request)))
 
-        # Test 2 - admin enabled notification but no service subscribed
+        # Test 2 - admin enabled notification
         self.superuser.profile.notification_enabled = True
         self.superuser.save()
-        self.assertEquals(0, len(_get_admin_emails(service=self.service_test)))
 
-        # Test 3 - admin enabled notification and service subscribed
-        self.superuser.profile.notification_enabled = True
-        self.superuser.profile.subscribed_services_notification.add(self.service_test)
-        self.superuser.save()
-        self.assertEquals(1, len(_get_admin_emails(service=self.service_test)))
+        self.assertEquals(1, len(_get_admin_emails(instance=self.test_instance)))
 
     def test_get_headers(self):
         expected_list = ["Message-ID", "In-Reply-To", "References"]
@@ -67,7 +64,6 @@ class TestMailUtils(BaseTest):
 
     def test_get_receivers_for_support_message(self):
         self.superuser.profile.notification_enabled = True
-        self.superuser.profile.subscribed_services_notification.add(self.service_test)
         new_support = Support.objects.create(title="title",
                                              instance=self.test_instance,
                                              opened_by=self.standard_user)
@@ -84,7 +80,6 @@ class TestMailUtils(BaseTest):
 
     def test_get_receivers_for_request_message(self):
         self.superuser.profile.notification_enabled = True
-        self.superuser.profile.subscribed_services_notification.add(self.service_test)
         request_message = RequestMessage.objects.create(sender=self.standard_user, content="message content",
                                                         request=self.test_request)
         receivers = _get_receivers_for_request_message(request_message)

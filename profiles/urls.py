@@ -51,9 +51,12 @@ urlpatterns = [
 
     # notifications
     path('notification/switch/', views.notification_switch, name='notification_switch'),
-    path('notification/add_service/', views.notification_add_service, name='notification_add_service'),
-    path('notification/remove_service/<int:service_id>/', views.notification_remove_service,
-         name='notification_remove_service'),
+    path('notification/notification_filter/create/', views.notification_filter_create,
+         name='notification_filter_create'),
+    path('notification/notification_filter/<int:notification_filter_id>/delete/', views.notification_filter_delete,
+         name='notification_filter_delete'),
+    path('notification/notification_filter/<int:notification_filter_id>/edit/', views.notification_filter_edit,
+         name='notification_filter_edit'),
 
     # team URLs
     path('team/<int:team_id>/users/update/', views.user_in_team_update, name='user_in_team_update'),
@@ -83,4 +86,3 @@ urlpatterns = [
          name='quota_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
