@@ -416,9 +416,8 @@ GUARDIAN_RAISE_403 = True
 # SQUEST VERSION
 # -----------------------------------------
 repo = git.Repo(search_parent_directories=True)
-sha = str(repo.head.object.hexsha)[0:6]
-SQUEST_VERSION = f"{__version__} - {sha}"
-print(f"SQUEST_VERSION: {SQUEST_VERSION}")
+SQUEST_COMMIT_SHA6 = str(repo.head.object.hexsha)[0:6]
+print(f"SQUEST_VERSION: {__version__} - {SQUEST_COMMIT_SHA6}")
 
 # -----------------------------------------
 # Metrics

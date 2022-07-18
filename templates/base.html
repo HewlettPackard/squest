@@ -70,8 +70,9 @@
 <!-- Footer -->
 {% if 'login' not in request.path %}
     <footer class="main-footer">
+        {% load version %}
         <div class="d-sm-inline justify-content-around">
-            <a class="text-secondary" href="https://hewlettpackard.github.io/squest/latest"><i
+            <a class="text-secondary" href="https://hewlettpackard.github.io/squest/{% squest_version %}"><i
                     class="fas fa-book"></i>
                 Docs</a>
             <a class="text-secondary" href="{% url 'schema-swagger-ui' %}"><i class="fas fa-laptop-code"></i>
@@ -83,8 +84,7 @@
                     Squest community chat</a>
                 </div>
             {% endif %}
-        {% load version %}
-        <div class="float-right d-none d-sm-inline">v{% app_version %}</div>
+        <div class="float-right d-none d-sm-inline">v{% squest_version %} - {% commit_sha %}</div>
     </footer>
 {% endif %}
 <!-- Bootstrap JS -->
