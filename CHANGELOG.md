@@ -1,3 +1,24 @@
+# 1.7.0 2022-07-13
+
+## Internal
+
+- Bump python version to 3.10
+
+## Fix
+
+- Global hook was not working
+- Fix ajax call when synchronizing job template. Number of template was not updated
+
+## Feature
+
+- Notification filters
+- Extra vars on Tower server, service and operation
+- Add maintenance mode
+
+## Enhancement
+
+- Operations can be limited to administrators only
+
 # 1.6.1 2022-07-04
 
 ## Fix

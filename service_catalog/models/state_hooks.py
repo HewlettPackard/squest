@@ -44,7 +44,7 @@ class GlobalHook(Model):
     def clean(self):
         if self.operation and not self.service:
             raise ValidationError({'service': _("Service cannot be null if operation is set.")})
-        if self.service and self.operation and not self.service.operations.filter(id=self.operation).exists():
+        if self.service and self.operation and not self.service.operations.filter(id=self.operation.id).exists():
             raise ValidationError({'operation': _(f"Operation must be in the service({','.join(operation.name for operation in self.service.operations.all())}).")})
         if self.extra_vars is None:
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
