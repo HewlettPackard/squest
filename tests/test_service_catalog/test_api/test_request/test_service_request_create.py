@@ -96,6 +96,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             keys = list(response.data.keys())
             keys.sort()
             self.assertEqual(self.expected, keys)
+            self.assertTrue(isinstance(Request.objects.latest('id').fill_in_survey, dict))
 
     def test_can_create_with_comment(self):
         self.client.force_login(user=self.standard_user)
