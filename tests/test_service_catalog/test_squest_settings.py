@@ -4,6 +4,7 @@ from rest_framework import status
 
 from service_catalog.models.squest_settings import SquestSettings
 from tests.test_service_catalog.base import BaseTest
+from rest_framework.test import APIClient
 
 CACHES = {
         'default': {
@@ -24,7 +25,9 @@ class TestSquestSettings(BaseTest):
 
         # from the api
         self.url = reverse('api_instance_list')
-        response = self.client.get(self.url, format='json')
+        api_client = APIClient()
+        api_client.force_authenticate(user=self.superuser)
+        response = api_client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # as end user I have no longer access to Squest
@@ -33,6 +36,7 @@ class TestSquestSettings(BaseTest):
         self.assertEqual(503, response.status_code)
 
         # from the api
+        api_client.force_authenticate(user=self.standard_user)
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
 
