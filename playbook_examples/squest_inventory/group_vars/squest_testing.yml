@@ -1,7 +1,9 @@
 ---
 # playbook variable
-squest_token: SQUEST_TOKEN
+squest_token: "xxxxxxxxxxxaaaaaeeee1234"
 squest_bearer_token: "Bearer {{ squest_token }}"
 
 # Resource tracking : resource group ID to create a new resource when provisioning the service (make sure to have a resource group with ID=1)
 resource_group_file_id: 1
+
+squest_api: "http://127.0.0.1:8000/api"
