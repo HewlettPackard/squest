@@ -1,4 +1,4 @@
-from json import dumps
+from json import dumps, loads
 from guardian.shortcuts import get_objects_for_user
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
@@ -75,8 +75,7 @@ class ServiceRequestSerializer(ModelSerializer):
 
         new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
                                                spoc=self.request.user)
-        fill_in_survey = dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder)
-        # create the request
+        fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
         new_request = Request.objects.create(instance=new_instance,
                                              operation=self.create_operation,
                                              fill_in_survey=fill_in_survey,
