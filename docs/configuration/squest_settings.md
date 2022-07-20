@@ -208,6 +208,12 @@ Django language. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#langu
 
 Time zone of the server that host Squest service. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-TIME_ZONE)
 
+### DATE_FORMAT
+
+**Default:** `%d %b, %Y  %H:%M`
+
+Change the format of all date in Squest UI. Based on Python [strftime](https://strftime.org/).
+
 ## Plugins
 
 ### FIELD_VALIDATOR_PATH
