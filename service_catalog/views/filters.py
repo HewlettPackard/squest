@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
@@ -152,3 +153,8 @@ def pretty_json(value):
 def addstr(arg1, arg2):
     """concatenate arg1 & arg2"""
     return str(arg1) + str(arg2)
+
+
+@register.filter(name="squest_date_format")
+def squest_date_format(date_to_format):
+    return date_to_format.strftime(settings.DATE_FORMAT)
