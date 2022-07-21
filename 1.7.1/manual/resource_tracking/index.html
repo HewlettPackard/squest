@@ -1,0 +1,1243 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
+    
+    
+      
+        <title>Resource tracking - Squest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4cae4f">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="deep-orange">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#resource-tracking" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Squest" class="md-header__button md-logo" aria-label="Squest" data-md-component="logo">
+      
+  <img src="../../images/squest_logo_white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Squest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Resource tracking
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HewlettPackard/squest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HewlettPackard/squest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Squest" class="md-nav__button md-logo" aria-label="Squest" data-md-component="logo">
+      
+  <img src="../../images/squest_logo_white.png" alt="logo">
+
+    </a>
+    Squest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HewlettPackard/squest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HewlettPackard/squest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Installation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Installation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Installation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/ldap/" class="md-nav__link">
+        LDAP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/tls/" class="md-nav__link">
+        TLS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/backup/" class="md-nav__link">
+        Backup
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/upgrade/" class="md-nav__link">
+        Upgrade
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Configuration
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Configuration" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Configuration
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/squest_settings/" class="md-nav__link">
+        Squest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/tower_settings/" class="md-nav__link">
+        Tower
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Manual
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Manual" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Manual
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service_catalog/" class="md-nav__link">
+        Service catalog
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Resource tracking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Resource tracking
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#concept" class="md-nav__link">
+    Concept
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-objects" class="md-nav__link">
+    Generic objects
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic objects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-pool" class="md-nav__link">
+    Resource pool
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group" class="md-nav__link">
+    Resource group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource" class="md-nav__link">
+    Resource
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-layer-example" class="md-nav__link">
+    Multiple layer example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#link-service-catalog-instances-to-resources" class="md-nav__link">
+    Link service catalog instances to resources
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tags" class="md-nav__link">
+    Tags
+  </a>
+  
+    <nav class="md-nav" aria-label="Tags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-add-multiple-tags" class="md-nav__link">
+    How to add multiple tags
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#over-commitment" class="md-nav__link">
+    Over commitment
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../settings/" class="md-nav__link">
+        Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quota/" class="md-nav__link">
+        Quota
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../teams/" class="md-nav__link">
+        Teams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        REST API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        Prometheus metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notifications/" class="md-nav__link">
+        Notifications
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Development
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Development" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Development
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/dev-env/" class="md-nav__link">
+        Setup a dev env
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/request-state-machine/" class="md-nav__link">
+        Request state machine
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/instance-state-machine/" class="md-nav__link">
+        Instance state machine
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/db-erd/" class="md-nav__link">
+        Database ERD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_5" type="checkbox" id="__nav_5_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_5">
+          Plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Plugins" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_5">
+          <span class="md-nav__icon md-icon"></span>
+          Plugins
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/plugins/validators/" class="md-nav__link">
+        Field validator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Contribute
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contribute" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Contribute
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribute/code/" class="md-nav__link">
+        Code
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribute/documentation/" class="md-nav__link">
+        Documentation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#concept" class="md-nav__link">
+    Concept
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-objects" class="md-nav__link">
+    Generic objects
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic objects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-pool" class="md-nav__link">
+    Resource pool
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group" class="md-nav__link">
+    Resource group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource" class="md-nav__link">
+    Resource
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-layer-example" class="md-nav__link">
+    Multiple layer example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#link-service-catalog-instances-to-resources" class="md-nav__link">
+    Link service catalog instances to resources
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tags" class="md-nav__link">
+    Tags
+  </a>
+  
+    <nav class="md-nav" aria-label="Tags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-add-multiple-tags" class="md-nav__link">
+    How to add multiple tags
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#over-commitment" class="md-nav__link">
+    Over commitment
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/HewlettPackard/squest/edit/master/docs/manual/resource_tracking.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="resource-tracking">Resource tracking</h1>
+<p>Nowadays, IT infrastructures are composed of multiple layers. Physical servers, virtual machines, containers, storage,...
+Each layer is consumer or a producer of resources of another layer.
+As an IT administrator, we need to monitor resource consumption of a top layers to be sure that we can provide 
+services on underlying layers. </p>
+<p>The resource tracking feature allows to monitor reserved resources and highlight available resource in an infrastructure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature is not a real time monitoring. It does not connect to you infrastructure to check the real 
+consumption but help to follow what resources have been reserved to avoid overallocation when accepting new request 
+from the service catalog.</p>
+</div>
+<h2 id="concept">Concept</h2>
+<p>To introduce the concept of resources, lets take the example of a virtualization stack like a VMware vCenter.</p>
+<p>The stack is composed of physical servers that <strong>produce</strong> resources like <code>CPU</code> and <code>memory</code> to the hypervisor.
+Then we can create VMs that will <strong>consume</strong> those resources as virtual CPU(<code>vCPU</code>) and <code>memory</code>.
+The hypervisor is then a <strong>resource pool</strong> with <strong>producers</strong> and <strong>consumers</strong> of resources.</p>
+<p>If we want to add more VMs that <strong>consume</strong> resources from the hypervisor resource pool, we need to be sure we have enough physical 
+servers that <strong>produce</strong> into it.  </p>
+<p>This stack could be drawn like the following with <code>resource group</code>(blue), <code>resource pool</code>(orange) and <code>resources</code>(green):</p>
+<p><img alt="hypervisor_example" src="../../images/hypervisor.png" /></p>
+<p>In this example, we have:</p>
+<ul>
+<li>two <strong>resources</strong> of the same kind(server) that <strong>produce</strong> resources into the <strong>resource pool</strong> <code>hypervisor</code></li>
+<li>two <strong>resources</strong> of the same kind(VM) that <strong>consume</strong> resources from the <strong>resource pool</strong> <code>hypervisor</code></li>
+</ul>
+<p>As server <strong>resources</strong> are of the same kind and <strong>produce</strong> in the same pool on the same <strong>attributes</strong>, they belong to the same <strong>resource group</strong> <code>servers</code>.</p>
+<p>As VM <strong>resources</strong> are of the same kind and <strong>consume</strong> in the same pool on the same <strong>attributes</strong>, they belong to the same <strong>resource group</strong> <code>VMs</code>.</p>
+<p>The previous drawing could be then simplified by just showing <strong>resource groups</strong> and <strong>resource pool</strong>:</p>
+<p><img alt="hypervisor_resource_group" src="../../images/resource_group_hypervisor.png" /></p>
+<h2 id="generic-objects">Generic objects</h2>
+<h3 id="resource-pool">Resource pool</h3>
+<p>A <code>resource pool</code> is a generic object composed by <code>attributes</code>.
+Resource pool attributes have <strong>producers</strong> and <strong>consumers</strong> which are attributes from <code>resource groups</code>.</p>
+<p>The sum of all <code>resource group attributes</code> that <strong>produce</strong> in the same <code>resource pool attribute</code> give a <strong>total produced</strong>.</p>
+<p>The sum of all <code>resource group attributes</code> that <strong>consume</strong> in the same <code>resource pool attribute</code> give a <strong>total consumed</strong>.</p>
+<p>The difference between <strong>total produced</strong> and <strong>total consumed</strong> gives the amount of <strong>available resources</strong> for a particular <code>resource pool attribute</code>.</p>
+<p><img alt="consumption" src="../../images/consumption.png" /></p>
+<h3 id="resource-group">Resource group</h3>
+<p>A <code>resource group</code> is a definition of a resource of same kind, composed of attributes that may <strong>produce</strong> or 
+<strong>consume</strong> from a particular <code>resource pool</code>.</p>
+<p>Example of resource group:</p>
+<ul>
+<li>Bare metal servers</li>
+<li>Physical disks</li>
+<li>VMware VMs</li>
+<li>K8S namespaces</li>
+<li>Openshift projects</li>
+<li>Openstack tenants</li>
+</ul>
+<p>Resource groups also have text attributes to provide some additional information.</p>
+<h3 id="resource">Resource</h3>
+<p>A resource is an instance of a <code>resource group</code> definition.
+Resources can be created, updated or deleted from the Squest UI or API.
+Updating resources in a resource group impact the total amount of produced or consumed resource on pool's attributes.</p>
+<h2 id="multiple-layer-example">Multiple layer example</h2>
+<p>In this example we do track the consumption of an orchestrator of container like Kubernetes or Openshift. 
+Namespaces (or projects in Openshift world) are a way to divide cluster resources between multiple users by using 
+resource quota.</p>
+<p>Openshift and Kubernetes frameworks are commonly deployed in a virtual machines. 
+So we retrieve layers from previous example with bare metal servers that produce resources in an hypervisor.</p>
+<p>Orchestrators are usually composed of 2 kind of node: Masters and Workers.
+Master VMs are used by the infrastructure itself and workers for user's workloads, aka namespaces.</p>
+<p>As namespaces are only executed in "worker" nodes, we need to declare 2 different <strong>resource group</strong>: </p>
+<ul>
+<li>Master VMs </li>
+<li>Worker VMs </li>
+</ul>
+<p>The aggregation of resources of all workers compose the <strong>resource pool</strong> of available resources that the <code>namespaces</code> 
+<strong>resource group</strong> will consume.</p>
+<p>The complete resource tracking definition would look like the following:</p>
+<p><img alt="openshift_example" src="../../images/openshift_example.png" /></p>
+<p>With this definition, we are able to determine there is enough available resources in pools to handle underlying objects.</p>
+<p>Adding a new namespace in the last <strong>resource group</strong> <code>namespaces</code> will generate more consumption on the <code>K8S</code> 
+<strong>resource pool</strong>. If this last pool is lacking of resources, adding more worker node in the <code>worker VMs</code> <strong>resource 
+group</strong> will be required, generating consumption on upper layers and so on...</p>
+<h2 id="link-service-catalog-instances-to-resources">Link service catalog instances to resources</h2>
+<p>Resources can be created from the API. It allows to create automatically a new resource in a resource group when 
+something is provisioned from the service catalog.</p>
+<p>In the example below, the playbook executed in Tower/AWX would have created a VM. 
+At the end of the process we call the squest API to instantiate a resource in the right resource group to reflect the 
+consumption.
+We link as well the pending instance(given by <code>squest.instance.id</code>) to this resource via the flag <code>service_catalog_instance</code>.
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add resource in resource group example</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span><span class="w"></span>
+<span class="w">  </span><span class="nt">connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w"></span>
+<span class="w">  </span><span class="nt">gather_facts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">squest_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744</span><span class="w"></span>
+<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">squest_api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://127.0.0.1:8000/api/&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resource_group_vm_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w"></span>
+<span class="w">    </span><span class="nt">squest</span><span class="p">:</span><span class="w"> </span><span class="c1"># this would be the sent data from squest as extra vars</span><span class="w"></span>
+<span class="w">      </span><span class="nt">instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span><span class="w"></span>
+<span class="w">        </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROVISIONING</span><span class="w"></span>
+<span class="w">    </span><span class="nt">vm_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test-vm&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">vm_vcpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
+<span class="w">    </span><span class="nt">vm_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span><span class="w"></span>
+<span class="w">    </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My</span><span class="nv"> </span><span class="s">description&quot;</span><span class="w"></span>
+
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Print info sent by Squest</span><span class="w"></span>
+<span class="w">      </span><span class="nt">debug</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">var</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">squest</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># -----------------------</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># PLACE HERE ALL THE MAGIC TO CREATE THE RESOURCE</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># -----------------------</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a resource in squest</span><span class="w"></span>
+<span class="w">      </span><span class="nt">uri</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_api</span><span class="nv"> </span><span class="s">}}resource_tracker/resource_group/{{</span><span class="nv"> </span><span class="s">resource_group_vm_id</span><span class="nv"> </span><span class="s">}}/resources/&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">headers</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POST</span><span class="w"></span>
+<span class="w">        </span><span class="nt">body</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_name</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">service_catalog_instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest[&#39;instance&#39;][&#39;id&#39;]</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">attributes</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vCPU&quot;</span><span class="w"></span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_vcpu</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Memory&quot;</span><span class="w"></span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_memory</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">text_attributes</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Description&quot;</span><span class="w"></span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">desc</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">status_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">201</span><span class="w"></span>
+<span class="w">        </span><span class="nt">body_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span><span class="w"></span>
+</code></pre></div></p>
+<h2 id="tags">Tags</h2>
+<p>Tags are words that are attached to objects, such as Resource Pool or Resource Group.</p>
+<p>Tags are intended to be used to specify identifying objects that are meaningful and relevant to users. Tags can be used
+to organize and select subsets of objects. Tags can be attached to objects at creation time and subsequently added and
+modified at any time.</p>
+<h3 id="how-to-add-multiple-tags">How to add multiple tags</h3>
+<ul>
+<li>
+<p>If the input doesn't contain any commas or double quotes, it is simply treated as a space-delimited list of tag names.</p>
+</li>
+<li>
+<p>If the input does contain either of these characters:</p>
+<ul>
+<li>
+<p>Groups of characters which appear between double quotes take precedence as multi-word tags (so double quoted tag
+  names may contain commas). An unclosed double quote will be ignored.</p>
+</li>
+<li>
+<p>Otherwise, if there are any unquoted commas in the input, it will be treated as comma-delimited. If not, it will
+  be treated as space-delimited.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Examples:</p>
+<table>
+<thead>
+<tr>
+<th>Tag input string</th>
+<th>Resulting tags</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>apple ball cat</td>
+<td><code>["apple", "ball", "cat"]</code></td>
+<td>No commas, so space delimited</td>
+</tr>
+<tr>
+<td>apple, ball cat</td>
+<td><code>["apple", "ball cat"]</code></td>
+<td>Comma present, so comma delimited</td>
+</tr>
+<tr>
+<td>"apple, ball" cat dog</td>
+<td><code>["apple, ball", "cat", "dog"]</code></td>
+<td>All commas are quoted, so space delimited</td>
+</tr>
+<tr>
+<td>"apple, ball", cat dog</td>
+<td><code>["apple, ball", "cat dog"]</code></td>
+<td>Contains an unquoted comma, so comma delimited</td>
+</tr>
+<tr>
+<td>apple "ball cat" dog</td>
+<td><code>["apple", "ball cat", "dog"]</code></td>
+<td>No commas, so space delimited</td>
+</tr>
+<tr>
+<td>"apple" "ball dog</td>
+<td><code>["apple", "ball", "dog"]</code></td>
+<td>Unclosed double quote is ignored</td>
+</tr>
+</tbody>
+</table>
+<h2 id="over-commitment">Over commitment</h2>
+<p>Over commitment is available on all resource pool attributes for consumers and producers.</p>
+<p>The over commitment allows you to specify whether resource pools produce/consume more or less than expected.</p>
+<p>The most common case is CPU/vCPU:</p>
+<p>If a host has 28 core processors and hyperthreading is enabled, that host will produce 56 vCPUs (28 cores x 2 threads
+per core) then you can configure the over commitment on the CPU produced attribute to 2 to match this behavior.</p>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../service_catalog/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Service catalog" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Service catalog
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Settings" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Settings
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.6c7ad80a.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.9.2/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
