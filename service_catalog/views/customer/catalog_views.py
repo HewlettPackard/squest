@@ -9,7 +9,10 @@ from service_catalog.models import Service, OperationType
 @login_required
 def customer_service_request(request, service_id, operation_id):
     target_service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
-    create_operation_list = target_service.operations.filter(type=OperationType.CREATE)
+    create_operation_list = target_service.operations.filter(
+        enabled=True, type=OperationType.CREATE,
+        is_admin_operation__in=[False, request.user.is_superuser]
+    )
     create_operation = get_object_or_404(create_operation_list, id=operation_id)
 
     target_service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
