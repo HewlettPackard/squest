@@ -1,3 +1,18 @@
+# 1.7.1 2022-07-21
+
+## Enhancement
+
+- Date format can be set for all date from the settings
+- Merge operation name and operation color type
+
+## Fix
+
+- Fix breadcrumbs links in notification page
+- Link to the doc now target the correct current version of the running squest instance
+- fill_in_survey flag was saved as a string when created from the API
+- Fix maintenance mode was not working when used from the API
+
+
 # 1.7.0 2022-07-18
 
 ## Internal
