@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Request, Service, RequestMessage, Portfolio
+from service_catalog.models import Request, Service, RequestMessage, Portfolio, Operation
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -30,7 +30,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
                          Service.objects.filter(enabled=True, parent_portfolio=self.portfolio_test_1).count())
         self.assertEqual(len(response.context["portfolio_list"]),
                          Portfolio.objects.filter(parent_portfolio=self.portfolio_test_1.id).count())
-        
+
     def test_customer_can_list_enabled_service(self):
         self.service_test.enabled = False
         self.service_test.save()
@@ -92,3 +92,29 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.assertNotIn("request_comment", created_request.fill_in_survey.keys())
         self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
         self.assertEqual(created_request.comments.first().sender, self.standard_user)
+
+    def test_customer_cannot_create_request_on_admin_only_operation(self):
+        admin_create_operation = Operation.objects.create(name="create admin",
+                                                          service=self.service_test,
+                                                          job_template=self.job_template_test,
+                                                          is_admin_operation=True,
+                                                          process_timeout_second=20)
+        self.client.force_login(user=self.standard_user)
+        args = {
+            "service_id": self.service_test.id
+        }
+        url = reverse('service_catalog:create_operation_list', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+        args["operation_id"] = admin_create_operation.id
+        url = reverse('service_catalog:customer_service_request', kwargs=args)
+
+        data = {
+            "squest_instance_name": "instance_1",
+            "text_variable": "text_value_1",
+            "multiplechoice_variable": "text_value_2",
+            "request_comment": "here_is_a_comment"
+        }
+        response = self.client.post(url, data=data)
+        self.assertEqual(404, response.status_code)

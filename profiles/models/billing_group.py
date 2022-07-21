@@ -12,7 +12,7 @@ class BillingGroup(models.Model):
         help_text="The users in this billing group.",
         related_name="billing_groups",
         related_query_name="billing_groups",
-        verbose_name="billing groups"
+        verbose_name="Users"
     )
 
     def __str__(self):

@@ -39,9 +39,14 @@ class OperationTableFromInstanceDetails(SquestTable):
 
 class CreateOperationTable(SquestTable):
     name = TemplateColumn(template_name='custom_columns/operation_name.html')
+    is_admin_operation = TemplateColumn(template_name='custom_columns/generic_boolean.html', verbose_name="Admin only")
     request = TemplateColumn(template_name='custom_columns/create_operation_request.html', orderable=False)
+
+    def before_render(self, request):
+        if not request.user.is_superuser:
+            self.columns.hide('is_admin_operation')
 
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "request")
+        fields = ("name", "description", "is_admin_operation", "request")

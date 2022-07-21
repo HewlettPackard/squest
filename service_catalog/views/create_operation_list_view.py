@@ -17,7 +17,11 @@ class CreateOperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     filterset_class = OperationFilterLimited
 
     def get_queryset(self):
-        return Operation.objects.filter(service__id=self.kwargs.get('service_id'), enabled=True, type=OperationType.CREATE)
+        return Operation.objects.filter(
+            service__id=self.kwargs.get('service_id'),
+            enabled=True, type=OperationType.CREATE,
+            is_admin_operation__in=[False, self.request.user.is_superuser]
+        )
 
     def dispatch(self, request, *args, **kwargs):
         qs = self.get_queryset()
