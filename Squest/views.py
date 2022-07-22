@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count, QuerySet, F
+from django.db.models import Count, F
 from django.utils import timezone
 from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
@@ -9,7 +9,6 @@ from service_catalog.models.announcement import Announcement
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from service_catalog.models import Request, Instance, Support, Service
-from service_catalog.models.squest_settings import SquestSettings
 from service_catalog.models.support import SupportState
 
 
@@ -26,7 +25,7 @@ def home(request):
         context['total_user'] = User.objects.all().count()
 
         # Create a dict that represent {service, number_of_instance, submitted_request}
-        all_services = Service.objects.all()
+        all_services = Service.objects.filter(enabled=True)
         instances = Instance.objects.filter(state=InstanceState.AVAILABLE).values('service')\
             .annotate(service_name=F('service__name'))\
             .annotate(instance_count=Count('service_name'))\
