@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .views.admin.custom_link_views import CustomLinkListView
 from .views.announcement_list_view import AnnouncementListView
 from .views.approval_workflow_list_view import ApprovalWorkflowListView
 from .views.create_operation_list_view import CreateOperationListView
@@ -112,6 +113,11 @@ urlpatterns = [
     path('tool/announcement/create/', views.announcement_create, name='announcement_create'),
     path('tool/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
     path('tool/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
+
+    path('tool/custom-link/', CustomLinkListView.as_view(), name='custom_link_list'),
+    path('tool/custom-link/create/', views.custom_link_create, name='custom_link_create'),
+    path('tool/custom-link/<int:custom_link_id>/edit/', views.custom_link_edit, name='custom_link_edit'),
+    path('tool/custom-link/<int:custom_link_id>/delete/', views.custom_link_delete, name='custom_link_delete'),
 
     path('approval-workflow/', ApprovalWorkflowListView.as_view(), name='approval_workflow_list'),
     path('approval-workflow/create/', views.approval_workflow_create, name='approval_workflow_create'),

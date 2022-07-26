@@ -3,6 +3,8 @@ from django.db.models import CASCADE, ForeignKey, ManyToManyField, TextField, Ch
 from django_mysql.models import ListCharField
 from jinja2 import Template, UndefinedError
 
+from Squest.utils.ansible_when import AnsibleWhen
+
 
 class NotificationFilter(models.Model):
     name = CharField(max_length=100)
@@ -55,11 +57,4 @@ class NotificationFilter(models.Model):
             "spec": instance.spec,
             "user_spec": instance.user_spec
         }
-        template_string = "{% if " + self.when + " %}True{% else %}{% endif %}"
-        template = Template(template_string)
-        try:
-            template_rendered = template.render(context)
-            return bool(template_rendered)
-        except UndefinedError:
-            # in case of any error we just use the given URL with the jinja so the admin can see the templating error
-            return False
+        return AnsibleWhen.when_render(context=context, when_string=self.when)
