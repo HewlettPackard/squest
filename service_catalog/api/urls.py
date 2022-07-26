@@ -1,6 +1,7 @@
 from django.urls import path
 
 from service_catalog.api.views import *
+from service_catalog.api.views.custom_link_api_views import CustomLinkDetails, CustomLinkListCreate
 
 urlpatterns = [
     # admin urls
@@ -55,4 +56,6 @@ urlpatterns = [
          name='api_approval_step_details'),
     path('portfolio/', PortfolioListCreate.as_view(), name='api_portfolio_list_create'),
     path('portfolio/<int:pk>/', PortfolioDetails.as_view(), name='api_portfolio_details'),
+    path('tool/custom-link/', CustomLinkListCreate.as_view(), name='api_custom_link_list_create'),
+    path('tool/custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_custom_link_details'),
 ]

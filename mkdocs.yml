@@ -39,7 +39,7 @@ nav:
   - Manual:
     - Service catalog: manual/service_catalog.md
     - Resource tracking: manual/resource_tracking.md
-    - Settings: manual/settings.md
+    - Tools: manual/tools.md
     - Quota: manual/quota.md
     - Teams: manual/teams.md
     - REST API: manual/api.md
