@@ -73,7 +73,7 @@ def portfolio_delete(request, portfolio_id):
 
 
 @login_required
-def portfolio_list(request):
+def service_catalog_list(request):
     current_portfolio_id = request.GET.get('parent_portfolio') if request.GET.get('parent_portfolio') else None
     current_portfolio = get_object_or_404(Portfolio.objects.all(), id=current_portfolio_id) if current_portfolio_id else None
     sub_portfolio_list = Portfolio.objects.filter(parent_portfolio__id=current_portfolio_id)
@@ -85,17 +85,17 @@ def portfolio_list(request):
         'current_portfolio': current_portfolio
     }
     context['breadcrumbs'][-1]['url'] = ''
-    return render(request, "service_catalog/common/portfolio-list.html", context)
+    return render(request, "service_catalog/common/service-catalog.html", context)
 
 
 def get_portfolio_breadcrumbs(parent_portfolio):
     parent_list = Portfolio.objects.get(id=parent_portfolio).get_parents() if parent_portfolio else list()
-    breadcrumbs = [{'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')}]
+    breadcrumbs = [{'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')}]
     breadcrumbs += [{'text': parent.name, 'url': get_portfolio_list_url(parent.id)} for parent in parent_list]
     return breadcrumbs
 
 
 def get_portfolio_list_url(parent_portfolio):
     if Portfolio.objects.filter(id=parent_portfolio).exists():
-        return reverse('service_catalog:portfolio_list') + f"?parent_portfolio={parent_portfolio}"
-    return reverse('service_catalog:portfolio_list')
+        return reverse('service_catalog:service_catalog_list') + f"?parent_portfolio={parent_portfolio}"
+    return reverse('service_catalog:service_catalog_list')

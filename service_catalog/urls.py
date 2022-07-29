@@ -10,6 +10,7 @@ from .views.global_hook_list_view import GlobalHookListView
 from .views.instance_list_view import InstanceListView
 from .views.job_template_list_view import JobTemplateListView
 from .views.operation_list_view import OperationListView
+from .views.portfolio_list_view import PortfolioListView
 from .views.request_archived_list_view import RequestArchivedListView
 from .views.request_list_view import RequestListView
 from .views.service_list_view import ServiceListView
@@ -40,7 +41,8 @@ urlpatterns = [
     path('request/<int:request_id>/unarchive/', views.admin_request_unarchive, name='admin_request_unarchive'),
     path('request/<int:request_id>/delete/', views.request_delete, name='request_delete'),
 
-    path('portfolio/', views.portfolio_list, name='portfolio_list'),
+    path('', views.service_catalog_list, name='service_catalog_list'),
+    path('portfolio/', PortfolioListView.as_view(), name='portfolio_list'),
     path('portfolio/create/', views.portfolio_create, name='portfolio_create'),
     path('portfolio/<int:portfolio_id>/edit/', views.portfolio_edit, name='portfolio_edit'),
     path('portfolio/<int:portfolio_id>/delete/', views.portfolio_delete, name='portfolio_delete'),
