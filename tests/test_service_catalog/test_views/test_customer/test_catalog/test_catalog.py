@@ -11,7 +11,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
     def test_customer_list_service_in_root(self):
-        url = reverse('service_catalog:portfolio_list')
+        url = reverse('service_catalog:service_catalog_list')
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("service_list" in response.context)
@@ -22,7 +22,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_customer_list_service_in_a_portfolio(self):
         self.service_test.parent_portfolio = self.portfolio_test_1
         self.service_test.save()
-        url = reverse('service_catalog:portfolio_list') + f"?parent_portfolio={self.portfolio_test_1.id}"
+        url = reverse('service_catalog:service_catalog_list') + f"?parent_portfolio={self.portfolio_test_1.id}"
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("service_list" in response.context)
@@ -31,13 +31,18 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.assertEqual(len(response.context["portfolio_list"]),
                          Portfolio.objects.filter(parent_portfolio=self.portfolio_test_1.id).count())
 
-    def test_customer_can_list_enabled_service(self):
+    def test_customer_can_list_service_catalog_enabled_service(self):
         self.service_test.enabled = False
         self.service_test.save()
-        url = reverse('service_catalog:service_list')
+        url = reverse('service_catalog:service_catalog_list')
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(len(response.context["table"].data.data), Service.objects.filter(enabled=True).count())
+        self.assertEqual(len(response.context["service_list"]), Service.objects.filter(enabled=True).count())
+
+    def test_customer_cannot_access_service_list(self):
+        url = reverse('service_catalog:service_list')
+        response = self.client.get(url)
+        self.assertEqual(403, response.status_code)
 
     def test_customer_service_request(self):
         args = {

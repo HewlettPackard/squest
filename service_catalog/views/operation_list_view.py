@@ -25,7 +25,7 @@ class OperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         context['service_id'] = service_id
         context['html_button_path'] = "generics/buttons/add_operation.html"
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:portfolio_list')},
+            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
             {'text': 'Services', 'url': reverse('service_catalog:service_list')},
             {'text': Service.objects.get(id=service_id).name, 'url': ""},
             {'text': 'Operations', 'url': ""},
