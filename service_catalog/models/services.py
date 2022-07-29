@@ -26,6 +26,7 @@ class Service(Model):
         related_query_name="service_list",
     )
     extra_vars = JSONField(default=dict, blank=True)
+    description_doc = ForeignKey('service_catalog.Doc', blank=True, null=True, on_delete=SET_NULL, verbose_name='Description documentation')
 
     def can_be_enabled(self):
         operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)

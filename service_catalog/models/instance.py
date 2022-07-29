@@ -6,6 +6,8 @@ from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTim
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
+
+from Squest.utils.ansible_when import AnsibleWhen
 from profiles.models import BillingGroup
 from profiles.models.role_manager import RoleManager
 from service_catalog.models.services import Service
@@ -36,6 +38,17 @@ class Instance(RoleManager):
 
     def __str__(self):
         return f"{self.name} (#{self.id})"
+
+    @property
+    def docs(self):
+        filtered_doc = list()
+        for doc in self.service.docs.all():
+            context = {
+                "instance": self
+            }
+            if not doc.when or (doc.when and AnsibleWhen.when_render(context=context, when_string=doc.when)):
+                filtered_doc.append(doc)
+        return filtered_doc
 
     def clean(self):
         if self.user_spec is None:

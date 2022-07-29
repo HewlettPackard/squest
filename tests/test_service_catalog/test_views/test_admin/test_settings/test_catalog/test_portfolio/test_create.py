@@ -10,9 +10,8 @@ class PortfolioCreateTestCase(BaseTest):
         self.data = {'name': 'new portfolio'}
 
     def _create_portfolio(self, data=None, parent_portfolio=None, get_status=200, post_status=302):
-        parent_str = f"?parent_portfolio={parent_portfolio}" if parent_portfolio else ""
         data = data if data else self.data
-        url = reverse('service_catalog:portfolio_create') + parent_str
+        url = reverse('service_catalog:portfolio_create')
         response = self.client.get(url)
         self.assertEqual(get_status, response.status_code)
         old_count = Portfolio.objects.filter(parent_portfolio__id=parent_portfolio).count()
@@ -23,9 +22,6 @@ class PortfolioCreateTestCase(BaseTest):
 
     def test_admin_can_create_a_portfolio_in_root(self):
         self._create_portfolio()
-
-    def test_admin_can_create_a_portfolio_in_another_portfolio(self):
-        self._create_portfolio(parent_portfolio=self.portfolio_test_1.id)
 
     def test_customer_cannot_create_portfolio(self):
         self.client.force_login(self.standard_user)
