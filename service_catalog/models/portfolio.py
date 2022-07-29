@@ -13,6 +13,8 @@ class Portfolio(Model):
         related_name="portfolio_list",
         related_query_name="portfolio_list",
     )
+    description_doc = ForeignKey('service_catalog.Doc', blank=True, null=True, on_delete=SET_NULL,
+                                 verbose_name='Description documentation')
 
     def __str__(self):
         return self.name
@@ -26,6 +28,3 @@ class Portfolio(Model):
         self.portfolio_list.update(**{"parent_portfolio": self.parent_portfolio})
         self.service_list.update(**{"parent_portfolio": self.parent_portfolio})
         super(Portfolio, self).delete(using, keep_parents)
-
-
-
