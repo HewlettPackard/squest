@@ -32,7 +32,7 @@ Administrator defines beginning, end, title, message and type of announcement.
 ## Custom links
 
 Custom links allow to display arbitrary hyperlinks to external content by using Squest `instance` attributes.
-Custom links appear as buttons in the top right corner of an **instance detail pages**.
+Custom links appear as buttons in the top right corner of an **instance detail page**.
 Jinja template can be used to insert data from the current squest `instance` details like `instance.spec`.
 
 For example a link can be created to expose the Hypervisor URL that has been placed into the instance spec of a created resource.
@@ -96,6 +96,7 @@ spec['configvar'] == 'value' and user_spec['other'] == 'value'
 
 When the loop definition is set, a dropdown button is created with a link for each element of the given list.
 Like for Ansible, the element is exposed as `item` in the Jinja template of the button text or URL.
+
 Instance spec example:
 ```json
 {
@@ -106,7 +107,12 @@ Instance spec example:
 }
 ```
 
-Button url example:
+Loop example:
+```
+{{ instance.spec.my_list }}
+```
+
+Button text example:
 ```
 name: {{ item }}
 ```
