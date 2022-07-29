@@ -28,7 +28,7 @@ class TestCustomLinks(BaseTestRequest):
 
     def test_get_single_button_no_jinja(self):
         result = get_single_button(context=self.context_text, custom_link=self.test_custom_link)
-        expected = '<a href="http://my_url" class="btn btn-sm btn-default  ml-1">text</a>'
+        expected = '<a href="http://my_url" class="btn btn-sm btn-default ml-1">text</a>'
         self.assertEqual(result, expected)
 
     def test_get_single_button_with_jinja(self):
@@ -37,7 +37,7 @@ class TestCustomLinks(BaseTestRequest):
         self.test_custom_link.save()
 
         result = get_single_button(context=self.context_text, custom_link=self.test_custom_link)
-        expected = '<a href="http://my_url/value1" class="btn btn-sm btn-default  ml-1">text-test_instance_1</a>'
+        expected = '<a href="http://my_url/value1" class="btn btn-sm btn-default ml-1">text-test_instance_1</a>'
         self.assertEqual(result, expected)
 
     def test_get_single_button_with_invalid_jinja(self):
@@ -68,7 +68,7 @@ class TestCustomLinks(BaseTestRequest):
 
     def test_get_custom_link(self):
         result = custom_links(user=self.superuser, instance=self.test_instance)
-        expected = '<a href="http://my_url" class="btn btn-sm btn-default  ml-1">text</a>'
+        expected = '<a href="http://my_url" class="btn btn-sm btn-default ml-1">text</a>'
         self.assertEqual(result, expected)
 
     def test_get_custom_link_different_service(self):
@@ -96,14 +96,14 @@ class TestCustomLinks(BaseTestRequest):
         self.assertEqual(result, expected_as_end_user)
 
         result = custom_links(user=self.superuser, instance=self.test_instance)
-        expected_as_admin = '<a href="http://my_url" class="btn btn-sm btn-default  ml-1">text</a>'
+        expected_as_admin = '<a href="http://my_url" class="btn btn-sm btn-default ml-1">text</a>'
         self.assertEqual(result, expected_as_admin)
 
     def test_get_custom_link_when_valid(self):
         self.test_custom_link.when = "instance.spec.key1 == 'value1'"
         self.test_custom_link.save()
         result = custom_links(user=self.superuser, instance=self.test_instance)
-        expected = '<a href="http://my_url" class="btn btn-sm btn-default  ml-1">text</a>'
+        expected = '<a href="http://my_url" class="btn btn-sm btn-default ml-1">text</a>'
         self.assertEqual(result, expected)
 
     def test_get_custom_link_when_non_valid(self):
