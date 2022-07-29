@@ -42,13 +42,13 @@ class ServiceEditTestCase(BaseTest):
 
     def test_hide_service_after_disabled(self):
         service_count = Service.objects.all().count()
-        response = self.client.get(reverse("service_catalog:portfolio_list"))
+        response = self.client.get(reverse("service_catalog:service_catalog_list"))
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.context["service_list"].count(), service_count)
         self.client.post(self.url, data=self.data)
         self.service_test.refresh_from_db()
         self.assertFalse(self.service_test.enabled)
-        response = self.client.get(reverse("service_catalog:portfolio_list"))
+        response = self.client.get(reverse("service_catalog:service_catalog_list"))
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.context["service_list"].count(), service_count - 1)
         response = self.client.get(reverse("service_catalog:create_operation_list",
