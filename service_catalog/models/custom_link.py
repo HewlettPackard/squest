@@ -6,16 +6,16 @@ from . import Service
 
 class LinkButtonClassChoices(TextChoices):
 
-    DEFAULT = 'default ', _('Default')
-    BLUE = 'primary ', _('Blue')
+    DEFAULT = 'default', _('Default')
+    BLUE = 'primary', _('Blue')
     GRAY = 'secondary', _('Gray')
-    GREEN = 'success ', _('Green')
-    RED = 'danger ', _('Red')
-    YELLOW = 'warning ', _('Yellow')
-    CYAN = 'info ', _('Cyan')
-    LIGHT = 'light ', _('Light')
-    DARK = 'dark ', _('Dark')
-    LINK = 'link ', _('Link')
+    GREEN = 'success', _('Green')
+    RED = 'danger', _('Red')
+    YELLOW = 'warning', _('Yellow')
+    CYAN = 'info', _('Cyan')
+    LIGHT = 'light', _('Light')
+    DARK = 'dark', _('Dark')
+    LINK = 'link', _('Link')
 
 
 class CustomLink(Model):

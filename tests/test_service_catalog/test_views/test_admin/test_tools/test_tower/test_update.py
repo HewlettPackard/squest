@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
-from tests.test_service_catalog.test_views.test_admin.test_settings.test_tower.base_test_tower import BaseTestTower
+from tests.test_service_catalog.test_views.test_admin.test_tools.test_tower.base_test_tower import BaseTestTower
 
 
 class AdminTowerUpdateViewsTest(BaseTestTower):

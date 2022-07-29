@@ -19,16 +19,12 @@ class PortfolioListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     model = Portfolio
     template_name = 'generics/list.html'
     filterset_class = PortfolioFilter
+    queryset = Portfolio.objects.all()
 
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_superuser:
             raise PermissionDenied
         return super(PortfolioListView, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return Portfolio.objects.all()
-        return Portfolio.objects.filter(enabled=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

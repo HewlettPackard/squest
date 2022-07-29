@@ -42,9 +42,7 @@ def custom_link_create(request):
     if request.method == 'POST':
         form = CustomLinkForm(request.POST)
         if form.is_valid():
-            custom_link = form.save()
-            custom_link.created_by = request.user
-            custom_link.save()
+            form.save()
             return redirect('service_catalog:custom_link_list')
     else:
         form = CustomLinkForm()
@@ -61,9 +59,7 @@ def custom_link_edit(request, custom_link_id):
     custom_link = get_object_or_404(CustomLink, id=custom_link_id)
     form = CustomLinkForm(request.POST or None, instance=custom_link)
     if form.is_valid():
-        custom_link = form.save()
-        custom_link.created_by = request.user
-        custom_link.save()
+        form.save()
         return redirect('service_catalog:custom_link_list')
     breadcrumbs = [
         {'text': 'Custom link', 'url': reverse('service_catalog:custom_link_list')},
