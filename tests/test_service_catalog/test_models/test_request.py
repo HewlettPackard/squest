@@ -434,3 +434,10 @@ class TestRequest(BaseTestRequest):
                              "tower_server_extra_var_overridden_by_operation")
             self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
                              "tower_server_extra_var_overridden_by_service2")
+
+    def test_date_submitted_not_update_on_save(self):
+        new_request = Request.objects.create(fill_in_survey={}, instance=self.test_instance,
+                                             operation=self.create_operation_test, user=self.standard_user)
+        old_submitted_date = new_request.date_submitted
+        new_request.save()
+        self.assertEqual(old_submitted_date, new_request.date_submitted)
