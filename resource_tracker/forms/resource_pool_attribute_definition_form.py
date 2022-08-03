@@ -6,7 +6,8 @@ from Squest.utils.squest_model_form import SquestModelForm
 class ResourcePoolAttributeDefinitionForm(SquestModelForm):
     class Meta:
         model = ResourcePoolAttributeDefinition
-        fields = ["name", "over_commitment_producers", "over_commitment_consumers"]
+        fields = ["name", "over_commitment_producers", "over_commitment_consumers", "yellow_threshold_percent_consumed",
+                  "red_threshold_percent_consumed"]
 
     name = forms.CharField(label="Name",
                            widget=forms.TextInput())

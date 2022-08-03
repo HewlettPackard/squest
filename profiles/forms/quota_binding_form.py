@@ -5,4 +5,4 @@ from profiles.models import QuotaBinding
 class QuotaBindingForm(SquestModelForm):
     class Meta:
         model = QuotaBinding
-        fields = ["limit"]
+        fields = ["limit", "yellow_threshold_percent", "red_threshold_percent"]

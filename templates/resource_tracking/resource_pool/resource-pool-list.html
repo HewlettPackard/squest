@@ -23,7 +23,7 @@
                                 <div class="btn-group">
                                     <a href="{% url 'resource_tracker:resource_pool_refresh_consumption' resource_pool.id %}"
                                        class="dropdown-item text-black" title="Refresh consumption">
-                                       <i class="fas fa-sync"></i>
+                                        <i class="fas fa-sync"></i>
                                     </a>
                                     <a class="dropdown-item text-primary" title="Edit"
                                        href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span
@@ -49,54 +49,52 @@
                                     <thead>
                                     <tr>
                                         <th>Attribute</th>
-                                        <th>Consumption</th>
                                         <th>Produced</th>
                                         <th>Consumed</th>
                                         <th>Available</th>
+                                        <th>Consumption</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for attribute in resource_pool.attribute_definitions.all %}
-                                        {% with progress_value=resource_pool.id|get_percent_consumption:attribute.name total_produced=attribute.total_produced total_consumed=attribute.total_consumed %}
-                                            <tr>
-                                                <td class="align-middle">{{ attribute.name }}</td>
-                                                <td class="align-middle">
-                                                    <div class="progress text_center">
-                                                        <div class="progress-bar {{ progress_value | get_progress_bar_color }}"
-                                                             role="progressbar" aria-valuenow="{{ progress_value }}"
-                                                             aria-valuemin="0" aria-valuemax="100"
-                                                             style="width: {{ progress_value }}%">
-                                                            {{ progress_value | floatformat:0 }}%
-                                                        </div>
+                                        <tr>
+                                            <td class="align-middle">{{ attribute.name }}</td>
+                                            <td class="align-middle">
+                                                <a href="{% url 'resource_tracker:resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                    {{ attribute.total_produced | floatformat:0 }}
+                                                    {% if attribute.over_commitment_producers != 1 %}
+                                                        <i class="fas fa-info-circle text-primary"
+                                                           title="Over commitment x{{ attribute.over_commitment_producers }} enabled">
+                                                        </i>
+                                                    {% endif %}
+                                                </a>
+
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="{% url 'resource_tracker:resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
+                                                    {{ attribute.total_consumed | floatformat:0 }}
+                                                    {% if attribute.over_commitment_consumers != 1 %}
+                                                        <i class="fas fa-info-circle text-primary"
+                                                           title="Over commitment x{{ attribute.over_commitment_consumers }} enabled">
+                                                        </i>
+                                                    {% endif %}
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-{{ attribute.progress_bar_color }}">{{ attribute.total_produced|subtract:attribute.total_consumed | floatformat:0 }}</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="progress text_center">
+                                                    <div class="progress-bar bg-{{ attribute.progress_bar_color }}"
+                                                         role="progressbar"
+                                                         aria-valuenow="{{ attribute.percent_consumed }}"
+                                                         aria-valuemin="0" aria-valuemax="100"
+                                                         style="width: {{ attribute.percent_consumed }}%">
+                                                        {{ attribute.percent_consumed }}%
                                                     </div>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <a href="{% url 'resource_tracker:resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                        {{ total_produced | floatformat:0 }}
-                                                        {% if attribute.over_commitment_producers != 1 %}
-                                                            <i class="fas fa-info-circle text-primary"
-                                                               title="Over commitment x{{ attribute.over_commitment_producers }} enabled">
-                                                            </i>
-                                                        {% endif %}
-                                                    </a>
-
-                                                </td>
-                                                <td class="align-middle">
-                                                    <a href="{% url 'resource_tracker:resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                        {{ total_consumed | floatformat:0 }}
-                                                        {% if attribute.over_commitment_consumers != 1 %}
-                                                            <i class="fas fa-info-circle text-primary"
-                                                               title="Over commitment x{{ attribute.over_commitment_consumers }} enabled">
-                                                            </i>
-                                                        {% endif %}
-                                                    </a>
-
-                                                </td>
-                                                <td class="align-middle">
-                                                    <span class="badge {{ progress_value | get_progress_bar_color }}">{{ total_produced|subtract:total_consumed | floatformat:0 }}</span>
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
+                                                </div>
+                                            </td>
+                                        </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
