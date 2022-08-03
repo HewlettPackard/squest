@@ -88,7 +88,9 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         data = {
             "name": "new_attribute",
             "over_commitment_producers": 2,
-            "over_commitment_consumers": 3
+            "over_commitment_consumers": 3,
+            "yellow_threshold_percent": 70,
+            "red_threshold_percent": 85
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)

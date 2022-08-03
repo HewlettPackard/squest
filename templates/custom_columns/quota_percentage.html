@@ -1,6 +1,6 @@
 {% if record.percentage %}
     <div class="progress text_center">
-        <div class="progress-bar {{ record.percentage | get_progress_bar_color }}"
+        <div class="progress-bar bg-{{ record.progress_bar_color }}"
              role="progressbar" aria-valuenow="{{ record.percentage }}"
              aria-valuemin="0" aria-valuemax="100"
              style="width: {{ record.percentage }}%">

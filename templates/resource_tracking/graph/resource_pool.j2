@@ -5,16 +5,18 @@
   </TR>
   <TR>
     <TD BGCOLOR="white" COLSPAN="3">Name</TD>
-    <TD BGCOLOR="white" COLSPAN="3">Produced</TD>
-    <TD BGCOLOR="white" COLSPAN="3">Consumed</TD>
-    <TD BGCOLOR="white" COLSPAN="3">Available</TD>
+    <TD BGCOLOR="white" COLSPAN="2">Produced</TD>
+    <TD BGCOLOR="white" COLSPAN="2">Consumed</TD>
+    <TD BGCOLOR="white" COLSPAN="2">Available</TD>
+    <TD BGCOLOR="white" COLSPAN="2">Consumption</TD>
   </TR>
   {% for attribute in attributes_list %}
     <TR>
-    <TD BGCOLOR="white" PORT="{{attribute.name.display}}" COLSPAN="3" HREF="{{attribute.name.href}}" TITLE="{{attribute.name.tooltip}}">{{ attribute.name.display }}</TD>
-    <TD COLSPAN="3" HREF="{{attribute.produced.href}}" TITLE="{{attribute.produced.tooltip}}">{{ attribute.produced.display }}</TD>
-    <TD COLSPAN="3" HREF="{{attribute.consumed.href}}" TITLE="{{attribute.consumed.tooltip}}">{{ attribute.consumed.display }}</TD>
-    <TD BGCOLOR="{{ attribute.available.color }}" COLSPAN="3" TITLE="{{ attribute.available.display }}"><font color="white">{{ attribute.available.display }}</font></TD>
+        <TD BGCOLOR="white" PORT="{{attribute.name.display}}" COLSPAN="3" HREF="{{attribute.name.href}}" TITLE="{{attribute.name.tooltip}}">{{ attribute.name.display }}</TD>
+        <TD COLSPAN="2" HREF="{{attribute.produced.href}}" TITLE="{{attribute.produced.tooltip}}">{{ attribute.produced.display }}</TD>
+        <TD COLSPAN="2" HREF="{{attribute.consumed.href}}" TITLE="{{attribute.consumed.tooltip}}">{{ attribute.consumed.display }}</TD>
+        <TD COLSPAN="2" TITLE="{{ attribute.available.display }}">{{ attribute.available.display }}</TD>
+        <TD BGCOLOR="{{ attribute.percent.color }}" COLSPAN="2" HREF="{{attribute.percent.href}}" TITLE="{{attribute.percent.tooltip}}"><font color="white">{{ attribute.percent.display }}</font></TD>
     </TR>
   {% endfor %}
 </TABLE>

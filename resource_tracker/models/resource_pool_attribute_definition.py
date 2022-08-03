@@ -20,9 +20,46 @@ class ResourcePoolAttributeDefinition(models.Model):
     over_commitment_consumers = models.FloatField(default=1)
     total_consumed = models.IntegerField(default=0)
     total_produced = models.IntegerField(default=0)
+    yellow_threshold_percent_consumed = models.IntegerField(
+        default=80,
+        blank=True,
+        verbose_name="Yellow threshold percent consumed",
+        help_text="Threshold at which the color changes to yellow. Threshold is reverse when the red threshold is lower"
+                  " than the yellow threshold."
+    )
+    red_threshold_percent_consumed = models.IntegerField(
+        default=90,
+        blank=True,
+        verbose_name="Red threshold percent consumed",
+        help_text="Threshold at which the color changes to red. Threshold is reverse when the red threshold is lower"
+                  " than the yellow threshold."
+    )
 
     def __str__(self):
         return f"{self.resource_pool.name} - {self.name}"
+
+    @property
+    def percent_consumed(self):
+        if self.total_produced == 0:
+            return "N/A"
+        return round(self.total_consumed * 100 / self.total_produced)
+
+    @property
+    def percent_available(self):
+        if self.total_produced == 0:
+            return "N/A"
+        return round(100 - self.percent_consumed)
+
+    @property
+    def progress_bar_color(self):
+        reversed_color = self.yellow_threshold_percent_consumed < self.red_threshold_percent_consumed
+        if isinstance(self.percent_consumed, int):
+            if int(self.percent_consumed) < self.yellow_threshold_percent_consumed and not int(self.percent_consumed) > self.red_threshold_percent_consumed:
+                return "green" if reversed_color else "red"
+            if int(self.percent_consumed) > self.red_threshold_percent_consumed and not int(self.percent_consumed) < self.yellow_threshold_percent_consumed:
+                return "red" if reversed_color else "green"
+            return "yellow"
+        return "gray"
 
     def add_producers(self, resource: ResourceGroupAttributeDefinition):
         resource.produce_for = self
@@ -63,17 +100,6 @@ class ResourcePoolAttributeDefinition(models.Model):
                     pass
         self.total_consumed = total_consumed * self.over_commitment_consumers
         self.save()
-
-    def get_percent_available_human_readable(self):
-        if self.total_produced == 0:
-            return ""
-        return f"({round(100 - self.get_percent_consumed())}%)"
-
-    def get_percent_consumed(self):
-        if self.total_produced == 0:
-            return "N/A"
-        percent_consumed = (self.total_consumed * 100) / self.total_produced
-        return round(percent_consumed)
 
     def get_total_produced_by(self, producer):
         total_produced = 0

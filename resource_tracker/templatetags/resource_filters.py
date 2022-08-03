@@ -33,22 +33,9 @@ def get_percent_consumption(resource_pool_id, attribute_name):
     try:
         resource_pool_attribute = ResourcePoolAttributeDefinition.objects.get(resource_pool_id=resource_pool_id,
                                                                               name=attribute_name)
-        return resource_pool_attribute.get_percent_consumed()
+        return resource_pool_attribute.percent_consumed
     except ResourcePoolAttributeDefinition.DoesNotExist:
         return 0
-
-
-@register.filter(name='get_progress_bar_color')
-def get_progress_bar_color(progress_value):
-    if isinstance(progress_value, int):
-        if progress_value < 80:
-            return "bg-green"
-        if 80 < progress_value < 90:
-            return "bg-yellow"
-        return "bg-red"
-    else:
-        return "bg-gray"
-
 
 @register.filter(name='has_attribute')
 def has_attribute(resource_pool_id, attribute_name):

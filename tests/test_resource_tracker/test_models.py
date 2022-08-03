@@ -36,15 +36,15 @@ class TestCalculation(TestCase):
                       container=self.vcenter_pool.attribute_definitions.get(name='vCPU').producers.all())
         # create VM group that consume
         self.vm_group = ResourceGroup.objects.create(name="vm-group")
-        vm_vcpu_attribute = self.vm_group.add_attribute_definition(name='vCPU')
+        self.vm_vcpu_attribute = self.vm_group.add_attribute_definition(name='vCPU')
         self.vcenter_pool.attribute_definitions.get(name='vCPU') \
             .add_consumers(self.vm_group.attribute_definitions.get(name='vCPU'))
         self.assertIn(member=self.vm_group.attribute_definitions.get(name='vCPU'),
                       container=self.vcenter_pool.attribute_definitions.get(name='vCPU').consumers.all())
         self.vm1 = self.vm_group.create_resource(name=f"vm1")
-        self.vm1.set_attribute(vm_vcpu_attribute, 25)
+        self.vm1.set_attribute(self.vm_vcpu_attribute, 25)
         vm2 = self.vm_group.create_resource(name=f"vm2")
-        vm2.set_attribute(vm_vcpu_attribute, 25)
+        vm2.set_attribute(self.vm_vcpu_attribute, 25)
         self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').total_consumed)
 
     def _create_vcenter_pool_with_one_server(self):
@@ -164,9 +164,9 @@ class TestCalculation(TestCase):
         self.assertEqual(sum(self.cpu_list) + 100,
                          openshift_pool.attribute_definitions.get(name='vCPU').total_produced)
 
-    def test_get_percent_consumed(self):
+    def test_percent_consumed(self):
         self._create_simple_testing_stack()
-        self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').get_percent_consumed())
+        self.assertEqual(50, self.vcenter_pool.attribute_definitions.get(name='vCPU').percent_consumed)
 
     def test_get_total_produced_by(self):
         self._create_simple_testing_stack()
@@ -422,3 +422,44 @@ class TestCalculation(TestCase):
         self.assertEqual(self.server_cpu_attribute_def.total_resource, 200)
         self.server_cpu_attribute_def.calculate_total_resource()
         self.assertEqual(self.server_cpu_attribute_def.total_resource, 100)
+
+    def test_progress_color(self):
+        self._create_simple_testing_stack()
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 50)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'green')
+        vm3 = self.vm_group.create_resource(name=f"vm3")
+        vm3.set_attribute(self.vm_vcpu_attribute, 35)
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 85)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'yellow')
+        vm4 = self.vm_group.create_resource(name=f"vm4")
+        vm4.set_attribute(self.vm_vcpu_attribute, 15)
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 100)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'red')
+
+    def test_progress_color_reversed_color(self):
+        self._create_simple_testing_stack()
+        self.vcpu_pool_ad.yellow_threshold_percent_consumed = 85
+        self.vcpu_pool_ad.red_threshold_percent_consumed = 55
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 50)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'red')
+        vm3 = self.vm_group.create_resource(name=f"vm3")
+        vm3.set_attribute(self.vm_vcpu_attribute, 15)
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 65)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'yellow')
+        vm4 = self.vm_group.create_resource(name=f"vm4")
+        vm4.set_attribute(self.vm_vcpu_attribute, 35)
+        self.vcpu_pool_ad.calculate_total_consumed()
+        self.vcpu_pool_ad.calculate_total_produced()
+        self.assertEqual(self.vcpu_pool_ad.percent_consumed, 100)
+        self.assertEqual(self.vcpu_pool_ad.progress_bar_color, 'green')
+

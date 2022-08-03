@@ -15,8 +15,8 @@ from resource_tracker.models import ResourceGroup, ResourcePool
 logger = logging.getLogger(__name__)
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
-          'available': '#ffc107', "bg-green": "#28a745", "bg-yellow": "#ffc107", "bg-red": "#dc3545",
-          'transparent': '#ffffff00', 'secondary': '#6c757d'}
+          'available': '#ffc107', "green": "#28a745", "yellow": "#ffc107", "red": "#dc3545",
+          'transparent': '#ffffff00', 'gray': '#6c757d'}
 
 
 def get_graph_name(resource) -> str:
@@ -115,7 +115,8 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                     kwargs={'resource_pool_id': resource_pool.id,
                             'attribute_id': attribute.id})},
             'consumed': {
-                'display': round(attribute.total_consumed),
+                'display': f"{round(attribute.total_consumed)}",
+                'color': COLORS[attribute.progress_bar_color],
                 'tooltip': f"Go to {attribute}'s consumers",
                 'href': reverse(
                     'resource_tracker:resource_pool_attribute_consumer_list',
@@ -123,8 +124,16 @@ def create_resource_pool_svg(resource_pool: ResourcePool):
                             'attribute_id': attribute.id})},
             'available': {
                 'display': f"{round(attribute.total_produced - attribute.total_consumed)}"
-                           f"{attribute.get_percent_available_human_readable()}",
-                'color': get_progress_bar_color(attribute.get_percent_consumed())},
+            },
+            'percent': {
+                'display': f"{attribute.percent_consumed}%",
+                'color': COLORS[attribute.progress_bar_color],
+                'tooltip': f"Go to {attribute}'s consumers",
+                'href': reverse(
+                    'resource_tracker:resource_pool_attribute_consumer_list',
+                    kwargs={'resource_pool_id': resource_pool.id,
+                            'attribute_id': attribute.id})
+            }
         }
         for attribute in resource_pool.attribute_definitions.filter()]
     context['color'] = COLORS['resource_pool']
@@ -161,13 +170,3 @@ def create_resource_group_svg(resource_group: ResourceGroup):
 
     tm = get_template('resource_tracking/graph/resource_group.j2').template
     return tm.render(context=Context(context))
-
-
-def get_progress_bar_color(progress_value):
-    if progress_value == 'N/A':
-        return COLORS["secondary"]
-    if progress_value < 80:
-        return COLORS["bg-green"]
-    if 80 < progress_value < 90:
-        return COLORS["bg-yellow"]
-    return COLORS["bg-red"]
