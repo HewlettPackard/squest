@@ -1,4 +1,4 @@
-from django.db.models import Model, ForeignKey, CASCADE, FloatField
+from django.db.models import Model, ForeignKey, CASCADE, FloatField, IntegerField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -26,6 +26,20 @@ class QuotaBinding(Model):
         on_delete=CASCADE,
         related_name='quota_bindings'
     )
+    yellow_threshold_percent = IntegerField(
+        default=80,
+        blank=True,
+        verbose_name="Yellow threshold percent consumed",
+        help_text="Threshold at which the color changes to yellow. Threshold is reverse when the red threshold is lower"
+                  " than the yellow threshold."
+    )
+    red_threshold_percent = IntegerField(
+        default=90,
+        blank=True,
+        verbose_name="Red threshold percent consumed",
+        help_text="Threshold at which the color changes to red. Threshold is reverse when the red threshold is lower"
+                  " than the yellow threshold."
+    )
 
     @property
     def available(self):
@@ -37,6 +51,17 @@ class QuotaBinding(Model):
             return None
         percent_consumed = (self.consumed * 100) / self.limit
         return round(percent_consumed)
+
+    @property
+    def progress_bar_color(self):
+        reversed_color = self.yellow_threshold_percent < self.red_threshold_percent
+        if isinstance(self.percentage, int):
+            if int(self.percentage) < self.yellow_threshold_percent and not int(self.percentage) > self.red_threshold_percent:
+                return "green" if reversed_color else "red"
+            if int(self.percentage) > self.red_threshold_percent and not int(self.percentage) < self.yellow_threshold_percent:
+                return "red" if reversed_color else "green"
+            return "yellow"
+        return "gray"
 
     def refresh_consumed(self):
         consumed = 0
