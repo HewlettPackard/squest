@@ -1,3 +1,20 @@
+# 1.7.2 2022-08-04
+
+## Feature
+
+- Custom links on instance detail page
+
+## Enhancement
+
+- Custom threshold color on resource pool and quota
+- Add description documentation to services and portfolios
+
+## Fix
+
+- Date submitted was updated on each save
+- Hide disabled services from homepage
+- Hide admin only create operations for end users
+
 # 1.7.1 2022-07-21
 
 ## Enhancement
