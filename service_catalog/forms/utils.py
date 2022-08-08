@@ -21,12 +21,10 @@ def _get_field_group(field_name, operation_survey):
         return "2. Admin fields"
 
 
-def get_choices_from_string(string_with_anti_slash_n):
-    split_lines = string_with_anti_slash_n.splitlines()
-    returned_list = [('', "Select an option")]
-    for line in split_lines:
-        returned_list.append((line, line))
-    return returned_list
+def get_choices_as_tuples_list(choices):
+    if not isinstance(choices, list):
+        choices = choices.splitlines()
+    return [('', "Select an option")] + [(choice, choice) for choice in choices]
 
 
 def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Service fields"):
@@ -67,7 +65,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
                             initial=survey_field['default'],
                             required=survey_field['required'],
                             help_text=survey_field['question_description'],
-                            choices=get_choices_from_string(survey_field["choices"]),
+                            choices=get_choices_as_tuples_list(survey_field["choices"]),
                             error_messages={'required': 'At least you must select one choice'},
                             widget=forms.Select(attrs={'class': 'form-control'}))
 
@@ -77,7 +75,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
                                     initial=survey_field['default'].split("\n"),
                                     required=survey_field['required'],
                                     help_text=survey_field['question_description'],
-                                    choices=get_choices_from_string(survey_field["choices"]),
+                                    choices=get_choices_as_tuples_list(survey_field["choices"]),
                                     widget=forms.SelectMultiple(
                                         attrs={'class': 'form-control', 'choices': 'OPTIONS_TUPPLE'}))
 
