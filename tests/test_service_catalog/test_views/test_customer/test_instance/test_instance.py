@@ -3,7 +3,7 @@ from django.urls import reverse
 from guardian.shortcuts import get_objects_for_user
 
 from profiles.models import Team
-from service_catalog.forms.utils import get_choices_from_string
+from service_catalog.forms.utils import get_choices_as_tuples_list
 from service_catalog.models import Support, SupportMessage, Request, OperationType, Operation
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.support import SupportState
@@ -12,9 +12,9 @@ from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 def _get_void_value(survey_field):
     if survey_field["type"] == "multiplechoice":
-        return [get_choices_from_string(survey_field["choices"])[1][1]]
+        return [get_choices_as_tuples_list(survey_field["choices"])[1][1]]
     elif survey_field["type"] == "multiselect":
-        return get_choices_from_string(survey_field["choices"])[1][1]
+        return get_choices_as_tuples_list(survey_field["choices"])[1][1]
     elif survey_field["type"] == "integer":
         return 0
     elif survey_field["type"] == "float":
