@@ -1,6 +1,7 @@
 import logging
 
-from django import forms
+from django.forms import CharField, TextInput, Textarea, PasswordInput, ChoiceField, Select, MultipleChoiceField, \
+    SelectMultiple, IntegerField, NumberInput, FloatField
 
 from Squest.utils.plugin_controller import PluginController
 
@@ -21,83 +22,104 @@ def _get_field_group(field_name, operation_survey):
         return "2. Admin fields"
 
 
-def get_choices_as_tuples_list(choices):
+def get_choices_as_tuples_list(choices, default=None):
+    if default is None:
+        default = [('', "Select an option")]
     if not isinstance(choices, list):
         choices = choices.splitlines()
-    return [('', "Select an option")] + [(choice, choice) for choice in choices]
+    return default + [(choice, choice) for choice in choices]
 
 
 def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Service fields"):
     fields = {}
     for survey_field in survey["spec"]:
         if survey_field["type"] == "text":
-            fields[survey_field['variable']] = forms. \
-                CharField(label=survey_field['question_name'],
-                          initial=survey_field['default'],
-                          required=survey_field['required'],
-                          help_text=survey_field['question_description'],
-                          min_length=survey_field['min'],
-                          max_length=survey_field['max'],
-                          widget=forms.TextInput(attrs={'class': 'form-control'}))
+            fields[survey_field['variable']] = CharField(
+                label=survey_field['question_name'],
+                initial=survey_field['default'],
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                min_length=survey_field['min'],
+                max_length=survey_field['max'],
+                widget=TextInput(
+                    attrs={'class': 'form-control'}
+                )
+            )
 
         elif survey_field["type"] == "textarea":
-            fields[survey_field['variable']] = forms. \
-                CharField(label=survey_field['question_name'],
-                          initial=survey_field['default'],
-                          required=survey_field['required'],
-                          help_text=survey_field['question_description'],
-                          min_length=survey_field['min'],
-                          max_length=survey_field['max'],
-                          widget=forms.Textarea(attrs={'class': 'form-control'}))
+            fields[survey_field['variable']] = CharField(
+                label=survey_field['question_name'],
+                initial=survey_field['default'],
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                min_length=survey_field['min'],
+                max_length=survey_field['max'],
+                widget=Textarea(
+                    attrs={'class': 'form-control'}
+                )
+            )
 
         elif survey_field["type"] == "password":
-            fields[survey_field['variable']] = forms. \
-                CharField(label=survey_field['question_name'],
-                          required=survey_field['required'],
-                          help_text=survey_field['question_description'],
-                          min_length=survey_field['min'],
-                          max_length=survey_field['max'],
-                          widget=forms.PasswordInput(render_value=True, attrs={'class': 'form-control'}))
+            fields[survey_field['variable']] = CharField(
+                label=survey_field['question_name'],
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                min_length=survey_field['min'],
+                max_length=survey_field['max'],
+                widget=PasswordInput(render_value=True, attrs={'class': 'form-control'}
+                                     )
+            )
 
         elif survey_field["type"] == "multiplechoice":
-            fields[survey_field['variable']] = forms. \
-                ChoiceField(label=survey_field['question_name'],
-                            initial=survey_field['default'],
-                            required=survey_field['required'],
-                            help_text=survey_field['question_description'],
-                            choices=get_choices_as_tuples_list(survey_field["choices"]),
-                            error_messages={'required': 'At least you must select one choice'},
-                            widget=forms.Select(attrs={'class': 'form-control'}))
+            fields[survey_field['variable']] = ChoiceField(
+                label=survey_field['question_name'],
+                initial=survey_field['default'],
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                choices=get_choices_as_tuples_list(survey_field["choices"]),
+                error_messages={'required': 'At least you must select one choice'},
+                widget=Select(
+                    attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}
+                )
+            )
 
         elif survey_field["type"] == "multiselect":
-            fields[survey_field['variable']] = forms. \
-                MultipleChoiceField(label=survey_field['question_name'],
-                                    initial=survey_field['default'].split("\n"),
-                                    required=survey_field['required'],
-                                    help_text=survey_field['question_description'],
-                                    choices=get_choices_as_tuples_list(survey_field["choices"]),
-                                    widget=forms.SelectMultiple(
-                                        attrs={'class': 'form-control', 'choices': 'OPTIONS_TUPPLE'}))
+            fields[survey_field['variable']] = MultipleChoiceField(
+                label=survey_field['question_name'],
+                initial=survey_field['default'].split("\n"),
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                choices=get_choices_as_tuples_list(survey_field["choices"], []),
+                widget=SelectMultiple(
+                    attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}
+                )
+            )
 
         elif survey_field["type"] == "integer":
-            fields[survey_field['variable']] = forms. \
-                IntegerField(label=survey_field['question_name'],
-                             initial=None if not survey_field['default'] else int(survey_field['default']),
-                             required=survey_field['required'],
-                             help_text=survey_field['question_description'],
-                             min_value=None if not survey_field['min'] else int(survey_field['min']),
-                             max_value=None if not survey_field['max'] else int(survey_field['max']),
-                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+            fields[survey_field['variable']] = IntegerField(
+                label=survey_field['question_name'],
+                initial=None if not survey_field['default'] else int(survey_field['default']),
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                min_value=None if not survey_field['min'] else int(survey_field['min']),
+                max_value=None if not survey_field['max'] else int(survey_field['max']),
+                widget=NumberInput(
+                    attrs={'class': 'form-control'}
+                )
+            )
 
         elif survey_field["type"] == "float":
-            fields[survey_field['variable']] = forms. \
-                FloatField(label=survey_field['question_name'],
-                           initial=None if not survey_field['default'] else float(survey_field['default']),
-                           required=survey_field['required'],
-                           help_text=survey_field['question_description'],
-                           min_value=None if not survey_field['min'] else float(survey_field['min']),
-                           max_value=None if not survey_field['max'] else float(survey_field['max']),
-                           widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}))
+            fields[survey_field['variable']] = FloatField(
+                label=survey_field['question_name'],
+                initial=None if not survey_field['default'] else float(survey_field['default']),
+                required=survey_field['required'],
+                help_text=survey_field['question_description'],
+                min_value=None if not survey_field['min'] else float(survey_field['min']),
+                max_value=None if not survey_field['max'] else float(survey_field['max']),
+                widget=NumberInput(
+                    attrs={'class': 'form-control', 'step': '0.1'}
+                )
+            )
 
         if survey_field["validators"] is not None and len(survey_field["validators"]) > 0:
             list_validator_def = list()
