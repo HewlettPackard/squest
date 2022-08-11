@@ -83,13 +83,12 @@
     {%  for service in service_details.values %}
         <div class="col-auto flex-shrink-1">
             <div class="card card-widget widget-user-2 shadow-sm">
-
                 <div class="widget-user-header bg-white">
                     <div class="widget-user-image">
                         <img class="img elevation-2" src="{% if service.service.image %}{{ service.service.image.url }}{% else %}{%  static '/squest/img/no_image.png' %}{% endif %}" alt="User Avatar">
                     </div>
-                    <h3 class="widget-user-desc">{{ service.service.name }}</h3>
-                    <p class="widget-user-username" title="Available instances">Instances: <strong class="text-success">{{ service.instances }}</strong></p>
+                    <h3 class="widget-user-desc"><a class="text-dark" title="Instances of {{ service.service.name }}" href="{% url 'service_catalog:instance_list' %}?service__id={{ service.service.id }}">{{ service.service.name }}</a></h3>
+                    <p class="widget-user-username" title="Available instances of {{ service.service.name }}">Instances:<a class="text-success" href="{% url 'service_catalog:instance_list' %}?service__id={{ service.service.id }}&?state=AVAILABLE"><strong>{{ service.instances }}</strong></a></p>
                 </div>
                 <div class="card-footer p-2">
                     <div class="d-flex justify-content-around">
