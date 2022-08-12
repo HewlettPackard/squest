@@ -54,6 +54,13 @@ class OperationRequestCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OperationRequestSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        request_created = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(RequestSerializer(request_created).data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class ServiceRequestCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]

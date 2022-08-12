@@ -1,3 +1,4 @@
+import ast
 from collections import OrderedDict
 
 from rest_framework import status
@@ -21,17 +22,15 @@ class TestApiOperationRequestCreate(BaseTestRequest):
                 'text_variable': 'my text'
             }
         }
-        self.expected = {
-            'fill_in_survey': OrderedDict([
-                ('text_variable', 'my text')
-            ])}
+        self.expected = {'text_variable': 'my text'}
 
     def test_can_create(self):
         request_count = Request.objects.count()
         response = self.client.post(self.url, data=self.data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(request_count + 1, Request.objects.count())
-        self.assertEqual(response.data, self.expected)
+        self.assertEqual(ast.literal_eval(response.data['fill_in_survey']), self.expected)
+        self.assertIn('id', response.data.keys())
 
     def test_cannot_create_with_disabled_operation(self):
         self.update_operation_test.enabled = False
