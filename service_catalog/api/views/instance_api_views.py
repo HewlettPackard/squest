@@ -1,4 +1,5 @@
 from guardian.shortcuts import get_objects_for_user
+from rest_framework import status
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_200_OK, HTTP_201_CREATED
 from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -29,6 +30,13 @@ class InstanceList(ListCreateAPIView):
                 return InstanceReadSerializer
         return RestrictedInstanceReadSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance_created = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(InstanceReadSerializer(instance_created).data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class InstanceDetails(RetrieveUpdateDestroyAPIView):
     serializer_class = InstanceReadSerializer
@@ -50,7 +58,6 @@ class InstanceDetails(RetrieveUpdateDestroyAPIView):
 
 
 class SpecDetailsAPIView(APIView):
-
     permission_classes = [IsAdminUser]
 
     def get(self, request, pk):

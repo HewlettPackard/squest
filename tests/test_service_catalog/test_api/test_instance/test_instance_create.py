@@ -18,8 +18,9 @@ class TestInstanceCreate(BaseTestRequest):
         self.assertEqual(instance_count + 1, Instance.objects.count())
         self.assertEqual(response.data['name'], expected['name'])
         self.assertEqual(response.data['service'], expected['service'])
-        self.assertEqual(response.data['spoc'], expected['spoc'])
-        self.assertEqual(response.data['billing_group'], expected['billing_group'])
+        self.assertEqual(response.data['spoc']['id'], expected['spoc'])
+        if response.data['billing_group']:
+            self.assertEqual(response.data['billing_group']['id'], expected['billing_group'])
         self.assertEqual(response.data['spec'], expected['spec'])
         self.assertEqual(response.data['resources'], expected['resources'])
 
