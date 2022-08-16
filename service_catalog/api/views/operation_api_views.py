@@ -1,6 +1,4 @@
 from guardian.shortcuts import get_objects_for_user
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
@@ -56,7 +54,8 @@ class InstanceOperationList(ListAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Instance.objects.none()
-        instance = get_object_or_404(get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=self.kwargs.get('instance_id', None))
+        instance = get_object_or_404(get_objects_for_user(self.request.user, 'service_catalog.view_instance'),
+                                     id=self.kwargs.get('instance_id', None))
         return instance.service.operations.exclude(type=OperationType.CREATE)
 
     permission_classes = [IsAuthenticated]
