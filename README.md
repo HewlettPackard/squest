@@ -33,15 +33,19 @@ If you want an idea of what you can do with Squest, click on the image below.
   - Add services to your catalog based on job templates you have in your Tower/AWX instance
   - Manage requests for services (review, update, approve and process)
   - Manage lifecycle of each instance of a service
-  - Integrated of external support page
+  - Integrated or external support page
   - Link billing group and track resource consumption
   - Quota
   - Auto approval
+  - Multiple layer approval configuration
+  - Custom on-boarding documentation
+  - Teams to share resources
 - Reserved resource tracking
   - Create generic objects
   - Link objects to compose layers of your infrastructure (Physical servers, Virtualization, Containers, Projects, Tenants,...)
   - Visualize pool of resource of what you have provided (CPU, vCPU, memory, disk...)
   - Check consumptions before approving new requests
+  - Graph representation of resource layers
   
 ## Links
 

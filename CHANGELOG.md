@@ -1,3 +1,19 @@
+# 1.7.3 2022-08-31
+
+## Enhancement
+
+- Create instance from API return full serializer
+- Instance filtered by multiple choice instead of text in UI
+- Link to access instances by service from home page in UI
+- Service catalog forms with data live search in UI
+- Filter for attribute definitions in API
+
+## Fix
+
+- Request operation from API return the new request 
+- Support choices as list in AWX survey
+
+
 # 1.7.2 2022-08-04
 
 ## Feature
