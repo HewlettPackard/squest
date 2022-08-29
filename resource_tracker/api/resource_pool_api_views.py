@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAdminUser
 
 from resource_tracker.api.serializers.resource_pool.resource_pool_serializer import ResourcePoolSerializer, \
     ResourcePoolSerializerRead, ResourcePoolAttributeDefinitionSerializer
+from resource_tracker.filters.resource_pool_attribute_definition_filter import ResourcePoolAttributeDefinitionFilter
 from resource_tracker.filters.resource_pool_filter import ResourcePoolFilter
 from resource_tracker.models import ResourcePool, ResourcePoolAttributeDefinition
 
@@ -23,6 +24,7 @@ class ResourcePoolDetails(generics.RetrieveUpdateDestroyAPIView):
 class PoolAttributeDefinitionList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourcePoolAttributeDefinitionSerializer
+    filterset_class = ResourcePoolAttributeDefinitionFilter
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
