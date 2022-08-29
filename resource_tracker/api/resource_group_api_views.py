@@ -7,7 +7,10 @@ from resource_tracker.api.serializers.resource_group.resource_group_serializers 
     ResourceGroupSerializerRead
 from resource_tracker.api.serializers.resource_group.text_attribute_definition_serializers import \
     ResourceGroupTextAttributeDefinitionSerializer
+from resource_tracker.filters.resource_group_attribute_definition_filter import ResourceGroupAttributeDefinitionFilter
 from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
+from resource_tracker.filters.resource_group_text_attribute_definition_filter import \
+    ResourceGroupTextAttributeDefinitionFilter
 from resource_tracker.models import ResourceGroup, ResourceGroupAttributeDefinition, \
     ResourceGroupTextAttributeDefinition
 
@@ -28,6 +31,7 @@ class ResourceGroupDetails(generics.RetrieveUpdateDestroyAPIView):
 class AttributeDefinitionList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourceGroupAttributeDefinitionSerializer
+    filterset_class = ResourceGroupAttributeDefinitionFilter
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
@@ -57,6 +61,7 @@ class AttributeDefinitionDetails(generics.RetrieveUpdateDestroyAPIView):
 class TextAttributeDefinitionList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = ResourceGroupTextAttributeDefinitionSerializer
+    filterset_class = ResourceGroupTextAttributeDefinitionFilter
 
     def get_queryset(self):
         resource_group_id = self.kwargs.get("pk")
