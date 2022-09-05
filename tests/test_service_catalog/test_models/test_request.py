@@ -142,6 +142,50 @@ class TestRequest(BaseTestRequest):
             if check_execution_called:
                 mock_job_execute.assert_called()
 
+    def _check_state_after_accept(self, expected_instance_state, expected_request_state):
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10
+            self.test_request.accept(self.superuser)
+            self.test_request.refresh_from_db()
+            self.assertEqual(self.test_instance.state, expected_instance_state)
+            self.assertEqual(self.test_request.state, expected_request_state)
+            if expected_request_state == RequestState.PROCESSING:
+                self.assertTrue(PeriodicTask.objects.filter(name=self.expected_created_periodic_task_name).exists())
+                expected_extra_vars = {
+                    'text_variable': 'my_var',
+                }
+                expected_request = {
+                    'id': self.test_request.id,
+                    'state': RequestState.PROCESSING,
+                    'operation': self.test_request.operation.id,
+                    'user': UserSerializer(self.test_request.user).data
+                }
+                expected_instance = {
+                    'id': self.test_instance.id,
+                    'name': 'test_instance_1',
+                    'spec': {},
+                    'state': str(expected_instance_state),
+                    'service': self.test_request.operation.service.id,
+                    'billing_group': None,
+                    'spoc': UserSerializer(self.test_request.instance.spoc).data
+                }
+                expected_user = UserSerializer(self.test_request.user).data
+                mock_job_execute.assert_called()
+                kwargs = mock_job_execute.call_args[1]
+                expected_data_list = [expected_extra_vars, expected_request, expected_instance, expected_user]
+                data_list = [
+                    kwargs.get("extra_vars", None),
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None),
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('instance', None),
+                    kwargs.get("extra_vars", None).get('squest', None).get('request', None).get('user', None)
+                ]
+                for expected_data, data in zip(expected_data_list, data_list):
+                    for key_var, val_var in expected_data.items():
+                        self.assertIn(key_var, data.keys())
+                        self.assertEqual(val_var, data[key_var])
+
+
+
     def test_request_accepted_automatically(self):
         self.create_operation_test.auto_accept = True
         self.create_operation_test.save()
@@ -158,6 +202,7 @@ class TestRequest(BaseTestRequest):
         self.create_operation_test.auto_process = True
         self.create_operation_test.save()
         self._check_request_after_create(RequestState.SUBMITTED, check_execution_called=False)
+        self._check_state_after_accept(InstanceState.PROVISIONING, RequestState.PROCESSING)
 
     def _process_timeout_with_expected_state(self, expected_instance_state):
         self.test_request.state = RequestState.PROCESSING
