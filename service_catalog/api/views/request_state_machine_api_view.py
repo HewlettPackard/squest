@@ -30,6 +30,7 @@ class RequestStateMachine(ViewSet):
     def accept(self, request, pk=None):
         """
         Accept the request and validate/complete the survey : change the state of the request to 'ACCEPTED'.
+        All fields of the survey is required, you can check the state the survey by performing a GET on this url.
         """
         target_request = get_object_or_404(Request, id=pk)
         if not can_proceed(target_request.accept):
