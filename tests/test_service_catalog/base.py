@@ -326,7 +326,6 @@ class BaseTest(TestCase):
         self.testing_empty_survey = {
             "name": "test-empty-survey",
             "description": "test-empty-survey-description",
-            "spec": []
         }
         self.job_template_empty_survey_test = JobTemplate.objects.create(
             name="job-template-empty-survey-test",

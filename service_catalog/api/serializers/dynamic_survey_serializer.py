@@ -23,7 +23,7 @@ class DynamicSurveySerializer(Serializer):
 
     def _get_fields_from_survey(self):
         fields = {}
-        for survey_field in self.survey["spec"]:
+        for survey_field in self.survey.get("spec", []):
             if survey_field["type"] == "text":
                 fields[survey_field['variable']] = CharField(
                     label=survey_field['question_name'],
