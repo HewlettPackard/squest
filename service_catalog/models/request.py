@@ -13,7 +13,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
-from django_fsm import FSMField, transition, post_transition
+from django_fsm import FSMField, transition, post_transition, can_proceed
 
 from profiles.models import Team
 from profiles.models.user_role_binding import UserRoleBinding
@@ -112,9 +112,10 @@ class Request(RoleManager):
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
                 target=RequestState.ACCEPTED, permission='service_catalog.approve_request_approvalstep')
-    def accept(self, user):
+    def accept(self, user, save=True):
         self.state = self.get_state_from_approval_step(user, ApprovalState.APPROVED)
-        self.save()
+        if save:
+            self.save()
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
                 conditions=[can_process])
@@ -357,33 +358,24 @@ class Request(RoleManager):
                 instance.add_team_in_role(team_binding.team, team_binding.role.name)
 
     @classmethod
-    def accept_if_auto_accept_on_operation(cls, sender, instance, created, *args, **kwargs):
+    def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
         """
-        Switch state to accept automatically if target operation auto_accept is true
+        Switch state to accept or process automatically if target operation auto_accept or auto_process is true
         when creating the Request
         :param instance: the current Request
         :type instance: Request
         """
-        if created:
-            if instance.operation.auto_accept:
-                instance.accept(None)
-                instance.save()
-
-    @classmethod
-    def process_if_auto_auto_process_on_operation(cls, sender, instance, created, *args, **kwargs):
-        """
-        Switch state to processing automatically if target operation auto_process is true
-        when creating the Request
-        :param instance: the current Request
-        :type instance: Request
-        """
-        if created:
+        if instance.operation.auto_accept:
+            if instance.state == RequestState.SUBMITTED:
+                if can_proceed(instance.accept):
+                    instance.accept(None, save=False)
+        if instance.operation.auto_process:
             if instance.state == RequestState.ACCEPTED:
-                if instance.operation.auto_process:
+                if can_proceed(instance.process):
                     instance.process()
-                    instance.save()
+                if can_proceed(instance.perform_processing):
                     instance.perform_processing()
-                    instance.save()
+                instance.save()
 
     @classmethod
     def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
@@ -409,7 +401,6 @@ pre_save.connect(Request.set_default_approval_step, sender=Request)
 pre_save.connect(Request.create_approval_step_states_when_approval_step_changed, sender=Request)
 post_save.connect(Request.create_approval_step_states, sender=Request)
 post_save.connect(Request.add_permission, sender=Request)
-post_save.connect(Request.accept_if_auto_accept_on_operation, sender=Request)
-post_save.connect(Request.process_if_auto_auto_process_on_operation, sender=Request)
+post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
 post_save.connect(Request.on_create_call_hook_manager, sender=Request)
