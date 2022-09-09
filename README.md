@@ -25,7 +25,7 @@ and object update management.
 
 If you want an idea of what you can do with Squest, click on the image below.
 
-[![DEMO](https://img.youtube.com/vi/ZfTjS1t7X74/maxresdefault.jpg)](https://www.youtube.com/watch?v=ZfTjS1t7X74)
+[![DEMO](https://i3.ytimg.com/vi/mQnNkSMMXwg/maxresdefault.jpg)](https://youtu.be/mQnNkSMMXwg)
 
 ## Features
 
@@ -52,5 +52,7 @@ If you want an idea of what you can do with Squest, click on the image below.
 :blue_book: [Documentation](https://hewlettpackard.github.io/squest/latest)<br/>
 :speech_balloon: [Chat on Gitter](https://gitter.im/HewlettPackard/squest)<br/>
 :movie_camera: Demo video
-- [Service catalog](https://www.youtube.com/watch?v=ZfTjS1t7X74)
+- [Service catalog](https://youtu.be/mQnNkSMMXwg)
 - [Resource tracking](https://www.youtube.com/watch?v=KxJbYxnR5Ug)
+
+> If you like the project, star it ⭐, it motivates us a lot 🙂
