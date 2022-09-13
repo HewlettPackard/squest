@@ -15,7 +15,8 @@ from profiles.models import Role, Team
 from profiles.tables import TeamsByObjectTable
 from profiles.tables import UserByObjectTable
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
-from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request
+from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request, \
+    Doc
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.views.support_list_view import SupportTable
@@ -91,6 +92,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
             return redirect('service_catalog:request_list')
     else:
         form = OperationRequestForm(request.user, **parameters)
+    docs = Doc.objects.filter(operations__service_id__in=[operation.id])
     context = {
         'form': form,
         'operation': operation,
@@ -103,9 +105,10 @@ def instance_request_new_operation(request, instance_id, operation_id):
         ],
         'icon_button': "fas fa-shopping-cart",
         'text_button': "Request the operation",
-        'color_button': "success"
+        'color_button': "success",
+        'docs': docs
     }
-    return render(request, 'generics/generic_form.html', context)
+    return render(request, 'service_catalog/customer/generic_list_with_docs.html', context)
 
 
 @login_required

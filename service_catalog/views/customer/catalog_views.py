@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from service_catalog.forms import ServiceRequestForm
-from service_catalog.models import Service, OperationType
+from service_catalog.models import Service, OperationType, Doc
 
 
 @login_required
@@ -32,6 +32,9 @@ def customer_service_request(request, service_id, operation_id):
         {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
         {'text': target_service.name, 'url': ""},
     ]
+    docs = Doc.objects.filter(operations__service_id__in=[create_operation.id])
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs,
-               'icon_button': "fas fa-shopping-cart", 'text_button': "Request the service", 'color_button': "success"}
-    return render(request, 'generics/generic_form.html', context)
+               'icon_button': "fas fa-shopping-cart", 'text_button': "Request the service",
+               'color_button': "success",
+               'docs': docs}
+    return render(request, 'service_catalog/customer/generic_list_with_docs.html', context)
