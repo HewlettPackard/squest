@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load martortags %}
+{% block header_button %}
+    {% if html_button_path %}
+        <div class="float-right">
+            {% include html_button_path %}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block main %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    {% if form_header %}{% include form_header %}{% endif %}
+                    <div class="card">
+                        <div class="card-body">
+                            {% include "generics/form_edit.html" %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    {% for doc in docs %}
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-info"></i> {{ doc.title }}
+                                </h3>
+                                {% if request.user.is_superuser %}
+                                    <div class="card-tools">
+                                        <a href="{% url 'admin:service_catalog_doc_change' doc.id %}"
+                                           class="btn btn-default btn-sm">
+                                            <i class="far fa-edit"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <div class="martor-preview">
+                                    {{ doc.content|safe_markdown }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'squest/js/admin_service_form.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js' %}"></script>
+{% endblock %}

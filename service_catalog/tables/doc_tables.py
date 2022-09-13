@@ -8,9 +8,10 @@ from service_catalog.models import Doc
 class DocTable(SquestTable):
     actions = TemplateColumn(template_name='custom_columns/doc_actions.html', orderable=False)
     services = TemplateColumn(template_name='custom_columns/doc_services.html', verbose_name="Linked services")
+    operations = TemplateColumn(template_name='custom_columns/doc_operations.html', verbose_name="Linked operations")
     title = LinkColumn("service_catalog:doc_show", args=[A("id")])
 
     class Meta:
         model = Doc
         attrs = {"id": "doc_table", "class": "table squest-pagination-tables"}
-        fields = ("title", "services", "actions")
+        fields = ("title", "services", "operations", "actions")
