@@ -10,6 +10,13 @@
                     <div class="col-sm-6">
                         {% include "generics/breadcrumbs.html" %}
                     </div>
+                    <div class="col-sm-6">
+                        {% if request.user.is_superuser %}
+                            <a class="btn btn-default float-sm-right" href="{% url 'admin:service_catalog_doc_change' doc.id %}">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

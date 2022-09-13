@@ -35,7 +35,7 @@ class Command(BaseCommand):
             team.add_user_in_role(users[username], "Admin")
             logger.info(f"Get or create '{users[username]}'")
         anthony_token = os.environ['AWX_TOKEN']
-        tower, _ = TowerServer.objects.get_or_create(name=r'AWX HPE', host=r'awx.gre.hpecorp.net:8043',
+        tower, _ = TowerServer.objects.get_or_create(name=r'AWX HPE', host=os.environ['AWX_HOST'],
                                                      token=anthony_token)
         logger.info('AWX added')
         print('Launch celery to sync: celery - A service_catalog worker - l info')
