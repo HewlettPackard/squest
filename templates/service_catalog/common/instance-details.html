@@ -113,11 +113,11 @@
                             </div>
                             {% if request.user.is_superuser %}
                                 <div class="tab-pane" id="spec">
-                                    <pre><code class="language-json">{{ instance.spec | pretty_json }}</code></pre>
+                                    <pre><code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ instance.spec | pretty_json }}</code></pre>
                                 </div>
                             {% endif %}
                             <div class="tab-pane" id="user-spec">
-                                <pre><code class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
+                                <pre><code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
                             </div>
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}

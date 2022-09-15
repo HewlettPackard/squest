@@ -24,3 +24,8 @@
 .form-control-checkbox {
     padding: 0 0.75rem;
 }
+
+pre {
+    padding: 0;
+    margin: 0;
+}
