@@ -1,0 +1,29 @@
+{% load static %}
+<div class="card">
+    <div class="card-header p-2">
+        <h3 class="card-title">
+            <i class="fas fa-comments"></i> Comments
+        </h3>
+        <div class="card-tools">
+            <span title="state" class="badge bg-{{ target_request.state |map_request_state }} p-1 mr-2">{{ target_request.state }}</span>
+        </div>
+    </div>
+    <div class="card-body">
+        {% for message in comment_messages %}
+            <div class="post">
+                <div class="user-block">
+                    <img class="img-circle img-bordered-sm" src="{% if message.sender.is_superuser %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
+                    <span class="username"><a href="#">{{ message.sender.username }}</a></span>
+                    <span class="description">{{ message.last_update_date |squest_date_format }}</span>
+                </div>
+                <!-- /.user-block -->
+                <p>
+                    {{ message.content|markdown }}
+                </p>
+            </div>
+        {%  endfor %}
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="{% url 'service_catalog:request_comment' target_request.id %}"><i class="fas fa-comment"></i> Comments</a>
+    </div>
+</div>

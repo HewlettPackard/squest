@@ -82,7 +82,7 @@
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <section class="col-lg-3">
+            <div class="col-lg-3">
                 <div class="card card-{{ target_request.state |map_request_state }}">
                     <div class="card-header">
                         <h3 class="card-title">Details</h3>
@@ -151,8 +151,8 @@
                         </ul>
                     </div>
                 </div>
-            </section>
-            <section class="col-lg-9">
+            </div>
+            <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
@@ -168,11 +168,15 @@
                         <div class="tab-content">
                             <div class="active tab-pane" id="survey">
                                 {% if request.user.is_superuser %}
-                                    <pre><code
-                                            class="language-json">{{ target_request.full_survey | pretty_json }}</code></pre>
+                                    <pre>
+                                        <code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ target_request.full_survey | pretty_json }}
+                                        </code>
+                                    </pre>
                                 {% else %}
-                                    <pre><code
-                                            class="language-json">{{ target_request.fill_in_survey | pretty_json }}</code></pre>
+                                    <pre>
+                                        <code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ target_request.fill_in_survey | pretty_json }}
+                                        </code>
+                                    </pre>
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="approval">
@@ -219,7 +223,10 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+            <div class="col-lg-5">
+                {% include 'service_catalog/common/request-messages.html' %}
+            </div>
         </div>
     </div><!-- end container fluid -->
 {% endblock %}
