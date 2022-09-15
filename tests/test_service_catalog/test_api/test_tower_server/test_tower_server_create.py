@@ -15,7 +15,8 @@ class TowerServerCreate(BaseTestRequest):
             'host': "my-tower-domain.com",
             'token': "mytokenverysimple",
             'secure': True,
-            'ssl_verify': False
+            'ssl_verify': False,
+            'extra_vars': '{"test": "test"}'
         }
         self.tower_server_url = reverse('api_tower_server_list_create')
 
@@ -49,3 +50,8 @@ class TowerServerCreate(BaseTestRequest):
         self.client.logout()
         response = self.client.post(self.tower_server_url, data=self.post_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_post_tower_server_with_non_json_as_extra_vars(self):
+        self.post_data['extra_vars'] = "test"
+        response = self.client.post(self.tower_server_url, data=self.post_data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
