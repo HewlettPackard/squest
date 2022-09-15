@@ -17,7 +17,8 @@ class TestApiOperationPut(BaseTestRequest):
             'auto_process': self.create_operation_test.auto_process,
             'process_timeout_second': self.create_operation_test.process_timeout_second,
             'service': self.create_operation_test.service.id,
-            'job_template': self.create_operation_test.job_template.id
+            'job_template': self.create_operation_test.job_template.id,
+            'extra_vars': '{"test": "test"}'
         }
         self.kwargs = {
             'service_id': self.service_test.id,

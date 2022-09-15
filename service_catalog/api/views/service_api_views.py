@@ -9,8 +9,12 @@ from service_catalog.api.serializers import ServiceSerializer, AdminServiceSeria
 
 
 class ServiceListCreate(ListCreateAPIView):
-    serializer_class = ServiceSerializer
     filterset_class = ServiceFilter
+
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return AdminServiceSerializer
+        return ServiceSerializer
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
