@@ -32,7 +32,7 @@ def customer_service_request(request, service_id, operation_id):
         {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
         {'text': target_service.name, 'url': ""},
     ]
-    docs = Doc.objects.filter(operations__service_id__in=[create_operation.id])
+    docs = Doc.objects.filter(operations__in=[create_operation])
     context = {'form': form, 'service': target_service, 'breadcrumbs': breadcrumbs,
                'icon_button': "fas fa-shopping-cart", 'text_button': "Request the service",
                'color_button': "success",
