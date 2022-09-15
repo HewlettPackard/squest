@@ -1,3 +1,9 @@
+# 1.7.4 2022-09-15 18:48
+
+## Fix
+
+- [Fix] Fix bad queryset 😅
+
 # 1.7.4 2022-09-15
 
 ## Fix
@@ -7,7 +13,7 @@
 - The extra_vars field is not valid if it is in JSON from the API.
 - Update resource from API does not work for all fields
 
-## Enhancement] 
+## Enhancement
 
 - link docs to operations
 - add request messages to request details
