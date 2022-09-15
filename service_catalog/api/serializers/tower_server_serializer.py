@@ -1,14 +1,16 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, JSONField
 from service_catalog.models import TowerServer
 
 
-class TowerServerSerializer(serializers.ModelSerializer):
+class TowerServerSerializer(ModelSerializer):
     class Meta:
         model = TowerServer
         exclude = ('token',)
 
 
-class TowerServerCreateSerializer(serializers.ModelSerializer):
+class TowerServerCreateSerializer(ModelSerializer):
     class Meta:
         model = TowerServer
         fields = '__all__'
+
+    extra_vars = JSONField(binary=True)

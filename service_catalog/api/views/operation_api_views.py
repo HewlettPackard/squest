@@ -11,6 +11,11 @@ class OperationListCreate(ListCreateAPIView):
     serializer_class = OperationSerializer
     filterset_class = OperationFilter
 
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return AdminOperationSerializer
+        return OperationSerializer
+
     def get_serializer(self, *args, **kwargs):
         if 'data' in kwargs:
             kwargs['data']['service'] = self.kwargs.get('service_id', None)

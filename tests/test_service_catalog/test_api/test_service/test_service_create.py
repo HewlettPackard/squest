@@ -18,6 +18,7 @@ class TestApiServiceCreate(BaseTestRequest):
             'billing_group_is_selectable': True,
             'billing_groups_are_restricted': False,
             'enabled': False,
+            'extra_vars': '{"test": "test"}'
         }
         self.get_service_details_url = reverse('api_service_list_create')
 
@@ -46,3 +47,8 @@ class TestApiServiceCreate(BaseTestRequest):
         self.client.logout()
         response = self.client.post(self.get_service_details_url, data=self.post_data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_post_service_with_non_json_as_extra_vars(self):
+        self.post_data['extra_vars'] = 'test'
+        response = self.client.post(self.get_service_details_url, data=self.post_data, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

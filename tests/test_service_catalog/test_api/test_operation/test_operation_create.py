@@ -19,7 +19,8 @@ class TestApiOperationCreate(BaseTestRequest):
             'auto_accept': False,
             'auto_process': False,
             'process_timeout_second': 60,
-            'job_template': self.job_template_test.id
+            'job_template': self.job_template_test.id,
+            'extra_vars': '{"test": "test"}'
         }
         self.get_operation_details_url = reverse('api_operation_list_create', kwargs=self.kwargs)
 
@@ -50,3 +51,9 @@ class TestApiOperationCreate(BaseTestRequest):
         response = self.client.post(self.get_operation_details_url, data=self.post_data,
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_post_operation_with_non_json_as_extra_vars(self):
+        self.post_data['extra_vars'] = 'test'
+        response = self.client.post(self.get_operation_details_url, data=self.post_data, 
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
