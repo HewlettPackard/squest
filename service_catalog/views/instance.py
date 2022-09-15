@@ -92,7 +92,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
             return redirect('service_catalog:request_list')
     else:
         form = OperationRequestForm(request.user, **parameters)
-    docs = Doc.objects.filter(operations__service_id__in=[operation.id])
+    docs = Doc.objects.filter(operations__in=[operation])
     context = {
         'form': form,
         'operation': operation,
