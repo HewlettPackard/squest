@@ -1,3 +1,17 @@
+# 1.7.4 2022-09-15
+
+## Fix
+
+- Accept request from API without survey doesn't work
+- Auto-process only worked if auto-accept is enabled 
+- The extra_vars field is not valid if it is in JSON from the API.
+- Update resource from API does not work for all fields
+
+## Enhancement] 
+
+- link docs to operations
+- add request messages to request details
+
 # 1.7.3 2022-08-31
 
 ## Enhancement
