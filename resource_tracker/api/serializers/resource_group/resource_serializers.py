@@ -15,7 +15,8 @@ from service_catalog.models import Instance
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = ["id", "resource_group", "name", "service_catalog_instance", "attributes", "text_attributes", "is_deleted_on_instance_deletion"]
+        fields = ["id", "resource_group", "name", "service_catalog_instance", "attributes", "text_attributes",
+                  "is_deleted_on_instance_deletion"]
         read_ony_fields = ["resource_group"]
 
     attributes = ResourceAttributeSerializer(many=True)
@@ -40,8 +41,9 @@ class ResourceSerializer(serializers.ModelSerializer):
         for text_attribute in text_attributes:
             text_attribute_item_name = text_attribute["text_attribute_type"].get('name', None)
             try:
-                text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(resource_group=instance.resource_group,
-                                                                                      name=text_attribute_item_name)
+                text_attribute_def = ResourceGroupTextAttributeDefinition.objects.get(
+                    resource_group=instance.resource_group,
+                    name=text_attribute_item_name)
                 text_attribute_item = ResourceTextAttribute.objects.get(resource=instance,
                                                                         text_attribute_type=text_attribute_def)
                 text_attribute_item.value = text_attribute.get('value', text_attribute_item.value)
@@ -52,7 +54,6 @@ class ResourceSerializer(serializers.ModelSerializer):
                                               f'{instance.resource_group.name}'
                 })
         return super(ResourceSerializer, self).update(instance, validated_data)
-
 
 
 class ResourceCreateSerializer(serializers.Serializer):
