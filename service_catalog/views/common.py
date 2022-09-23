@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from martor.utils import LazyEncoder
 from service_catalog.models import Doc
-from service_catalog.models import Service
 from .color import random_color
 
 
