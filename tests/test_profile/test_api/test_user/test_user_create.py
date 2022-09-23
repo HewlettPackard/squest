@@ -20,7 +20,7 @@ class TestApiUserCreate(BaseTestRequest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()),
                          {'id', 'last_name', 'first_name', 'is_staff', 'email',
-                          'profile', 'username', 'is_superuser', 'is_active'})
+                          'profile', 'username', 'is_superuser', 'is_active', 'billing_groups'})
 
     def _create_user_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_user_url, data=self.post_data,
