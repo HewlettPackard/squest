@@ -21,7 +21,7 @@ class TestApiRequestAccept(BaseTestRequest):
                 expected = {
                     'text_variable': "my_var",
                     'multiplechoice_variable': "choice1",
-                    'multiselect_var': set(["multiselect_3", "multiselect_2"]),
+                    'multiselect_var': ["multiselect_3", "multiselect_2"],
                     'textarea_var': "textarea_val",
                     'password_var': "password_val",
                     'float_var': 1.5,
@@ -50,9 +50,9 @@ class TestApiRequestAccept(BaseTestRequest):
             request.refresh_from_db()
             for key in data.keys():
                 if isinstance(data[key], list):
-                    self.assertEqual(str(set(data[key])), request.full_survey[key])
+                    self.assertEqual(set(data[key]), set(request.full_survey[key]))
                 else:
-                    self.assertEqual(str(data[key]), request.full_survey[key])
+                    self.assertEqual(data[key], request.full_survey[key])
             self.assertEqual(RequestState.ACCEPTED, request.state)
 
     def test_admin_can_accept_request(self):
