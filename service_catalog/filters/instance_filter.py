@@ -34,10 +34,12 @@ class InstanceFilter(SquestFilter):
     no_billing_groups = BooleanFilter(method='no_billing_group', label="No billing group", widget=CheckboxInput())
     no_spocs = BooleanFilter(method='no_spoc', label="No SPOC", widget=CheckboxInput())
 
-    spec = CharInFilter(method='spec_filter',
+    spec = CharInFilter(label="Admin spec contains",
+                        method='spec_filter',
                         validators=[validate_json_field],
                         help_text="JSON accessor, see the documentation for usage.")
-    user_spec = CharInFilter(method='user_spec_filter',
+    user_spec = CharInFilter(label="User spec contains",
+                             method='user_spec_filter',
                              validators=[validate_json_field],
                              help_text="JSON accessor, see the documentation for usage.")
 
