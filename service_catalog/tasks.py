@@ -1,4 +1,5 @@
 import logging
+from smtplib import SMTPDataError
 
 from celery import shared_task
 from django.core import management
@@ -46,7 +47,10 @@ def send_email(subject, plain_text, html_template, from_email, receivers=None, b
                                  reply_to=reply_to,
                                  headers=headers)
     msg.attach_alternative(html_template, "text/html")
-    msg.send()
+    try:
+        msg.send()
+    except SMTPDataError as e:
+        logger.error(f"[send_email] Fail to send email: {e.smtp_code} {e.smtp_error}")
     logger.info(f"[send_email] email sent")
 
 

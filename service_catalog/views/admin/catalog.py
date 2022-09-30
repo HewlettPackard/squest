@@ -4,8 +4,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from service_catalog.forms import ServiceOperationForm, ServiceForm
+from service_catalog.forms.tower_survey_field_form import TowerSurveyFieldForm
 from service_catalog.models import Service, Operation
-from service_catalog.models.tower_survey_field import TowerSurveyField, TowerSurveyFieldForm
+from service_catalog.models.tower_survey_field import TowerSurveyField
 
 
 @user_passes_test(lambda u: u.is_superuser)

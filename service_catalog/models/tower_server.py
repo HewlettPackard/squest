@@ -26,15 +26,35 @@ class TowerServer(Model):
         """
         from .job_templates import JobTemplate as JobTemplateLocal
         tower = self.get_tower_instance()
+
+        # sync job template
         if job_template_id is None:
-            id_in_tower = []
+            job_template_id_in_tower = []
             for job_template_from_tower in tower.job_templates:
-                id_in_tower.append(job_template_from_tower.id)
+                job_template_id_in_tower.append(job_template_from_tower.id)
                 self._update_job_template_from_tower(job_template_from_tower)
-            JobTemplateLocal.objects.filter(tower_server=self).exclude(tower_id__in=id_in_tower).delete()
+            JobTemplateLocal.objects.filter(tower_server=self).exclude(tower_id__in=job_template_id_in_tower).delete()
         else:
             job_template = JobTemplateLocal.objects.get(id=job_template_id)
             self._update_job_template_from_tower(tower.get_job_template_by_id(job_template.tower_id))
+
+        # sync inventories
+        inventory_ids_in_tower = []
+        for inventory_from_tower in tower.inventories:
+            inventory_ids_in_tower.append(inventory_from_tower.id)
+            self._update_inventory_from_tower(inventory_from_tower)
+        # delete inventories that do not exist anymore in Tower
+        from .inventory import Inventory as InventoryLocal
+        InventoryLocal.objects.filter(tower_server=self).exclude(tower_id__in=inventory_ids_in_tower).delete()
+
+        # sync credentials
+        credentials_ids_in_tower = []
+        for credential_from_tower in tower.credentials:
+            credentials_ids_in_tower.append(credential_from_tower.id)
+            self._update_credential_from_tower(credential_from_tower)
+        # delete inventories that do not exist anymore in Tower
+        from .credential import Credential as CredentialLocal
+        CredentialLocal.objects.filter(tower_server=self).exclude(tower_id__in=credentials_ids_in_tower).delete()
 
     @property
     def url(self):
@@ -58,3 +78,21 @@ class TowerServer(Model):
         # update all operation that uses this template
         from service_catalog.models import Operation
         Operation.update_survey_after_job_template_update(job_template)
+
+    def _update_inventory_from_tower(self, inventory_from_tower):
+        from .inventory import Inventory as InventoryLocal
+        inventory, _ = InventoryLocal.objects.get_or_create(tower_id=inventory_from_tower.id,
+                                                            tower_server=self,
+                                                            defaults={'name': inventory_from_tower.name})
+        # update data
+        inventory.name = inventory_from_tower.name
+        inventory.save()
+
+    def _update_credential_from_tower(self, credential_from_tower):
+        from .credential import Credential as CredentialLocal
+        credential, _ = CredentialLocal.objects.get_or_create(tower_id=credential_from_tower.id,
+                                                              tower_server=self,
+                                                              defaults={'name': credential_from_tower.name})
+        # update data
+        credential.name = credential_from_tower.name
+        credential.save()

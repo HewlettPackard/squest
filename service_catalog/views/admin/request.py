@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 
 from service_catalog.forms import RequestMessageForm, AcceptRequestForm
+from service_catalog.forms.process_request_form import ProcessRequestForm
 from service_catalog.forms.request_forms import RequestForm
 from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Request, RequestMessage
@@ -77,7 +78,8 @@ def admin_request_re_submit(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_reject(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) or not can_proceed(target_request.reject):
+    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) \
+            or not can_proceed(target_request.reject):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
@@ -105,7 +107,8 @@ def admin_request_reject(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_accept(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) or not can_proceed(target_request.accept):
+    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) \
+            or not can_proceed(target_request.accept):
         raise PermissionDenied
     parameters = {
         'request': target_request
@@ -140,15 +143,47 @@ def admin_request_process(request, request_id):
     if not can_proceed(target_request.process):
         raise PermissionDenied
     error_message = ""
+    parameters = {
+        'request': target_request
+    }
     if request.method == "POST":
-        error_message = process_request(request.user, target_request)
-        if not error_message:
-            return redirect('service_catalog:request_list')
+        form = ProcessRequestForm(request.user, request.POST, **parameters)
+        if form.is_valid():
+            # get job template extra parameters
+            inventory_override = form.cleaned_data.get('ask_inventory_on_launch')
+            credentials_override = form.cleaned_data.get('ask_credential_on_launch')
+            limit_override = form.cleaned_data.get('ask_limit_on_launch')
+            tags_override = form.cleaned_data.get('ask_tags_on_launch')
+            skip_tags_override = form.cleaned_data.get('ask_skip_tags_on_launch')
+            verbosity_override = form.cleaned_data.get('ask_verbosity_on_launch')
+            job_type_override = form.cleaned_data.get('ask_job_type_on_launch')
+            diff_mode_override = form.cleaned_data.get('ask_diff_mode_on_launch')
+            error_message = process_request(request.user,
+                                            target_request,
+                                            inventory_override=inventory_override,
+                                            credentials_override=credentials_override,
+                                            limit_override=limit_override,
+                                            tags_override=tags_override,
+                                            skip_tags_override=skip_tags_override,
+                                            verbosity_override=verbosity_override,
+                                            job_type_override=job_type_override,
+                                            diff_mode_override=diff_mode_override
+                                            )
+            if not error_message:
+                return redirect('service_catalog:request_list')
+    else:
+        form = ProcessRequestForm(request.user, **parameters)
+
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': request_id, 'url': ""},
     ]
+
     context = {
+        'icon_button': "fas fa-play",
+        'text_button': "Process",
+        'color_button': "success",
+        'form': form,
         'target_request': target_request,
         'error_message': error_message,
         'breadcrumbs': breadcrumbs
@@ -199,13 +234,22 @@ def request_delete(request, request_id):
     return render(request, 'generics/confirm-delete-template.html', context=context)
 
 
-def process_request(user, target_request):
+def process_request(user, target_request, inventory_override=None, credentials_override=None, tags_override=None,
+                    skip_tags_override=None, limit_override=None, verbosity_override=None, job_type_override=None,
+                    diff_mode_override=None):
     from towerlib.towerlibexceptions import AuthFailed
     try:
         # switch the state to processing before trying to execute the process
         target_request.process()
         target_request.save()
-        target_request.perform_processing()
+        target_request.perform_processing(inventory_override=inventory_override,
+                                          credentials_override=credentials_override,
+                                          tags_override=tags_override,
+                                          skip_tags_override=skip_tags_override,
+                                          limit_override=limit_override,
+                                          verbosity_override=verbosity_override,
+                                          job_type_override=job_type_override,
+                                          diff_mode_override=diff_mode_override)
         target_request.save()
     except AuthFailed:
         logger.error(

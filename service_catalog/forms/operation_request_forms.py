@@ -1,5 +1,6 @@
 import urllib3
 from django import forms
+
 from service_catalog.forms.form_utils import FormUtils
 from service_catalog.forms.utils import get_fields_from_survey
 from service_catalog.models import Operation, Instance, Request, RequestMessage
@@ -29,10 +30,14 @@ class OperationRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
                                                        operation_survey=self.operation.tower_survey_fields)
-        purged_survey_with_default = FormUtils.apply_spec_template_to_survey(job_template_survey=purged_survey,
+
+        from service_catalog.api.serializers import InstanceReadSerializer
+        context = {
+            "instance": InstanceReadSerializer(self.instance).data
+        }
+        purged_survey_with_default = FormUtils.apply_jinja_template_to_survey(job_template_survey=purged_survey,
                                                                              operation_survey=self.operation.tower_survey_fields,
-                                                                             admin_spec=self.instance.spec,
-                                                                             user_spec=self.instance.user_spec)
+                                                                             context=context)
         purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
             job_template_survey=purged_survey_with_default,
             operation_survey=self.operation.tower_survey_fields)
