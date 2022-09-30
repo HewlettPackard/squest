@@ -1,10 +1,13 @@
 import copy
+import logging
 
 import urllib3
 from jinja2 import Template
 from jinja2.exceptions import UndefinedError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+logger = logging.getLogger(__name__)
 
 
 class FormUtils:
@@ -26,23 +29,18 @@ class FormUtils:
         return returned_dict
 
     @classmethod
-    def apply_spec_template_to_survey(cls, job_template_survey, operation_survey, admin_spec=None, user_spec=None):
+    def apply_jinja_template_to_survey(cls, job_template_survey, operation_survey, context=None):
         """
         Apply the "default" field of the operation survey
         :param job_template_survey: json job template config
         :param operation_survey: list of TowerSurveyField
-        :param admin_spec: admin spec as json
-        :param user_spec: user spec as json
+        :param context: dict context to be passed to the template
         :return: Updated survey with templated string from spec
         """
-        spec_config = {
-            "spec": admin_spec,
-            "user_spec": user_spec
-        }
         for survey_filled in job_template_survey.get("spec", []):   # loop all survey config from tower
             target_tower_field = operation_survey.get(name=survey_filled["variable"])
             if target_tower_field.default is not None and target_tower_field.default != "":
-                survey_filled["default"] = cls.template_field(target_tower_field.default, spec_config)
+                survey_filled["default"] = cls.template_field(target_tower_field.default, context)
         return job_template_survey
 
     @classmethod
@@ -55,17 +53,20 @@ class FormUtils:
         return job_template_survey
 
     @classmethod
-    def template_field(cls, default_template_config, spec_config):
+    def template_field(cls, jinja_template_string, template_data_dict):
         """
         Template a field value with user and or admin spec
-        :param default_template_config: string that may contain jinja template markers
-        :param spec_config: dict of admin or user spec to use in the template
+        :param jinja_template_string: string that may contain jinja template markers
+        :param template_data_dict: dict context
         :return: templated string
         """
-        template = Template(default_template_config)
+        if template_data_dict is None:
+            template_data_dict = dict()
         templated_string = ""
+        template = Template(jinja_template_string)
         try:
-            templated_string = template.render(spec_config)
-        except UndefinedError:
+            templated_string = template.render(template_data_dict)
+        except UndefinedError as e:
+            logger.warning(f"[template_field] templating error: {e.message}")
             pass
         return templated_string

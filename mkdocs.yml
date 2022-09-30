@@ -37,7 +37,10 @@ nav:
     - Squest: configuration/squest_settings.md
     - Tower: configuration/tower_settings.md
   - Manual:
-    - Service catalog: manual/service_catalog.md
+    - Service catalog:
+      - Concept: manual/service_catalog/concept.md
+      - Service: manual/service_catalog/service.md
+      - Operation: manual/service_catalog/operation.md
     - Resource tracking: manual/resource_tracking.md
     - Tools: manual/tools.md
     - Quota: manual/quota.md
@@ -46,6 +49,7 @@ nav:
     - Prometheus metrics: manual/metrics.md
     - Notifications: manual/notifications.md
     - Filters: manual/filters.md
+    - Jinja: manual/jinja.md
   - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md

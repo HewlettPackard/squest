@@ -18,8 +18,8 @@
             <div class="container-fluid">
                 <div class="callout callout-info">
                     <h5>Operation survey</h5>
-                    <p><strong>Enabled:</strong> fields are displayed into the end user survey</p>
-                    <p><strong>Default:</strong> can be left empty or filled with a <code>string</code> or a jinja template string. E.g: <code>&#123;&#123; user_spec.key &#125;&#125;</code> or <code>&#123;&#123; spec.key &#125;&#125;</code></p>
+                    <p><strong>Enabled:</strong> Fields are displayed into the end user survey</p>
+                    <p><strong>Default:</strong> Can be left empty or filled with a <code>string</code> or a jinja template string based on the current <code>&#123;&#123; instance &#125;&#125;</code>. E.g: <code>&#123;&#123; instance.spec.key &#125;&#125;</code> or <code>&#123;&#123; instance.name &#125;&#125;</code></p>
                     <p><strong>Validators:</strong> Admin provided field validator scripts</p>
                 </div>
                 <div class="card">

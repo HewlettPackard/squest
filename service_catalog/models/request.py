@@ -131,7 +131,9 @@ class Request(RoleManager):
         self.instance.save()
 
     @transition(field=state, source=RequestState.PROCESSING)
-    def perform_processing(self):
+    def perform_processing(self, inventory_override=None, credentials_override=None, tags_override=None,
+                           skip_tags_override=None, limit_override=None, verbosity_override=None,
+                           job_type_override=None, diff_mode_override=None):
         # get the survey with variables set by the end user and admin
         tower_extra_vars = copy.copy(self.full_survey)
         # add tower server extra vars
@@ -149,7 +151,15 @@ class Request(RoleManager):
         }
         tower_job_id = None
         try:
-            tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars)
+            tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars,
+                                                               inventory_override=inventory_override,
+                                                               credentials_override=credentials_override,
+                                                               tags_override=tags_override,
+                                                               skip_tags_override=skip_tags_override,
+                                                               limit_override=limit_override,
+                                                               verbosity_override=verbosity_override,
+                                                               job_type_override=job_type_override,
+                                                               diff_mode_override=diff_mode_override)
         except towerlib.towerlibexceptions.AuthFailed:
             self.has_failed(reason="towerlib.towerlibexceptions.AuthFailed")
         except requests.exceptions.SSLError:

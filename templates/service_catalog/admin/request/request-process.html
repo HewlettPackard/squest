@@ -52,44 +52,35 @@
                                 </div>
                             </div>
                         </div>
-
                         {% if target_request.full_survey %}
-                        <div class="card card-secondary">
-                            <div class="card-header">
-                                <h3 class="card-title">Job template configuration</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body p-0">
-                                <table class="table table-bordered">
-                                    <tbody>
-                                    {% for field,value in target_request.full_survey.items %}
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h3 class="card-title">Extra vars</h3>
+                                </div>
+
+                                <div class="card-body p-0">
+                                    <table class="table table-sm">
+                                        <thead>
                                         <tr>
-                                            <td>
-                                                {{ field }}
-                                            </td>
-                                            <td>
-                                                {{ value }}
-                                            </td>
-
+                                            <th>Variable name</th>
+                                            <th>Value</th>
                                         </tr>
-                                    {%  endfor %}
-
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {% for field,value in target_request.full_survey.items %}
+                                            <tr>
+                                                <td>{{ field }}</td>
+                                                <td>{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <!-- /.card-body -->
-                        </div>
                         {% endif %}
-                        <form id="form_process_request" action='' method='POST'>{% csrf_token %}
-                            <button onclick="showLoaderOnClick();" type="submit" class="btn btn-success">
-                                <i class="fas fa-play"></i> Process request
-                            </button>
-                            <a class="btn btn-default" href="{% url 'service_catalog:request_list' %}">Return</a>
-                        </form>
+                        {% include "generics/form_edit.html" %}
+
                     </div>
-
-
-
                 </div>
             </div><!-- end container fluid -->
         </div>
