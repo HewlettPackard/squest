@@ -35,6 +35,26 @@ class Operation(Model):
     )
     extra_vars = JSONField(default=dict, blank=True)
     is_admin_operation = BooleanField(default=False, blank=True)
+    default_inventory_id = CharField(max_length=500, blank=True, null=True,
+                                     help_text="Jinja supported with context {{ request }}. "
+                                               "Id of the inventory to use by default. "
+                                               "Leave blank to use the default Job Template inventory")
+    default_limits = CharField(max_length=500, blank=True, null=True,
+                               help_text="Jinja supported with context {{ request }}. "
+                                         "Comma separated list of inventory host limits")
+    default_tags = CharField(max_length=500, blank=True, null=True,
+                             help_text="Jinja supported. Comma separated list of tags")
+    default_skip_tags = CharField(max_length=500, blank=True, null=True,
+                                  help_text="Jinja supported. Comma separated list of skip tags")
+    default_credentials_ids = CharField(max_length=500, blank=True, null=True,
+                                        help_text="Jinja supported with context `{{ request }}`. "
+                                                  "Comma separated list of credentials ID")
+    default_verbosity = CharField(max_length=500, blank=True, null=True,
+                                  help_text="Jinja supported. Verbosity level (Integer)")
+    default_diff_mode = CharField(max_length=500, blank=True, null=True,
+                                  help_text="Jinja supported. Show changes")
+    default_job_type = CharField(max_length=500, blank=True, null=True,
+                                 help_text="Jinja supported. Job template type")
 
     def __str__(self):
         return f"{self.name} ({self.service})"

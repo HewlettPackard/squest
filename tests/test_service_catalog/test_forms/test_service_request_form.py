@@ -1,5 +1,6 @@
 from django.test import override_settings
 
+from service_catalog.api.serializers import InstanceSerializer
 from service_catalog.forms import FormUtils, ServiceRequestForm
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base import BaseTest
@@ -44,7 +45,7 @@ class TestServiceRequestForm(BaseTest):
                          FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
                                                         operation_survey=self.create_operation_test.tower_survey_fields))
 
-    def test_apply_spec_template_to_survey_empty_default(self):
+    def test_apply_jinja_template_to_survey_empty_default(self):
         self.job_template_test.survey = {
             "name": "test-survey",
             "description": "test-survey-description",
@@ -87,10 +88,10 @@ class TestServiceRequestForm(BaseTest):
             ]
         }
         self.assertEqual(expected_result,
-                         FormUtils.apply_spec_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                 operation_survey=self.create_operation_test.tower_survey_fields))
+                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
+                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
 
-    def test_apply_spec_template_to_survey_override_default(self):
+    def test_apply_jinja_template_to_survey_override_default(self):
         self.job_template_test.survey = {
             "name": "test-survey",
             "description": "test-survey-description",
@@ -133,10 +134,10 @@ class TestServiceRequestForm(BaseTest):
             ]
         }
         self.assertEqual(expected_result,
-                         FormUtils.apply_spec_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                 operation_survey=self.create_operation_test.tower_survey_fields))
+                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
+                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
 
-    def test_apply_spec_template_to_survey_with_spec_variable(self):
+    def test_apply_jinja_template_to_survey_with_spec_variable(self):
         self.job_template_test.survey = {
             "name": "test-survey",
             "description": "test-survey-description",
@@ -158,10 +159,15 @@ class TestServiceRequestForm(BaseTest):
         self.job_template_test.save()
         # test with en empty string
         target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.default = "{{ spec.os }}"
+        target_field.default = "{{ instance.spec.os }}"
         target_field.save()
-        admin_spec = {
-            "os": "linux"
+        context = {
+            "instance": {
+                "spec": {
+                    "os": "linux"
+                }
+            }
+
         }
         expected_result = {
             "name": "test-survey",
@@ -182,10 +188,10 @@ class TestServiceRequestForm(BaseTest):
             ]
         }
         self.assertEqual(expected_result,
-                         FormUtils.apply_spec_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                 operation_survey=self.create_operation_test.tower_survey_fields,
-                                                                 admin_spec=admin_spec
-                                                                 ))
+                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
+                                                                  operation_survey=self.create_operation_test.tower_survey_fields,
+                                                                  context=context
+                                                                  ))
 
     def test_template_field_no_default_no_spec(self):
         default_template_config = ""
@@ -274,6 +280,10 @@ class TestServiceRequestForm(BaseTest):
         expected_result = "value with "
         self.assertEqual(expected_result,
                          FormUtils.template_field(default_template_config, spec_config))
+
+    def test_template_field_none_value_as_template_data_dict(self):
+        default_template_config = "default_template_config"
+        self.assertEqual("default_template_config", FormUtils.template_field(default_template_config, None))
 
     def test_template_field_default_and_non_valid_spec_name(self):
         default_template_config = "value with {{ non_exist.my_key }}"

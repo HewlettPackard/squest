@@ -52,8 +52,8 @@ For example a link can be created to expose the Hypervisor URL that has been pla
 
 ### Jinja templating
 
-[Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) can be used in the `text` or `URL` definition. The `instance` object of the current instance detail 
-page is used.
+[Jinja templating](jinja.md) can be used in the `text` or `URL` definition. The `instance` object of the current instance detail 
+page is used as context.
 
 Full `instance` object definition can be retrieved through the [API documentation](api.md).
 

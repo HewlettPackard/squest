@@ -17,8 +17,8 @@ EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "squest_instanc
 
 class ServiceRequestForm(forms.Form):
     squest_instance_name = forms.CharField(label="Squest instance name",
-                                    help_text="Help to identify the requested service in the 'Instances' view",
-                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                           help_text="Help to identify the requested service in the 'Instances' view",
+                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     request_comment = forms.CharField(label="Comment",
                                       help_text="Add a comment to your request",
@@ -29,7 +29,7 @@ class ServiceRequestForm(forms.Form):
         label="Billing group",
         choices=[],
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control', 'disabled': False})
+        widget=forms.Select(attrs={'class': 'form-control selectpicker', 'data-live-search': 'True'})
     )
 
     def __init__(self, user, *args, **kwargs):
@@ -55,8 +55,8 @@ class ServiceRequestForm(forms.Form):
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
                                                        operation_survey=self.create_operation.tower_survey_fields)
-        purged_survey_with_default = FormUtils.apply_spec_template_to_survey(job_template_survey=purged_survey,
-                                                                             operation_survey=self.create_operation.tower_survey_fields)
+        purged_survey_with_default = FormUtils.apply_jinja_template_to_survey(job_template_survey=purged_survey,
+                                                                              operation_survey=self.create_operation.tower_survey_fields)
         purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(job_template_survey=purged_survey_with_default,
                                                                                 operation_survey=self.create_operation.tower_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey_with_validator))

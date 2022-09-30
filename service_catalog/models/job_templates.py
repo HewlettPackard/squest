@@ -1,8 +1,12 @@
+import logging
+
 from django.db.models import Model, CharField, IntegerField, JSONField, ForeignKey, CASCADE, BooleanField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from . import BootstrapType, ExceptionServiceCatalog, TowerServer
+
+logger = logging.getLogger(__name__)
 
 
 class JobTemplate(Model):
@@ -23,12 +27,35 @@ class JobTemplate(Model):
     def __str__(self):
         return f"{self.name} ({self.tower_server.name})"
 
-    def execute(self, extra_vars):
+    def execute(self, extra_vars, inventory_override=None, credentials_override=None, tags_override=None,
+                skip_tags_override=None, limit_override=None, verbosity_override=None, job_type_override=None,
+                diff_mode_override=None):
         tower_job_template = self.tower_server.get_tower_instance().get_job_template_by_id(self.tower_id)
         if tower_job_template is None:
             raise ExceptionServiceCatalog.JobTemplateNotFound(tower_name=self.tower_server.name,
                                                               job_template_id=self.tower_id)
-        tower_job_run = tower_job_template.launch(extra_vars=extra_vars)
+
+        try:
+            credentials_override_to_list = list(map(int, credentials_override))
+        except TypeError:
+            credentials_override_to_list = None
+        if inventory_override is not None:
+            inventory_override = int(inventory_override)
+        if verbosity_override is not None:
+            verbosity_override = int(verbosity_override)
+        parameters = {
+            "extra_vars": extra_vars,
+            "inventory": inventory_override,
+            "credentials": credentials_override_to_list,
+            "job_tags": tags_override,
+            "skip_tags": skip_tags_override,
+            "limit": limit_override,
+            "verbosity": verbosity_override,
+            "job_type": job_type_override,
+            "diff_mode": diff_mode_override,
+        }
+        logger.info(f"[job-template-execute] Execute job template with parameter: {parameters}")
+        tower_job_run = tower_job_template.launch(**parameters)
         return tower_job_run.id
 
     def check_is_compliant(self):
