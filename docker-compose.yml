@@ -8,8 +8,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - "./docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-    ports:
-      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.3
