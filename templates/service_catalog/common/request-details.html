@@ -129,6 +129,18 @@
                                         class="float-right">{{ target_request.date_complete |squest_date_format }}</span>
                                 </li>
                             {% endif %}
+                            {% if target_request.accepted_by %}
+                                <li class="list-group-item">
+                                    <b>Accepted by</b><span
+                                        class="float-right">{{ target_request.accepted_by.username }}</span>
+                                </li>
+                            {% endif %}
+                            {% if target_request.processed_by %}
+                                <li class="list-group-item">
+                                    <b>Processed by</b><span
+                                        class="float-right">{{ target_request.processed_by.username }}</span>
+                                </li>
+                            {% endif %}
                             {% if target_request.date_archived %}
                                 <li class="list-group-item">
                                     <b>Date archived</b><span

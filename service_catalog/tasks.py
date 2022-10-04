@@ -1,5 +1,5 @@
 import logging
-from smtplib import SMTPDataError
+from smtplib import SMTPDataError, SMTPRecipientsRefused
 
 from celery import shared_task
 from django.core import management
@@ -49,9 +49,13 @@ def send_email(subject, plain_text, html_template, from_email, receivers=None, b
     msg.attach_alternative(html_template, "text/html")
     try:
         msg.send()
+        logger.info(f"[send_email] email sent")
     except SMTPDataError as e:
         logger.error(f"[send_email] Fail to send email: {e.smtp_code} {e.smtp_error}")
-    logger.info(f"[send_email] email sent")
+    except SMTPRecipientsRefused as e:
+        logger.error(f"[send_email] Fail to send email to addresses: {e.recipients}")
+    except ConnectionRefusedError as e:
+        logger.error(f"[send_email] Fail to send email. Connection refused: {e.strerror}")
 
 
 @shared_task

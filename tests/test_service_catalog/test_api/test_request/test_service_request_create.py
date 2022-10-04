@@ -25,7 +25,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
             }
         }
         self.expected = ['id', 'instance', 'user', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
-                         'tower_job_id', 'state', 'operation', 'approval_step']
+                         'tower_job_id', 'state', 'operation', 'approval_step', 'processed_by', 'accepted_by']
         self.expected.sort()
 
     def test_can_create(self):
