@@ -53,6 +53,8 @@ class Request(RoleManager):
         related_name='requests',
         related_query_name='request'
     )
+    accepted_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="accepted_requests")
+    processed_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="processed_requests")
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
@@ -113,13 +115,14 @@ class Request(RoleManager):
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
                 target=RequestState.ACCEPTED, permission='service_catalog.approve_request_approvalstep')
     def accept(self, user, save=True):
+        self.accepted_by = user
         self.state = self.get_state_from_approval_step(user, ApprovalState.APPROVED)
         if save:
             self.save()
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
                 conditions=[can_process])
-    def process(self):
+    def process(self, user=None, save=True):
         logger.info(f"[Request][process] trying to start processing request '{self.id}'")
         # the instance now switch depending on the operation type
         if self.operation.type == OperationType.CREATE:
@@ -128,7 +131,10 @@ class Request(RoleManager):
             self.instance.updating()
         elif self.operation.type == OperationType.DELETE:
             self.instance.deleting()
+        self.processed_by = user
         self.instance.save()
+        if save:
+            self.save()
 
     @transition(field=state, source=RequestState.PROCESSING)
     def perform_processing(self, inventory_override=None, credentials_override=None, tags_override=None,
@@ -382,7 +388,7 @@ class Request(RoleManager):
         if instance.operation.auto_process:
             if instance.state == RequestState.ACCEPTED:
                 if can_proceed(instance.process):
-                    instance.process()
+                    instance.process(None, save=False)
                 if can_proceed(instance.perform_processing):
                     instance.perform_processing()
                 instance.save()

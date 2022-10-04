@@ -240,8 +240,7 @@ def process_request(user, target_request, inventory_override=None, credentials_o
     from towerlib.towerlibexceptions import AuthFailed
     try:
         # switch the state to processing before trying to execute the process
-        target_request.process()
-        target_request.save()
+        target_request.process(user)
         target_request.perform_processing(inventory_override=inventory_override,
                                           credentials_override=credentials_override,
                                           tags_override=tags_override,
