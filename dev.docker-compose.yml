@@ -1,0 +1,7 @@
+# add this file to the docker compose execution when developing Squest
+version: '3.7'
+
+services:
+  db:
+    ports:
+      - "3306:3306"
