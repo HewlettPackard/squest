@@ -42,7 +42,7 @@ class TestMailUtils(BaseTest):
         self.superuser.profile.notification_enabled = True
         self.superuser.save()
 
-        self.assertEquals(1, len(_get_admin_emails(instance=self.test_instance)))
+        self.assertEquals(1, len(_get_admin_emails()))
 
     def test_get_headers(self):
         expected_list = ["Message-ID", "In-Reply-To", "References"]

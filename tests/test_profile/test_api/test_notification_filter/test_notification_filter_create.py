@@ -19,8 +19,7 @@ class TestApiNotificationFilterCreate(BaseTestProfile):
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()),
-                         {'id', 'name', 'profile', 'services', 'operations', 'request_states', 'instance_states', 
-                          'when'})
+                         {'id', 'name', 'profile', 'services', 'operations', 'request_states', 'when'})
 
     def _create_notification_filter_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,

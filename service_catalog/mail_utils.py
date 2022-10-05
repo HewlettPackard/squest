@@ -36,7 +36,7 @@ def _get_headers(subject):
     return headers
 
 
-def _get_admin_emails(instance=None, request=None):
+def _get_admin_emails(request=None):
     """
     Return a list of admin (is_staff) email if notification is enabled and target service subscribed
     :return:
@@ -45,20 +45,20 @@ def _get_admin_emails(instance=None, request=None):
     # create a list of email
     email_admins = list()
     for admin in admins:
-        if admin.email and admin.profile.notification_enabled and admin.profile.is_notification_authorized(instance, request):
+        if admin.email and admin.profile.notification_enabled and admin.profile.is_notification_authorized(request):
             email_admins.append(admin.email)
     return email_admins
 
 
 def _get_receivers_for_request_message(request_message):
-    receiver_email_list = _get_admin_emails(instance=request_message.request.instance, request=request_message.request)
+    receiver_email_list = _get_admin_emails(request=request_message.request)
     receiver_email_list = _add_user_in_user_list(request_message.request.user, receiver_email_list)
     receiver_email_list = _remove_user_in_user_list(request_message.sender, receiver_email_list)
     return receiver_email_list
 
 
 def _get_receivers_for_support_message(support_message):
-    receiver_email_list = _get_admin_emails(instance=support_message.support.instance)
+    receiver_email_list = _get_admin_emails()
     receiver_email_list = _add_user_in_user_list(support_message.support.instance.spoc, receiver_email_list)
     receiver_email_list = _remove_user_in_user_list(support_message.sender, receiver_email_list)
     return receiver_email_list
@@ -98,7 +98,7 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     if target_request.approval_step:
         receiver_email_list = target_request.approval_step.get_approvers_emails()
     if receiver_email_list is None:
-        receiver_email_list = _get_admin_emails(instance=target_request.instance, request=target_request)  # email sent to all admins
+        receiver_email_list = _get_admin_emails(request=target_request)  # email sent to all admins
     if target_request.user.profile.notification_enabled and target_request.user.email:
         receiver_email_list.append(target_request.user.email)  # email sent to the requester
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,

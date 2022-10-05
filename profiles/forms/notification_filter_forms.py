@@ -12,11 +12,6 @@ class NotificationFilterForm(SquestModelForm):
                                          choices=RequestState.choices,
                                          widget=SelectMultiple(attrs={'class': 'form-control'}))
 
-    instance_states = MultipleChoiceField(label="Instance states",
-                                          required=False,
-                                          choices=InstanceState.choices,
-                                          widget=SelectMultiple(attrs={'class': 'form-control'}))
-
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
         self.user = user
@@ -33,4 +28,4 @@ class NotificationFilterForm(SquestModelForm):
 
     class Meta:
         model = NotificationFilter
-        fields = ["name", "services", "operations", "request_states", "instance_states", "when", "profile"]
+        fields = ["name", "services", "operations", "request_states","when", "profile"]
