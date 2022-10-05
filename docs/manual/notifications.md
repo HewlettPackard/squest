@@ -38,10 +38,16 @@ Example behavior when setting multiple service and multiple operation:
 
 ### When: Ansible like conditions
 
-The `when` condition allows to filter notification based on instance "spec" and/or "user_spec".
-The syntax is the same as the one used in Ansible. `spec` and `user_spec` object are directly usable in the condition without JINJA double-curly braces.
+The `when` condition allows to filter notification based on current "request".
+The syntax is the same as the one used in Ansible. The `request` object is directly usable as context in the condition without JINJA double-curly braces.
+See the [Jinja documentation](jinja.md) for more example.
 
-E.g:
+E.g with a 'when' based on the survey filled by the user
 ```python
-spec['configvar'] == 'value' and user_spec['other'] == 'value'
+request.fill_in_survey['location'] == 'grenoble'
+```
+
+E.g with instance spec
+```python
+request.instance.spec['spec_key1'] == 'spec_value1'
 ```
