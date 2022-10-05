@@ -24,7 +24,6 @@ class TestApiNotificationFilterPatch(BaseTestProfile):
             'services': self.put_data['services'],
             'operations': list(self.notification_filter_test.operations.all()),
             'request_states': self.notification_filter_test.request_states,
-            'instance_states': self.notification_filter_test.instance_states,
             'when': self.notification_filter_test.when,
         }
 

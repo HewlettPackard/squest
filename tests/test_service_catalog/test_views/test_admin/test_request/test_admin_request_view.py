@@ -156,6 +156,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_instance.refresh_from_db()
         self.assertEqual(self.test_instance.state, expected_instance_state)
         if response.status_code == 302:
+            self.assertEqual(self.test_request.accepted_by, self.superuser)
             billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id
             self.assertEqual(data['billing_group_id'], billing_group_id)
 
@@ -272,6 +273,7 @@ class AdminRequestViewTest(BaseTestRequest):
             response = self.client.post(url)
             self.assertEqual(302, response.status_code)
             self.test_request.refresh_from_db()
+            self.assertEqual(self.test_request.processed_by, self.superuser)
             self.assertEqual(self.test_request.state, expected_request_state)
             expected_extra_vars = {
                 'text_variable': 'my_var',

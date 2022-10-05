@@ -42,6 +42,7 @@ class RequestApprovalStepViewTest(BaseApproval):
         self.assertEqual(self.test_instance.state, expected_instance_state)
         if response.status_code == 302:
             approval_step_state.refresh_from_db()
+            self.assertEqual(self.test_request.accepted_by, user)
             self.assertEqual(approval_step_state.state, ApprovalState.APPROVED)
             self.assertEqual(approval_step_state.updated_by, user)
             billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id

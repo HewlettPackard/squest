@@ -20,7 +20,6 @@ class TestApiNotificationFilterDetails(BaseTestProfile):
             'services': list(self.notification_filter_test.services.all()),
             'operations': list(self.notification_filter_test.operations.all()),
             'request_states': self.notification_filter_test.request_states,
-            'instance_states': self.notification_filter_test.instance_states,
             'when': self.notification_filter_test.when,
         }
         self.expected_data_list = [self.expected_data]
