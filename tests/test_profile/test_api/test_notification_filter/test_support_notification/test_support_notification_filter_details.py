@@ -5,22 +5,21 @@ from tests.test_profile.base_test_profile import BaseTestProfile
 from tests.utils import check_data_in_dict
 
 
-class TestApiNotificationFilterDetails(BaseTestProfile):
+class TestApiSupportNotificationFilterDetails(BaseTestProfile):
 
     def setUp(self):
-        super(TestApiNotificationFilterDetails, self).setUp()
+        super(TestApiSupportNotificationFilterDetails, self).setUp()
         self.kwargs = {
-            'pk': self.notification_filter_test.id
+            'pk': self.support_notification_filter_test.id
         }
-        self.get_notification_filter_details_url = reverse('api_notification_filter_details', kwargs=self.kwargs)
+        self.get_notification_filter_details_url = reverse('api_support_notification_filter_details', kwargs=self.kwargs)
         self.expected_data = {
-            'id': self.notification_filter_test.id,
-            'name': self.notification_filter_test.name,
-            'profile': self.notification_filter_test.profile.id,
-            'services': list(self.notification_filter_test.services.all()),
-            'operations': list(self.notification_filter_test.operations.all()),
-            'request_states': self.notification_filter_test.request_states,
-            'when': self.notification_filter_test.when,
+            'id': self.support_notification_filter_test.id,
+            'name': self.support_notification_filter_test.name,
+            'profile': self.support_notification_filter_test.profile.id,
+            'services': list(self.support_notification_filter_test.services.all()),
+            'instance_states': self.support_notification_filter_test.instance_states,
+            'when': self.support_notification_filter_test.when,
         }
         self.expected_data_list = [self.expected_data]
 

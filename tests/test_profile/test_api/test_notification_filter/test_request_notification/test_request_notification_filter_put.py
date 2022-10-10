@@ -5,26 +5,26 @@ from tests.test_profile.base_test_profile import BaseTestProfile
 from tests.utils import check_data_in_dict
 
 
-class TestApiNotificationFilterPatch(BaseTestProfile):
+class TestApiRequestNotificationFilterPatch(BaseTestProfile):
 
     def setUp(self):
-        super(TestApiNotificationFilterPatch, self).setUp()
+        super(TestApiRequestNotificationFilterPatch, self).setUp()
         self.put_data = {
             'name': 'new_name',
             'services': [self.service_test.id, self.service_test_2.id],
         }
         self.kwargs = {
-            'pk': self.notification_filter_test.id
+            'pk': self.request_notification_filter_test.id
         }
-        self.get_notification_filter_details_url = reverse('api_notification_filter_details', kwargs=self.kwargs)
+        self.get_notification_filter_details_url = reverse('api_request_notification_filter_details', kwargs=self.kwargs)
         self.expected_data = {
-            'id': self.notification_filter_test.id,
+            'id': self.request_notification_filter_test.id,
             'name': self.put_data['name'],
-            'profile': self.notification_filter_test.profile.id,
+            'profile': self.request_notification_filter_test.profile.id,
             'services': self.put_data['services'],
-            'operations': list(self.notification_filter_test.operations.all()),
-            'request_states': self.notification_filter_test.request_states,
-            'when': self.notification_filter_test.when,
+            'operations': list(self.request_notification_filter_test.operations.all()),
+            'request_states': self.request_notification_filter_test.request_states,
+            'when': self.request_notification_filter_test.when,
         }
 
     def test_admin_put_notification_filter(self):

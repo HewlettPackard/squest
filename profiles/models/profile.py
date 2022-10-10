@@ -6,14 +6,27 @@ from django.dispatch import receiver
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    notification_enabled = models.BooleanField(default=True)
+    request_notification_enabled = models.BooleanField(default=True)
+    support_notification_enabled = models.BooleanField(default=True)
 
-    def is_notification_authorized(self, request=None):
-        if self.notification_filters.count() == 0 or request is None:
+    def is_notification_authorized_for_request(self, request):
+        from profiles.models import RequestNotification
+        if RequestNotification.objects.filter(profile=self).count() == 0:
             return True
         is_notification_authorized = False
-        for notification_filter in self.notification_filters.all():
-            if notification_filter.is_authorized(request):
+        for request_notification_filter in RequestNotification.objects.filter(profile=self):
+            if request_notification_filter.is_authorized(request):
+                is_notification_authorized = True
+                break
+        return is_notification_authorized
+
+    def is_notification_authorized_for_instance(self, instance):
+        from profiles.models.instance_notification import InstanceNotification
+        if InstanceNotification.objects.filter(profile=self).count() == 0:
+            return True
+        is_notification_authorized = False
+        for instance_notification_filter in InstanceNotification.objects.filter(profile=self):
+            if instance_notification_filter.is_authorized(instance):
                 is_notification_authorized = True
                 break
         return is_notification_authorized

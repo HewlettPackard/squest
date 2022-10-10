@@ -8,4 +8,5 @@ from profiles.models.team import Team
 from profiles.models.team_role_binding import TeamRoleBinding
 from profiles.models.profile import Profile
 from profiles.models.role_manager import RoleManager
-from profiles.models.notification_filter import NotificationFilter
+from profiles.models.request_notification import RequestNotification
+from profiles.models.instance_notification import InstanceNotification
