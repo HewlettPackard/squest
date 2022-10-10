@@ -1,4 +1,4 @@
-from profiles.models import NotificationFilter
+from profiles.models import RequestNotification, InstanceNotification
 from service_catalog.models import Request, RequestState, InstanceState, Instance
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -15,12 +15,19 @@ class BaseTestProfile(BaseTestRequest):
         }
         self.test_instance.save()
 
-        self.notification_filter_test = NotificationFilter.objects.create(name="test_filter",
-                                                                          profile=self.superuser.profile)
-        self.notification_filter_test_2 = NotificationFilter.objects.create(name="test_filter_2",
-                                                                            profile=self.superuser.profile)
-        self.notification_filter_test_3 = NotificationFilter.objects.create(name="test_filter_3",
-                                                                            profile=self.superuser_2.profile)
+        self.request_notification_filter_test = RequestNotification.objects.create(name="request_test_filter",
+                                                                                   profile=self.superuser.profile)
+        self.request_notification_filter_test_2 = RequestNotification.objects.create(name="request_test_filter_2",
+                                                                                     profile=self.superuser.profile)
+        self.request_notification_filter_test_3 = RequestNotification.objects.create(name="request_test_filter_3",
+                                                                                     profile=self.superuser_2.profile)
+
+        self.support_notification_filter_test = InstanceNotification.objects.create(name="support_test_filter",
+                                                                                    profile=self.superuser.profile)
+        self.support_notification_filter_test_2 = InstanceNotification.objects.create(name="support_test_filter_2",
+                                                                                      profile=self.superuser.profile)
+        self.support_notification_filter_test_3 = InstanceNotification.objects.create(name="support_test_filter_3",
+                                                                                      profile=self.superuser_2.profile)
 
         self.test_instance_2.service = self.service_test_2
         self.test_instance_2.state = InstanceState.AVAILABLE

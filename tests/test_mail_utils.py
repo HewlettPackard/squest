@@ -1,3 +1,4 @@
+from profiles.models import RequestNotification, InstanceNotification
 from service_catalog.mail_utils import _get_admin_emails, _get_subject, _get_headers, \
     _get_receivers_for_request_message, _get_receivers_for_support_message
 
@@ -17,9 +18,14 @@ class TestMailUtils(BaseTest):
             'integer_var': '1',
             'float_var': '0.6'
         }
-        self.test_instance = Instance.objects.create(name="test_instance_1", service=self.service_test,
+        self.test_instance = Instance.objects.create(name="test_instance_1",
+                                                     service=self.service_test,
+                                                     spec={
+                                                         "value1": "key1"
+                                                     },
                                                      spoc=self.standard_user)
-        self.test_instance_2 = Instance.objects.create(name="test_instance_2", service=self.service_test,
+        self.test_instance_2 = Instance.objects.create(name="test_instance_2",
+                                                       service=self.service_test_2,
                                                        spoc=self.standard_user)
         self.test_request = Request.objects.create(fill_in_survey=data,
                                                    instance=self.test_instance,
@@ -27,22 +33,64 @@ class TestMailUtils(BaseTest):
                                                    user=self.standard_user)
         self.test_request_2 = Request.objects.create(fill_in_survey=data,
                                                      instance=self.test_instance_2,
-                                                     operation=self.create_operation_test,
+                                                     operation=self.create_operation_test_2,
                                                      user=self.standard_user)
 
-    def test_get_admin_emails(self):
+    def test_get_admin_emails_with_request(self):
         # Test 1 - admin disabled notification
-        self.superuser.profile.notification_enabled = False
+        self.superuser.profile.request_notification_enabled = False
         self.superuser.save()
-        self.superuser_2.profile.notification_enabled = False
+        self.superuser_2.profile.request_notification_enabled = False
         self.superuser_2.save()
-        self.assertEquals(0, len(_get_admin_emails(request=self.test_request)))
+        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_request)))
 
         # Test 2 - admin enabled notification
-        self.superuser.profile.notification_enabled = True
+        self.superuser.profile.request_notification_enabled = True
         self.superuser.save()
+        self.superuser_2.profile.request_notification_enabled = True
+        self.superuser_2.save()
+        self.assertEquals(2, len(_get_admin_emails(object_to_filter=self.test_request)))
 
-        self.assertEquals(1, len(_get_admin_emails()))
+    def test_get_admin_emails_with_support(self):
+        # Test 1 - admin disabled notification
+        self.superuser.profile.support_notification_enabled = False
+        self.superuser.save()
+        self.superuser_2.profile.support_notification_enabled = False
+        self.superuser_2.save()
+        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_instance)))
+
+        # Test 2 - admin enabled notification
+        self.superuser.profile.support_notification_enabled = True
+        self.superuser.save()
+        self.superuser_2.profile.support_notification_enabled = True
+        self.superuser_2.save()
+        self.assertEquals(2, len(_get_admin_emails(object_to_filter=self.test_instance)))
+
+    def test_get_admin_emails_with_request_filter(self):
+        self.superuser.profile.request_notification_enabled = True
+        self.superuser_2.profile.request_notification_enabled = False
+        self.superuser_2.save()
+        request_filter = RequestNotification.objects.create(name="test_filter",
+                                                            profile=self.superuser.profile,
+                                                            when="request.fill_in_survey['text_variable'] == 'my_var'")
+        self.superuser.save()
+        self.assertEquals(1, len(_get_admin_emails(object_to_filter=self.test_request)))
+        request_filter.when = "request.fill_in_survey['text_variable'] == 'other_my_var'"
+        request_filter.save()
+        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_request)))
+
+    def test_get_admin_emails_with_instance_filter(self):
+        self.superuser.profile.support_notification_enabled = True
+        self.superuser_2.profile.support_notification_enabled = False
+        self.superuser_2.save()
+        instance_filter = InstanceNotification.objects.create(name="test_filter",
+                                                              profile=self.superuser.profile,
+                                                              when="instance.spec['value1'] == 'key1'")
+        self.superuser.save()
+        self.assertEquals(1, len(_get_admin_emails(object_to_filter=self.test_instance)))
+        instance_filter.when = "instance.spec['value1'] == 'other_key'"
+        instance_filter.save()
+        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_instance)))
 
     def test_get_headers(self):
         expected_list = ["Message-ID", "In-Reply-To", "References"]
@@ -63,7 +111,7 @@ class TestMailUtils(BaseTest):
         self.assertNotEqual(subject_request, subject_request_2)
 
     def test_get_receivers_for_support_message(self):
-        self.superuser.profile.notification_enabled = True
+        self.superuser.profile.request_notification_enabled = True
         new_support = Support.objects.create(title="title",
                                              instance=self.test_instance,
                                              opened_by=self.standard_user)
@@ -79,7 +127,7 @@ class TestMailUtils(BaseTest):
         self.assertNotIn(self.superuser.email, receivers)
 
     def test_get_receivers_for_request_message(self):
-        self.superuser.profile.notification_enabled = True
+        self.superuser.profile.request_notification_enabled = True
         request_message = RequestMessage.objects.create(sender=self.standard_user, content="message content",
                                                         request=self.test_request)
         receivers = _get_receivers_for_request_message(request_message)

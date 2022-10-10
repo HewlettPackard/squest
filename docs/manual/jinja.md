@@ -45,8 +45,10 @@ Accessing instance name:
                     "username": "admin",
                     "email": "admin@squest.domain",
                     "profile": {
-                        "notification_enabled": true,
-                        "notification_filters": []
+                        "request_notification_enabled": true,
+                        "support_notification_enabled": true,
+                        "request_notification_filters": [],
+                        "instance_notification_filters": []
                     },
                     "first_name": "",
                     "last_name": "",
@@ -92,8 +94,10 @@ Accessing instance spec:
                     "username": "admin",
                     "email": "admin@squest.domain",
                     "profile": {
-                        "notification_enabled": true,
-                        "notification_filters": []
+                        "request_notification_enabled": true,
+                        "support_notification_enabled": true,
+                        "request_notification_filters": [],
+                        "instance_notification_filters": []
                     },
                     "first_name": "",
                     "last_name": "",
@@ -152,8 +156,10 @@ This example, used in the "default limit" of the operation job template config, 
                         "username": "admin",
                         "email": "admin@squest.domain",
                         "profile": {
-                            "notification_enabled": true,
-                            "notification_filters": []
+                            "request_notification_enabled": true,
+                            "support_notification_enabled": true,
+                            "request_notification_filters": [],
+                            "instance_notification_filters": []
                         },
                         "first_name": "",
                         "last_name": "",
@@ -174,7 +180,7 @@ This example, used in the "default limit" of the operation job template config, 
                     "username": "admin",
                     "email": "admin@squest.domain",
                     "profile": {
-                        "notification_enabled": true,
+                        "request_notification_enabled": true,
                         "notification_filters": []
                     },
                     "first_name": "",
