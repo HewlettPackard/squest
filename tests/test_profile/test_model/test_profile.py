@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Profile, NotificationFilter
+from profiles.models import Profile, RequestNotification
 from tests.test_profile.base_test_profile import BaseTestProfile
 
 
@@ -19,16 +19,16 @@ class TestProfile(BaseTestProfile):
         self.assertEqual(users_count, profile_count)
 
     def test_is_notification_authorized_with_two_different_operation(self):
-        self.notification_filter_test.operations.add(self.create_operation_test)
-        self.notification_filter_test.save()
+        self.request_notification_filter_test.operations.add(self.create_operation_test)
+        self.request_notification_filter_test.save()
 
-        self.notification_filter_test_2.operations.add(self.update_operation_test)
-        self.notification_filter_test_2.save()
+        self.request_notification_filter_test_2.operations.add(self.update_operation_test)
+        self.request_notification_filter_test_2.save()
 
-        self.assertTrue(self.superuser.profile.is_notification_authorized(request=self.test_request))
-        self.assertTrue(self.superuser.profile.is_notification_authorized(request=self.test_request_2))
-        self.assertFalse(self.superuser.profile.is_notification_authorized(request=self.test_request_3))
+        self.assertTrue(self.superuser.profile.is_notification_authorized_for_request(request=self.test_request))
+        self.assertTrue(self.superuser.profile.is_notification_authorized_for_request(request=self.test_request_2))
+        self.assertFalse(self.superuser.profile.is_notification_authorized_for_request(request=self.test_request_3))
 
     def test_is_notification_authorized_no_filter(self):
-        NotificationFilter.objects.all().delete()
-        self.assertTrue(self.superuser.profile.is_notification_authorized(request=self.test_request))
+        RequestNotification.objects.all().delete()
+        self.assertTrue(self.superuser.profile.is_notification_authorized_for_request(request=self.test_request))

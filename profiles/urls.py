@@ -49,14 +49,28 @@ urlpatterns = [
     path('billing-group/<int:billing_group_id>/quota_attribute/edit-limits/', views.quota_binding_set_limits,
          name='quota_binding_set_limits'),
 
-    # notifications
-    path('notification/switch/', views.notification_switch, name='notification_switch'),
-    path('notification/notification_filter/create/', views.notification_filter_create,
-         name='notification_filter_create'),
-    path('notification/notification_filter/<int:notification_filter_id>/delete/', views.notification_filter_delete,
-         name='notification_filter_delete'),
-    path('notification/notification_filter/<int:notification_filter_id>/edit/', views.notification_filter_edit,
-         name='notification_filter_edit'),
+    # request notifications
+    path('notification/request/switch/', views.request_notification_switch, name='request_notification_switch'),
+    path('notification/notification_filter/request/create/', views.request_notification_create,
+         name='request_notification_create'),
+    path('notification/notification_filter/request/<int:request_notification_id>/delete/',
+         views.request_notification_delete,
+         name='request_notification_delete'),
+    path('notification/notification_filter/request/<int:request_notification_id>/edit/',
+         views.request_notification_edit,
+         name='request_notification_edit'),
+
+    # support notifications
+    path('notification/support/switch/', views.support_notification_switch,
+         name='support_notification_switch'),
+    path('notification/notification_filter/support/create/', views.support_notification_create,
+         name='support_notification_create'),
+    path('notification/notification_filter/support/<int:support_notification_id>/delete/',
+         views.support_notification_delete,
+         name='support_notification_delete'),
+    path('notification/notification_filter/support/<int:support_notification_id>/edit/',
+         views.support_notification_edit,
+         name='support_notification_edit'),
 
     # team URLs
     path('team/<int:team_id>/users/update/', views.user_in_team_update, name='user_in_team_update'),

@@ -1,13 +1,21 @@
-from django_tables2 import tables, TemplateColumn, LinkColumn
-from django_tables2.utils import A
+from django_tables2 import tables, TemplateColumn
 
-from profiles.models import Team
+from profiles.models import InstanceNotification, RequestNotification
 
 
-class NotificationFilterTable(tables.Table):
+class RequestNotificationFilterTable(tables.Table):
     actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
-        model = Team
-        attrs = {"id": "notification_filter__table", "class": "table squest-pagination-tables "}
+        model = RequestNotification
+        attrs = {"id": "request_notification_filter__table", "class": "table squest-pagination-tables "}
+        fields = ("name", "actions")
+
+
+class SupportNotificationFilterTable(tables.Table):
+    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+
+    class Meta:
+        model = InstanceNotification
+        attrs = {"id": "support_notification_filter__table", "class": "table squest-pagination-tables "}
         fields = ("name", "actions")

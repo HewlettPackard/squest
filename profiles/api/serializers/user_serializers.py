@@ -9,7 +9,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['notification_enabled', 'notification_filters']
+        fields = ['request_notification_enabled', 'support_notification_enabled',
+                  'request_notification_filters', 'instance_notification_filters']
 
 
 class UserSerializer(serializers.ModelSerializer):

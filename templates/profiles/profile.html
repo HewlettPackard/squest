@@ -13,7 +13,10 @@
                         <a href="#tokens" data-toggle="tab" class="nav-link">Tokens</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#notifications" data-toggle="tab" class="nav-link">Notifications</a>
+                        <a href="#request-notifications" data-toggle="tab" class="nav-link">Request notifications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#support-notifications" data-toggle="tab" class="nav-link">Support notifications</a>
                     </li>
                 </ul>
             </div>
@@ -101,38 +104,75 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="notifications" class="tab-pane">
+                    <div id="request-notifications" class="tab-pane">
                         <dl class="row">
-                            <div class="col-md-12">
-                                <dd class="col-sm-8">
-                                    {% if user.profile.notification_enabled %}
-                                        <p class="text-success"><i class="fas fa-bell"></i> Notifications are enabled</p>
-                                        <a class="btn btn-secondary" href="{% url "profiles:notification_switch" %}">
-                                            <i class="fas fa-bell-slash"></i> Disable
-                                        </a>
-                                    {% else %}
-                                        <p class="text-secondary"><i class="fas fa-bell-slash"></i> Notifications are disabled</p>
-                                        <a class="btn btn-success" href="{% url "profiles:notification_switch" %}">
-                                            <i class="fas fa-bell"></i> Enable
-                                        </a>
-                                    {% endif %}
-                                </dd>
+                            <div class="col-md-3 col-6">
+                                <div class="small-box bg{% if user.profile.request_notification_enabled %}-success{% else %}-gray{% endif %}">
+                                    <div class="inner">
+                                        <p><strong>Request</strong> notifications are <strong>{% if user.profile.request_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-bell{% if not user.profile.request_notification_enabled %}-slash{% endif %}"></i>
+                                    </div>
+                                    <a href="{% url "profiles:request_notification_switch" %}" class="small-box-footer">
+                                        {% if user.profile.request_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.request_notification_enabled %}-slash{% endif %}"></i>
+                                    </a>
+                                </div>
                             </div>
                         </dl>
                         <div class="row">
                             <div class="col-12">
-                                {% if request.user.is_superuser and user.profile.notification_enabled %}
-                                    <a title="Add a notification filter" class="btn btn-success mb-2"
-                                       href="{% url "profiles:notification_filter_create" %}">
-                                        <i class="fas fa-plus"></i> Add a notification filter
+                                {% if request.user.is_superuser and user.profile.request_notification_enabled %}
+                                    <a title="Add a notification filter" class="btn btn-default mb-2"
+                                       href="{% url "profiles:request_notification_create" %}">
+                                        <i class="fas fa-plus"></i> Add a request notification filter
                                     </a>
-                                    {% if request.user.profile.notification_filters.count == 0 %}
-                                        <div class="callout callout-warning">
+                                    {% if request.user.profile.request_notification_filters.count == 0 %}
+                                        <div class="callout callout-warning mt-3">
                                             <h5><i class="fas fa-info"></i> Note:</h5>
-                                            You haven't created any filters. You will receive all notifications.
+                                            You haven't created any request filters. You will receive all notifications.
                                         </div>
                                     {%  else %}
-                                        {% render_table table %}
+                                        {% with object_name='request_notification' %}
+                                            {% render_table request_filter_table %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="support-notifications" class="tab-pane">
+                        <dl class="row">
+                            <div class="col-md-3 col-6">
+                                <div class="small-box bg{% if user.profile.support_notification_enabled %}-success{% else %}-gray{% endif %}">
+                                    <div class="inner">
+                                        <p><strong>Support</strong> notifications are <strong>{% if user.profile.support_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-bell{% if not user.profile.support_notification_enabled %}-slash{% endif %}"></i>
+                                    </div>
+                                    <a href="{% url "profiles:support_notification_switch" %}" class="small-box-footer">
+                                        {% if user.profile.support_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.support_notification_enabled %}-slash{% endif %}"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </dl>
+                        <div class="row">
+                            <div class="col-12">
+                                {% if request.user.is_superuser and user.profile.support_notification_enabled %}
+                                    <a title="Add a notification filter" class="btn btn-default mb-2"
+                                       href="{% url "profiles:support_notification_create" %}">
+                                        <i class="fas fa-plus"></i> Add a support notification filter
+                                    </a>
+                                    {% if request.user.profile.instance_notification_filters.count == 0 %}
+                                        <div class="callout callout-warning mt-3">
+                                            <h5><i class="fas fa-info"></i> Note:</h5>
+                                            You haven't created any support filters. You will receive all notifications.
+                                        </div>
+                                    {%  else %}
+                                        {% with object_name='support_notification' %}
+                                            {% render_table support_filter_table %}
+                                        {% endwith %}
                                     {% endif %}
                                 {% endif %}
                             </div>

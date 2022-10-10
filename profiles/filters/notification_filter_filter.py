@@ -1,8 +1,14 @@
-from profiles.models import NotificationFilter
+from profiles.models import RequestNotification, InstanceNotification
 from Squest.utils.squest_filter import SquestFilter
 
 
-class NotificationFilterFilter(SquestFilter):
+class RequestNotificationFilterFilter(SquestFilter):
     class Meta:
-        model = NotificationFilter
+        model = RequestNotification
+        fields = ['name']
+
+
+class InstanceNotificationFilterFilter(SquestFilter):
+    class Meta:
+        model = InstanceNotification
         fields = ['name']
