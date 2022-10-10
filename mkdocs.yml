@@ -57,6 +57,7 @@ nav:
     - Database ERD: dev/db-erd.md
     - Plugins:
       - Field validator:  dev/plugins/validators.md
+    - Release: dev/release.md
   - Contribute:
       - Code: contribute/code.md
       - Documentation: contribute/documentation.md

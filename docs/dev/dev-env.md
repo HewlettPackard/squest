@@ -38,7 +38,7 @@ The development environment is composed of 4 parts:
 
 Run the Docker compose file with only required services to bring up database, message broker and other required system
 ```bash
-docker-compose up db phpmyadmin rabbitmq
+docker-compose -f docker-compose.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
 ```
 
 ### Javascript libraries

@@ -1,4 +1,30 @@
-# 1.7.4 2022-09-15 18:48
+# 1.8.0 2022-10-10
+
+## Breaking changes ⚠
+
+- Context usable with Jinja has changed. `spec`/`user_spec` --> `instance`. Impacted pages:
+  - default values of an operation survey
+  - 'when' of a profile notification filter
+
+## Fix
+
+- URL for available instances was wrong
+- Fix JSON integer cast in survey
+- Remove exposed MySQL port from prod
+
+## Feature
+
+- Add job template config on request process
+- Notification filters split: Support or request notification
+
+## Enhancement
+
+- Add billing group field in UserSerializer
+- Filter instance by spec and user spec
+- Update filter sidebar size
+- Add accepted_by and approved_by field
+
+# 1.7.5 2022-09-15 18:48
 
 ## Fix
 
