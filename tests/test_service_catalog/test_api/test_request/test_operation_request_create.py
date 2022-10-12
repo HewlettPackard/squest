@@ -29,8 +29,9 @@ class TestApiOperationRequestCreate(BaseTestRequest):
         response = self.client.post(self.url, data=self.data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(request_count + 1, Request.objects.count())
-        self.assertEqual(ast.literal_eval(response.data['fill_in_survey']), self.expected)
         self.assertIn('id', response.data.keys())
+        self.assertTrue(isinstance(response.data['fill_in_survey'], dict))
+        self.assertEqual(response.data['fill_in_survey'], self.expected)
 
     def test_cannot_create_with_disabled_operation(self):
         self.update_operation_test.enabled = False

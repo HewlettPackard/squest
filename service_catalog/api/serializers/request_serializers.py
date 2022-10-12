@@ -128,7 +128,7 @@ class OperationRequestSerializer(ModelSerializer):
             self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey_with_validator)
 
     def save(self, **kwargs):
-        fill_in_survey = dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder)
+        fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
         new_request = Request.objects.create(instance=self.target_instance,
                                              operation=self.target_operation,
                                              fill_in_survey=fill_in_survey,
