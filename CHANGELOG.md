@@ -1,3 +1,13 @@
+# 1.8.1 2022-10-12
+
+## Fix
+
+- Fix the request serializer on day 2 operations. `fill_in_survey` was saved as string instead of dict
+
+## Enhancement
+
+- Minor UI enhancements
+
 # 1.8.0 2022-10-10
 
 ## Breaking changes ⚠
