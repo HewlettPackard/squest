@@ -94,11 +94,11 @@
                     <div class="d-flex justify-content-around">
                         <div class="row">
                             <div class="col-4">
-                                <a class="btn btn-app m-0" href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&instance__service__id={{ service.service.id }}" title="New submitted requests">
-                                    {% if service.submitted_request > 0 %}
-                                        <span class="badge bg-info">{{ service.submitted_request }}</span>
+                                <a class="btn btn-app m-0" href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&state=ACCEPTED&instance__service__id={{ service.service.id }}" title="New requests">
+                                    {% if service.submitted_and_accepted_request > 0 %}
+                                        <span class="badge bg-info">{{ service.submitted_and_accepted_request }}</span>
                                     {%  endif %}
-                                    <i class="{% if service.submitted_request > 0 %}text-info{%  endif %} fas fa-clipboard-check"></i> Requests
+                                    <i class="{% if service.submitted_and_accepted_request > 0 %}text-info{%  endif %} fas fa-clipboard-check"></i> Requests
                                 </a>
                             </div>
                             <div class="col-4">

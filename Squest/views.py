@@ -30,7 +30,9 @@ def home(request):
             .annotate(service_name=F('service__name'))\
             .annotate(instance_count=Count('service_name'))\
             .order_by('service_name')
-        submitted_requests = Request.objects.filter(state=RequestState.SUBMITTED).values('instance__service__name')\
+        submitted_and_accepted_requests = Request.objects.filter(state__in=[RequestState.SUBMITTED,
+                                                                            RequestState.ACCEPTED])\
+            .values('instance__service__name')\
             .annotate(service_name=F('instance__service__name'))\
             .annotate(request_count=Count('service_name'))\
             .order_by('service_name')
@@ -54,8 +56,8 @@ def home(request):
             }
             if instances.filter(service=service.id).exists():
                 service_details[service.name]["instances"] = instances.get(service=service.id)["instance_count"]
-            if submitted_requests.filter(instance__service=service.id).exists():
-                service_details[service.name]["submitted_request"] = submitted_requests.get(instance__service=service.id)["request_count"]
+            if submitted_and_accepted_requests.filter(instance__service=service.id).exists():
+                service_details[service.name]["submitted_and_accepted_request"] = submitted_and_accepted_requests.get(instance__service=service.id)["request_count"]
             if failed_requests.filter(instance__service=service.id).exists():
                 service_details[service.name]["failed_requests"] = failed_requests.get(instance__service=service.id)["request_count"]
             if opened_supports.filter(instance__service=service.id).exists():
