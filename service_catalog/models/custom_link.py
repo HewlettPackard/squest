@@ -42,4 +42,4 @@ class CustomLink(Model):
     )
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({','.join(self.services.all().values_list('name', flat=True))})"
