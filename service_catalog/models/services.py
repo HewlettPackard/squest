@@ -44,7 +44,7 @@ class Service(Model):
             raise ValidationError({'enabled': _("At least one 'CREATE' operation with a valid job template is required "
                                                 "to enable the service")})
 
-        if self.extra_vars is None:
+        if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
 

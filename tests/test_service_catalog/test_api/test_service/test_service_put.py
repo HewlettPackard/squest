@@ -17,7 +17,7 @@ class TestApiServicePut(BaseTestRequest):
             'billing_group_is_selectable': self.service_test.billing_group_is_selectable,
             'billing_groups_are_restricted': self.service_test.billing_groups_are_restricted,
             'enabled': self.service_test.enabled,
-            'extra_vars': '{"test": "test"}'
+            'extra_vars': {"test": "test"}
         }
         self.kwargs = {
             'pk': self.service_test.id
