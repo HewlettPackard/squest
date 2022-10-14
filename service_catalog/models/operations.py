@@ -64,7 +64,7 @@ class Operation(Model):
             raise ValidationError({'approval_workflow': _("You cannot use an approval workflow without entrypoint.")})
         if self.auto_accept and self.approval_workflow:
             raise ValidationError({'auto_accept': _("Auto accept cannot be set with an approval step.")})
-        if self.extra_vars is None:
+        if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
     def update_survey(self):

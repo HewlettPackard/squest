@@ -20,7 +20,7 @@ class TestApiOperationCreate(BaseTestRequest):
             'auto_process': False,
             'process_timeout_second': 60,
             'job_template': self.job_template_test.id,
-            'extra_vars': '{"test": "test"}'
+            'extra_vars': {"test": "test"}
         }
         self.get_operation_details_url = reverse('api_operation_list_create', kwargs=self.kwargs)
 
