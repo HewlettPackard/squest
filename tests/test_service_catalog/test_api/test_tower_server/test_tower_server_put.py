@@ -15,7 +15,7 @@ class TestApiTowerServerPut(BaseTestRequest):
             'token': "mytokenverysimple",
             'secure': True,
             'ssl_verify': False,
-            'extra_vars': '{"test": "test"}'
+            'extra_vars': {"test": "test"}
         }
         self.kwargs = {
             'pk': self.tower_server_test.id

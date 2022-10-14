@@ -16,7 +16,7 @@ class TowerServerCreate(BaseTestRequest):
             'token': "mytokenverysimple",
             'secure': True,
             'ssl_verify': False,
-            'extra_vars': '{"test": "test"}'
+            'extra_vars': {"test": "test"}
         }
         self.tower_server_url = reverse('api_tower_server_list_create')
 

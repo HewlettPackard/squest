@@ -18,7 +18,7 @@ class TestApiServiceCreate(BaseTestRequest):
             'billing_group_is_selectable': True,
             'billing_groups_are_restricted': False,
             'enabled': False,
-            'extra_vars': '{"test": "test"}'
+            'extra_vars': {"test": "test"}
         }
         self.get_service_details_url = reverse('api_service_list_create')
 

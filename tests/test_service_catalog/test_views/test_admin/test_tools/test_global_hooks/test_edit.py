@@ -27,7 +27,7 @@ class GlobalHooksEditViewsTest(BaseTest):
             "model": "Instance",
             "state": "PENDING",
             "job_template": self.job_template_test.id,
-            "extra_vars": "{}"
+            "extra_vars": {}
         }
         response = self.client.post(self.url, data=data)
         self.assertEqual(302, response.status_code)

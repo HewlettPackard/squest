@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, JSONField
+from rest_framework.serializers import ModelSerializer, ValidationError
 from service_catalog.models import Operation
 
 
@@ -14,4 +14,7 @@ class AdminOperationSerializer(ModelSerializer):
         model = Operation
         fields = '__all__'
 
-    extra_vars = JSONField(binary=True)
+    def validate_extra_vars(self, value):
+        if value is None or not isinstance(value, dict):
+            raise ValidationError("Please enter a valid JSON. Empty value is {} for JSON.")
+        return value
