@@ -10,6 +10,11 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
 
     def setUp(self):
         super(TestResourceGroupResourceViews, self).setUp()
+        resources = list(Resource.objects.filter(resource_group=self.rg_physical_servers))
+        resources[0].tags.add("test1")
+        resources[1].tags.add("test2")
+        resources[2].tags.add("test1")
+        resources[2].tags.add("test2")
 
     def test_resource_group_resource_list(self):
         arg = {
@@ -20,11 +25,29 @@ class TestResourceGroupResourceViews(BaseTestResourceTracker):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("resource_group_id" in response.context)
-        for column in columns:
-            self.assertTrue(column in response.context['table'].columns.columns)
-            self.assertTrue(column in response.context['table'].base_columns)
-            self.assertTrue(column in response.context['table'].sequence)
-            self.assertTrue(column in response.context['table'].Meta.fields)
+        self.assertTrue(all(elem in response.context['table'].columns.columns for elem in columns))
+        self.assertTrue(all(elem in response.context['table'].base_columns for elem in columns))
+        self.assertTrue(all(elem in response.context['table'].sequence for elem in columns))
+        self.assertTrue(all(elem in response.context['table'].Meta.fields for elem in columns))
+        self.assertEqual(len(response.context["table"].data.data), Resource.objects.filter(resource_group=self.rg_physical_servers).count())
+
+    def test_resource_group_resource_list_filter_type_and(self):
+        arg = {
+            "resource_group_id": self.rg_physical_servers.id
+        }
+        url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg) + "?tag=test1&tag=test2&tag_filter_type=AND"
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 1)
+
+    def test_resource_group_resource_list_filter_type_or(self):
+        arg = {
+            "resource_group_id": self.rg_physical_servers.id
+        }
+        url = reverse('resource_tracker:resource_group_resource_list', kwargs=arg) + "?tag=test1&tag=test2&tag_filter_type=OR"
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 3)
 
     def test_cannot_get_resource_group_resource_list_when_logout(self):
         arg = {

@@ -10,12 +10,88 @@ class TestResourceGroupViews(BaseTestResourceTracker):
 
     def setUp(self):
         super(TestResourceGroupViews, self).setUp()
+        self.rg_test_without_tag = ResourceGroup.objects.create(name="without_tag")
+        self.rg_physical_servers.tags.add("test1")
+        self.rg_ocp_workers.tags.add("test2")
+        self.rg_ocp_projects.tags.add("test1")
+        self.rg_ocp_projects.tags.add("test2")
 
     def test_resource_group_list(self):
         url = reverse('resource_tracker:resource_group_list')
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
+
+    def test_resource_group_list_filter_type_and(self):
+        url = reverse('resource_tracker:resource_group_list') + "?tag=test1&tag=test2&tag_filter_type=AND"
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 1)
+
+    def test_resource_group_list_filter_type_or(self):
+        url = reverse('resource_tracker:resource_group_list') + "?tag=test1&tag=test2&tag_filter_type=OR"
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 3)
+
+    def test_get_resource_group_with_one_tag_in_session(self):
+        url = reverse('resource_tracker:resource_group_list')
+
+        # try to get all resource
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
+
+        # get the page by giving a tag into the URL (like the button apply filter)
+        response = self.client.get(url + f"?tag=test1&tag_filter_type=OR")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 2)
+
+        # move to another page
+        response = self.client.get(reverse('service_catalog:doc_list'))
+        self.assertEqual(200, response.status_code)
+
+        # go back to the resource group list without a tag in the URL
+        response = self.client.get(url, follow=True)  # follow the redirect
+        self.assertEqual(200, response.status_code)
+        self.assertIn("test1", response.request["QUERY_STRING"])
+        self.assertEqual(len(response.context["table"].data.data), 2)
+
+        # save tags and type
+        response = self.client.get(url + f"?tag=test1&tag=test2&tag_filter_type=AND")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), 1)
+
+        # move to another page
+        response = self.client.get(reverse('service_catalog:doc_list'))
+        self.assertEqual(200, response.status_code)
+
+        # go back to the resource group list without a tag in the URL
+        response = self.client.get(url, follow=True)  # follow the redirect
+        self.assertEqual(200, response.status_code)
+        self.assertIn("test1", response.request["QUERY_STRING"])
+        self.assertIn("test2", response.request["QUERY_STRING"])
+        self.assertEqual(len(response.context["table"].data.data), 1)
+
+        # save type
+        response = self.client.get(url + f"?tag_filter_type=AND")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.count())
+
+        # move to another page
+        response = self.client.get(reverse('service_catalog:doc_list'))
+        self.assertEqual(200, response.status_code)
+
+        # go back to the resource group list without a tag in the URL
+        response = self.client.get(url, follow=True)  # follow the redirect
+        self.assertEqual(200, response.status_code)
+        self.assertIn("AND", response.request["QUERY_STRING"])
+        self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.count())
+
+        # reset tags and type
+        response = self.client.get(url + f"?tag_filter_type=OR")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.count())
 
     def test_cannot_get_resource_group_list_when_logout(self):
         self.client.logout()

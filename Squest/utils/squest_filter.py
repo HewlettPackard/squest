@@ -1,8 +1,8 @@
-import django_filters
+from django_filters import FilterSet
 from django.forms import TextInput, Select, SelectMultiple, CheckboxInput
 
 
-class SquestFilter(django_filters.FilterSet):
+class SquestFilter(FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(SquestFilter, self).__init__(*args, **kwargs)
@@ -19,3 +19,6 @@ class SquestFilter(django_filters.FilterSet):
                 current_filter.field.widget.attrs['class'] = 'form-control-checkbox'
             else:
                 current_filter.field.widget.attrs['class'] = 'form-control'
+
+    def fake_filter_method(self, queryset, name, value):
+        return queryset

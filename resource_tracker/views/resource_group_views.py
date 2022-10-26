@@ -1,71 +1,18 @@
 import logging
 
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.utils.decorators import method_decorator
 from django_celery_results.models import TaskResult
-from django_filters.views import FilterView
-from django_tables2 import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 
-from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker.forms import ResourceGroupForm
 from resource_tracker.models import ResourceGroup
 from resource_tracker.tables.resource_group_attribute_definition_table import ResourceGroupAttributeDefinitionTable
-from resource_tracker.tables.resource_group_table import ResourceGroupTable
 from resource_tracker.tables.resource_group_text_attribute_definition_table import \
     ResourceGroupTextAttributeDefinitionTable
 from service_catalog.tasks import async_recalculate_total_resources
 
 logger = logging.getLogger(__name__)
-
-
-@method_decorator(login_required, name='dispatch')
-class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
-    table_pagination = {'per_page': 10}
-    table_class = ResourceGroupTable
-    model = ResourceGroup
-    template_name = 'generics/list.html'
-    filterset_class = ResourceGroupFilter
-
-    def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied
-
-        tag_session_key = f'{self.request.path}__tags'
-        tag_redirect_flag = "tag_redirect" in self.request.GET
-        tags_from_session = self.request.session.get(tag_session_key, [])
-        if len(tags_from_session) > 0 and not tag_redirect_flag:
-            logger.info(f"Using tags loaded from session: {tags_from_session}")
-            string_tag = "?"
-            for tag in tags_from_session:
-                string_tag += f"tag={tag}&"
-            string_tag += "tag_redirect="  # in order to stop the redirect
-            return redirect(reverse("resource_tracker:resource_group_list") + string_tag)
-        return super(ResourceGroupListView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Resource groups"
-        context['app_name'] = "resource_tracker"
-        context['object_name'] = "resource_group"
-        context['html_button_path'] = "generics/buttons/generic_add_button.html"
-        return context
-
-    def get_queryset(self):
-        tag_redirect_flag = "tag_redirect" in self.request.GET
-        tag_session_key = f'{self.request.path}__tags'
-        if "tag" in self.request.GET and not tag_redirect_flag:
-            tag_list = self.request.GET.getlist("tag")
-            resource_group_list_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
-            logger.info(f"Settings tags from URL in session: {tag_list}")
-            self.request.session[tag_session_key] = tag_list
-        else:
-            resource_group_list_queryset = ResourceGroup.objects.all()
-            self.request.session[tag_session_key] = []
-        return resource_group_list_queryset
 
 
 @user_passes_test(lambda u: u.is_superuser)
