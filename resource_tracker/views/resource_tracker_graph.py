@@ -9,8 +9,11 @@ from django.utils.safestring import mark_safe
 from graphviz import Digraph
 from taggit.models import Tag
 
-from resource_tracker.filters.graph_filter import GraphFilter
+from resource_tracker.filters.tag_filter import TagFilterset
+from resource_tracker.filters.resource_group_filter import ResourceGroupFilter
+from resource_tracker.filters.resource_pool_filter import ResourcePoolFilter
 from resource_tracker.models import ResourceGroup, ResourcePool
+from resource_tracker.views import tag_session_manager
 
 logger = logging.getLogger(__name__)
 
@@ -35,38 +38,25 @@ def get_graph_name(resource) -> str:
 
 @user_passes_test(lambda u: u.is_superuser)
 def resource_tracker_graph(request):
+    redirect_url = tag_session_manager(request)
+    if redirect_url:
+        return redirect_url
+
     dot = Digraph(comment='Graph')
     dot.attr(bgcolor=COLORS["transparent"])
     dot.name = 'Resource Tracker Graph'
     dot.attr('node', shape='plaintext')
 
     tags = Tag.objects.all()
-    resource_graph_filtered = GraphFilter(request.GET, queryset=tags)
+    resource_graph_filtered = TagFilterset(request.GET, queryset=tags)
     display_graph = False
 
-    tag_session_key = f'{request.path}__tags'
-
-    tag_redirect_flag = "tag_redirect" in request.GET
-    tags_from_session = request.session.get(tag_session_key, [])
-    if len(tags_from_session) > 0 and not tag_redirect_flag:
-        logger.info(f"Using tags loaded from session: {tags_from_session}")
-        string_tag = "?"
-        for tag in tags_from_session:
-            string_tag += f"tag={tag}&"
-        string_tag += "tag_redirect="  # in order to stop the redirect
-        return redirect(reverse("resource_tracker:resource_tracker_graph") + string_tag)
-
-    elif "tag" in request.GET:
-        tag_list = request.GET.getlist("tag")
-        resource_pool_queryset = ResourcePool.objects.filter(tags__name__in=tag_list)
-        resource_group_queryset = ResourceGroup.objects.filter(tags__name__in=tag_list)
-        logger.info(f"Settings tags from URL in session: {tag_list}")
-        request.session[tag_session_key] = tag_list
-    else:
-        resource_pool_queryset = ResourcePool.objects.all()
-        resource_group_queryset = ResourceGroup.objects.all()
-        request.session[tag_session_key] = []
-
+    resource_pool_filter = ResourcePoolFilter(request.GET, queryset=ResourcePool.objects.all())
+    resource_pool_filter.is_valid()
+    resource_pool_queryset = resource_pool_filter.qs
+    resource_group_filter = ResourceGroupFilter(request.GET, queryset=ResourceGroup.objects.all())
+    resource_group_filter.is_valid()
+    resource_group_queryset = resource_group_filter.qs
     for resource_pool in resource_pool_queryset:
         dot.node(f'{get_graph_name(resource_pool)}', label=create_resource_pool_svg(resource_pool))
         display_graph = True
@@ -85,10 +75,17 @@ def resource_tracker_graph(request):
     dot.format = 'svg'
     svg = mark_safe(dot.pipe().decode('utf-8'))
 
-    return render(request, 'resource_tracking/graph/resource-tracker-graph.html',
-                  context={'svg': svg,
-                           'display_graph': display_graph,
-                           'resource_graph': resource_graph_filtered})
+    return render(
+        request,
+        'resource_tracking/graph/resource-tracker-graph.html',
+        context={
+            'svg': svg,
+            'display_graph': display_graph,
+            'resource_graph': resource_graph_filtered,
+            'resource_pools': resource_pool_queryset,
+            'resource_groups': resource_group_queryset
+        }
+    )
 
 
 def create_resource_pool_svg(resource_pool: ResourcePool):
