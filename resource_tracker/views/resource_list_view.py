@@ -1,18 +1,14 @@
 from django.urls import reverse
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 
 from resource_tracker.filters.resource_filter import ResourceFilter
 from resource_tracker.models import Resource, ResourceGroup
 from resource_tracker.tables.resource_table import ResourceTable
+from resource_tracker.views import TagFilterListView
 
 
-class ResourceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
-    table_pagination = {'per_page': 10}
+class ResourceListView(TagFilterListView):
     table_class = ResourceTable
     model = Resource
-    template_name = 'generics/list.html'
     filterset_class = ResourceFilter
 
     def get_table_data(self, **kwargs):
