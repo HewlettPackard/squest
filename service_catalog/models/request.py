@@ -408,11 +408,6 @@ class Request(RoleManager):
                                      target=RequestState.SUBMITTED, *args, **kwargs)
 
 
-@receiver(pre_delete, sender=Instance)
-def pre_delete(sender, instance, **kwargs):
-    instance.remove_all_bindings()
-
-
 pre_save.connect(Request.set_default_approval_step, sender=Request)
 pre_save.connect(Request.create_approval_step_states_when_approval_step_changed, sender=Request)
 post_save.connect(Request.create_approval_step_states, sender=Request)

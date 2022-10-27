@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
+from django.dispatch import receiver
+
 from profiles.models.role import Role
 from profiles.models.user_role_binding import UserRoleBinding
+from service_catalog.models.request import pre_delete
 
 
 class RoleManager(Model):
@@ -94,5 +97,20 @@ class RoleManager(Model):
 
     def remove_all_bindings(self):
         from profiles.models import TeamRoleBinding
+        for binding in TeamRoleBinding.objects.filter(role__in=self.roles, object_id=self.id):
+            binding.remove_permissions()
         TeamRoleBinding.objects.filter(role__in=self.roles, object_id=self.id).delete()
+        for binding in UserRoleBinding.objects.filter(role__in=self.roles, object_id=self.id):
+            binding.remove_permissions()
         UserRoleBinding.objects.filter(role__in=self.roles, object_id=self.id).delete()
+
+
+@receiver(pre_delete)
+def remove_all_binding(sender, instance, **kwargs):
+    from profiles.models import Team
+    if isinstance(instance, Team):
+        from profiles.models import TeamRoleBinding
+        for binding in TeamRoleBinding.objects.filter(team=instance):
+            binding.remove_permissions()
+    if issubclass(sender, RoleManager):
+        instance.remove_all_bindings()

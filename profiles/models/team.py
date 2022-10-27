@@ -24,11 +24,3 @@ class Team(RoleManager):
 
     def __str__(self):
         return self.name
-
-
-@receiver(pre_delete, sender=Team)
-def unset_permission(sender, instance, **kwargs):
-    from profiles.models import TeamRoleBinding
-    for binding in TeamRoleBinding.objects.filter(team=instance):
-        binding.remove_permissions()
-    instance.remove_all_bindings()

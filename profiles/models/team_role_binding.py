@@ -73,4 +73,8 @@ def set_permission(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=TeamRoleBinding)
 def unset_permission(sender, instance, **kwargs):
+    try:
+        instance.get_object()
+    except instance.content_type.model_class().DoesNotExist:
+        return
     instance.remove_permissions()
