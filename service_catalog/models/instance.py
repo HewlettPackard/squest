@@ -194,5 +194,4 @@ def post_save(sender, instance, created, **kwargs):
 
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
-    instance.remove_all_bindings()
     instance.delete_linked_resources()
