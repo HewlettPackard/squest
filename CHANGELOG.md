@@ -1,3 +1,15 @@
+# 1.8.2 2022-10-31
+
+## Fix
+
+- In API, extra_vars JSON fields were displayed as str instead of dict.
+- Allow to delete UserRoleBinding linked to deleted object.
+- UserRoleBindings on `Request` object were not deleted when deleting `Request` (Fix and cleanup migration).
+
+## Feature
+
+- Tags can be filtered with 'AND' or 'OR' method (only 'AND' before).
+
 # 1.8.1 2022-10-12
 
 ## Fix
