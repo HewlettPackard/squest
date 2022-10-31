@@ -24,9 +24,9 @@ def resource_pool_list(request):
     task_id = request.session.pop('task_id', None)
 
     resource_pool_filter = ResourcePoolFilter(request.GET, queryset=ResourcePool.objects.all())
-    if resource_pool_filter.is_valid():
-        return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
-                      {'resource_pools': resource_pool_filter, 'title': "Resource pools", "task_id": task_id})
+    resource_pool_filter.is_valid()
+    return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
+                  {'resource_pools': resource_pool_filter, 'title': "Resource pools", "task_id": task_id})
 
 
 @user_passes_test(lambda u: u.is_superuser)
