@@ -29,3 +29,30 @@ pre {
     padding: 0;
     margin: 0;
 }
+
+.orderable {
+    position: relative;          /* This is needed for the absolute positioning. */
+}
+
+.orderable::before,
+.orderable::after {
+    position: absolute;
+    left: -0.5em;
+    font-family: 'Font Awesome 5 Free';  /* Use FontAwesome's font so that you can set the content */
+    opacity: 0.3;                /* Set opacity to gray out icons by default */
+}
+
+.orderable::before {
+    content: '\f0de';            /* Font Awesome's up arrow */
+    top: calc(50% - 0.75em);     /* Tricky to calculate the top offset */
+}
+
+.orderable::after {
+    content: '\f0dd';            /* Font Awesome's down arrow */
+    bottom: calc(50% - 0.75em);
+}
+
+.asc::before,
+.desc::after {
+    opacity: 1;                  /* When sorting, set full opacity on the direction */
+}

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.html import format_html
-from django_tables2 import tables, TemplateColumn, A, LinkColumn
+from django_tables2 import tables, TemplateColumn, LinkColumn
 
 
 class UserTable(tables.Table):
