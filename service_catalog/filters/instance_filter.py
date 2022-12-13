@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django.forms import HiddenInput, CheckboxInput
 from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
+
+from profiles.models import BillingGroup
 from service_catalog.models import Instance, Service
 from service_catalog.models.instance import InstanceState
 from Squest.utils.squest_filter import SquestFilter
@@ -30,6 +32,7 @@ class InstanceFilter(SquestFilter):
     spoc = MultipleChoiceFilter()
     state = MultipleChoiceFilter(choices=InstanceState.choices)
     service = MultipleChoiceFilter()
+    billing_group = MultipleChoiceFilter()
 
     no_billing_groups = BooleanFilter(method='no_billing_group', label="No billing group", widget=CheckboxInput())
     no_spocs = BooleanFilter(method='no_spoc', label="No SPOC", widget=CheckboxInput())
@@ -46,8 +49,9 @@ class InstanceFilter(SquestFilter):
     def __init__(self, *args, **kwargs):
         super(InstanceFilter, self).__init__(*args, **kwargs)
         self.filters['id'].field.widget = HiddenInput()
-        self.filters['service'].field.choices = [(service.id, service.name) for service in Service.objects.all()]
-        self.filters['spoc'].field.choices = [(spoc.id, spoc.username) for spoc in User.objects.all()]
+        self.filters['service'].field.choices = [(service.id, service.name) for service in Service.objects.all().order_by("name")]
+        self.filters['spoc'].field.choices = [(spoc.id, spoc.username) for spoc in User.objects.all().order_by("username")]
+        self.filters['billing_group'].field.choices = [(billing_group.id, billing_group.name) for billing_group in BillingGroup.objects.all().order_by("name")]
 
     def no_billing_group(self, queryset, name, value):
         if not value:

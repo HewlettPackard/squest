@@ -22,4 +22,4 @@ class InstanceTable(SquestTable):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "name", "service__name", "state", "opened_support_count", "spoc", "date_available")
+        fields = ("selection", "name", "service__name", "state", "opened_support_count", "spoc__username", "date_available")
