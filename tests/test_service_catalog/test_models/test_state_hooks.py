@@ -60,21 +60,26 @@ class TestStateHook(BaseTestRequest):
                                     spoc=self.standard_user)
             mock_trigger_hook2.assert_called()
 
-    def test_hook_manager_execute_job_template(self):
-        from service_catalog.api.serializers import InstanceReadSerializer, RequestSerializer
+    def test_hook_manager_execute_job_template_from_request(self):
+        from service_catalog.api.serializers import AdminRequestSerializer
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute:
-
             HookManager.trigger_hook(sender=Request, instance=self.test_request,
                                      name="accept", source=RequestState.SUBMITTED, target=RequestState.ACCEPTED)
             expected_extra_vars = self.global_hook1.extra_vars
-            expected_extra_vars["squest"] = RequestSerializer(self.test_request).data
+            expected_extra_vars.update(
+                {"squest": {"request": AdminRequestSerializer(self.test_request).data}}
+            )
             mock_job_template_execute.assert_called_with(extra_vars=expected_extra_vars)
 
+    def test_hook_manager_execute_job_template_from_instance(self):
+        from service_catalog.api.serializers import InstanceReadSerializer
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute2:
             HookManager.trigger_hook(sender=Instance, instance=self.test_instance,
                                      name="accept", source=InstanceState.PENDING, target=InstanceState.PROVISIONING)
             expected_extra_vars = self.global_hook2.extra_vars
-            expected_extra_vars["squest"] = InstanceReadSerializer(self.test_instance).data
+            expected_extra_vars.update(
+                {"squest": {"instance": InstanceReadSerializer(self.test_instance).data}}
+            )
             mock_job_template_execute2.assert_called_with(extra_vars=expected_extra_vars)
 
     def test_hook_manager_does_not_execute_job_template(self):
