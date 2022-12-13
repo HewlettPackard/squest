@@ -78,7 +78,9 @@ class HookManager(object):
             serialized_data = dict()
             service = None
             operations = list()
+            from django.conf import settings
             extra_vars = {
+                "squest_host": settings.SQUEST_HOST,
                 "squest": dict()
             }
             if isinstance(instance, Instance):
