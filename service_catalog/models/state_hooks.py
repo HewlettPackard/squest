@@ -71,24 +71,28 @@ class HookManager(object):
                      f"target '{target}'")
         # check if global hooks exist for this object sender model and state
         global_hook_set = GlobalHook.objects.filter(model=sender.__name__, state=target)
-        from service_catalog.api.serializers import InstanceReadSerializer, RequestSerializer
+        from service_catalog.api.serializers import InstanceReadSerializer, AdminRequestSerializer
         from service_catalog.models import Instance, Request
         if global_hook_set:
             # serialize the instance
             serialized_data = dict()
             service = None
             operations = list()
+            extra_vars = {
+                "squest": dict()
+            }
             if isinstance(instance, Instance):
                 service = instance.service
                 operations = instance.service.operations.all()
-                serialized_data = InstanceReadSerializer(instance).data
+                serialized_data = dict(InstanceReadSerializer(instance).data)
+                extra_vars["squest"]["instance"] = serialized_data
             if isinstance(instance, Request):
                 service = instance.instance.service
                 operations = [instance.operation]
-                serialized_data = RequestSerializer(instance).data
+                serialized_data = dict(AdminRequestSerializer(instance).data)
+                extra_vars["squest"]["request"] = serialized_data
             for global_hook in global_hook_set.all():
                 if global_hook.service is None or service == global_hook.service:
                     if global_hook.operation is None or global_hook.operation in operations:
-                        extra_vars = global_hook.extra_vars
-                        extra_vars["squest"] = serialized_data
+                        extra_vars.update(global_hook.extra_vars)
                         global_hook.job_template.execute(extra_vars=extra_vars)
