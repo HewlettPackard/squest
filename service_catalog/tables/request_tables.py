@@ -17,14 +17,14 @@ class RequestTable(SquestTable):
 
     def before_render(self, request):
         if request.user.is_superuser:
-            self.columns.show('user')
+            self.columns.show('user__username')
             self.columns.show('selection')
         else:
-            self.columns.hide('user')
+            self.columns.hide('user__username')
             self.columns.hide('selection')
 
     class Meta:
         model = Request
         attrs = {"id": "request_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "id", "instance__name", "user", "date_submitted", "instance__service__name", "operation__name",
+        fields = ("selection", "id", "instance__name", "user__username", "date_submitted", "instance__service__name", "operation__name",
                   "state", "actions")
