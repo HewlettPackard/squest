@@ -67,7 +67,9 @@ class TestStateHook(BaseTestRequest):
                                      name="accept", source=RequestState.SUBMITTED, target=RequestState.ACCEPTED)
             expected_extra_vars = self.global_hook1.extra_vars
             expected_extra_vars.update(
-                {"squest": {"request": AdminRequestSerializer(self.test_request).data}}
+                {"squest_host": "http://squest.domain.local",
+                 "squest": {"request": AdminRequestSerializer(self.test_request).data}
+                 }
             )
             mock_job_template_execute.assert_called_with(extra_vars=expected_extra_vars)
 
@@ -78,7 +80,10 @@ class TestStateHook(BaseTestRequest):
                                      name="accept", source=InstanceState.PENDING, target=InstanceState.PROVISIONING)
             expected_extra_vars = self.global_hook2.extra_vars
             expected_extra_vars.update(
-                {"squest": {"instance": InstanceReadSerializer(self.test_instance).data}}
+                {"squest_host": "http://squest.domain.local",
+                 "squest":
+                     {"instance": InstanceReadSerializer(self.test_instance).data}
+                 }
             )
             mock_job_template_execute2.assert_called_with(extra_vars=expected_extra_vars)
 
