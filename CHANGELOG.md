@@ -1,3 +1,20 @@
+# 1.9.0 2022-12-14
+
+## Breaking changes ⚠
+
+- Global hook execution now send the same "squest" metadata to the job template as the one used in service operations
+
+## Enhancement
+
+- Minor UI enhancements
+- Add a link to go back to a request details from request comment page
+
+## Fix
+
+- Global hook now send squest metadata
+- Global hook use admin request serializer instead of read only serializer
+- Fix table sort in request and instance list page
+
 # 1.8.2 2022-10-31
 
 ## Fix
