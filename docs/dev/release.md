@@ -6,7 +6,7 @@
 - Update the `CHANGELOG.md`
 - Delete all migration file since the last release in all Django app
 - Make migration files
-- Update `version.py` with release version
+- Update `Squest/version.py` with release version
 - Update version in Poetry `pyproject.toml`
 - PR --> master
 - Last review and rebase/merge master
