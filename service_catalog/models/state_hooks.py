@@ -80,8 +80,9 @@ class HookManager(object):
             operations = list()
             from django.conf import settings
             extra_vars = {
-                "squest_host": settings.SQUEST_HOST,
-                "squest": dict()
+                "squest": {
+                    "squest_host": settings.SQUEST_HOST
+                }
             }
             if isinstance(instance, Instance):
                 service = instance.service
