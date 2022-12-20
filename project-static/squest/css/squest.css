@@ -56,3 +56,7 @@ pre {
 .desc::after {
     opacity: 1;                  /* When sorting, set full opacity on the direction */
 }
+
+div.dt-button-collection {
+    width: auto !important;
+}

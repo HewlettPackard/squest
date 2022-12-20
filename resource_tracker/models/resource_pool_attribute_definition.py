@@ -39,6 +39,10 @@ class ResourcePoolAttributeDefinition(models.Model):
         return f"{self.resource_pool.name} - {self.name}"
 
     @property
+    def available(self):
+        return self.total_produced - self.total_consumed
+
+    @property
     def percent_consumed(self):
         if self.total_produced == 0:
             return "N/A"
