@@ -15,101 +15,49 @@
     <div class="content">
         <div class="row">
             <div class="col-12 connectedSortable ui-sortable">
-                {% for resource_pool in resource_pools.qs %}
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title"><strong>{{ resource_pool.name }}</strong></h3>
-                            <div class="card-tools">
-                                <div class="btn-group">
-                                    <a href="{% url 'resource_tracker:resource_pool_refresh_consumption' resource_pool.id %}"
-                                       class="dropdown-item text-black" title="Refresh consumption">
-                                        <i class="fas fa-sync"></i>
-                                    </a>
-                                    <a class="dropdown-item text-primary" title="Edit"
-                                       href="{% url 'resource_tracker:resource_pool_edit' resource_pool.id %}"><span
-                                            class="text-primary fas fa-pencil-alt"></span></a>
-                                    <a class="dropdown-item text-danger" title="Delete"
-                                       href="{% url 'resource_tracker:resource_pool_delete' resource_pool.id %}"><span
-                                            class="text-danger fas fa-trash"></span></a>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><strong>Pools</strong></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table id="pool_table" class="table table-sm" >
+                                        <thead>
+                                        <tr>
+                                            <th>Pool name</th>
+                                            {% for attribute_name in list_attribute_name %}
+                                                <th>{{ attribute_name }} produced</th>
+                                                <th>{{ attribute_name }} p-factor</th>
+                                                <th>{{ attribute_name }} consumed</th>
+                                                <th>{{ attribute_name }} c-factor</th>
+                                                <th>{{ attribute_name }} available</th>
+                                            {% endfor %}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for pool in resource_pools %}
+                                            <tr>
+                                                <td>{{ pool.pool_name }}</td>
+                                                {% for attribute in pool.list_attribute %}
+                                                    <td>{{ attribute.produced }}</td> {# produce #}
+                                                    <td>{{ attribute.p_factor }}</td> {# factor #}
+                                                    <td>{{ attribute.consumed }}</td> {# consume #}
+                                                    <td>{{ attribute.c_factor }}</td> {# factor #}
+                                                    <td>{{ attribute.available }}</td> {# available #}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            {% if resource_pool.attribute_definitions.all|length == 0 %}
-                                <div class="row">
-                                    <div class="col text-center">
-                                        <a class="btn btn-lg btn-success text-center"
-                                           href="{% url 'resource_tracker:resource_pool_attribute_create' resource_pool.id %}">
-                                            <i class="fas fa-plus"></i> Add computable attribute
-                                        </a>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <table class="table table-sm">
-                                    <thead>
-                                    <tr>
-                                        <th>Attribute</th>
-                                        <th>Produced</th>
-                                        <th>Consumed</th>
-                                        <th>Available</th>
-                                        <th>Consumption</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for attribute in resource_pool.attribute_definitions.all %}
-                                        <tr>
-                                            <td class="align-middle">{{ attribute.name }}</td>
-                                            <td class="align-middle">
-                                                <a href="{% url 'resource_tracker:resource_pool_attribute_producer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                    {{ attribute.total_produced | floatformat:0 }}
-                                                    {% if attribute.over_commitment_producers != 1 %}
-                                                        <i class="fas fa-info-circle text-primary"
-                                                           title="Over commitment x{{ attribute.over_commitment_producers }} enabled">
-                                                        </i>
-                                                    {% endif %}
-                                                </a>
-
-                                            </td>
-                                            <td class="align-middle">
-                                                <a href="{% url 'resource_tracker:resource_pool_attribute_consumer_list' resource_pool_id=resource_pool.id attribute_id=attribute.id %}">
-                                                    {{ attribute.total_consumed | floatformat:0 }}
-                                                    {% if attribute.over_commitment_consumers != 1 %}
-                                                        <i class="fas fa-info-circle text-primary"
-                                                           title="Over commitment x{{ attribute.over_commitment_consumers }} enabled">
-                                                        </i>
-                                                    {% endif %}
-                                                </a>
-                                            </td>
-                                            <td class="align-middle">
-                                                <span class="badge bg-{{ attribute.progress_bar_color }}">{{ attribute.total_produced|subtract:attribute.total_consumed | floatformat:0 }}</span>
-                                            </td>
-                                            <td class="align-middle">
-                                                <div class="progress text_center">
-                                                    <div class="progress-bar bg-{{ attribute.progress_bar_color }}"
-                                                         role="progressbar"
-                                                         aria-valuenow="{{ attribute.percent_consumed }}"
-                                                         aria-valuemin="0" aria-valuemax="100"
-                                                         style="width: {{ attribute.percent_consumed }}%">
-                                                        {{ attribute.percent_consumed }}%
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endif %}
-                        </div>
-                        <div class="card-footer">
-                            <strong>Tags: </strong>
-                            {% for tag in resource_pool.tags.all %}
-                                <small class="badge badge-secondary">{{ tag }}</small>
-                            {% endfor %}
-                        </div>
                     </div>
-                {% endfor %}
+                </div>
             </div>
-            <aside class="control-sidebar control-sidebar-light" style="display: block;">
+            <aside class="control-sidebar control-sidebar-light" style="display: block; width: 700px">
                 <div class="row">
                     <a class="nav-link float-left" data-widget="control-sidebar">
                         <i class="fas fa-chevron-right"></i>
@@ -120,7 +68,7 @@
                         <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
                     </div>
                     <form method="get">
-                        {{ resource_pools.form.as_p }}
+                        {{ resource_pools_filter.form.as_p }}
                         <button class="btn btn-primary" type="submit">Apply</button>
                     </form>
                 </div>

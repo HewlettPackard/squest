@@ -8,7 +8,38 @@ $(document).ready(function () {
 
     $('.ajax_sync_all_job_template').click(sync_all_job_template);
     $('.ajax_sync_job_template').click(sync_job_template);
+
+    // pool table
+    var disabled_column_list = ["p-factor", "c-factor"];
+    var poolTable = $('#pool_table').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'colvis'
+        ],
+    });
+
+    // Apply the filter to remove refactors by default
+    poolTable.columns().eq(0).reverse().each(function (colIdx) {
+        var column = poolTable.columns(colIdx);
+        // console.log(column);
+        var title = $('#pool_table thead th').eq(colIdx).text();
+        if (containsAny(title, disabled_column_list)){
+            // console.log("disable colum id:" + colIdx)
+            column.visible(!column.visible());
+        }
+    });
 });
+
+function containsAny(str, substrings) {
+    for (var i = 0; i !== substrings.length; i++) {
+       var substring = substrings[i];
+       if (str.indexOf(substring) !== - 1) {
+            // console.log("found:" + str );
+            return true;
+       }
+    }
+    return false;
+}
 
 function add_tab_management() {
     var hash = window.location.hash;

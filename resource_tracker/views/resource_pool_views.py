@@ -21,12 +21,54 @@ def resource_pool_list(request):
     if redirect_url:
         return redirect_url
 
-    task_id = request.session.pop('task_id', None)
-
     resource_pool_filter = ResourcePoolFilter(request.GET, queryset=ResourcePool.objects.all())
     resource_pool_filter.is_valid()
+
+    all_attributes = ResourcePoolAttributeDefinition.objects.filter(resource_pool__in=resource_pool_filter.qs)
+
+    dict_of_attributes = dict()
+    list_attribute_name = list(set([x.name for x in all_attributes]))
+
+    for attribute_def in all_attributes:
+        attribute_json = {
+            "produced": attribute_def.total_produced,
+            "p_factor": attribute_def.over_commitment_producers,
+            "consumed": attribute_def.total_consumed,
+            "c_factor": attribute_def.over_commitment_consumers,
+            "available": attribute_def.available,
+        }
+        if attribute_def.resource_pool.name not in dict_of_attributes:
+            dict_of_attributes[attribute_def.resource_pool.name] = dict()
+        if attribute_def.name not in dict_of_attributes[attribute_def.resource_pool.name]:
+            dict_of_attributes[attribute_def.resource_pool.name][attribute_def.name] = dict()
+        dict_of_attributes[attribute_def.resource_pool.name][attribute_def.name] = attribute_json
+
+    print(dict_of_attributes)
+    print(list_attribute_name)
+
+    returned_list = list()
+
+    for pool_name, attributes in dict_of_attributes.items():
+        default_dict = {
+            "produced": "",
+            "p_factor": "",
+            "consumed": "",
+            "c_factor": "",
+            "available": "",
+        }
+        new_pool = {
+            "pool_name": pool_name,
+            "list_attribute": list()
+        }
+        for attribute_name_to_have in list_attribute_name:
+            new_pool["list_attribute"].append(dict_of_attributes[pool_name].get(attribute_name_to_have, default_dict))
+        returned_list.append(new_pool)
+    print(returned_list)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
-                  {'resource_pools': resource_pool_filter, 'title': "Resource pools", "task_id": task_id})
+                  {'resource_pools': returned_list,
+                   'resource_pools_filter': resource_pool_filter,
+                   'list_attribute_name': list_attribute_name,
+                   'title': "Resource pools"})
 
 
 @user_passes_test(lambda u: u.is_superuser)
