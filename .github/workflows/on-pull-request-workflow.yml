@@ -15,7 +15,7 @@ jobs:
         poetry-version: ['1.1.13']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install system dependencies
         run: |
@@ -24,7 +24,7 @@ jobs:
           sudo apt install -y default-libmysqlclient-dev gcc npm libldap2-dev libsasl2-dev graphviz libsqlite3-dev
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
