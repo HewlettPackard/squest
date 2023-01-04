@@ -1,0 +1,16 @@
+<aside class="control-sidebar control-sidebar-light" style="display: block; width: 700px">
+    <div class="row">
+        <a class="nav-link float-left" data-widget="control-sidebar">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+    <div class="p-3 control-sidebar-content">
+        <div class="row pb-3">
+            <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+        </div>
+        <form method="get">
+            {{ resource_pools.form.as_p }}
+            <button class="btn btn-primary" type="submit">Apply</button>
+        </form>
+    </div>
+</aside>

@@ -24,6 +24,19 @@ def resource_pool_list(request):
     resource_pool_filter = ResourcePoolFilter(request.GET, queryset=ResourcePool.objects.all())
     resource_pool_filter.is_valid()
 
+    return render(request, 'resource_tracking/resource_pool/resource_pool_list.html',
+                  {'resource_pools': resource_pool_filter, 'title': "Resource pools"})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def resource_pool_list_tables(request):
+    redirect_url = tag_session_manager(request)
+    if redirect_url:
+        return redirect_url
+
+    resource_pool_filter = ResourcePoolFilter(request.GET, queryset=ResourcePool.objects.all())
+    resource_pool_filter.is_valid()
+
     all_attributes = ResourcePoolAttributeDefinition.objects.filter(resource_pool__in=resource_pool_filter.qs)
 
     dict_of_attributes = dict()
@@ -60,9 +73,9 @@ def resource_pool_list(request):
         for attribute_name_to_have in list_attribute_name:
             new_pool["list_attribute"].append(dict_of_attributes[pool_name].get(attribute_name_to_have, default_dict))
         returned_list.append(new_pool)
-    return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
-                  {'resource_pools': returned_list,
-                   'resource_pools_filter': resource_pool_filter,
+    return render(request, 'resource_tracking/resource_pool/resource_pool_list_table_view.html',
+                  {'resource_pool_list': returned_list,
+                   'resource_pools': resource_pool_filter,
                    'list_attribute_name': list_attribute_name,
                    'title': "Resource pools"})
 
