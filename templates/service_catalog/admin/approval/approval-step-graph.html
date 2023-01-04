@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+ {{ approval_workflow.name }} | Approval
+{%  endblock %}
 {% block main %}
     <div class="content">
         <div class="container-fluid">
@@ -17,11 +20,11 @@
                                 {% endif %}
                                 <div class="timeline-item">
                                     <span class="time">
-                                        <a href="{% url 'service_catalog:approval_step_edit' approval_workflow_id approval_step.id %}"
+                                        <a href="{% url 'service_catalog:approval_step_edit' approval_workflow.id approval_step.id %}"
                                            class="btn btn-tool">
                                             <i class="fas fa-pencil-alt text-primary"></i>
                                         </a>
-                                        <a href="{% url 'service_catalog:approval_step_delete' approval_workflow_id approval_step.id %}"
+                                        <a href="{% url 'service_catalog:approval_step_delete' approval_workflow.id approval_step.id %}"
                                            class="btn btn-tool text-danger">
                                             <i class="fas fa-trash"></i>
                                         </a>
@@ -42,7 +45,7 @@
                                 </div>
                             </div>
                             <div class="time-label mb-5">
-                                <a href="{% url 'service_catalog:approval_step_create' approval_workflow_id %}?previous_id={{ approval_step.id }}">
+                                <a href="{% url 'service_catalog:approval_step_create' approval_workflow.id %}?previous_id={{ approval_step.id }}">
                                     <i
                                             class="fas fa-solid fa-plus bg-success squest-timeline-icon"
                                             style="
