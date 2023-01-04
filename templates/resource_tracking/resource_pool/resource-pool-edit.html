@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+ {{  resource_pool.name }} | Pool
+{%  endblock %}
 {% load render_table from django_tables2 %}
 {% block header_button %}
     <div class="float-right">
