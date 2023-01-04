@@ -73,3 +73,17 @@ Example of lookup string that can be used in the filter.
 ```
 my_first_field.my_second_field.0=my_value1,my_integer_field=1
 ```
+
+### Instance spec with regex
+
+```json
+{
+  "dns_name": "my_hostname.domain.example"
+}
+```
+
+Lookup string example:
+
+```
+dns_name.regex=my_hostname
+```

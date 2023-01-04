@@ -43,9 +43,6 @@ def resource_pool_list(request):
             dict_of_attributes[attribute_def.resource_pool.name][attribute_def.name] = dict()
         dict_of_attributes[attribute_def.resource_pool.name][attribute_def.name] = attribute_json
 
-    print(dict_of_attributes)
-    print(list_attribute_name)
-
     returned_list = list()
 
     for pool_name, attributes in dict_of_attributes.items():
@@ -63,7 +60,6 @@ def resource_pool_list(request):
         for attribute_name_to_have in list_attribute_name:
             new_pool["list_attribute"].append(dict_of_attributes[pool_name].get(attribute_name_to_have, default_dict))
         returned_list.append(new_pool)
-    print(returned_list)
     return render(request, 'resource_tracking/resource_pool/resource-pool-list.html',
                   {'resource_pools': returned_list,
                    'resource_pools_filter': resource_pool_filter,
