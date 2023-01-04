@@ -5,9 +5,13 @@
     <a class="btn btn-default float-right ml-1" data-widget="control-sidebar">
         <i class="fas fa-sliders-h"></i>
     </a>
-    <a class="btn btn-success float-sm-right"
+    <a class="btn btn-success float-sm-right ml-1"
        href="{% url 'resource_tracker:resource_pool_create' %}">
         <i class="fas fa-plus"></i> New resource pool
+    </a>
+    <a class="btn btn-default float-sm-right"
+       href="{% url 'resource_tracker:resource_pool_list' %}">
+        <i class="fas fa-list"></i> Classic view
     </a>
 {% endblock %}
 
@@ -37,7 +41,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% for pool in resource_pools %}
+                                        {% for pool in resource_pool_list %}
                                             <tr>
                                                 <td>{{ pool.pool_name }}</td>
                                                 {% for attribute in pool.list_attribute %}
@@ -57,22 +61,7 @@
                     </div>
                 </div>
             </div>
-            <aside class="control-sidebar control-sidebar-light" style="display: block; width: 700px">
-                <div class="row">
-                    <a class="nav-link float-left" data-widget="control-sidebar">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </div>
-                <div class="p-3 control-sidebar-content">
-                    <div class="row pb-3">
-                        <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
-                    </div>
-                    <form method="get">
-                        {{ resource_pools_filter.form.as_p }}
-                        <button class="btn btn-primary" type="submit">Apply</button>
-                    </form>
-                </div>
-            </aside>
+            {% include 'resource_tracking/resource_pool/common/resource_pool_aside.html' %}
         </div>
     </div>
 {% endblock %}

@@ -60,6 +60,7 @@ urlpatterns = [
          name='resource_group_resource_edit'),
 
     path('resource_pool/', views.resource_pool_list, name='resource_pool_list'),
+    path('resource_pool/tables', views.resource_pool_list_tables, name='resource_pool_list_tables'),
     path('resource_pool/create/', views.resource_pool_create, name='resource_pool_create'),
     path('resource_pool/<int:resource_pool_id>/edit/', views.resource_pool_edit,
          name='resource_pool_edit'),

@@ -14,9 +14,17 @@ $(document).ready(function () {
     var poolTable = $('#pool_table').DataTable( {
         dom: 'Bfrtip',
         buttons: [
-            'csv', 'colvis'
+            'csv', 'colvis', 'pageLength'
         ],
+        lengthMenu: [
+            [50, 100, 200, -1],
+            [50, 100, 200, 'All'],
+        ],
+        fixedColumns:   {
+            left: 1,
+        }
     });
+
 
     // Apply the filter to remove refactors by default
     poolTable.columns().eq(0).reverse().each(function (colIdx) {
