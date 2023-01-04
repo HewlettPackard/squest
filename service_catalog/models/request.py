@@ -85,7 +85,7 @@ class Request(RoleManager):
     # TODO: add the job id (url of tower and axw are different)
     @property
     def tower_job_url(self):
-        return f"{self.operation.job_template.tower_server.url}/#/jobs"
+        return f"{self.operation.job_template.tower_server.url}/#/jobs/playbook/{self.tower_job_id}/output"
 
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
     def need_info(self):
