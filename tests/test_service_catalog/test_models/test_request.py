@@ -249,7 +249,8 @@ class TestRequest(BaseTestRequest):
         self._process_timeout_with_expected_state(expected_instance_state)
 
     def test_tower_job_url(self):
-        self.assertEqual("https://localhost/#/jobs", self.test_request.tower_job_url)
+        self.test_request.tower_job_id = 1234
+        self.assertEqual("https://localhost/#/jobs/playbook/1234/output", self.test_request.tower_job_url)
 
     def test_delete_request_also_delete_periodic_task(self):
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
