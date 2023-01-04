@@ -22,19 +22,19 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("resource_pools" in response.context)
-        self.assertEqual(response.context['resource_pools_filter'].qs.count(), ResourcePool.objects.count())
+        self.assertEqual(response.context["resource_pools"].qs.count(), ResourcePool.objects.count())
 
     def test_resource_pool_list_filter_type_and(self):
         url = reverse('resource_tracker:resource_pool_list') + "?tag=test1&tag=test2&tag_filter_type=AND"
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context['resource_pools_filter'].qs.count(), 1)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 1)
 
     def test_resource_pool_list_filter_type_or(self):
         url = reverse('resource_tracker:resource_pool_list') + "?tag=test1&tag=test2&tag_filter_type=OR"
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context['resource_pools_filter'].qs.count(), 3)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 3)
 
     def test_get_resource_pool_with_one_tag_in_session(self):
         url = reverse('resource_tracker:resource_pool_list')
@@ -42,12 +42,12 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         # try to get all resource pool
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), ResourcePool.objects.all().count())
+        self.assertEqual(response.context["resource_pools"].qs.count(), ResourcePool.objects.all().count())
 
         # get the page by giving a tag into the URL (like the button apply filter)
         response = self.client.get(url + f"?tag=test1&tag_filter_type=OR")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), 2)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 2)
 
         # move to another page
         response = self.client.get(reverse('service_catalog:doc_list'))
@@ -58,12 +58,12 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertEqual(200, response.status_code)
         self.assertIn("test1", response.request["QUERY_STRING"])
         self.assertIn("OR", response.request["QUERY_STRING"])
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), 2)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 2)
 
         # save tags and type
         response = self.client.get(url + f"?tag=test1&tag=test2&tag_filter_type=AND")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), 1)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 1)
 
         # move to another page
         response = self.client.get(reverse('service_catalog:doc_list'))
@@ -75,12 +75,12 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         self.assertIn("test1", response.request["QUERY_STRING"])
         self.assertIn("test2", response.request["QUERY_STRING"])
         self.assertIn("AND", response.request["QUERY_STRING"])
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), 1)
+        self.assertEqual(response.context["resource_pools"].qs.count(), 1)
 
         # save type
         response = self.client.get(url + f"?tag_filter_type=AND")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), ResourcePool.objects.count())
+        self.assertEqual(response.context["resource_pools"].qs.count(), ResourcePool.objects.count())
 
         # move to another page
         response = self.client.get(reverse('service_catalog:doc_list'))
@@ -90,12 +90,12 @@ class TestResourcePoolViews(BaseTestResourceTracker):
         response = self.client.get(url, follow=True)  # follow the redirect
         self.assertEqual(200, response.status_code)
         self.assertIn("AND", response.request["QUERY_STRING"])
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), ResourcePool.objects.count())
+        self.assertEqual(response.context["resource_pools"].qs.count(), ResourcePool.objects.count())
 
         # reset tags and type
         response = self.client.get(url + f"?tag_filter_type=OR")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.context["resource_pools_filter"].qs.count(), ResourcePool.objects.count())
+        self.assertEqual(response.context["resource_pools"].qs.count(), ResourcePool.objects.count())
 
     def test_cannot_get_resource_pool_list_when_logout(self):
         self.client.logout()
