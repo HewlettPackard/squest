@@ -32,7 +32,8 @@
     <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet" >
     <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet" >
 
-    <title>Squest</title>
+{#    <title>Squest</title>#}
+    <title>{% if title %}{{ title }}{% else %}{% block title %}Squest{% endblock title %}{% endif %}</title>
 </head>
 <body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 {% if 'login' not in request.path %}

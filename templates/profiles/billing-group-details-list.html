@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+ {{ billing_group.name }} | Billing group
+{%  endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% load squest_utils %}

@@ -105,6 +105,6 @@ def approval_step_graph(request, approval_workflow_id):
             {'text': approval_workflow.name, 'url': ''}
         ],
         'approval_steps': approval_workflow.approval_step_list.order_by("position"),
-        'approval_workflow_id': approval_workflow_id
+        'approval_workflow': approval_workflow
     }
     return render(request, "service_catalog/admin/approval/approval-step-graph.html", context)
