@@ -27,15 +27,16 @@ $(document).ready(function () {
 
 
     // Apply the filter to remove refactors by default
-    poolTable.columns().eq(0).reverse().each(function (colIdx) {
+    var titles = $('#pool_table thead th');
+    poolTable.columns().eq(0).each(function (colIdx) {
         var column = poolTable.columns(colIdx);
-        // console.log(column);
-        var title = $('#pool_table thead th').eq(colIdx).text();
+        var title = titles.eq(colIdx).text();
         if (containsAny(title, disabled_column_list)){
             // console.log("disable colum id:" + colIdx)
-            column.visible(!column.visible());
+            column.visible(false, false);
         }
     });
+    poolTable.reload();
 });
 
 function containsAny(str, substrings) {
