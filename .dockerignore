@@ -1,7 +1,7 @@
 /static
 /node_modules
 /media
-*/ldap_config.py*
+# */ldap_config.py*
 /docker/certs/*
 /backup
 /site

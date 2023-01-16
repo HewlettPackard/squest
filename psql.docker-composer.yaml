@@ -1,0 +1,24 @@
+
+services:
+  db:
+    image: postgres:latest
+    env_file: docker/environment_variables/psql.env
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - "./docker/scripts/psql-init.sh:/docker-entrypoint-initdb.d/psql-init.sh"
+
+  django:
+    environment:
+      WAIT_HOSTS: db:5432,rabbitmq:5672
+
+  celery-worker:
+    environment:
+      WAIT_HOSTS: db:5432,rabbitmq:5672,django:8000
+      WAIT_TIMEOUT: 60
+
+  celery-beat:
+    environment:
+      WAIT_HOSTS: db:5432,rabbitmq:5672,django:8000
+      WAIT_TIMEOUT: 60
