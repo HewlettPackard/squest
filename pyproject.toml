@@ -43,7 +43,7 @@ redis = "^4.3.4"
 django-redis = "^5.2.0"
 django-cachalot = "^2.5.1"
 django-mysql = "^4.7.0"
-
+psycopg2 = "^2.9.5"
 
 [tool.poetry.dev-dependencies]
 

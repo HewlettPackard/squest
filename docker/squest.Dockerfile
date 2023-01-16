@@ -14,12 +14,12 @@ FROM python:3.10-slim-bullseye
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE=Squest.settings
-ENV POETRY_VERSION=1.1.13
+ENV POETRY_VERSION=1.3.2
 ENV NODE_VERSION=16.15.1
 ENV NVM_VERSION=v0.39.1
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev"
+ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev libpq-dev python3-dev libssl-dev" 
 ENV BUID_DEPS="gcc"
 
 # Install system deps

@@ -24,11 +24,11 @@ from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
 SECRET_KEY = os.environ.get('SECRET_KEY', 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-')
 DEBUG = str_to_bool(os.getenv('DEBUG', True))
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'squest_db')
-MYSQL_USER = os.environ.get('MYSQL_USER', 'squest_user')
-MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'squest_password')
-MYSQL_HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
-MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
+DB_DATABASE = os.environ.get('DB_DATABASE', 'squest')
+DB_USER = os.environ.get('DB_USER', 'squest')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', 'squest')
+DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
+DB_PORT = os.environ.get('DB_PORT', '3306')
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
 BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
@@ -127,14 +127,24 @@ WSGI_APPLICATION = 'Squest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': MYSQL_DATABASE,
-        'USER': MYSQL_USER,
-        'PASSWORD': MYSQL_PASSWORD,
-        'HOST': MYSQL_HOST,
-        'PORT': MYSQL_PORT,
+        'ENGINE': "django.db.backends.mysql",
+        'NAME': DB_DATABASE,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+    },
+    'psql': {
+        'ENGINE': "django.db.backends.postgresql",
+        'NAME': DB_DATABASE,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
+
+DATABASE_ROUTERS = ['Squest.db_router.DbRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
