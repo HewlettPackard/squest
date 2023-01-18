@@ -7,36 +7,79 @@ The configuration is loaded from environment variables file placed in the folder
 
 ## Database
 
-### MYSQL_DATABASE
+### MYSQL
+
+#### DATABASE
+
+**Default:** `default`
+
+Setup mysql database usage
+
+#### MYSQL_DATABASE
 
 **Default:** `squest_db`
 
 Mysql database name.
 
-### MYSQL_USER
+#### MYSQL_USER
 
 **Default:** `squest_user`
 
 Mysql user used to connect to the `MYSQL_DATABASE` name.
 
-### MYSQL_PASSWORD
+#### MYSQL_PASSWORD
 
 **Default:** `squest_password`
 
 Password of the `MYSQL_USER` username.  
 
-### MYSQL_HOST
+#### MYSQL_HOST
 
 **Default:** `127.0.0.1`
 
 Mysql database host. The default value is localhost to match the development configuration. 
 Switch to `db` in production when using the docker-compose based deployment.
 
-### MYSQL_PORT
+#### DB_PORT
 
 **Default:** `3306`
 
-Mysql database port.
+Database port.
+
+### Postgres SQL
+
+#### DATABASE
+
+**Default:** `default`
+
+Set to `psql` for postgres SQL usage
+
+Setup mysql database usage
+
+#### DB_DATABASE
+
+**Default:** `squest_db`
+
+PSQL Database name
+
+#### DB_PASSWORD
+
+**Default:** `squest_password`
+
+Password of the `DB_DATABASE` username. 
+
+#### DB_USER
+
+**Default:** `squest_user`
+
+user used to connect to the `DB_DATABASE` name.
+
+#### DB_PORT
+
+**Default:** `5432`
+
+Database PORT
+
 
 ## Authentication
 
