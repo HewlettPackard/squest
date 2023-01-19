@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-ENV DATABASE=""
 
 echo "Wait for required services to start"
 /wait
