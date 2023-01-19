@@ -7,87 +7,54 @@ The configuration is loaded from environment variables file placed in the folder
 
 ## Database
 
-### MYSQL
+### DB_ROOT_PASSWORD
 
-#### DATABASE
+Set the database root/superuser password
+
+### DATABASE
 
 **Default:** `default`
 
 Setup mysql database usage
+Set to `psql` for postgres SQL usage
 
-#### MYSQL_DATABASE
+### DB_DATABASE
 
 **Default:** `squest_db`
 
-Mysql database name.
+Database name.
 
-#### MYSQL_USER
+### DB_USER
 
 **Default:** `squest_user`
 
-Mysql user used to connect to the `MYSQL_DATABASE` name.
+User used to connect to the `DB_DATABASE` name.
 
-#### MYSQL_PASSWORD
+### DB_PASSWORD
 
 **Default:** `squest_password`
 
-Password of the `MYSQL_USER` username.  
+Password of the `DB_USER` username.  
 
-#### MYSQL_HOST
+### DB_HOST
 
 **Default:** `127.0.0.1`
 
-Mysql database host. The default value is localhost to match the development configuration. 
+Database host. The default value is localhost to match the development configuration. 
 Switch to `db` in production when using the docker-compose based deployment.
 
-#### DB_PORT
+### DB_PORT
 
 **Default:** `3306`
 
 Database port.
 
-### Postgres SQL
-
-#### DATABASE
-
-**Default:** `default`
-
-Set to `psql` for postgres SQL usage
-
-Setup mysql database usage
-
-#### DB_DATABASE
-
-**Default:** `squest_db`
-
-PSQL Database name
-
-#### DB_PASSWORD
-
-**Default:** `squest_password`
-
-Password of the `DB_DATABASE` username. 
-
-#### DB_USER
-
-**Default:** `squest_user`
-
-user used to connect to the `DB_DATABASE` name.
-
-#### DB_PORT
-
-**Default:** `5432`
-
-Database PORT
-
 
 ## Authentication
 
-### LDAP_ENABLED
+### LDAP
 
-**Default:** `False`
-
-Set to `True` to enable LDAP based authentication. [See configuration doc](../installation/ldap.md).  
+See [See configuration doc](../installation/ldap.md).
 
 ### DEFAULT_ADMIN_TOKEN
 
