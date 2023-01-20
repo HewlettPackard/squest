@@ -38,7 +38,11 @@ The development environment is composed of 4 parts:
 
 Run the Docker compose file with only required services to bring up database, message broker and other required system
 ```bash
-docker-compose -f docker-compose.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
+docker-compose -f docker-compose.yml  -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
+```
+If you use postgreSQL, update docker/environment_variables/squest.env, then run
+```bash
+docker-compose -f docker-compose.yml  -f psql.docker-composer.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
 ```
 
 ### Javascript libraries
