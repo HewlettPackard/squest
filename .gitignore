@@ -3,7 +3,6 @@ media/service_image
 media/portfolio_image
 media/doc_images
 static/
-# ldap_config.py
 node_modules/
 docker/certs/*
 backup/

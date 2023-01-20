@@ -10,7 +10,7 @@ services:
       - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
-      - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/mariadb-init.sh"
+      - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
       
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.3

@@ -7,7 +7,7 @@ services:
       - 5432:5432
     volumes:
       - db_data:/var/lib/postgresql/data
-      - "./docker/scripts/psql-init.sh:/docker-entrypoint-initdb.d/psql-init.sh"
+      - "./docker/scripts/psql-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
 
   django:
     environment:
