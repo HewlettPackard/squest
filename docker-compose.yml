@@ -2,13 +2,16 @@
 version: '3.7'
 
 services:
+
   db:
     image: mariadb:latest
     env_file: docker/environment_variables/db.env
+    ports:
+      - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
-      - "./docker/scripts/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
+      - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
+      
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.3
     env_file: docker/environment_variables/phpmyadmin.env
@@ -36,7 +39,6 @@ services:
 
   django: &django
     image: quay.io/hewlettpackardenterprise/squest:latest
-#    image: squest:latest
     env_file: docker/environment_variables/squest.env
     environment:
       WAIT_HOSTS: db:3306,rabbitmq:5672
@@ -81,7 +83,6 @@ services:
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker -l info"
-
   celery-beat:
     <<: *django
     depends_on:
@@ -94,7 +95,6 @@ services:
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker --beat -l info"
-
 volumes:
   db_data: {}
   rabbitmq_data: {}

@@ -4,7 +4,7 @@ echo "Wait for required services to start"
 /wait
 
 echo "Applying database migration"
-python manage.py migrate
+python manage.py migrate --database=${DATABASE:-default}
 
 echo "Collect static files"
 python manage.py collectstatic --noinput
