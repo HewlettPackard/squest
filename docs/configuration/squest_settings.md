@@ -62,6 +62,14 @@ See [See configuration doc](../installation/ldap.md).
 
 Set an API token that will be linked to the admin user when starting Squest.
 
+### LOGIN_HELPER_TEXT
+
+**Default:** `None`
+
+Add a custom note into the login page that helps user to know what are the expected credentials. HTML text is supported.
+
+E.G: "Use your corporate email and password".
+
 ## Squest
 
 ### MAINTENANCE_MODE_ENABLED
