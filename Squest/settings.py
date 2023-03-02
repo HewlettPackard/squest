@@ -272,7 +272,7 @@ CELERY_BEAT_SCHEDULE = {}
 # Squest email config
 # -----------------------------------------
 SQUEST_HOST = os.environ.get('SQUEST_HOST', "http://squest.domain.local")
-SQUEST_EMAIL_HOST = os.environ.get('SQUEST_EMAIL_HOST', "squest.domain.local")
+SQUEST_EMAIL_HOST = os.environ.get('SQUEST_EMAIL_HOST', "squest@squest.domain.local")
 SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(os.environ.get('SQUEST_EMAIL_NOTIFICATION_ENABLED', False))
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
