@@ -21,6 +21,8 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from django.conf import settings
+
+from service_catalog.views.login import LoginView
 from .views import *
 
 #  drf-yasg
@@ -40,6 +42,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('accounts/login/', LoginView.as_view(), name="login"),
     path('ui/', home, name='home'),
     path('', lambda req: redirect('home')),
     path('admin/', admin.site.urls),
