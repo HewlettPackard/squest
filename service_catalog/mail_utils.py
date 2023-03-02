@@ -8,7 +8,7 @@ from service_catalog import tasks
 from service_catalog.models import Instance
 from service_catalog.models.request import RequestState, Request
 
-DEFAULT_FROM_EMAIL = f"squest@{settings.SQUEST_EMAIL_HOST}"
+DEFAULT_FROM_EMAIL = f"{settings.SQUEST_EMAIL_HOST}"
 EMAIL_TITLE_PREFIX = "[Squest]"
 
 

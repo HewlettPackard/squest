@@ -83,7 +83,7 @@ Address of the Squest portal instance. Used in email templates and in metadata s
 
 ### SQUEST_EMAIL_HOST
 
-**Default:** `squest.domain.local`
+**Default:** `squest@squest.domain.local`
 
 Domain name used as email sender. E.g: "squest@squest.domain.local". 
 
