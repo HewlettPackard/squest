@@ -17,12 +17,12 @@ Following tools need to be installed on your workstation:
 
 Ubuntu based OS:
 ```bash
-sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev libsasl2-dev python3-dev libldap2-dev libssl-dev
+sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev libsasl2-dev python3-dev libldap2-dev libssl-dev libpq-dev
 ```
 
 CentOS/RedHat/Fedora
 ```bash
-sudo yum install mysql-devel graphviz mysql libsq3-devel
+sudo yum install mysql-devel graphviz mysql libsq3-devel libpq-devel
 ```
 
 ## Start a development environment
