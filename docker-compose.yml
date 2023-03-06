@@ -75,7 +75,6 @@ services:
       - db
       - rabbitmq
     ports: []
-    env_file: docker/environment_variables/celery-worker.env
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker -l info"
@@ -86,7 +85,6 @@ services:
       - db
       - rabbitmq
     ports: []
-    env_file: docker/environment_variables/celery-beat.env
     command: >
       bash -c "/wait &&
       celery -A service_catalog worker --beat -l info"
