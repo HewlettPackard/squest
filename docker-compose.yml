@@ -71,6 +71,9 @@ services:
 
   celery-worker:
     <<: *django
+    env_file:
+      - docker/environment_variables/squest.env
+      - docker/environment_variables/celery.env
     depends_on:
       - db
       - rabbitmq
@@ -81,6 +84,9 @@ services:
 
   celery-beat:
     <<: *django
+    env_file:
+      - docker/environment_variables/squest.env
+      - docker/environment_variables/celery.env
     depends_on:
       - db
       - rabbitmq
