@@ -1,3 +1,15 @@
+# 1.10.0 2023-03-07
+
+## Fix
+
+- Fix SQUEST_EMAIL_HOST env var to match the behavior described in the doc. Removed hard coded `squest@`. ⚠️may break your config if <name>@<domain> is not set.
+
+## Feature
+
+- CVS export on resource pool page
+- add PostgreSQL database support
+- add a custom note into the login page
+
 # 1.9.0 2022-12-14
 
 ## Breaking changes ⚠
