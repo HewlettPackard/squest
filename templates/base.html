@@ -32,7 +32,6 @@
     <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet" >
     <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet" >
 
-{#    <title>Squest</title>#}
     <title>{% if title %}{{ title }}{% else %}{% block title %}Squest{% endblock title %}{% endif %}</title>
 </head>
 <body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -79,10 +78,12 @@
 
 {% endblock %}
 
+{% load maintenance %}
+{% load version %}
+{% is_dev_server as is_dev_server_bool %}
 <!-- Footer -->
 {% if 'login' not in request.path %}
-    <footer class="main-footer">
-        {% load version %}
+    <footer class="main-footer {% if is_dev_server_bool %}bg-warning{% endif %}">
         <div class="d-sm-inline justify-content-around">
             <a class="text-secondary" href="https://hewlettpackard.github.io/squest/{% squest_version %}"><i
                     class="fas fa-book"></i>
@@ -96,7 +97,13 @@
                     Squest community chat</a>
                 </div>
             {% endif %}
-        <div class="float-right d-none d-sm-inline">v{% squest_version %} - {% commit_sha %}</div>
+
+        <div class="float-right d-none d-sm-inline">
+            {% if is_dev_server_bool %}
+                <strong class="text-white">DEV SERVER</strong>
+            {% endif %}
+            v{% squest_version %} - {% commit_sha %}
+        </div>
     </footer>
 {% endif %}
 <!-- Bootstrap JS -->

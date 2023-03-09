@@ -41,6 +41,7 @@ DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
 MAINTENANCE_MODE_ENABLED = os.environ.get('MAINTENANCE_MODE_ENABLED', False)
 DATE_FORMAT = os.environ.get('DATE_FORMAT', "%d %b, %Y  %H:%M")
 LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
+IS_DEV_SERVER = os.environ.get('IS_DEV_SERVER', True)
 
 # -------------------------------
 # SQUEST CONFIG
