@@ -101,6 +101,12 @@ Domain name used as email sender. E.g: "squest@squest.domain.local".
 
 Set to `True` to enable email notifications.  
 
+### IS_DEV_SERVER
+
+**Default:** False
+
+Set to `True` to change the navbar and footer color to visually identify a testing instance of Squest.
+
 ## SMTP
 
 ### EMAIL_HOST
