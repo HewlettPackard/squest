@@ -27,7 +27,7 @@ from .views import *
 
 #  drf-yasg
 from Squest.api.celery_tasks_views import CeleryTaskView
-from service_catalog.views import markdown_uploader
+from service_catalog.views import markdown_uploader, mail_test
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -62,6 +62,7 @@ urlpatterns = [
         r'^api/uploader/$',
         markdown_uploader, name='markdown_uploader_page'
     ),
+    # path('mail_test/', mail_test, name='mail_test'),  # enable it to dev mail templates
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.METRICS_ENABLED:

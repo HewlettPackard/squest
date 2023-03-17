@@ -1,16 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Support</title>
-</head>
-<h2>Support closed ({{ support.id }})</h2>
+{% extends 'service_catalog/mails/mail_base.html' %}
+{% block content %}
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Montserrat',sans-serif; font-size: 18px; ">
+                    <strong>Support closed on instance <a href="{{ current_site }}{% url 'service_catalog:instance_details' support.instance.id %}#support">{{ support.instance.name }}</a></strong>
+                </h1>
+            </td>
+        </tr>
 
-<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' support.instance.id %}"><b>{{ support.instance.name }}</b></a></li>
-<li>SPOC: <b>{{ support.instance.spoc.username }}</b></li>
-<br>
-<br>
-
-Retrieve supports on <a href="{{ current_site }}{% url 'service_catalog:instance_details' support.instance.id %}#support">Squest portal</a>.
-</body>
-</html>
+        </tbody>
+    </table>
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <div>
+                    <p>Support <strong>"{{ support.title }}"</strong> closed.</p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
