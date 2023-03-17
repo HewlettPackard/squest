@@ -1,11 +1,30 @@
-<!DOCTYPE html>
-<br lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Request cancelled</title>
-</head>
-<p>Request <strong>#{{ request_id }}</strong> cancelled by {{ user_applied_state.username }}.</p>
+{% extends 'service_catalog/mails/mail_base.html' %}
+{% block content %}
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Montserrat',sans-serif; font-size: 18px; ">
+                    <strong>Request cancelled</strong>
+                </h1>
+            </td>
+        </tr>
 
-Retrieve this request on <a href="{{ current_site }}{% url 'service_catalog:request_list' %}">Squest portal</a>.
-</body>
-</html>
+        </tbody>
+    </table>
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <div>
+                    <p>Request <strong>#{{ request_id }}</strong> cancelled by {{ user_applied_state.username }}.</p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

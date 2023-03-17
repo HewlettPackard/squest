@@ -1,38 +1,216 @@
-<!DOCTYPE html>
-<br lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<h2>Request: <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">#{{ request.id }}</a></h2>
-<h4>Request details</h4>
-<li>State: <b>{{ request.state }}</b></li>
-{% if user_applied_state is not none %}
-    <li>Applied by: <b>{{ user_applied_state.username }}</b></li>
-{% endif %}
-<li>Requester: <b>{{ request.user.username }}</b></li>
-<li>Service: <b>{{ request.operation.service.name }}</b></li>
-<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}"><b>{{ request.instance.name }}</b></a></li>
-<li>Operation type: <b>{{ request.operation.type }}</b></li>
-<li>Operation name: <b>{{ request.operation.name }}</b></li>
-{% if request.tower_job_id is not None %}
-<li>Tower job id: <a href="{{ request.tower_job_url }}"><b> {{ request.tower_job_id }}</b></a></li>
-{%  endif %}
-{% if message is not None %}
-    <h4>Message</h4>
-    <p>{{ message.content }}</p>
-{%  endif %}
-{% if request.state == 'SUBMITTED' %}
-    <h4>Configuration</h4>
-    {% for variable_name, variable_value in request.fill_in_survey.items %}
-        <li><b>{{ variable_name }}:</b> {{ variable_value }}</li>
-    {% endfor %}
-    <br>
-{% endif %}
-{% if request.state == 'COMPLETE' %}
-    <br>
-    You may find attached documentation and on-boarding information for the requested service in your <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}">instance details</a>.
-{% endif %}
-<br>
-Retrieve this request on <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">Squest portal</a>.
-</body>
-</html>
+{% extends 'service_catalog/mails/mail_base.html' %}
+{% block content %}
+
+    {% include 'service_catalog/mails/utils/header.html' with title="Request details" %}
+
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+
+                <div>
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td width="35%" align="left" bgcolor="#eeeeee"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
+                                Request
+                            </td>
+                            <td width="65%" align="left" bgcolor="#eeeeee"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
+                                <a href="{{ current_site }}{% url 'service_catalog:request_details' request.id %}">#{{ request.id }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                State
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                {{ request.state }}
+                            </td>
+                        </tr>
+                        {% if user_applied_state and user_applied_state is not None %}
+                            <tr>
+                                <td width="25%" align="left"
+                                    style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                    Applied by
+                                </td>
+                                <td width="75%" align="left"
+                                    style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                    {{ user_applied_state.username }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                Requester
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                {{ request.user.username }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                Service
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                {{ request.operation.service.name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                Instance
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                <a href="{{ current_site }}{% url 'service_catalog:instance_details' request.instance.id %}">{{ request.instance.name }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                Operation type
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                {{ request.operation.type }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="25%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                Operation name
+                            </td>
+                            <td width="75%" align="left"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                {{ request.operation.name }}
+                            </td>
+                        </tr>
+                        {% if request.tower_job_id and request.tower_job_id is not None %}
+                            <tr>
+                                <td width="25%" align="left"
+                                    style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                    Tower job
+                                </td>
+                                <td width="75%" align="left"
+                                    style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                    <a href="{{ request.tower_job_url }}"><b> {{ request.tower_job_id }}</b></a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- MESSAGE -->
+    {% if message and message is not None %}
+        {% include 'service_catalog/mails/utils/delimiter.html' %}
+        {% include 'service_catalog/mails/utils/header.html' with title="Message" %}
+        <p align="left" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;color: #00b389;font-weight: bold;" >
+            {{ message.content }}
+        </p>
+    {% endif %}
+
+    <!-- REQUEST SUBMITTED SHOW SURVEY -->
+    {% if request.state == 'SUBMITTED' %}
+        {% include 'service_catalog/mails/utils/delimiter.html' %}
+        {% include 'service_catalog/mails/utils/header.html' with title="Survey" %}
+        <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+               cellspacing="0" width="100%" border="0">
+            <tbody>
+            <tr>
+                <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                    align="left">
+
+                    <div>
+                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <td width="35%" align="left" bgcolor="#eeeeee"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
+                                Config
+                            </td>
+                            <td width="65%" align="left" bgcolor="#eeeeee"
+                                style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
+                                Value
+                            </td>
+
+                            {% for variable_name, variable_value in request.fill_in_survey.items %}
+                                <tr>
+                                    <td width="35%" align="left"
+                                        style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                        {{ variable_name }}
+                                    </td>
+                                    <td width="65%" align="left"
+                                        style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                        {{ variable_value }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}<!-- end SUBMITTED -->
+
+
+    <!-- REQUEST COMPLETE SHOW DOCS AND USER SPECS -->
+    {% if request.state == 'COMPLETE' %}
+        {% include 'service_catalog/mails/utils/delimiter.html' %}
+        {% include 'service_catalog/mails/utils/header.html' with title="Specs" %}
+
+        <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+               cellspacing="0" width="100%" border="0">
+            <tbody>
+            <tr>
+                <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                    align="left">
+                    <div>
+                        <pre>{{ request.instance.user_spec | pretty_json }}</pre>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- DOCS -->
+        {% include 'service_catalog/mails/utils/delimiter.html' %}
+        {% include 'service_catalog/mails/utils/header.html' with title="Docs" %}
+
+        <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+               cellspacing="0" width="100%" border="0">
+            <tbody>
+            <tr>
+                <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                    align="left">
+                    <div style="color: #293c4b; line-height: 140%; text-align: center; word-wrap: break-word;">
+                        <ul>
+                            {% for doc in request.instance.service.docs.all %}
+                                <li style="line-height: 19.6px; text-align: left;">
+                                    <a rel="noopener" href="{{ current_site }}{% url 'service_catalog:doc_show' doc.id %}"
+                                       target="_blank">{{ doc.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %} <!-- end COMPLETE -->
+
+
+
+{% endblock %}

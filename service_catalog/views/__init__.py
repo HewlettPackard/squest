@@ -12,3 +12,4 @@ from .admin.announcements_views import *
 from .approval_workflow_views import *
 from .approval_step_views import *
 from .admin.custom_link_views import *
+from.mail_test import *
