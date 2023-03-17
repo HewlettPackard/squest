@@ -1,22 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Request comment</title>
-</head>
-<h2>New comment on <a href="{{ current_site }}{% url 'service_catalog:request_details' message.request.id %}">Request</a> {{ message.request }}</h2>
+{% extends 'service_catalog/mails/mail_base.html' %}
+{% block content %}
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Montserrat',sans-serif; font-size: 18px; ">
+                    <strong>New comment on request <a href="{{ current_site }}{% url 'service_catalog:request_details' message.request.id %}">#{{ message.request.id }}</a></strong>
+                </h1>
+            </td>
+        </tr>
 
-<li>Instance: <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.request.instance.id %}"><b>{{ message.request.instance.name }}</b></a></li>
-<li>Operation type: <b>{{ message.request.operation.type }}</b></li>
-<li>Operation name: <b>{{ message.request.operation.name }}</b></li>
-<li>SPOC: <b>{{ message.request.instance.spoc.username }}</b></li>
-<li>Sender: <b>{{ message.sender.username }}</b></li>
-<br>
-<h2><b>Comment:</b></h2>
-<p>{{ message.content }}</p>
-<br>
-<br>
-
-Retrieve this comment on <a href="{{ current_site }}{% url 'service_catalog:request_comment' message.request.id %}">Squest portal</a>.
-</body>
-</html>
+        </tbody>
+    </table>
+    <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
+           cellspacing="0" width="100%" border="0">
+        <tbody>
+        <tr>
+            <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
+                align="left">
+                <div>
+                    <p><b>{{ message.sender.username }}</b>: {{ message.content }}</p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
