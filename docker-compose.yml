@@ -44,7 +44,7 @@ services:
       - django_static:/app/static
       - django_media:/app/media
       - backup:/app/backup
-#      - /tmp/squest_plugins/field_validators:/app/plugins/field_validators
+      - ./plugins/field_validators:/app/plugins/field_validators
     depends_on:
       - db
       - rabbitmq
