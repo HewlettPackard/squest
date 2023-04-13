@@ -38,7 +38,7 @@ services:
     env_file: docker/environment_variables/redis.env
 
   django: &django
-    image: quay.io/hewlettpackardenterprise/squest:latest
+    image: ${SQUEST_IMAGE:-quay.io/hewlettpackardenterprise/squest}:${SQUEST_TAG:-latest}
     env_file: docker/environment_variables/squest.env
     volumes:
       - django_static:/app/static
