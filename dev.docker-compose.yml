@@ -2,6 +2,13 @@
 version: '3.7'
 
 services:
+
   db:
     ports:
       - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1.3
+    env_file: docker/environment_variables/phpmyadmin.env
+    ports:
+      - "8082:80"

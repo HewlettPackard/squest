@@ -10,12 +10,6 @@ services:
       - db_data:/var/lib/mysql
       - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.1.3
-    env_file: docker/environment_variables/phpmyadmin.env
-    ports:
-      - "8082:80"
-
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
