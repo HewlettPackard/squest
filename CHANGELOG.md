@@ -1,3 +1,22 @@
+# 1.10.1 2023-04-24
+
+## Enhancement
+
+- refactoring mail templates
+- add billing group filter on request list page
+- expose SQUEST_IMAGE and SQUEST_TAG as variables in docker-compose (see [documentation](https://docs.docker.com/compose/environment-variables/set-environment-variables/))
+- always mount volume for field_validators
+
+
+## Fix
+
+- close MySQL port by default
+- move phpmyadmin in dev.docker-compose.yml
+
+## Feature
+
+- add IS_DEV_SERVER flag
+
 # 1.10.0 2023-03-07
 
 ## Fix
