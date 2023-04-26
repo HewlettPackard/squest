@@ -164,6 +164,25 @@ class AdminRequestViewTest(BaseTestRequest):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
 
+    def test_admin_request_accept_and_request_pending_instance(self):
+        data = {
+                'squest_instance_name': self.test_request.instance.name,
+                'billing_group_id': '',
+                'text_variable': 'my_var',
+                'multiplechoice_variable': 'choice1',
+                'multiselect_var': 'multiselect_1',
+                'textarea_var': '2',
+                'password_var': 'password1234',
+                'integer_var': '1',
+                'float_var': '0.6',
+                'accept_and_process': 'accept_and_process'
+            }
+        with mock.patch("service_catalog.models.request.Request.perform_processing") as mock_towerlib_call:
+            self._accept_request_with_expected_state(expected_request_state=RequestState.PROCESSING,
+                                                     expected_instance_state=InstanceState.PROVISIONING,
+                                                     custom_data=data)
+            mock_towerlib_call.assert_called()
+
     def test_admin_request_accept_pending_instance_missing_not_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
