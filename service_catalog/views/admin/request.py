@@ -120,7 +120,13 @@ def admin_request_accept(request, request_id):
             target_request.accept(request.user)
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            return redirect('service_catalog:request_list')
+            if 'accept_and_process' in request.POST:
+                logger.info(f"[admin_request_accept] request '{target_request.id}' accepted and processed "
+                            f"by {request.user}")
+                error_message = process_request(request.user, target_request)
+                if not error_message:
+                    return redirect('service_catalog:request_list')
+            return redirect('service_catalog:admin_request_process', target_request.id)
     else:
         form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
     breadcrumbs = [
