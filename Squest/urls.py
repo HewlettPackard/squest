@@ -17,6 +17,7 @@ from django.conf.urls import url, static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
+from django.views.generic import TemplateView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -68,4 +69,11 @@ urlpatterns = [
 if settings.METRICS_ENABLED:
     urlpatterns += [
         path('metrics/', include('monitoring.urls')),
+    ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path("403.html", TemplateView.as_view(template_name="403.html"), name="403-test"),
+        path("404.html", TemplateView.as_view(template_name="404.html"), name="404-test"),
+        path("500.html", TemplateView.as_view(template_name="500.html"), name="500-test")
     ]
