@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "squest"
-version = "1.10.2b"
+version = "1.10.2"
 description = "Service catalog on top of Ansible Tower"
 authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>", "Elias Boulharts <elias.boulharts@hpe.com", "Anthony Belhadj <anthony.belhadj@hpe.com>"]
 license = "MIT"
