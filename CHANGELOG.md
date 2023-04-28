@@ -1,3 +1,15 @@
+# 1.10.2 2023-04-28
+
+## Fix
+
+- fix IS_DEV_SERVER boolean
+
+## Enhancement
+
+- go to process after accepting 
+- add accept and process
+- add error 500 page
+
 # 1.10.1 2023-04-24
 
 ## Enhancement
