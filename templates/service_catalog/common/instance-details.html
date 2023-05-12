@@ -61,7 +61,7 @@
                             {% if request.user.is_superuser %}
                                 <li class="list-group-item">
                                     <b>Resources</b>
-                                    {% for resource in instance.resources.all %}
+                                    {% for resource in instance.resources_v1.all %}
                                         <a class="float-right" href="{% url 'resource_tracker:resource_group_resource_edit' resource.resource_group.id resource.id %}">
                                             {{ resource.name }}
                                         </a> <br>

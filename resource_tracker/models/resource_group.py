@@ -11,7 +11,7 @@ class ResourceGroup(models.Model):
                             blank=False,
                             unique=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(related_name="resource_group_v1")
 
     def __str__(self):
         return self.name
