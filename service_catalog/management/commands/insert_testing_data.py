@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
 from profiles.models import BillingGroup, Team
-from resource_tracker.models import ResourceGroup, ResourcePool
+from resource_tracker_v2.models import AttributeDefinition, Resource, ResourceGroup, Transformer
 from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request, ApprovalWorkflow, \
     ApprovalStep
 from service_catalog.models.approval_step_type import ApprovalStepType
@@ -104,57 +104,73 @@ class Command(BaseCommand):
                                                                    fill_in_survey=dict(),
                                                                    user=user)
 
-        # create resource pools
-        vcenter_pool = ResourcePool.objects.create(name="G5 vcenter")
-        vcenter_pool.add_attribute_definition(name='vCPU')
-        vcenter_pool.add_attribute_definition(name='Memory')
-        ocp_pool = ResourcePool.objects.create(name="ocp4-02 projects")
-        ocp_pool.add_attribute_definition(name='requests.cpu')
-        ocp_pool.add_attribute_definition(name='requests.memory')
-        # resource
-        server_group = ResourceGroup.objects.create(name="Gen10")
-        server_group_cpu_attribute = server_group.add_attribute_definition(name="CPU")
-        server_group_memory_attribute = server_group.add_attribute_definition(name="Memory")
-        ocp_worker_node_group = ResourceGroup.objects.create(name="OCP Worker node")
-        ocp_worker_node_group_vcpu_attribute = ocp_worker_node_group.add_attribute_definition(name="vCPU")
-        ocp_worker_node_group_memory_attribute = ocp_worker_node_group.add_attribute_definition(name="Memory")
-        ocp_worker_node_group.add_text_attribute_definition(name="Comments")
-        ocp_project_group = ResourceGroup.objects.create(name="OCP Project")
-        ocp_project_group_cpu_att = ocp_project_group.add_attribute_definition(name="requests.cpu")
-        ocp_project_group_mem_att = ocp_project_group.add_attribute_definition(name="requests.memory")
-        # Links
-        vcenter_pool.attribute_definitions.get(name='vCPU') \
-            .add_producers(server_group.attribute_definitions.get(name='CPU'))
-        vcenter_pool.attribute_definitions.get(name='Memory') \
-            .add_producers(server_group.attribute_definitions.get(name='Memory'))
-        vcenter_pool.attribute_definitions.get(name='vCPU') \
-            .add_consumers(ocp_worker_node_group.attribute_definitions.get(name='vCPU'))
-        vcenter_pool.attribute_definitions.get(name='Memory') \
-            .add_consumers(ocp_worker_node_group.attribute_definitions.get(name='Memory'))
+        # ----------------------
+        # resource tracker v2
+        # ----------------------
+        # layer 1: vcenter
+        core_attribute = AttributeDefinition.objects.create(name="core")
+        memory_attribute = AttributeDefinition.objects.create(name="memory")
+        three_par_attribute = AttributeDefinition.objects.create(name="3PAR")
+        cluster = ResourceGroup.objects.create(name="cluster")
+        # cluster --> core
+        Transformer.objects.create(resource_group=cluster,
+                                   attribute_definition=core_attribute)
+        # cluster --> memory
+        Transformer.objects.create(resource_group=cluster,
+                                   attribute_definition=memory_attribute)
+        # cluster --> 3par
+        Transformer.objects.create(resource_group=cluster,
+                                   attribute_definition=three_par_attribute)
 
-        ocp_pool.attribute_definitions.get(name='requests.cpu') \
-            .add_producers(ocp_worker_node_group.attribute_definitions.get(name='vCPU'))
-        ocp_pool.attribute_definitions.get(name='requests.memory') \
-            .add_producers(ocp_worker_node_group.attribute_definitions.get(name='Memory'))
-        ocp_pool.attribute_definitions.get(name='requests.cpu') \
-            .add_consumers(ocp_project_group.attribute_definitions.get(name='requests.cpu'))
-        ocp_pool.attribute_definitions.get(name='requests.memory') \
-            .add_consumers(ocp_project_group.attribute_definitions.get(name='requests.memory'))
+        server1 = Resource.objects.create(name="server1", resource_group=cluster)
+        server1.set_attribute(core_attribute, 10)
+        server1.set_attribute(memory_attribute, 50)
 
-        # Instances
-        cpu_list = [30, 40, 50, 100]
-        memory_list = [100, 120, 150, 200]
-        for i in range(4):
-            server = server_group.create_resource(name=f"server-{i}")
-            server.set_attribute(server_group_cpu_attribute, cpu_list[i])
-            server.set_attribute(server_group_memory_attribute, memory_list[i])
-        for i in range(3):
-            worker_node = ocp_worker_node_group.create_resource(name=f"worker{i}")
-            worker_node.set_attribute(ocp_worker_node_group_vcpu_attribute, 16)
-            worker_node.set_attribute(ocp_worker_node_group_memory_attribute, 32)
-            worker_node.service_catalog_instance = Instance.objects.order_by("?").first()
-        for i in range(5):
-            new_ocp_project = ocp_project_group.create_resource(name=f"project-{i}")
-            new_ocp_project.set_attribute(ocp_project_group_cpu_att, random.randint(8, 32))
-            new_ocp_project.set_attribute(ocp_project_group_mem_att, random.randint(8, 32))
-            new_ocp_project.service_catalog_instance = Instance.objects.order_by("?").first()
+        server2 = Resource.objects.create(name="server2", resource_group=cluster)
+        server2.set_attribute(core_attribute, 30)
+        server2.set_attribute(memory_attribute, 10)
+
+        # layer 2 VM (workers)
+        single_vms = ResourceGroup.objects.create(name="single_vms")
+        vcpu_attribute = AttributeDefinition.objects.create(name="vcpu")
+        v_memory_attribute = AttributeDefinition.objects.create(name="vmemory")
+        Transformer.objects.create(resource_group=single_vms,
+                                   attribute_definition=vcpu_attribute)
+        Transformer.objects.create(resource_group=single_vms,
+                                   attribute_definition=v_memory_attribute)
+        # add resources
+        vm1 = Resource.objects.create(name="vm1", resource_group=single_vms)
+        vm1.set_attribute(vcpu_attribute, 5)
+        vm1.set_attribute(v_memory_attribute, 4)
+        vm2 = Resource.objects.create(name="vm2", resource_group=single_vms)
+        vm2.set_attribute(vcpu_attribute, 15)
+        vm2.set_attribute(v_memory_attribute, 8)
+
+        # vcpu --> core
+        Transformer.objects.create(resource_group=single_vms,
+                                   attribute_definition=vcpu_attribute,
+                                   consume_from_resource_group=cluster,
+                                   consume_from_attribute_definition=core_attribute)
+        # vvmemory --> memory
+        Transformer.objects.create(resource_group=single_vms,
+                                   attribute_definition=v_memory_attribute,
+                                   consume_from_resource_group=cluster,
+                                   consume_from_attribute_definition=memory_attribute)
+
+        # layer 3: ocp project
+        ocp_projects = ResourceGroup.objects.create(name="ocp_projects")
+        request_cpu = AttributeDefinition.objects.create(name="request.cpu")
+        request_memory = AttributeDefinition.objects.create(name="request.memory")
+        # request.cpu --> vcpu
+        Transformer.objects.create(resource_group=ocp_projects,
+                                   attribute_definition=request_cpu,
+                                   consume_from_resource_group=single_vms,
+                                   consume_from_attribute_definition=vcpu_attribute)
+        # request.memory --> v-memory
+        Transformer.objects.create(resource_group=ocp_projects,
+                                   attribute_definition=request_memory,
+                                   consume_from_resource_group=single_vms,
+                                   consume_from_attribute_definition=v_memory_attribute)
+        project1 = Resource.objects.create(name="project1", resource_group=ocp_projects)
+        project1.set_attribute(request_cpu, 10)
+        project1.set_attribute(request_memory, 10)

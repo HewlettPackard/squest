@@ -172,7 +172,7 @@ class TestQuotaModel(BaseTestQuota):
     def test_delete_instance(self):
         self._set_up_update_consumed()
         count = 0
-        for resource in self.instance.resources.all():
+        for resource in self.instance.resources_v1.all():
             count += resource.attributes.count()
         with mock.patch(
                 "service_catalog.tasks.async_resource_attribute_quota_bindings_update_consumed.delay", wraps=async_resource_attribute_quota_bindings_update_consumed):
@@ -224,4 +224,3 @@ class TestQuotaModel(BaseTestQuota):
         self.assertEqual(self.quota_binding.consumed, 5 * 16)
         self.quota_binding_2.refresh_from_db()
         self.assertEqual(self.quota_binding_2.consumed, 0)
-

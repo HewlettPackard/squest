@@ -48,7 +48,7 @@ urlpatterns = [
     path('', lambda req: redirect('home')),
     path('admin/', admin.site.urls),
     path('ui/service_catalog/', include('service_catalog.urls')),
-    path('ui/resource_tracker/', include('resource_tracker.urls')),
+    path('ui/resource_tracker/', include('resource_tracker_v2.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/service_catalog/', include('service_catalog.api.urls')),
     path('api/resource_tracker/', include('resource_tracker.api.urls')),
