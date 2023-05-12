@@ -17,12 +17,12 @@ class Resource(models.Model):
 
     service_catalog_instance = models.ForeignKey(Instance,
                                                  on_delete=models.SET_NULL,
-                                                 related_name='resources',
-                                                 related_query_name='resource',
+                                                 related_name='resources_v1',
+                                                 related_query_name='resource_v1',
                                                  null=True,
                                                  blank=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(related_name="resource_v1")
 
     is_deleted_on_instance_deletion = models.BooleanField(default=True,
                                                           verbose_name="Delete this resource on instance deletion")

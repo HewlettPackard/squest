@@ -7,7 +7,7 @@ class ResourcePool(models.Model):
                             blank=False,
                             unique=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(related_name="resource_pool_v1")
 
     def __str__(self):
         return self.name

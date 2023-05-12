@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ resource_group.name }} | Resource group
+{%  endblock %}
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        {% include "generics/breadcrumbs.html" %}
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+
+                        {% if resource_group.resources.count > 0 %}
+                            <blockquote class="quote-warning">
+                                <h5>Resource group in use</h5>
+                                <p>This resource group is in use by following resource: </p>
+                                <ul>
+                                    {% for resource in resource_group.resources.all %}
+                                        <li>{{ resource.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </blockquote>
+                        {% endif %}
+
+                        <form action="{% url 'resource_tracker:resource_group_delete' resource_group.id %}" method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the resource group "{{ resource_group.name }}"?</p>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a class="btn btn-default" href="{% url 'resource_tracker:resource_group_list' %}">Cancel</a>
+                        </form>
+                    </div>
+                </div><!-- end container fluid -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
