@@ -9,8 +9,12 @@ class TransformerTable(SquestTable):
     class Meta:
         model = Transformer
         attrs = {"id": "attribute_definition_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "consume_from", "on_attribute", "factor", "actions")
+        fields = ("attribute", "consume_from", "on_attribute", "factor", "actions")
 
+    attribute = TemplateColumn(
+        verbose_name="Attribute",
+        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_attribute_name.html',
+        orderable=True)
     consume_from = TemplateColumn(
         verbose_name="Consume from",
         template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_consume.html',

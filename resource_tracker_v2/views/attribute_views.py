@@ -5,7 +5,6 @@ from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
-from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
 from resource_tracker_v2.forms.attribute_definition_form import AttributeDefinitionForm
 from resource_tracker_v2.models import AttributeDefinition
 from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefinitionTable
@@ -14,7 +13,7 @@ from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefini
 class AttributeListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_class = AttributeDefinitionTable
     model = AttributeDefinition
-    filterset_class = AttributeDefinitionFilter
+    # filterset_class = AttributeDefinitionFilter
     template_name = 'generics/list.html'
 
     def get_context_data(self, **kwargs):
