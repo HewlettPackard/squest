@@ -23,11 +23,11 @@ class BillingGroup(models.Model):
             binding.refresh_consumed()
 
     def quota_bindings_remove_instance(self, instance):
-        for resource in instance.resources.all():
+        for resource in instance.resources_v1.all():
             self.quota_bindings_remove_resource(resource)
 
     def quota_bindings_add_instance(self, instance):
-        for resource in instance.resources.all():
+        for resource in instance.resources_v1.all():
             self.quota_bindings_add_resource(resource)
 
     def quota_bindings_remove_resource(self, resource):
