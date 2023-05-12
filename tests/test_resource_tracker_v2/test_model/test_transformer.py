@@ -150,3 +150,11 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
         with mock.patch('resource_tracker_v2.models.transformer.Transformer.calculate_total_consumed') as calculate_total_consumed:
             self.project1.set_attribute(self.request_cpu, 20)
             calculate_total_consumed.assert_called_once()
+
+    def test_setting_consumer_auto_add_facto_to_1(self):
+        rwo_storage = AttributeDefinition.objects.create(name="rwo_storage")
+        new_transformer = Transformer.objects.create(resource_group=self.ocp_projects,
+                                                     attribute_definition=rwo_storage,
+                                                     consume_from_resource_group=self.cluster,
+                                                     consume_from_attribute_definition=self.three_par_attribute)
+        self.assertEqual(1, new_transformer.factor)

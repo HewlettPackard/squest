@@ -134,18 +134,6 @@ class Command(BaseCommand):
         single_vms = ResourceGroup.objects.create(name="single_vms")
         vcpu_attribute = AttributeDefinition.objects.create(name="vcpu")
         v_memory_attribute = AttributeDefinition.objects.create(name="vmemory")
-        Transformer.objects.create(resource_group=single_vms,
-                                   attribute_definition=vcpu_attribute)
-        Transformer.objects.create(resource_group=single_vms,
-                                   attribute_definition=v_memory_attribute)
-        # add resources
-        vm1 = Resource.objects.create(name="vm1", resource_group=single_vms)
-        vm1.set_attribute(vcpu_attribute, 5)
-        vm1.set_attribute(v_memory_attribute, 4)
-        vm2 = Resource.objects.create(name="vm2", resource_group=single_vms)
-        vm2.set_attribute(vcpu_attribute, 15)
-        vm2.set_attribute(v_memory_attribute, 8)
-
         # vcpu --> core
         Transformer.objects.create(resource_group=single_vms,
                                    attribute_definition=vcpu_attribute,
@@ -156,6 +144,13 @@ class Command(BaseCommand):
                                    attribute_definition=v_memory_attribute,
                                    consume_from_resource_group=cluster,
                                    consume_from_attribute_definition=memory_attribute)
+        # add resources
+        vm1 = Resource.objects.create(name="vm1", resource_group=single_vms)
+        vm1.set_attribute(vcpu_attribute, 5)
+        vm1.set_attribute(v_memory_attribute, 4)
+        vm2 = Resource.objects.create(name="vm2", resource_group=single_vms)
+        vm2.set_attribute(vcpu_attribute, 15)
+        vm2.set_attribute(v_memory_attribute, 8)
 
         # layer 3: ocp project
         ocp_projects = ResourceGroup.objects.create(name="ocp_projects")
