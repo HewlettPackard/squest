@@ -66,7 +66,7 @@ class QuotaBinding(Model):
     def refresh_consumed(self):
         consumed = 0
         for instance in self.billing_group.instances.all():
-            for resource in instance.resources.all():
+            for resource in instance.resources_v1.all():
                 for attribute in resource.attributes.all():
                     if attribute.attribute_type in self.quota.attribute_definitions.all():
                         consumed += attribute.value
