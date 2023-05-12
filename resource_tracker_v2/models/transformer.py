@@ -58,6 +58,8 @@ class Transformer(Model):
 
     def save(self, *args, **kwargs):
         self._check_circular_loop()
+        if self.consume_from_resource_group is not None and self.factor is None:
+            self.factor = 1
         super(Transformer, self).save(*args, **kwargs)
 
     def clean(self):
