@@ -43,7 +43,7 @@ class TestSquestSettings(BaseTest):
     def test_access_squest_when_maintenance_enabled_from_model_settings(self):
         squest_settings = SquestSettings.load()
         squest_settings.maintenance_mode_enabled = True
-        squest_settings.save()
+        squest_settings.save(,
         self._check_squest_access()
 
     @override_settings(MAINTENANCE_MODE_ENABLED=True)
