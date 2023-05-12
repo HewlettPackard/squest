@@ -35,7 +35,7 @@ class ApprovalStepListCreate(ListCreateAPIView):
                                               "create next url to add the following steps of the workflow.")
             else:
                 raise PermissionDenied(detail="You must create an entry point in this workflow.")
-        approval_step = serializer.save(approval_workflow=approval_workflow)
+        approval_step = serializer.save()
         next_approval_step_id = None
         if previous:
             next_approval_step_id = previous.next.id if previous.next else None

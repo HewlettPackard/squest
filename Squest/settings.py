@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'dbbackup',
     'service_catalog',
     'resource_tracker',
+    'resource_tracker_v2',
     'profiles',
     'monitoring',
     'cachalot',
@@ -472,7 +473,7 @@ CACHES = {
         }
     }
 }
-if TESTING:
+if TESTING or DEBUG:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
