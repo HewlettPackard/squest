@@ -5,25 +5,23 @@ from django.urls import reverse
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
-from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
 from resource_tracker_v2.forms.resource_group_link_form import ResourceGroupLinkForm
-from resource_tracker_v2.models import AttributeDefinition, Transformer, ResourceGroup
+from resource_tracker_v2.models import Transformer, ResourceGroup
 from resource_tracker_v2.tables.transformer_table import TransformerTable
 
 
 class ResourceGroupAttributeListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_class = TransformerTable
-    # model = AttributeDefinitionLink
-    filterset_class = AttributeDefinitionFilter
+    model = Transformer
+    # filterset_class = AttributeDefinitionFilter
     template_name = 'generics/list.html'
 
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
-        list_attribute_definition_link = list()
         resource_group_id = self.kwargs.get('resource_group_id')
         resource_group = ResourceGroup.objects.get(id=resource_group_id)
-        # get all attribute transformer of this resource group
-        transformers = Transformer.objects.filter(source_resource_group__id__in=[resource_group.id]).distinct() & filtered
+        # get all transformer of this resource group
+        transformers = Transformer.objects.filter(resource_group__id__in=[resource_group.id]).distinct() & filtered
         return transformers
 
     def get_context_data(self, **kwargs):

@@ -12,7 +12,7 @@ class ResourceGroupTable(SquestTable):
 
     tags = TemplateColumn(template_name='custom_columns/tags.html', orderable=False)
     attributes = TemplateColumn(
-        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes.html',
+        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_button.html',
         orderable=False)
     resources = TemplateColumn(
         template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_resource.html',
