@@ -4,11 +4,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from resource_tracker.views import TagFilterListView
 from resource_tracker_v2.filters.resource_filter import ResourceFilter
 from resource_tracker_v2.forms.resource_form import ResourceForm
 from resource_tracker_v2.models import Resource, ResourceGroup
 from resource_tracker_v2.tables.resource_table import ResourceTable
+from resource_tracker_v2.views.utils.tag_filter_list_view import TagFilterListView
 
 
 class ResourceListView(TagFilterListView):

@@ -2,7 +2,7 @@
 from django_tables2 import TemplateColumn
 
 from Squest.utils.squest_table import SquestTable
-from resource_tracker_v2.models import AttributeDefinition, Transformer
+from resource_tracker_v2.models import Transformer
 
 
 class TransformerTable(SquestTable):
