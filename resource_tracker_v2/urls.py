@@ -34,5 +34,14 @@ urlpatterns = [
          views.resource_group_attribute_delete,
          name='resource_group_attribute_delete'),
     path('tool/resource_group/load-resource-group-attribute/', views.ajax_load_attribute,
-             name='ajax_load_attribute'),
+         name='ajax_load_attribute'),
+    path('resource_group/<int:resource_group_id>/resources/', views.ResourceListView.as_view(),
+         name='resource_group_resource_list'),
+    path('resource_group/<int:resource_group_id>/resources/create/', views.resource_group_resource_create,
+         name='resource_group_resource_create'),
+    path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/edit/', views.resource_group_resource_edit,
+         name='resource_group_resource_edit'),
+    path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/delete/', views.resource_group_resource_delete,
+         name='resource_group_resource_delete'),
+
 ]
