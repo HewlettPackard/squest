@@ -16,3 +16,6 @@ class AttributeDefinition(models.Model):
             transformer.save()
 
         super(AttributeDefinition, self).delete()
+
+    def __str__(self):
+        return self.name
