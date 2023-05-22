@@ -1,5 +1,5 @@
-from resource_tracker.filters.tag_filter import TagFilterset
-from resource_tracker.models import ResourceGroup
+from resource_tracker_v2.filters.tag_filter import TagFilterset
+from resource_tracker_v2.models import ResourceGroup
 
 
 class ResourceGroupFilter(TagFilterset):
