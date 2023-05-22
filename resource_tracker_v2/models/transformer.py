@@ -54,12 +54,16 @@ class Transformer(Model):
 
     def create(self, *args, **kwargs):
         self._check_circular_loop()
+        if self.consume_from_resource_group is not None and self.factor is None:
+            self.factor = 1
         super(Transformer, self).save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        self._check_circular_loop()
-        if self.consume_from_resource_group is not None and self.factor is None:
-            self.factor = 1
+        try:
+            if (self.consume_from_resource_group is not None) and self.factor is None:
+                self.factor = 1
+        except ValueError:  # when saving from a form we have no id
+            pass
         super(Transformer, self).save(*args, **kwargs)
 
     def clean(self):
@@ -115,7 +119,7 @@ class Transformer(Model):
         return self.total_consumed
 
     def get_parent(self):
-        if self.consume_from_resource_group is not None:
+        if self.consume_from_resource_group is not None and self.consume_from_resource_group.id is not None:
             return self.consume_from_resource_group.transformers \
                 .filter(attribute_definition=self.consume_from_attribute_definition).first()
         return None

@@ -85,10 +85,11 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
 
     def test_no_circular_loop_on_transformer(self):
         with self.assertRaises(ValidationError):
-            Transformer.objects.create(resource_group=self.cluster,
+            t1 = Transformer.objects.create(resource_group=self.cluster,
                                        attribute_definition=self.core_attribute,
                                        consume_from_resource_group=self.ocp_projects,
                                        consume_from_attribute_definition=self.request_cpu)
+            t1._check_circular_loop()
 
         rwo_storage = AttributeDefinition.objects.create(name="rwo_storage")
         non_circular_transformer = Transformer.objects.create(resource_group=self.ocp_projects,
@@ -136,14 +137,14 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
 
     def test_resource_group_cannot_consume_from_itself(self):
         new_attribute = AttributeDefinition.objects.create(name="new_attribute")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Transformer.objects.create(resource_group=self.cluster,
                                        attribute_definition=new_attribute,
                                        consume_from_resource_group=self.cluster,
                                        consume_from_attribute_definition=self.core_attribute)
 
     def test_resource_group_cannot_consume_from_itself_on_change_consumer(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             self.core_transformer.change_consumer(resource_group=self.cluster, attribute=self.three_par_attribute)
 
     def test_calculate_total_consume_call_only_on_one_layer_parent(self):
@@ -151,7 +152,7 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
             self.project1.set_attribute(self.request_cpu, 20)
             calculate_total_consumed.assert_called_once()
 
-    def test_setting_consumer_auto_add_facto_to_1(self):
+    def test_setting_consumer_auto_add_factor_to_1(self):
         rwo_storage = AttributeDefinition.objects.create(name="rwo_storage")
         new_transformer = Transformer.objects.create(resource_group=self.ocp_projects,
                                                      attribute_definition=rwo_storage,
