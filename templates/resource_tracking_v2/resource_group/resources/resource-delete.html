@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+ {{ resource.name }} | Resource
+{%  endblock %}
+{% block main %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Confirm deletion</h3>
+                </div>
+                <div class="card-body">
+                    <form action='' method='POST'>{% csrf_token %}
+                        <p>Do you want to delete the resource "{{ resource.name }}"?</p>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <a class="btn btn-default"
+                           href="{% url 'resource_tracker:resource_group_resource_list' resource_group_id=resource_group.id %}">Cancel</a>
+                    </form>
+                </div>
+            </div><!-- end container fluid -->
+        </div>
+    </div>
+{% endblock %}
