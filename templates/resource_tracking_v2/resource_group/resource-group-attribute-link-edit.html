@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form id="ResourceGroupLinkForm" class="form-horizontal" action="{% url 'resource_tracker:resource_group_attribute_create' resource_group.id %}" method="post" current-resource-group-id="{{ resource_group.id }}" data-attribute-url="{% url 'resource_tracker:ajax_load_attribute' %}">{% csrf_token %}
+                        <form id="ResourceGroupLinkForm" class="form-horizontal" action="{% url 'resource_tracker:resource_group_attribute_edit' resource_group.id attribute.id %}" method="post" current-resource-group-id="{{ resource_group.id }}" data-attribute-url="{% url 'resource_tracker:ajax_load_attribute' %}">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
@@ -41,9 +41,9 @@
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <!-- validate button -->
-                                    <button class="btn btn-success" type="submit">
+                                    <button class="btn btn-primary" type="submit">
                                         <i class="fas fa-plus"></i>
-                                        Add attribute
+                                        Edit attribute
                                     </button>
                                 </div>
                             </div>
@@ -56,10 +56,6 @@
     {% load static %}
     <script src="{% static 'squest/js/resource_group_attributes.js' %}"></script>
     <script>
-        $("#id_consume_from_attribute_definition").empty();
-        let selectElement = document.getElementById('id_consume_from_attribute_definition');
-        let myNewOption = new Option("---------", "");
-        selectElement.options[0] = myNewOption;
         // on resource group change we update the list of attribute
         $("#id_consume_from_resource_group").change(function () {
             load_resource_group_attributes($(this).val(), );

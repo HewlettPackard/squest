@@ -9,7 +9,7 @@ function load_resource_group_attributes(target_resource_group_id){
             'target_resource_group_id': target_resource_group_id
         },
         success: function (data) {
-            $("#id_consume_from_attribute_id").html(data);
+            $("#id_consume_from_attribute_definition").html(data);
         },
         error: function(){
             console.log("Error during ajax call 'load_resource_group_attributes'");
