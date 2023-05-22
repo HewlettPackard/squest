@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}
+ Graph
+{%  endblock %}
+{% block content %}
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Resource Tracker Graph</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="float-sm-right">
+                            <a class="btn btn-success" href="{% url 'resource_tracker:resource_group_create' %}">
+                                <i class="fas fa-plus"></i> New resource group
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="card float-sm-left">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form method="get">
+                                    {{ resource_graph.form.as_p }}
+                                    <button class="btn btn-primary" type="submit">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-10">
+                        {% if display_graph %}
+                            {{ svg }}
+                        {% else %}
+                            Nothing to display
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('body').css({'background-color': '#F4F6F9'});
+        });
+    </script>
+{% endblock %}

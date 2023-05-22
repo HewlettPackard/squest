@@ -85,6 +85,17 @@ class Transformer(Model):
             return "N/A"
         return round(100 - self.percent_consumed)
 
+    @property
+    def progress_bar_color(self):
+        reversed_color = self.yellow_threshold_percent_consumed < self.red_threshold_percent_consumed
+        if isinstance(self.percent_consumed, int):
+            if int(self.percent_consumed) < self.yellow_threshold_percent_consumed and not int(self.percent_consumed) > self.red_threshold_percent_consumed:
+                return "green" if reversed_color else "red"
+            if int(self.percent_consumed) > self.red_threshold_percent_consumed and not int(self.percent_consumed) < self.yellow_threshold_percent_consumed:
+                return "red" if reversed_color else "green"
+            return "yellow"
+        return "gray"
+
     def set_factor(self, new_factor):
         self.factor = new_factor
         self.save()
