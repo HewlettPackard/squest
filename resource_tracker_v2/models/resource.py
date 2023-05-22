@@ -64,11 +64,7 @@ class Resource(models.Model):
             transformer.calculate_total_produced()
             transformer.notify_parent()
 
-
-    # @property
-    # def organization(self):
-    # TODO
-    # if self.service_catalog_instance:
-    #     if self.service_catalog_instance.billing_group:
-    #         return self.service_catalog_instance.billing_group
-    # return None
+    def delete_attribute_from_def(self, attribute_definition):
+        for attribute in self.resource_attributes.all():
+            if attribute.attribute_definition == attribute_definition:
+                attribute.delete()
