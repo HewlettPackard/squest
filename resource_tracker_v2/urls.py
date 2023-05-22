@@ -43,5 +43,10 @@ urlpatterns = [
          name='resource_group_resource_edit'),
     path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/delete/', views.resource_group_resource_delete,
          name='resource_group_resource_delete'),
-
+    path('resource_group/<int:resource_group_id>/resources/delete-confirm/',
+         views.resource_group_resource_bulk_delete_confirm,
+         name='resource_group_resource_bulk_delete_confirm'),
+    path('resource_group/<int:resource_group_id>/resources/delete-force/',
+         views.resource_group_resource_bulk_delete,
+         name='resource_group_resource_bulk_delete'),
 ]
