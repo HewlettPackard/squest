@@ -5,6 +5,7 @@ from tests.test_service_catalog.base import BaseTest
 class BaseTestResourceTrackerV2(BaseTest):
 
     def setUp(self):
+        super(BaseTestResourceTrackerV2, self).setUp()
         # layer 1: vcenter
         self.core_attribute = AttributeDefinition.objects.create(name="core")
         self.memory_attribute = AttributeDefinition.objects.create(name="memory")
