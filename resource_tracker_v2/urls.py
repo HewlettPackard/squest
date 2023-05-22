@@ -49,4 +49,7 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/resources/delete-force/',
          views.resource_group_resource_bulk_delete,
          name='resource_group_resource_bulk_delete'),
+
+    # graph
+    path('resource_tracker_graph/', views.resource_tracker_graph, name='resource_tracker_graph'),
 ]
