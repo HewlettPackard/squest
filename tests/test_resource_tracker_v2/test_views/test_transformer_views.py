@@ -16,6 +16,8 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
 
         response = self.client.get(reverse('resource_tracker:resource_group_attribute_list', kwargs=args))
         self.assertEqual(200, response.status_code)
+        self.assertEqual(len(response.context["table"].data.data),
+                         Transformer.objects.filter(resource_group=self.ocp_projects).count())
 
     def test_create_transformer_no_consumer(self):
         args = {
