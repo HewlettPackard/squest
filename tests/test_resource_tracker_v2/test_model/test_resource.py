@@ -13,7 +13,6 @@ class TestModelResource(BaseTestResourceTrackerV2):
         super(TestModelResource, self).setUp()
 
     def _prepare_service_catalog(self):
-        self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', 'password')
         self.service_test = Service.objects.create(name="service-test", description="description-of-service-test")
         self.test_instance = Instance.objects.create(name="test_instance_1",
                                                      service=self.service_test,
