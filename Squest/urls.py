@@ -51,7 +51,7 @@ urlpatterns = [
     path('ui/resource_tracker/', include('resource_tracker_v2.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/service_catalog/', include('service_catalog.api.urls')),
-    path('api/resource_tracker/', include('resource_tracker.api.urls')),
+    path('api/resource_tracker/', include('resource_tracker_v2.api.urls')),
     path('api/profiles/', include('profiles.api.urls')),
     path('api/tasks/<int:task_id>/', CeleryTaskView.as_view(), name='get_task_result'),
     path('ui/profiles/', include('profiles.urls')),
