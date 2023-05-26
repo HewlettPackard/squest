@@ -3,6 +3,7 @@ from django.db import models
 
 class AttributeDefinition(models.Model):
     name = models.CharField(max_length=100,
+                            unique=True,
                             blank=False)
 
     description = models.CharField(max_length=100, default='', null=True, blank=True)
