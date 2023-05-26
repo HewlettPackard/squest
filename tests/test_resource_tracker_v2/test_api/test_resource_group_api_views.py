@@ -37,7 +37,7 @@ class TestResourceGroupAPIViews(BaseTestResourceTrackerV2API):
     def test_resource_group_resources_list(self):
         response = self.client.get(self._list_create_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()), 4)
+        self.assertEqual(response.json()["count"], ResourceGroup.objects.all().count())
         for resource_group in response.json()['results']:
             self.assertTrue("id" in resource_group)
             self.assertTrue("name" in resource_group)
