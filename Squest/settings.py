@@ -380,7 +380,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
 }
 
 # -----------------------------------------
@@ -480,18 +480,18 @@ if TESTING or DEBUG:
         }
     }
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Basic': {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
             'type': 'basic'
-      },
-      'Bearer (format: Bearer <token>)': {
+        },
+        'Bearer (format: Bearer <token>)': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
             'bearerFormat': 'Bearer',
             'scheme': 'bearer'
-      }
-   }
+        }
+    }
 }
 
 # -----------------------------------------
