@@ -2,16 +2,16 @@ import tempfile
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from rest_framework.test import APITestCase
 
 from profiles.models import BillingGroup
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
 
-class BaseTest(TestCase):
+class Common:
 
-    def setUp(self):
-        super(BaseTest, self).setUp()
+    def setUpData(self):
         # ------------------------------
         # USERS
         # ------------------------------
@@ -403,3 +403,15 @@ class BaseTest(TestCase):
 
         self.test_billing_group = BillingGroup.objects.create(name='test_billing_group')
         self.test_billing_group2 = BillingGroup.objects.create(name='test_billing_group2')
+
+
+class BaseTest(TestCase, Common):
+    def setUp(self):
+        super(BaseTest, self).setUp()
+        self.setUpData()
+
+
+class BaseTestAPI(APITestCase, Common):
+    def setUp(self):
+        super(BaseTestAPI, self).setUp()
+        self.setUpData()
