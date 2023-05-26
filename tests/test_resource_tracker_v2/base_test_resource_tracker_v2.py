@@ -1,11 +1,9 @@
 from resource_tracker_v2.models import AttributeDefinition, ResourceGroup, Resource, Transformer
-from tests.test_service_catalog.base import BaseTest
+from tests.test_service_catalog.base import BaseTest, BaseTestAPI
 
 
-class BaseTestResourceTrackerV2(BaseTest):
-
-    def setUp(self):
-        super(BaseTestResourceTrackerV2, self).setUp()
+class Common:
+    def set_up_data_resource_tracker(self):
         # layer 1: vcenter
         self.core_attribute = AttributeDefinition.objects.create(name="core")
         self.memory_attribute = AttributeDefinition.objects.create(name="memory")
@@ -94,3 +92,17 @@ class BaseTestResourceTrackerV2(BaseTest):
         # assert parent consumption updated
         self.core_transformer.refresh_from_db()
         self.assertEqual(self.parent_consumption_before - self.current_production, self.core_transformer.total_consumed)
+
+
+class BaseTestResourceTrackerV2API(BaseTestAPI, Common):
+
+    def setUp(self):
+        super(BaseTestResourceTrackerV2API, self).setUp()
+        self.set_up_data_resource_tracker()
+
+
+class BaseTestResourceTrackerV2(BaseTest, Common):
+
+    def setUp(self):
+        super(BaseTestResourceTrackerV2, self).setUp()
+        self.set_up_data_resource_tracker()
