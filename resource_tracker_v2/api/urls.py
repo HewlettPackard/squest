@@ -2,6 +2,7 @@ from django.urls import path
 
 from resource_tracker_v2.api.views.attribute_definition_api_views import AttributeDefinitionList, \
     AttributeDefinitionDetails
+from resource_tracker_v2.api.views.resource_api_view import ResourceListCreate
 from resource_tracker_v2.api.views.resource_group_api_views import ResourceGroupList, ResourceGroupDetails
 
 urlpatterns = [
@@ -12,4 +13,7 @@ urlpatterns = [
     # resource group
     path('resource_group/', ResourceGroupList.as_view(), name='api_resource_group_list_create'),
     path('resource_group/<int:pk>/', ResourceGroupDetails.as_view(), name='api_resource_group_details'),
+
+    path('resource_group/<int:resource_group_id>/resources/', ResourceListCreate.as_view(),
+         name='api_resource_list_create'),
 ]
