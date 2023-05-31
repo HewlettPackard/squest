@@ -1,6 +1,4 @@
-from django.core.exceptions import ValidationError
 from django.db.models import Model, ForeignKey, CASCADE, FloatField, IntegerField, SET_NULL, CheckConstraint, F, Q
-from django.utils.translation import gettext_lazy as _
 
 from resource_tracker_v2.models.attribute_definition import AttributeDefinition
 from resource_tracker_v2.models.resource_attribute import ResourceAttribute
@@ -10,7 +8,8 @@ from resource_tracker_v2.models.resource_group import ResourceGroup
 class Transformer(Model):
 
     class Meta:
-        unique_together = ['resource_group', 'attribute_definition', 'consume_from_resource_group', 'consume_from_attribute_definition']
+        unique_together = (('resource_group', 'attribute_definition'),
+                           ('resource_group', 'attribute_definition', 'consume_from_resource_group', 'consume_from_attribute_definition'))
 
         constraints = [
             CheckConstraint(name='cannot_consume_from_itself', check=~Q(resource_group=F('consume_from_resource_group')))
@@ -42,32 +41,42 @@ class Transformer(Model):
                   " than the yellow threshold."
     )
 
-    def _check_circular_loop(self):
+    @classmethod
+    def is_loop_consumption_detected(cls, source_resource_group, source_attribute, target_resource_group, target_attribute):
+        source_transformer = Transformer.objects.filter(resource_group=source_resource_group,
+                                                        attribute_definition=source_attribute)
+        if not source_transformer.exists():
+            return False
+        source_transformer = source_transformer.first()
+
+        target_transformer = Transformer.objects.filter(resource_group=target_resource_group,
+                                                        attribute_definition=target_attribute)
+        if not target_transformer.exists():
+            return False
+        target_transformer = target_transformer.first()
         list_parent_id = list()
-        transformer = self
-        while transformer is not None and transformer.resource_group.id not in list_parent_id:
-            list_parent_id.append(transformer.resource_group.id)
-            transformer = transformer.get_parent()
-        if transformer is not None and transformer.resource_group.id in list_parent_id:
-            raise ValidationError(_(f"Circular loop detected on resource group '{transformer.resource_group.name}'"))
-        return True  # means no loop
+        # we should not fall on the source transformer again when getting all parents of the target transformer
+        list_parent_id.append(source_transformer.id)
+        while target_transformer is not None and target_transformer.id not in list_parent_id:
+            list_parent_id.append(target_transformer.id)
+            target_transformer = target_transformer.get_parent()
+        if target_transformer is not None and target_transformer.id in list_parent_id:
+            return True
+        return False
 
     def create(self, *args, **kwargs):
-        self._check_circular_loop()
         if self.consume_from_resource_group is not None and self.factor is None:
             self.factor = 1
         super(Transformer, self).save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         try:
-            if (self.consume_from_resource_group is not None) and self.factor is None:
+            if (self.consume_from_resource_group is not None and self.consume_from_attribute_definition is not None) \
+                    and self.factor is None:
                 self.factor = 1
         except ValueError:  # when saving from a form we have no id
             pass
         super(Transformer, self).save(*args, **kwargs)
-
-    def clean(self):
-        self._check_circular_loop()
 
     @property
     def available(self):
