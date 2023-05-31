@@ -1,6 +1,5 @@
 from unittest import mock
 
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 from resource_tracker_v2.models import Transformer, ResourceGroup, AttributeDefinition
@@ -34,6 +33,13 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
                                        attribute_definition=self.vcpu_attribute,
                                        consume_from_resource_group=self.cluster,
                                        consume_from_attribute_definition=self.core_attribute)
+
+    def test_cannot_create_same_transformer_twice_without_consumer(self):
+        with self.assertRaises(IntegrityError):
+            Transformer.objects.create(resource_group=self.single_vms,
+                                       attribute_definition=self.vcpu_attribute,
+                                       consume_from_resource_group=None,
+                                       consume_from_attribute_definition=None)
 
     def test_calculate_total_consumed_with_factor(self):
         self.vcpu_from_core_transformer.refresh_from_db()
@@ -83,20 +89,17 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
         self.vcpu_from_core_transformer.delete()
         self._validate_state_after_deletion()
 
-    def test_no_circular_loop_on_transformer(self):
-        with self.assertRaises(ValidationError):
-            t1 = Transformer.objects.create(resource_group=self.cluster,
-                                       attribute_definition=self.core_attribute,
-                                       consume_from_resource_group=self.ocp_projects,
-                                       consume_from_attribute_definition=self.request_cpu)
-            t1._check_circular_loop()
+    def test_is_loop_consumption_detected(self):
+        self.assertTrue(Transformer.is_loop_consumption_detected(source_resource_group=self.cluster,
+                                                                 source_attribute=self.core_attribute,
+                                                                 target_resource_group=self.ocp_projects,
+                                                                 target_attribute=self.request_cpu))
 
-        rwo_storage = AttributeDefinition.objects.create(name="rwo_storage")
-        non_circular_transformer = Transformer.objects.create(resource_group=self.ocp_projects,
-                                                              attribute_definition=rwo_storage,
-                                                              consume_from_resource_group=self.cluster,
-                                                              consume_from_attribute_definition=self.three_par_attribute)
-        self.assertTrue(non_circular_transformer._check_circular_loop())
+        new_attribute = AttributeDefinition.objects.create(name="new_attribute")
+        self.assertFalse(Transformer.is_loop_consumption_detected(source_resource_group=self.cluster,
+                                                                  source_attribute=new_attribute,
+                                                                  target_resource_group=self.ocp_projects,
+                                                                  target_attribute=self.request_cpu))
 
     def test_consumption_updated_if_consume_from_set_after_resource_creation(self):
         # add a new RG
