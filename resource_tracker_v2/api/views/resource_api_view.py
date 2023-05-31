@@ -30,3 +30,28 @@ class ResourceListCreate(generics.ListCreateAPIView):
             read_serializer = ResourceSerializer(instance=new_resource)
             return Response(read_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResourceDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = ResourceSerializer
+
+    def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Resource.objects.none()
+        resource_group_id = self.kwargs['resource_group_id']
+        queryset = Resource.objects.filter(resource_group_id=resource_group_id)
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            kwargs['data']['resource_group'] = self.kwargs.get('resource_group_id', None)
+        serializer = super(ResourceDetails, self).get_serializer(*args, **kwargs)
+        serializer.context["resource_group"] = self.kwargs.get('resource_group_id', None)
+        return serializer
+
+    def get_object(self):
+        resource_group_id = self.kwargs.get('resource_group_id')
+        resource_id = self.kwargs.get('pk')
+        resource = get_object_or_404(Resource, id=resource_id, resource_group_id=resource_group_id)
+        return resource
