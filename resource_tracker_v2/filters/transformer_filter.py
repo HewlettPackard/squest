@@ -19,6 +19,6 @@ class TransformerFilter(SquestFilter):
         self.filters['attribute_definition'].field.choices = [(attribute.id, attribute.name) for attribute in AttributeDefinition.objects.all()]
 
     attribute_definition = MultipleChoiceFilter(
-        label="Service",
+        label="Attribute",
         choices=[],
         widget=SelectMultiple(attrs={'data-live-search': "true"}))

@@ -35,7 +35,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         model = Resource
         fields = ["id", "resource_group", "name", "service_catalog_instance",
                   "resource_attributes", "is_deleted_on_instance_deletion"]
-        read_ony_fields = ["resource_group"]
+        read_only_fields = ["resource_group"]
 
     resource_attributes = ResourceAttributeSerializer(many=True)
 

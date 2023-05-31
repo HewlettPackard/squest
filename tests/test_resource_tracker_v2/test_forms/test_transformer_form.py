@@ -47,6 +47,15 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
         self.assertFalse(form.is_valid())
         self.assertIsNotNone(form.errors["consume_from_attribute_definition"])
 
+    def test_cannot_create_transformer_with_no_target_rg_and_target_attribute(self):
+        data = {
+            "attribute_definition": self.disk_att.id,
+            "consume_from_attribute_definition": self.cluster.id,
+        }
+        form = TransformerForm(data, **self.parameters)
+        self.assertFalse(form.is_valid())
+        self.assertIsNotNone(form.errors["consume_from_resource_group"])
+
     def test_transformer_exist_already_on_selected_attribute(self):
         data = {
             "attribute_definition": self.vcpu_attribute.id,
@@ -133,5 +142,22 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
         form = TransformerForm(data, **parameters)
         self.assertFalse(form.is_valid())
         self.assertEqual(
-            form.errors["consume_from_attribute_definition"], [f"Selected attribute '{self.vcpu_attribute.name}' is "
-                                                               f"not a valid attribute of the resource group '{self.cluster.name}'"])
+            form.errors["consume_from_attribute_definition"],
+            [f"Selected attribute '{self.vcpu_attribute.name}' is "
+             f"not a valid attribute of the resource group '{self.cluster.name}'"])
+
+    def test_cannot_create_circular_loop_when_adding_consumer(self):
+        data = {
+            "attribute_definition": self.core_attribute.id,
+            "consume_from_resource_group": self.ocp_projects.id,
+            "consume_from_attribute_definition": self.request_cpu.id,
+        }
+        parameters = {
+            "source_resource_group": self.cluster,
+        }
+        form = TransformerForm(instance=self.core_transformer, data=data, **parameters)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["consume_from_attribute_definition"],
+            [f"Circular loop detected on resource "
+             f"group '{self.cluster.name}'"])
