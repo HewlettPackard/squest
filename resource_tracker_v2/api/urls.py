@@ -4,6 +4,7 @@ from resource_tracker_v2.api.views.attribute_definition_api_views import Attribu
     AttributeDefinitionDetails
 from resource_tracker_v2.api.views.resource_api_view import ResourceListCreate, ResourceDetails
 from resource_tracker_v2.api.views.resource_group_api_views import ResourceGroupList, ResourceGroupDetails
+from resource_tracker_v2.api.views.transformer_api_views import TransformerListCreate, TransformerDetails
 
 urlpatterns = [
     # attribute definition
@@ -19,5 +20,11 @@ urlpatterns = [
          name='api_resource_list_create'),
     path('resource_group/<int:resource_group_id>/resources/<int:pk>/', ResourceDetails.as_view(),
          name='api_resource_details'),
+
+    # transformer
+    path('resource_group/<int:resource_group_id>/attributes/', TransformerListCreate.as_view(),
+         name='api_transformer_list_create'),
+    path('resource_group/<int:resource_group_id>/attributes/<int:pk>/', TransformerDetails.as_view(),
+         name='api_transformer_details'),
 
 ]
