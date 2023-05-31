@@ -55,26 +55,30 @@ class TransformerForm(SquestModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        attribute_definition = cleaned_data.get("attribute_definition")
         consume_from_resource_group = cleaned_data.get("consume_from_resource_group")
         consume_from_attribute = cleaned_data.get("consume_from_attribute_definition")
 
         if consume_from_resource_group is not None and consume_from_attribute is None:
-            raise forms.ValidationError({"consume_from_attribute_definition": f"Select a target attribute to consume from"})
+            raise forms.ValidationError(
+                {"consume_from_attribute_definition": f"Select a target attribute to consume from"})
+        if consume_from_resource_group is None and consume_from_attribute is not None:
+            raise forms.ValidationError(
+                {"consume_from_resource_group": f"Select a target resource group to consume from"})
 
         if consume_from_resource_group is not None and consume_from_attribute is not None:
             # check if the target attribute is defined as transformer
             if Transformer.objects.filter(resource_group=consume_from_resource_group,
                                           attribute_definition=consume_from_attribute).count() == 0:
-                raise forms.ValidationError({"consume_from_attribute_definition": f"Selected attribute '{consume_from_attribute.name}' is not a valid "
-                                                                                  f"attribute of the resource group '{consume_from_resource_group.name}'"})
+                raise forms.ValidationError(
+                    {"consume_from_attribute_definition": f"Selected attribute '{consume_from_attribute.name}' is not "
+                                                          f"a valid attribute of the resource group "
+                                                          f"'{consume_from_resource_group.name}'"})
 
-            # check for circular loop
-            list_parent_id = list()
-            next_transformer = Transformer.objects.filter(resource_group=consume_from_resource_group,
-                                                          attribute_definition=consume_from_attribute).first()
-            while next_transformer is not None and next_transformer.resource_group.id not in list_parent_id:
-                list_parent_id.append(next_transformer.resource_group.id)
-                next_transformer = next_transformer.get_parent()
-            if next_transformer is not None and next_transformer.resource_group.id in list_parent_id:
-                raise forms.ValidationError(f"Circular loop detected on resource "
-                                            f"group '{next_transformer.resource_group.name}'")
+            if Transformer.is_loop_consumption_detected(source_resource_group=self.source_resource_group,
+                                                        source_attribute=attribute_definition,
+                                                        target_resource_group=consume_from_resource_group,
+                                                        target_attribute=consume_from_attribute):
+                raise forms.ValidationError(
+                    {"consume_from_attribute_definition": f"Circular loop detected on resource "
+                                                          f"group '{self.source_resource_group.name}'"})
