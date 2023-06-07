@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resource_tracker', '0008_auto_20220120_1538'),
         ('profiles', '0003_role_team_teamrolebinding_userrolebinding'),
     ]
 
@@ -17,7 +16,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, unique=True)),
-                ('attribute_definitions', models.ManyToManyField(blank=True, help_text='The attribute definitions linked to this quota.', related_name='quota', related_query_name='quota', to='resource_tracker.ResourceGroupAttributeDefinition', verbose_name='Attribute Definition')),
             ],
         ),
         migrations.CreateModel(
