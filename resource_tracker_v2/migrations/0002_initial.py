@@ -8,11 +8,8 @@ import taggit.managers
 
 class Migration(migrations.Migration):
 
-    initial = True
-
     dependencies = [
-        ('taggit', '0005_auto_20220424_2025'),
-        ('service_catalog', '0012_auto_20221004_1808'),
+        ('resource_tracker_v2', '0001_clean_up_v1'),
     ]
 
     operations = [
