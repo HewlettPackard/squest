@@ -1,7 +1,5 @@
 from profiles.models.token import Token
 from profiles.models.billing_group import BillingGroup
-from profiles.models.quota import Quota
-from profiles.models.quota_binding import QuotaBinding
 from profiles.models.role import Role
 from profiles.models.user_role_binding import UserRoleBinding
 from profiles.models.team import Team

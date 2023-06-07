@@ -10,21 +10,11 @@ class TransformerSerializer(serializers.ModelSerializer):
         fields = ["id", "resource_group", "attribute_definition", "consume_from_resource_group",
                   "consume_from_attribute_definition", "factor", "total_consumed", "total_produced",
                   "yellow_threshold_percent_consumed", "red_threshold_percent_consumed"]
-        read_only_fields = ["resource_group", "total_consumed", "total_produced"]
-
-    def create(self, validated_data):
-        resource_group = self.context.get('resource_group')
-        new_transformer = Transformer.objects.create(
-            resource_group=resource_group,
-            attribute_definition=validated_data['attribute_definition'],
-            consume_from_resource_group=validated_data['consume_from_resource_group'],
-            consume_from_attribute_definition=validated_data['consume_from_attribute_definition'],
-        )
-        return new_transformer
+        read_only_fields = ["total_consumed", "total_produced"]
 
     def validate(self, data):
         super(TransformerSerializer, self).validate(data)
-        resource_group = self.context.get("resource_group")
+        resource_group = data.get("resource_group")
         attribute_definition = data.get("attribute_definition")
         consume_from_resource_group = data.get("consume_from_resource_group")
         consume_from_attribute = data.get("consume_from_attribute_definition")

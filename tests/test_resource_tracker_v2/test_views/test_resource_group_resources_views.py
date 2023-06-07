@@ -38,6 +38,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         # test POST
         data = {
             "name": "new_resource",
+            "resource_group": self.cluster.id,
             f"{self.core_attribute.name}": 10,
             f"{self.memory_attribute.name}": 20,
             "is_deleted_on_instance_deletion": True
@@ -68,6 +69,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
 
         # test POST
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             f"{self.core_attribute.name}": 1,
             f"{self.memory_attribute.name}": 2

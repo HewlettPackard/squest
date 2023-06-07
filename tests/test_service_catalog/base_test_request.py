@@ -1,4 +1,4 @@
-from resource_tracker.models import ResourceGroup
+from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer, Resource
 from service_catalog.models import Request, Instance, Support
 from tests.test_service_catalog.base import BaseTest
 
@@ -26,8 +26,9 @@ class BaseTestRequest(BaseTest):
                                                        spoc=self.standard_user_2)
         self.support_test2 = Support.objects.create(title="support_2", instance=self.test_instance_2)
 
-
         self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
-        self.rg_physical_servers_cpu_attribute = self.rg_physical_servers.add_attribute_definition(name="CPU")
-        self.resource_server = self.rg_physical_servers.create_resource(name=f"resource_server")
-        self.resource_server.set_attribute(self.rg_physical_servers_cpu_attribute, 12)
+        cpu_attribute = AttributeDefinition.objects.create(name="CPU")
+        Transformer.objects.create(resource_group=self.rg_physical_servers,
+                                   attribute_definition=cpu_attribute)
+        self.resource_server = Resource.objects.create(name="server1", resource_group=self.rg_physical_servers)
+        self.resource_server.set_attribute(cpu_attribute, 12)

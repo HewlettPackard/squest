@@ -1,18 +1,16 @@
-from taggit.forms import *
-from resource_tracker_v2.models import ResourceGroup, Resource, ResourceAttribute, AttributeDefinition
+from django import forms
+from resource_tracker_v2.models import Resource, ResourceAttribute, AttributeDefinition
 from Squest.utils.squest_model_form import SquestModelForm
 
 
 class ResourceForm(SquestModelForm):
     class Meta:
         model = Resource
-        fields = ["name", "service_catalog_instance", "is_deleted_on_instance_deletion"]
+        fields = ["name", "service_catalog_instance", "is_deleted_on_instance_deletion", "resource_group"]
 
     def __init__(self, *args, **kwargs):
-        resource_group_id = kwargs.pop('resource_group_id', None)
-        self.resource_group = ResourceGroup.objects.get(id=resource_group_id)
+        self.resource_group = kwargs.pop('resource_group', None)
         super(ResourceForm, self).__init__(*args, **kwargs)
-        self._newly_created = kwargs.get('instance') is None
         self.attributes_name_list = list()
         for transformer in self.resource_group.transformers.all():
             initial_value = None
@@ -29,17 +27,13 @@ class ResourceForm(SquestModelForm):
                                            help_text=transformer.attribute_definition.description,
                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
             self.fields[transformer.attribute_definition.name] = new_field
+            self.fields['resource_group'].widget = forms.HiddenInput()
+            self.fields['resource_group'].initial = self.resource_group.id
             self.attributes_name_list.append(transformer.attribute_definition.name)
 
     def save(self, **kwargs):
-        resource_name = self.cleaned_data["name"]
-        if self._newly_created:
-            self.instance = super(ResourceForm, self).save(commit=False)
-            self.instance.resource_group = self.resource_group
-        else:
-            self.instance.name = resource_name
-
-        self.instance.save()
+        kwargs["commit"] = True
+        self.instance = super(ResourceForm, self).save(kwargs)
 
         # get all attribute
         for attribute_name in self.attributes_name_list:

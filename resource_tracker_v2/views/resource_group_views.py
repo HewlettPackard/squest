@@ -1,7 +1,6 @@
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
@@ -11,11 +10,12 @@ from resource_tracker_v2.models import ResourceGroup
 from resource_tracker_v2.tables.resource_group_table import ResourceGroupTable
 
 
-class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class ResourceGroupListView(PermissionRequiredMixin, SingleTableMixin, FilterView):
     table_class = ResourceGroupTable
     model = ResourceGroup
     filterset_class = ResourceGroupFilter
     template_name = 'generics/list.html'
+    permission_required = "is_superuser"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,48 +26,57 @@ class ResourceGroupListView(LoginRequiredMixin, SingleTableMixin, FilterView):
         return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def resource_group_create(request):
-    if request.method == 'POST':
-        form = ResourceGroupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("resource_tracker:resource_group_list")
-    else:
-        form = ResourceGroupForm()
-    breadcrumbs = [
-        {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
-        {'text': 'Create a new resource group', 'url': ""},
-    ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
-    return render(request, 'generics/generic_form.html', context)
+class ResourceGroupCreateView(PermissionRequiredMixin, CreateView):
+    model = ResourceGroup
+    template_name = 'generics/generic_form.html'
+    form_class = ResourceGroupForm
+    permission_required = "is_superuser"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Resource group"
+        context['app_name'] = "resource_tracker"
+        context['object_name'] = "resource_group"
+        context['action'] = "create"
+        context[""] = [
+            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': 'Create a new resource group', 'url': ""},
+        ]
+        return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def resource_group_edit(request, resource_group_id):
-    resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
-    form = ResourceGroupForm(request.POST or None, instance=resource_group)
-    if form.is_valid():
-        form.save()
-        return redirect("resource_tracker:resource_group_list")
-    breadcrumbs = [
-        {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
-        {'text': resource_group.name, 'url': ""},
-    ]
-    context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'edit'}
-    return render(request, 'generics/generic_form.html', context)
+class ResourceGroupEditView(PermissionRequiredMixin, UpdateView):
+    model = ResourceGroup
+    template_name = 'generics/generic_form.html'
+    form_class = ResourceGroupForm
+    permission_required = "is_superuser"
+    pk_url_kwarg = "resource_group_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Resource group"
+        context['app_name'] = "resource_tracker"
+        context['object_name'] = "resource_group"
+        context['action'] = "edit"
+        context[""] = [
+            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': self.object.name, 'url': ""},
+        ]
+        return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def resource_group_delete(request, resource_group_id):
-    resource_group = get_object_or_404(ResourceGroup, id=resource_group_id)
-    if request.method == 'POST':
-        resource_group.delete()
-        return redirect("resource_tracker:resource_group_list")
-    breadcrumbs = [
-        {'text': 'Attribute definition', 'url': reverse('resource_tracker:resource_group_list')},
-        {'text': resource_group.name, 'url': ""},
-    ]
-    context = {'resource_group': resource_group, 'breadcrumbs': breadcrumbs}
-    return render(request,
-                  'resource_tracking_v2/resource_group/resource-group-delete.html', context)
+class ResourceGroupDeleteView(PermissionRequiredMixin, DeleteView):
+    model = ResourceGroup
+    template_name = 'resource_tracking_v2/resource_group/resource-group-delete.html'
+    success_url = reverse_lazy("resource_tracker:resource_group_list")
+    permission_required = "is_superuser"
+    pk_url_kwarg = "resource_group_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        breadcrumbs = [
+            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': self.object.name, 'url': ""},
+        ]
+        context['breadcrumbs'] = breadcrumbs
+        return context
