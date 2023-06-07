@@ -2,7 +2,7 @@ from django.forms import SelectMultiple
 from django_filters import MultipleChoiceFilter
 
 from Squest.utils.squest_filter import SquestFilter
-from service_catalog.models import CustomLink, Service
+from service_catalog.models import CustomLink
 
 
 class CustomLinkFilter(SquestFilter):

@@ -1,4 +1,5 @@
 from django.db.models import Model, ForeignKey, CASCADE, FloatField, IntegerField, SET_NULL, CheckConstraint, F, Q
+from django.urls import reverse
 
 from resource_tracker_v2.models.attribute_definition import AttributeDefinition
 from resource_tracker_v2.models.resource_attribute import ResourceAttribute
@@ -40,6 +41,10 @@ class Transformer(Model):
         help_text="Threshold at which the color changes to red. Threshold is reverse when the red threshold is lower"
                   " than the yellow threshold."
     )
+
+    def get_absolute_url(self):
+        return reverse("resource_tracker:resource_group_attribute_list",
+                       kwargs={"resource_group_id": self.resource_group.id})
 
     @classmethod
     def is_loop_consumption_detected(cls, source_resource_group, source_attribute, target_resource_group, target_attribute):

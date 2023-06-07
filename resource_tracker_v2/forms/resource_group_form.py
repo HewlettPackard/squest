@@ -1,4 +1,6 @@
-from taggit.forms import *
+from django import forms
+from taggit.forms import TagField, TagWidget
+
 from resource_tracker_v2.models import ResourceGroup
 from Squest.utils.squest_model_form import SquestModelForm
 
