@@ -21,6 +21,11 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
 
+    def test_resource_group_list_as_standard_ser(self):
+        self.client.force_login(self.standard_user)
+        response = self.client.get(reverse('resource_tracker:resource_group_list'))
+        self.assertEqual(403, response.status_code)
+
     def test_resource_group_list_with_tag_and(self):
         response = self.client.get(reverse('resource_tracker:resource_group_list') + "?tag=tag1&tag=tag2&tag_filter_type=AND")
         self.assertEqual(200, response.status_code)

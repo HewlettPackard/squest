@@ -85,7 +85,6 @@ INSTALLED_APPS = [
     'django_tables2',
     'dbbackup',
     'service_catalog',
-    'resource_tracker',
     'resource_tracker_v2',
     'profiles',
     'monitoring',

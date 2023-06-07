@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from taggit.managers import TaggableManager
 
 from resource_tracker_v2.models import Transformer
@@ -35,6 +36,9 @@ class Resource(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('resource_tracker:resource_group_resource_list', args=[self.resource_group.id])
+
     def set_attribute(self, attribute_definition, value):
         # check that the target attribute def is well declared as transformer
         if not self.resource_group.transformers.filter(attribute_definition=attribute_definition).exists():
@@ -44,17 +48,18 @@ class Resource(models.Model):
         attribute.value = value
         attribute.save()
 
-        # notify transformer
-        for transformer in Transformer.objects.filter(attribute_definition=attribute_definition,
-                                                      resource_group=self.resource_group):
-            transformer.calculate_total_produced()
-            for target_transformer in Transformer.objects.filter(attribute_definition=transformer.consume_from_attribute_definition,
-                                                                 resource_group=transformer.consume_from_resource_group):
-                target_transformer.calculate_total_consumed()
+        # notify transformer (we should have only one single transformer)
+        transformer = Transformer.objects.get(attribute_definition=attribute_definition,
+                                              resource_group=self.resource_group)
+        transformer.calculate_total_produced()
+        for target_transformer in Transformer.objects.filter(attribute_definition=transformer.consume_from_attribute_definition,
+                                                             resource_group=transformer.consume_from_resource_group):
+            target_transformer.calculate_total_consumed()
 
     def get_attribute_value(self, attribute_definition):
         result = 0
-        result += sum([item.value for item in self.resource_attributes.filter(resource=self, attribute_definition=attribute_definition)])
+        result += sum([item.value for item in self.resource_attributes.filter(resource=self,
+                                                                              attribute_definition=attribute_definition)])
         return result
 
     def delete(self, using=None, keep_parents=False):
