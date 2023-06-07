@@ -21,20 +21,20 @@
                 <div class="card">
                     <div class="card-body">
 
-                        {% if attribute_definition.resource_groups.count > 0 %}
+                        {% if impacted_resource_group.count > 0 %}
                             <blockquote class="quote-warning">
                                 <h5>Attribute in use</h5>
                                 <p>This attribute is in use by following resource groups: </p>
                                 <ul>
-                                    {% for resource_group in attribute_definition.resource_groups.all %}
+                                    {% for resource_group in impacted_resource_group.all %}
                                         <li>{{ resource_group.name }}</li>
                                     {% endfor %}
                                 </ul>
                             </blockquote>
                         {% endif %}
 
-                        <form action="{% url 'resource_tracker:attribute_definition_delete' attribute_definition.id %}" method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the attribute definition "{{ attribute_definition.name }}"?</p>
+                        <form action="{% url 'resource_tracker:attribute_definition_delete' object.id %}" method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the attribute definition "{{ object.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'resource_tracker:attribute_definition_list' %}">Cancel</a>
                         </form>

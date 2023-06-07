@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        {% include "generics/breadcrumbs.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+                {% if error_message %}
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ error_message }}</h3>
+                        </div>
+
+
+
+                        {% if protected_objects %}
+                            <div class="card-body">
+                                <a href="{{ object.get_absolute_url }}">{{ object }}</a> still referenced in:
+                                <ul>
+                                    {% for obj in protected_objects %}
+                                        <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+
+
+
+                {% else %}
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Are you sure you want to delete <b>{{ object }}</b></h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal" method="post">{% csrf_token %}
+                                <button class="btn btn-danger" type="submit">
+                                    <i class="fas fa-trash"></i>
+                                    Confirm
+                                </button>
+                                <button class="btn btn-light" type="button" onclick=window.history.back()>
+                                    <i class="fas fa-window-close"></i>
+                                    Cancel
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -20,21 +20,28 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-
-                        {% if resource_group.resources.count > 0 %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if object.resources.count > 0 %}
                             <blockquote class="quote-warning">
                                 <h5>Resource group in use</h5>
                                 <p>This resource group is in use by following resource: </p>
                                 <ul>
-                                    {% for resource in resource_group.resources.all %}
+                                    {% for resource in object.resources.all %}
                                         <li>{{ resource.name }}</li>
                                     {% endfor %}
                                 </ul>
                             </blockquote>
                         {% endif %}
-
-                        <form action="{% url 'resource_tracker:resource_group_delete' resource_group.id %}" method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the resource group "{{ resource_group.name }}"?</p>
+                        <form action="{% url 'resource_tracker:resource_group_delete' object.id %}" method='POST'>{% csrf_token %}
+                            <p>Do you want to delete the resource group "{{ object.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'resource_tracker:resource_group_list' %}">Cancel</a>
                         </form>

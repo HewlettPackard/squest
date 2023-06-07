@@ -1,3 +1,5 @@
+import copy
+
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser
@@ -23,11 +25,11 @@ class TransformerListCreate(generics.ListCreateAPIView):
     def create(self, request, **kwargs):
         resource_group_id = self.kwargs['resource_group_id']
         resource_group = get_object_or_404(ResourceGroup, pk=resource_group_id)
-        context = {'resource_group': resource_group}
-        serializer = TransformerSerializer(data=request.data, context=context)
+        data = copy.copy(request.data)
+        data["resource_group"] = resource_group.id
+        serializer = TransformerSerializer(data=data)
         if serializer.is_valid():
-            new_transformer = serializer.save()
-            # read_serializer = TransformerSerializer(instance=new_transformer)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
