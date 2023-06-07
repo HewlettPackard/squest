@@ -1,3 +1,5 @@
+import copy
+
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser
@@ -23,8 +25,9 @@ class ResourceListCreate(generics.ListCreateAPIView):
     def create(self, request, **kwargs):
         resource_group_id = self.kwargs['resource_group_id']
         resource_group = get_object_or_404(ResourceGroup, pk=resource_group_id)
-        context = {'resource_group': resource_group}
-        serializer = ResourceCreateSerializer(data=request.data, context=context)
+        data = copy.copy(request.data)
+        data["resource_group"] = resource_group.id
+        serializer = ResourceCreateSerializer(data=data)
         if serializer.is_valid():
             new_resource = serializer.save()
             read_serializer = ResourceSerializer(instance=new_resource)
