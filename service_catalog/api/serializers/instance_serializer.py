@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from profiles.api.serializers.billing_group_serializers import BillingGroupInstanceReadSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
-from resource_tracker.api.serializers.resource_group.resource_serializers import ResourceSerializer
+from resource_tracker_v2.api.serializers.resource_serializer import ResourceSerializer
 from service_catalog.models import Instance, InstanceState
 
 

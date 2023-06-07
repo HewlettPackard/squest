@@ -1,8 +1,9 @@
 from django.urls import reverse
-from tests.test_resource_tracker.base_test_resource_tracker import BaseTestResourceTracker
+
+from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
-class TestHome(BaseTestResourceTracker):
+class TestHome(BaseTestRequest):
 
     def setUp(self):
         super(TestHome, self).setUp()

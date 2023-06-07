@@ -1,7 +1,6 @@
 from django.db import models
+from django.urls import reverse
 from taggit.managers import TaggableManager
-
-from resource_tracker_v2.models.resource_attribute import ResourceAttribute
 
 
 class ResourceGroup(models.Model):
@@ -17,3 +16,6 @@ class ResourceGroup(models.Model):
     def create_resource(self, name):
         resource, _ = self.resources.get_or_create(name=name, resource_group=self)
         return resource
+
+    def get_absolute_url(self):
+        return reverse("resource_tracker:resource_group_list")
