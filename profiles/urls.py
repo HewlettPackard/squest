@@ -39,16 +39,6 @@ urlpatterns = [
     path('billing-group/<int:billing_group_id>/delete/', views.billing_group_delete, name='billing_group_delete'),
     path('billing-group/<int:billing_group_id>/refresh_quota/', views.billing_group_refresh_quota, name='billing_group_refresh_quota'),
 
-    # Quota Binding
-    path('billing-group/<int:billing_group_id>/quota_attribute/<int:quota_binding_id>/edit/', views.quota_binding_edit,
-         name='quota_binding_edit'),
-    path('billing-group/<int:billing_group_id>/quota_attribute/<int:quota_binding_id>/delete/',
-         views.quota_binding_delete, name='quota_binding_delete'),
-    path('billing-group/<int:billing_group_id>/quota_attribute/edit/', views.quota_binding_edit_all,
-         name='quota_binding_edit_all'),
-    path('billing-group/<int:billing_group_id>/quota_attribute/edit-limits/', views.quota_binding_set_limits,
-         name='quota_binding_set_limits'),
-
     # request notifications
     path('notification/request/switch/', views.request_notification_switch, name='request_notification_switch'),
     path('notification/notification_filter/request/create/', views.request_notification_create,
@@ -91,12 +81,5 @@ urlpatterns = [
     path('role/ajax/update-roles/', views.ajax_team_role_binding_form_update_roles, name='ajax_update_roles'),
     path('role/ajax/update-objects/', views.ajax_team_role_binding_form_update_objects, name='ajax_update_objects'),
 
-    # Quota
-    path('quota/', views.QuotaListView.as_view(), name='quota_list'),
-    path('quota/create/', views.quota_create, name='quota_create'),
-    path('quota/<int:quota_id>/edit/', views.quota_edit,
-         name='quota_edit'),
-    path('quota/<int:quota_id>/delete/', views.quota_delete,
-         name='quota_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

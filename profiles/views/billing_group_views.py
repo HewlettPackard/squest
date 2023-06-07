@@ -8,7 +8,6 @@ from profiles.filters.billing_group_filter import BillingGroupFilter
 from profiles.forms import AddUserForm
 from profiles.forms.billing_group_forms import BillingGroupForm
 from profiles.models.billing_group import BillingGroup
-from profiles.tables.quota_binding_table import QuotaBindingTable
 from profiles.tables.user_by_billing_group_table import UserByBillingGroupTable
 from service_catalog import tasks
 
@@ -120,7 +119,6 @@ def billing_group_list(request):
     for billing_group in billing_filtered.queryset.all():
         tables = dict()
         tables['users_table'] = UserByBillingGroupTable(billing_group.user_set.all())
-        tables['quota_table'] = QuotaBindingTable(billing_group.quota_bindings.all())
         tables_dict[billing_group.id] = tables
     context = {
         'title': 'Billing Groups',

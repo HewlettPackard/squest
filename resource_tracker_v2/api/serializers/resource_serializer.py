@@ -83,14 +83,17 @@ class ResourceSerializer(serializers.ModelSerializer):
         return super(ResourceSerializer, self).update(instance, validated_data)
 
 
-class ResourceCreateSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    resource_attributes = ResourceAttributeCreateSerializer(many=True)
-    service_catalog_instance = PrimaryKeyRelatedField(queryset=Instance.objects.all(), allow_null=True)
-    is_deleted_on_instance_deletion = serializers.BooleanField(default=True)
+class ResourceCreateSerializer(serializers.ModelSerializer):
+
+    resource_attributes = ResourceAttributeCreateSerializer(many=True, label="resource_attributes")
+
+    class Meta:
+        model = Resource
+        fields = ["name", "service_catalog_instance", "is_deleted_on_instance_deletion",
+                  "resource_attributes", "resource_group"]
 
     def validate_resource_attributes(self, attributes):
-        resource_group = self.context["resource_group"]
+        resource_group = self.initial_data["resource_group"]
         # check attribute exist
         seen = set()
         for attribute in attributes:
@@ -109,27 +112,9 @@ class ResourceCreateSerializer(serializers.Serializer):
                 raise serializers.ValidationError(f"Duplicate attribute '{attribute_name}'")
         return attributes
 
-    def validate_name(self, value):
-        resource_group = self.context.get('resource_group')
-        try:
-            Resource.objects.get(name=value, resource_group=resource_group)
-            raise serializers.ValidationError(f"Resource with this name exist already in resource "
-                                              f"group {resource_group.name}")
-        except Resource.DoesNotExist:
-            return value
-
     def create(self, validated_data):
-        resource_group = self.context.get('resource_group')
-        # create the resource
-        new_resource = Resource.objects.create(
-            name=validated_data['name'],
-            resource_group=resource_group,
-            is_deleted_on_instance_deletion=validated_data['is_deleted_on_instance_deletion']
-        )
-        if validated_data['service_catalog_instance'] is not None:
-            new_resource.service_catalog_instance = validated_data['service_catalog_instance']
-            new_resource.save()
         resource_attributes = validated_data.pop('resource_attributes')
+        new_resource = super(ResourceCreateSerializer, self).create(validated_data)
         for attribute in resource_attributes:
             attribute_definition = AttributeDefinition.objects.get(name=attribute.get('name'))
             ResourceAttribute.objects.create(value=attribute.pop('value'),

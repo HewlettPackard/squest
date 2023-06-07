@@ -1,5 +1,4 @@
 from service_catalog.forms import AcceptRequestForm
-from service_catalog.forms.utils import _get_field_group
 from service_catalog.models import Request, Instance
 from tests.test_service_catalog.base import BaseTest
 

@@ -6,5 +6,3 @@ from profiles.views.common import *
 from profiles.views.token_views import *
 from profiles.views.request_notification_views import *
 from profiles.views.support_notification_views import *
-from profiles.views.quota_views import *
-from profiles.views.quota_binding_views import *
