@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resource_tracker_v2', '0001_initial'),
+        ('resource_tracker_v2', '0002_initial'),
         ('service_catalog', '0012_auto_20221004_1808'),
     ]
 
