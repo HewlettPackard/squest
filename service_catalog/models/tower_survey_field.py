@@ -1,10 +1,9 @@
 import logging
 
-from django.db.models import Model, CharField, BooleanField, ForeignKey, CASCADE, SET_NULL
+from django.db.models import Model, CharField, BooleanField, ForeignKey, CASCADE
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-from resource_tracker_v2.models.attribute_definition import AttributeDefinition
 from service_catalog.models import Operation
 
 logger = logging.getLogger(__name__)
@@ -19,12 +18,6 @@ class TowerSurveyField(Model):
                            related_name="tower_survey_fields",
                            related_query_name="tower_survey_field")
     validators = CharField(null=True, blank=True, max_length=200, verbose_name="Field validators")
-    attribute_definition = ForeignKey(AttributeDefinition,
-                                      on_delete=SET_NULL,
-                                      blank=True,
-                                      null=True,
-                                      related_name="tower_survey_fields",
-                                      related_query_name="tower_survey_field")
 
     def __str__(self):
         return self.name
