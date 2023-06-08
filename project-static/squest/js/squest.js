@@ -24,20 +24,6 @@ $(document).ready(function () {
             left: 1,
         }
     });
-
-
-    // Apply the filter to remove refactors by default
-    // depreacted resource tracker v1
-    // var titles = $('#pool_table thead th');
-    // poolTable.columns().eq(0).each(function (colIdx) {
-    //     var column = poolTable.columns(colIdx);
-    //     var title = titles.eq(colIdx).text();
-    //     if (containsAny(title, disabled_column_list)){
-    //         // console.log("disable colum id:" + colIdx)
-    //         column.visible(false, false);
-    //     }
-    // });
-    // poolTable.reload();
 });
 
 function containsAny(str, substrings) {

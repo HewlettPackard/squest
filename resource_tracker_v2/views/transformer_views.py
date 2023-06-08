@@ -19,6 +19,13 @@ class TransformerListView(PermissionRequiredMixin, SingleTableMixin, FilterView)
     filterset_class = TransformerFilter
     template_name = 'generics/list.html'
 
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super(TransformerListView, self).get_filterset_kwargs(filterset_class)
+        resource_group_id = self.kwargs.get('resource_group_id')
+        resource_group = ResourceGroup.objects.get(id=resource_group_id)
+        kwargs.update({"resource_group": resource_group})
+        return kwargs
+
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
         resource_group_id = self.kwargs.get('resource_group_id')

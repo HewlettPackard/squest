@@ -2,7 +2,7 @@ from django.forms import SelectMultiple
 from django_filters import MultipleChoiceFilter
 
 from Squest.utils.squest_filter import SquestFilter
-from resource_tracker_v2.models import Transformer
+from resource_tracker_v2.models import Transformer, AttributeDefinition
 
 
 class TransformerFilter(SquestFilter):
@@ -12,11 +12,12 @@ class TransformerFilter(SquestFilter):
         fields = ['attribute_definition']
 
     def __init__(self, *args, **kwargs):
+        self.resource_group = kwargs.pop("resource_group", None)
         super(TransformerFilter, self).__init__(*args, **kwargs)
         self.filters['attribute_definition'].field.label = "Attribute"
-        from resource_tracker_v2.models import AttributeDefinition
-        # TODO: filter to have only linked attributes. Here the list contains all attributes
-        self.filters['attribute_definition'].field.choices = [(attribute.id, attribute.name) for attribute in AttributeDefinition.objects.all()]
+        self.filters['attribute_definition'].field.choices = [(attribute_definition.id, attribute_definition.name) for attribute_definition in AttributeDefinition.objects.all()]
+        if self.resource_group is not None:
+            self.filters['attribute_definition'].field.choices = [(transformer.attribute_definition.id, transformer.attribute_definition.name) for transformer in self.resource_group.transformers.all()]
 
     attribute_definition = MultipleChoiceFilter(
         label="Attribute",
