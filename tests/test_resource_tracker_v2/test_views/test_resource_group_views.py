@@ -21,7 +21,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
 
-    def test_resource_group_list_as_standard_ser(self):
+    def test_resource_group_list_as_standard_user(self):
         self.client.force_login(self.standard_user)
         response = self.client.get(reverse('resource_tracker:resource_group_list'))
         self.assertEqual(403, response.status_code)
