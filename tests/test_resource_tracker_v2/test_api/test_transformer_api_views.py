@@ -5,10 +5,10 @@ from resource_tracker_v2.models import Transformer, AttributeDefinition, Resourc
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2API
 
 
-class TestResourceAPIView(BaseTestResourceTrackerV2API):
+class TestTransformerAPIView(BaseTestResourceTrackerV2API):
 
     def setUp(self):
-        super(TestResourceAPIView, self).setUp()
+        super(TestTransformerAPIView, self).setUp()
         self._list_create_url = reverse('api_transformer_list_create',  kwargs={"resource_group_id": self.cluster.id})
         self._details_url = reverse('api_transformer_details', kwargs={"resource_group_id": self.cluster.id,
                                                                        "pk": self.core_transformer.id})

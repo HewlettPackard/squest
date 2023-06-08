@@ -114,3 +114,18 @@ class TransformerSerializerTests(BaseTestResourceTrackerV2API):
         serializer = TransformerSerializer(instance=self.core_transformer, data=data)
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), {'consume_from_attribute_definition'})
+
+    def test_update_factor_also_update_parent_consumption(self):
+        consumption_before = self.core_transformer.total_consumed
+        data = {
+            "resource_group": self.single_vms.id,
+            "attribute_definition": self.vcpu_attribute.id,
+            "consume_from_resource_group": self.cluster.id,
+            "consume_from_attribute_definition": self.core_attribute.id,
+            "factor": 2
+        }
+        serializer = TransformerSerializer(instance=self.vcpu_from_core_transformer, data=data)
+        self.assertTrue(serializer.is_valid())
+        serializer.save()
+        self.core_transformer.refresh_from_db()
+        self.assertEqual(self.core_transformer.total_consumed, consumption_before / 2)
