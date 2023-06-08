@@ -52,9 +52,6 @@ class Resource(models.Model):
         transformer = Transformer.objects.get(attribute_definition=attribute_definition,
                                               resource_group=self.resource_group)
         transformer.calculate_total_produced()
-        for target_transformer in Transformer.objects.filter(attribute_definition=transformer.consume_from_attribute_definition,
-                                                             resource_group=transformer.consume_from_resource_group):
-            target_transformer.calculate_total_consumed()
 
     def get_attribute_value(self, attribute_definition):
         result = 0

@@ -43,7 +43,8 @@ class TestModelTransformer(BaseTestResourceTrackerV2):
 
     def test_calculate_total_consumed_with_factor(self):
         self.vcpu_from_core_transformer.refresh_from_db()
-        self.vcpu_from_core_transformer.set_factor(4)
+        self.vcpu_from_core_transformer.factor = 4
+        self.vcpu_from_core_transformer.save()
         self.core_transformer.refresh_from_db()
         self.assertEqual(5, self.core_transformer.total_consumed)
         self.assertEqual(35, self.core_transformer.available)

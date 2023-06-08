@@ -1,4 +1,6 @@
 from django.db.models import Model, ForeignKey, CASCADE, FloatField, IntegerField, SET_NULL, CheckConstraint, F, Q
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse
 
 from resource_tracker_v2.models.attribute_definition import AttributeDefinition
@@ -110,11 +112,6 @@ class Transformer(Model):
             return "yellow"
         return "gray"
 
-    def set_factor(self, new_factor):
-        self.factor = new_factor
-        self.save()
-        self.notify_parent()
-
     def calculate_total_produced(self):
         """
         Calculate the sum of all source attribute
@@ -150,8 +147,9 @@ class Transformer(Model):
         return None
 
     def notify_parent(self):
-        if self.get_parent() is not None:
-            self.get_parent().calculate_total_consumed()
+        parent = self.get_parent()
+        if parent is not None:
+            parent.calculate_total_consumed()
 
     def change_consumer(self, resource_group, attribute):
         # get old transformer
@@ -178,3 +176,9 @@ class Transformer(Model):
             children_transformer.consume_from_attribute_definition = None
             children_transformer.save()
         super(Transformer, self).delete()
+
+
+@receiver(post_save, sender=Transformer)
+def create_user_profile(sender, instance, created, **kwargs):
+    if not created:
+        instance.notify_parent()
