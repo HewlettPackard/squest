@@ -21,7 +21,6 @@ def home(request):
         context['total_request'] = Request.objects.filter(state=RequestState.SUBMITTED).count()
         context['total_instance'] = Instance.objects.filter(state='AVAILABLE').count()
         context['total_support_opened'] = Support.objects.filter(state='OPENED').count()
-        context['total_user_without_billing_groups'] = User.objects.filter(billing_groups=None).count()
         context['total_user'] = User.objects.all().count()
 
         # Create a dict that represent {service, number_of_instance, submitted_request}
