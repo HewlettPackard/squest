@@ -1,14 +1,13 @@
 from django.urls import reverse
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
+
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.request_filter import RequestArchivedFilter
 from service_catalog.models import Request
 from service_catalog.tables.request_tables import RequestTable
 
 
-class RequestArchivedListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class RequestArchivedListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = RequestTable
     model = Request
