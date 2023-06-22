@@ -18,6 +18,14 @@ class AbstractScope(SquestModel):
         verbose_name="Default roles"
     )
 
+    def get_object(self):
+        if hasattr(self, "organization"):
+            return self.organization
+        elif hasattr(self, "team"):
+            return self.team
+        raise Exception("This scope is not implemented")
+
+
     def get_queryset_for_user(cls, user, perm):
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
@@ -31,20 +39,10 @@ class AbstractScope(SquestModel):
                                     scope__rbac__role__permissions__content_type__app_label=app_label)
 
     def get_scopes(self):
-        if hasattr(self, "organization"):
-            return self.organization.get_scopes()
-        elif hasattr(self, "team"):
-            return self.team.get_scopes()
-        else:
-            raise Exception("Not implemented")
+        return self.get_object().get_scopes()
 
     def __str__(self):
-        if hasattr(self, "organization"):
-            return str(self.organization)
-        elif hasattr(self, "team"):
-            return str(self.team)
-        else:
-            raise Exception("Not implemented")
+        return str(self.get_object())
 
     @property
     def users(self):
@@ -76,7 +74,6 @@ class AbstractScope(SquestModel):
         group.user_set.remove(user)
 
     def remove_user(self, user):
-
         for rbac in self.rbac.filter(user=user):
             rbac.user_set.remove(user)
 
@@ -84,15 +81,10 @@ class AbstractScope(SquestModel):
         return self.get_group_role(role_name).user_set.all()
 
     def get_perspective_users(self):
-        return User.objects.all()
+        return self.get_object().get_perspective_users()
 
     def get_absolute_url(self):
-        if hasattr(self, "organization"):
-            return self.organization.get_absolute_url()
-        elif hasattr(self, "team"):
-            return self.team.get_absolute_url()
-        else:
-            return ""
+        return self.get_object().get_absolute_url()
 
 
 class Scope(AbstractScope):
