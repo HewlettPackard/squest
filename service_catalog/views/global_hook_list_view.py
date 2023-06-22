@@ -1,14 +1,12 @@
 from django.core.exceptions import PermissionDenied
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.global_hook_filter import GlobalHookFilter
 from service_catalog.models import GlobalHook
 from service_catalog.tables.global_hook_tables import GlobalHookTable
 
 
-class GlobalHookListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class GlobalHookListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = GlobalHookTable
     model = GlobalHook
@@ -22,6 +20,5 @@ class GlobalHookListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Global hooks"
         context['html_button_path'] = "generics/buttons/create_global_hook.html"
         return context

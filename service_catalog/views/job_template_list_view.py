@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
 from guardian.decorators import permission_required
-from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.job_template_filter import JobTemplateFilter
 from service_catalog.models import JobTemplate, TowerServer
 from service_catalog.tables.job_template_tables import JobTemplateTable
@@ -13,7 +11,7 @@ from service_catalog.tables.job_template_tables import JobTemplateTable
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(permission_required('service_catalog.view_jobtemplate'), name='dispatch')
-class JobTemplateListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class JobTemplateListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = JobTemplateTable
     model = JobTemplate
