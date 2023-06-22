@@ -33,10 +33,10 @@
                             </blockquote>
                         {% endif %}
 
-                        <form action="{% url 'resource_tracker:resource_group_attribute_delete' resource_group.id attribute.id %}" method='POST'>{% csrf_token %}
+                        <form action="{% url 'resource_tracker_v2:resourcegroup_attribute_delete' resource_group.id attribute.id %}" method='POST'>{% csrf_token %}
                             <p>Do you want to delete the attribute "{{ attribute.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'resource_tracker:resource_group_attribute_list' resource_group.id %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'resource_tracker_v2:resourcegroup_attribute_list' resource_group.id %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

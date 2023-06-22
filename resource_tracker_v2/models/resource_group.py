@@ -18,4 +18,4 @@ class ResourceGroup(models.Model):
         return resource
 
     def get_absolute_url(self):
-        return reverse("resource_tracker:resource_group_list")
+        return reverse("resource_tracker_v2:resourcegroup_list")

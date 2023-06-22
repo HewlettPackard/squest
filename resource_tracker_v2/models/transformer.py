@@ -45,7 +45,7 @@ class Transformer(Model):
     )
 
     def get_absolute_url(self):
-        return reverse("resource_tracker:resource_group_attribute_list",
+        return reverse("resource_tracker_v2:resourcegroup_attribute_list",
                        kwargs={"resource_group_id": self.resource_group.id})
 
     @classmethod
