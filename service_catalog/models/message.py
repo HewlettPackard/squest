@@ -4,7 +4,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from service_catalog.models import Request
+from service_catalog.models.request import Request
 from service_catalog.models.support import Support
 
 

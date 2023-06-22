@@ -5,23 +5,15 @@ from datetime import datetime, timedelta
 import requests
 import towerlib
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField
-from django.db.models.signals import post_save, pre_delete, pre_save
-from django.dispatch import receiver
+from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition, can_proceed
 
-from profiles.models import Team
-from profiles.models.user_role_binding import UserRoleBinding
-from profiles.models.team_role_binding import TeamRoleBinding
-from profiles.models.role_manager import RoleManager
-from service_catalog.models.approval_step import ApprovalStep
-from service_catalog.models.approval_step_state import ApprovalStepState
-from service_catalog.models.approval_state import ApprovalState
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.request_state import RequestState
@@ -31,7 +23,7 @@ from service_catalog.models.state_hooks import HookManager
 logger = logging.getLogger(__name__)
 
 
-class Request(RoleManager):
+class Request(SquestModel):
     fill_in_survey = JSONField(default=dict, blank=True)
     admin_fill_in_survey = JSONField(default=dict, blank=True)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True)
@@ -45,16 +37,11 @@ class Request(RoleManager):
     periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
     periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = TextField(blank=True, null=True)
-    approval_step = ForeignKey(
-        ApprovalStep,
-        blank=True,
-        null=True,
-        on_delete=SET_NULL,
-        related_name='requests',
-        related_query_name='request'
-    )
     accepted_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="accepted_requests")
     processed_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="processed_requests")
+
+    def get_scopes(self):
+        return self.instance.get_scopes()
 
     def __str__(self):
         return f"{self.operation.name} - {self.instance.name} (#{self.id})"
@@ -296,14 +283,10 @@ class Request(RoleManager):
                 return RequestState.REJECTED
             else:
                 raise NotImplementedError
-        bindings = UserRoleBinding.objects.filter(
-            content_type=ContentType.objects.get(app_label="profiles", model="team"),
-            user=user
-        )
-        teams = Team.objects.filter(id__in=[binding.object_id for binding in bindings])
-        for approval_step_state in ApprovalStepState.objects.filter(team__in=teams, request=self,
-                                                                    approval_step=self.approval_step):
-            approval_step_state.set_state(user, target_approval_step_state)
+        # teams = Team.objects.filter(id__in=[binding.object_id for binding in bindings])
+        # for approval_step_state in ApprovalStepState.objects.filter(team__in=teams, request=self,
+        #                                                             approval_step=self.approval_step):
+        #     approval_step_state.set_state(user, target_approval_step_state)
         state = self.approval_step.get_request_approval_state(self)
         if state == ApprovalState.REJECTED:
             return RequestState.REJECTED
@@ -348,30 +331,12 @@ class Request(RoleManager):
 
     @classmethod
     def create_approval_step_states(cls, sender, instance, created, *args, **kwargs):
-        if created:
-            if instance.approval_step:
-                for team in instance.approval_step.teams.all():
-                    ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
-                                                     team=team)
-
-    @classmethod
-    def add_permission(cls, sender, instance, created, *args, **kwargs):
-        if created:
-            if instance.user:
-                instance.add_user_in_role(instance.user, "Admin")
-            instance_content_type = ContentType.objects.get_for_model(Instance)
-            user_bindings = UserRoleBinding.objects.filter(
-                content_type=instance_content_type,
-                object_id=instance.instance.id
-            )
-            team_bindings = TeamRoleBinding.objects.filter(
-                content_type=instance_content_type,
-                object_id=instance.instance.id
-            )
-            for user_binding in user_bindings:
-                instance.add_user_in_role(user_binding.user, user_binding.role.name)
-            for team_binding in team_bindings:
-                instance.add_team_in_role(team_binding.team, team_binding.role.name)
+        pass
+        # if created:
+        #     if instance.approval_step:
+        #         for team in instance.approval_step.teams.all():
+        #             ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
+        #                                              team=team)
 
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
@@ -411,7 +376,6 @@ class Request(RoleManager):
 pre_save.connect(Request.set_default_approval_step, sender=Request)
 pre_save.connect(Request.create_approval_step_states_when_approval_step_changed, sender=Request)
 post_save.connect(Request.create_approval_step_states, sender=Request)
-post_save.connect(Request.add_permission, sender=Request)
 post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
 post_save.connect(Request.on_create_call_hook_manager, sender=Request)
