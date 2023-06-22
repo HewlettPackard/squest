@@ -23,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         style={'input_type': 'password', 'placeholder': 'Password'}
     )
 
+
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super(UserSerializer, self).create(validated_data)
@@ -30,5 +31,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'password', 'email', 'profile', 'first_name', 'last_name', 'is_staff',
-                  'is_superuser', 'is_active', 'billing_groups']
-        read_only_fields = ['billing_groups']
+                  'is_superuser', 'is_active']
