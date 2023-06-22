@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:global_hook_create' %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}" data-operation-url="{% url 'service_catalog:ajax_load_service_operations' %}">{% csrf_token %}
+                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:globalhook_create' %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}" data-operation-url="{% url 'service_catalog:ajax_load_service_operations' %}">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">

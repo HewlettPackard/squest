@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 from django.forms import HiddenInput, CheckboxInput
 from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
 
-from profiles.models import BillingGroup
 from service_catalog.models import Instance, Service
 from service_catalog.models.instance import InstanceState
 from Squest.utils.squest_filter import SquestFilter
@@ -27,15 +26,13 @@ class CharInFilter(BaseInFilter, CharFilter):
 class InstanceFilter(SquestFilter):
     class Meta:
         model = Instance
-        fields = ['name', 'id', 'spoc', 'service', 'state', 'billing_group']
+        fields = ['name', 'id', 'requester', 'service', 'state']
 
-    spoc = MultipleChoiceFilter()
+    requester = MultipleChoiceFilter()
     state = MultipleChoiceFilter(choices=InstanceState.choices)
     service = MultipleChoiceFilter()
-    billing_group = MultipleChoiceFilter()
 
-    no_billing_groups = BooleanFilter(method='no_billing_group', label="No billing group", widget=CheckboxInput())
-    no_spocs = BooleanFilter(method='no_spoc', label="No SPOC", widget=CheckboxInput())
+    no_requesters = BooleanFilter(method='no_requester', label="No requester", widget=CheckboxInput())
 
     spec = CharInFilter(label="Admin spec contains",
                         method='spec_filter',
@@ -50,18 +47,12 @@ class InstanceFilter(SquestFilter):
         super(InstanceFilter, self).__init__(*args, **kwargs)
         self.filters['id'].field.widget = HiddenInput()
         self.filters['service'].field.choices = [(service.id, service.name) for service in Service.objects.all().order_by("name")]
-        self.filters['spoc'].field.choices = [(spoc.id, spoc.username) for spoc in User.objects.all().order_by("username")]
-        self.filters['billing_group'].field.choices = [(billing_group.id, billing_group.name) for billing_group in BillingGroup.objects.all().order_by("name")]
+        self.filters['requester'].field.choices = [(requester.id, requester.username) for requester in User.objects.all().order_by("username")]
 
-    def no_billing_group(self, queryset, name, value):
+    def no_requester(self, queryset, name, value):
         if not value:
             return queryset
-        return queryset.filter(billing_group=None)
-
-    def no_spoc(self, queryset, name, value):
-        if not value:
-            return queryset
-        return queryset.filter(spoc=None)
+        return queryset.filter(requester=None)
 
     def spec_filter(self, queryset, name, value):
         return json_filter(queryset, name, value, 'spec')

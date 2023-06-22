@@ -6,7 +6,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from service_catalog.filters.request_filter import RequestFilter
-from service_catalog.models import RequestState, Service
+from service_catalog.models.services import Service
+from service_catalog.models.request_state import RequestState
 from service_catalog.api.serializers import RequestSerializer, AdminRequestSerializer, OperationRequestSerializer, ServiceRequestSerializer
 
 
@@ -77,4 +78,3 @@ class ServiceRequestCreate(CreateAPIView):
         request_created = serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(RequestSerializer(request_created).data, status=status.HTTP_201_CREATED, headers=headers)
-
