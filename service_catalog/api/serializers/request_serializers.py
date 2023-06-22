@@ -7,9 +7,13 @@ from rest_framework.serializers import ModelSerializer, CharField, ValidationErr
 
 from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializer
-from profiles.models import BillingGroup
 from service_catalog.forms import FormUtils
-from service_catalog.models import Request, Service, OperationType, Operation, Instance, RequestMessage
+from service_catalog.models.request import Request
+from service_catalog.models.message import RequestMessage
+from service_catalog.models.services import Service
+from service_catalog.models.operations import Operation
+from service_catalog.models.operation_type import OperationType
+from service_catalog.models.instance import Instance
 from service_catalog.api.serializers import DynamicSurveySerializer, InstanceReadSerializer
 
 
@@ -27,9 +31,6 @@ class ServiceRequestSerializer(ModelSerializer):
         help_text="Add a comment to your request",
         required=False
     )
-    billing_group = PrimaryKeyRelatedField(label='billing group', allow_null=True, default=None, required=False,
-                                           queryset=BillingGroup.objects.all(),
-                                           help_text="Billing group id")
 
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', None)
@@ -54,18 +55,6 @@ class ServiceRequestSerializer(ModelSerializer):
             if not purged_survey.get('spec'):
                 self.fields['fill_in_survey'].required = False
 
-    def validate_billing_group(self, value):
-        if not self.service.billing_group_is_selectable:
-            return None if self.service.billing_group_id is None else BillingGroup.objects.get(
-                id=self.service.billing_group_id)
-        if value is not None:
-            if self.service.billing_groups_are_restricted and value not in self.request.user.billing_groups.all():
-                raise ValidationError(
-                    f"You are not authorized to request this service with the billing group {value.name}. "
-                    f"Please choose among yours"
-                )
-        return value
-
     def save(self):
         # create the instance
         instance_name = self.validated_data["squest_instance_name"]
@@ -74,7 +63,7 @@ class ServiceRequestSerializer(ModelSerializer):
             billing_group = self.validated_data["billing_group"]
 
         new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
-                                               spoc=self.request.user)
+                                               requester=self.request.user)
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
         new_request = Request.objects.create(instance=new_instance,
                                              operation=self.create_operation,

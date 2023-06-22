@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from service_catalog.forms import GlobalHookForm
-from service_catalog.models import GlobalHook, Service
+from service_catalog.models.services import Service
+from service_catalog.models.state_hooks import GlobalHook
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
@@ -14,11 +15,11 @@ def global_hook_create(request):
         form = GlobalHookForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('service_catalog:global_hook_list')
+            return redirect('service_catalog:globalhook_list')
     else:
         form = GlobalHookForm()
     breadcrumbs = [
-        {'text': 'Global hooks', 'url': reverse('service_catalog:global_hook_list')},
+        {'text': 'Global hooks', 'url': reverse('service_catalog:globalhook_list')},
         {'text': "Create a new global hook", 'url': ""}
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs}
@@ -31,9 +32,9 @@ def global_hook_edit(request, global_hook_id):
     form = GlobalHookForm(request.POST or None, instance=target_global_hook)
     if form.is_valid():
         form.save()
-        return redirect('service_catalog:global_hook_list')
+        return redirect('service_catalog:globalhook_list')
     breadcrumbs = [
-        {'text': 'Global hooks', 'url': reverse('service_catalog:global_hook_list')},
+        {'text': 'Global hooks', 'url': reverse('service_catalog:globalhook_list')},
         {'text': target_global_hook.name, 'url': ""}
     ]
     context = {'form': form,
@@ -48,9 +49,9 @@ def global_hook_delete(request, global_hook_id):
     target_global_hook = get_object_or_404(GlobalHook, id=global_hook_id)
     if request.method == "POST":
         target_global_hook.delete()
-        return redirect('service_catalog:global_hook_list')
+        return redirect('service_catalog:globalhook_list')
     breadcrumbs = [
-        {'text': 'Global hooks', 'url': reverse('service_catalog:global_hook_list')},
+        {'text': 'Global hooks', 'url': reverse('service_catalog:globalhook_list')},
         {'text': target_global_hook.name, 'url': ""}
     ]
     context = {

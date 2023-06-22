@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from Squest.utils.squest_rbac import SquestObjectPermissions
 from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer, RestrictedInstanceReadSerializer
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.models import Instance
@@ -38,23 +39,25 @@ class InstanceList(ListCreateAPIView):
         return Response(InstanceReadSerializer(instance_created).data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+from rest_framework import permissions
+
+
+
+
+
 class InstanceDetails(RetrieveUpdateDestroyAPIView):
     serializer_class = InstanceReadSerializer
+    queryset = Instance.objects.all()
+    permission_classes = [SquestObjectPermissions]
 
-    def get_permissions(self):
-        if self.request.method in ["PATCH", "PUT", "DELETE"]:
-            return [IsAdminUser()]
-        return [IsAuthenticated()]
 
     def get_serializer_class(self):
+        object = self.get_object()
         if self.request.method in ["PATCH", "PUT", "DELETE"]:
             return InstanceSerializer
         if self.request.user.is_superuser:
             return InstanceReadSerializer
         return RestrictedInstanceReadSerializer
-
-    def get_queryset(self):
-        return get_objects_for_user(self.request.user, 'service_catalog.view_instance')
 
 
 class SpecDetailsAPIView(APIView):

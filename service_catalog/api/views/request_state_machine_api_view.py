@@ -13,7 +13,7 @@ from rest_framework.viewsets import ViewSet
 from service_catalog.api.serializers import AcceptRequestSerializer, RequestSerializer, MessageSerializer, \
     RequestMessageSerializer, AdminRequestSerializer
 from service_catalog.mail_utils import send_mail_request_update, send_email_request_canceled
-from service_catalog.models import Request
+from service_catalog.models.request import Request
 from service_catalog.views import process_request
 
 

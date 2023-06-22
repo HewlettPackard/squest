@@ -75,12 +75,9 @@ urlpatterns = [
     path('instance/<int:instance_id>/archive/', views.instance_archive, name='instance_archive'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/', views.instance_request_new_operation,
          name='instance_request_new_operation'),
-    path('instance/<int:instance_id>/users/', views.user_in_instance_update, name='user_in_instance_update'),
     path('instance/<int:instance_id>/users/remove/<int:user_id>/', views.user_in_instance_remove,
          name='user_in_instance_remove'),
-    path('instance/<int:instance_id>/teams/', views.team_in_instance_update, name='team_in_instance_update'),
-    path('instance/<int:instance_id>/teams/remove/<int:team_id>/', views.team_in_instance_remove,
-         name='team_in_instance_remove'),
+
 
     path('support/', SupportListView.as_view(), name='support_list'),
 
@@ -101,10 +98,10 @@ urlpatterns = [
     path('tower/<int:tower_id>/job_template/<int:job_template_id>/', views.job_template_details,
          name='job_template_details'),
 
-    path('tool/global_hook/', GlobalHookListView.as_view(), name='global_hook_list'),
-    path('tool/global_hook/create/', views.global_hook_create, name='global_hook_create'),
-    path('tool/global_hook/<int:global_hook_id>/edit/', views.global_hook_edit, name='global_hook_edit'),
-    path('tool/global_hook/<int:global_hook_id>/delete/', views.global_hook_delete, name='global_hook_delete'),
+    path('tool/global_hook/', GlobalHookListView.as_view(), name='globalhook_list'),
+    path('tool/global_hook/create/', views.global_hook_create, name='globalhook_create'),
+    path('tool/global_hook/<int:global_hook_id>/edit/', views.global_hook_edit, name='globalhook_edit'),
+    path('tool/global_hook/<int:global_hook_id>/delete/', views.global_hook_delete, name='globalhook_delete'),
     path('tool/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
     path('tool/global_hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
@@ -115,9 +112,9 @@ urlpatterns = [
     path('tool/announcement/<int:announcement_id>/edit/', views.announcement_edit, name='announcement_edit'),
     path('tool/announcement/<int:announcement_id>/delete/', views.announcement_delete, name='announcement_delete'),
 
-    path('tool/custom-link/', CustomLinkListView.as_view(), name='custom_link_list'),
-    path('tool/custom-link/create/', views.custom_link_create, name='custom_link_create'),
-    path('tool/custom-link/<int:custom_link_id>/edit/', views.custom_link_edit, name='custom_link_edit'),
-    path('tool/custom-link/<int:custom_link_id>/delete/', views.custom_link_delete, name='custom_link_delete'),
+    path('tool/custom-link/', CustomLinkListView.as_view(), name='customlink_list'),
+    path('tool/custom-link/create/', views.custom_link_create, name='customlink_create'),
+    path('tool/custom-link/<int:custom_link_id>/edit/', views.custom_link_edit, name='customlink_edit'),
+    path('tool/custom-link/<int:custom_link_id>/delete/', views.custom_link_delete, name='customlink_delete'),
 
 ]
