@@ -1,5 +1,6 @@
 from audioop import reverse
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from profiles.models.scope import Scope
@@ -15,6 +16,9 @@ class Organization(Scope):
         from profiles.models.scope import Scope
         squest_scope = SquestScope.load()
         return Scope.objects.filter(id=squest_scope.id) | Scope.objects.filter(id=self.id)
+
+    def get_perspective_users(self):
+        return User.objects.all()
 
     def get_name_by_role_name(self, role_name):
         return f"{self.name} - {role_name}"

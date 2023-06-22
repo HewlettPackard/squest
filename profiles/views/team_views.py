@@ -5,7 +5,7 @@ from guardian.mixins import LoginRequiredMixin
 
 from Squest.utils.squest_views import SquestListView
 from profiles.filters.team_filter import TeamFilter
-from profiles.forms.team_forms import TeamForm, OrganizationTeamForm
+from profiles.forms.team_forms import TeamForm
 from profiles.models.team import Team
 from profiles.models.organization import Organization
 from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
@@ -65,11 +65,11 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
 class OrganizationTeamCreateView(LoginRequiredMixin, CreateView):
     model = Team
     template_name = 'generics/generic_form.html'
-    form_class = OrganizationTeamForm
+    form_class = TeamForm
 
     def get_form_kwargs(self):
         kwargs = super(OrganizationTeamCreateView, self).get_form_kwargs()
-        kwargs['org_id'] = self.kwargs.get('pk')
+        kwargs['organization_id'] = self.kwargs.get('pk')
         return kwargs
 
     def get_context_data(self, **kwargs):
