@@ -2,17 +2,15 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.models import Service
 from service_catalog.tables.service_tables import ServiceTable
 
 
 @method_decorator(login_required, name='dispatch')
-class ServiceListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class ServiceListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = ServiceTable
     model = Service

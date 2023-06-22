@@ -1,15 +1,13 @@
 from django.shortcuts import redirect
 from django.urls import reverse
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.operation_filter import OperationFilterLimited
 from service_catalog.models import Operation, Service, OperationType
 from service_catalog.tables.operation_tables import CreateOperationTable
 
 
-class CreateOperationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class CreateOperationListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = CreateOperationTable
     model = Operation
