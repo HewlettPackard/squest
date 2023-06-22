@@ -25,14 +25,6 @@ class Operation(Model):
     auto_process = BooleanField(default=False, blank=True)
     process_timeout_second = IntegerField(default=60, verbose_name="Process timeout (s)")
     enabled = BooleanField(default=True, blank=True)
-    approval_workflow = ForeignKey(
-        "service_catalog.ApprovalWorkflow",
-        blank=True,
-        null=True,
-        on_delete=SET_NULL,
-        related_name='operation',
-        related_query_name='operation'
-    )
     extra_vars = JSONField(default=dict, blank=True)
     is_admin_operation = BooleanField(default=False, blank=True)
     default_inventory_id = CharField(max_length=500, blank=True, null=True,
