@@ -106,7 +106,6 @@ def request_details(request, request_id):
     comment_messages = RequestMessage.objects.filter(request=target_request)
     context = {'target_request': target_request,
                'comment_messages': comment_messages,
-               'approval_steps': target_request.get_approval_workflow_status(),
                'breadcrumbs': [
                    {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
                    {'text': request_id, 'url': ""},

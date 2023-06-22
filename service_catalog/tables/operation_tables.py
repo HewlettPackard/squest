@@ -12,12 +12,10 @@ class OperationTable(SquestTable):
     is_admin_operation = TemplateColumn(template_name='custom_columns/generic_boolean.html', verbose_name="Admin only")
     actions = TemplateColumn(template_name='custom_columns/operation_actions.html', orderable=False)
 
-    approval_workflow__name = Column(verbose_name="Approval")
-
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("enabled", "name", "type", "job_template", "approval_workflow__name", "auto_accept", "auto_process",
+        fields = ("enabled", "name", "type", "job_template", "auto_accept", "auto_process",
                   "is_admin_operation", "actions")
 
 
