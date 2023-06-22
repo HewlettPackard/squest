@@ -178,12 +178,11 @@ if LDAP_ENABLED:
 # do not use LDAP auth when testing
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    'guardian.backends.ObjectPermissionBackend',
+    'Squest.utils.squest_rbac.MagicAdminBackend',
 ]
 if LDAP_ENABLED and not TESTING:
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
-        'guardian.backends.ObjectPermissionBackend',
         'django_auth_ldap.backend.LDAPBackend',
     )
 
