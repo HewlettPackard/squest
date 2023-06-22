@@ -1,0 +1,10 @@
+{% with class_name=scope|to_class_name|lower %}
+    {% for group in record.groups.all %}
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-secondary disabled">{{ group.role.name }}</a>
+            <a title="Delete"
+               href="{% url "profiles:"|add:class_name|add:"_rbac_delete" scope.id group.id record.id %}"
+               class="btn btn-secondary"><i class="fas fa-times fa-xs"></i></a>
+        </div>
+    {% endfor %}
+{% endwith %}
