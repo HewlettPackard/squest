@@ -7,14 +7,11 @@
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
-            <a href="{% url 'profiles:organization_rbac_create' object.id %}"
+            <a href="{% url 'profiles:scope_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
             <a href="{% url 'profiles:organization_team_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Create team
-            </a>
-            <a href="{% url 'profiles:organization_role_create' object.id %}"
-               class="btn btn-success"> <i class="fas fa-plus"></i> Add roles
             </a>
             <a href="{% url 'profiles:organization_edit' object.id %}"
                class="btn btn-primary">
@@ -41,6 +38,9 @@
                         <ul class="list-group mb-3">
                             <li class="list-group-item">
                                 <b>Name</b> <a class="float-right">{{ object.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Description</b> <p class="float-right">{{ object.description }}</p>
                             </li>
                         </ul>
                     </div>
