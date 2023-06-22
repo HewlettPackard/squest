@@ -1,16 +1,17 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
-from django_filters.views import FilterView
-from django_tables2 import SingleTableMixin
 
+
+from Squest.utils.squest_views import SquestListView
 from resource_tracker_v2.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker_v2.forms.resource_group_form import ResourceGroupForm
 from resource_tracker_v2.models import ResourceGroup
 from resource_tracker_v2.tables.resource_group_table import ResourceGroupTable
 
 
-class ResourceGroupListView(PermissionRequiredMixin, SingleTableMixin, FilterView):
+class ResourceGroupListView(PermissionRequiredMixin, SquestListView):
     table_class = ResourceGroupTable
     model = ResourceGroup
     filterset_class = ResourceGroupFilter
@@ -19,9 +20,6 @@ class ResourceGroupListView(PermissionRequiredMixin, SingleTableMixin, FilterVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Resource group"
-        context['app_name'] = "resource_tracker"
-        context['object_name'] = "resource_group"
         context['html_button_path'] = "generics/buttons/generic_add_button.html"
         return context
 
@@ -34,13 +32,16 @@ class ResourceGroupCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Resource group"
-        context['app_name'] = "resource_tracker"
-        context['object_name'] = "resource_group"
+
+        content_type = ContentType.objects.get_for_model(self.model)
+
+        context['title'] = f'Create {content_type.name}'
+        context['app_name'] = content_type.app_label
+        context['object_name'] = content_type.model
         context['action'] = "create"
-        context[""] = [
-            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
-            {'text': 'Create a new resource group', 'url': ""},
+        context["breadcrumbs"] = [
+            {'text': content_type.name.capitalize(), 'url': reverse(f'{content_type.app_label}:{content_type.model}_list')},
+            {'text': f'Create a new {content_type.name}', 'url': ""},
         ]
         return context
 
@@ -54,12 +55,15 @@ class ResourceGroupEditView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Resource group"
-        context['app_name'] = "resource_tracker"
-        context['object_name'] = "resource_group"
+
+        content_type = ContentType.objects.get_for_model(self.model)
+
+        context['title'] = f'Edit {content_type.name}'
+        context['app_name'] = content_type.app_label
+        context['object_name'] = content_type.model
         context['action'] = "edit"
-        context[""] = [
-            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
+        context["breadcrumbs"] = [
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
             {'text': self.object.name, 'url': ""},
         ]
         return context
@@ -68,14 +72,14 @@ class ResourceGroupEditView(PermissionRequiredMixin, UpdateView):
 class ResourceGroupDeleteView(PermissionRequiredMixin, DeleteView):
     model = ResourceGroup
     template_name = 'resource_tracking_v2/resource_group/resource-group-delete.html'
-    success_url = reverse_lazy("resource_tracker:resource_group_list")
+    success_url = reverse_lazy("resource_tracker_v2:resourcegroup_list")
     permission_required = "is_superuser"
     pk_url_kwarg = "resource_group_id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Resource group', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
             {'text': self.object.name, 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
