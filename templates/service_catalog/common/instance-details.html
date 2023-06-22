@@ -53,7 +53,7 @@
                                     class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Billing group</b> {% if instance.billing_group %}<a href="{% url 'profiles:billing_group_list' %}?id={{ instance.billing_group.id }}#quota{{ instance.billing_group.id }}" class="float-right">{{ instance.billing_group.name }}</a>{% endif %}
+                                <b>Scope</b> <a href="{{ instance.scope.get_absolute_url }}" class="float-right">{{ instance.scope }}</a>
                             </li>
                             <li class="list-group-item">
                                 <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}" class="float-right">{{ instance.spoc.username }}</a>
@@ -62,7 +62,7 @@
                                 <li class="list-group-item">
                                     <b>Resources</b>
                                     {% for resource in instance.resources.all %}
-                                        <a class="float-right" href="{% url 'resource_tracker:resource_group_resource_edit' resource.resource_group.id resource.id %}">
+                                        <a class="float-right" href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
                                             {{ resource.name }}
                                         </a> <br>
                                     {% endfor %}
@@ -90,8 +90,6 @@
                             {% if request.user.is_superuser %}<li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a></li>{% endif %}
                             <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
-                            <li class="nav-item"><a class="nav-link" href="#users" data-toggle="tab">Users</a>
-                            <li class="nav-item"><a class="nav-link" href="#teams" data-toggle="tab">Teams</a>
                             </li>
                         </ul>
                     </div>
@@ -124,24 +122,6 @@
                             </div>
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}
-                            </div>
-                            <div class="tab-pane" id="users">
-                                <a class="btn btn-info float-sm-right{% if "change_instance" not in instance_perms %} disabled{% endif %}"
-                                   href="{% url "service_catalog:user_in_instance_update" instance.id %}">
-                                    <i class="fas fa-user-edit"></i> Manage users role
-                                </a>
-                                {% with user_roles as roles %}
-                                    {% render_table users_table %}
-                                {% endwith %}
-                            </div>
-                            <div class="tab-pane" id="teams">
-                                <a class="btn btn-info float-sm-right{% if "change_instance" not in instance_perms %} disabled{% endif %}"
-                                   href="{% url "service_catalog:team_in_instance_update" instance.id %}">
-                                    <i class="fas fa-user-edit"></i> Manage team role
-                                </a>
-                                {% with team_roles as roles %}
-                                    {% render_table teams_table %}
-                                {% endwith %}
                             </div>
                         </div>
                     </div>
