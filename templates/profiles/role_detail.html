@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Role
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    {% if request.user.is_superuser %}
+        <div class="float-right">
+            <a href="{% url 'profiles:role_edit' object.id %}"
+               class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+            <a href="{% url 'profiles:role_delete' object.id %}"
+               class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card card-sucess">
+                    <div class="card-header">
+                        <h3 class="card-title">Details</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">
+                                <b>Name</b> <p class="float-right">{{ object.name }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Description</b> <p class="float-right">{{ object.description }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Permissions
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        {% render_table permissions_table %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+{% endblock %}

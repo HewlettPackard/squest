@@ -1,24 +1,27 @@
 from django.db.models import ProtectedError
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from guardian.mixins import LoginRequiredMixin
 
 from Squest.utils.squest_views import SquestListView
-from profiles.filters.team_filter import TeamFilter
-from profiles.forms.team_forms import TeamForm, OrganizationTeamForm
-from profiles.models.team import Team
-from profiles.models.organization import Organization
-from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
+from profiles.filters import OrganizationFilter
+from profiles.forms import OrganizationForm
+from profiles.models import Organization
+from profiles.tables import OrganizationTable, UserRoleTable, ScopeRoleTable, TeamTable
+
+from django.urls import reverse
+from guardian.mixins import LoginRequiredMixin
+
+from profiles.filters.user_filter import UserFilter
 
 
-class TeamListView(SquestListView):
+class OrganizationListView(SquestListView):
     table_pagination = {'per_page': 10}
-    table_class = TeamTable
-    model = Team
+    table_class = OrganizationTable
+    model = Organization
     template_name = 'generics/list.html'
     ordering = 'name'
 
-    filterset_class = TeamFilter
+    filterset_class = OrganizationFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,59 +29,36 @@ class TeamListView(SquestListView):
         return context
 
 
-class TeamDetailView(DetailView):
-    model = Team
+class OrganizationDetailView(LoginRequiredMixin, DetailView):
+    model = Organization
+    filterset_class = UserFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Breadcrumbs
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Organizations', 'url': reverse('profiles:organization_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
-        context['users'] = UserRoleTable(self.object.users)
-        context['roles'] = ScopeRoleTable(self.object.roles.all())
         context['scope'] = self.object
-
+        context['users'] = UserRoleTable(self.object.users)
+        context['teams'] = TeamTable(self.object.teams.all())
+        context['roles'] = ScopeRoleTable(self.object.roles.all())
         return context
 
 
-class TeamCreateView(LoginRequiredMixin, CreateView):
-    model = Team
+class OrganizationCreateView(LoginRequiredMixin, CreateView):
+    model = Organization
     template_name = 'generics/generic_form.html'
-    form_class = TeamForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
-            {'text': f'Create Team', 'url': ""},
-        ]
-        context['breadcrumbs'] = breadcrumbs
-
-        context['action'] = "create"
-        return context
-
-
-class OrganizationTeamCreateView(LoginRequiredMixin, CreateView):
-    model = Team
-    template_name = 'generics/generic_form.html'
-    form_class = OrganizationTeamForm
-
-    def get_form_kwargs(self):
-        kwargs = super(OrganizationTeamCreateView, self).get_form_kwargs()
-        kwargs['org_id'] = self.kwargs.get('pk')
-        return kwargs
+    form_class = OrganizationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
             {'text': 'Organizations', 'url': reverse('profiles:organization_list')},
-            {'text': f'{Organization.objects.get(id=self.kwargs.get("pk"))}',
-             'url': reverse('profiles:organization_details', kwargs={"pk": self.kwargs.get("pk")})},
-            {'text': f'Create team', 'url': ""},
+            {'text': f'Create organization', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
 
@@ -86,15 +66,15 @@ class OrganizationTeamCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class TeamEditView(UpdateView):
-    model = Team
+class OrganizationEditView(UpdateView):
+    model = Organization
     template_name = 'generics/generic_form.html'
-    form_class = TeamForm
+    form_class = OrganizationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Organizations', 'url': reverse('profiles:organization_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
@@ -103,18 +83,19 @@ class TeamEditView(UpdateView):
         return context
 
 
-class TeamDeleteView(DeleteView):
-    model = Team
+class OrganizationDeleteView(DeleteView):
+    model = Organization
     template_name = 'generics/delete.html'
-    success_url = reverse_lazy("profiles:team_list")
+    success_url = reverse_lazy("profiles:organization_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Organizations', 'url': reverse('profiles:organization_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
+
         return context
 
     def delete(self, request, *args, **kwargs):
