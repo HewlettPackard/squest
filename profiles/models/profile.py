@@ -2,12 +2,16 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     request_notification_enabled = models.BooleanField(default=True)
     support_notification_enabled = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse("profiles:user_details", args=[self.pk])
 
     def is_notification_authorized_for_request(self, request):
         from profiles.models import RequestNotification

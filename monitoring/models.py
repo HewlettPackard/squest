@@ -3,7 +3,6 @@ from django.db.models import Count
 from prometheus_client import Summary
 from prometheus_client.metrics_core import GaugeMetricFamily
 
-from profiles.models import Team, BillingGroup
 from service_catalog.models import Instance, Support, Request
 
 
@@ -23,7 +22,6 @@ class ComponentCollector(object):
         yield self.get_total_support()
         yield self.get_total_users()
         yield self.get_total_teams()
-        yield self.get_total_billing_group()
 
     @staticmethod
     def get_total_squest_instance_per_service_name():
@@ -62,24 +60,24 @@ class ComponentCollector(object):
     def get_total_instance():
         """
         Get all instances
-        Labels: service__name, instance_state, billing_group_name
-        squest_instance_total{state="AVAILABLE", service="K8S", billing_group="5G"} 1.0
-        squest_instance_total{state="PENDING", service="K8S", billing_group="5G"} 2.0
+        Labels: service__name, instance_state, scope_name
+        squest_instance_total{state="AVAILABLE", service="K8S", scope="5G"} 1.0
+        squest_instance_total{state="PENDING", service="K8S", scope="5G"} 2.0
         """
         gauge_squest_instance_total = GaugeMetricFamily("squest_instance_total",
                                                         'Total number of instance in squest',
-                                                        labels=['service', 'state', 'billing_group'])
+                                                        labels=['service', 'state', 'scope'])
         instances = Instance.objects.values('service__name',
-                                            'billing_group__name',
+                                            'scope__name',
                                             'state').annotate(total_count=Count('id'))
         for instance in instances:
-            if instance["billing_group__name"] is not None:
-                billing_group_name = instance["billing_group__name"]
+            if instance["scope__name"] is not None:
+                scope_name = instance["scope__name"]
             else:
-                billing_group_name = "None"
+                scope_name = "None"
             gauge_squest_instance_total.add_metric([instance["service__name"],
                                                     instance["state"],
-                                                    billing_group_name],
+                                                    scope_name],
                                                    instance["total_count"])
         return gauge_squest_instance_total
 
@@ -109,14 +107,7 @@ class ComponentCollector(object):
     def get_total_teams():
         gauge = GaugeMetricFamily("squest_team_total",
                                   'Total number of team in squest')
-        gauge.add_metric([], Team.objects.all().count())
-        return gauge
-
-    @staticmethod
-    def get_total_billing_group():
-        gauge = GaugeMetricFamily("squest_billing_group_total",
-                                  'Total number of billing_group in squest')
-        gauge.add_metric([], BillingGroup.objects.all().count())
+        gauge.add_metric([], 1)
         return gauge
 
     @staticmethod
