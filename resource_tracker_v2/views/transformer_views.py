@@ -3,16 +3,15 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, DeleteView
-from django_filters.views import FilterView
-from django_tables2 import SingleTableMixin
 
+from Squest.utils.squest_views import SquestListView
 from resource_tracker_v2.filters.transformer_filter import TransformerFilter
 from resource_tracker_v2.forms.transformer_form import TransformerForm
 from resource_tracker_v2.models import Transformer, ResourceGroup, AttributeDefinition, ResourceAttribute
 from resource_tracker_v2.tables.transformer_table import TransformerTable
 
 
-class TransformerListView(PermissionRequiredMixin, SingleTableMixin, FilterView):
+class TransformerListView(SquestListView):
     permission_required = "is_superuser"
     table_class = TransformerTable
     model = Transformer
@@ -39,12 +38,9 @@ class TransformerListView(PermissionRequiredMixin, SingleTableMixin, FilterView)
         resource_group = ResourceGroup.objects.get(id=resource_group_id)
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
+            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
             {'text': resource_group.name, 'url': ""},
         ]
-        context['title'] = "Resource group attribute"
-        context['app_name'] = "resource_tracker"
-        context['object_name'] = "transformer"
         context['resource_group_id'] = resource_group_id
         context['html_button_path'] = "resource_tracking_v2/resource_group/resource_group_attribute_list_buttons.html"
         return context
@@ -70,8 +66,8 @@ class TransformerCreateView(PermissionRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["resource_group"] = resource_group
         context['breadcrumbs'] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker:resource_group_list')},
-            {'text': resource_group.name, 'url': reverse('resource_tracker:resource_group_attribute_list',
+            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': resource_group.name, 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
                                                          kwargs={"resource_group_id": resource_group_id})},
             {'text': "Add attribute", 'url': ""},
         ]
@@ -106,8 +102,8 @@ class TransformerEditView(PermissionRequiredMixin, UpdateView):
         context["resource_group"] = resource_group
         context["attribute"] = attribute
         context['breadcrumbs'] = [
-            {'text': "Resource groups", 'url': reverse('resource_tracker:resource_group_list')},
-            {'text': f"{resource_group.name}", 'url': reverse('resource_tracker:resource_group_attribute_list',
+            {'text': "Resource groups", 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': f"{resource_group.name}", 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
                                                               kwargs={
                                                                   'resource_group_id': resource_group.id,
                                                               })},
@@ -128,7 +124,7 @@ class TransformerDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_success_url(self):
         resource_group_id = self.kwargs.get('resource_group_id')
-        return reverse("resource_tracker:resource_group_attribute_list",
+        return reverse("resource_tracker_v2:resourcegroup_attribute_list",
                        kwargs={"resource_group_id": resource_group_id})
 
     def get_context_data(self, **kwargs):
@@ -145,8 +141,8 @@ class TransformerDeleteView(PermissionRequiredMixin, DeleteView):
         context["attribute"] = attribute_definition
         context["impacted_resources"] = impacted_resources
         context['breadcrumbs'] = [
-            {'text': "Resource groups", 'url': reverse('resource_tracker:resource_group_list')},
-            {'text': f"{resource_group.name}", 'url': reverse('resource_tracker:resource_group_attribute_list',
+            {'text': "Resource groups", 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': f"{resource_group.name}", 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
                                                               kwargs={
                                                                   'resource_group_id': resource_group.id,
                                                               })},

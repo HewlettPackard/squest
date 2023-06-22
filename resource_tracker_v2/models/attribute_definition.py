@@ -23,4 +23,4 @@ class AttributeDefinition(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("resource_tracker:attribute_definition_list")
+        return reverse("resource_tracker_v2:attributedefinition_list")

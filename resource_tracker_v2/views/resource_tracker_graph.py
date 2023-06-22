@@ -69,19 +69,19 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['name'] = {
         'display': resource_group.name,
         'tooltip': f"Go to {resource_group}",
-        'href': reverse('resource_tracker:resource_group_edit',
+        'href': reverse('resource_tracker_v2:resourcegroup_edit',
                         kwargs={'resource_group_id': resource_group.id})}
     context['count'] = {
         'display': resource_group.resources.count(),
         'tooltip': f"Go to {resource_group}'s resources",
-        'href': reverse('resource_tracker:resource_group_resource_list',
+        'href': reverse('resource_tracker_v2:resourcegroup_resource_list',
                         kwargs={'resource_group_id': resource_group.id})}
     context['transformers'] = [
         {
             'name': {
                 'display': transformer.attribute_definition.name,
                 'tooltip': f"Edit transformer {transformer.attribute_definition.name}",
-                'href': reverse('resource_tracker:resource_group_attribute_edit',
+                'href': reverse('resource_tracker_v2:resourcegroup_attribute_edit',
                                 kwargs={'resource_group_id': resource_group.id,
                                         'attribute_id': transformer.attribute_definition.id})},
             'produced': {

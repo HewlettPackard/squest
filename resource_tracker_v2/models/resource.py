@@ -37,7 +37,7 @@ class Resource(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('resource_tracker:resource_group_resource_list', args=[self.resource_group.id])
+        return reverse('resource_tracker_v2:resourcegroup_resource_list', args=[self.resource_group.id])
 
     def set_attribute(self, attribute_definition, value):
         # check that the target attribute def is well declared as transformer
