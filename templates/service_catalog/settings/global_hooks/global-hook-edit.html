@@ -28,7 +28,7 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:global_hook_edit' global_hook.id %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}">{% csrf_token %}
+                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:globalhook_edit' global_hook.id %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
