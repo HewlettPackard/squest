@@ -4,7 +4,7 @@ from django.db.models import Model, CharField, ImageField, IntegerField, Boolean
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-from service_catalog.models import OperationType
+from service_catalog.models.operation_type import OperationType
 
 
 class Service(Model):
@@ -12,10 +12,6 @@ class Service(Model):
     description = CharField(max_length=500, blank=True)
     external_support_url = CharField(max_length=2000, blank=True)
     image = ImageField(upload_to='service_image', blank=True)
-    billing_group_id = IntegerField(null=True, default=None)
-    billing_group_is_shown = BooleanField(default=False)
-    billing_group_is_selectable = BooleanField(default=False)
-    billing_groups_are_restricted = BooleanField(default=True)
     enabled = BooleanField(default=False, blank=True)
     parent_portfolio = ForeignKey(
         "service_catalog.Portfolio",
