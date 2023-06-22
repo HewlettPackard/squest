@@ -5,7 +5,7 @@ import random
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
-from profiles.models import BillingGroup, Team
+from profiles.models import Organization
 from resource_tracker_v2.models import AttributeDefinition, Resource, ResourceGroup, Transformer
 from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request, ApprovalWorkflow, \
     ApprovalStep
@@ -31,8 +31,8 @@ class Command(BaseCommand):
                 users[username] = User.objects.get(username=username, password="admin")
             except User.DoesNotExist:
                 users[username] = User.objects.create_user(username=username, password="admin", is_staff=True, is_superuser=True)
-            team = Team.objects.create(name=username)
-            team.add_user_in_role(users[username], "Admin")
+            # team = Team.objects.create(name=username)
+            # team.add_user_in_role(users[username], "Admin")
             logger.info(f"Get or create '{users[username]}'")
         awx_token = os.environ['AWX_TOKEN']
         awx_host = os.environ['AWX_HOST']
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         billing_groups_name = ['5G', 'Assurance', 'Orchestration']
         billing_groups = []
         for billing_group in billing_groups_name:
-            billing_groups.append(BillingGroup.objects.get_or_create(name=billing_group)[0])
+            billing_groups.append(Organization.objects.get_or_create(name=billing_group)[0])
 
         approval_workflow = ApprovalWorkflow.objects.create(name='testing AW')
         approval_step_3 = ApprovalStep.objects.create(
@@ -53,21 +53,21 @@ class Command(BaseCommand):
             type=ApprovalStepType.ALL_OF_THEM,
             approval_workflow=approval_workflow
         )
-        approval_step_3.teams.set(Team.objects.filter(id__lt=3))
+        # approval_step_3.teams.set(Team.objects.filter(id__lt=3))
         approval_step_2 = ApprovalStep.objects.create(
             name="Second",
             type=ApprovalStepType.ALL_OF_THEM,
             next=approval_step_3,
             approval_workflow=approval_workflow
         )
-        approval_step_2.teams.set(Team.objects.filter(id__gt=4, id__lt=7))
+        # approval_step_2.teams.set(Team.objects.filter(id__gt=4, id__lt=7))
         approval_step_1 = ApprovalStep.objects.create(
             name="First",
             type=ApprovalStepType.AT_LEAST_ONE,
             next=approval_step_2,
             approval_workflow=approval_workflow
         )
-        approval_step_1.teams.set(Team.objects.filter(id__gt=2, id__lt=5))
+        # approval_step_1.teams.set(Team.objects.filter(id__gt=2, id__lt=5))
         approval_workflow.entry_point = approval_step_1
         approval_workflow.save()
         job_templates = JobTemplate.objects.all()
@@ -95,7 +95,7 @@ class Command(BaseCommand):
                         continue
                     user = users[username]
                     new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
-                                                           billing_group=random.choice(billing_groups), spoc=user)
+                                                           scope=random.choice(billing_groups), requester=user)
                     # create the request
                     new_request, _ = Request.objects.get_or_create(instance=new_instance,
                                                                    operation=service.operations.filter(
