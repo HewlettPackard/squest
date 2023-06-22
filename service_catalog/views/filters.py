@@ -63,10 +63,10 @@ def is_action_dropdown_disabled(args):
         if not can_proceed(target_request.need_info):
             return "disabled"
     if target_action == "reject":
-        if not can_proceed(target_request.reject) or target_request.approval_step and user not in target_request.approval_step.get_approvers():
+        if not can_proceed(target_request.reject):
             return "disabled"
     if target_action == "accept":
-        if not can_proceed(target_request.accept) or target_request.approval_step and user not in target_request.approval_step.get_approvers():
+        if not can_proceed(target_request.accept):
             return "disabled"
     if target_action == "process":
         if not can_proceed(target_request.process):
