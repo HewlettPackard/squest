@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.template.loader import get_template
 
 from service_catalog import tasks
-from service_catalog.models import Instance
+from service_catalog.models.instance import Instance
 from service_catalog.models.request import RequestState, Request
 
 DEFAULT_FROM_EMAIL = f"{settings.SQUEST_EMAIL_HOST}"
@@ -65,7 +65,7 @@ def _get_receivers_for_request_message(request_message):
 
 def _get_receivers_for_support_message(support_message):
     receiver_email_list = _get_admin_emails(object_to_filter=support_message.support.instance)
-    receiver_email_list = _add_user_in_user_list(support_message.support.instance.spoc, receiver_email_list)
+    receiver_email_list = _add_user_in_user_list(support_message.support.instance.requester, receiver_email_list)
     receiver_email_list = _remove_user_in_user_list(support_message.sender, receiver_email_list)
     return receiver_email_list
 

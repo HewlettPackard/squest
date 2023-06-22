@@ -9,6 +9,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.custom_link_filter import CustomLinkFilter
 from service_catalog.forms.custom_link_form import CustomLinkForm
 from service_catalog.models import CustomLink
@@ -16,7 +17,7 @@ from service_catalog.tables.custom_link_table import CustomLinkTable
 
 
 @method_decorator(login_required, name='dispatch')
-class CustomLinkListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class CustomLinkListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = CustomLinkTable
     model = CustomLink
@@ -30,9 +31,6 @@ class CustomLinkListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Custom links"
-        context['app_name'] = "service_catalog"
-        context['object_name'] = "custom_link"
         context['html_button_path'] = "generics/buttons/generic_add_button.html"
         return context
 
@@ -43,11 +41,11 @@ def custom_link_create(request):
         form = CustomLinkForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('service_catalog:custom_link_list')
+            return redirect('service_catalog:customlink_list')
     else:
         form = CustomLinkForm()
     breadcrumbs = [
-        {'text': 'Custom link', 'url': reverse('service_catalog:custom_link_list')},
+        {'text': 'Custom link', 'url': reverse('service_catalog:customlink_list')},
         {'text': "Create a new custom_link", 'url': ""}
     ]
     context = {'form': form, 'breadcrumbs': breadcrumbs, 'action': 'create'}
@@ -60,9 +58,9 @@ def custom_link_edit(request, custom_link_id):
     form = CustomLinkForm(request.POST or None, instance=custom_link)
     if form.is_valid():
         form.save()
-        return redirect('service_catalog:custom_link_list')
+        return redirect('service_catalog:customlink_list')
     breadcrumbs = [
-        {'text': 'Custom link', 'url': reverse('service_catalog:custom_link_list')},
+        {'text': 'Custom link', 'url': reverse('service_catalog:customlink_list')},
         {'text': custom_link.name, 'url': ""}
     ]
     context = {'form': form,
@@ -78,15 +76,15 @@ def custom_link_delete(request, custom_link_id):
     custom_link = get_object_or_404(CustomLink, id=custom_link_id)
     if request.method == "POST":
         custom_link.delete()
-        return redirect('service_catalog:custom_link_list')
+        return redirect('service_catalog:customlink_list')
     breadcrumbs = [
-        {'text': 'Custom link', 'url': reverse('service_catalog:custom_link_list')},
+        {'text': 'Custom link', 'url': reverse('service_catalog:customlink_list')},
         {'text': custom_link.name, 'url': ""}
     ]
     context = {
         'breadcrumbs': breadcrumbs,
         'confirm_text': mark_safe(f"Confirm deletion of <strong>{custom_link.name}</strong>?"),
-        'action_url': reverse('service_catalog:custom_link_delete', args=[custom_link_id]),
+        'action_url': reverse('service_catalog:customlink_delete', args=[custom_link_id]),
         'button_text': 'Delete',
     }
     return render(request, "generics/confirm-delete-template.html", context)
