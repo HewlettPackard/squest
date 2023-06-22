@@ -68,21 +68,21 @@
                     </li>
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:attribute_definition_list' %}"
+                        <a href="{% url 'resource_tracker_v2:attributedefinition_list' %}"
                            class="nav-link {% if '/resource_tracker/attributes/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-bezier-curve"></i>
                             <p>Attributes</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:resource_group_list' %}"
+                        <a href="{% url 'resource_tracker_v2:resourcegroup_list' %}"
                            class="nav-link {% if '/resource_tracker/resource_group/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-object-group"></i>
                             <p>Resource groups</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'resource_tracker:resource_tracker_graph' %}"
+                        <a href="{% url 'resource_tracker_v2:resource_tracker_graph' %}"
                            class="nav-link {% if '/resource_tracker/resource_tracker_graph/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-project-diagram"></i>
                             <p>Graph</p>

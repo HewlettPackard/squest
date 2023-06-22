@@ -1,4 +1,4 @@
 {% for attribute in record.attribute_definitions.all %}
-    <a  href="{% url "resource_tracker:resource_group_edit" attribute.resource_group.id %}">{{ attribute}}</a>
+    <a  href="{% url "resource_tracker_v2:resourcegroup_edit" attribute.resource_group.id %}">{{ attribute}}</a>
     <br>
 {% endfor %}

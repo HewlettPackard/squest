@@ -4,15 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django_filters.views import FilterView
-from django_tables2 import SingleTableMixin
-from guardian.mixins import LoginRequiredMixin
+
+from Squest.utils.squest_views import SquestListView
 
 logger = logging.getLogger(__name__)
 
 
 @method_decorator(login_required, name='dispatch')
-class TagFilterListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class TagFilterListView(SquestListView):
     table_pagination = {'per_page': 10}
     template_name = 'generics/list.html'
 
