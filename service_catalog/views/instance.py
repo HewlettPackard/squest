@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User, Group
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -10,13 +9,15 @@ from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from jinja2 import UndefinedError
 
-from profiles.forms import UserRoleForObjectForm, TeamRoleForObjectForm
-from profiles.models import Role, Team
-from profiles.tables import TeamsByObjectTable
-from profiles.tables import UserByObjectTable
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
-from service_catalog.models import Instance, Support, Operation, InstanceState, OperationType, SupportMessage, Request, \
-    Doc
+from service_catalog.models.instance import Instance
+from service_catalog.models.support import Support
+from service_catalog.models.operations import Operation
+from service_catalog.models.instance_state import InstanceState
+from service_catalog.models.operation_type import OperationType
+from service_catalog.models.message import SupportMessage
+from service_catalog.models.request import Request
+from service_catalog.models.documentation import Doc
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.views.support_list_view import SupportTable
@@ -261,16 +262,10 @@ def instance_details(request, instance_id):
                                   hide_fields=["instance__name", "instance__service__name"])
     supports_table = SupportTable(supports, hide_fields=["instance__name"])
 
-    users_table = UserByObjectTable(instance.get_all_users())
-    teams_table = TeamsByObjectTable(instance.get_all_teams())
     context = {'instance': instance,
                'operations_table': operations_table,
                'requests_table': requests_table,
                'supports_table': supports_table,
-               'users_table': users_table,
-               'teams_table': teams_table,
-               'user_roles': instance.get_roles_of_users(),
-               'team_roles': instance.get_roles_of_teams(),
                'app_name': 'service_catalog',
                'object': instance,
                'object_name': 'instance',
@@ -282,50 +277,12 @@ def instance_details(request, instance_id):
                }
     return render(request, 'service_catalog/common/instance-details.html', context=context)
 
-
-@login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
-def user_in_instance_update(request, instance_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    form = UserRoleForObjectForm(request.POST or None, object=instance)
-    error = False
-    if request.method == 'POST':
-        if form.is_valid():
-            users_id = form.cleaned_data.get('users')
-            role_id = int(form.cleaned_data.get('roles'))
-            role = Role.objects.get(id=role_id)
-            current_users = instance.get_users_in_role(role.name)
-            selected_users = [User.objects.get(id=user_id) for user_id in users_id]
-            to_remove = list(set(current_users) - set(selected_users))
-            to_add = list(set(selected_users) - set(current_users))
-            if instance.spoc in to_remove and role.name == "Admin":
-                form.add_error('users', 'SPOC cannot be removed from Admin')
-                error = True
-            if not error:
-                for user in to_add:
-                    instance.add_user_in_role(user, role.name)
-                for user in to_remove:
-                    instance.remove_user_in_role(user, role.name)
-                return redirect(reverse("service_catalog:instance_details", args=[instance_id]) + "#users")
-    context = {
-        'form': form,
-        'content_type_id': ContentType.objects.get_for_model(Instance).id,
-        'object_id': instance.id,
-        'breadcrumbs': [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': "Users", 'url': ""}
-        ]
-    }
-    return render(request, 'profiles/role/user-role-for-object-form.html', context)
-
-
 @login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
 def user_in_instance_remove(request, instance_id, user_id):
     instance = get_object_or_404(Instance, id=instance_id)
     user = User.objects.get(id=user_id)
-    if user == instance.spoc:
+    if user == instance.requester:
         return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#users")
     if request.method == 'POST':
         instance.remove_user_in_role(user)
@@ -350,50 +307,32 @@ def user_in_instance_remove(request, instance_id, user_id):
 
 @login_required
 @permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
-def team_in_instance_update(request, instance_id):
+def group_in_instance_remove(request, instance_id, group_id):
     instance = get_object_or_404(Instance, id=instance_id)
-    form = TeamRoleForObjectForm(request.POST or None, user=request.user, object=instance)
+    group = Group.objects.get(id=group_id)
     if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#teams")
-    context = {
-        'form': form,
-        'content_type_id': ContentType.objects.get_for_model(Instance).id,
-        'object_id': instance.id,
-        'breadcrumbs': [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': "Teams", 'url': ""}
-        ]
-    }
-    return render(request, 'profiles/role/team-role-for-object-form.html', context)
-
-
-@login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
-def team_in_instance_remove(request, instance_id, team_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    team = Team.objects.get(id=team_id)
-    if request.method == 'POST':
-        instance.remove_team_in_role(team)
-        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#teams")
+        instance.remove_group_in_role(group)
+        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#groups")
     args = {
         "instance_id": instance_id,
-        "team_id": team_id
+        "group_id": group_id
     }
     context = {
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
             {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': "Teams", 'url': ""}
+            {'text': "Groups", 'url': ""}
         ],
-        'confirm_text': mark_safe(f"Confirm to remove all roles of the team <strong>{team.name}</strong> on "
+        'confirm_text': mark_safe(f"Confirm to remove all roles of the group <strong>{group.name}</strong> on "
                                   f"{instance}?"),
-        'action_url': reverse('service_catalog:team_in_instance_remove', kwargs=args),
+        'action_url': reverse('service_catalog:group_in_instance_remove', kwargs=args),
         'button_text': 'Remove'
     }
     return render(request, 'generics/confirm-delete-template.html', context=context)
+
+
+
+
 
 
 @user_passes_test(lambda u: u.is_superuser)

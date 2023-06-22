@@ -3,11 +3,10 @@ import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 
-from profiles.models import BillingGroup
+from profiles.models.scope import Scope
 from service_catalog.forms.form_utils import FormUtils
 from service_catalog.forms.utils import get_fields_from_survey
 from service_catalog.models import Service, Operation, Instance, Request, RequestMessage
-from service_catalog.models.operations import OperationType
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -25,12 +24,12 @@ class ServiceRequestForm(forms.Form):
                                       widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
                                       required=False)
 
-    billing_group_id = forms.ChoiceField(
-        label="Billing group",
-        choices=[],
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-control selectpicker', 'data-live-search': 'True'})
-    )
+    scope_id = forms.ModelChoiceField(
+            label="Scope",
+            queryset=Scope.objects.none(),
+            required=False,
+            widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
+        )
 
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
@@ -40,17 +39,7 @@ class ServiceRequestForm(forms.Form):
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
         self.service = Service.objects.get(id=service_id)
         self.create_operation = Operation.objects.get(id=operation_id)
-        if self.service.billing_groups_are_restricted:
-            self.fields['billing_group_id'].choices = [(g.id, g.name) for g in self.user.billing_groups.all()]
-        else:
-            self.fields['billing_group_id'].choices = [(g.id, g.name) for g in BillingGroup.objects.all()]
-        if not self.service.billing_group_is_selectable:
-            self.fields['billing_group_id'].choices += [(None, None)]
-            self.fields['billing_group_id'].widget.attrs['disabled'] = True
-            self.fields['billing_group_id'].initial = self.service.billing_group_id
-        if not self.service.billing_group_is_shown:
-            self.fields['billing_group_id'].label = ""
-            self.fields['billing_group_id'].widget = forms.HiddenInput()
+        self.fields['scope_id'].queryset = Scope.objects.filter()
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
@@ -73,7 +62,7 @@ class ServiceRequestForm(forms.Form):
             "billing_group_id"] else self.service.billing_group_id
         billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None
         new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
-                                               spoc=self.user)
+                                               requester=self.user)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
                                              operation=self.create_operation,
