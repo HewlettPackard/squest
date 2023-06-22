@@ -62,24 +62,34 @@ urlpatterns = [
          views.support_notification_edit,
          name='support_notification_edit'),
 
-    # team URLs
-    path('team/<int:team_id>/users/update/', views.user_in_team_update, name='user_in_team_update'),
-    path('team/<int:team_id>/users/remove/<int:user_id>/', views.user_in_team_remove, name='user_in_team_remove'),
-    path('team/', TeamListView.as_view(), name='team_list'),
-    path('team/create/', views.team_create, name='team_create'),
-    path('team/<int:team_id>/', views.team_details, name='team_details'),
-    path('team/<int:team_id>/edit/', views.team_edit, name='team_edit'),
-    path('team/<int:team_id>/delete/', views.team_delete, name='team_delete'),
-    path('team/<int:team_id>/role/create/', views.team_role_binding_create, name='team_role_binding_create'),
-    path('team/<int:team_id>/role/<int:team_role_binding_id>/delete/', views.team_role_binding_delete,
-         name='team_role_binding_delete'),
+
+    # Scope
+    path('scope/<int:scope_id>/role/<int:pk>/delete/', views.scope_role_delete, name="scope_role_delete"),
+
+    # Organization
+    path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
+    path('organization/create/', views.OrganizationCreateView.as_view(), name="organization_create"),
+    path('organization/<int:pk>/edit/', views.OrganizationEditView.as_view(), name="organization_edit"),
+    path('organization/<int:pk>/delete/', views.OrganizationDeleteView.as_view(), name="organization_delete"),
+    path('organization/<int:pk>/', views.OrganizationDetailView.as_view(), name="organization_details"),
+    path('organization/<int:pk>/role/create/', views.organization_role_create, name="organization_role_create"),
+    path('organization/<int:pk>/rbac/create/', views.organization_rbac_create, name="organization_rbac_create"),
+    path('organization/<int:scope_id>/rbac/<int:rbac_id>/user/<int:user_id>/delete/', views.organization_rbac_delete, name="organization_rbac_delete"),
+    path('organization/<int:pk>/team/create/', views.OrganizationTeamCreateView.as_view(), name="organization_team_create"),
 
     # User Role Binding URLs
     path('role/ajax/get-users-with-role/', views.ajax_get_users_with_role, name='get_users_with_role'),
     path('role/ajax/get-teams-with-role/', views.ajax_get_teams_with_role, name='get_teams_with_role'),
 
-    path('role/ajax/update-roles/', views.ajax_team_role_binding_form_update_roles, name='ajax_update_roles'),
-    path('role/ajax/update-objects/', views.ajax_team_role_binding_form_update_objects, name='ajax_update_objects'),
+    # Team
+    path('team/', views.TeamListView.as_view(), name="team_list"),
+    path('team/create/', views.TeamCreateView.as_view(), name="team_create"),
+    path('team/<int:pk>/edit', views.TeamEditView.as_view(), name="team_edit"),
+    path('team/<int:pk>/delete', views.TeamDeleteView.as_view(), name="team_delete"),
+    path('team/<int:pk>/', views.TeamDetailView.as_view(), name="team_details"),
+    path('team/<int:pk>/role/create/', views.team_role_create, name="team_role_create"),
+    path('team/<int:pk>/rbac/create/', views.team_rbac_create, name="team_rbac_create"),
+    path('team/<int:scope_id>/rbac/<int:rbac_id>/user/<int:user_id>/delete/', views.team_rbac_delete, name="team_rbac_delete"),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
