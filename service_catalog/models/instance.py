@@ -2,39 +2,58 @@ import logging
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField
-from django.db.models.signals import pre_save, post_save, pre_delete
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, SET_DEFAULT
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
 
 from Squest.utils.ansible_when import AnsibleWhen
-from profiles.models import BillingGroup
-from profiles.models.role_manager import RoleManager
+from Squest.utils.squest_model import SquestModel
+from profiles.models.scope import Scope
 from service_catalog.models.services import Service
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.state_hooks import HookManager
-from .. import tasks
 
 logger = logging.getLogger(__name__)
 
 
-class Instance(RoleManager):
+def get_default_org():
+    from profiles.models import Organization
+    return Organization.objects.get_or_create(name="Default org")[0].id
+
+
+class Instance(SquestModel):
     name = CharField(verbose_name="Instance name", max_length=100)
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
     service = ForeignKey(Service, blank=True, null=True, on_delete=SET_NULL)
-    spoc = ForeignKey(User, null=True, help_text='Single Point Of Contact', verbose_name="SPOC",
-                             on_delete=SET_NULL)
-    state = FSMField(default=InstanceState.PENDING)
-    date_available = DateTimeField(null=True, blank=True)
-    billing_group = ForeignKey(
-        BillingGroup,
-        blank=True,
-        null=True,
-        on_delete=SET_NULL,
+    requester = ForeignKey(User, null=True, help_text='Initial request', verbose_name="Requester", on_delete=SET_NULL)
+    scope = ForeignKey(
+        Scope,
+        default=get_default_org,
+        on_delete=SET_DEFAULT,
         related_name='instances',
         related_query_name='instance'
     )
+    state = FSMField(default=InstanceState.PENDING)
+    date_available = DateTimeField(null=True, blank=True)
+
+    @classmethod
+    def get_queryset_for_user(cls, user, perm):
+        from profiles.models import Team
+        qs = super().get_queryset_for_user(user, perm)
+        if qs.exists():
+            return qs
+        app_label, codename = perm.split(".")
+        return Instance.objects.filter(scope__rbac__user=user,
+                                       scope__rbac__role__permissions__codename=codename,
+                                       scope__rbac__role__permissions__content_type__app_label=app_label) | \
+               Instance.objects.filter(scope__in=Team.objects.filter(org__rbac__user=user),
+                                       scope__rbac__role__permissions__codename=codename,
+                                       scope__rbac__role__permissions__content_type__app_label=app_label)
+
+    def get_scopes(self):
+        return self.scope.get_scopes()
 
     def __str__(self):
         return f"{self.name} (#{self.id})"
@@ -112,42 +131,8 @@ class Instance(RoleManager):
         if self.state in [InstanceState.UPDATE_FAILED, InstanceState.DELETE_FAILED]:
             self.state = InstanceState.AVAILABLE
 
-    def add_user_in_role(self, user, role_name):
-        super(Instance, self).add_user_in_role(user, role_name)
-        for request in self.request_set.all():
-            request.add_user_in_role(user, role_name)
-
-    def get_roles_of_users(self):
-        roles = super(Instance, self).get_roles_of_users()
-        if self.spoc:
-            roles[self.spoc.id].append("SPOC")
-        return roles
-
-    def remove_user_in_role(self, user, role_name=None):
-        super(Instance, self).remove_user_in_role(user, role_name)
-        for request in self.request_set.all():
-            request.remove_user_in_role(user, role_name)
-
-    def add_team_in_role(self, team, role_name):
-        super(Instance, self).add_team_in_role(team, role_name)
-        for request in self.request_set.all():
-            request.add_team_in_role(team, role_name)
-
-    def remove_team_in_role(self, team, role_name=None):
-        super(Instance, self).remove_team_in_role(team, role_name)
-        for request in self.request_set.all():
-            request.remove_team_in_role(team, role_name)
-
-    def assign_permission_to_spoc(self):
-        if self.spoc:
-            self.add_user_in_role(self.spoc, "Admin")
-
-    def remove_permission_to_spoc(self):
-        self.remove_user_in_role(self.spoc, "Admin")
-
     def delete_linked_resources(self):
-        for resource in self.resources.filter(is_deleted_on_instance_deletion=True):
-            resource.delete()
+        self.resources.filter(is_deleted_on_instance_deletion=True).delete()
 
     @classmethod
     def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
@@ -165,31 +150,6 @@ class Instance(RoleManager):
 
 post_transition.connect(Instance.trigger_hook_handler, sender=Instance)
 post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
-
-
-@receiver(pre_save, sender=Instance)
-def pre_save(sender, instance, **kwargs):
-    instance._old_billing_group = None
-    instance._need_update = False
-    if instance.id:
-        old_instance = sender.objects.get(id=instance.id)
-        if old_instance.billing_group != instance.billing_group:
-            instance._old_billing_group = old_instance.billing_group
-            instance._need_update = True
-        if old_instance.spoc != instance.spoc:
-            old_instance.remove_permission_to_spoc()
-            instance.assign_permission_to_spoc()
-
-
-@receiver(post_save, sender=Instance)
-def post_save(sender, instance, created, **kwargs):
-    if created:
-        instance.assign_permission_to_spoc()
-    if instance._need_update:
-        if instance.billing_group:
-            tasks.async_quota_bindings_add_instance.delay(instance_id=instance.id, billing_id=instance.billing_group.id)
-        if instance._old_billing_group:
-            tasks.async_quota_bindings_remove_instance.delay(instance_id=instance.id, billing_id=instance._old_billing_group.id)
 
 
 @receiver(pre_delete, sender=Instance)
