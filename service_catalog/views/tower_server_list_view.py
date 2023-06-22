@@ -5,13 +5,14 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from guardian.mixins import LoginRequiredMixin
 
+from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.tower_server_filter import TowerServerFilter
 from service_catalog.models import TowerServer
 from service_catalog.tables.tower_server_tables import TowerServerTable
 
 
 @method_decorator(login_required, name='dispatch')
-class TowerServerListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class TowerServerListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = TowerServerTable
     model = TowerServer
@@ -25,6 +26,5 @@ class TowerServerListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Tower/AWX"
         context['html_button_path'] = "generics/buttons/add_tower_server.html"
         return context
