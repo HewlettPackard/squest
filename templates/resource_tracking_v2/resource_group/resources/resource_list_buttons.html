@@ -1,9 +1,9 @@
 {% include 'generics/buttons/delete_button.html' %}
 <a class="btn btn-success float-right mr-1"
-   href="{% url 'resource_tracker:resource_group_resource_create' resource_group_id=resource_group_id %}">
+   href="{% url 'resource_tracker_v2:resourcegroup_resource_create' resource_group_id=resource_group_id %}">
     <i class="fas fa-plus"></i> Add
 </a>
 <a class="btn btn-default float-right mr-1"
-   href="{% url 'resource_tracker:resource_group_edit' resource_group_id=resource_group_id %}">
+   href="{% url 'resource_tracker_v2:resourcegroup_edit' resource_group_id=resource_group_id %}">
     <i class="fas fa-pencil-alt"></i> Edit resource group
 </a>

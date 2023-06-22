@@ -14,7 +14,7 @@
                         <p>Do you want to delete the resource "{{ resource.name }}"?</p>
                         <button type="submit" class="btn btn-danger">Delete</button>
                         <a class="btn btn-default"
-                           href="{% url 'resource_tracker:resource_group_resource_list' resource_group_id=resource_group.id %}">Cancel</a>
+                           href="{% url 'resource_tracker_v2:resourcegroup_resource_list' resource_group_id=resource_group.id %}">Cancel</a>
                     </form>
                 </div>
             </div><!-- end container fluid -->
