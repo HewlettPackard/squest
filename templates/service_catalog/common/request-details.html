@@ -173,10 +173,6 @@
                         <ul class="nav nav-pills">
                             <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a>
                             </li>
-                            {% if approval_steps %}
-                                <li class="nav-item"><a class="nav-link" href="#approval" data-toggle="tab">Approval
-                                    workflow</a></li>
-                            {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
@@ -193,47 +189,6 @@
                                         </code>
                                     </pre>
                                 {% endif %}
-                            </div>
-                            <div class="tab-pane" id="approval">
-                                <div class="timeline">
-                                    <div class="time-label">
-                                        <span class="bg-default px-3 border">Start</span>
-                                    </div>
-                                    {% for approval_step in approval_steps %}
-                                        <div class="mb-0">
-                                            {% if approval_step.type == "ALL_OF_THEM" %}
-                                                <i class="fas fa-solid fa-users {% if approval_step.status == "APPROVED" %}bg-green{% elif approval_step.name == target_request.approval_step.name %}bg-primary{% endif %}"></i>
-                                            {% elif approval_step.type == "AT_LEAST_ONE" %}
-                                                <i class="fas fa-solid fa-user {% if approval_step.status == "APPROVED" %}bg-green{% elif approval_step.name == target_request.approval_step.name %}bg-primary{% endif %}"></i>
-                                            {% endif %}
-                                            <div class="timeline-item">
-                                                <span class="time">
-                                                    <small class="badge badge-light">{{ approval_step.status }}</small>
-                                                </span>
-                                                <h3 class="timeline-header{% if approval_step.status == "APPROVED" %} bg-green{% elif approval_step.status == "REJECTED" %} bg-red{% elif approval_step.name == target_request.approval_step.name %} bg-primary{% endif %}">
-                                                    <strong>{{ approval_step.name }}</strong>
-                                                </h3>
-
-                                                <div class="timeline-body card">
-                                                    <div class="card-body p-0" style="display: block;">
-                                                        <ul class="nav nav-pills flex-column">
-                                                            {% for team in approval_step.teams %}
-                                                                <li title="{{ team.status }}"
-                                                                    class="nav-item{% if team.status == "APPROVED" %} text-green{% elif team.status == "REJECTED" %} text-red{% endif %}">{{ team.name }}</li>
-                                                            {% endfor %}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                    <div class="time-label">
-                                        <span class="{% if target_request.state == "ACCEPTED" %}bg-green{% elif target_request.state == "REJECTED" %}bg-red{% else %}bg-gray{% endif %}">
-                                            {% if target_request.state == "REJECTED" %}Rejected{% else %}
-                                                Approved{% endif %}
-                                        </span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

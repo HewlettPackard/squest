@@ -3,7 +3,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{% url 'home' %}" class="brand-link">
-        <img src="{% static '/squest/img/squest_logo.png' %}" class="brand-image" alt="squest_logo" width="33" height="33">
+        <img src="{% static '/squest/img/squest_logo.png' %}" class="brand-image" alt="squest_logo" width="33"
+             height="33">
         <span class="brand-text">Squest</span>
     </a>
     <!-- Sidebar -->
@@ -59,13 +60,6 @@
                     </a>
                 </li>
                 {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:approval_workflow_list' %}"
-                           class="nav-link {% if '/approval-workflow/' in request.path %}active{% endif %}">
-                            <i class="nav-icon far fa-thumbs-up"></i>
-                            <p>Approvals</p>
-                        </a>
-                    </li>
                     <li class="nav-header">Resource tracking</li>
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:attributedefinition_list' %}"
@@ -88,48 +82,43 @@
                             <p>Graph</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href=""
-                           class="nav-link {% if '/quota-attribute/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-chart-pie"></i>
-                            <p>Quota</p>
-                        </a>
-                    </li>
-
-
                 {% endif %}
 
                 <li class="nav-header">Profiles</li>
-                {% if user.is_superuser %}
-
-                    <li class="nav-item">
-                        <a href="{% url 'profiles:user_list' %}"
-                           class="nav-link {% if '/user/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-user"></i>
-                            <p>Users</p>
-                        </a>
-                    </li>
-                    {#  disable as not used yet. We'll be added back when implementing RBAC #}
-                    {#                    <li class="nav-item">#}
-                    {#                        <a href="{% url 'profiles:group_list' %}"#}
-                    {#                           class="nav-link {% if '/group/' in request.path %}active{% endif %}">#}
-                    {#                            <i class="nav-icon fas fa-users"></i>#}
-                    {#                            <p>Groups</p>#}
-                    {#                        </a>#}
-                    {#                    </li>#}
-                {% endif %}
+                <li class="nav-item">
+                    <a href="{% url 'profiles:organization_list' %}"
+                       class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
+                        <i class="nav-icon fas fa-sitemap"></i>
+                        <p>Organizations</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{% url 'profiles:team_list' %}"
-                       class="nav-link {% if '/team/' in request.path %}active{% endif %}">
+                       class="nav-link {% if '/profiles/team/' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-user-friends"></i>
                         <p>Teams</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'profiles:user_list' %}"
+                       class="nav-link {% if '/profiles/user/' in request.path %}active{% endif %}">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'profiles:role_list' %}"
+                       class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
+                        <i class="nav-icon fas fa-user-check"></i>
+                        <p>Roles</p>
+                    </a>
+                </li>
+
                 {% if user.is_superuser %}
 
                     <li class="nav-header">Tools</li>
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:global_hook_list' %}"
+                        <a href="{% url 'service_catalog:globalhook_list' %}"
                            class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-file-code"></i>
                             <p>Global hooks</p>
@@ -143,7 +132,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:custom_link_list' %}"
+                        <a href="{% url 'service_catalog:customlink_list' %}"
                            class="nav-link {% if '/tool/custom-link/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-link"></i>
                             <p>Custom links</p>
