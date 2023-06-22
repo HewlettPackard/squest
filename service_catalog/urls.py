@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 from .views.admin.custom_link_views import CustomLinkListView
 from .views.announcement_list_view import AnnouncementListView
-from .views.approval_workflow_list_view import ApprovalWorkflowListView
 from .views.create_operation_list_view import CreateOperationListView
 from .views.doc_list_view import DocListView
 from .views.global_hook_list_view import GlobalHookListView
@@ -120,21 +119,5 @@ urlpatterns = [
     path('tool/custom-link/create/', views.custom_link_create, name='custom_link_create'),
     path('tool/custom-link/<int:custom_link_id>/edit/', views.custom_link_edit, name='custom_link_edit'),
     path('tool/custom-link/<int:custom_link_id>/delete/', views.custom_link_delete, name='custom_link_delete'),
-
-    path('approval-workflow/', ApprovalWorkflowListView.as_view(), name='approval_workflow_list'),
-    path('approval-workflow/create/', views.approval_workflow_create, name='approval_workflow_create'),
-    path('approval-workflow/<int:approval_workflow_id>/edit/', views.approval_workflow_edit,
-         name='approval_workflow_edit'),
-    path('approval-workflow/<int:approval_workflow_id>/delete/', views.approval_workflow_delete,
-         name='approval_workflow_delete'),
-
-    path('approval-workflow/<int:approval_workflow_id>/approval-step/create/', views.approval_step_create,
-         name='approval_step_create'),
-    path('approval-workflow/<int:approval_workflow_id>/approval-step/<int:approval_step_id>/edit/',
-         views.approval_step_edit, name='approval_step_edit'),
-    path('approval-workflow/<int:approval_workflow_id>/approval-step/<int:approval_step_id>/delete/',
-         views.approval_step_delete, name='approval_step_delete'),
-    path('approval-workflow/<int:approval_workflow_id>/approval-step/', views.approval_step_graph,
-         name='approval_step_graph'),
 
 ]
