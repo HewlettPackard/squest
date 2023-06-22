@@ -18,4 +18,15 @@ urlpatterns = [
          name='api_support_notification_filter_list_create'),
     path('notification-filter/support/<int:pk>/', SupportNotificationFilterDetails.as_view(),
          name='api_support_notification_filter_details'),
+
+    # Organization
+    path('organization/', OrganizationListCreate.as_view(), name='api_organization_list_create'),
+    path('organization/<int:pk>/', OrganizationDetails.as_view(), name='api_organization_details'),
+
+    # Team
+    path('organization/<int:organization_id>/team/', OrganizationTeamListCreate.as_view(), name='api_team_list_create'),
+    path('organization/<int:organization_id>/team/<int:pk>/', OrganizationTeamDetails.as_view(), name='api_team_details'),
+    path('team/', TeamListCreate.as_view(), name='api_team_list_create'),
+    path('team/<int:pk>/', TeamDetails.as_view(), name='api_team_details'),
+
 ]
