@@ -5,4 +5,4 @@ from Squest.utils.squest_filter import SquestFilter
 class TeamFilter(SquestFilter):
     class Meta:
         model = Team
-        fields = ['name']
+        fields = ['name','org']

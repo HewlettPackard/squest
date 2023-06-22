@@ -1,24 +1,27 @@
 from django.db.models import ProtectedError
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from guardian.mixins import LoginRequiredMixin
 
 from Squest.utils.squest_views import SquestListView
-from profiles.filters.team_filter import TeamFilter
-from profiles.forms.team_forms import TeamForm, OrganizationTeamForm
-from profiles.models.team import Team
-from profiles.models.organization import Organization
-from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
+from profiles.filters import RoleFilter
+from profiles.forms import RoleForm
+from profiles.models import Role
+from profiles.tables import RoleTable, PermissionTable
+
+from django.urls import reverse
+from guardian.mixins import LoginRequiredMixin
+
+from profiles.filters.user_filter import UserFilter
 
 
-class TeamListView(SquestListView):
+class RoleListView(SquestListView):
     table_pagination = {'per_page': 10}
-    table_class = TeamTable
-    model = Team
+    table_class = RoleTable
+    model = Role
     template_name = 'generics/list.html'
     ordering = 'name'
 
-    filterset_class = TeamFilter
+    filterset_class = RoleFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,35 +29,35 @@ class TeamListView(SquestListView):
         return context
 
 
-class TeamDetailView(DetailView):
-    model = Team
+class RoleDetailView(LoginRequiredMixin, DetailView):
+    model = Role
+    filterset_class = UserFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Breadcrumbs
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Roles', 'url': reverse('profiles:role_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
-        context['users'] = UserRoleTable(self.object.users)
-        context['roles'] = ScopeRoleTable(self.object.roles.all())
         context['scope'] = self.object
 
+        context['permissions_table'] = PermissionTable(self.object.permissions.all())
         return context
 
 
-class TeamCreateView(LoginRequiredMixin, CreateView):
-    model = Team
+class RoleCreateView(LoginRequiredMixin, CreateView):
+    model = Role
     template_name = 'generics/generic_form.html'
-    form_class = TeamForm
+    form_class = RoleForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
-            {'text': f'Create Team', 'url': ""},
+            {'text': 'Roles', 'url': reverse('profiles:role_list')},
+            {'text': f'Create role', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
 
@@ -62,39 +65,15 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class OrganizationTeamCreateView(LoginRequiredMixin, CreateView):
-    model = Team
+class RoleEditView(UpdateView):
+    model = Role
     template_name = 'generics/generic_form.html'
-    form_class = OrganizationTeamForm
-
-    def get_form_kwargs(self):
-        kwargs = super(OrganizationTeamCreateView, self).get_form_kwargs()
-        kwargs['org_id'] = self.kwargs.get('pk')
-        return kwargs
+    form_class = RoleForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Organizations', 'url': reverse('profiles:organization_list')},
-            {'text': f'{Organization.objects.get(id=self.kwargs.get("pk"))}',
-             'url': reverse('profiles:organization_details', kwargs={"pk": self.kwargs.get("pk")})},
-            {'text': f'Create team', 'url': ""},
-        ]
-        context['breadcrumbs'] = breadcrumbs
-
-        context['action'] = "create"
-        return context
-
-
-class TeamEditView(UpdateView):
-    model = Team
-    template_name = 'generics/generic_form.html'
-    form_class = TeamForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Roles', 'url': reverse('profiles:role_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
@@ -103,18 +82,19 @@ class TeamEditView(UpdateView):
         return context
 
 
-class TeamDeleteView(DeleteView):
-    model = Team
+class RoleDeleteView(DeleteView):
+    model = Role
     template_name = 'generics/delete.html'
-    success_url = reverse_lazy("profiles:team_list")
+    success_url = reverse_lazy("profiles:role_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
+            {'text': 'Roles', 'url': reverse('profiles:role_list')},
             {'text': f'{self.object}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
+
         return context
 
     def delete(self, request, *args, **kwargs):
