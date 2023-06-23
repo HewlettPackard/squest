@@ -50,6 +50,7 @@ urlpatterns = [
 
     # Global Permission
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
+    path('global-permission/edit', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),

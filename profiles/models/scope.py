@@ -1,5 +1,6 @@
 from django.db.models import CharField, Model, ManyToManyField, Prefetch, Q, ForeignKey
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Role
@@ -23,6 +24,8 @@ class AbstractScope(SquestModel):
             return self.organization
         elif hasattr(self, "team"):
             return self.team
+        elif hasattr(self, "globalpermission"):
+            return self.globalpermission
         raise Exception("This scope is not implemented")
 
     def get_queryset_for_user(cls, user, perm):
@@ -92,6 +95,9 @@ class Scope(AbstractScope):
 
 class GlobalPermission(AbstractScope):
 
+    def get_absolute_url(self):
+        return reverse("profiles:globalpermission_details")
+
     def delete(self, *args, **kwargs):
         pass
 
@@ -99,3 +105,6 @@ class GlobalPermission(AbstractScope):
     def load(cls):
         obj, _ = GlobalPermission.objects.get_or_create(name="GlobalPermission")
         return obj
+
+    def get_perspective_users(self):
+        return User.objects.all()
