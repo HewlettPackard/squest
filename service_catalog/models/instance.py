@@ -2,7 +2,7 @@ import logging
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, SET_DEFAULT
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, SET_DEFAULT, ManyToManyField
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
@@ -28,10 +28,9 @@ class Instance(SquestModel):
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
     service = ForeignKey(Service, blank=True, null=True, on_delete=SET_NULL)
     requester = ForeignKey(User, null=True, help_text='Initial request', verbose_name="Requester", on_delete=SET_NULL)
-    scope = ForeignKey(
+    scopes = ManyToManyField(
         Scope,
-        default=get_default_org,
-        on_delete=SET_DEFAULT,
+        blank=True,
         related_name='instances',
         related_query_name='instance'
     )
