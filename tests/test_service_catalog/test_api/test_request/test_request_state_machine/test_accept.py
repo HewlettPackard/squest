@@ -67,7 +67,7 @@ class TestApiRequestAccept(BaseTestRequest):
     def test_admin_can_accept_request_on_empty_survey(self):
         test_instance = Instance.objects.create(name="test_instance_1",
                                                 service=self.service_test,
-                                                spoc=self.standard_user)
+                                                requester=self.standard_user)
         test_request = Request.objects.create(fill_in_survey={},
                                               instance=test_instance,
                                               operation=self.create_operation_empty_survey_test,

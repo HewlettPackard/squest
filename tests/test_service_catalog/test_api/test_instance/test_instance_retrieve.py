@@ -31,7 +31,7 @@ class TestInstanceRetrieve(BaseTestRequest):
             self.assertEqual(response.data['spec'], self.test_instance.spec)
         self.assertEqual(response.data['state'], self.test_instance.state)
         self.assertEqual(response.data['service'], self.test_instance.service.id)
-        self.assertEqual(response.data['spoc'].get('id'), self.test_instance.spoc.id)
+        self.assertEqual(response.data['requester'].get('id'), self.test_instance.requester.id)
         self.assertEqual(response.data['billing_group'], self.test_instance.billing_group)
 
     def test_get_details_as_admin(self):

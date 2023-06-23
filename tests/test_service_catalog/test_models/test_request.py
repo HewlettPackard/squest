@@ -48,7 +48,7 @@ class TestRequest(BaseTestRequest):
                 'state': str(expected_state),
                 'service': self.test_request.operation.service.id,
                 'billing_group': None,
-                'spoc': UserSerializer(self.test_request.instance.spoc).data
+                'requester': UserSerializer(self.test_request.instance.requester).data
             }
             expected_user = UserSerializer(self.test_request.user).data
             mock_job_execute.assert_called()
@@ -167,7 +167,7 @@ class TestRequest(BaseTestRequest):
                     'state': str(expected_instance_state),
                     'service': self.test_request.operation.service.id,
                     'billing_group': None,
-                    'spoc': UserSerializer(self.test_request.instance.spoc).data
+                    'requester': UserSerializer(self.test_request.instance.requester).data
                 }
                 expected_user = UserSerializer(self.test_request.user).data
                 mock_job_execute.assert_called()
