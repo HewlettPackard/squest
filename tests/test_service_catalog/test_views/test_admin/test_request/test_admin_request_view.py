@@ -315,7 +315,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'state': str(expected_instance_state),
                 'service': self.test_request.operation.service.id,
                 'billing_group': None,
-                'spoc': UserSerializer(self.test_request.instance.spoc).data
+                'requester': UserSerializer(self.test_request.instance.requester).data
             }
             self.test_instance.refresh_from_db()
             self.assertEqual(self.test_instance.state, expected_instance_state)
