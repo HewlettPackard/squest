@@ -10,6 +10,10 @@
             <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
+            <a href="{% url 'profiles:globalpermission_edit'%}"
+               class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
         </div>
     {% endif %}
 {% endblock %}
