@@ -44,16 +44,18 @@ class Instance(SquestModel):
         if qs.exists():
             return qs
         app_label, codename = perm.split(".")
-        return Instance.objects.filter(scope__rbac__user=user,
-                                       scope__rbac__role__permissions__codename=codename,
-                                       scope__rbac__role__permissions__content_type__app_label=app_label) | \
-               Instance.objects.filter(scope__in=Team.objects.filter(org__rbac__user=user),
-                                       scope__rbac__role__permissions__codename=codename,
-                                       scope__rbac__role__permissions__content_type__app_label=app_label)
+        return Instance.objects.filter(scopes__rbac__user=user,
+                                       scopes__rbac__role__permissions__codename=codename,
+                                       scopes__rbac__role__permissions__content_type__app_label=app_label) | \
+               Instance.objects.filter(scopes__in=Team.objects.filter(org__rbac__user=user),
+                                       scopes__rbac__role__permissions__codename=codename,
+                                       scopes__rbac__role__permissions__content_type__app_label=app_label)
 
     def get_scopes(self):
-        return self.scope.get_scopes()
-
+        qs = Scope.objects.none()
+        for scope in self.scopes.all():
+            qs = qs | scope.get_scopes()
+        return qs
     def __str__(self):
         return f"{self.name} (#{self.id})"
 
