@@ -57,7 +57,7 @@ class TestStateHook(BaseTestRequest):
         with mock.patch("service_catalog.models.state_hooks.HookManager.trigger_hook") as mock_trigger_hook2:
             Instance.objects.create(name="test_instance_1",
                                     service=self.service_test,
-                                    spoc=self.standard_user)
+                                    requester=self.standard_user)
             mock_trigger_hook2.assert_called()
 
     def test_hook_manager_execute_job_template_from_request(self):
@@ -105,7 +105,7 @@ class TestStateHook(BaseTestRequest):
         instance = Instance.objects.create(
             name="test_instance_1",
             service=self.service_test,
-            spoc=self.standard_user
+            requester=self.standard_user
         )
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_template_execute_1:
             # test with correct service and target state. Hook executed
@@ -131,7 +131,7 @@ class TestStateHook(BaseTestRequest):
         instance = Instance.objects.create(
             name="test_instance_1",
             service=self.service_test,
-            spoc=self.standard_user
+            requester=self.standard_user
         )
         request = Request.objects.create(
             instance=instance,

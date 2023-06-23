@@ -9,7 +9,7 @@ class TestTeamRoleBinding(TestGroupBase):
 
     def setUp(self):
         super(TestTeamRoleBinding, self).setUp()
-        self.instance = Instance.objects.create(service=None, name="Test", billing_group=None, spoc=self.standard_user)
+        self.instance = Instance.objects.create(service=None, name="Test", billing_group=None, requester=self.standard_user)
         self.instance_content_type = ContentType.objects.get_for_model(Instance)
         self.role = Role.objects.create(
             name="Test",

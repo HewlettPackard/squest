@@ -18,7 +18,7 @@ class TestInstanceCreate(BaseTestRequest):
         self.assertEqual(instance_count + 1, Instance.objects.count())
         self.assertEqual(response.data['name'], expected['name'])
         self.assertEqual(response.data['service'], expected['service'])
-        self.assertEqual(response.data['spoc']['id'], expected['spoc'])
+        self.assertEqual(response.data['requester']['id'], expected['requester'])
         if response.data['billing_group']:
             self.assertEqual(response.data['billing_group']['id'], expected['billing_group'])
         self.assertEqual(response.data['spec'], expected['spec'])
@@ -28,7 +28,7 @@ class TestInstanceCreate(BaseTestRequest):
         data = {
             "name": "instance_create_test_1",
             "service": self.service_test_2.id,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
             "billing_group": self.test_billing_group.id,
             "spec": {
@@ -40,7 +40,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'name': 'instance_create_test_1',
                     'spec': {'key1': 'val1', 'key2': 'val2'},
                     'service': self.service_test_2.id,
-                    'spoc': self.standard_user_2.id,
+                    'requester': self.standard_user_2.id,
                     'resources': [],
                     'billing_group': self.test_billing_group.id}
         self._assert_created(data, expected)
@@ -49,7 +49,7 @@ class TestInstanceCreate(BaseTestRequest):
         data = {
             "name": "instance_create_test_2",
             "service": self.service_test_2.id,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.UPDATING,
             "billing_group": None,
             "spec": {}
@@ -58,7 +58,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'name': 'instance_create_test_2',
                     'spec': {},
                     'service': self.service_test_2.id,
-                    'spoc': self.standard_user_2.id,
+                    'requester': self.standard_user_2.id,
                     'resources': [],
                     'billing_group': None}
         self._assert_created(data, expected)
@@ -67,7 +67,7 @@ class TestInstanceCreate(BaseTestRequest):
         data = {
             "name": "instance_create_test_3",
             "service": None,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
             "billing_group": None,
             "spec": {
@@ -77,7 +77,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'name': 'instance_create_test_3',
                     'spec': {},
                     'service': None,
-                    'spoc': self.standard_user_2.id,
+                    'requester': self.standard_user_2.id,
                     'resources': [],
                     'billing_group': None}
         self._assert_created(data, expected)
@@ -87,7 +87,7 @@ class TestInstanceCreate(BaseTestRequest):
         data = {
             "name": "instance_create_test_1",
             "service": self.service_test_2.id,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
             "billing_group": self.test_billing_group.id,
             "spec": {
