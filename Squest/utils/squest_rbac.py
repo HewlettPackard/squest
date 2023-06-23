@@ -34,12 +34,9 @@ class MagicAdminBackend(BaseBackend):
         #     print(f"has perm with no answer for user_obj={user_obj},perm={perm},obj={obj}")
 
         if isinstance(obj, Instance):
-            if obj.spoc == user_obj:
-                if perm in ["service_catalog.view_instance"]:
-                    return True
             scopes = obj.get_scopes()
             app_label, codename = perm.split(".")
-            test_perm = Permission.objects.filter(roles__rbac__scope__in=scopes, roles__rbac__user=user_obj,
+            test_perm = Permission.objects.filter(role__rbac__scope__in=scopes, role__rbac__user=user_obj,
                                                   codename=codename,
                                                   content_type__app_label=app_label)
             if test_perm.exists():
