@@ -17,27 +17,27 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         self.ocp_projects.tags.add("tag2")
 
     def test_resource_group_list(self):
-        response = self.client.get(reverse('resource_tracker:resource_group_list'))
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list'))
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), ResourceGroup.objects.all().count())
 
     def test_resource_group_list_as_standard_user(self):
         self.client.force_login(self.standard_user)
-        response = self.client.get(reverse('resource_tracker:resource_group_list'))
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list'))
         self.assertEqual(403, response.status_code)
 
     def test_resource_group_list_with_tag_and(self):
-        response = self.client.get(reverse('resource_tracker:resource_group_list') + "?tag=tag1&tag=tag2&tag_filter_type=AND")
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list') + "?tag=tag1&tag=tag2&tag_filter_type=AND")
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), 1)
 
     def test_resource_group_list_with_tag_or(self):
-        response = self.client.get(reverse('resource_tracker:resource_group_list') + "?tag=tag1&tag=tag2&tag_filter_type=OR")
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list') + "?tag=tag1&tag=tag2&tag_filter_type=OR")
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), 3)
 
     def test_resource_group_create(self):
-        url = reverse('resource_tracker:resource_group_create')
+        url = reverse('resource_tracker_v2:resourcegroup_create')
         data = {
             "name": "new_resource_group",
         }
@@ -53,7 +53,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.cluster.id,
         }
-        url = reverse('resource_tracker:resource_group_edit', kwargs=args)
+        url = reverse('resource_tracker_v2:resourcegroup_edit', kwargs=args)
 
         new_name = "new_group_url"
         data = {
@@ -71,7 +71,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         args = {
             'resource_group_id': self.cluster.id,
         }
-        url = reverse('resource_tracker:resource_group_delete', kwargs=args)
+        url = reverse('resource_tracker_v2:resourcegroup_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url)
