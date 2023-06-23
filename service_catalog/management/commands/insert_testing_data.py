@@ -45,8 +45,6 @@ class Command(BaseCommand):
         for billing_group in billing_groups_name:
             billing_groups.append(Organization.objects.get_or_create(name=billing_group)[0])
 
-
-
         job_templates = JobTemplate.objects.all()
         services = dict()
         services['vmware_service'], _ = Service.objects.get_or_create(name="VMWare")
@@ -70,8 +68,8 @@ class Command(BaseCommand):
                     if random.randint(0, 2) == 1:
                         continue
                     user = users[username]
-                    new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
-                                                           scope=random.choice(billing_groups), requester=user)
+                    new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}", requester=user)
+                    new_instance.scopes.add(random.choice(billing_groups))
                     # create the request
                     new_request, _ = Request.objects.get_or_create(instance=new_instance,
                                                                    operation=service.operations.filter(

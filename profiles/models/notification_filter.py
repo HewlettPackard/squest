@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CASCADE, ForeignKey, ManyToManyField, TextField, CharField
+from django.db.models import ManyToManyField, TextField, CharField
 
 
 class NotificationFilter(models.Model):
