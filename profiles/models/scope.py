@@ -20,10 +20,8 @@ class AbstractScope(SquestModel):
     )
 
     def get_object(self):
-        if hasattr(self, "organization"):
-            return self.organization
-        elif hasattr(self, "team"):
-            return self.team
+        if hasattr(self, "scope"):
+            return self.scope.get_object()
         elif hasattr(self, "globalpermission"):
             return self.globalpermission
         raise Exception("This scope is not implemented")
@@ -90,7 +88,13 @@ class AbstractScope(SquestModel):
 
 
 class Scope(AbstractScope):
-    pass
+    def get_object(self):
+        if hasattr(self, "organization"):
+            return self.organization
+        elif hasattr(self, "team"):
+            return self.team
+        raise Exception("This scope is not implemented")
+
 
 
 class GlobalPermission(AbstractScope):

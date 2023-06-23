@@ -34,8 +34,10 @@ class TeamDetailView(DetailView):
 
         # Breadcrumbs
         breadcrumbs = [
-            {'text': 'Teams', 'url': reverse('profiles:team_list')},
-            {'text': f'{self.object}', 'url': ""},
+            {'text': 'Organization', 'url': reverse('profiles:organization_list')},
+            {'text': f'{self.object.org}', 'url': reverse('profiles:organization_details', kwargs={'pk': self.object.org.id})},
+            {'text': 'Teams', 'url': reverse('profiles:organization_details', kwargs={'pk': self.object.org.id}) + "#teams"},
+            {'text': f'{self.object.name}', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs
         context['users'] = UserRoleTable(self.object.users)
