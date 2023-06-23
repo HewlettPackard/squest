@@ -84,14 +84,8 @@
                     </li>
                 {% endif %}
 
-                <li class="nav-header">Profiles</li>
-                <li class="nav-item">
-                    <a href="{% url 'profiles:squestscope_details' %}"
-                       class="nav-link {% if '/profiles/squest-scope/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-sitemap"></i>
-                        <p>Squest Scope</p>
-                    </a>
-                </li>
+                <li class="nav-header">Access</li>
+
                 <li class="nav-item">
                     <a href="{% url 'profiles:organization_list' %}"
                        class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
@@ -113,17 +107,25 @@
                         <p>Users</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url 'profiles:role_list' %}"
-                       class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-user-check"></i>
-                        <p>Roles</p>
-                    </a>
-                </li>
+
 
                 {% if user.is_superuser %}
 
                     <li class="nav-header">Tools</li>
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:globalpermission_details' %}"
+                           class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-globe"></i>
+                            <p>Global Permission</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:role_list' %}"
+                           class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-unlock"></i>
+                            <p>Roles</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:globalhook_list' %}"
                            class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">

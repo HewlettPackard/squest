@@ -14,8 +14,8 @@ class SquestRBAC(Model):
 
         app_label, codename = perm.split(".")
 
-        from profiles.models.scope import SquestScope
-        squest_scope = SquestScope.load()
+        from profiles.models.scope import GlobalPermission
+        squest_scope = GlobalPermission.load()
         if Permission.objects.filter(
                 role__rbac__scope=squest_scope,
                 role__rbac__user=user,
