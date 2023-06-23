@@ -10,12 +10,12 @@ class TestAttributeDefinitionViews(BaseTestResourceTrackerV2):
         super(TestAttributeDefinitionViews, self).setUp()
 
     def test_attribute_list(self):
-        response = self.client.get(reverse('resource_tracker:attribute_definition_list'))
+        response = self.client.get(reverse('resource_tracker_v2:attributedefinition_list'))
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), AttributeDefinition.objects.all().count())
 
     def test_attribute_create(self):
-        url = reverse('resource_tracker:attribute_definition_create')
+        url = reverse('resource_tracker_v2:attributedefinition_create')
         data = {
             "name": "new_attribute"
         }
@@ -31,7 +31,7 @@ class TestAttributeDefinitionViews(BaseTestResourceTrackerV2):
         args = {
             "attribute_definition_id": self.core_attribute.id,
         }
-        url = reverse('resource_tracker:attribute_definition_edit', kwargs=args)
+        url = reverse('resource_tracker_v2:attributedefinition_edit', kwargs=args)
 
         new_name = "updated"
         data = {
@@ -48,7 +48,7 @@ class TestAttributeDefinitionViews(BaseTestResourceTrackerV2):
         args = {
             "attribute_definition_id": self.core_attribute.id,
         }
-        url = reverse('resource_tracker:attribute_definition_delete', kwargs=args)
+        url = reverse('resource_tracker_v2:attributedefinition_delete', kwargs=args)
 
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
