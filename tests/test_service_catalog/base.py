@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
+from profiles.models import Organization
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
@@ -400,6 +401,9 @@ class Common:
             tower_job_template_data=self.job_template_testing_data
         )
 
+
+        self.test_quota_scope = Organization.objects.create(name='Test Org 1')
+        self.test_quota_scope2 = Organization.objects.create(name='Test Org 2')
 
 class BaseTest(TestCase, Common):
     def setUp(self):
