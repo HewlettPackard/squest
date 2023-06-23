@@ -7,3 +7,4 @@ from profiles.views.organization_views import *
 from profiles.views.scope_views import *
 from profiles.views.user_views import *
 from profiles.views.role_views import *
+from profiles.views.globalpermission_views import *
