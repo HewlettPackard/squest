@@ -41,9 +41,15 @@ urlpatterns = [
          name='support_notification_edit'),
 
     # Scope
+    path('squest-scope/<int:scope_id>/role/create/', views.scope_rbac_create, name="squestscope_rbac_create"),
+    path('squest-scope/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="squestscope_rbac_delete"),
+    path('organization/<int:scope_id>/role/create/', views.scope_rbac_create, name="organization_rbac_create"),
+    path('organization/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="organization_rbac_delete"),
+    path('team/<int:scope_id>/role/create/', views.scope_rbac_create, name="team_rbac_create"),
+    path('team/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="team_rbac_delete"),
 
-    path('scope/<int:scope_id>/rbac/create/', views.scope_rbac_create, name="scope_rbac_create"),
-    path('scope/<int:scope_id>/rbac/<int:rbac_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="scope_rbac_delete"),
+    # Squest Scope
+    path('squest-scope/', views.SquestScopeDetailView.as_view(), name="squestscope_details"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
