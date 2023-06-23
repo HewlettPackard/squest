@@ -13,14 +13,14 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.ocp_projects.id
         }
-        self.url_confirm = reverse('resource_tracker:resource_group_resource_bulk_delete_confirm', kwargs=args)
-        self.url_delete = reverse('resource_tracker:resource_group_resource_bulk_delete', kwargs=args)
+        self.url_confirm = reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete_confirm', kwargs=args)
+        self.url_delete = reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete', kwargs=args)
 
     def test_resource_group_resources_list(self):
         args = {
             "resource_group_id": self.ocp_projects.id
         }
-        response = self.client.get(reverse('resource_tracker:resource_group_resource_list', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_resource_list', kwargs=args))
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data),
                          Resource.objects.filter(resource_group=self.ocp_projects).count())
@@ -29,7 +29,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.cluster.id
         }
-        url = reverse('resource_tracker:resource_group_resource_create', kwargs=args)
+        url = reverse('resource_tracker_v2:resourcegroup_resource_create', kwargs=args)
 
         # test GET
         response = self.client.get(url)
@@ -61,7 +61,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
             "resource_group_id": self.cluster.id,
             "resource_id": self.server1.id
         }
-        url = reverse('resource_tracker:resource_group_resource_edit', kwargs=args)
+        url = reverse('resource_tracker_v2:resourcegroup_resource_edit', kwargs=args)
 
         # test GET
         response = self.client.get(url)
@@ -89,7 +89,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
             "resource_group_id": self.cluster.id,
             "resource_id": self.server1.id
         }
-        url = reverse('resource_tracker:resource_group_resource_delete', kwargs=args)
+        url = reverse('resource_tracker_v2:resourcegroup_resource_delete', kwargs=args)
 
         # test GET
         response = self.client.get(url)
