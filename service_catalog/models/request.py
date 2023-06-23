@@ -246,11 +246,6 @@ class Request(SquestModel):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
-
-
-
-
-
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
         """
