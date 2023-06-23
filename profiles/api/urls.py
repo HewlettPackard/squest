@@ -26,4 +26,12 @@ urlpatterns = [
     path('team/', TeamListCreate.as_view(), name='api_team_list_create'),
     path('team/<int:pk>/', TeamDetails.as_view(), name='api_team_details'),
 
+    # Role
+    path('role/', RoleListCreate.as_view(), name='api_role_list_create'),
+    path('role/<int:pk>/', RoleDetails.as_view(), name='api_role_details'),
+
+    # RBAC
+    path('scope/', RoleListCreate.as_view(), name='api_role_list_create'),
+    path('role/<int:pk>/', RoleDetails.as_view(), name='api_role_details'),
+
 ]
