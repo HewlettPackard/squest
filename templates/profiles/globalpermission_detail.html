@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}
-    Squest Scope
+    Global Permission
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
-            <a href="{% url 'profiles:squestscope_rbac_create' object.id %}"
+            <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
         </div>
@@ -17,25 +17,7 @@
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <section class="col-lg-3">
-                <div class="card card-sucess">
-                    <div class="card-header">
-                        <h3 class="card-title">Details</h3>
-                    </div>
-                    <div class="card-body">
-
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item">
-                                <b>Name</b> <a class="float-right">{{ object.name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Description</b> <p class="float-right">{{ object.description }}</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            <section class="col-lg-9">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills" id="tabs">
@@ -56,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 {% endblock %}
