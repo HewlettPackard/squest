@@ -12,9 +12,9 @@ class Organization(Scope):
         return self.name
 
     def get_scopes(self):
-        from profiles.models.scope import SquestScope
+        from profiles.models.scope import GlobalPermission
         from profiles.models.scope import Scope
-        squest_scope = SquestScope.load()
+        squest_scope = GlobalPermission.load()
         return Scope.objects.filter(id=squest_scope.id) | Scope.objects.filter(id=self.id)
 
     def get_perspective_users(self):

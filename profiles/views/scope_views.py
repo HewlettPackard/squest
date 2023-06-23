@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from django.views.generic import DetailView
 
 from profiles.forms.scope_form import ScopeCreateRBACForm
-from profiles.models import RBAC, Organization, SquestScope, AbstractScope
+from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope
 
 from django.urls import reverse
 
@@ -12,17 +12,17 @@ from django.contrib.auth.models import User
 from profiles.tables import UserRoleTable, ScopeRoleTable
 
 
-class SquestScopeDetailView(DetailView):
-    model = SquestScope
+class GlobalPermissionDetailView(DetailView):
+    model = GlobalPermission
     
     def dispatch(self, request, *args, **kwargs):
-        self.kwargs['pk'] = SquestScope.load().id
+        self.kwargs['pk'] = GlobalPermission.load().id
         kwargs['pk'] = self.kwargs.get('pk')
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Squest Scope"
+        context['title'] = "Global Permission"
         context['users'] = UserRoleTable(self.object.users)
         context['roles'] = ScopeRoleTable(self.object.roles.all())
         context['scope'] = self.object
