@@ -17,8 +17,8 @@ class SquestRBAC(Model):
         from profiles.models.scope import SquestScope
         squest_scope = SquestScope.load()
         if Permission.objects.filter(
-                roles__rbac__scope=squest_scope,
-                roles__rbac__user=user,
+                role__rbac__scope=squest_scope,
+                role__rbac__user=user,
                 codename=codename,
                 content_type__app_label=app_label
         ).exists():
