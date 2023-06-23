@@ -1,8 +1,0 @@
-{% load guardian_tags %}
-{% get_obj_perms request.user for object as "object_perms" %}
-<a
-        class="btn btn-info float-sm-right{% if "change_"|add:object_name not in object_perms %} disabled{% endif %}"
-        href="{% url app_name|add:":user_in_"|add:object_name|add:"_update" object_id %}"
->
-    <i class="fas fa-user-edit"></i> Manage users role
-</a>
