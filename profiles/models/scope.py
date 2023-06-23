@@ -25,7 +25,6 @@ class AbstractScope(SquestModel):
             return self.team
         raise Exception("This scope is not implemented")
 
-
     def get_queryset_for_user(cls, user, perm):
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
@@ -92,14 +91,11 @@ class Scope(AbstractScope):
 
 
 class SquestScope(AbstractScope):
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super(SquestScope, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         pass
 
     @classmethod
     def load(cls):
-        obj, _ = cls.objects.get_or_create(pk=1, name="Global Scope")
+        obj, _ = SquestScope.objects.get_or_create(name="SquestScope")
         return obj
