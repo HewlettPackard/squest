@@ -96,16 +96,12 @@ class Request(SquestModel):
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
     def reject(self, user):
-        self.state = self.get_state_from_approval_step(user, ApprovalState.REJECTED)
-        self.save()
+        pass
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
-                target=RequestState.ACCEPTED, permission='service_catalog.approve_request_approvalstep')
+                target=RequestState.ACCEPTED)
     def accept(self, user, save=True):
-        self.accepted_by = user
-        self.state = self.get_state_from_approval_step(user, ApprovalState.APPROVED)
-        if save:
-            self.save()
+        pass
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
                 conditions=[can_process])
@@ -250,93 +246,10 @@ class Request(SquestModel):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
-    def get_approval_workflow_status(self):
-        if not self.operation.approval_workflow:
-            return list()
-        approval_steps = self.operation.approval_workflow.approval_step_list.order_by("position")
-        approval_workflow = list()
-        for approval_step in approval_steps:
-            approval_workflow.append({
-                'name': approval_step.name,
-                'type': approval_step.type,
-                'status': approval_step.get_request_approval_state(self),
-                'teams': [
-                    {
-                        'name': team.name,
-                        'status': ApprovalStepState.objects.get(request=self, team=team,
-                                                                approval_step=approval_step).state if ApprovalStepState.objects.filter(
-                            request=self, team=team, approval_step=approval_step).exists() else None
-                    }
-                    for team in approval_step.teams.all()
-                ]
-            })
-        return approval_workflow
 
-    def get_state_from_approval_step(self, user, target_approval_step_state):
-        """
-        This method return the calculated status from approval step states
-        """
-        if self.operation.approval_workflow is None and self.approval_step is None:
-            if target_approval_step_state == ApprovalState.APPROVED:
-                return RequestState.ACCEPTED
-            elif target_approval_step_state == ApprovalState.REJECTED:
-                return RequestState.REJECTED
-            else:
-                raise NotImplementedError
-        # teams = Team.objects.filter(id__in=[binding.object_id for binding in bindings])
-        # for approval_step_state in ApprovalStepState.objects.filter(team__in=teams, request=self,
-        #                                                             approval_step=self.approval_step):
-        #     approval_step_state.set_state(user, target_approval_step_state)
-        state = self.approval_step.get_request_approval_state(self)
-        if state == ApprovalState.REJECTED:
-            return RequestState.REJECTED
-        elif state == ApprovalState.APPROVED:
-            self.approval_step = self.approval_step.next
-            if self.approval_step:
-                from service_catalog.mail_utils import send_mail_request_update
-                send_mail_request_update(
-                    self,
-                    plain_text=f"Request need your approval"
-                )
-        if self.operation.approval_workflow and self.approval_step is None and self.state == RequestState.SUBMITTED:
-            return RequestState.ACCEPTED
-        return self.state
 
-    @classmethod
-    def set_default_approval_step(cls, sender, instance, *args, **kwargs):
-        if not instance.id and instance.operation.approval_workflow:
-            instance.approval_step = instance.operation.approval_workflow.entry_point
 
-    @classmethod
-    def create_approval_step_states_when_approval_step_changed(cls, sender, instance, *args, **kwargs):
-        if instance.id:
-            old = Request.objects.get(id=instance.id)
-            if old.approval_step != instance.approval_step:
-                if instance.approval_step:
-                    for team in instance.approval_step.teams.all():
-                        approval_step_state, created = ApprovalStepState.objects.get_or_create(
-                            request=instance,
-                            approval_step=instance.approval_step,
-                            team=team
-                        )
-                        if instance.approval_step:
-                            instance.state = RequestState.SUBMITTED
-                            next_approval_steps = instance.approval_step.approval_workflow.approval_step_list.filter(
-                                position__gte=instance.approval_step.position
-                            )
-                            ApprovalStepState.objects.filter(
-                                request=instance,
-                                approval_step__in=next_approval_steps
-                            ).update(**{"state": ApprovalState.PENDING})
 
-    @classmethod
-    def create_approval_step_states(cls, sender, instance, created, *args, **kwargs):
-        pass
-        # if created:
-        #     if instance.approval_step:
-        #         for team in instance.approval_step.teams.all():
-        #             ApprovalStepState.objects.create(request=instance, approval_step=instance.approval_step,
-        #                                              team=team)
 
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
@@ -373,9 +286,6 @@ class Request(SquestModel):
                                      target=RequestState.SUBMITTED, *args, **kwargs)
 
 
-pre_save.connect(Request.set_default_approval_step, sender=Request)
-pre_save.connect(Request.create_approval_step_states_when_approval_step_changed, sender=Request)
-post_save.connect(Request.create_approval_step_states, sender=Request)
 post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
 post_save.connect(Request.on_create_call_hook_manager, sender=Request)
