@@ -10,7 +10,7 @@ class TestUserRoleBinding(TestGroupBase):
 
     def setUp(self):
         super(TestUserRoleBinding, self).setUp()
-        self.instance = Instance.objects.create(service=None, name="Test", billing_group=None, spoc=self.standard_user)
+        self.instance = Instance.objects.create(service=None, name="Test", billing_group=None, requester=self.standard_user)
         self.request = Request.objects.create(fill_in_survey={}, instance=self.instance,
                                               operation=self.create_operation_test, user=self.standard_user_2)
         self.instance_content_type = ContentType.objects.get_for_model(Instance)

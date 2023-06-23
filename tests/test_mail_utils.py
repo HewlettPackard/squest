@@ -23,10 +23,10 @@ class TestMailUtils(BaseTest):
                                                      spec={
                                                          "value1": "key1"
                                                      },
-                                                     spoc=self.standard_user)
+                                                     requester=self.standard_user)
         self.test_instance_2 = Instance.objects.create(name="test_instance_2",
                                                        service=self.service_test_2,
-                                                       spoc=self.standard_user)
+                                                       requester=self.standard_user)
         self.test_request = Request.objects.create(fill_in_survey=data,
                                                    instance=self.test_instance,
                                                    operation=self.create_operation_test,

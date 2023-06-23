@@ -42,7 +42,7 @@ class BaseTestProfile(BaseTestRequest):
 
         self.test_instance_3 = Instance.objects.create(name="test_instance_3",
                                                        service=self.service_empty_survey_test,
-                                                       spoc=self.standard_user_2,
+                                                       requester=self.standard_user_2,
                                                        state=InstanceState.ARCHIVED)
         self.test_request_3 = Request.objects.create(fill_in_survey={},
                                                      instance=self.test_instance_3,

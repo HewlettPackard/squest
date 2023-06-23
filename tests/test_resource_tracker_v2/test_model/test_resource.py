@@ -16,7 +16,7 @@ class TestModelResource(BaseTestResourceTrackerV2):
         self.service_test = Service.objects.create(name="service-test", description="description-of-service-test")
         self.test_instance = Instance.objects.create(name="test_instance_1",
                                                      service=self.service_test,
-                                                     spoc=self.standard_user)
+                                                     requester=self.standard_user)
         self.resource_id_to_delete = copy(self.vm1.id)
         self.vm1.service_catalog_instance = self.test_instance
         self.vm1.save()

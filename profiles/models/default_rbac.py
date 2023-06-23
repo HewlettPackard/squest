@@ -93,16 +93,16 @@ roles_list = {
             },
         },
     },
-    "Approver": {
-        "description": "An approver can approve approval step linked to his Group (Organization or Team)",
-        "model_names": {
-            "service_catalog.approvalstep": {
-                "permissions": [
-                    "approve_request_approvalstep"
-                ]
-            }
-        }
-    },
+    # "Approver": {
+    #     "description": "An approver can approve approval step linked to his Group (Organization or Team)",
+    #     "model_names": {
+    #         "service_catalog.approvalstep": {
+    #             "permissions": [
+    #                 "approve_request_approvalstep"
+    #             ]
+    #         }
+    #     }
+    # },
     "Organization member": {
         "description": "A member can access the members of the organization",
         "model_names": {

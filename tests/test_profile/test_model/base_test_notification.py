@@ -12,7 +12,7 @@ class BaseTestNotificationFilter(BaseTestProfile):
                                                                 job_template=self.job_template_test)
         self.test_instance_3 = Instance.objects.create(name="test_instance_3",
                                                        service=self.service_test_3,
-                                                       spoc=self.standard_user_2)
+                                                       requester=self.standard_user_2)
         self.test_request_3 = Request.objects.create(fill_in_survey={"location": "grenoble"},
                                                      instance=self.test_instance_3,
                                                      operation=self.create_operation_test_3,
