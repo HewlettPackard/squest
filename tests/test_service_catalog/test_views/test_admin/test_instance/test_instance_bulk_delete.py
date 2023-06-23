@@ -13,7 +13,7 @@ class InstanceBulkDeleteTest(BaseTestRequest):
                 Instance.objects.create(
                     name=f"test_bulk_delete_instance_{x}",
                     service=self.service_test,
-                    spoc=self.standard_user
+                    requester=self.standard_user
                 ).id
             )
         self.data = {"selection": self.instance_to_delete_list}

@@ -12,7 +12,7 @@ class CustomLinksPresenceTest(BaseTestCustomLink):
         self.args = {
             "instance_id": self.test_instance.id
         }
-        self.test_instance.spoc = self.standard_user
+        self.test_instance.requester = self.standard_user
         self.test_instance.save()
         self.instance_detail_url = reverse('service_catalog:instance_details', kwargs=self.args)
 

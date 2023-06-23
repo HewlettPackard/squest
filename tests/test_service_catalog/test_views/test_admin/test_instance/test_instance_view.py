@@ -21,7 +21,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.edit_instance_data = {
             "name": "new_instance_name",
             "service": self.service_test_2.id,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
             "billing_group": "",
             "spec": json.dumps(self.json_spec),
@@ -41,7 +41,7 @@ class TestAdminInstanceViews(BaseTestRequest):
         self.assertEqual(302, response.status_code)
 
     def test_admin_can_get_details(self):
-        self.test_instance.spoc = None
+        self.test_instance.requester = None
         self.test_instance.save()
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
