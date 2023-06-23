@@ -52,10 +52,6 @@ class Operation(Model):
         return f"{self.name} ({self.service})"
 
     def clean(self):
-        if self.approval_workflow and not self.approval_workflow.entry_point:
-            raise ValidationError({'approval_workflow': _("You cannot use an approval workflow without entrypoint.")})
-        if self.auto_accept and self.approval_workflow:
-            raise ValidationError({'auto_accept': _("Auto accept cannot be set with an approval step.")})
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
@@ -112,9 +108,7 @@ def on_change(sender, instance: Operation, **kwargs):
         if instance.type == OperationType.CREATE and instance.enabled and previous.enabled != instance.enabled and instance.service.can_be_enabled():
             instance.service.enabled = True
             instance.service.save()
-        if previous.approval_workflow != instance.approval_workflow:
-            approval_step = instance.approval_workflow.entry_point if instance.approval_workflow else None
-            instance.request_set.update(**{"approval_step": approval_step})
+
 
 
 
