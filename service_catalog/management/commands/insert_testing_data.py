@@ -7,9 +7,7 @@ from django.core.management import BaseCommand
 
 from profiles.models import Organization
 from resource_tracker_v2.models import AttributeDefinition, Resource, ResourceGroup, Transformer
-from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request, ApprovalWorkflow, \
-    ApprovalStep
-from service_catalog.models.approval_step_type import ApprovalStepType
+from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 
@@ -47,29 +45,8 @@ class Command(BaseCommand):
         for billing_group in billing_groups_name:
             billing_groups.append(Organization.objects.get_or_create(name=billing_group)[0])
 
-        approval_workflow = ApprovalWorkflow.objects.create(name='testing AW')
-        approval_step_3 = ApprovalStep.objects.create(
-            name="Third",
-            type=ApprovalStepType.ALL_OF_THEM,
-            approval_workflow=approval_workflow
-        )
-        # approval_step_3.teams.set(Team.objects.filter(id__lt=3))
-        approval_step_2 = ApprovalStep.objects.create(
-            name="Second",
-            type=ApprovalStepType.ALL_OF_THEM,
-            next=approval_step_3,
-            approval_workflow=approval_workflow
-        )
-        # approval_step_2.teams.set(Team.objects.filter(id__gt=4, id__lt=7))
-        approval_step_1 = ApprovalStep.objects.create(
-            name="First",
-            type=ApprovalStepType.AT_LEAST_ONE,
-            next=approval_step_2,
-            approval_workflow=approval_workflow
-        )
-        # approval_step_1.teams.set(Team.objects.filter(id__gt=2, id__lt=5))
-        approval_workflow.entry_point = approval_step_1
-        approval_workflow.save()
+
+
         job_templates = JobTemplate.objects.all()
         services = dict()
         services['vmware_service'], _ = Service.objects.get_or_create(name="VMWare")
@@ -81,8 +58,7 @@ class Command(BaseCommand):
             service = services[service_name]
             Operation.objects.get_or_create(name=service.name,
                                             service=service,
-                                            job_template=job_templates[1],
-                                            approval_workflow=approval_workflow)
+                                            job_template=job_templates[1])
             Operation.objects.get_or_create(name="Delete my resource",
                                             type=OperationType.DELETE,
                                             service=service,
