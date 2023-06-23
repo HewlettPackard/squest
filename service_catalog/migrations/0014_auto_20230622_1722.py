@@ -3,11 +3,31 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import service_catalog.models.instance
+
+def billing_group_to_org(apps, schema_editor):
+    from profiles.models.default_rbac import roles_list
+    Role = apps.get_model('profiles', 'Role')
+    for role_name, role_params in roles_list.items():
+        role, created = Role.objects.get_or_create(
+            name=role_name,
+            description=role_params['description'],
+        )
+    BillingGroup = apps.get_model('profiles', 'BillingGroup')
+    Organization = apps.get_model('profiles', 'Organization')
+    RBAC = apps.get_model('profiles', 'RBAC')
+    for billing in BillingGroup.objects.all():
+        org = Organization.objects.create(name=billing.name)
+        for user in billing.user_set.all():
+            group, _ = RBAC.objects.get_or_create(
+                scope=org,
+                name=f'group_role_{org.name}_Organization member',
+                role=Role.objects.get(name="Organization member")
+            )
+            group.user_set.add(user)
+        org.instances.add(*list(billing.instances.all()))
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('profiles', '0012_auto_20230622_1722'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -38,11 +58,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='instance',
             name='requester',
-            field=models.ForeignKey(help_text='Initial request', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='Requester'),
+            field=models.ForeignKey(help_text='Initial request', null=True,
+                                    on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL,
+                                    verbose_name='Requester'),
         ),
         migrations.AddField(
             model_name='instance',
-            name='scope',
-            field=models.ForeignKey(default=service_catalog.models.instance.get_default_org, on_delete=django.db.models.deletion.SET_DEFAULT, related_name='instances', related_query_name='instance', to='profiles.scope'),
+            name='scopes',
+            field=models.ManyToManyField(blank=True, related_name='instances', related_query_name='instance',
+                                         to='profiles.Scope')
         ),
+        migrations.RunPython(billing_group_to_org)
     ]
