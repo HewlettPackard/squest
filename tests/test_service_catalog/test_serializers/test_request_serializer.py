@@ -9,7 +9,7 @@ class TestRequestSerializer(BaseTestRequest):
         super(TestRequestSerializer, self).setUp()
         self.local_test_instance = Instance.objects.create(name="test_instance_1",
                                                            service=self.service_test,
-                                                           spoc=self.standard_user,
+                                                           requester=self.standard_user,
                                                            billing_group=self.test_billing_group)
 
         # add a first request

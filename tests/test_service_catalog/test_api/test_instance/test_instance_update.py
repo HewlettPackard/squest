@@ -15,7 +15,7 @@ class TestInstanceUpdate(BaseTestRequest):
         self.update_data = {
             "name": "new_name",
             "service": self.service_test_2.id,
-            "spoc": self.standard_user_2.id,
+            "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
             "billing_group": self.test_billing_group.id,
             "spec": {

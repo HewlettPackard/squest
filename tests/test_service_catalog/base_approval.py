@@ -39,7 +39,7 @@ class BaseApproval(TestGroupBase):
         self.create_operation_test.approval_workflow = self.test_approval_workflow
         self.create_operation_test.save()
         self.test_instance = Instance.objects.create(name="test_instance_1", service=self.service_test,
-                                                     spoc=self.standard_user)
+                                                     requester=self.standard_user)
         form_data = {'text_variable': 'my_var'}
         self.test_request = Request.objects.create(fill_in_survey=form_data,
                                                    instance=self.test_instance,
