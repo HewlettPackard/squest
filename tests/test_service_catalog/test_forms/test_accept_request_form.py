@@ -31,7 +31,7 @@ class TestAcceptRequestForm(BaseTest):
         }
         self.test_instance = Instance.objects.create(name="test_instance_1",
                                                      service=self.service_test,
-                                                     spoc=self.standard_user)
+                                                     requester=self.standard_user)
         self.test_request = Request.objects.create(fill_in_survey=data,
                                                    instance=self.test_instance,
                                                    operation=self.create_operation_test,
