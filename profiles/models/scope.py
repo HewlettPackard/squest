@@ -90,12 +90,12 @@ class Scope(AbstractScope):
     pass
 
 
-class SquestScope(AbstractScope):
+class GlobalPermission(AbstractScope):
 
     def delete(self, *args, **kwargs):
         pass
 
     @classmethod
     def load(cls):
-        obj, _ = SquestScope.objects.get_or_create(name="SquestScope")
+        obj, _ = GlobalPermission.objects.get_or_create(name="GlobalPermission")
         return obj
