@@ -1,16 +1,36 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
+from django.views.generic import DetailView
 
 from profiles.forms.scope_form import ScopeCreateRBACForm
-from profiles.models import RBAC, Scope
+from profiles.models import RBAC, Organization, SquestScope, AbstractScope
 
 from django.urls import reverse
 
 from django.contrib.auth.models import User
 
+from profiles.tables import UserRoleTable, ScopeRoleTable
+
+
+class SquestScopeDetailView(DetailView):
+    model = SquestScope
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.kwargs['pk'] = SquestScope.load().id
+        kwargs['pk'] = self.kwargs.get('pk')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Squest Scope"
+        context['users'] = UserRoleTable(self.object.users)
+        context['roles'] = ScopeRoleTable(self.object.roles.all())
+        context['scope'] = self.object
+        return context
+
 
 def scope_rbac_create(request, scope_id):
-    scope = get_object_or_404(Scope, id=scope_id)
+    scope = get_object_or_404(AbstractScope, id=scope_id)
     form = ScopeCreateRBACForm(request.POST or None, scope=scope)
     class_name = scope.get_object().__class__.__name__
     if form.is_valid():
@@ -27,15 +47,16 @@ def scope_rbac_create(request, scope_id):
     return render(request, 'generics/generic_form.html', context)
 
 
-def scope_rbac_delete(request, scope_id, rbac_id, user_id):
-    scope = get_object_or_404(Scope, id=scope_id)
-    rbac = get_object_or_404(RBAC, group_ptr=rbac_id)
+def scope_rbac_delete(request, scope_id, role_id, user_id):
+    scope = get_object_or_404(AbstractScope, id=scope_id)
+    scope = scope.get_object()
+    rbac = get_object_or_404(RBAC, role__id=role_id, scope__id=scope_id)
     user = get_object_or_404(User, id=user_id)
-    class_name = scope.get_object().__class__.__name__
+    class_name = scope.__class__.__name__
     details = None
-    if hasattr(scope, "organization"):
+    if isinstance(scope, Organization):
         team_name_list = RBAC.objects.filter(
-            scope__in=scope.organization.teams.all(),
+            scope__in=scope.teams.all(),
             user__id=user_id
         ).values_list("scope__name", flat=True)
         details = {
@@ -55,8 +76,8 @@ def scope_rbac_delete(request, scope_id, rbac_id, user_id):
             {'text': rbac.role, 'url': ""},
             {'text': user, 'url': ""},
         ],
-        'action_url': reverse(f'profiles:scope_rbac_delete',
-                              kwargs={"scope_id": scope.id, "rbac_id": rbac_id, "user_id": user_id}) + "#users",
+        'action_url': reverse(f'profiles:{class_name.lower()}_rbac_delete',
+                              kwargs={"scope_id": scope.id, "role_id": role_id, "user_id": user_id}) + "#users",
         'confirm_text': mark_safe(f"Confirm to remove <strong>{user}</strong> from <strong>{rbac.role}</strong>?"),
         'button_text': 'Delete',
         'details': details

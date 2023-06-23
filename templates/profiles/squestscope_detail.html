@@ -1,25 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}
-    #{{ object.id }} | Organization
+    Squest Scope
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
-            <a href="{% url 'profiles:organization_rbac_create' object.id %}"
+            <a href="{% url 'profiles:squestscope_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
-            </a>
-            <a href="{% url 'profiles:organization_team_create' object.id %}"
-               class="btn btn-success"> <i class="fas fa-plus"></i> Create team
-            </a>
-            <a href="{% url 'profiles:organization_edit' object.id %}"
-               class="btn btn-primary">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
-            <a href="{% url 'profiles:organization_delete' object.id %}"
-               class="btn btn-danger">
-                <i class="fas fa-trash"></i>
             </a>
         </div>
     {% endif %}
@@ -52,7 +41,6 @@
                         <ul class="nav nav-pills" id="tabs">
                             <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#teams" data-toggle="tab">Teams</a></li>
                             <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
 
                         </ul>
@@ -61,9 +49,6 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="users">
                                 {% render_table users %}
-                            </div>
-                            <div class="tab-pane" id="teams">
-                                {% render_table teams %}
                             </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
