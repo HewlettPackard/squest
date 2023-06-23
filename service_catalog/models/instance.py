@@ -2,7 +2,7 @@ import logging
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, SET_DEFAULT, ManyToManyField
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField,ManyToManyField, PROTECT
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
@@ -31,8 +31,16 @@ class Instance(SquestModel):
     scopes = ManyToManyField(
         Scope,
         blank=True,
-        related_name='instances',
-        related_query_name='instance'
+        related_name='scope_instances',
+        related_query_name='scope_instance'
+    )
+
+    quota_scope = ForeignKey(
+        Scope,
+        related_name="quota_instances",
+        related_query_name="quota_instance",
+        on_delete=PROTECT,
+        default=get_default_org
     )
     state = FSMField(default=InstanceState.PENDING)
     date_available = DateTimeField(null=True, blank=True)
@@ -56,6 +64,7 @@ class Instance(SquestModel):
         for scope in self.scopes.all():
             qs = qs | scope.get_scopes()
         return qs
+
     def __str__(self):
         return f"{self.name} (#{self.id})"
 
