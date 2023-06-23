@@ -19,8 +19,8 @@ class TestInstanceCreate(BaseTestRequest):
         self.assertEqual(response.data['name'], expected['name'])
         self.assertEqual(response.data['service'], expected['service'])
         self.assertEqual(response.data['requester']['id'], expected['requester'])
-        if response.data['billing_group']:
-            self.assertEqual(response.data['billing_group']['id'], expected['billing_group'])
+        if response.data['quota_scope']:
+            self.assertEqual(response.data['quota_scope']['id'], expected['quota_scope'])
         self.assertEqual(response.data['spec'], expected['spec'])
         self.assertEqual(response.data['resources'], expected['resources'])
 
@@ -30,7 +30,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
-            "billing_group": self.test_billing_group.id,
+            "quota_scope": self.test_quota_scope.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"
@@ -42,7 +42,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': self.service_test_2.id,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'billing_group': self.test_billing_group.id}
+                    'quota_scope': self.test_quota_scope.id}
         self._assert_created(data, expected)
 
     def test_instance_create_spec_empty_dict(self):
@@ -51,7 +51,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.UPDATING,
-            "billing_group": None,
+            "quota_scope": None,
             "spec": {}
         }
         expected = {'state': 'UPDATING',
@@ -60,7 +60,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': self.service_test_2.id,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'billing_group': None}
+                    'quota_scope': None}
         self._assert_created(data, expected)
 
     def test_instance_create_no_service(self):
@@ -69,7 +69,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": None,
             "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
-            "billing_group": None,
+            "quota_scope": None,
             "spec": {
             }
         }
@@ -79,7 +79,7 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': None,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'billing_group': None}
+                    'quota_scope': None}
         self._assert_created(data, expected)
 
     def test_non_admin_cannot_create_instance(self):
@@ -89,7 +89,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
-            "billing_group": self.test_billing_group.id,
+            "quota_scope": self.test_quota_scope.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"
