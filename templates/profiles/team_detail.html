@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}
-    #{{ object.id }} | Organization
+    #{{ object.id }} | Team
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
-            <a href="{% url 'profiles:scope_rbac_create' object.id %}"
+            <a href="{% url 'profiles:team_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
             <a href="{% url 'profiles:team_edit' object.id %}"

@@ -86,6 +86,13 @@
 
                 <li class="nav-header">Profiles</li>
                 <li class="nav-item">
+                    <a href="{% url 'profiles:squestscope_details' %}"
+                       class="nav-link {% if '/profiles/squest-scope/' in request.path %}active{% endif %}">
+                        <i class="nav-icon fas fa-sitemap"></i>
+                        <p>Squest Scope</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{% url 'profiles:organization_list' %}"
                        class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
                         <i class="nav-icon fas fa-sitemap"></i>
