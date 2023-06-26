@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer, Serializer
-from profiles.models import Scope, Role
+from profiles.models import Scope
 from rest_framework.fields import MultipleChoiceField
 
 
@@ -13,20 +13,23 @@ class ScopeSerializer(ModelSerializer):
 
 class ScopeCreateRBACSerializer(Serializer):
     roles = MultipleChoiceField(
-        choices=Role.objects.all().values_list('id', 'name'),
+        choices=[],
         required=True,
     )
     users = MultipleChoiceField(
-        choices=User.objects.none(),
+        choices=[],
         required=True,
     )
 
     def __init__(self, *args, **kwargs):
+        from profiles.models import Role
         self.scope = Scope.objects.get(id=kwargs.get('context').get('view').kwargs.get('scope_id'))
         super(ScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
         self.fields["users"].choices = self.scope.get_perspective_users().values_list('id', 'username')
+        self.fields["roles"].choices = Role.objects.all().values_list('id', 'name')
 
     def save(self):
+        from profiles.models import Role
         for role_id in self.data.get('roles'):
             role = Role.objects.get(id=role_id)
             for user_id in self.data.get('users'):
