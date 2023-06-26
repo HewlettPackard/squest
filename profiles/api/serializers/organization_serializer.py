@@ -7,4 +7,5 @@ class OrganizationSerializer(ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = ('name',)
+        fields = '__all__'
+        read_only_fields = ('id',)
