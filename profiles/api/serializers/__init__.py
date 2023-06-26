@@ -9,3 +9,4 @@ from .request_notification_filter_serializer import *
 from .support_notification_filter_serializer import *
 from .user_serializers import *
 from .globalpermission_serializer import *
+from .scope_serializer import *
