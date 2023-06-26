@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
 from profiles.forms.scope_form import ScopeCreateRBACForm
-from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope
+from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope, Team
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -22,10 +22,14 @@ def scope_rbac_create(request, scope_id):
     else:
         breadcrumbs = [
             {'text': class_name, 'url': reverse(f'profiles:{class_name.lower()}_list')},
-            {'text': scope,
-            'url': reverse(f'profiles:{class_name.lower()}_details', kwargs={"pk": scope.id})},
+            {'text': scope.name, 'url': scope.get_absolute_url()},
             {'text': f'Add RBAC', 'url': ""},
         ]
+        if isinstance(scope, Team):
+            breadcrumbs = [
+                {'text': "Organization", 'url': reverse(f'profiles:organization_list')},
+                {'text': scope.org, 'url': scope.org.get_absolute_url()},
+            ] + breadcrumbs
     context = {'form': form, 'object_name': "billing_group", 'breadcrumbs': breadcrumbs,
                'action': "edit"}
     return render(request, 'generics/generic_form.html', context)
@@ -61,13 +65,17 @@ def scope_rbac_delete(request, scope_id, role_id, user_id):
     else:
         breadcrumbs = [
             {'text': class_name, 'url': reverse(f'profiles:{class_name.lower()}_list')},
-            {'text': scope,
-             'url': reverse(f'profiles:{class_name.lower()}_details', kwargs={"pk": scope.id})},
+            {'text': scope, 'url': scope.get_absolute_url()},
             {'text': "Role", 'url': ""},
             {'text': rbac.role, 'url': ""},
             {'text': "User", 'url': ""},
             {'text': user, 'url': ""},
         ]
+        if isinstance(scope, Team):
+            breadcrumbs = [
+                {'text': scope.org.__class__.__name__, 'url': reverse(f'profiles:{scope.org.__class__.__name__.lower()}_list')},
+                {'text': scope.org, 'url': scope.org.get_absolute_url()},
+            ] + breadcrumbs
     context = {
         'breadcrumbs': breadcrumbs,
         'action_url': reverse(f'profiles:{class_name.lower()}_rbac_delete',
