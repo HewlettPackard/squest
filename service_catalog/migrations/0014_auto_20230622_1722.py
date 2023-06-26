@@ -24,7 +24,7 @@ def billing_group_to_org(apps, schema_editor):
                 role=Role.objects.get(name="Organization member")
             )
             group.user_set.add(user)
-        org.instances.add(*list(billing.instances.all()))
+        org.quota_instances.add(*list(billing.instances.all()))
 
 
 class Migration(migrations.Migration):
