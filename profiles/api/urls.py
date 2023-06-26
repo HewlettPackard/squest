@@ -16,6 +16,9 @@ urlpatterns = [
     path('notification-filter/support/<int:pk>/', SupportNotificationFilterDetails.as_view(),
          name='api_support_notification_filter_details'),
 
+    # Global Permission
+    path('global-permission/', GlobalPermissionDetails.as_view(), name='api_organization_details'),
+
     # Organization
     path('organization/', OrganizationListCreate.as_view(), name='api_organization_list_create'),
     path('organization/<int:pk>/', OrganizationDetails.as_view(), name='api_organization_details'),
