@@ -16,6 +16,14 @@ urlpatterns = [
     path('notification-filter/support/<int:pk>/', SupportNotificationFilterDetails.as_view(),
          name='api_support_notification_filter_details'),
 
+    # Scope
+    path('global-permission/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_globalpermission_rbac_create"),
+    path('global-permission/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_globalpermission_rbac_delete"),
+    path('organization/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_organization_rbac_create"),
+    path('organization/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_organization_rbac_delete"),
+    path('team/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_team_rbac_create"),
+    path('team/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_team_rbac_delete"),
+
     # Global Permission
     path('global-permission/', GlobalPermissionDetails.as_view(), name='api_organization_details'),
 
