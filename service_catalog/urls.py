@@ -1,12 +1,12 @@
 from django.urls import path
 
 from . import views
+from .views import InstanceDetailView, InstanceEditView, InstanceDeleteView
 from .views.admin.custom_link_views import CustomLinkListView
 from .views.announcement_list_view import AnnouncementListView
 from .views.create_operation_list_view import CreateOperationListView
 from .views.doc_list_view import DocListView
 from .views.global_hook_list_view import GlobalHookListView
-from .views.instance_list_view import InstanceListView
 from .views.job_template_list_view import JobTemplateListView
 from .views.operation_list_view import OperationListView
 from .views.portfolio_list_view import PortfolioListView
@@ -60,23 +60,21 @@ urlpatterns = [
     path('service/<int:service_id>/operation/<int:operation_id>/survey/',
          views.service_operation_edit_survey, name='service_operation_edit_survey'),
 
-    path('instance/', InstanceListView.as_view(), name='instance_list'),
+    path('instance/', views.InstanceListView.as_view(), name='instance_list'),
     path('instance/delete-confirm/', views.instance_bulk_delete_confirm, name='instance_bulk_delete_confirm'),
     path('instance/delete-force/', views.instance_bulk_delete, name='instance_bulk_delete'),
-    path('instance/<int:instance_id>/', views.instance_details, name='instance_details'),
+    path('instance/<int:pk>/', InstanceDetailView.as_view(), name='instance_details'),
     path('instance/<int:instance_id>/new-support/', views.instance_new_support,
          name='instance_new_support'),
     path('instance/<int:instance_id>/support/<int:support_id>/', views.instance_support_details,
          name='instance_support_details'),
     path('instance/<int:instance_id>/support/<int:support_id>/message/<int:message_id>/', views.support_message_edit,
          name='support_message_edit'),
-    path('instance/<int:instance_id>/edit/', views.instance_edit, name='instance_edit'),
-    path('instance/<int:instance_id>/delete/', views.instance_delete, name='instance_delete'),
+    path('instance/<int:pk>/edit/', InstanceEditView.as_view(), name='instance_edit'),
+    path('instance/<int:pk>/delete/', InstanceDeleteView.as_view(), name='instance_delete'),
     path('instance/<int:instance_id>/archive/', views.instance_archive, name='instance_archive'),
     path('instance/<int:instance_id>/operation/<int:operation_id>/', views.instance_request_new_operation,
          name='instance_request_new_operation'),
-    path('instance/<int:instance_id>/users/remove/<int:user_id>/', views.user_in_instance_remove,
-         name='user_in_instance_remove'),
 
 
     path('support/', SupportListView.as_view(), name='support_list'),
