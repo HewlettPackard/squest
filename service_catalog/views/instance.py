@@ -1,14 +1,19 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
-from django.contrib.auth.models import User, Group
 from django.core.exceptions import PermissionDenied
+from django.db.models import ProtectedError
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.views.generic import DetailView, UpdateView, DeleteView
 from django_fsm import can_proceed
 from guardian.decorators import permission_required_or_403
 from jinja2 import UndefinedError
+from rest_framework.reverse import reverse_lazy
 
+from Squest.utils.squest_rbac import SquestObjectPermissions
+from Squest.utils.squest_views import SquestListView
+from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
 from service_catalog.models.instance import Instance
 from service_catalog.models.support import Support
@@ -16,57 +21,100 @@ from service_catalog.models.operations import Operation
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.message import SupportMessage
-from service_catalog.models.request import Request
 from service_catalog.models.documentation import Doc
+from service_catalog.tables.instance_tables import InstanceTable
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.views.support_list_view import SupportTable
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def instance_edit(request, instance_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    form = InstanceForm(request.POST or None, request.FILES or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('service_catalog:instance_details', instance.id)
-    context = {
-        'form': form,
-        'breadcrumbs': [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{instance.name} ({instance.id})",
-             'url': reverse('service_catalog:instance_details', args=[instance_id])},
-        ],
-        'object_name': 'instance'}
-    return render(request, 'generics/edit-sensitive-object.html', context)
+class InstanceListView(SquestListView):
+    table_pagination = {'per_page': 10}
+    table_class = InstanceTable
+    model = Instance
+    template_name = 'generics/list.html'
+    filterset_class = InstanceFilter
+
+    def get_table_data(self, **kwargs):
+        filtered = super().get_table_data().distinct()
+        return Instance.get_queryset_for_user(
+            self.request.user,
+            'service_catalog.view_instance').distinct().order_by("-date_available") & filtered
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_superuser:
+            context['html_button_path'] = 'generics/buttons/delete_button.html'
+            context['action_url'] = reverse('service_catalog:instance_bulk_delete_confirm')
+        return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def instance_delete(request, instance_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    if request.method == 'POST':
-        instance.delete()
-        return redirect("service_catalog:instance_list")
-    args = {
-        "instance_id": instance_id,
-    }
-    context = {
-        'breadcrumbs': [
+class InstanceDetailView(DetailView):
+    model = Instance
+    filterset_class = InstanceFilter
+    permission_classes = [SquestObjectPermissions]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{instance.name} ({instance.id})",
-             'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': 'Delete', 'url': ''}
+            {'text': f"{self.object.name} ({self.object.id})", 'url': ""},
         ],
-        'confirm_text': mark_safe(f"Confirm deletion of <strong>{instance.name}</strong>?"),
-        'action_url': reverse('service_catalog:instance_delete', kwargs=args),
-        'button_text': 'Delete',
-        'details':
-            {
-                'warning_sentence': 'Warning: all requests related to this instance will be deleted:',
-                'details_list': [f"ID: {request.id}, State: {request.state}" for request in instance.request_set.all()]
-            } if instance.request_set.count() != 0 else None
-    }
-    return render(request, 'generics/confirm-delete-template.html', context=context)
+        context['instance'] = self.object
+        context['operations_table'] = OperationTableFromInstanceDetails(self.object.service.operations.all())
+        context['requests_table'] = RequestTable(self.object.request_set.all(),
+                                                 hide_fields=["instance__name", "instance__service__name"])
+        context['supports_table'] = SupportTable(self.object.supports.all(), hide_fields=["instance__name"])
+        return context
+
+
+class InstanceEditView(UpdateView):
+    model = Instance
+    template_name = 'generics/generic_form.html'
+    form_class = InstanceForm
+    permission_classes = [SquestObjectPermissions]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        breadcrumbs = [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{self.object.name} ({self.object.id})",
+             'url': self.object.get_absolute_url()},
+        ]
+        context['breadcrumbs'] = breadcrumbs
+
+        context['action'] = "edit"
+        return context
+
+
+class InstanceDeleteView(DeleteView):
+    model = Instance
+    template_name = 'generics/confirm-delete-template.html'
+    success_url = reverse_lazy("service_catalog:instance_list")
+    permission_classes = [SquestObjectPermissions]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f'{self.object}', 'url': ""},
+        ]
+        context['confirm_text'] = mark_safe(f"Confirm deletion of <strong>{self.object.name}</strong>?")
+        context['details'] = {
+            'warning_sentence': 'Warning: all requests related to this instance will be deleted:',
+            'details_list': [f"ID: {request.id}, State: {request.state}" for request in
+                             self.object.request_set.all()]} if self.object.request_set.count() != 0 else None
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            return super().delete(request, *args, **kwargs)
+        except ProtectedError as e:
+            error_message = f"{e.args[0]}"
+            # Vous pouvez personnaliser le message d'erreur en fonction de vos besoins
+            context = self.get_context_data(object=self.object, error_message=error_message,
+                                            protected_objects=e.protected_objects)
+            return self.render_to_response(context)
 
 
 @login_required
@@ -163,7 +211,8 @@ def instance_new_support(request, instance_id):
         'instance': target_instance,
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{target_instance.name} ({target_instance.id})", 'url': reverse('service_catalog:instance_details', args=[instance_id])},
+            {'text': f"{target_instance.name} ({target_instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
         ],
         'color_button': 'success',
         'text_button': 'Open new support',
@@ -227,7 +276,8 @@ def support_message_edit(request, instance_id, support_id, message_id):
             return redirect('service_catalog:instance_support_details', support_message.support.instance.id,
                             support_message.support.id)
     else:
-        form = SupportMessageForm(sender=support_message.sender, support=support_message.support, instance=support_message)
+        form = SupportMessageForm(sender=support_message.sender, support=support_message.support,
+                                  instance=support_message)
     context = {
         'form': form,
         'breadcrumbs': [
@@ -242,97 +292,6 @@ def support_message_edit(request, instance_id, support_id, message_id):
         'action': 'edit'
     }
     return render(request, "generics/generic_form.html", context)
-
-
-@login_required
-@permission_required_or_403('service_catalog.view_instance', (Instance, 'id', 'instance_id'))
-def instance_details(request, instance_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    supports = Support.objects.filter(instance=instance)
-    if request.user.is_superuser:
-        operations = Operation.objects.filter(service=instance.service,
-                                              type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True)
-    else:
-        operations = Operation.objects.filter(service=instance.service,
-                                              type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True,
-                                              is_admin_operation=False)
-    requests = Request.objects.filter(instance=instance)
-    operations_table = OperationTableFromInstanceDetails(operations)
-    requests_table = RequestTable(requests,
-                                  hide_fields=["instance__name", "instance__service__name"])
-    supports_table = SupportTable(supports, hide_fields=["instance__name"])
-
-    context = {'instance': instance,
-               'operations_table': operations_table,
-               'requests_table': requests_table,
-               'supports_table': supports_table,
-               'app_name': 'service_catalog',
-               'object': instance,
-               'object_name': 'instance',
-               'object_id': instance.id,
-               'breadcrumbs': [
-                   {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-                   {'text': f"{instance.name} ({instance.id})", 'url': ""},
-               ],
-               }
-    return render(request, 'service_catalog/common/instance-details.html', context=context)
-
-@login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
-def user_in_instance_remove(request, instance_id, user_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    user = User.objects.get(id=user_id)
-    if user == instance.requester:
-        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#users")
-    if request.method == 'POST':
-        instance.remove_user_in_role(user)
-        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#users")
-    args = {
-        "instance_id": instance_id,
-        "user_id": user_id
-    }
-    context = {
-        'breadcrumbs': [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': "Users", 'url': ""}
-        ],
-        'confirm_text': mark_safe(f"Confirm to remove all roles of the user <strong>{user.username}</strong> from "
-                                  f"{instance}?"),
-        'action_url': reverse('service_catalog:user_in_instance_remove', kwargs=args),
-        'button_text': 'Remove'
-    }
-    return render(request, 'generics/confirm-delete-template.html', context=context)
-
-
-@login_required
-@permission_required_or_403('service_catalog.change_instance', (Instance, 'id', 'instance_id'))
-def group_in_instance_remove(request, instance_id, group_id):
-    instance = get_object_or_404(Instance, id=instance_id)
-    group = Group.objects.get(id=group_id)
-    if request.method == 'POST':
-        instance.remove_group_in_role(group)
-        return redirect(reverse('service_catalog:instance_details', args=[instance_id]) + "#groups")
-    args = {
-        "instance_id": instance_id,
-        "group_id": group_id
-    }
-    context = {
-        'breadcrumbs': [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': instance.name, 'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': "Groups", 'url': ""}
-        ],
-        'confirm_text': mark_safe(f"Confirm to remove all roles of the group <strong>{group.name}</strong> on "
-                                  f"{instance}?"),
-        'action_url': reverse('service_catalog:group_in_instance_remove', kwargs=args),
-        'button_text': 'Remove'
-    }
-    return render(request, 'generics/confirm-delete-template.html', context=context)
-
-
-
-
 
 
 @user_passes_test(lambda u: u.is_superuser)
