@@ -41,12 +41,12 @@ urlpatterns = [
          name='support_notification_edit'),
 
     # Scope
-    path('global-permission/<int:scope_id>/role/create/', views.scope_rbac_create, name="globalpermission_rbac_create"),
-    path('global-permission/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="globalpermission_rbac_delete"),
-    path('organization/<int:scope_id>/role/create/', views.scope_rbac_create, name="organization_rbac_create"),
-    path('organization/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="organization_rbac_delete"),
-    path('team/<int:scope_id>/role/create/', views.scope_rbac_create, name="team_rbac_create"),
-    path('team/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', views.scope_rbac_delete, name="team_rbac_delete"),
+    path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
+    path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),
+    path('organization/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="organization_rbac_create"),
+    path('organization/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="organization_rbac_delete"),
+    path('team/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="team_rbac_create"),
+    path('team/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="team_rbac_delete"),
 
     # Global Permission
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
