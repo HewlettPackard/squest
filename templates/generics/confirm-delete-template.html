@@ -21,15 +21,15 @@
                         {% if details != None %}
                             {{ details.warning_sentence }}
                             <ul>
-                            {% for detail in details.details_list %}
-                                <li>{{ detail }}</li>
-                            {% endfor %}
+                                {% for detail in details.details_list %}
+                                    <li>{{ detail }}</li>
+                                {% endfor %}
                             </ul>
                         {% endif %}
-                        <form class="form-horizontal" action={{ action_url }} method="post">{% csrf_token %}
+                        <form class="form-horizontal" method="post">{% csrf_token %}
                             <button class="btn btn-danger" type="submit">
                                 <i class="fas fa-trash"></i>
-                                {{ button_text }}
+                                Confirm
                             </button>
                             <button class="btn btn-light" type="button" onclick=window.history.back()>
                                 <i class="fas fa-window-close"></i>
