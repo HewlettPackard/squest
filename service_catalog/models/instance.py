@@ -1,4 +1,6 @@
 import logging
+
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -58,6 +60,10 @@ class Instance(SquestModel):
                Instance.objects.filter(scopes__in=Team.objects.filter(org__rbac__user=user),
                                        scopes__rbac__role__permissions__codename=codename,
                                        scopes__rbac__role__permissions__content_type__app_label=app_label)
+    
+
+    def get_absolute_url(self):
+        return reverse("service_catalog:instance_details", args=[self.pk])
 
     def get_scopes(self):
         qs = Scope.objects.none()
