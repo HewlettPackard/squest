@@ -53,7 +53,11 @@
                                     class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Scope</b> <a href="{{ instance.scope.get_absolute_url }}" class="float-right">{{ instance.scope }}</a>
+                                <b>Quota scope</b> <a href="{{ instance.quota_scope.get_absolute_url }}" class="float-right">{{ instance.quota_scope }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>RBAC scope</b>
+                                    <a href="{{ instance.scopes.get_absolute_url }}" class="float-right">{{ instance.quota_scope }}</a>
                             </li>
                             <li class="list-group-item">
                                 <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}" class="float-right">{{ instance.spoc.username }}</a>
