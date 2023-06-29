@@ -1,10 +1,14 @@
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer, Serializer
+
+from profiles.api.serializers import RBACSerializer
 from profiles.models import Scope
 from rest_framework.fields import MultipleChoiceField
 
 
 class ScopeSerializer(ModelSerializer):
+    rbac = RBACSerializer(many=True, read_only=True)
+
     class Meta:
         model = Scope
         fields = '__all__'
