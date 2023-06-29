@@ -7,7 +7,7 @@ class GlobalHooksListViewsTest(BaseTest):
 
     def setUp(self):
         super(GlobalHooksListViewsTest, self).setUp()
-        self.url = reverse('service_catalog:global_hook_list')
+        self.url = reverse('service_catalog:globalhook_list')
 
     def test_get_list(self):
         response = self.client.get(self.url)

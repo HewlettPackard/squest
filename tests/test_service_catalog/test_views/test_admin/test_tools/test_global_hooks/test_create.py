@@ -8,7 +8,7 @@ class GlobalHooksCreateViewsTest(BaseTest):
 
     def setUp(self):
         super(GlobalHooksCreateViewsTest, self).setUp()
-        self.url = reverse('service_catalog:global_hook_create')
+        self.url = reverse('service_catalog:globalhook_create')
         self.number_global_hook_before = GlobalHook.objects.all().count()
 
     def test_get_page(self):
