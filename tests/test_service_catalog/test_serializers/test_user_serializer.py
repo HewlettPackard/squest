@@ -13,7 +13,7 @@ class TestUserSerializer(BaseTest):
         serializer = UserSerializer(instance=self.superuser)
         self.assertEqual(set(serializer.data.keys()),
                          {'id', 'last_name', 'first_name', 'is_staff', 'email',
-                          'profile', 'username', 'is_superuser', 'is_active', 'billing_groups'})
+                          'profile', 'username', 'is_superuser', 'is_active'})
 
     def test_user_field_content(self):
         serializer = UserSerializer(instance=self.superuser)

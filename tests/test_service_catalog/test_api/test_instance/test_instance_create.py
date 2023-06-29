@@ -19,8 +19,7 @@ class TestInstanceCreate(BaseTestRequest):
         self.assertEqual(response.data['name'], expected['name'])
         self.assertEqual(response.data['service'], expected['service'])
         self.assertEqual(response.data['requester']['id'], expected['requester'])
-        if response.data['quota_scope']:
-            self.assertEqual(response.data['quota_scope']['id'], expected['quota_scope'])
+        self.assertEqual(response.data['quota_scope'], expected['quota_scope'])
         self.assertEqual(response.data['spec'], expected['spec'])
         self.assertEqual(response.data['resources'], expected['resources'])
 
@@ -30,7 +29,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
-            "quota_scope": self.test_quota_scope.id,
+            "quota_scope": self.test_quota_scope_org.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"
@@ -42,7 +41,8 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': self.service_test_2.id,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'quota_scope': self.test_quota_scope.id}
+                    'quota_scope': self.test_quota_scope_org.id
+                    }
         self._assert_created(data, expected)
 
     def test_instance_create_spec_empty_dict(self):
@@ -51,7 +51,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.UPDATING,
-            "quota_scope": None,
+            "quota_scope": self.test_quota_scope_org.id,
             "spec": {}
         }
         expected = {'state': 'UPDATING',
@@ -60,7 +60,8 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': self.service_test_2.id,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'quota_scope': None}
+                    'quota_scope': self.test_quota_scope_org.id
+                    }
         self._assert_created(data, expected)
 
     def test_instance_create_no_service(self):
@@ -69,7 +70,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": None,
             "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
-            "quota_scope": None,
+            "quota_scope": self.test_quota_scope_org.id,
             "spec": {
             }
         }
@@ -79,7 +80,8 @@ class TestInstanceCreate(BaseTestRequest):
                     'service': None,
                     'requester': self.standard_user_2.id,
                     'resources': [],
-                    'quota_scope': None}
+                    "quota_scope": self.test_quota_scope_org.id,
+                    }
         self._assert_created(data, expected)
 
     def test_non_admin_cannot_create_instance(self):
@@ -89,7 +91,7 @@ class TestInstanceCreate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.AVAILABLE,
-            "quota_scope": self.test_quota_scope.id,
+            "quota_scope": self.test_quota_scope_org.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"

@@ -3,7 +3,7 @@ from unittest import mock
 from django.urls import reverse
 
 from profiles.api.serializers.user_serializers import UserSerializer
-from profiles.models import BillingGroup
+from profiles.models import Scope
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -127,7 +127,8 @@ class AdminRequestViewTest(BaseTestRequest):
             response = self.client.post(url, data=data)
             self.assertEqual(403, response.status_code)
 
-    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None, status=302):
+    def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None,
+                                            status=302):
         args = {
             'request_id': self.test_request.id
         }
@@ -136,7 +137,7 @@ class AdminRequestViewTest(BaseTestRequest):
         else:
             data = {
                 'squest_instance_name': self.test_request.instance.name,
-                'billing_group_id': '',
+                'quota_scope_id': 2,
                 'text_variable': 'my_var',
                 'multiplechoice_variable': 'choice1',
                 'multiselect_var': 'multiselect_1',
@@ -157,8 +158,8 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEqual(self.test_instance.state, expected_instance_state)
         if response.status_code == 302:
             self.assertEqual(self.test_request.accepted_by, self.superuser)
-            billing_group_id = '' if not self.test_request.instance.billing_group else self.test_request.instance.billing_group.id
-            self.assertEqual(data['billing_group_id'], billing_group_id)
+            quota_scope_id = self.test_request.instance.quota_scope.id
+            self.assertEqual(data['quota_scope_id'], quota_scope_id)
 
     def test_admin_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
@@ -166,17 +167,17 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_request_accept_and_request_pending_instance(self):
         data = {
-                'squest_instance_name': self.test_request.instance.name,
-                'billing_group_id': '',
-                'text_variable': 'my_var',
-                'multiplechoice_variable': 'choice1',
-                'multiselect_var': 'multiselect_1',
-                'textarea_var': '2',
-                'password_var': 'password1234',
-                'integer_var': '1',
-                'float_var': '0.6',
-                'accept_and_process': 'accept_and_process'
-            }
+            'squest_instance_name': self.test_request.instance.name,
+            'quota_scope_id': 2,
+            'text_variable': 'my_var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': 'multiselect_1',
+            'textarea_var': '2',
+            'password_var': 'password1234',
+            'integer_var': '1',
+            'float_var': '0.6',
+            'accept_and_process': 'accept_and_process'
+        }
         with mock.patch("service_catalog.models.request.Request.perform_processing") as mock_towerlib_call:
             self._accept_request_with_expected_state(expected_request_state=RequestState.PROCESSING,
                                                      expected_instance_state=InstanceState.PROVISIONING,
@@ -186,7 +187,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_pending_instance_missing_not_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'billing_group_id': '',
+            'quota_scope_id': 2,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -201,7 +202,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_cannot_accept_pending_instance_missing_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'billing_group_id': '',
+            'quota_scope_id': 2,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -216,15 +217,15 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_accepted_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
-        self.test_instance.billing_group = self.test_billing_group
+        self.test_instance.quota_scope = self.test_quota_scope_org
         self.test_instance.save()
         self.test_request.refresh_from_db()
         old_survey = self.test_request.fill_in_survey
-        billing_group = BillingGroup.objects.exclude(id=self.test_request.instance.billing_group.id).first()
+        quota_scope = Scope.objects.exclude(id=self.test_request.instance.quota_scope.id).first()
         new_instance_name = f"{self.test_request.instance.name} modified by admin"
         data = {
             'squest_instance_name': new_instance_name,
-            'billing_group_id': billing_group.id,
+            'quota_scope_id': 2,
             'text_variable': 'var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -246,7 +247,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'float_var': 0.8
         }
         self.assertEqual(self.test_request.instance.name, new_instance_name)
-        self.assertEqual(self.test_request.instance.billing_group, billing_group)
+        self.assertEqual(self.test_request.instance.quota_scope, self.test_quota_scope)
         self.assertDictEqual(self.test_request.full_survey, data_expected)
         self.assertNotEqual(self.test_request.fill_in_survey, old_survey)
 
@@ -314,7 +315,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'spec': {},
                 'state': str(expected_instance_state),
                 'service': self.test_request.operation.service.id,
-                'billing_group': None,
+                'quota_scope': self.test_request.instance.quota_scope.id,
                 'requester': UserSerializer(self.test_request.instance.requester).data
             }
             self.test_instance.refresh_from_db()
