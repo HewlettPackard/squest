@@ -77,4 +77,13 @@ urlpatterns = [
     path('role/<int:pk>/delete/', views.RoleDeleteView.as_view(), name="role_delete"),
     path('role/<int:pk>/', views.RoleDetailView.as_view(), name="role_details"),
 
+    # Quota
+
+    path('organization/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
+         name="organization_quota_edit"),
+    path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
+         name="team_quota_edit"),
+    path('team/<int:scope_id>/quota/<int:quota_id>/', views.QuotaDetailsView.as_view(),
+         name="quota_details")
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,12 +1,15 @@
-from profiles.models import RequestNotification, InstanceNotification
+from django.test import TestCase
+from rest_framework.test import APITestCase
+
+from profiles.models import RequestNotification, InstanceNotification, Organization, Team
 from service_catalog.models import Request, RequestState, InstanceState, Instance
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestCommon
 
 
-class BaseTestProfile(BaseTestRequest):
+class BaseTestProfileCommon(BaseTestRequestCommon):
 
     def setUp(self):
-        super(BaseTestProfile, self).setUp()
+        super(BaseTestProfileCommon, self).setUp()
         self.test_instance.spec = {
             "spec_key1": "spec_value1"
         }
@@ -49,3 +52,14 @@ class BaseTestProfile(BaseTestRequest):
                                                      operation=self.delete_operation_test,
                                                      user=self.standard_user,
                                                      state=RequestState.FAILED)
+
+        self.test_org = Organization.objects.create(name="test_org")
+        self.team1 = Team.objects.create(org=self.test_org, name="team1")
+
+
+class BaseTestProfile(TestCase, BaseTestProfileCommon):
+    pass
+
+
+class BaseTestProfileAPI(APITestCase, BaseTestProfileCommon):
+    pass

@@ -2,9 +2,6 @@ from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
 
-from resource_tracker_v2.models import Transformer
-from service_catalog.models.instance import Instance
-
 
 class InvalidAttributeDefinition(Exception):
     pass
@@ -18,7 +15,7 @@ class Resource(models.Model):
                                        related_name='resources',
                                        related_query_name='resource')
 
-    service_catalog_instance = models.ForeignKey(Instance,
+    service_catalog_instance = models.ForeignKey('service_catalog.Instance',
                                                  on_delete=models.SET_NULL,
                                                  related_name='resources',
                                                  related_query_name='resource',
@@ -40,6 +37,7 @@ class Resource(models.Model):
         return reverse('resource_tracker_v2:resourcegroup_resource_list', args=[self.resource_group.id])
 
     def set_attribute(self, attribute_definition, value):
+        from resource_tracker_v2.models import Transformer
         # check that the target attribute def is well declared as transformer
         if not self.resource_group.transformers.filter(attribute_definition=attribute_definition).exists():
             raise InvalidAttributeDefinition
