@@ -1,13 +1,14 @@
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import status
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_200_OK, HTTP_201_CREATED
-from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from Squest.utils.squest_rbac import SquestObjectPermissions
-from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer, RestrictedInstanceReadSerializer
+from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer, \
+    RestrictedInstanceReadSerializer, InstanceSerializerUserSpec, InstanceSerializerSpec
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.models import Instance
 
@@ -39,20 +40,12 @@ class InstanceList(ListCreateAPIView):
         return Response(InstanceReadSerializer(instance_created).data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-from rest_framework import permissions
-
-
-
-
-
 class InstanceDetails(RetrieveUpdateDestroyAPIView):
     serializer_class = InstanceReadSerializer
     queryset = Instance.objects.all()
-    permission_classes = [SquestObjectPermissions]
-
+    permission_classes = [SquestObjectPermissions, IsAuthenticated]
 
     def get_serializer_class(self):
-        object = self.get_object()
         if self.request.method in ["PATCH", "PUT", "DELETE"]:
             return InstanceSerializer
         if self.request.user.is_superuser:
@@ -60,8 +53,9 @@ class InstanceDetails(RetrieveUpdateDestroyAPIView):
         return RestrictedInstanceReadSerializer
 
 
-class SpecDetailsAPIView(APIView):
-    permission_classes = [IsAdminUser]
+class SpecDetailsAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [SquestObjectPermissions, IsAdminUser, IsAuthenticated]
+    serializer_class = InstanceSerializerSpec
 
     def get(self, request, pk):
         instance = get_object_or_404(Instance, id=pk)
@@ -86,15 +80,11 @@ class SpecDetailsAPIView(APIView):
         return Response(target_instance.spec, status=HTTP_204_NO_CONTENT)
 
 
-class UserSpecDetailsAPIView(APIView):
-
-    def get_permissions(self):
-        if self.request.method in ["GET"]:
-            return [IsAuthenticated()]
-        return [IsAdminUser()]
-
+class UserSpecDetailsAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [SquestObjectPermissions, IsAuthenticated]
+    serializer_class = InstanceSerializerUserSpec
     def get(self, request, pk):
-        instance = get_object_or_404(get_objects_for_user(self.request.user, 'service_catalog.view_instance'), id=pk)
+        instance = get_object_or_404(Instance, id=pk)
         return Response(instance.user_spec, status=HTTP_200_OK)
 
     def post(self, request, pk):

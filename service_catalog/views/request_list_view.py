@@ -1,5 +1,4 @@
 from django.urls import reverse
-from guardian.shortcuts import get_objects_for_user
 
 from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.request_filter import RequestFilter
@@ -18,7 +17,7 @@ class RequestListView(SquestListView):
 
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
-        return get_objects_for_user(self.request.user, 'service_catalog.view_request').distinct() & filtered
+        return Request.get_queryset_for_user(self.request.user, 'service_catalog.view_request').distinct() & filtered
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

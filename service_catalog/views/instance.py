@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import ProtectedError
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,7 +12,7 @@ from guardian.decorators import permission_required_or_403
 from jinja2 import UndefinedError
 from rest_framework.reverse import reverse_lazy
 
-from Squest.utils.squest_rbac import SquestObjectPermissions
+from Squest.utils.squest_rbac import SquestObjectPermissions, SquestPermissionRequiredMixin
 from Squest.utils.squest_views import SquestListView
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
@@ -49,17 +50,17 @@ class InstanceListView(SquestListView):
         return context
 
 
-class InstanceDetailView(DetailView):
+class InstanceDetailView(SquestPermissionRequiredMixin, DetailView):
     model = Instance
     filterset_class = InstanceFilter
-    permission_classes = [SquestObjectPermissions]
+    permission_required = "service_catalog.view_instance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{self.object.name} ({self.object.id})", 'url': ""},
-        ],
+                                     {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+                                     {'text': f"{self.object.name} ({self.object.id})", 'url': ""},
+                                 ],
         context['instance'] = self.object
         context['operations_table'] = OperationTableFromInstanceDetails(self.object.service.operations.all())
         context['requests_table'] = RequestTable(self.object.request_set.all(),
@@ -68,11 +69,12 @@ class InstanceDetailView(DetailView):
         return context
 
 
-class InstanceEditView(UpdateView):
+class InstanceEditView(SquestPermissionRequiredMixin, UpdateView):
     model = Instance
     template_name = 'generics/generic_form.html'
     form_class = InstanceForm
-    permission_classes = [SquestObjectPermissions]
+
+    permission_required = "service_catalog.change_instance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -87,11 +89,11 @@ class InstanceEditView(UpdateView):
         return context
 
 
-class InstanceDeleteView(DeleteView):
+class InstanceDeleteView(SquestPermissionRequiredMixin, DeleteView):
     model = Instance
     template_name = 'generics/confirm-delete-template.html'
     success_url = reverse_lazy("service_catalog:instance_list")
-    permission_classes = [SquestObjectPermissions]
+    permission_required = "service_catalog.delete_instance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

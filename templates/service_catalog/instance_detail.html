@@ -1,28 +1,34 @@
 {% extends 'base.html' %}
 {% block title %}
- #{{ instance.id }} | Instance
-{%  endblock %}
+    #{{ instance.id }} | Instance
+{% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-    {% if request.user.is_superuser %}
-        <div class="float-right">
+    <div class="float-right">
+        {% has_perm request.user "service_catalog.change_instance" object as permission_edit %}
+        {% if permission_edit %}
             <a href="{% url 'service_catalog:instance_edit' instance.id %}"
                class="btn btn-primary">
                 <i class="fas fa-pencil-alt"></i>
             </a>
+        {% endif %}
+        {% has_perm request.user "service_catalog.delete_instance" object as permission_delete %}
+        {% if permission_delete %}
+
             <a href="{% url 'service_catalog:instance_delete' instance.id %}"
                class="btn btn-danger">
                 <i class="fas fa-trash"></i>
             </a>
-        </div>
-    {% endif %}
+        {% endif %}
+
+    </div>
 {% endblock %}
 {% block custom_links %}
     <div class="float-right">
-        {%  load custom_links %}
+        {% load custom_links %}
         <div class="btn-toolbar">
-        {%  custom_links request.user instance %}
+            {% custom_links request.user instance %}
         </div>
     </div>
 {% endblock %}
@@ -38,7 +44,9 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <img class="card-img-top" src="{% if instance.service.image %}{{ instance.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                            <img class="card-img-top" src="
+
+                                    {% if instance.service.image %}{{ instance.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Service image">
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
@@ -46,27 +54,34 @@
                                 <b>Name</b> <a class="float-right">{{ instance.name }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Service</b> {% if request.user.is_superuser %}<a href="{% url 'service_catalog:edit_service' instance.service.id %}" class="float-right">{{ instance.service.name }}</a>{% else %}<a class="float-right">{{ instance.service.name }}</a>{% endif %}
+                                <b>Service</b> {% if request.user.is_superuser %}
+                                <a href="{% url 'service_catalog:edit_service' instance.service.id %}"
+                                   class="float-right">{{ instance.service.name }}</a>{% else %}
+                                <a class="float-right">{{ instance.service.name }}</a>{% endif %}
                             </li>
                             <li class="list-group-item">
                                 <b>State</b> <strong
                                     class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
                             </li>
                             <li class="list-group-item">
-                                <b>Quota scope</b> <a href="{{ instance.quota_scope.get_absolute_url }}" class="float-right">{{ instance.quota_scope }}</a>
+                                <b>Quota scope</b> <a href="{{ instance.quota_scope.get_absolute_url }}"
+                                                      class="float-right">{{ instance.quota_scope }}</a>
                             </li>
                             <li class="list-group-item">
                                 <b>RBAC scope</b>
-                                    <a href="{{ instance.scopes.get_absolute_url }}" class="float-right">{{ instance.quota_scope }}</a>
+                                <a href="{{ instance.scopes.get_absolute_url }}"
+                                   class="float-right">{{ instance.quota_scope }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}" class="float-right">{{ instance.spoc.username }}</a>
+                                <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}"
+                                               class="float-right">{{ instance.spoc.username }}</a>
                             </li>
                             {% if request.user.is_superuser %}
                                 <li class="list-group-item">
                                     <b>Resources</b>
                                     {% for resource in instance.resources.all %}
-                                        <a class="float-right" href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
+                                        <a class="float-right"
+                                           href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
                                             {{ resource.name }}
                                         </a> <br>
                                     {% endfor %}
@@ -91,7 +106,9 @@
                             <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a>
                             </li>
                             <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
-                            {% if request.user.is_superuser %}<li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a></li>{% endif %}
+                            {% if request.user.is_superuser %}
+                                <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a>
+                                </li>{% endif %}
                             <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
                             </li>
@@ -103,12 +120,14 @@
                                 {% render_table operations_table %}
                             </div>
                             <div class="tab-pane" id="support">
-                                {%  if instance.service.external_support_url is not None and instance.service.external_support_url != '' %}
-                                    <p class="text-muted">Supports for this service are redirected to an external tool</p>
-                                    <a class="btn btn-success" href="{% url 'service_catalog:instance_new_support' instance.id %}">
+                                {% if instance.service.external_support_url is not None and instance.service.external_support_url != '' %}
+                                    <p class="text-muted">Supports for this service are redirected to an external
+                                        tool</p>
+                                    <a class="btn btn-success"
+                                       href="{% url 'service_catalog:instance_new_support' instance.id %}">
                                         <i class="fas fa-link"></i> Open new support
                                     </a>
-                                {%  else %}
+                                {% else %}
                                     <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
                                        class="float-right btn btn-success">
                                         <i class="fas fa-plus"></i> Open new support
@@ -118,11 +137,13 @@
                             </div>
                             {% if request.user.is_superuser %}
                                 <div class="tab-pane" id="spec">
-                                    <pre><code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ instance.spec | pretty_json }}</code></pre>
+                                    <pre><code style="border: 0; padding: 0; margin: 0;"
+                                               class="language-json">{{ instance.spec | pretty_json }}</code></pre>
                                 </div>
                             {% endif %}
                             <div class="tab-pane" id="user-spec">
-                                <pre><code style="border: 0; padding: 0; margin: 0;" class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
+                                <pre><code style="border: 0; padding: 0; margin: 0;"
+                                           class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
                             </div>
                             <div class="tab-pane" id="requests">
                                 {% render_table requests_table %}
