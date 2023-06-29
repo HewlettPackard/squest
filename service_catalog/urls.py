@@ -15,6 +15,7 @@ from .views.request_list_view import RequestListView
 from .views.service_list_view import ServiceListView
 from .views.support_list_view import SupportListView
 from .views.tower_server_list_view import TowerServerListView
+from .views.support_view import ReOpenSupportView, CloseSupportView
 
 app_name = 'service_catalog'
 
@@ -68,6 +69,10 @@ urlpatterns = [
          name='instance_new_support'),
     path('instance/<int:instance_id>/support/<int:support_id>/', views.instance_support_details,
          name='instance_support_details'),
+    path('instance/<int:instance_id>/support/<int:support_id>/close/', CloseSupportView.as_view(),
+         name='instance_support_close'),
+    path('instance/<int:instance_id>/support/<int:support_id>/reopen/', ReOpenSupportView.as_view(),
+         name='instance_support_reopen'),
     path('instance/<int:instance_id>/support/<int:support_id>/message/<int:message_id>/', views.support_message_edit,
          name='support_message_edit'),
     path('instance/<int:pk>/edit/', InstanceEditView.as_view(), name='instance_edit'),
