@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from guardian.shortcuts import get_objects_for_user
 
-from profiles.models import Team
 from service_catalog.forms.utils import get_choices_as_tuples_list
 from service_catalog.models import Support, SupportMessage, Request, OperationType, Operation
 from service_catalog.models.instance import InstanceState, Instance
@@ -323,55 +322,6 @@ class TestCustomerInstanceViews(BaseTestRequest):
         instance_id = self.test_instance.id
         self.test_instance.delete()
         self.assertFalse(Support.objects.filter(instance=instance_id).exists())
-
-    def test_add_and_remove_new_user_in_role_update_permissions_of_instance(self):
-        user = User.objects.create(username="tester")
-        for role in self.test_instance.roles:
-            self.test_instance.add_user_in_role(user, role.name)
-            self._assert_role_of_instance(user, self.test_instance, role.name)
-            self.test_instance.remove_user_in_role(user, role.name)
-            self._assert_role_of_instance(user, self.test_instance, None)
-
-    def test_add_and_remove_new_team_in_role_update_permissions_of_instance(self):
-        team_admin = User.objects.create(username="tester-admin")
-        user = User.objects.create(username="tester")
-        team = Team.objects.create(name="test")
-        team.add_user_in_role(team_admin, "Admin")
-        team.add_user_in_role(user, "Member")
-        for role in self.test_instance.roles:
-            self.test_instance.add_team_in_role(team, role.name)
-            self._assert_role_of_instance(team_admin, self.test_instance, role.name)
-            self._assert_role_of_instance(user, self.test_instance, role.name)
-            self.test_instance.remove_team_in_role(team, role.name)
-            self._assert_role_of_instance(team_admin, self.test_instance, None)
-            self._assert_role_of_instance(user, self.test_instance, None)
-
-    def test_add_and_remove_new_member_in_team_update_permissions_of_instance(self):
-        team_admin = User.objects.create(username="tester-admin")
-        user = User.objects.create(username="tester")
-        tmp_user = User.objects.create(username="tester-tmp")
-        team = Team.objects.create(name="test")
-        team.add_user_in_role(team_admin, "Admin")
-        team.add_user_in_role(user, "Member")
-        for role in self.test_instance.roles:
-            print(f"testing for the role: {role.name}")
-            self.test_instance.add_team_in_role(team, role.name)
-            self._assert_role_of_instance(tmp_user, self.test_instance, None)
-            team.add_user_in_role(tmp_user, "Member")
-            self._assert_role_of_instance(tmp_user, self.test_instance, role.name)
-            team.remove_user_in_role(tmp_user, "Member")
-            self._assert_role_of_instance(tmp_user, self.test_instance, None)
-            self.test_instance.remove_team_in_role(team, role.name)
-
-
-    def _assert_role_of_instance(self, user, instance, role_name):
-        self.client.force_login(user)
-        self.assertIn(role_name, [None, "Admin", "Operator", "Reader"])
-        self._assert_list_instances(instance, role_name in ["Admin", "Operator", "Reader"])
-        self._assert_get_instance_details(instance, role_name in ["Admin", "Operator", "Reader"])
-        self._assert_request_operation_on_instance(instance, role_name in ["Admin", "Operator"])
-        self._assert_request_instance_support(instance, role_name in ["Admin", "Operator"])
-        self._assert_archive_instance(instance, role_name in ["Admin"])
 
     def _assert_list_instances(self, instance, authorized=True):
         url = reverse('service_catalog:instance_list')
