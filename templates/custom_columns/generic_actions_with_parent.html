@@ -1,2 +1,6 @@
+{% with class_name=record|to_class_name|lower %}
+{% with app_name=record|to_app_name|lower %}
 {% include 'custom_columns/generic_edit_with_parent.html' %}
 {% include 'custom_columns/generic_delete_with_parent.html' %}
+{%  endwith %}
+{%  endwith %}

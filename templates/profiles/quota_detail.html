@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Quota
+{% endblock %}
+{% load render_table from django_tables2 %}
+
+{% block main %}
+    {% with class_name=object.scope.get_object|to_class_name %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-warning"><i class="fas fa-tachometer-alt"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Limit</span>
+                            <span class="info-box-number">{{ object.limit }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success"><i class="fas fa-check"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Available</span>
+                            <span class="info-box-number">{{ object.available }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if class_name  == "Organization" %}
+                <div class="col-md-3 col-sm-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-primary"><i class="fas fa-users"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Teams consumption</span>
+                            <span class="info-box-number">{{ quotas_teams_consumption }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="col-md-3 col-sm-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info"><i class="fas fas fa-cubes"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Instances consumption</span>
+                            <span class="info-box-number">{{ instances_consumption }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                {% if class_name  == "Organization" %}
+                    <div class="col-6">
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-users"></i> Team distributed quota</h3>
+                            </div>
+                            <div class="card-body">
+                                {% render_table team_limit_table %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="col-6">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fas fa-cubes"></i> Instance quota consumption</h3>
+                        </div>
+                        <div class="card-body">
+                            {% render_table instance_consumption_table %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endwith %}
+{% endblock %}

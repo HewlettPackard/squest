@@ -1,8 +1,11 @@
-from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer, Resource
-from service_catalog.models import Request, Instance, Support
-from test_service_catalog.base import BaseTestCommon
 from django.test import TestCase
 from rest_framework.test import APITestCase
+
+from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer, Resource
+from service_catalog.models import Request, Instance, Support
+from tests.test_service_catalog.base import BaseTestCommon
+
+class BaseTestRequestCommon(BaseTestCommon):
 
 class BaseTestRequestCommon(BaseTestCommon):
 
@@ -30,11 +33,11 @@ class BaseTestRequestCommon(BaseTestCommon):
         self.support_test2 = Support.objects.create(title="support_2", instance=self.test_instance_2)
 
         self.rg_physical_servers = ResourceGroup.objects.create(name="Physical servers")
-        cpu_attribute = AttributeDefinition.objects.create(name="CPU")
+        self.cpu_attribute = AttributeDefinition.objects.create(name="CPU")
         Transformer.objects.create(resource_group=self.rg_physical_servers,
-                                   attribute_definition=cpu_attribute)
+                                   attribute_definition=self.cpu_attribute)
         self.resource_server = Resource.objects.create(name="server1", resource_group=self.rg_physical_servers)
-        self.resource_server.set_attribute(cpu_attribute, 12)
+        self.resource_server.set_attribute(self.cpu_attribute, 12)
 
 
 class BaseTestRequest(TestCase, BaseTestRequestCommon):

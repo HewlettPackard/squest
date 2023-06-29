@@ -7,6 +7,9 @@
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
+            <a href="{% url 'profiles:team_quota_edit' object.id %}"
+               class="btn btn-primary"> <i class="fas fa-chart-pie"></i> Set quotas
+            </a>
             <a href="{% url 'profiles:team_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
@@ -53,6 +56,7 @@
                             <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
                             </li>
                             <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a></li>
 
                         </ul>
                     </div>
@@ -63,6 +67,9 @@
                             </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
+                            </div>
+                            <div class="tab-pane" id="quotas">
+                                {% render_table quotas %}
                             </div>
                         </div>
                     </div>

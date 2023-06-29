@@ -24,7 +24,11 @@ class FormUtils:
         returned_dict["spec"] = list()
         # loop the original survey
         for survey_filled in job_template_survey.get("spec", []):
-            if operation_survey.get(name=survey_filled["variable"]).enabled:
+            target_tower_field = operation_survey.get(name=survey_filled["variable"])
+            if target_tower_field.enabled:
+                survey_filled["quota"] = None
+                if target_tower_field.attribute_definition:
+                    survey_filled["quota"] = target_tower_field.attribute_definition.name
                 returned_dict["spec"].append(survey_filled)
         return returned_dict
 
