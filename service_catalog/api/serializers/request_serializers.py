@@ -7,6 +7,7 @@ from rest_framework.serializers import ModelSerializer, CharField, ValidationErr
 
 from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.models import Scope
 from service_catalog.forms import FormUtils
 from service_catalog.models.request import Request
 from service_catalog.models.message import RequestMessage
@@ -20,7 +21,7 @@ from service_catalog.api.serializers import DynamicSurveySerializer, InstanceRea
 class ServiceRequestSerializer(ModelSerializer):
     class Meta:
         model = Request
-        fields = ['squest_instance_name', 'billing_group', 'request_comment', 'fill_in_survey']
+        fields = ['squest_instance_name', 'quota_scope', 'request_comment', 'fill_in_survey']
 
     squest_instance_name = CharField(
         label="Squest instance name",
@@ -31,6 +32,10 @@ class ServiceRequestSerializer(ModelSerializer):
         help_text="Add a comment to your request",
         required=False
     )
+
+    quota_scope = PrimaryKeyRelatedField(label='Quota', allow_null=True, default=None, required=False,
+                                           queryset=Scope.objects.all(),
+                                           help_text="Quota")
 
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', None)
@@ -58,11 +63,9 @@ class ServiceRequestSerializer(ModelSerializer):
     def save(self):
         # create the instance
         instance_name = self.validated_data["squest_instance_name"]
-        billing_group = None
-        if self.validated_data["billing_group"]:
-            billing_group = self.validated_data["billing_group"]
+        quota_scope = self.validated_data["quota_scope"]
 
-        new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
+        new_instance = Instance.objects.create(service=self.service, name=instance_name, quota_scope=quota_scope,
                                                requester=self.request.user)
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
         new_request = Request.objects.create(instance=new_instance,
