@@ -19,20 +19,20 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         }
         self.data = {
             'squest_instance_name': 'instance test',
-            'billing_group': None,
+            'quota_scope': None,
             'fill_in_survey': {
                 'text_variable': 'my text'
             }
         }
         self.expected = ['id', 'instance', 'user', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
-                         'tower_job_id', 'state', 'operation', 'approval_step', 'processed_by', 'accepted_by']
+                         'tower_job_id', 'state', 'operation', 'processed_by', 'accepted_by']
         self.expected.sort()
 
     def test_can_create(self):
         self._check_create()
 
-    def test_can_create_without_billing_group_given(self):
-        self.data.pop('billing_group')
+    def test_can_create_without_quota_scope_given(self):
+        self.data.pop('quota_scope')
         self._check_create()
         self.client.force_login(self.standard_user)
         self._check_create()
@@ -50,29 +50,29 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.kwargs['pk'] = 9999999
         self._check_create(status.HTTP_404_NOT_FOUND)
 
-    def test_cannot_create_with_non_own_billing_group(self):
-        self.service_test.billing_group_is_selectable = True
+    def test_cannot_create_with_non_own_quota_scope(self):
+        self.service_test.quota_scope_is_selectable = True
         self.service_test.save()
-        self.test_billing_group.user_set.add(self.superuser)
-        self.data['billing_group'] = self.test_billing_group.id
+        self.test_quota_scope_org.user_set.add(self.superuser) # TODO rewrite with quota_scope
+        self.data['quota_scope'] = self.test_quota_scope_org.id
         self._check_create()
         self.client.force_login(user=self.standard_user)
         self._check_create(status.HTTP_400_BAD_REQUEST)
 
-    def test_cannot_create_with_non_existing_billing_group(self):
-        self.service_test.billing_group_is_selectable = True
-        self.service_test.billing_groups_are_restricted = False
+    def test_cannot_create_with_non_existing_quota_scope(self):
+        self.service_test.quota_scope_is_selectable = True
+        self.service_test.quota_scopes_are_restricted = False
         self.service_test.save()
-        self.data['billing_group'] = 9999999
+        self.data['quota_scope'] = 9999999
         self._check_create(status.HTTP_400_BAD_REQUEST)
 
-    def test_cannot_create_with_billing_group_different_from_the_imposed_one(self):
-        self.service_test.billing_group_id = self.test_billing_group.id
-        self.service_test.billing_groups_are_restricted = False
+    def test_cannot_create_with_quota_scope_different_from_the_imposed_one(self):
+        self.service_test.quota_scope_id = self.test_quota_scope_org.id
+        self.service_test.quota_scopes_are_restricted = False
         self.service_test.save()
-        self.data['billing_group'] = self.test_billing_group.id
+        self.data['quota_scope'] = self.test_quota_scope_org.id
         self._check_create()
-        self.data['billing_group'] = self.test_billing_group2.id
+        self.data['quota_scope'] = self.test_quota_scope_org2.id
         self._check_create()
 
     def test_cannot_create_with_wrong_survey_fields(self):
@@ -128,7 +128,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
         self.data = {
             'squest_instance_name': 'instance test',
-            'billing_group': None,
+            'quota_scope': self.test_quota_scope.id,
             'fill_in_survey': {
                 "text_variable": "13"
             },
@@ -140,7 +140,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
         self.data = {
             'squest_instance_name': 'instance test',
-            'billing_group': None,
+            'quota_scope': self.test_quota_scope.id,
             'fill_in_survey': {
                 "text_variable": "8"
             },
@@ -152,7 +152,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
 
         self.data = {
             'squest_instance_name': 'instance test',
-            'billing_group': None,
+            'quota_scope': self.test_quota_scope.id,
             'fill_in_survey': {
                 "text_variable": "12"
             },

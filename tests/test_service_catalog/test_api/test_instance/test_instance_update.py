@@ -17,7 +17,7 @@ class TestInstanceUpdate(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
-            "billing_group": self.test_billing_group.id,
+            "quota_scope": self.test_quota_scope_org.id,
             "spec": {
                 "key1": "val1",
                 "key2": "val2"
@@ -33,7 +33,7 @@ class TestInstanceUpdate(BaseTestRequest):
             "key2": "val2"
         }
         self.assertDictEqual(self.test_instance.spec, expected_spec)
-        self.assertEqual(self.test_instance.billing_group.id, self.update_data["billing_group"])
+        self.assertEqual(self.test_instance.quota_scope.id, self.update_data["quota_scope"])
         self.assertEqual(self.test_instance.name, "new_name")
 
     def test_update_instance_with_empty_spec(self):

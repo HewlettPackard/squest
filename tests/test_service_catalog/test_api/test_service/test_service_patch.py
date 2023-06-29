@@ -22,10 +22,6 @@ class TestApiServicePatch(BaseTestRequest):
             'name': "My new name",
             'description': "My new description",
             'image': f"http://testserver{self.service_test.image.url}",
-            'billing_group_id': self.service_test.billing_group_id,
-            'billing_group_is_shown': self.service_test.billing_group_is_shown,
-            'billing_group_is_selectable': self.service_test.billing_group_is_selectable,
-            'billing_groups_are_restricted': self.service_test.billing_groups_are_restricted,
             'enabled': self.service_test.enabled
         }
 

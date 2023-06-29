@@ -10,8 +10,7 @@ class TestHome(BaseTestRequest):
         self.url = reverse('home')
 
     def test_admin_get_home(self):
-        expected_context_list = ['total_request', 'total_instance', 'total_support_opened',
-                                 'total_user_without_billing_groups', 'total_user']
+        expected_context_list = ['total_request', 'total_instance', 'total_support_opened', 'total_user']
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
         for expected_context in expected_context_list:
@@ -19,7 +18,7 @@ class TestHome(BaseTestRequest):
 
     def test_customer_get_home(self):
         self.client.login(username=self.standard_user.username, password=self.common_password)
-        not_expected_context_list = ['total_support_opened', 'total_user_without_billing_groups', 'total_user',
+        not_expected_context_list = ['total_support_opened', 'total_user_without_quota_scopes', 'total_user',
                                      'pie_charts']
         expected_context_list = ['total_request', 'total_instance', 'total_request_need_info']
         response = self.client.get(self.url)
