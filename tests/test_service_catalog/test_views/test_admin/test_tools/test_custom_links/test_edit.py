@@ -13,7 +13,7 @@ class CustomLinksEditViewsTest(BaseTestCustomLink):
         args = {
             "custom_link_id": self.test_custom_link.id
         }
-        self.url = reverse('service_catalog:custom_link_edit', kwargs=args)
+        self.url = reverse('service_catalog:customlink_edit', kwargs=args)
 
     def test_get_page(self):
         response = self.client.get(self.url)

@@ -11,7 +11,7 @@ class CustomLinksCreateViewsTest(BaseTestCustomLink):
 
     def setUp(self):
         super(CustomLinksCreateViewsTest, self).setUp()
-        self.url = reverse('service_catalog:custom_link_create')
+        self.url = reverse('service_catalog:customlink_create')
         self.number_custom_link_before = CustomLink.objects.all().count()
 
     def test_get_page(self):

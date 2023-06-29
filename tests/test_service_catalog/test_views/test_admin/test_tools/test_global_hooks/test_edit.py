@@ -13,9 +13,9 @@ class GlobalHooksEditViewsTest(BaseTest):
                                                           state="PROVISIONING",
                                                           job_template=self.job_template_test)
         args = {
-            "global_hook_id": self.global_hook_test.id
+            "globalhook_id": self.global_hook_test.id
         }
-        self.url = reverse('service_catalog:global_hook_edit', kwargs=args)
+        self.url = reverse('service_catalog:globalhook_edit', kwargs=args)
 
     def test_get_page(self):
         response = self.client.get(self.url)
