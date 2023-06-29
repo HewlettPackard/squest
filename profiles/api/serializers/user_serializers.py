@@ -1,11 +1,11 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, CharField
 
 from profiles.models import Profile
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(ModelSerializer):
 
     class Meta:
         model = Profile
@@ -13,10 +13,9 @@ class ProfileSerializer(serializers.ModelSerializer):
                   'request_notification_filters', 'instance_notification_filters']
 
 
-class UserSerializer(serializers.ModelSerializer):
-
+class UserSerializer(ModelSerializer):
     profile = ProfileSerializer(required=False)
-    password = serializers.CharField(
+    password = CharField(
         write_only=True,
         required=True,
         help_text='Leave empty if no change needed',
@@ -31,4 +30,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'password', 'email', 'profile', 'first_name', 'last_name', 'is_staff',
-                  'is_superuser', 'is_active']
+                  'is_superuser', 'is_active', 'groups']
