@@ -1,11 +1,9 @@
-from rest_framework.serializers import ModelSerializer
-
+from profiles.api.serializers import ScopeSerializer
 from profiles.models import Organization
 
 
-class OrganizationSerializer(ModelSerializer):
-
+class OrganizationSerializer(ScopeSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'teams')
