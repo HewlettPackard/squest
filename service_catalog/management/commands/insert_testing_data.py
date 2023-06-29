@@ -28,7 +28,8 @@ class Command(BaseCommand):
             try:
                 users[username] = User.objects.get(username=username, password="admin")
             except User.DoesNotExist:
-                users[username] = User.objects.create_user(username=username, password="admin", is_staff=True, is_superuser=True)
+                users[username] = User.objects.create_user(username=username, password="admin", is_staff=False,
+                                                           is_superuser=False)
             # team = Team.objects.create(name=username)
             # team.add_user_in_role(users[username], "Admin")
             logger.info(f"Get or create '{users[username]}'")
@@ -68,8 +69,8 @@ class Command(BaseCommand):
                     if random.randint(0, 2) == 1:
                         continue
                     user = users[username]
-                    new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}", requester=user)
-                    new_instance.scopes.add(random.choice(billing_groups))
+                    new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
+                                                           requester=user, quota_scope=random.choice(billing_groups))
                     # create the request
                     new_request, _ = Request.objects.get_or_create(instance=new_instance,
                                                                    operation=service.operations.filter(
