@@ -46,6 +46,9 @@
                         {% if field.help_text %}
                             <small class="form-text text-muted">{{ field.help_text|safe }}</small>
                         {% endif %}
+                        {% if field.field.quota %}
+                        <small class="form-text text-primary">Quota: {{ field.field.quota }}</small>
+                        {%  endif %}
                     </div>
                 </div>
             {% endif %}
