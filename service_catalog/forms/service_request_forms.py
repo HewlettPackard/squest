@@ -11,7 +11,7 @@ from service_catalog.models import Service, Operation, Instance, Request, Reques
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "squest_instance_name"]
+EXCLUDED_SURVEY_FIELDS = ["quota_scope_id", "request_comment", "squest_instance_name"]
 
 
 class ServiceRequestForm(forms.Form):
@@ -24,10 +24,10 @@ class ServiceRequestForm(forms.Form):
                                       widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
                                       required=False)
 
-    scope_id = forms.ModelChoiceField(
+    quota_scope = forms.ModelChoiceField(
             label="Scope",
             queryset=Scope.objects.none(),
-            required=False,
+            required=True,
             widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
         )
 
@@ -39,7 +39,7 @@ class ServiceRequestForm(forms.Form):
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
         self.service = Service.objects.get(id=service_id)
         self.create_operation = Operation.objects.get(id=operation_id)
-        self.fields['scope_id'].queryset = Scope.objects.filter()
+        self.fields['quota_scope'].queryset = Scope.objects.filter() #TODO get_queryset_for_user with consume_quota
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
@@ -58,10 +58,8 @@ class ServiceRequestForm(forms.Form):
                 user_provided_survey_fields[field_key] = value
         # create the instance
         instance_name = self.cleaned_data["squest_instance_name"]
-        billing_group_id = self.cleaned_data["billing_group_id"] if self.cleaned_data[
-            "billing_group_id"] else self.service.billing_group_id
-        billing_group = BillingGroup.objects.get(id=billing_group_id) if billing_group_id else None
-        new_instance = Instance.objects.create(service=self.service, name=instance_name, billing_group=billing_group,
+        quota_scope = self.cleaned_data["quota_scope"]
+        new_instance = Instance.objects.create(service=self.service, name=instance_name, quota_scope=quota_scope,
                                                requester=self.user)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
@@ -77,12 +75,6 @@ class ServiceRequestForm(forms.Form):
         from service_catalog.mail_utils import send_mail_request_update
         send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
-
-    def clean_billing_group_id(self):
-        if self.service.billing_group_is_selectable and (not self.fields["billing_group_id"].choices or not self.cleaned_data['billing_group_id']):
-            raise ValidationError('You must be in a billing group to request this service')
-        billing_group_id = self.cleaned_data['billing_group_id']
-        return billing_group_id
 
     def clean(self):
         super(ServiceRequestForm, self).clean()
