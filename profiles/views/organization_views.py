@@ -12,6 +12,7 @@ from django.urls import reverse
 from guardian.mixins import LoginRequiredMixin
 
 from profiles.filters.user_filter import UserFilter
+from profiles.tables.quota_table import QuotaTable
 
 
 class OrganizationListView(SquestListView):
@@ -43,9 +44,11 @@ class OrganizationDetailView(LoginRequiredMixin, DetailView):
         ]
         context['breadcrumbs'] = breadcrumbs
         context['scope'] = self.object
+        context['parent_id'] = self.object.id  # used by generic_actions_with_parent in the table
         context['users'] = UserRoleTable(self.object.users)
         context['teams'] = TeamTable(self.object.teams.all())
         context['roles'] = ScopeRoleTable(self.object.roles.all())
+        context['quotas'] = QuotaTable(self.object.quotas.all())
         return context
 
 

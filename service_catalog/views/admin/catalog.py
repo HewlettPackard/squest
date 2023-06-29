@@ -149,7 +149,9 @@ def service_operation_edit_survey(request, service_id, operation_id):
         {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
         {'text': 'Services', 'url': reverse('service_catalog:service_list')},
         {'text': target_service.name, 'url': reverse('service_catalog:service_operations', args=[service_id])},
+        {'text': "Operation", 'url': ''},
         {'text': target_operation.name, 'url': ""},
+        {'text': "Survey", 'url': ''},
     ]
     context = {'formset': formset,
                'service': target_service,
