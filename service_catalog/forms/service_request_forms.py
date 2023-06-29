@@ -25,7 +25,7 @@ class ServiceRequestForm(forms.Form):
                                       required=False)
 
     quota_scope = forms.ModelChoiceField(
-            label="Scope",
+            label="Quota",
             queryset=Scope.objects.none(),
             required=True,
             widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})

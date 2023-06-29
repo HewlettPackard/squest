@@ -158,3 +158,11 @@ def addstr(arg1, arg2):
 @register.filter(name="squest_date_format")
 def squest_date_format(date_to_format):
     return date_to_format.strftime(settings.DATE_FORMAT)
+
+
+@register.filter(name="get_field_type")
+def get_field_type(instance):
+    for survey in instance.operation.job_template.survey["spec"]:
+        if survey["question_name"] == instance.name:
+            return survey["type"]
+    return ""

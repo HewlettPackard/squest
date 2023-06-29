@@ -49,4 +49,14 @@ urlpatterns = [
     path('permission/', PermissionList.as_view(), name='api_permission_list'),
     path('permission/<int:pk>/', PermissionDetails.as_view(), name='api_permission_details'),
 
+    # Quota
+    path('organization/<int:scope_id>/quota/', QuotaListCreateView.as_view(),
+         name="quota_org_list_create"),
+    path('team/<int:scope_id>/quota/', QuotaListCreateView.as_view(),
+         name="quota_team_list_create"),
+    path('organization/<int:scope_id>/quota/<int:pk>/', QuotaDetails.as_view(),
+         name="quota_org_details"),
+    path('team/<int:scope_id>/quota/<int:pk>/', QuotaDetails.as_view(),
+         name="quota_team_details"),
+
 ]
