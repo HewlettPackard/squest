@@ -54,7 +54,8 @@ class TestCustomerCatalogViews(BaseTestRequest):
         data = {
             "squest_instance_name": "instance_1",
             "text_variable": "text_value_1",
-            "multiplechoice_variable": "text_value_2"
+            "multiplechoice_variable": "text_value_2",
+            "quota_scope_id": self.test_quota_scope_org.id
         }
         number_request_before = Request.objects.all().count()
         response = self.client.post(url, data=data)
@@ -93,7 +94,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
 
         created_request = Request.objects.latest('id')
         self.assertEqual(created_request.comments.count(), 1)
-        self.assertNotIn("billing_group_id", created_request.fill_in_survey.keys())
+        self.assertNotIn("quota_scope_id", created_request.fill_in_survey.keys())
         self.assertNotIn("request_comment", created_request.fill_in_survey.keys())
         self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
         self.assertEqual(created_request.comments.first().sender, self.standard_user)
