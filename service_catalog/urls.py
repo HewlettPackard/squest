@@ -98,8 +98,8 @@ urlpatterns = [
 
     path('tool/global_hook/', GlobalHookListView.as_view(), name='globalhook_list'),
     path('tool/global_hook/create/', views.global_hook_create, name='globalhook_create'),
-    path('tool/global_hook/<int:global_hook_id>/edit/', views.global_hook_edit, name='globalhook_edit'),
-    path('tool/global_hook/<int:global_hook_id>/delete/', views.global_hook_delete, name='globalhook_delete'),
+    path('tool/global_hook/<int:globalhook_id>/edit/', views.global_hook_edit, name='globalhook_edit'),
+    path('tool/global_hook/<int:globalhook_id>/delete/', views.global_hook_delete, name='globalhook_delete'),
     path('tool/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
     path('tool/global_hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,

@@ -12,7 +12,7 @@ class CustomLinksDeleteViewsTest(BaseTestCustomLink):
         args = {
             "custom_link_id": self.test_custom_link.id
         }
-        self.url = reverse('service_catalog:custom_link_delete', kwargs=args)
+        self.url = reverse('service_catalog:customlink_delete', kwargs=args)
 
     def test_can_delete_custom_link(self):
         response = self.client.get(self.url)

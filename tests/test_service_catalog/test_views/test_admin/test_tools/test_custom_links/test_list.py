@@ -8,7 +8,7 @@ class CustomLinksListViewsTest(BaseTestCustomLink):
 
     def setUp(self):
         super(CustomLinksListViewsTest, self).setUp()
-        self.url = reverse('service_catalog:custom_link_list')
+        self.url = reverse('service_catalog:customlink_list')
 
     def test_get_list(self):
         response = self.client.get(self.url)
