@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from rest_framework.relations import PrimaryKeyRelatedField
 
 from resource_tracker_v2.models import Resource, ResourceAttribute, AttributeDefinition, Transformer
-from service_catalog.models import Instance
 
 
 class ResourceAttributeSerializer(serializers.ModelSerializer):

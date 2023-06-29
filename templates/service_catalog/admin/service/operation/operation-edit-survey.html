@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
- {{ operation.name }} | Operation
+    {{ operation.name }} | Operation
 {%  endblock %}
 {% block content %}
     <div class="content-wrapper" style="min-height: 278px;">
@@ -18,37 +18,59 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="callout callout-info">
-                    <h5>Operation survey</h5>
-                    <p><strong>Enabled:</strong> Fields are displayed into the end user survey</p>
-                    <p><strong>Default:</strong> Can be left empty or filled with a <code>string</code> or a jinja template string based on the current <code>&#123;&#123; instance &#125;&#125;</code>. E.g: <code>&#123;&#123; instance.spec.key &#125;&#125;</code> or <code>&#123;&#123; instance.name &#125;&#125;</code></p>
-                    <p><strong>Validators:</strong> Admin provided field validator scripts</p>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
-                            {{ formset.management_form }}
-                            {% for form in formset %}
-                                <fieldset>
-                                    <legend class="text-info"><strong>{{  form.instance.name }}</strong></legend>
-                                    {{ form.as_p }}
-                                </fieldset>
-                                {% if not forloop.last %}
-                                    <hr class="mt-2 mb-3"/>
-                                {%  endif %}
-                            {% endfor %}
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <!-- validate button -->
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fas fa-plus"></i>
-                                        Update survey
-                                    </button>
-                                </div>
+                <div id="accordion">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h4 class="card-title w-100">
+                                <a class="d-block w-100 collapsed" data-toggle="collapse" href="#documentation" aria-expanded="false">
+                                    <i class="fas fa-info"></i> Tips
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="documentation" class="collapse" data-parent="#accordion" style="">
+                            <div class="card-body">
+                                <p><strong>Enabled:</strong> Fields are displayed into the end user survey</p>
+                                <p><strong>Default:</strong> Can be left empty or filled with a <code>string</code> or a jinja template string based on the current <code>&#123;&#123; instance &#125;&#125;</code>. E.g: <code>&#123;&#123; instance.spec.key &#125;&#125;</code> or <code>&#123;&#123; instance.name &#125;&#125;</code></p>
+                                <p><strong>Validators:</strong> Admin provided field validator scripts</p>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+                <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <h3 class="card-title text-primary"><strong>{{ form.instance.name }}</strong> - <span class="text-muted">{{ form.instance | get_field_type }}</span></h3>
+                            </div>
+                            <div class="card-body">
+                                {% for field in form %}
+                                    {% if field.name == "id" %}
+                                        {{ field.as_hidden }}
+                                    {% else %}
+                                        <div class="form-group row {% if field.errors %}has-error{% endif %}">
+                                            <label for="{{field.name}}" class="col-sm-2 col-form-label">
+                                                {{ field.label }}
+                                            </label>
+                                            <div class="col-sm-10">
+                                                {{ field }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <!-- validate button -->
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-save"></i>
+                                Update survey
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

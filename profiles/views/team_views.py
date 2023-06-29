@@ -9,6 +9,7 @@ from profiles.forms.team_forms import TeamForm
 from profiles.models.team import Team
 from profiles.models.organization import Organization
 from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
+from profiles.tables.quota_table import QuotaTable
 
 
 class TeamListView(SquestListView):
@@ -42,6 +43,8 @@ class TeamDetailView(DetailView):
         context['breadcrumbs'] = breadcrumbs
         context['users'] = UserRoleTable(self.object.users)
         context['roles'] = ScopeRoleTable(self.object.roles.all())
+        context['parent_id'] = self.object.id  # used by generic_actions_with_parent in the table
+        context['quotas'] = QuotaTable(self.object.quotas.all())
         context['scope'] = self.object
 
         return context
