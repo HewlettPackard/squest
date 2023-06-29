@@ -10,6 +10,7 @@ class BaseTestRequest(BaseTest):
         form_data = {'text_variable': 'my_var'}
         self.test_instance = Instance.objects.create(name="test_instance_1",
                                                      service=self.service_test,
+                                                     quota_scope=self.test_quota_scope_org,
                                                      requester=self.standard_user)
 
         # add a first request
@@ -23,6 +24,7 @@ class BaseTestRequest(BaseTest):
         # second instance for second user
         self.test_instance_2 = Instance.objects.create(name="test_instance_2",
                                                        service=self.service_test,
+                                                       quota_scope=self.test_quota_scope_org2,
                                                        requester=self.standard_user_2)
         self.support_test2 = Support.objects.create(title="support_2", instance=self.test_instance_2)
 
