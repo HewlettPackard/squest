@@ -1,10 +1,13 @@
 from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Permission
 
 from service_catalog.models import Instance, Request, Support
 from rest_framework.permissions import DjangoObjectPermissions
 
-
+class SquestPermissionRequiredMixin(PermissionRequiredMixin):
+    def has_permission(self):
+        return self.request.user.has_perm(self.permission_required, self.get_object())
 class SquestObjectPermissions(DjangoObjectPermissions):
     """
     Custom permission to only allow owners of an object to edit it.
@@ -40,11 +43,13 @@ class MagicAdminBackend(BaseBackend):
                                                   codename=codename,
                                                   content_type__app_label=app_label)
             if test_perm.exists():
+                print("permission accordé")
                 return True
 
+
         #     return False
-        # elif isinstance(obj, Request):
-        #     return user_obj.has_perm(perm="service_catalog.view_instance", obj=obj.instance)
+        elif isinstance(obj, Request):
+            return user_obj.has_perm(perm=perm, obj=obj.instance)
         # elif isinstance(obj, Support):
         #     return user_obj.has_perm(perm=perm, obj=obj.instance)
         # else:

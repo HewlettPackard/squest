@@ -40,6 +40,19 @@ class Request(SquestModel):
     accepted_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="accepted_requests")
     processed_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="processed_requests")
 
+    @classmethod
+    def get_queryset_for_user(cls, user, perm):
+        from profiles.models import Team
+        qs = super().get_queryset_for_user(user, perm)
+        if qs.exists():
+            return qs
+        app_label, codename = perm.split(".")
+        return Request.objects.filter(instance__scopes__rbac__user=user,
+                                       instance__scopes__rbac__role__permissions__codename=codename,
+                                       instance__scopes__rbac__role__permissions__content_type__app_label=app_label) | \
+               Request.objects.filter(instance__scopes__in=Team.objects.filter(org__rbac__user=user),
+                                       instance__scopes__rbac__role__permissions__codename=codename,
+                                       instance__scopes__rbac__role__permissions__content_type__app_label=app_label)
     def get_scopes(self):
         return self.instance.get_scopes()
 
@@ -101,7 +114,10 @@ class Request(SquestModel):
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
                 target=RequestState.ACCEPTED)
     def accept(self, user, save=True):
-        pass
+        self.accepted_by = user
+        self.state = RequestState.ACCEPTED
+        if save:
+            self.save()
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.FAILED], target=RequestState.PROCESSING,
                 conditions=[can_process])

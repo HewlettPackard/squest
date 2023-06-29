@@ -15,3 +15,7 @@ def to_class_name(value):
 @register.filter
 def to_app_name(value):
     return ContentType.objects.get_for_model(value).app_label
+
+@register.simple_tag()
+def has_perm(user, permission, object):
+    return user.has_perm(permission, object)
