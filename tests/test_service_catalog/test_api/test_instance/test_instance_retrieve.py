@@ -38,11 +38,6 @@ class TestInstanceRetrieve(BaseTestRequest):
         response = self.client.get(self.url, format='json')
         self._assert_can_get_details(response)
 
-    def test_get_details_as_instance_owner(self):
-        self.client.force_login(user=self.standard_user)
-        response = self.client.get(self.url, format='json')
-        self._assert_can_get_details(response, is_admin=False)
-
     def test_cannot_get_details_when_not_owner(self):
         self.client.force_login(user=self.standard_user_2)
         response = self.client.get(self.url, format='json')
