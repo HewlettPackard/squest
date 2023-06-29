@@ -13,10 +13,6 @@ class TestApiServiceCreate(BaseTestRequest):
         self.post_data = {
             'name': "My new name",
             'description': "My new description",
-            'billing_group_id': self.test_billing_group.id,
-            'billing_group_is_shown': True,
-            'billing_group_is_selectable': True,
-            'billing_groups_are_restricted': False,
             'enabled': False,
             'extra_vars': {"test": "test"}
         }
@@ -28,10 +24,6 @@ class TestApiServiceCreate(BaseTestRequest):
         check_data_in_dict(self, [self.post_data], [response.data])
         service = Service.objects.last()
         self.assertEqual(service.name, self.post_data['name'])
-        self.assertEqual(service.billing_group_is_shown, self.post_data['billing_group_is_shown'])
-        self.assertEqual(service.billing_group_is_selectable, self.post_data['billing_group_is_selectable'])
-        self.assertEqual(service.billing_groups_are_restricted, self.post_data['billing_groups_are_restricted'])
-        self.assertEqual(service.billing_group_id, self.post_data['billing_group_id'])
 
     def test_admin_cannot_post_on_service_not_full(self):
         self.post_data.pop('name')

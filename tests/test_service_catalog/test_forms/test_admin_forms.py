@@ -79,7 +79,7 @@ class TestServiceRequestForm(BaseTest):
         }
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'billing_group_id': self.test_request.instance.billing_group_id,
+            'quota_scope_id': self.test_request.instance.quota_scope_id,
             'multiselect_var': ['multiselect_2', 'multiselect_3'],
             'text_var': ['text_val'],
             'textarea_var': ['text_area'],

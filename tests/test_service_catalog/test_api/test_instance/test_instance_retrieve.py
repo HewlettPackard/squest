@@ -16,7 +16,7 @@ class TestInstanceRetrieve(BaseTestRequest):
         self.assertTrue("id" in response.json())
         self.assertTrue("name" in response.json())
         self.assertTrue("state" in response.json())
-        self.assertTrue("billing_group" in response.json())
+        self.assertTrue("quota_scope" in response.json())
         self.assertTrue("service" in response.json())
         self.assertTrue("user_spec" in response.json())
         if is_admin:
@@ -32,7 +32,7 @@ class TestInstanceRetrieve(BaseTestRequest):
         self.assertEqual(response.data['state'], self.test_instance.state)
         self.assertEqual(response.data['service'], self.test_instance.service.id)
         self.assertEqual(response.data['requester'].get('id'), self.test_instance.requester.id)
-        self.assertEqual(response.data['billing_group'], self.test_instance.billing_group)
+        self.assertEqual(response.data['quota_scope'], self.test_instance.quota_scope.id)
 
     def test_get_details_as_admin(self):
         response = self.client.get(self.url, format='json')
