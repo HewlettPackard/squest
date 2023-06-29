@@ -27,8 +27,8 @@ def global_hook_create(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def global_hook_edit(request, global_hook_id):
-    target_global_hook = get_object_or_404(GlobalHook, id=global_hook_id)
+def global_hook_edit(request, globalhook_id):
+    target_global_hook = get_object_or_404(GlobalHook, id=globalhook_id)
     form = GlobalHookForm(request.POST or None, instance=target_global_hook)
     if form.is_valid():
         form.save()
@@ -45,8 +45,8 @@ def global_hook_edit(request, global_hook_id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def global_hook_delete(request, global_hook_id):
-    target_global_hook = get_object_or_404(GlobalHook, id=global_hook_id)
+def global_hook_delete(request, globalhook_id):
+    target_global_hook = get_object_or_404(GlobalHook, id=globalhook_id)
     if request.method == "POST":
         target_global_hook.delete()
         return redirect('service_catalog:globalhook_list')
