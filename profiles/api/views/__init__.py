@@ -1,3 +1,4 @@
+from .permission_api_views import *
 from .organization_api_views import *
 from .request_notification_filter import *
 from .support_notification_filter import *
