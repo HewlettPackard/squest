@@ -15,11 +15,7 @@ class SupportListView(SquestListView):
 
     def get_table_data(self, **kwargs):
         filtered = super().get_table_data().distinct()
-        if self.request.user.is_superuser:
-            return Support.objects.all().distinct() & filtered
-        else:
-            instances = get_objects_for_user(self.request.user, 'service_catalog.request_support_on_instance').distinct()
-            return Support.objects.filter(instance__in=instances).distinct() & filtered
+        return Support.get_queryset_for_user(self.request.user, 'service_catalog.request_support_on_instance').distinct() & filtered
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
