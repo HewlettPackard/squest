@@ -43,7 +43,7 @@ class TestAcceptRequestForm(BaseTest):
         }
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'billing_group_id': None,
+            'quota_scope_id': None,
             'text_variable': '',
         }
         form = AcceptRequestForm(self.superuser, data, **parameters)

@@ -59,7 +59,7 @@ class TestApiRequestDetails(BaseTestRequest):
             'user_spec': self.test_request_standard_user_1.instance.user_spec,
             'service': self.test_request_standard_user_1.instance.service.id,
             'requester': UserSerializer(self.test_request_standard_user_1.instance.requester).data,
-            'billing_group': self.test_request_standard_user_1.instance.billing_group.id if self.test_request_standard_user_1.instance.billing_group else None
+            'quota_scope': self.test_request_standard_user_1.instance.quota_scope.id
         }
         self.expected_data_list = [self.expected_data, self.expected_instance]
 

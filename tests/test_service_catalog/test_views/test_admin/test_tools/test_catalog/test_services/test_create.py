@@ -21,9 +21,6 @@ class ServiceCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "job_template_timeout": 60,
-            "billing": "defined",
-            "billing_group_id": "",
-            "billing_group_is_shown": "on"
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -46,9 +43,6 @@ class ServiceCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "job_template_timeout": 60,
-            "billing": "defined",
-            "billing_group_id": "",
-            "billing_group_is_shown": "on",
             "image": image
         }
         number_service_before = Service.objects.all().count()

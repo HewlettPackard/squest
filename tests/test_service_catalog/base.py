@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from profiles.models import Organization
+from profiles.models import Organization, Scope
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
@@ -28,7 +28,8 @@ class Common:
         # Tower
         # ------------------------------
         self.tower_server_test = TowerServer.objects.create(name="tower-server-test", host="localhost", token="xxx")
-        self.tower_server_test_2 = TowerServer.objects.create(name="tower-server-test-2", host="my-tower.com", token="xxx")
+        self.tower_server_test_2 = TowerServer.objects.create(name="tower-server-test-2", host="my-tower.com",
+                                                              token="xxx")
         self.job_template_testing_data = {'id': 7, 'type': 'job_template', 'url': '/api/v2/job_templates/7/',
                                           'related': {'created_by': '/api/v2/users/1/',
                                                       'modified_by': '/api/v2/users/3/',
@@ -401,9 +402,12 @@ class Common:
             tower_job_template_data=self.job_template_testing_data
         )
 
+        self.test_quota_scope_org = Organization.objects.create(name='Test Org 1')
+        self.test_quota_scope_org2 = Organization.objects.create(name='Test Org 2')
 
-        self.test_quota_scope = Organization.objects.create(name='Test Org 1')
-        self.test_quota_scope2 = Organization.objects.create(name='Test Org 2')
+        self.test_quota_scope = Scope.objects.get(id=self.test_quota_scope_org.id)
+        self.test_quota_scope2 = Scope.objects.get(id=self.test_quota_scope_org2.id)
+
 
 class BaseTest(TestCase, Common):
     def setUp(self):

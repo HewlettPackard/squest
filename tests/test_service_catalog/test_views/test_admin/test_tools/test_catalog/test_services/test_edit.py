@@ -15,9 +15,6 @@ class ServiceEditTestCase(BaseTest):
         self.data = {
             "name": "service-test-updated",
             "description": "description-of-service-test-updated",
-            "billing": "defined",
-            "billing_group_id": "",
-            "billing_group_is_shown": "on",
             "enabled": False
         }
 
