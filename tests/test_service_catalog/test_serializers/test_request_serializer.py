@@ -10,7 +10,7 @@ class TestRequestSerializer(BaseTestRequest):
         self.local_test_instance = Instance.objects.create(name="test_instance_1",
                                                            service=self.service_test,
                                                            requester=self.standard_user,
-                                                           billing_group=self.test_billing_group)
+                                                           quota_scope=self.test_quota_scope_org)
 
         # add a first request
         self.local_test_request = Request.objects.create(fill_in_survey={},
@@ -22,7 +22,7 @@ class TestRequestSerializer(BaseTestRequest):
         serializer = AdminRequestSerializer(instance=self.local_test_request)
         self.assertEqual(set(serializer.data.keys()),
                          {'id', 'fill_in_survey', 'admin_fill_in_survey', 'date_submitted', 'date_complete',
-                          'date_archived', 'instance', 'operation', 'state', 'tower_job_id', 'user', 'approval_step',
+                          'date_archived', 'instance', 'operation', 'state', 'tower_job_id', 'user',
                           'processed_by', 'accepted_by'})
 
     def test_request_serializer_field_content(self):
@@ -38,10 +38,10 @@ class TestRequestSerializer(BaseTestRequest):
                          self.local_test_request.instance.name)
         self.assertEqual(serializer.data['instance']['service'],
                          self.local_test_request.instance.service.id)
-        self.assertEqual(serializer.data['instance']['billing_group']['id'],
-                         self.local_test_request.instance.billing_group.id)
-        self.assertEqual(serializer.data['instance']['billing_group']['name'],
-                         self.local_test_request.instance.billing_group.name)
+        self.assertEqual(serializer.data['instance']['quota_scope']['id'],
+                         self.local_test_request.instance.quota_scope.id)
+        self.assertEqual(serializer.data['instance']['quota_scope']['name'],
+                         self.local_test_request.instance.quota_scope.name)
 
         # user object
         self.assertEqual(serializer.data['user']['id'],

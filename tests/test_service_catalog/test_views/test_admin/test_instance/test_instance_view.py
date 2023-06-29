@@ -23,7 +23,7 @@ class TestAdminInstanceViews(BaseTestRequest):
             "service": self.service_test_2.id,
             "requester": self.standard_user_2.id,
             "state": InstanceState.PROVISIONING,
-            "billing_group": "",
+            "quota_scope": "",
             "spec": json.dumps(self.json_spec),
             "user_spec": json.dumps(self.json_spec),
         }

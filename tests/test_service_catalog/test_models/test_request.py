@@ -47,7 +47,7 @@ class TestRequest(BaseTestRequest):
                 'spec': {},
                 'state': str(expected_state),
                 'service': self.test_request.operation.service.id,
-                'billing_group': None,
+                'quota_scope': self.test_quota_scope_org.id,
                 'requester': UserSerializer(self.test_request.instance.requester).data
             }
             expected_user = UserSerializer(self.test_request.user).data
@@ -166,7 +166,7 @@ class TestRequest(BaseTestRequest):
                     'spec': {},
                     'state': str(expected_instance_state),
                     'service': self.test_request.operation.service.id,
-                    'billing_group': None,
+                    'quota_scope': self.test_request.instance.quota_scope.id,
                     'requester': UserSerializer(self.test_request.instance.requester).data
                 }
                 expected_user = UserSerializer(self.test_request.user).data
