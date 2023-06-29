@@ -7,6 +7,9 @@
 {% block header_button %}
     {% if request.user.is_superuser %}
         <div class="float-right">
+            <a href="{% url 'profiles:organization_quota_edit' object.id %}"
+               class="btn btn-primary"> <i class="fas fa-chart-pie"></i> Set quotas
+            </a>
             <a href="{% url 'profiles:organization_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
@@ -29,21 +32,15 @@
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
-                <div class="card card-sucess">
+                <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Details</h3>
+                        <h3 class="card-title">{{ object.name }}</h3>
                     </div>
                     <div class="card-body">
-
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item">
-                                <b>Name</b> <a class="float-right">{{ object.name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Description</b> <p class="float-right">{{ object.description }}</p>
-                            </li>
-                        </ul>
+                        <strong><i class="far fa-file-alt mr-1"></i> Description</strong>
+                        <p class="text-muted">{{ object.description }}</p>
                     </div>
+
                 </div>
             </section>
             <section class="col-lg-9">
@@ -54,6 +51,7 @@
                             </li>
                             <li class="nav-item"><a class="nav-link" href="#teams" data-toggle="tab">Teams</a></li>
                             <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a></li>
 
                         </ul>
                     </div>
@@ -67,6 +65,9 @@
                             </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
+                            </div>
+                            <div class="tab-pane" id="quotas">
+                                {% render_table quotas %}
                             </div>
                         </div>
                     </div>
