@@ -7,4 +7,4 @@ class RoleSerializer(ModelSerializer):
 
     class Meta:
         model = Role
-        fields = ('name', 'description', 'permissions')
+        fields = '__all__'

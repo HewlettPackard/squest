@@ -45,4 +45,8 @@ urlpatterns = [
     path('scope/', RoleListCreate.as_view(), name='api_role_list_create'),
     path('role/<int:pk>/', RoleDetails.as_view(), name='api_role_details'),
 
+    # Permission
+    path('permission/', PermissionList.as_view(), name='api_permission_list'),
+    path('permission/<int:pk>/', PermissionDetails.as_view(), name='api_permission_details'),
+
 ]
