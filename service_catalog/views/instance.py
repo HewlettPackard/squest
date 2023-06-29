@@ -224,24 +224,16 @@ def instance_new_support(request, instance_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
+@permission_required_or_403('service_catalog.view_support', (Instance, 'id', 'instance_id'))
 def instance_support_details(request, instance_id, support_id):
     instance = get_object_or_404(Instance, id=instance_id)
     support = get_object_or_404(Support, id=support_id)
     messages = SupportMessage.objects.filter(support=support)
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, sender=request.user, support=support)
-        if "btn_close" in request.POST:
-            if not can_proceed(support.do_close):
-                raise PermissionDenied
-            support.do_close()
-            support.save()
-        if "btn_re_open" in request.POST:
-            if not can_proceed(support.do_open):
-                raise PermissionDenied
-            support.do_open()
-            support.save()
         if form.is_valid():
+            if not request.user.has_perm("service_catalog.comment_support", support):
+                raise PermissionDenied
             if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
                 form.save()
             return redirect('service_catalog:instance_support_details', instance.id, support.id)
