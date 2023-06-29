@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField,ManyToManyField, PROTECT
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
@@ -171,3 +171,11 @@ post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
     instance.delete_linked_resources()
+
+
+
+def add_quota_scope_to_scopes(sender, instance, created, **kwargs):
+    if instance.quota_scope not in instance.scopes.all():
+        instance.scopes.add(instance.quota_scope)
+
+post_save.connect(add_quota_scope_to_scopes, sender=Instance)
