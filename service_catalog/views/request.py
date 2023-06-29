@@ -4,11 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.views.generic import DetailView
 from django_fsm import can_proceed
 
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import get_objects_for_user
 
+from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
 from service_catalog.forms import RequestMessageForm
 from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
@@ -99,16 +101,20 @@ def request_comment_edit(request, request_id, comment_id):
     return render(request, "generics/generic_form.html", context)
 
 
-@login_required
-def request_details(request, request_id):
-    request_list = get_objects_for_user(request.user, 'service_catalog.view_request')
-    target_request = get_object_or_404(request_list, id=request_id)
-    comment_messages = RequestMessage.objects.filter(request=target_request)
-    context = {'target_request': target_request,
-               'comment_messages': comment_messages,
-               'breadcrumbs': [
-                   {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-                   {'text': request_id, 'url': ""},
-               ],
-               }
-    return render(request, 'service_catalog/common/request-details.html', context=context)
+
+
+class RequestDetailView(SquestPermissionRequiredMixin, DetailView):
+    model = Request
+    permission_required = "service_catalog.view_request"
+    pk_url_kwarg = "request_id"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        comment_messages = RequestMessage.objects.filter(request=self.object)
+        context = {'target_request': self.object,
+                   'comment_messages': comment_messages,
+                   'breadcrumbs': [
+                       {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+                       {'text': self.object.id, 'url': ""},
+                   ],
+                   }
+        return context

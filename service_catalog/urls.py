@@ -25,7 +25,7 @@ urlpatterns = [
     path('request/delete-confirm/', views.request_bulk_delete_confirm, name='request_bulk_delete_confirm'),
     path('request/delete-force/', views.request_bulk_delete, name='request_bulk_delete'),
     path('request/archived/', RequestArchivedListView.as_view(), name='request_archived_list'),
-    path('request/<int:request_id>/', views.request_details, name='request_details'),
+    path('request/<int:request_id>/', views.RequestDetailView.as_view(), name='request_details'),
     path('request/<int:request_id>/comment/<int:comment_id>/', views.request_comment_edit,
          name='request_comment_edit'),
     path('request/<int:request_id>/edit/', views.request_edit, name='request_edit'),

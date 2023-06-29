@@ -78,8 +78,7 @@ def admin_request_re_submit(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_reject(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) \
-            or not can_proceed(target_request.reject):
+    if not can_proceed(target_request.reject):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
@@ -107,9 +106,6 @@ def admin_request_reject(request, request_id):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_request_accept(request, request_id):
     target_request = get_object_or_404(Request, id=request_id)
-    if (target_request.approval_step and request.user not in target_request.approval_step.get_approvers()) \
-            or not can_proceed(target_request.accept):
-        raise PermissionDenied
     parameters = {
         'request': target_request
     }
