@@ -10,7 +10,6 @@ class ServiceForm(SquestModelForm):
         super(ServiceForm, self).__init__(*args, **kwargs)
         self.fields['enabled'].disabled = True
         self.fields['enabled'].initial = False
-        self.fields['scope_id'].choices += Scope.objects.values_list("id", "name", flat=True)
         if self.instance.id:  # Edit object
             self.fields['enabled'].initial = self.instance.enabled
             self.fields['enabled'].disabled = False
