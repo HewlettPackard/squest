@@ -55,7 +55,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
             "squest_instance_name": "instance_1",
             "text_variable": "text_value_1",
             "multiplechoice_variable": "text_value_2",
-            "quota_scope_id": self.test_quota_scope_org.id
+            "quota_scope": self.test_quota_scope_org.id
         }
         number_request_before = Request.objects.all().count()
         response = self.client.post(url, data=data)
@@ -81,6 +81,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
 
         data = {
             "squest_instance_name": "instance_1",
+            "quota_scope": self.test_quota_scope.id,
             "text_variable": "text_value_1",
             "multiplechoice_variable": "text_value_2",
             "request_comment": "here_is_a_comment"

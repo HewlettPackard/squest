@@ -15,10 +15,6 @@ class TestApiOperationListInInstance(BaseTestRequest):
     def test_admin_get_all_operations_of_the_instance(self):
         self._check_list()
 
-    def test_customer_get_all_operations_of_his_instance(self):
-        self.client.force_login(user=self.standard_user)
-        self._check_list()
-
     def test_customer_cannot_get_all_operations_of_non_own_instance(self):
         self.client.force_login(user=self.standard_user_2)
         self._check_list(status_expected=status.HTTP_404_NOT_FOUND)

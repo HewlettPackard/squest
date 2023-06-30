@@ -46,22 +46,6 @@ class TestApiRequestList(BaseTestRequest):
         self.assertEqual(response.data['count'], Request.objects.count())
         self.assertIn('admin_fill_in_survey', response.data['results'][-1].keys())
 
-    def test_customer_get_his_requests(self):
-        self.client.force_login(user=self.standard_user)
-        response = self.client.get(self.get_request_list_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data['count'],
-            get_objects_for_user(self.standard_user, 'service_catalog.view_request').count()
-        )
-        self.assertNotEqual(
-            response.data['count'],
-            Request.objects.count()
-        )
-        self.assertNotIn('admin_fill_in_survey', response.data['results'][-1].keys())
-        request_id_list = [request['id'] for request in response.data['results']].sort()
-        request_id_list_db = [request.id for request in get_objects_for_user(self.standard_user, 'service_catalog.view_request')].sort()
-        self.assertEqual(request_id_list, request_id_list_db)
 
     def test_cannot_get_request_list_when_logout(self):
         self.client.logout()

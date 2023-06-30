@@ -1,12 +1,13 @@
 from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer, Resource
 from service_catalog.models import Request, Instance, Support
-from tests.test_service_catalog.base import BaseTest
+from test_service_catalog.base import BaseTestCommon
+from django.test import TestCase
+from rest_framework.test import APITestCase
 
-
-class BaseTestRequest(BaseTest):
+class BaseTestRequestCommon(BaseTestCommon):
 
     def setUp(self):
-        super(BaseTestRequest, self).setUp()
+        super(BaseTestRequestCommon, self).setUp()
         form_data = {'text_variable': 'my_var'}
         self.test_instance = Instance.objects.create(name="test_instance_1",
                                                      service=self.service_test,
@@ -34,3 +35,11 @@ class BaseTestRequest(BaseTest):
                                    attribute_definition=cpu_attribute)
         self.resource_server = Resource.objects.create(name="server1", resource_group=self.rg_physical_servers)
         self.resource_server.set_attribute(cpu_attribute, 12)
+
+
+class BaseTestRequest(TestCase, BaseTestRequestCommon):
+    pass
+
+
+class BaseTestRequestAPI(APITestCase, BaseTestRequestCommon):
+    pass

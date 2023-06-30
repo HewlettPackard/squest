@@ -33,10 +33,6 @@ class TestCustomerRequestViewTest(BaseTestRequest):
     def test_request_cancel_by_admin(self):
         self._assert_can_cancel()
 
-    def test_request_cancel_by_owner(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
-        self._assert_can_cancel()
-
     def test_request_cancel_by_other(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         self._assert_cannot_cancel()

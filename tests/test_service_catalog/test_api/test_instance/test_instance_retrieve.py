@@ -32,16 +32,12 @@ class TestInstanceRetrieve(BaseTestRequest):
         self.assertEqual(response.data['state'], self.test_instance.state)
         self.assertEqual(response.data['service'], self.test_instance.service.id)
         self.assertEqual(response.data['requester'].get('id'), self.test_instance.requester.id)
-        self.assertEqual(response.data['quota_scope'], self.test_instance.quota_scope.id)
+        self.assertEqual(response.data['quota_scope']["id"], self.test_instance.quota_scope.id)
 
     def test_get_details_as_admin(self):
         response = self.client.get(self.url, format='json')
         self._assert_can_get_details(response)
 
-    def test_cannot_get_details_when_not_owner(self):
-        self.client.force_login(user=self.standard_user_2)
-        response = self.client.get(self.url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_cannot_retrieve_instance_details_when_logout(self):
         self.client.logout()

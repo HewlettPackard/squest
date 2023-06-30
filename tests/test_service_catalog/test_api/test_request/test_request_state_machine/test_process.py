@@ -2,6 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
+from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import RequestState, InstanceState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
@@ -39,7 +40,7 @@ class TestApiRequestProcess(BaseTestRequest):
                 'spec': {},
                 'state': str(expected_instance_state),
                 'service': self.test_request.operation.service.id,
-                'quota_scope': self.test_quota_scope_org.id,
+                'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
                 'requester': UserSerializer(self.test_request.instance.requester).data
             }
             self.test_instance.refresh_from_db()

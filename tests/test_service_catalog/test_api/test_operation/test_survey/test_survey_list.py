@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestOperationSurveyList(BaseTestRequest):
+class TestOperationSurveyList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestOperationSurveyList, self).setUp()
@@ -18,10 +18,10 @@ class TestOperationSurveyList(BaseTestRequest):
 
     def test_customer_cannot_list_survey(self):
         self.client.force_login(user=self.standard_user)
-        response = self.client.get(self.get_operation_survey_list_url, content_type="application/json")
+        response = self.client.get(self.get_operation_survey_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_cannot_list_survey_when_logout(self):
         self.client.logout()
-        response = self.client.post(self.get_operation_survey_list_url, content_type="application/json")
+        response = self.client.post(self.get_operation_survey_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

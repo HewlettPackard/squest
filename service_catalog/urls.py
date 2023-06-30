@@ -65,7 +65,7 @@ urlpatterns = [
     path('instance/delete-confirm/', views.instance_bulk_delete_confirm, name='instance_bulk_delete_confirm'),
     path('instance/delete-force/', views.instance_bulk_delete, name='instance_bulk_delete'),
     path('instance/<int:pk>/', InstanceDetailView.as_view(), name='instance_details'),
-    path('instance/<int:instance_id>/new-support/', views.instance_new_support,
+    path('instance/<int:pk>/new-support/', views.instance_new_support,
          name='instance_new_support'),
     path('instance/<int:instance_id>/support/<int:support_id>/', views.instance_support_details,
          name='instance_support_details'),
