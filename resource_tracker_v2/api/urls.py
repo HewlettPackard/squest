@@ -20,6 +20,8 @@ urlpatterns = [
          name='api_resource_list_create'),
     path('resource_group/<int:resource_group_id>/resources/<int:pk>/', ResourceDetails.as_view(),
          name='api_resource_details'),
+    # path('resource_group/<int:resource_group_id>/resources/<int:pk>/move/', ResourceMove.as_view(),
+    #      name='api_resource_move'),
 
     # transformer
     path('resource_group/<int:resource_group_id>/attributes/', TransformerListCreate.as_view(),

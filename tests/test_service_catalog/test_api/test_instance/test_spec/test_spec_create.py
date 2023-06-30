@@ -1,8 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from test_service_catalog.base_test_request import BaseTestRequestAPI
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
