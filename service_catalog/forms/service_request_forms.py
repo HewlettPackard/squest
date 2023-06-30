@@ -11,7 +11,7 @@ from service_catalog.models import Service, Operation, Instance, Request, Reques
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-EXCLUDED_SURVEY_FIELDS = ["quota_scope_id", "request_comment", "squest_instance_name"]
+EXCLUDED_SURVEY_FIELDS = ["quota_scope", "request_comment", "squest_instance_name"]
 
 
 class ServiceRequestForm(forms.Form):

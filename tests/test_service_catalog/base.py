@@ -1,4 +1,5 @@
 import tempfile
+from django.test.testcases import TransactionTestCase
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -9,9 +10,9 @@ from service_catalog.models import TowerServer, JobTemplate, Operation, Service,
 from service_catalog.models.operations import OperationType
 
 
-class Common:
+class BaseTestCommon(TransactionTestCase):
 
-    def setUpData(self):
+    def setUp(self):
         # ------------------------------
         # USERS
         # ------------------------------
@@ -409,13 +410,9 @@ class Common:
         self.test_quota_scope2 = Scope.objects.get(id=self.test_quota_scope_org2.id)
 
 
-class BaseTest(TestCase, Common):
-    def setUp(self):
-        super(BaseTest, self).setUp()
-        self.setUpData()
+class BaseTest(TestCase, BaseTestCommon):
+    pass
 
 
-class BaseTestAPI(APITestCase, Common):
-    def setUp(self):
-        super(BaseTestAPI, self).setUp()
-        self.setUpData()
+class BaseTestAPI(APITestCase, BaseTestCommon):
+    pass

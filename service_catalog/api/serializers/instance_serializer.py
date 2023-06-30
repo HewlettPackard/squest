@@ -27,7 +27,6 @@ class RestrictedInstanceReadSerializer(InstanceReadSerializer):
 class InstanceSerializer(serializers.ModelSerializer):
     state = serializers.ChoiceField(choices=InstanceState.choices)
     resources = ResourceSerializer(many=True, read_only=True)
-    quota_scope = ScopeSerializer(read_only=True)
     class Meta:
         model = Instance
         fields = '__all__'

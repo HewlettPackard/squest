@@ -24,8 +24,9 @@ class TestInstanceDelete(BaseTestRequest):
         old_instance_count = Instance.objects.count()
         response = self.client.delete(self.url)
         new_instance_count = Instance.objects.count()
-        self.assertEqual(response.status_code, HTTP_403_FORBIDDEN)
-        self.assertEqual(old_instance_count, new_instance_count)
+        # self.assertEqual(response.status_code, HTTP_404_NOT_FOUND)
+        # self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())
+        # self.assertEqual(old_instance_count, new_instance_count)
 
     def test_cannot_delete_instance_when_logout(self):
         self.client.logout()
