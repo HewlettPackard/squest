@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from resource_tracker_v2.api.serializers.resource_serializer import ResourceSerializer
-from resource_tracker_v2.models import Transformer, Resource
+from resource_tracker_v2.models import Transformer, Resource, ResourceGroup
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2API
 
 
@@ -130,7 +130,8 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
                     "name": "memory",
                     "value": 2
                 }
-            ]
+            ],
+            "resource_group": self.cluster.id
         }
         response = self.client.put(self._details_url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -151,6 +152,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         data = {
             "name": "server-1-new-name",
             "service_catalog_instance": None,
+            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "core",
@@ -175,6 +177,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         data = {
             "name": "new_resource",
             "service_catalog_instance": None,
+            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "CPU",
@@ -193,6 +196,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         data = {
             "name": "server-1-new-name",
             "service_catalog_instance": None,
+            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "memory",
@@ -211,3 +215,17 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         response = self.client.delete(self._details_url,format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Resource.objects.filter(id=resource_to_delete).exists())
+
+    def test_update_resource_group_of_resource(self):
+        new_rg = ResourceGroup.objects.create(name="new_rg")
+        data = {
+            "resource_group": new_rg.id
+        }
+        self.assertEqual(self.cluster.id, self.server1.resource_group.id)
+        response = self.client.patch(self._details_url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_json = response.json()
+        self.assertEqual(new_rg.id, response_json["resource_group"])
+
+        self.server1.refresh_from_db()
+        self.assertEqual(new_rg.id, self.server1.resource_group.id)

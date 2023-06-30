@@ -346,6 +346,7 @@ class TestServiceRequestForm(BaseTest):
                     "new_question": True,
                     "question_description": "",
                     "question_name": "String variable",
+                    "quota": None,
                     "required": True,
                     "type": "text",
                     "variable": "text_variable",

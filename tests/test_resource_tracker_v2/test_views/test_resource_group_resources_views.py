@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker_v2.models import Resource
+from resource_tracker_v2.models import Resource, ResourceGroup
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2
 
 
@@ -122,3 +122,26 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         response = self.client.post(self.url_delete, data=data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Resource.objects.filter(id__in=resource_list_to_delete).count(), 0)
+
+    def test_resource_group_resources_move(self):
+        args = {
+            "resource_group_id": self.cluster.id,
+            "resource_id": self.server1.id
+        }
+        url = reverse('resource_tracker_v2:resourcegroup_resource_move', kwargs=args)
+
+        # test GET
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+
+        # test POST
+        new_rg = ResourceGroup.objects.create(name="new_rg")
+        self.assertEqual(self.server1.resource_group, self.cluster)
+        data = {
+            "resource_group": new_rg.id,
+
+        }
+        response = self.client.post(url, data=data)
+        self.assertEqual(302, response.status_code)
+        self.server1.refresh_from_db()
+        self.assertEqual(self.server1.resource_group, new_rg)
