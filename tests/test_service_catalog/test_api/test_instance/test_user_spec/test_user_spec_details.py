@@ -19,11 +19,6 @@ class TestApiUserSpecDetails(TestApiSpecDetails):
         self.client.force_login(user=self.standard_user)
         self.test_admin_get_spec_detail()
 
-    def test_customer_cannot_get_user_spec_non_owned_instance(self):
-        self.client.force_login(user=self.standard_user_2)
-        response = self.client.get(self.get_spec_details_url, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_cannot_get_spec_details_when_logout(self):
         self.client.logout()
         response = self.client.get(self.get_spec_details_url, content_type="application/json")

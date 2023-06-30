@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import ProtectedError
 from django.shortcuts import render, get_object_or_404, redirect
@@ -50,7 +50,7 @@ class InstanceListView(SquestListView):
         return context
 
 
-class InstanceDetailView(SquestPermissionRequiredMixin, DetailView):
+class InstanceDetailView(LoginRequiredMixin,SquestPermissionRequiredMixin, DetailView):
     model = Instance
     filterset_class = InstanceFilter
     permission_required = "service_catalog.view_instance"
@@ -180,11 +180,11 @@ def instance_archive(request, instance_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
-def instance_new_support(request, instance_id):
-    target_instance = get_object_or_404(Instance, id=instance_id)
+@user_passes_test(lambda u: u.is_superuser)
+def instance_new_support(request, pk):
+    target_instance = get_object_or_404(Instance, id=pk)
     parameters = {
-        'instance_id': instance_id
+        'instance_id': pk
     }
 
     if target_instance.service.external_support_url is not None and target_instance.service.external_support_url != '':
@@ -214,7 +214,7 @@ def instance_new_support(request, instance_id):
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
             {'text': f"{target_instance.name} ({target_instance.id})",
-             'url': reverse('service_catalog:instance_details', args=[instance_id])},
+             'url': reverse('service_catalog:instance_details', args=[pk])},
         ],
         'color_button': 'success',
         'text_button': 'Open new support',

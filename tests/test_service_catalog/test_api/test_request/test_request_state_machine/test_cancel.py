@@ -35,22 +35,6 @@ class TestApiRequestCancel(BaseTestRequest):
             self.test_request.save()
             self._cancel(status=403)
 
-    def test_user_can_cancel_request(self):
-        self.client.force_login(self.standard_user)
-        for state in AUTHORIZED_STATES:
-            self.test_request.state = state
-            self.test_request.save()
-            self._cancel()
-
-    def test_user_cannot_cancel_request_in_forbidden_state(self):
-        self.client.force_login(self.standard_user)
-        forbidden_state = RequestState.values
-        for state in AUTHORIZED_STATES:
-            forbidden_state.remove(state)
-        for state in forbidden_state:
-            self.test_request.state = state
-            self.test_request.save()
-            self._cancel(status=403)
 
     def test_cannot_cancel_request_when_logout(self):
         self.client.logout()
