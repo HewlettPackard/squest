@@ -9,6 +9,7 @@ from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
 from django_fsm import can_proceed
 
+from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
@@ -47,7 +48,7 @@ class TestRequest(BaseTestRequest):
                 'spec': {},
                 'state': str(expected_state),
                 'service': self.test_request.operation.service.id,
-                'quota_scope': self.test_quota_scope_org.id,
+                'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
                 'requester': UserSerializer(self.test_request.instance.requester).data
             }
             expected_user = UserSerializer(self.test_request.user).data
@@ -166,7 +167,7 @@ class TestRequest(BaseTestRequest):
                     'spec': {},
                     'state': str(expected_instance_state),
                     'service': self.test_request.operation.service.id,
-                    'quota_scope': self.test_request.instance.quota_scope.id,
+                    'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
                     'requester': UserSerializer(self.test_request.instance.requester).data
                 }
                 expected_user = UserSerializer(self.test_request.user).data

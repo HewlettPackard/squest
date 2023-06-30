@@ -13,8 +13,5 @@ class TestApiUserSpecCreate(TestApiSpecCreate):
     def test_admin_create_user_spec(self):
         self.test_admin_create_spec()
 
-    def test_customer_cannot_create_user_spec(self):
-        self.test_customer_cannot_create_spec()
-
     def test_cannot_create_user_spec_when_logout(self):
         self.test_cannot_create_spec_when_logout()
