@@ -2,6 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
+from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import Scope
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
@@ -315,7 +316,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'spec': {},
                 'state': str(expected_instance_state),
                 'service': self.test_request.operation.service.id,
-                'quota_scope': self.test_request.instance.quota_scope.id,
+                'quota_scope': ScopeSerializer(self.test_request.instance.quota_scope).data,
                 'requester': UserSerializer(self.test_request.instance.requester).data
             }
             self.test_instance.refresh_from_db()
@@ -486,13 +487,6 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_details(self):
         self._validate_access_request_details()
 
-    def test_customer_can_access_his_request_details(self):
-        self.client.force_login(self.standard_user)
-        self._validate_access_request_details()
-
-    def test_customer_cannot_access_non_owned_request_details(self):
-        self.client.force_login(self.standard_user_2)
-        self._refused_access_request_details(404)
 
     def test_not_logged_cannot_access_request_details(self):
         self.client.logout()

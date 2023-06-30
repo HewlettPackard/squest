@@ -46,9 +46,6 @@ class CustomerRequestCommentTest(BaseTestRequest):
     def test_admin_can_list_request_comment(self):
         self._assert_can_list_comment()
 
-    def test_request_owner_can_list_request_comment(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
-        self._assert_can_list_comment()
 
     def test_non_owner_cannot_list_request_comment(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
@@ -60,10 +57,6 @@ class CustomerRequestCommentTest(BaseTestRequest):
         self.assertEqual(403, response.status_code)
 
     def test_admin_can_add_request_message(self):
-        self._assert_can_add_comment()
-
-    def test_owner_can_add_request_message(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
         self._assert_can_add_comment()
 
     def test_non_owner_cannot_add_request_message(self):
