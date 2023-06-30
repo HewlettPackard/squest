@@ -130,7 +130,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
             )
 
         elif survey_field["type"] == "float":
-            fields[survey_field['variable']] = FloatField(
+            fields[survey_field['variable']] = SquestFloatField(
                 label=survey_field['question_name'],
                 initial=None if not survey_field['default'] else float(survey_field['default']),
                 required=survey_field['required'],

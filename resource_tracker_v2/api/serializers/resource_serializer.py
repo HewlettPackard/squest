@@ -33,12 +33,10 @@ class ResourceSerializer(serializers.ModelSerializer):
         model = Resource
         fields = ["id", "resource_group", "name", "service_catalog_instance",
                   "resource_attributes", "is_deleted_on_instance_deletion"]
-        read_only_fields = ["resource_group"]
 
     resource_attributes = ResourceAttributeSerializer(many=True)
 
     def validate_resource_attributes(self, attributes):
-        resource_group = self.context["resource_group"]
         # check attribute exist
         seen = set()
         for attribute in attributes:
@@ -49,9 +47,9 @@ class ResourceSerializer(serializers.ModelSerializer):
             attribute_def = AttributeDefinition.objects.get(name=attribute_name)
             # check attribute is linked to the target resource group
             if not Transformer.objects.filter(attribute_definition=attribute_def,
-                                              resource_group=resource_group).exists():
+                                              resource_group=self.instance.resource_group).exists():
                 raise serializers.ValidationError(
-                    f"Attribute '{attribute_name}' not linked to resource group '{resource_group}'")
+                    f"Attribute '{attribute_name}' not linked to resource group '{self.instance.resource_group}'")
             # check for duplicate
             if attribute_name not in seen:
                 seen.add(attribute_name)

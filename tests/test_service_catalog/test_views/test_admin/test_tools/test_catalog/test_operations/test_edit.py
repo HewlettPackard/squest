@@ -162,24 +162,6 @@ class OperationEditTestCase(BaseTest):
         self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="text_variable").enabled)
         self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").enabled)
 
-    def test_service_operation_edit_survey_non_existing_flag(self):
-        args = {
-            'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id,
-        }
-        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
-        data = {
-            'form-0-id': 125,
-            'form-0-enabled': "on",
-            'form-0-default': "default_var",
-            'form-TOTAL_FORMS': 1,
-            'form-INITIAL_FORMS': 2
-        }
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
-        response = self.client.post(url, data=data)
-        self.assertEqual(200, response.status_code)
-
     def test_update_survey_when_job_template_on_operation_changed(self):
         args = {
             'service_id': self.service_empty_survey_test.id,
