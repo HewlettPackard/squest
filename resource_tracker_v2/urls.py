@@ -43,6 +43,8 @@ urlpatterns = [
          name='resourcegroup_resource_edit'),
     path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/delete/', views.ResourceDeleteView.as_view(),
          name='resourcegroup_resource_delete'),
+    path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/move/', views.ResourceMoveView.as_view(),
+         name='resourcegroup_resource_move'),
     path('resource_group/<int:resource_group_id>/resources/delete-confirm/',
          views.resource_group_resource_bulk_delete_confirm,
          name='resourcegroup_resource_bulk_delete_confirm'),

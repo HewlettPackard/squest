@@ -1,14 +1,14 @@
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from resource_tracker_v2.filters.resource_filter import ResourceFilter
-from resource_tracker_v2.forms.resource_form import ResourceForm
+from resource_tracker_v2.forms.resource_form import ResourceForm, ResourceMoveForm
 from resource_tracker_v2.models import Resource, ResourceGroup
 from resource_tracker_v2.tables.resource_table import ResourceTable
 from resource_tracker_v2.views.utils.tag_filter_list_view import TagFilterListView
@@ -95,7 +95,7 @@ class ResourceEditView(PermissionRequiredMixin, UpdateView):
         context['app_name'] = content_type.app_label
         context['object_name'] = content_type.model
         context['action'] = "edit"
-        context[""] = [
+        context["breadcrumbs"] = [
             {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
             {'text': resource_group.name,
              'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
@@ -128,6 +128,34 @@ class ResourceDeleteView(PermissionRequiredMixin, DeleteView):
             {'text': resource_group.name,
              'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
             {'text': resource.name, 'url': ""},
+        ]
+        return context
+
+
+class ResourceMoveView(PermissionRequiredMixin, UpdateView):
+    model = Resource
+    template_name = 'generics/generic_form.html'
+    permission_required = "is_superuser"
+    pk_url_kwarg = "resource_id"
+    form_class = ResourceMoveForm
+
+    def get_context_data(self, **kwargs):
+        resource_group_id = self.kwargs.get('resource_group_id')
+        resource_group = ResourceGroup.objects.get(id=resource_group_id)
+        resource_id = self.kwargs.get('resource_id')
+        resource = Resource.objects.get(id=resource_id)
+        context = super().get_context_data(**kwargs)
+        content_type = ContentType.objects.get_for_model(self.model)
+        context['title'] = f'Move {content_type.name} {resource.name}'
+        context['app_name'] = content_type.app_label
+        context['object_name'] = content_type.model
+        context['action'] = "edit"
+        context["breadcrumbs"] = [
+            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': resource_group.name,
+             'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
+            {'text': resource.name, 'url': ""},
+            {'text': "Move", 'url': ""},
         ]
         return context
 

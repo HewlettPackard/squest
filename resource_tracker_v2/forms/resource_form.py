@@ -43,3 +43,9 @@ class ResourceForm(SquestModelForm):
             self.instance.set_attribute(AttributeDefinition.objects.get(name=attribute_name), my_value)
 
         return self.instance
+
+
+class ResourceMoveForm(SquestModelForm):
+    class Meta:
+        model = Resource
+        fields = ["resource_group"]

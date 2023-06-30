@@ -26,9 +26,6 @@ class FormUtils:
         for survey_filled in job_template_survey.get("spec", []):
             target_tower_field = operation_survey.get(name=survey_filled["variable"])
             if target_tower_field.enabled:
-                survey_filled["quota"] = None
-                if target_tower_field.attribute_definition:
-                    survey_filled["quota"] = target_tower_field.attribute_definition.name
                 returned_dict["spec"].append(survey_filled)
         return returned_dict
 
@@ -43,8 +40,10 @@ class FormUtils:
         """
         for survey_filled in job_template_survey.get("spec", []):   # loop all survey config from tower
             target_tower_field = operation_survey.get(name=survey_filled["variable"])
+            # jinja templating default values
             if target_tower_field.default is not None and target_tower_field.default != "":
                 survey_filled["default"] = cls.template_field(target_tower_field.default, context)
+
         return job_template_survey
 
     @classmethod
@@ -54,6 +53,11 @@ class FormUtils:
             survey_filled["validators"] = list()
             if target_tower_field.validators is not None:
                 survey_filled["validators"] = target_tower_field.validators.split(",")
+
+            # add quota attribute
+            survey_filled["quota"] = None
+            if target_tower_field.attribute_definition:
+                survey_filled["quota"] = target_tower_field.attribute_definition.name
         return job_template_survey
 
     @classmethod
