@@ -5,7 +5,6 @@ from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Trans
 from service_catalog.models import Request, Instance, Support
 from tests.test_service_catalog.base import BaseTestCommon
 
-class BaseTestRequestCommon(BaseTestCommon):
 
 class BaseTestRequestCommon(BaseTestCommon):
 

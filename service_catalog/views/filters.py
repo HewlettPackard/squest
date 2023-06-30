@@ -161,8 +161,8 @@ def squest_date_format(date_to_format):
 
 
 @register.filter(name="get_field_type")
-def get_field_type(instance):
-    for survey in instance.operation.job_template.survey["spec"]:
-        if survey["question_name"] == instance.name:
+def get_field_type(tower_survey_field):
+    for survey in tower_survey_field.operation.job_template.survey["spec"]:
+        if survey["question_name"] == tower_survey_field.name:
             return survey["type"]
     return ""
