@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -88,7 +89,8 @@ def request_comment_edit(request, request_id, comment_id):
             form.save()
             return redirect('service_catalog:request_comment', request_id)
     else:
-        form = RequestMessageForm(sender=request_comment.sender, target_request=request_comment.request, instance=request_comment)
+        form = RequestMessageForm(sender=request_comment.sender, target_request=request_comment.request,
+                                  instance=request_comment)
     context = {
         'form': form,
         'breadcrumbs': [
@@ -101,12 +103,11 @@ def request_comment_edit(request, request_id, comment_id):
     return render(request, "generics/generic_form.html", context)
 
 
-
-
-class RequestDetailView(SquestPermissionRequiredMixin, DetailView):
+class RequestDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, DetailView):
     model = Request
     permission_required = "service_catalog.view_request"
     pk_url_kwarg = "request_id"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         comment_messages = RequestMessage.objects.filter(request=self.object)

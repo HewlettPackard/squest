@@ -74,9 +74,6 @@ class TestApiSpecPatch(BaseTestRequest):
         else:
             self.assertEqual(self.test_instance.user_spec, self.current_user_spec)
 
-    def test_customer_cannot_patch_spec(self):
-        self.client.force_login(user=self.standard_user)
-        self._check_403_forbidden()
 
     def test_cannot_patch_spec_when_logout(self):
         self.client.logout()

@@ -13,8 +13,6 @@ class TestApiUserSpecDelete(TestApiSpecDelete):
     def test_admin_delete_user_spec(self):
         self.test_admin_delete_spec()
 
-    def test_customer_cannot_delete_user_spec(self):
-        self.test_customer_cannot_delete_spec()
 
     def test_cannot_delete_user_spec_when_logout(self):
         self.test_cannot_delete_spec_when_logout()

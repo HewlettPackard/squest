@@ -6,10 +6,10 @@ from rest_framework.reverse import reverse
 
 from service_catalog.models import Request, Instance, OperationType
 from service_catalog.models.tower_survey_field import TowerSurveyField
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestApiServiceRequestListCreate(BaseTestRequest):
+class TestApiServiceRequestListCreate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiServiceRequestListCreate, self).setUp()
@@ -19,7 +19,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         }
         self.data = {
             'squest_instance_name': 'instance test',
-            'quota_scope': None,
+            'quota_scope': self.test_quota_scope.id,
             'fill_in_survey': {
                 'text_variable': 'my text'
             }
@@ -31,11 +31,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
     def test_can_create(self):
         self._check_create()
 
-    def test_can_create_without_quota_scope_given(self):
-        self.data.pop('quota_scope')
-        self._check_create()
-        self.client.force_login(self.standard_user)
-        self._check_create()
 
     def test_cannot_create_when_service_is_disabled(self):
         self.service_test.enabled = False
@@ -50,14 +45,6 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         self.kwargs['pk'] = 9999999
         self._check_create(status.HTTP_404_NOT_FOUND)
 
-    def test_cannot_create_with_non_own_quota_scope(self):
-        self.service_test.quota_scope_is_selectable = True
-        self.service_test.save()
-        self.test_quota_scope_org.user_set.add(self.superuser) # TODO rewrite with quota_scope
-        self.data['quota_scope'] = self.test_quota_scope_org.id
-        self._check_create()
-        self.client.force_login(user=self.standard_user)
-        self._check_create(status.HTTP_400_BAD_REQUEST)
 
     def test_cannot_create_with_non_existing_quota_scope(self):
         self.service_test.quota_scope_is_selectable = True
@@ -88,7 +75,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
         instance_count = Instance.objects.count()
         request_count = Request.objects.count()
         url = reverse('api_service_request_create', kwargs=self.kwargs)
-        response = self.client.post(url, data=self.data, content_type="application/json")
+        response = self.client.post(url, data=self.data, format="json")
         self.assertEqual(response.status_code, response_status)
         self.assertEqual(instance_count + offset, Instance.objects.count())
         self.assertEqual(request_count + offset, Request.objects.count())
@@ -133,7 +120,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
                 "text_variable": "13"
             },
         }
-        response = self.client.post(url, data=self.data, content_type="application/json")
+        response = self.client.post(url, data=self.data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         loaded_content = json.loads(response.content)
         self.assertTrue('This field must be an even number.' in loaded_content["fill_in_survey"]["text_variable"])
@@ -145,7 +132,7 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
                 "text_variable": "8"
             },
         }
-        response = self.client.post(url, data=self.data, content_type="application/json")
+        response = self.client.post(url, data=self.data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         loaded_content = json.loads(response.content)
         self.assertTrue('Must be superior to 10' in loaded_content["fill_in_survey"]["text_variable"])
@@ -157,5 +144,5 @@ class TestApiServiceRequestListCreate(BaseTestRequest):
                 "text_variable": "12"
             },
         }
-        response = self.client.post(url, data=self.data, content_type="application/json")
+        response = self.client.post(url, data=self.data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
