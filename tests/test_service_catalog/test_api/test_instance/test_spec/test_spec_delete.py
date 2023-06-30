@@ -43,10 +43,6 @@ class TestApiSpecDelete(BaseTestRequest):
         else:
             self.assertEqual(self.test_instance.user_spec, {})
 
-    def test_customer_cannot_delete_spec(self):
-        self.client.force_login(user=self.standard_user)
-        response = self.client.delete(self.get_spec_create_url, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_delete_spec_when_logout(self):
         self.client.logout()

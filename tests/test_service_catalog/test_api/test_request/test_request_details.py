@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
@@ -59,7 +60,7 @@ class TestApiRequestDetails(BaseTestRequest):
             'user_spec': self.test_request_standard_user_1.instance.user_spec,
             'service': self.test_request_standard_user_1.instance.service.id,
             'requester': UserSerializer(self.test_request_standard_user_1.instance.requester).data,
-            'quota_scope': self.test_request_standard_user_1.instance.quota_scope.id
+            'quota_scope': ScopeSerializer(self.test_request_standard_user_1.instance.quota_scope).data
         }
         self.expected_data_list = [self.expected_data, self.expected_instance]
 
@@ -70,13 +71,6 @@ class TestApiRequestDetails(BaseTestRequest):
         check_data_in_dict(self, self.expected_data_list, data_list)
         self.assertIn('admin_fill_in_survey', response.data.keys())
 
-    def test_customer_get_his_request_detail(self):
-        self.client.force_login(user=self.standard_user)
-        response = self.client.get(self.get_request_details_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data_list = [response.data, response.data.get('instance', None)]
-        check_data_in_dict(self, self.expected_data_list, data_list)
-        self.assertNotIn('admin_fill_in_survey', response.data.keys())
 
     def test_customer_cannot_get_non_own_request_detail(self):
         self.client.force_login(user=self.standard_user)

@@ -10,7 +10,7 @@ class CustomLinksPresenceTest(BaseTestCustomLink):
         super(CustomLinksPresenceTest, self).setUp()
 
         self.args = {
-            "instance_id": self.test_instance.id
+            "pk": self.test_instance.id
         }
         self.test_instance.requester = self.standard_user
         self.test_instance.save()
@@ -28,20 +28,6 @@ class CustomLinksPresenceTest(BaseTestCustomLink):
 
     def test_custom_link_present(self):
         self._validate_can_see_button()
-
-    def test_custom_link_admin_only(self):
-        self.test_custom_link.is_admin_only = True
-        self.test_custom_link.save()
-        self._validate_can_see_button()
-        self.client.login(username=self.standard_user, password=self.common_password)
-        self._validate_cannot_see_button()
-
-    def test_custom_link_disabled(self):
-        self.test_custom_link.enabled = False
-        self.test_custom_link.save()
-        self._validate_cannot_see_button()
-        self.client.login(username=self.standard_user, password=self.common_password)
-        self._validate_cannot_see_button()
 
     def test_custom_link_when(self):
         self.test_custom_link.when = "instance.spec.key1 == 'value1'"

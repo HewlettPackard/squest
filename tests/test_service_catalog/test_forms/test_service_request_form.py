@@ -371,6 +371,7 @@ class TestServiceRequestForm(BaseTest):
         # not valid because not even number
         data = {
             "squest_instance_name": "instance test",
+            "quota_scope": self.test_quota_scope.id,
             "text_variable": "3"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
@@ -379,6 +380,7 @@ class TestServiceRequestForm(BaseTest):
         # not valid because not superior to 10
         data = {
             "squest_instance_name": "instance test",
+            "quota_scope": self.test_quota_scope.id,
             "text_variable": "9"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)
@@ -387,6 +389,7 @@ class TestServiceRequestForm(BaseTest):
         # valid because superior to 10 and even number
         data = {
             "squest_instance_name": "instance test",
+            "quota_scope": self.test_quota_scope.id,
             "text_variable": "12"
         }
         form = ServiceRequestForm(self.standard_user, data, **parameters)

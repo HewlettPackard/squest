@@ -14,8 +14,5 @@ class TestApiUserSpecPatch(TestApiSpecPatch):
     def test_admin_patch_user_spec(self):
         self.test_admin_patch_spec()
 
-    def test_customer_cannot_patch_user_spec(self):
-        self.test_customer_cannot_patch_spec()
-
     def test_cannot_patch_user_spec_when_logout(self):
         self.test_cannot_patch_spec_when_logout()

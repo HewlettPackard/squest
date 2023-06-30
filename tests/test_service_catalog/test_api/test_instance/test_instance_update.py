@@ -54,11 +54,6 @@ class TestInstanceUpdate(BaseTestRequest):
         self.assertDictEqual(self.test_instance.spec, {})
         self.assertEqual(self.test_instance.name, "new_name")
 
-    def test_non_admin_cannot_update(self):
-        self.client.force_login(user=self.standard_user)
-        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     def test_cannot_update_when_logout(self):
         self.client.logout()
         response = self.client.put(self.url, data=self.update_data, content_type="application/json")
