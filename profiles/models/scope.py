@@ -1,6 +1,5 @@
-from django.db.models import CharField, Model, ManyToManyField, Prefetch, Q, ForeignKey
+from django.db.models import CharField, ManyToManyField, Prefetch
 from django.contrib.auth.models import User
-from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Role
@@ -13,7 +12,7 @@ class AbstractScope(SquestModel):
     roles = ManyToManyField(
         Role,
         blank=True,
-        help_text="The roles assign to the scope.",
+        help_text="The roles assigned to the scope.",
         related_name="scopes",
         related_query_name="scopes",
         verbose_name="Default roles"
@@ -90,25 +89,3 @@ class Scope(AbstractScope):
         elif hasattr(self, "team"):
             return self.team
         raise Exception("This scope is not implemented")
-
-class GlobalPermission(AbstractScope):
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse("profiles:globalpermission_details")
-
-    def delete(self, *args, **kwargs):
-        pass
-
-    @classmethod
-    def load(cls):
-        obj, _ = GlobalPermission.objects.get_or_create(name="GlobalPermission")
-        return obj
-
-    def get_potential_users(self):
-        return User.objects.all()
-
-    def get_scopes(self):
-        return AbstractScope.objects.filter(id=self.id)
