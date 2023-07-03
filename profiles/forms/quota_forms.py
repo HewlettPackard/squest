@@ -36,13 +36,10 @@ class QuotaForm(SquestForm):
                     IntegerField(label=quota.attribute_definition.name,
                                  required=True,
                                  initial=default_value,
-                                 max_value=quota.available,
+                                 max_value=quota.available,  # TODO: add the current team consumption to available
                                  help_text=f"Available a organization level: {quota.available}",
                                  widget=forms.NumberInput(attrs={'step': '1',
                                                                  'class': 'form-control'}))
-
-    # def clean(self):
-    #     super(QuotaForm, self).clean()
 
     def save(self):
         for form_attribute, limit in self.cleaned_data.items():
