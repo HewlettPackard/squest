@@ -55,7 +55,7 @@ class Quota(Model):
         class_name = self.scope.get_object().__class__.__name__
         if class_name == "Organization":
             target_org = self.scope.get_object()
-            team_consumed = Quota.objects.filter(scope__in=[scope for scope in target_org.teams.all()],
+            team_consumed = Quota.objects.filter(scope__in=target_org.teams.all(),
                                                  attribute_definition=self.attribute_definition) \
                 .aggregate(limit=Sum('limit')) \
                 .get("limit", 0)

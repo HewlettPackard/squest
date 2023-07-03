@@ -50,7 +50,8 @@ class QuotaDetailsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        class_name = self.object.scope.get_object().__class__.__name__
+        scope = self.object.scope.get_object()
+        class_name = scope.__class__.__name__
         context["breadcrumbs"] = [
             {'text': class_name, 'url': reverse(f"profiles:{class_name.lower()}_list")},
             {'text': f"{self.object.scope.name}", 'url': self.object.scope.get_absolute_url() + "#quotas"},
@@ -58,8 +59,7 @@ class QuotaDetailsView(DetailView):
             {'text': f"{self.object.name}", 'url': ''},
         ]
         if class_name == "Organization":
-            org = self.object.scope.get_object()
-            quotas_teams = Quota.objects.filter(scope__in=org.teams.all(),
+            quotas_teams = Quota.objects.filter(scope__in=scope.teams.all(),
                                                 attribute_definition=self.object.attribute_definition)
             quotas_teams_consumption = quotas_teams.aggregate(consumed=Sum('limit')).get("consumed", 0)
             context['quotas_teams_consumption'] = quotas_teams_consumption
