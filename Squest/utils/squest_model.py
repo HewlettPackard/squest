@@ -27,7 +27,7 @@ class SquestRBAC(Model):
 
 
     def get_scopes(self):
-        pass
+        raise NotImplemented
 
 
 class SquestChangelog(Model):

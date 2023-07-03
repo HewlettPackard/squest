@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Model, CharField, ImageField, IntegerField, BooleanField, ForeignKey, SET_NULL, JSONField
+from django.db.models import Model, CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 

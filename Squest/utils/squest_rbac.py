@@ -1,9 +1,11 @@
+import logging
+
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Permission
 
-from service_catalog.models import Instance, Request, Support
 from rest_framework.permissions import DjangoObjectPermissions
+logger = logging.getLogger(__name__)
 
 
 class SquestPermissionRequiredMixin(PermissionRequiredMixin):
@@ -30,35 +32,21 @@ class SquestObjectPermissions(DjangoObjectPermissions):
         return True
 
 
-class MagicAdminBackend(BaseBackend):
+class SquestRBACBackend(BaseBackend):
     def has_perm(self, user_obj, perm, obj=None):
-        # return True
         if obj is None:
-            print(f"has perm called for user_obj={user_obj},perm={perm} with None object")
+            logger.debug(f"has perm called for user_obj={user_obj},perm={perm} with None object")
             return
-        print(f"has perm called for user_obj={user_obj},perm={perm},obj={obj},type={obj._meta.label}")
-        #
-        # if obj == None:
-        #     return False
-        #     print(f"has perm with no answer for user_obj={user_obj},perm={perm},obj={obj}")
-
-        if isinstance(obj, Instance):
+        logger.debug(f"has perm called for user_obj={user_obj},perm={perm},obj={obj},type={obj._meta.label}")
+        try:
             scopes = obj.get_scopes()
             app_label, codename = perm.split(".")
             test_perm = Permission.objects.filter(role__rbac__scope__in=scopes, role__rbac__user=user_obj,
                                                   codename=codename,
                                                   content_type__app_label=app_label)
             if test_perm.exists():
-                print("permission accordé")
+                logger.debug("permission granted")
                 return True
-
-
-        #     return False
-        elif isinstance(obj, Request):
-            return user_obj.has_perm(perm=perm, obj=obj.instance)
-        elif isinstance(obj, Support):
-            return user_obj.has_perm(perm=perm, obj=obj.instance)
-        # else:
-        #     print(f"has perm with no answer(else) for user_obj={user_obj},perm={perm},obj={obj}")
-        #     return False
-        # return False
+        except NotImplemented:
+            logger.debug("get_scopes method is not implemented for this object")
+            return

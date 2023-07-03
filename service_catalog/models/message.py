@@ -4,11 +4,12 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.request import Request
 from service_catalog.models.support import Support
 
 
-class Message(Model):
+class Message(SquestModel):
     sender = ForeignKey(User, blank=True, null=True, on_delete=CASCADE)
     creation_date = DateTimeField(auto_now_add=True)
     last_update_date = DateTimeField(auto_now_add=True)
