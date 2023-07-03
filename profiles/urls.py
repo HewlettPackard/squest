@@ -50,7 +50,7 @@ urlpatterns = [
 
     # Global Permission
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
-    path('global-permission/edit', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
+    path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
@@ -65,8 +65,8 @@ urlpatterns = [
     # Team
     path('team/', views.TeamListView.as_view(), name="team_list"),
     path('team/create/', views.TeamCreateView.as_view(), name="team_create"),
-    path('team/<int:pk>/edit', views.TeamEditView.as_view(), name="team_edit"),
-    path('team/<int:pk>/delete', views.TeamDeleteView.as_view(), name="team_delete"),
+    path('team/<int:pk>/edit/', views.TeamEditView.as_view(), name="team_edit"),
+    path('team/<int:pk>/delete/', views.TeamDeleteView.as_view(), name="team_delete"),
     path('team/<int:pk>/', views.TeamDetailView.as_view(), name="team_details"),
 
 
