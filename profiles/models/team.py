@@ -27,10 +27,10 @@ class Team(Scope):
         app_label, codename = perm.split(".")
         return cls.objects.filter(org__rbac__user=user,
                                   org__rbac__role__permissions__codename=codename,
-                                  org__rbac__role__permissions__content_type__app_label=app_label)\
-                | cls.objects.filter(rbac__user=user,
-                                  rbac__role__permissions__codename=codename,
-                                  rbac__role__permissions__content_type__app_label=app_label)
+                                  org__rbac__role__permissions__content_type__app_label=app_label) \
+               | cls.objects.filter(rbac__user=user,
+                                    rbac__role__permissions__codename=codename,
+                                    rbac__role__permissions__content_type__app_label=app_label)
 
     def get_scopes(self):
         from profiles.models.scope import AbstractScope
