@@ -32,8 +32,8 @@ class AbstractScope(SquestModel):
             return qs
         app_label, codename = perm.split(".")
         return cls.objects.filter(rbac__user=user,
-                                    rbac__role__permissions__codename=codename,
-                                    rbac__role__permissions__content_type__app_label=app_label)
+                                  rbac__role__permissions__codename=codename,
+                                  rbac__role__permissions__content_type__app_label=app_label)
 
     def get_scopes(self):
         return self.get_object().get_scopes()
@@ -89,3 +89,13 @@ class Scope(AbstractScope):
         elif hasattr(self, "team"):
             return self.team
         raise Exception("This scope is not implemented")
+
+    @classmethod
+    def get_queryset_for_user(cls, user, perm):
+        qs = super().get_queryset_for_user(user, perm)
+        if qs.exists():
+            return qs
+        app_label, codename = perm.split(".")
+        return cls.objects.filter(rbac__user=user,
+                                  rbac__role__permissions__codename=codename,
+                                  rbac__role__permissions__content_type__app_label=app_label)
