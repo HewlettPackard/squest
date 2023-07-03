@@ -12,6 +12,18 @@ from service_catalog.models.operations import OperationType
 class BaseTestCommon(TransactionTestCase):
 
     def setUp(self):
+        # Organization
+        self.test_quota_scope_org = Organization.objects.create(name='Test Org 1')
+        self.test_quota_scope_org2 = Organization.objects.create(name='Test Org 2')
+
+        # Scopes
+        self.test_quota_scope = Scope.objects.get(id=self.test_quota_scope_org.id)
+        self.test_quota_scope2 = Scope.objects.get(id=self.test_quota_scope_org2.id)
+
+        # Users with Scopes
+
+
+
         # ------------------------------
         # USERS
         # ------------------------------
@@ -402,11 +414,7 @@ class BaseTestCommon(TransactionTestCase):
             tower_job_template_data=self.job_template_testing_data
         )
 
-        self.test_quota_scope_org = Organization.objects.create(name='Test Org 1')
-        self.test_quota_scope_org2 = Organization.objects.create(name='Test Org 2')
 
-        self.test_quota_scope = Scope.objects.get(id=self.test_quota_scope_org.id)
-        self.test_quota_scope2 = Scope.objects.get(id=self.test_quota_scope_org2.id)
 
 
 class BaseTest(TestCase, BaseTestCommon):
