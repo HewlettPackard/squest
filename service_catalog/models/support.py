@@ -53,9 +53,15 @@ class Support(SquestModel):
         if qs.exists():
             return qs
         app_label, codename = perm.split(".")
-        return Support.objects.filter(instance__scopes__rbac__user=user,
-                                      instance__scopes__rbac__role__permissions__codename=codename,
-                                      instance__scopes__rbac__role__permissions__content_type__app_label=app_label) | \
-               Support.objects.filter(instance__scopes__in=Team.objects.filter(org__rbac__user=user),
-                                      instance__scopes__rbac__role__permissions__codename=codename,
-                                      instance__scopes__rbac__role__permissions__content_type__app_label=app_label)
+        return Support.objects.filter(
+            instance__scopes__rbac__user=user,
+            instance__scopes__rbac__role__permissions__codename=codename,
+            instance__scopes__rbac__role__permissions__content_type__app_label=app_label
+        ) | Support.objects.filter(
+            instance__scopes__in=Team.objects.filter(org__rbac__user=user,
+                                                     org__rbac__role__permissions__codename=codename,
+                                                     org__rbac__role__permissions__content_type__app_label=app_label)
+        )
+
+    def get_scopes(self):
+        return self.instance.get_scopes()

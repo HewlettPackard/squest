@@ -31,6 +31,9 @@ class RequestMessage(Message):
                          related_query_name='comment'
                          )
 
+    def get_scopes(self):
+        return self.request.get_scopes()
+
 
 class SupportMessage(Message):
     support = ForeignKey(Support,
@@ -40,3 +43,6 @@ class SupportMessage(Message):
                          related_name='messages',
                          related_query_name='message'
                          )
+
+    def get_scopes(self):
+        return self.support.get_scopes()
