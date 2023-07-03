@@ -13,7 +13,7 @@ class Organization(Scope):
         return self.name
 
     def get_scopes(self):
-        from profiles.models.scope import GlobalPermission, AbstractScope
+        from profiles.models import GlobalPermission, AbstractScope
         squest_scope = GlobalPermission.load()
         return squest_scope.get_scopes() | AbstractScope.objects.filter(id=self.id)
 
