@@ -27,7 +27,7 @@ class ScopeCreateRBACSerializer(Serializer):
 
     def __init__(self, *args, **kwargs):
         from profiles.models import Role
-        self.scope = Scope.objects.get(id=kwargs.get('context').get('view').kwargs.get('scope_id'))
+        self.scope = Scope.objects.get(id=kwargs.get('scope_id'))
         super(ScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
         self.fields["users"].choices = self.scope.get_potential_users().values_list('id', 'username')
         self.fields["roles"].choices = Role.objects.all().values_list('id', 'name')
