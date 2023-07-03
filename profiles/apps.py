@@ -17,7 +17,6 @@ def create_roles(sender, **kwargs):
             description=role_params['description'],
         )
         for model_name, model_params in role_params['model_names'].items():
-            print(model_name)
             content_type = ContentType.objects.get(app_label=model_name.split('.')[0], model=model_name.split('.')[1])
             for codename in model_params['permissions']:
                 permission, created = Permission.objects.get_or_create(codename=codename, content_type=content_type)

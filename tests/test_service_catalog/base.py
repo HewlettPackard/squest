@@ -1,10 +1,10 @@
 import tempfile
 from django.test.testcases import TransactionTestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from profiles.models import Organization, Scope
+from profiles.models import Organization, Scope, Role, GlobalPermission
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
@@ -20,10 +20,6 @@ class BaseTestCommon(TransactionTestCase):
         self.test_quota_scope = Scope.objects.get(id=self.test_quota_scope_org.id)
         self.test_quota_scope2 = Scope.objects.get(id=self.test_quota_scope_org2.id)
 
-        # Users with Scopes
-
-
-
         # ------------------------------
         # USERS
         # ------------------------------
@@ -35,6 +31,15 @@ class BaseTestCommon(TransactionTestCase):
         # standard user
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
+        # Users with Scopes
+
+        role_consume_quota = Role.objects.create(name="Consume quota")
+        role_consume_quota.permissions.add(
+            Permission.objects.get(content_type__app_label="profiles", content_type__model="scope",
+                                   codename="consume_quota_scope"))
+        self.global_perm = GlobalPermission.load()
+        self.global_perm.add_user_in_role(self.standard_user, role_consume_quota)
+        self.global_perm.add_user_in_role(self.standard_user_2, role_consume_quota)
 
         # ------------------------------
         # Tower
@@ -413,8 +418,6 @@ class BaseTestCommon(TransactionTestCase):
             tower_server=self.tower_server_test,
             tower_job_template_data=self.job_template_testing_data
         )
-
-
 
 
 class BaseTest(TestCase, BaseTestCommon):
