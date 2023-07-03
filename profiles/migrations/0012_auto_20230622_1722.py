@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='abstractscope',
             name='roles',
-            field=models.ManyToManyField(blank=True, help_text='The roles assign to the scope.', related_name='scopes', related_query_name='scopes', to='profiles.Role', verbose_name='Default roles'),
+            field=models.ManyToManyField(blank=True, help_text='The roles assigned to the scope.', related_name='scopes', related_query_name='scopes', to='profiles.Role', verbose_name='Default roles'),
         ),
         migrations.CreateModel(
             name='Organization',
