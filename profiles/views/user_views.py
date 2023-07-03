@@ -9,8 +9,6 @@ from service_catalog.tables.instance_tables import InstanceTable
 from service_catalog.tables.request_tables import RequestTable
 
 
-
-
 class UserListView(SquestListView):
     table_pagination = {'per_page': 10}
     table_class = UserTable
@@ -42,6 +40,5 @@ class UserDetailsView(DetailView):
 
         # Instances
         context['instances'] = InstanceTable(self.object.instance_set.all())
-
 
         return context

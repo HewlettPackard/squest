@@ -31,19 +31,16 @@
             <section class="col-lg-3">
                 <div class="card card-sucess">
                     <div class="card-header">
-                        <h3 class="card-title">Details</h3>
+                        <h3 class="card-title"><b>{{ object.name }}</b></h3>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body pt-0 pb-0">
 
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item">
-                                <b>Organization</b> <a class="float-right" href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item border-top-0">
+                                <u>Organization</u> <a class="float-right" href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
                             </li>
-                            <li class="list-group-item">
-                                <b>Name</b> <a class="float-right">{{ object.name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Description</b> <p class="float-right">{{ object.description }}</p>
+                            <li class="list-group-item border-bottom-0">
+                                <u>Description</u> <p class="float-right">{{ object.description }}</p>
                             </li>
                         </ul>
                     </div>

@@ -97,7 +97,7 @@ class ScopeRBACDeleteView(DeleteView):
             return HttpResponseRedirect(self.get_success_url())
         except ProtectedError as e:
             error_message = f"{e.args[0]}"
-            # Vous pouvez personnaliser le message d'erreur en fonction de vos besoins
+
             context = self.get_context_data(object=self.object, error_message=error_message,
                                             protected_objects=e.protected_objects)
             return self.render_to_response(context)
