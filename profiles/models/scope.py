@@ -43,6 +43,7 @@ class AbstractScope(SquestModel):
 
     @property
     def users(self):
+        # get all users that are at least in one group (RBAC) of the scope.
         rbac_queryset = self.rbac.prefetch_related(
             Prefetch("role", queryset=Role.objects.all())).prefetch_related(
             Prefetch("user_set", queryset=User.objects.all()))

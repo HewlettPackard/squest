@@ -32,13 +32,16 @@
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
-                <div class="card card-primary">
+                <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{ object.name }}</h3>
+                        <h3 class="card-title"><b>{{ object.name }}</b></h3>
                     </div>
-                    <div class="card-body">
-                        <strong><i class="far fa-file-alt mr-1"></i> Description</strong>
-                        <p class="text-muted">{{ object.description }}</p>
+                    <div class="card-body pt-0 pb-0">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item bt-0 bb-0">
+                                <u>Description</u> <p class="float-right">{{ object.description }}</p>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
