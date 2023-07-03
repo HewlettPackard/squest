@@ -29,7 +29,7 @@ class ScopeCreateRBACSerializer(Serializer):
         from profiles.models import Role
         self.scope = Scope.objects.get(id=kwargs.get('context').get('view').kwargs.get('scope_id'))
         super(ScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
-        self.fields["users"].choices = self.scope.get_perspective_users().values_list('id', 'username')
+        self.fields["users"].choices = self.scope.get_potential_users().values_list('id', 'username')
         self.fields["roles"].choices = Role.objects.all().values_list('id', 'name')
 
     def save(self):
@@ -37,4 +37,4 @@ class ScopeCreateRBACSerializer(Serializer):
         for role_id in self.data.get('roles'):
             role = Role.objects.get(id=role_id)
             for user_id in self.data.get('users'):
-                self.scope.add_user_in_role(User.objects.get(id=user_id), role.name)
+                self.scope.add_user_in_role(User.objects.get(id=user_id), role)
