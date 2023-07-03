@@ -32,8 +32,6 @@ urlpatterns = [
     path('organization/<int:pk>/', OrganizationDetails.as_view(), name='api_organization_details'),
 
     # Team
-    path('organization/<int:organization_id>/team/', OrganizationTeamListCreate.as_view(), name='api_team_list_create'),
-    path('organization/<int:organization_id>/team/<int:pk>/', OrganizationTeamDetails.as_view(), name='api_team_details'),
     path('team/', TeamListCreate.as_view(), name='api_team_list_create'),
     path('team/<int:pk>/', TeamDetails.as_view(), name='api_team_details'),
 
