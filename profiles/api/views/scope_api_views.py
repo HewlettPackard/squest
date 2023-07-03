@@ -10,6 +10,12 @@ class ScopeRBACCreate(CreateAPIView):
     serializer_class = ScopeCreateRBACSerializer
     permission_classes = [IsAdminUser]
 
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs.setdefault('context', self.get_serializer_context())
+        kwargs.setdefault('scope_id', self.kwargs['scope_id'])
+        return serializer_class(*args, **kwargs)
+
 
 class ScopeRBACDelete(DestroyAPIView):
     permission_classes = [IsAdminUser]
