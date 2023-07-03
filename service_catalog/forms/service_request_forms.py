@@ -1,7 +1,6 @@
 
 import urllib3
 from django import forms
-from django.core.exceptions import ValidationError
 
 from profiles.models.scope import Scope
 from service_catalog.forms.form_utils import FormUtils
@@ -39,7 +38,7 @@ class ServiceRequestForm(forms.Form):
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
         self.service = Service.objects.get(id=service_id)
         self.create_operation = Operation.objects.get(id=operation_id)
-        self.fields['quota_scope'].queryset = Scope.objects.filter() #TODO get_queryset_for_user with consume_quota
+        self.fields['quota_scope'].queryset = Scope.get_queryset_for_user(user, 'profiles.consume_quota_scope')
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
