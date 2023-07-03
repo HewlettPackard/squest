@@ -18,10 +18,10 @@ class ScopeCreateRBACForm(SquestForm):
     def __init__(self, *args, **kwargs):
         self.scope = kwargs.pop('scope')
         super(ScopeCreateRBACForm, self).__init__(*args, **kwargs)
-        self.fields["users"].queryset = self.scope.get_perspective_users()
+        self.fields["users"].queryset = self.scope.get_potential_users()
 
     def save(self):
         for role in self.cleaned_data.get('roles'):
-            group = self.scope.get_group_role(role.name)
+            group = self.scope.get_rbac(role)
             for user in self.cleaned_data.get('users'):
-                self.scope.add_user_in_role(user, role.name)
+                self.scope.add_user_in_role(user, role)
