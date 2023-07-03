@@ -54,13 +54,15 @@ class Instance(SquestModel):
         if qs.exists():
             return qs
         app_label, codename = perm.split(".")
-        return Instance.objects.filter(scopes__rbac__user=user,
-                                       scopes__rbac__role__permissions__codename=codename,
-                                       scopes__rbac__role__permissions__content_type__app_label=app_label) | \
-               Instance.objects.filter(scopes__in=Team.objects.filter(org__rbac__user=user),
-                                       scopes__rbac__role__permissions__codename=codename,
-                                       scopes__rbac__role__permissions__content_type__app_label=app_label)
-    
+        return Instance.objects.filter(
+            scopes__rbac__user=user,
+            scopes__rbac__role__permissions__codename=codename,
+            scopes__rbac__role__permissions__content_type__app_label=app_label
+        ) | Instance.objects.filter(
+            scopes__in=Team.objects.filter(org__rbac__user=user,
+                                           org__rbac__role__permissions__codename=codename,
+                                           org__rbac__role__permissions__content_type__app_label=app_label)
+        )
 
     def get_absolute_url(self):
         return reverse("service_catalog:instance_details", args=[self.pk])
@@ -173,9 +175,9 @@ def pre_delete(sender, instance, **kwargs):
     instance.delete_linked_resources()
 
 
-
 def add_quota_scope_to_scopes(sender, instance, created, **kwargs):
     if instance.quota_scope not in instance.scopes.all():
         instance.scopes.add(instance.quota_scope)
+
 
 post_save.connect(add_quota_scope_to_scopes, sender=Instance)
