@@ -16,5 +16,11 @@ permissions = [
         "model": "support",
         "codename": "comment_support",
         "name": "Can comment support",
+    },
+    {
+        "app_label": "profiles",
+        "model": "scope",
+        "codename": "consume_quota_scope",
+        "name": "Can consume quota",
     }
 ]

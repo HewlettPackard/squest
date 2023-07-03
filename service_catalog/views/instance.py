@@ -50,7 +50,7 @@ class InstanceListView(SquestListView):
         return context
 
 
-class InstanceDetailView(LoginRequiredMixin,SquestPermissionRequiredMixin, DetailView):
+class InstanceDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, DetailView):
     model = Instance
     filterset_class = InstanceFilter
     permission_required = "service_catalog.view_instance"
