@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('service_catalog', '0015_remove_instance_billing_group'),
+        ('service_catalog', '0014_auto_20230622_1722'),
         ('profiles', '0012_auto_20230622_1722'),
     ]
 
