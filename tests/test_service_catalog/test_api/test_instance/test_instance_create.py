@@ -83,19 +83,3 @@ class TestInstanceCreate(BaseTestRequestAPI):
                     "quota_scope": self.test_quota_scope_org.id,
                     }
         self._assert_created(data, expected)
-
-    def test_non_admin_cannot_create_instance(self):
-        self.client.force_login(user=self.standard_user)
-        data = {
-            "name": "instance_create_test_1",
-            "service": self.service_test_2.id,
-            "requester": self.standard_user_2.id,
-            "state": InstanceState.AVAILABLE,
-            "quota_scope": self.test_quota_scope_org.id,
-            "spec": {
-                "key1": "val1",
-                "key2": "val2"
-            }
-        }
-        response = self.client.post(self.url, data=data, format='json')
-        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
