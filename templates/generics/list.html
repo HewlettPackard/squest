@@ -40,7 +40,7 @@
                 {% endif %}
             </div>
             {% if filter %}
-                <aside class="control-sidebar control-sidebar-light" style="display: block; width: 700px">
+                <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }}" style="display: block; width: 700px">
                     <div class="row">
                         <a class="nav-link float-left" data-widget="control-sidebar">
                             <i class="fas fa-chevron-right"></i>
