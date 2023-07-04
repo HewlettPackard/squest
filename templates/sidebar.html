@@ -1,6 +1,6 @@
 {% load static %}
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
     <!-- Brand Logo -->
     <a href="{% url 'home' %}" class="brand-link">
         <img src="{% static '/squest/img/squest_logo.png' %}" class="brand-image" alt="squest_logo" width="33"

@@ -2,6 +2,7 @@
 import urllib3
 from django import forms
 
+from Squest.utils.squest_form import SquestForm
 from profiles.models.scope import Scope
 from service_catalog.forms.form_utils import FormUtils
 from service_catalog.forms.utils import get_fields_from_survey
@@ -13,21 +14,19 @@ FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
 EXCLUDED_SURVEY_FIELDS = ["quota_scope", "request_comment", "squest_instance_name"]
 
 
-class ServiceRequestForm(forms.Form):
+class ServiceRequestForm(SquestForm):
     squest_instance_name = forms.CharField(label="Squest instance name",
                                            help_text="Help to identify the requested service in the 'Instances' view",
-                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                           )
 
     request_comment = forms.CharField(label="Comment",
                                       help_text="Add a comment to your request",
-                                      widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
                                       required=False)
 
     quota_scope = forms.ModelChoiceField(
             label="Quota",
             queryset=Scope.objects.none(),
             required=True,
-            widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
         )
 
     def __init__(self, user, *args, **kwargs):
