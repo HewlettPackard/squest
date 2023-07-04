@@ -9,6 +9,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     request_notification_enabled = models.BooleanField(default=True)
     support_notification_enabled = models.BooleanField(default=True)
+    theme = models.CharField(default="dark", max_length=20)
 
     def get_absolute_url(self):
         return reverse("profiles:user_details", args=[self.pk])

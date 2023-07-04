@@ -9,33 +9,8 @@ $(document).ready(function () {
     $('.ajax_sync_all_job_template').click(sync_all_job_template);
     $('.ajax_sync_job_template').click(sync_job_template);
 
-    // pool table
-    var disabled_column_list = ["p-factor", "c-factor"];
-    var poolTable = $('#pool_table').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'csv', 'colvis', 'pageLength'
-        ],
-        lengthMenu: [
-            [50, 100, 200, -1],
-            [50, 100, 200, 'All'],
-        ],
-        fixedColumns:   {
-            left: 1,
-        }
-    });
 });
 
-function containsAny(str, substrings) {
-    for (var i = 0; i !== substrings.length; i++) {
-       var substring = substrings[i];
-       if (str.indexOf(substring) !== - 1) {
-            // console.log("found:" + str );
-            return true;
-       }
-    }
-    return false;
-}
 
 function add_tab_management() {
     var hash = window.location.hash;
@@ -279,16 +254,5 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
         document.getElementById(sync_button_id).classList.remove('disabled');
         clearInterval(interval_id);
         return false;
-    });
-}
-
-function showLoaderOnClick() {
-    $(document).Toasts('create', {
-        icon: 'fas fa-chess-rook',
-        title: 'Tower',
-        body: 'Starting job template. Please wait...',
-        autohide: true,
-        delay: 5000,
-        class: 'bg-info mr-3 my-3'
     });
 }
