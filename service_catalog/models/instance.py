@@ -19,11 +19,6 @@ from service_catalog.models.state_hooks import HookManager
 logger = logging.getLogger(__name__)
 
 
-def get_default_org():
-    from profiles.models import Organization
-    return Organization.objects.get_or_create(name="Default org")[0].id
-
-
 class Instance(SquestModel):
     name = CharField(verbose_name="Instance name", max_length=100)
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
@@ -42,7 +37,7 @@ class Instance(SquestModel):
         related_name="quota_instances",
         related_query_name="quota_instance",
         on_delete=PROTECT,
-        default=get_default_org
+        default=Scope.get_default_org
     )
     state = FSMField(default=InstanceState.PENDING)
     date_available = DateTimeField(null=True, blank=True)
