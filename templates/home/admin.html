@@ -67,13 +67,13 @@
         <!-- small card -->
         <div class="small-box bg-pink">
             <div class="inner">
-                <h3>{{ total_user_without_billing_groups }}</h3>
-                <p>Users without billing groups</p>
+                <h3>{{ user_without_org }}</h3>
+                <p>Users without organization</p>
             </div>
             <div class="icon">
                 <i class="fas fa-users-slash"></i>
             </div>
-            <a href="{% url 'profiles:user_list' %}?no_billing_groups=on" class="small-box-footer">
+            <a href="{% url 'profiles:user_list' %}?no_organization=on" class="small-box-footer">
                 More info <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
@@ -83,7 +83,7 @@
     {%  for service in service_details.values %}
         <div class="col-auto flex-shrink-1">
             <div class="card card-widget widget-user-2 shadow-sm">
-                <div class="widget-user-header bg-white">
+                <div class="widget-user-header bg-{% if request.user.profile.theme == "dark" %}dark{% else %}white{% endif %}">
                     <div class="widget-user-image">
                         <img class="img elevation-2" src="{% if service.service.image %}{{ service.service.image.url }}{% else %}{%  static '/squest/img/no_image.png' %}{% endif %}" alt="User Avatar">
                     </div>

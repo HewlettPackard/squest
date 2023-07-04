@@ -9,6 +9,7 @@ app_name = 'profiles'
 urlpatterns = [
     # common URLs
     path('profile/', views.profile, name='profile'),
+    path('profile/theme-switch/', views.dark_light_theme_switch, name='dark_light_theme_switch'),
     path('profile/token/create/', views.token_create, name='token_create'),
     path('profile/token/<int:token_id>/generate/', views.token_generate, name='token_generate'),
     path('profile/token/<int:token_id>/edit/', views.token_edit, name='token_edit'),
