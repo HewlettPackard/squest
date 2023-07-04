@@ -84,6 +84,11 @@ class Scope(AbstractScope):
     def __str__(self):
         return str(self.get_object())
 
+    @staticmethod
+    def get_default_org():
+        from profiles.models import Organization
+        return Organization.objects.get_or_create(name="Default org")[0].id
+
     def get_object(self):
         if hasattr(self, "organization"):
             return self.organization

@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import profiles.models.scope
 
 def billing_group_to_org(apps, schema_editor):
     from profiles.models.default_rbac import roles_list
@@ -68,5 +69,29 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(blank=True, related_name='instances', related_query_name='instance',
                                          to='profiles.Scope')
         ),
-        migrations.RunPython(billing_group_to_org)
+        migrations.AddField(
+            model_name='instance',
+            name='quota_scope',
+            field=models.ForeignKey(default=profiles.models.scope.Scope.get_default_org,
+                                    on_delete=django.db.models.deletion.PROTECT, related_name='quota_instances',
+                                    related_query_name='quota_instance', to='profiles.scope'),
+        ),
+        migrations.AlterField(
+            model_name='instance',
+            name='scopes',
+            field=models.ManyToManyField(blank=True, related_name='scope_instances',
+                                         related_query_name='scope_instance', to='profiles.Scope'),
+        ),
+        migrations.RunPython(billing_group_to_org),
+        migrations.AddField(
+            model_name='towersurveyfield',
+            name='attribute_definition',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                    related_name='tower_survey_fields', related_query_name='tower_survey_field',
+                                    to='resource_tracker_v2.attributedefinition'),
+        ),
+        migrations.RemoveField(
+            model_name='instance',
+            name='billing_group',
+        ),
     ]
