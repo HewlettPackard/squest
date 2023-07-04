@@ -63,6 +63,7 @@ def home(request):
                 service_details[service.name]["opened_supports"] = opened_supports.get(instance__service=service.id)["request_count"]
 
         context["service_details"] = service_details
+        context['user_without_org'] = User.objects.filter(groups__isnull=True).count()
 
     else:
         context['total_request'] = get_objects_for_user(request.user, 'service_catalog.view_request').filter(
