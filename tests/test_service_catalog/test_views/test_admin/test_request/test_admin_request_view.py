@@ -138,7 +138,7 @@ class AdminRequestViewTest(BaseTestRequest):
         else:
             data = {
                 'squest_instance_name': self.test_request.instance.name,
-                'quota_scope_id': 2,
+                'quota_scope_id': self.test_quota_scope.id,
                 'text_variable': 'my_var',
                 'multiplechoice_variable': 'choice1',
                 'multiselect_var': 'multiselect_1',
@@ -169,7 +169,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_and_request_pending_instance(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'quota_scope_id': 2,
+            'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -188,7 +188,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_pending_instance_missing_not_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'quota_scope_id': 2,
+            'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -203,7 +203,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_cannot_accept_pending_instance_missing_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
-            'quota_scope_id': 2,
+            'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -226,7 +226,7 @@ class AdminRequestViewTest(BaseTestRequest):
         new_instance_name = f"{self.test_request.instance.name} modified by admin"
         data = {
             'squest_instance_name': new_instance_name,
-            'quota_scope_id': 2,
+            'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -244,7 +244,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'multiselect_var': ['multiselect_1'],
             'textarea_var': '1',
             'password_var': 'password',
-            'integer_var': 2,
+            'integer_var': self.test_quota_scope.id,
             'float_var': 0.8
         }
         self.assertEqual(self.test_request.instance.name, new_instance_name)
