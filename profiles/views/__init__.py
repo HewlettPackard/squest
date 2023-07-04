@@ -9,3 +9,4 @@ from profiles.views.user_views import *
 from profiles.views.role_views import *
 from profiles.views.globalpermission_views import *
 from profiles.views.quota_views import *
+from profiles.views.profile_views import *

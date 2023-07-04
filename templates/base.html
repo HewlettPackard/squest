@@ -14,7 +14,6 @@
     <!-- Bootstrap select -->
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
     <!-- Tower Service Catalog -->
-    <link rel="stylesheet" type="text/css" href="{% static 'squest/css/squest.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'squest/css/pygments.css' %}">
     <link rel="shortcut icon" type="image/png" href="{% static '/squest/img/squest_logo.png' %}"/>
     <!-- Tempus dominus -->
@@ -32,9 +31,17 @@
     <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet" >
     <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet" >
 
+    <!-- custom squest css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'squest/css/squest.css' %}">
+    {% if request.user %}
+        {% if request.user.profile.theme == "dark" %}
+            <link rel="stylesheet" type="text/css" href="{% static 'squest/css/squest-dark.css' %}">
+        {% endif %}
+    {% endif %}
+
     <title>{% if title %}{{ title }}{% else %}{% block title %}Squest{% endblock title %}{% endif %}</title>
 </head>
-<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed {% if request.user %}{% if request.user.profile.theme == "dark" %}dark-mode{% endif %}{% endif %}">
 {% if 'login' not in request.path %}
     {% include 'navbar.html' %}
     {% include 'sidebar.html' %}
