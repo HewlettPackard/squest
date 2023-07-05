@@ -15,15 +15,6 @@
             <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent"
                 data-widget="treeview" role="menu">
                 <li class="nav-header">Service catalog</li>
-                {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:list_tower' %}"
-                           class="nav-link {% if '/tower/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-chess-rook"></i>
-                            <p>Tower/AWX</p>
-                        </a>
-                    </li>
-                {% endif %}
                 <li class="nav-item">
                     <a href="{% url 'service_catalog:service_catalog_list' %}"
                        class="nav-link {% if '/service/' in request.path %}active{% endif %}">
@@ -64,7 +55,7 @@
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:attributedefinition_list' %}"
                            class="nav-link {% if '/resource_tracker/attributes/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-bezier-curve"></i>
+                            <i class="nav-icon fas fa-shapes"></i>
                             <p>Attributes</p>
                         </a>
                     </li>
@@ -78,7 +69,7 @@
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:resource_tracker_graph' %}"
                            class="nav-link {% if '/resource_tracker/resource_tracker_graph/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-project-diagram"></i>
+                            <i class="nav-icon fas fa-sitemap"></i>
                             <p>Graph</p>
                         </a>
                     </li>
@@ -89,7 +80,7 @@
                 <li class="nav-item">
                     <a href="{% url 'profiles:organization_list' %}"
                        class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-sitemap"></i>
+                        <i class="nav-icon fas fa-building"></i>
                         <p>Organizations</p>
                     </a>
                 </li>
@@ -111,21 +102,49 @@
 
                 {% if user.is_superuser %}
 
-                    <li class="nav-header">Tools</li>
+                    <li class="nav-header">Administration</li>
                     <li class="nav-item">
-                        <a href="{% url 'profiles:globalpermission_details' %}"
-                           class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-globe"></i>
-                            <p>Global permission</p>
+                        <a href="{% url 'service_catalog:list_tower' %}"
+                           class="nav-link {% if '/tower/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-chess-rook"></i>
+                            <p>Controllers</p>
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a href="{% url 'profiles:role_list' %}"
-                           class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-unlock"></i>
-                            <p>Roles</p>
+                        <a href="#" class="nav-link{% if '/profiles/global-permission/' in request.path or '/profiles/role/' in request.path or '/profiles/role/permission' in request.path %} active{% endif %}">
+                            <i class="nav-icon fas fa-user-check"></i>
+                            <p>
+                                Access
+                                <i class="right fas fa-angle-down"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'profiles:globalpermission_details' %}"
+                                   class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-globe"></i>
+                                    <p>Global permission</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'profiles:role_list' %}"
+                                   class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <p>Roles</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'profiles:permission_list' %}"
+                                        class="nav-link {% if '/profiles/permission/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-unlock"></i>
+                                    <p>Permissions</p>
+                                </a>
+                            </li>
+
+                        </ul>
                     </li>
+
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:globalhook_list' %}"
                            class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">
