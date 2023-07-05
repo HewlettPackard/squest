@@ -26,5 +26,6 @@ class TowerServerListView(SquestListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['title'] = "Controllers"
         context['html_button_path'] = "generics/buttons/add_tower_server.html"
         return context
