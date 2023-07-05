@@ -53,6 +53,12 @@ urlpatterns = [
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
     path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
 
+    # permission_list
+    path('permission/', views.PermissionListView.as_view(), name="permission_list"),
+    path('permission/create/', views.PermissionCreateView.as_view(), name="permission_create"),
+    path('permission/<int:pk>/edit/', views.PermissionEditView.as_view(), name="permission_edit"),
+    path('permission/<int:pk>/delete/', views.PermissionDeleteView.as_view(), name="permission_delete"),
+
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
     path('organization/create/', views.OrganizationCreateView.as_view(), name="organization_create"),
