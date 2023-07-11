@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('taggit', '0005_auto_20220424_2025'),
         ('service_catalog', '0012_auto_20221004_1808'),
+        ('profiles', '0010_clean_quota'),
     ]
     operations = [
         migrations.RunSQL("DROP TABLE IF EXISTS resource_tracker_resourceattribute"),
