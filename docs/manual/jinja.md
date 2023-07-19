@@ -46,7 +46,7 @@ Accessing instance name:
                     "email": "admin@squest.domain",
                     "profile": {
                         "request_notification_enabled": true,
-                        "support_notification_enabled": true,
+                        "instance_notification_enabled": true,
                         "request_notification_filters": [],
                         "instance_notification_filters": []
                     },
@@ -95,7 +95,7 @@ Accessing instance spec:
                     "email": "admin@squest.domain",
                     "profile": {
                         "request_notification_enabled": true,
-                        "support_notification_enabled": true,
+                        "instance_notification_enabled": true,
                         "request_notification_filters": [],
                         "instance_notification_filters": []
                     },
@@ -157,7 +157,7 @@ This example, used in the "default limit" of the operation job template config, 
                         "email": "admin@squest.domain",
                         "profile": {
                             "request_notification_enabled": true,
-                            "support_notification_enabled": true,
+                            "instance_notification_enabled": true,
                             "request_notification_filters": [],
                             "instance_notification_filters": []
                         },

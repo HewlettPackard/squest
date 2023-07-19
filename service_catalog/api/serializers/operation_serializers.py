@@ -8,12 +8,6 @@ class OperationSerializer(ModelSerializer):
         fields = '__all__'
         read_only = True
 
-
-class AdminOperationSerializer(ModelSerializer):
-    class Meta:
-        model = Operation
-        fields = '__all__'
-
     def validate_extra_vars(self, value):
         if value is None or not isinstance(value, dict):
             raise ValidationError("Please enter a valid JSON. Empty value is {} for JSON.")

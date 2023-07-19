@@ -1,10 +1,25 @@
 {% with app=record|to_app_name|lower %}
     {% with class=record|to_class_name|lower %}
-        {% with kwargs=kwargs|default:"" %}
-            <a href="{% url app|add:":"|add:class|add:"_edit"|add:kwargs record.id %}"
-               class="btn btn-primary bg-sm" title="Edit">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
+        {% with perm=app|add:".change_"|add:class %}
+            {% has_perm request.user perm as can_change %}
+            {% if parent_id %}
+                <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
+
+                <a href="{% url app|add:":"|add:class|add:"_edit" parent_id record.id %}"
+                   class="btn btn-primary bg-sm{% if not can_change %} disabled{% endif %}"
+                   title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+            </span>
+            {% else %}
+                <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
+                <a href="{% url app|add:":"|add:class|add:"_edit" record.id %}"
+                   class="btn btn-primary bg-sm{% if not can_change %} disabled{% endif %}"
+                   title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+            </span>
+            {% endif %}
         {% endwith %}
     {% endwith %}
 {% endwith %}

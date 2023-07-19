@@ -25,7 +25,7 @@ class PortfolioCreateTestCase(BaseTest):
 
     def test_customer_cannot_create_portfolio(self):
         self.client.force_login(self.standard_user)
-        self._create_portfolio(get_status=302, post_status=302)
+        self._create_portfolio(get_status=403, post_status=403)
 
     def test_cannot_create_portfolio_when_logout(self):
         self.client.logout()

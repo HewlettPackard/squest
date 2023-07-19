@@ -1,19 +1,17 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAdminUser
 
+from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from profiles.api.serializers import RoleSerializer
 from profiles.filters import RoleFilter
 from profiles.models import Role
 
 
-class RoleDetails(RetrieveUpdateDestroyAPIView):
+class RoleDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = RoleSerializer
-    permission_classes = [IsAdminUser]
     queryset = Role.objects.all()
 
 
-class RoleListCreate(ListCreateAPIView):
+class RoleListCreate(SquestListCreateAPIView):
     serializer_class = RoleSerializer
-    permission_classes = [IsAdminUser]
     queryset = Role.objects.all()
     filterset_class = RoleFilter

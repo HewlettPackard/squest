@@ -6,13 +6,6 @@ class ServiceSerializer(ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-        read_only = True
-
-
-class AdminServiceSerializer(ModelSerializer):
-    class Meta:
-        model = Service
-        fields = '__all__'
 
     def validate_extra_vars(self, value):
         if value is None or not isinstance(value, dict):

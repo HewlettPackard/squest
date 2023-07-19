@@ -1,12 +1,10 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.views.generic import CreateView, UpdateView, DeleteView
 
+
+from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.resource_filter import ResourceFilter
 from resource_tracker_v2.forms.resource_form import ResourceForm, ResourceMoveForm
 from resource_tracker_v2.models import Resource, ResourceGroup
@@ -15,61 +13,50 @@ from resource_tracker_v2.views.utils.tag_filter_list_view import TagFilterListVi
 
 
 class ResourceListView(TagFilterListView):
-    table_class = ResourceTable
     model = Resource
     filterset_class = ResourceFilter
+    table_class = ResourceTable
 
-    def get_table_data(self, **kwargs):
-        filtered = super().get_table_data().distinct()
-        return Resource.objects.filter(resource_group_id=self.kwargs.get('resource_group_id')).distinct() & filtered
+    def get_queryset(self):
+        return super().get_queryset().filter(resource_group_id=self.kwargs.get('resource_group_id'))
 
     def get_context_data(self, **kwargs):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_group = ResourceGroup.objects.get(id=resource_group_id)
+        resource_group = get_object_or_404(ResourceGroup,id=self.kwargs.get('resource_group_id'))
         context = super().get_context_data(**kwargs)
-        context['resource_group_id'] = resource_group_id
+        context['resource_group_id'] = resource_group.id
         context['breadcrumbs'] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group.name, 'url': ""},
-            {'text': "Resources", 'url': ""}
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': resource_group, 'url': ""},
+            {'text': "Resource", 'url': ""}
         ]
-        context['action_url'] = reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete_confirm',
-                                        kwargs={'resource_group_id': resource_group_id})
         context['html_button_path'] = "resource_tracking_v2/resource_group/resources/resource_list_buttons.html"
         return context
 
 
-class ResourceCreateView(PermissionRequiredMixin, CreateView):
-    permission_required = "is_superuser"
+class ResourceCreateView(SquestCreateView):
     form_class = ResourceForm
     model = Resource
-    template_name = 'generics/generic_form.html'
 
     def get_form_kwargs(self):
         """Return the keyword arguments for instantiating the form."""
         kwargs = super().get_form_kwargs()
-        resource_group_id = self.kwargs['resource_group_id']
-        resource_group = get_object_or_404(ResourceGroup, pk=resource_group_id)
-        kwargs.update({'resource_group': resource_group})
+        self.resource_group = get_object_or_404(ResourceGroup, pk=self.kwargs['resource_group_id'])
+        kwargs.update({'resource_group': self.resource_group})
         return kwargs
 
     def get_context_data(self, **kwargs):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_group = ResourceGroup.objects.get(id=resource_group_id)
         context = super().get_context_data(**kwargs)
-        context["resource_group"] = resource_group
-        context["action"] = "create"
+        context["resource_group"] = self.resource_group
         context['breadcrumbs'] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group.name,
-             'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': self.resource_group,
+             'url': reverse('resource_tracker_v2:resource_list', args=[self.resource_group.id])},
             {'text': 'New resource', 'url': ""},
         ]
         return context
 
 
-class ResourceEditView(PermissionRequiredMixin, UpdateView):
-    permission_required = "is_superuser"
+class ResourceEditView(SquestUpdateView):
     model = Resource
     form_class = ResourceForm
     template_name = 'generics/generic_form.html'
@@ -83,98 +70,58 @@ class ResourceEditView(PermissionRequiredMixin, UpdateView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_group = ResourceGroup.objects.get(id=resource_group_id)
-        resource_id = self.kwargs.get('resource_id')
-        resource = Resource.objects.get(id=resource_id)
+        resource_group = ResourceGroup.objects.get(id=self.kwargs.get('resource_group_id'))
         context = super().get_context_data(**kwargs)
-
-        content_type = ContentType.objects.get_for_model(self.model)
-
-        context['title'] = f'Edit {content_type.name}'
-        context['app_name'] = content_type.app_label
-        context['object_name'] = content_type.model
-        context['action'] = "edit"
         context["breadcrumbs"] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group.name,
-             'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
-            {'text': resource.name, 'url': ""},
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': resource_group,
+             'url': reverse('resource_tracker_v2:resource_list', args=[resource_group.id])},
+            {'text': self.get_object(), 'url': ""},
         ]
         return context
 
 
-class ResourceDeleteView(PermissionRequiredMixin, DeleteView):
+class ResourceDeleteView(SquestDeleteView):
     model = Resource
-    template_name = "resource_tracking_v2/resource_group/resources/resource-delete.html"
-    permission_required = "is_superuser"
     pk_url_kwarg = "resource_id"
 
-    def get_success_url(self):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        return reverse("resource_tracker_v2:resourcegroup_resource_list",
-                       kwargs={"resource_group_id": resource_group_id})
-
-    def get_context_data(self, **kwargs):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_group = ResourceGroup.objects.get(id=resource_group_id)
-        resource_id = self.kwargs.get('resource_id')
-        resource = Resource.objects.get(id=resource_id)
-        context = super().get_context_data(**kwargs)
-        context["resource"] = resource
-        context["resource_group"] = resource_group
-        context['breadcrumbs'] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group.name,
-             'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
-            {'text': resource.name, 'url': ""},
-        ]
-        return context
+    def get_generic_url_kwargs(self):
+        return {"resource_group_id": self.kwargs.get('resource_group_id')}
 
 
-class ResourceMoveView(PermissionRequiredMixin, UpdateView):
+class ResourceMoveView(SquestUpdateView):
     model = Resource
-    template_name = 'generics/generic_form.html'
-    permission_required = "is_superuser"
     pk_url_kwarg = "resource_id"
     form_class = ResourceMoveForm
 
     def get_context_data(self, **kwargs):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_group = ResourceGroup.objects.get(id=resource_group_id)
-        resource_id = self.kwargs.get('resource_id')
-        resource = Resource.objects.get(id=resource_id)
+        resource_group = get_object_or_404(ResourceGroup, id=self.kwargs.get('resource_group_id'))
         context = super().get_context_data(**kwargs)
-        content_type = ContentType.objects.get_for_model(self.model)
-        context['title'] = f'Move {content_type.name} {resource.name}'
-        context['app_name'] = content_type.app_label
-        context['object_name'] = content_type.model
-        context['action'] = "edit"
         context["breadcrumbs"] = [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group.name,
-             'url': reverse('resource_tracker_v2:resourcegroup_resource_list', args=[resource_group_id])},
-            {'text': resource.name, 'url': ""},
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': resource_group,
+             'url': reverse('resource_tracker_v2:resource_list', args=[resource_group.id])},
+            {'text': self.get_object(), 'url': ""},
             {'text': "Move", 'url': ""},
         ]
         return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
 def resource_group_resource_bulk_delete(request, resource_group_id):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_resources = Resource.objects.filter(pk__in=pks)
+        selected_resources = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource').filter(pk__in=pks)
+        if selected_resources.count() != len(pks):
+            raise PermissionDenied
         selected_resources.delete()
-    return redirect("resource_tracker_v2:resourcegroup_resource_list", resource_group_id)
+    return redirect("resource_tracker_v2:resource_list", resource_group_id)
 
 
-@user_passes_test(lambda u: u.is_superuser)
 def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
     context = {
         'breadcrumbs': [
-            {'text': 'Resource groups', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': 'Resources', 'url': reverse('resource_tracker_v2:resourcegroup_resource_list',
+            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': 'Resources', 'url': reverse('resource_tracker_v2:resource_list',
                                                  kwargs={'resource_group_id': resource_group_id})},
             {'text': "Delete multiple", 'url': ""}
         ],
@@ -184,11 +131,12 @@ def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
         }),
         'button_text': 'Delete',
     }
-
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        context['object_list'] = Resource.objects.filter(pk__in=pks)
+        context['object_list'] = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource').filter(pk__in=pks)
+        if context['object_list'].count() != len(pks):
+            raise PermissionDenied
         if context['object_list']:
             return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
     messages.warning(request, 'No resources selected for deletion.')
-    return redirect('resource_tracker_v2:resourcegroup_resource_list', resource_group_id=resource_group_id)
+    return redirect('resource_tracker_v2:resource_list', resource_group_id=resource_group_id)

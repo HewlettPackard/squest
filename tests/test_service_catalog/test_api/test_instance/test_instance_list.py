@@ -1,4 +1,3 @@
-from guardian.shortcuts import get_objects_for_user
 from rest_framework import status
 from rest_framework.reverse import reverse
 from service_catalog.models import Instance
@@ -21,17 +20,17 @@ class TestInstanceList(BaseTestRequest):
         self.assertEqual(response.data['results'], serializer.data)
 
     def test_standard_user_can_list_his_own_instances(self):
-        self.client.login(username=self.standard_user, password=self.common_password)
+        self.client.force_login(self.standard_user)
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(
             response.data['count'],
-            get_objects_for_user(self.standard_user, 'service_catalog.view_instance').count()
+            Instance.get_queryset_for_user(self.standard_user, 'service_catalog.view_instance').count()
         )
         instance_id_list = [request['id'] for request in response.data['results']].sort()
         instance_id_list_db = [instance.id for instance in
-                               get_objects_for_user(self.standard_user, 'service_catalog.view_instance')].sort()
+                               Instance.get_queryset_for_user(self.standard_user, 'service_catalog.view_instance')].sort()
         self.assertEqual(instance_id_list, instance_id_list_db)
 
     def test_cannot_get_instance_list_when_logout(self):

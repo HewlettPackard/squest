@@ -1,11 +1,21 @@
 from django.core.exceptions import ValidationError
-from django.db.models import Model, CharField, BooleanField, JSONField
+from django.db.models import CharField, BooleanField, JSONField
 from towerlib import Tower
 from django.utils.translation import gettext_lazy as _
 
+from Squest.utils.squest_model import SquestModel
 
-class TowerServer(Model):
-    name = CharField(max_length=100)
+
+class TowerServer(SquestModel):
+    class Meta:
+        verbose_name = "controller"
+        verbose_name_plural = "controllers"
+        permissions = [
+            ("sync_towerserver", "Can sync Controller"),
+        ]
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
+    name = CharField(max_length=100,)
     host = CharField(max_length=200, unique=True)
     token = CharField(max_length=200)
     secure = BooleanField(default=True)

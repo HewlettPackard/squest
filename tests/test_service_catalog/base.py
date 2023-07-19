@@ -31,16 +31,10 @@ class BaseTestCommon(TransactionTestCase):
         # standard user
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
-        # Users with Scopes
 
-        role_consume_quota = Role.objects.create(name="Consume quota")
-        role_consume_quota.permissions.add(
-            Permission.objects.get(content_type__app_label="profiles", content_type__model="scope",
-                                   codename="consume_quota_scope"))
-        self.global_perm = GlobalPermission.load()
-        self.global_perm.add_user_in_role(self.standard_user, role_consume_quota)
-        self.global_perm.add_user_in_role(self.standard_user_2, role_consume_quota)
 
+        self.team_member_role = Role.objects.get(name="Team member")
+        self.test_quota_scope.add_user_in_role(self.standard_user, self.team_member_role)
         # ------------------------------
         # Tower
         # ------------------------------

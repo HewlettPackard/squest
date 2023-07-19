@@ -23,10 +23,12 @@ class TestMailUtils(BaseTest):
                                                      spec={
                                                          "value1": "key1"
                                                      },
-                                                     requester=self.standard_user)
+                                                     requester=self.standard_user,
+                                                     quota_scope=self.test_quota_scope)
         self.test_instance_2 = Instance.objects.create(name="test_instance_2",
                                                        service=self.service_test_2,
-                                                       requester=self.standard_user)
+                                                       requester=self.standard_user,
+                                                       quota_scope=self.test_quota_scope)
         self.test_request = Request.objects.create(fill_in_survey=data,
                                                    instance=self.test_instance,
                                                    operation=self.create_operation_test,
@@ -53,16 +55,16 @@ class TestMailUtils(BaseTest):
 
     def test_get_admin_emails_with_support(self):
         # Test 1 - admin disabled notification
-        self.superuser.profile.support_notification_enabled = False
+        self.superuser.profile.instance_notification_enabled = False
         self.superuser.save()
-        self.superuser_2.profile.support_notification_enabled = False
+        self.superuser_2.profile.instance_notification_enabled = False
         self.superuser_2.save()
         self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_instance)))
 
         # Test 2 - admin enabled notification
-        self.superuser.profile.support_notification_enabled = True
+        self.superuser.profile.instance_notification_enabled = True
         self.superuser.save()
-        self.superuser_2.profile.support_notification_enabled = True
+        self.superuser_2.profile.instance_notification_enabled = True
         self.superuser_2.save()
         self.assertEquals(2, len(_get_admin_emails(object_to_filter=self.test_instance)))
 
@@ -80,8 +82,8 @@ class TestMailUtils(BaseTest):
         self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_request)))
 
     def test_get_admin_emails_with_instance_filter(self):
-        self.superuser.profile.support_notification_enabled = True
-        self.superuser_2.profile.support_notification_enabled = False
+        self.superuser.profile.instance_notification_enabled = True
+        self.superuser_2.profile.instance_notification_enabled = False
         self.superuser_2.save()
         instance_filter = InstanceNotification.objects.create(name="test_filter",
                                                               profile=self.superuser.profile,

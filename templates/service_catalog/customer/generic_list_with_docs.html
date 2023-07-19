@@ -26,7 +26,7 @@
                                 <h3 class="card-title">
                                     <i class="fas fa-info"></i> {{ doc.title }}
                                 </h3>
-                                {% if request.user.is_superuser %}
+                                {% if request.user.is_staff %}
                                     <div class="card-tools">
                                         <a href="{% url 'admin:service_catalog_doc_change' doc.id %}"
                                            class="btn btn-default btn-sm">
@@ -36,7 +36,7 @@
                                 {% endif %}
                             </div>
                             <div class="card-body p-0">
-                                <div class="martor-preview">
+                                <div class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
                                     {{ doc.content|safe_markdown }}
                                 </div>
                             </div>
