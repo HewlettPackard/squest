@@ -39,13 +39,13 @@
                                 {% for message in messages %}
                                     <div class="post">
                                         <div class="user-block">
-                                            <img class="img-circle img-bordered-sm" src="{% if message.sender.is_superuser %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
+                                            <img class="img-circle img-bordered-sm" src="{% if message.sender.is_staff %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
                                             <span class="username">
                                                 <a href="#">{{ message.sender.username }}</a>
                                                 {% if request.user.is_superuser or message.sender == request.user %}
                                                     <a title="Edit"
                                                        class="btn btn-primary float-right"
-                                                       href="{% url "service_catalog:request_comment_edit" message.request.id message.id %}">
+                                                       href="{% url "service_catalog:requestmessage_edit" message.request.id message.id %}">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
                                                 {% endif %}
@@ -60,7 +60,7 @@
                                 {%  endfor %}
                             </div>
                             <div class="card-footer">
-                                <form action="{% url 'service_catalog:request_comment' target_request.id %}" method="post" _lpchecked="1">{% csrf_token %}
+                                <form action="{% url 'service_catalog:requestmessage_create' target_request.id %}" method="post" _lpchecked="1">{% csrf_token %}
                                     {{  form.as_p }}
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">

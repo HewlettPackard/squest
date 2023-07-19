@@ -1,17 +1,16 @@
 import copy
 
-from rest_framework import generics, status
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
+from Squest.utils.squest_api_views import SquestRetrieveUpdateDestroyAPIView, SquestListCreateAPIView
 from resource_tracker_v2.api.serializers.transformer_serializer import TransformerSerializer
 from resource_tracker_v2.filters.transformer_filter import TransformerFilter
 from resource_tracker_v2.models import Transformer, ResourceGroup
 
 
-class TransformerListCreate(generics.ListCreateAPIView):
-    permission_classes = [IsAdminUser]
+class TransformerListCreate(SquestListCreateAPIView):
     serializer_class = TransformerSerializer
     filterset_class = TransformerFilter
 
@@ -30,12 +29,11 @@ class TransformerListCreate(generics.ListCreateAPIView):
         serializer = TransformerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
-class TransformerDetails(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
+class TransformerDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = TransformerSerializer
 
     def get_queryset(self):

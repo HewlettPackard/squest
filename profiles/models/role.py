@@ -1,11 +1,13 @@
 from django.contrib.auth.models import Permission
-from django.db.models import Model, CharField, ManyToManyField
-from django.urls import reverse
+from django.db.models import CharField, ManyToManyField
+
+from Squest.utils.squest_model import SquestModel
 
 
-class AbstractRole(Model):
+class AbstractRole(SquestModel):
     class Meta:
         abstract = True
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
     name = CharField(max_length=100,
                      blank=False, unique=True)
@@ -13,14 +15,12 @@ class AbstractRole(Model):
     permissions = ManyToManyField(
         Permission,
         blank=True,
-        help_text="Permissions linked to this role."
+        help_text="Permissions linked to this role.",
+        limit_choices_to={"content_type__app_label__in": ["service_catalog", "profiles", "resource_tracker_v2", "auth"]}
     )
 
     def __str__(self):
         return self.name
-
-    def get_absolute_url(self):
-        return reverse("profiles:role_details", args=[self.pk])
 
 
 class Role(AbstractRole):

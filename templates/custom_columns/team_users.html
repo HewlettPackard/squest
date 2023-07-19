@@ -1,5 +1,0 @@
-{% load guardian_tags %}
-{% get_obj_perms request.user for record as "team_perms" %}
-<a href="{% url "profiles:team_details" record.id %}" class="btn btn-default bg-sm{% if "view_team" not in team_perms %} disabled{% endif %}">
-    {{ record.get_all_users | length }}
-</a>

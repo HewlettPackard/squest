@@ -1,27 +1,27 @@
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_200_OK, HTTP_201_CREATED
-from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 
+from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView, \
+    SquestRetrieveUpdateAPIView, SquestObjectPermissions
 from service_catalog.api.serializers import InstanceSerializer, InstanceReadSerializer, \
     RestrictedInstanceReadSerializer, InstanceSerializerUserSpec, InstanceSerializerSpec
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.models import Instance
 
 
-class InstanceList(ListCreateAPIView):
+class InstanceList(SquestListCreateAPIView):
     filterset_class = InstanceFilter
-    permission_classes = (IsAuthenticated, )
+
     def get_queryset(self):
         return Instance.get_queryset_for_user(self.request.user, 'service_catalog.view_instance')
 
     def get_serializer_class(self):
         if self.request.method in ["POST"]:
             return InstanceSerializer
-        else:
-            if self.request.user.is_superuser:
-                return InstanceReadSerializer
+        elif self.request.user.has_perm('service_catalog.view_admin_spec_instance'):
+            return InstanceReadSerializer
         return RestrictedInstanceReadSerializer
 
     def create(self, request, *args, **kwargs):
@@ -32,69 +32,67 @@ class InstanceList(ListCreateAPIView):
         return Response(InstanceReadSerializer(instance_created).data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class InstanceDetails(RetrieveUpdateDestroyAPIView):
+class InstanceDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = InstanceReadSerializer
     queryset = Instance.objects.all()
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.request.method in ["PATCH", "PUT", "DELETE"]:
             return InstanceSerializer
-        if self.request.user.is_superuser:
+        elif self.request.user.has_perm('service_catalog.view_admin_spec_instance'):
             return InstanceReadSerializer
         return RestrictedInstanceReadSerializer
 
 
-class SpecDetailsAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
+class SquestAdminSpecPermissionsDetails(SquestObjectPermissions):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    perms_map = {
+        'GET': ['%(app_label)s.view_admin_spec_instance'],
+        'OPTIONS': [],
+        'HEAD': [],
+        'PUT': ['%(app_label)s.change_admin_spec_instance'],
+        'PATCH': ['%(app_label)s.change_admin_spec_instance'],
+    }
+
+
+class SpecDetailsAPIView(SquestRetrieveUpdateAPIView):
     serializer_class = InstanceSerializerSpec
+    queryset = Instance.objects.all()
+    permission_classes = [IsAuthenticated, SquestAdminSpecPermissionsDetails]
+
+    def get(self, request, *args, **kwargs):
+        return Response(self.get_object().spec, status=HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.spec = request.data
+        instance.save()
+        return Response(instance.spec, status=HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.spec.update(request.data)
+        instance.save()
+        return Response(instance.spec, status=HTTP_200_OK)
+
+
+class UserSpecDetailsAPIView(SquestRetrieveUpdateAPIView):
+    serializer_class = InstanceSerializerUserSpec
     queryset = Instance.objects.all()
 
     def get(self, request, *args, **kwargs):
-        instance = self.get_object()
-        return Response(instance.spec, status=HTTP_200_OK)
+        return Response(self.get_object().user_spec, status=HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         target_instance = self.get_object()
-        target_instance.spec = request.data
-        target_instance.save()
-        return Response(target_instance.spec, status=HTTP_201_CREATED)
-
-    def patch(self, request, *args, **kwargs):
-        target_instance = self.get_object()
-        target_instance.spec.update(request.data)
-        target_instance.save()
-        return Response(target_instance.spec, status=HTTP_200_OK)
-
-    def delete(self, request, *args, **kwargs):
-        target_instance = self.get_object()
-        target_instance.spec = {}
-        target_instance.save()
-        return Response(target_instance.spec, status=HTTP_204_NO_CONTENT)
-
-
-class UserSpecDetailsAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = InstanceSerializerUserSpec
-
-    def get(self, request, pk):
-        instance = get_object_or_404(Instance, id=pk)
-        return Response(instance.user_spec, status=HTTP_200_OK)
-
-    def post(self, request, pk):
-        target_instance = get_object_or_404(Instance, id=pk)
         target_instance.user_spec = request.data
-        target_instance.save()
-        return Response(target_instance.user_spec, status=HTTP_201_CREATED)
-
-    def patch(self, request, pk):
-        target_instance = get_object_or_404(Instance, id=pk)
-        target_instance.user_spec.update(request.data)
         target_instance.save()
         return Response(target_instance.user_spec, status=HTTP_200_OK)
 
-    def delete(self, request, pk):
-        target_instance = get_object_or_404(Instance, id=pk)
-        target_instance.user_spec = {}
+    def patch(self, request, *args, **kwargs):
+        target_instance = self.get_object()
+        target_instance.user_spec.update(request.data)
         target_instance.save()
-        return Response(target_instance.user_spec, status=HTTP_204_NO_CONTENT)
+        return Response(target_instance.user_spec, status=HTTP_200_OK)

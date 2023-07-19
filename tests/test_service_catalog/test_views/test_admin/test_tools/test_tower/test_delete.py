@@ -9,9 +9,9 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
     def setUp(self):
         super(AdminTowerDeleteViewsTest, self).setUp()
         self.args = {
-            'tower_id': self.tower_server_test.id,
+            'pk': self.tower_server_test.id,
         }
-        self.url = reverse('service_catalog:delete_tower', kwargs=self.args)
+        self.url = reverse('service_catalog:towerserver_delete', kwargs=self.args)
 
     def test_get_page(self):
         response = self.client.get(self.url)
@@ -27,7 +27,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.client.login(username=self.standard_user, password=self.common_password)
         id_to_delete = self.tower_server_test.id
         response = self.client.post(self.url)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
 
     def test_admin_can_delete_job_template(self):
@@ -35,9 +35,9 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
                                                                   operation__type__exact=OperationType.CREATE)]
         args = {
             'tower_id': self.tower_server_test.id,
-            'job_template_id': self.job_template_test.id
+            'pk': self.job_template_test.id
         }
-        url = reverse('service_catalog:delete_job_template', kwargs=args)
+        url = reverse('service_catalog:jobtemplate_delete', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
@@ -52,27 +52,27 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
         self.client.login(username=self.standard_user, password=self.common_password)
         args = {
             'tower_id': self.tower_server_test.id,
-            'job_template_id': self.job_template_test.id
+            'pk': self.job_template_test.id
         }
-        url = reverse('service_catalog:delete_job_template', kwargs=args)
+        url = reverse('service_catalog:jobtemplate_delete', kwargs=args)
         id_to_delete = self.job_template_test.id
         response = self.client.post(url)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         self.assertTrue(JobTemplate.objects.filter(id=id_to_delete).exists())
 
     def test_can_reach_delete_job_template_page(self):
         args = {
-            'tower_id': self.tower_server_test.id,
+            'pk': self.tower_server_test.id,
         }
-        url = reverse('service_catalog:delete_tower', kwargs=args)
+        url = reverse('service_catalog:towerserver_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
 
     def test_cannot_delete_job_template_page_when_logout(self):
         self.client.logout()
         args = {
-            'tower_id': self.tower_server_test.id,
+            'pk': self.tower_server_test.id,
         }
-        url = reverse('service_catalog:delete_tower', kwargs=args)
+        url = reverse('service_catalog:towerserver_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)

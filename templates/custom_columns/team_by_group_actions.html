@@ -1,5 +1,0 @@
-{% load guardian_tags %}
-{% get_obj_perms request.user for object as "object_perms" %}
-<a href="{% url app_name|add:":team_in_"|add:object_name|add:"_remove" object_id record.id %}" class="btn btn-danger bg-sm{% if not request.user.is_superuser and "change_"|add:object_name not in object_perms %} disabled{% endif %}">
-    <i class="fas fa-trash"></i>
-</a>

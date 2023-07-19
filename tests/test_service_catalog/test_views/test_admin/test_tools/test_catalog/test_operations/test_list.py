@@ -10,15 +10,14 @@ class OperationListTestCase(BaseTest):
         args = {
             'service_id': self.service_test.id,
         }
-        self.url = reverse('service_catalog:service_operations', kwargs=args)
+        self.url = reverse('service_catalog:operation_list', kwargs=args)
 
     def test_get_operation_list(self):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
 
     def test_customer_can_get_operation_list(self):
-        self.client.logout()
-        self.client.login(username=self.standard_user.username, password=self.common_password)
+        self.client.force_login(self.standard_user)
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
 

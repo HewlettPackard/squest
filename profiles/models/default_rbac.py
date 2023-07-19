@@ -6,7 +6,6 @@ roles_list = {
                 "permissions": [
                     "view_organization",
                     "view_users_organization",
-                    "edit_users_organization",
                 ]
             },
             # "profiles.team": {
@@ -22,13 +21,11 @@ roles_list = {
             "service_catalog.instance": {
                 "permissions": [
                     "view_instance",
-                    "request_operation_on_instance",
-                    "request_support_on_instance",
+                    "request_on_instance",
                 ]
             },
             "service_catalog.request": {
                 "permissions": [
-                    "comment_request",
                     "cancel_request",
                     "view_request",
                 ]
@@ -43,9 +40,9 @@ roles_list = {
             # },
             "service_catalog.support": {
                 "permissions": [
-                    "create_support",
+                    "add_support",
                     "view_support",
-                    "edit_support",
+                    "change_support",
                     "delete_support",
                 ]
             },
@@ -64,13 +61,11 @@ roles_list = {
             "service_catalog.instance": {
                 "permissions": [
                     "view_instance",
-                    "request_operation_on_instance",
-                    "request_support_on_instance",
+                    "request_on_instance",
                 ]
             },
             "service_catalog.request": {
                 "permissions": [
-                    "comment_request",
                     "cancel_request",
                     "view_request",
                 ]
@@ -85,9 +80,9 @@ roles_list = {
             # },
             "service_catalog.support": {
                 "permissions": [
-                    "create_support",
+                    "add_support",
                     "view_support",
-                    "edit_support",
+                    "change_support",
                     "delete_support",
                 ]
             },
@@ -114,41 +109,57 @@ roles_list = {
         }
     },
     "Team member": {
-        "description": "An administrator of the organization can manage it",
+        "description": "An member of the team",
         "model_names": {
-            # "profiles.team": {
-            #     "permissions": [
-            #         "view_team",
-            #         "view_users_team",
-            #     ]
-            # },
+            'profiles.quota': {
+                'permissions': [
+                    'consume_quota_scope'
+                ]
+            },
+            "profiles.team": {
+                "permissions": [
+                    "view_team",
+                    "view_users_team",
+                ]
+            },
             "service_catalog.instance": {
                 "permissions": [
                     "view_instance",
-                    "request_operation_on_instance",
-                    "request_support_on_instance",
+                    "request_on_instance",
                 ]
             },
             "service_catalog.request": {
                 "permissions": [
-                    "comment_request",
                     "cancel_request",
                     "view_request",
                 ]
             },
-            # "service_catalog.message": {
-            #     "permissions": [
-            #         "create_message",
-            #         "view_message",
-            #         "edit_message",
-            #         "delete_message",
-            #     ]
-            # },
+            "service_catalog.operation": {
+                "permissions": [
+                    "list_operation",
+                ]
+            },
+            "service_catalog.supportmessage": {
+                "permissions": [
+                    "add_message",
+                    "view_message",
+                    "change_message",
+                    "delete_message",
+                ]
+            },
+            "service_catalog.requestmessage": {
+                "permissions": [
+                    "add_message",
+                    "view_message",
+                    "change_message",
+                    "delete_message",
+                ]
+            },
             "service_catalog.support": {
                 "permissions": [
-                    "create_support",
+                    "add_support",
                     "view_support",
-                    "edit_support",
+                    "change_support",
                     "delete_support",
                 ]
             },

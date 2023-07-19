@@ -1,6 +1,7 @@
 import logging
 
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.template import Context
 from django.template.loader import get_template
@@ -21,8 +22,10 @@ COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851
           'transparent': '#ffffff00', 'gray': '#6c757d'}
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
 def resource_tracker_graph(request):
+    if not request.user.has_perm('profiles.list_resource_group'):
+        raise PermissionDenied
     redirect_url = tag_session_manager(request)
     if redirect_url:
         return redirect_url
@@ -74,7 +77,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['count'] = {
         'display': resource_group.resources.count(),
         'tooltip': f"Go to {resource_group}'s resources",
-        'href': reverse('resource_tracker_v2:resourcegroup_resource_list',
+        'href': reverse('resource_tracker_v2:resource_list',
                         kwargs={'resource_group_id': resource_group.id})}
     context['transformers'] = [
         {

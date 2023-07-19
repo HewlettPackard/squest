@@ -1,12 +1,14 @@
-from django.db import models
+from django.db.models import CharField
 from django.urls import reverse
 from taggit.managers import TaggableManager
 
+from Squest.utils.squest_model import SquestModel
 
-class ResourceGroup(models.Model):
-    name = models.CharField(max_length=100,
-                            blank=False,
-                            unique=True)
+
+class ResourceGroup(SquestModel):
+    name = CharField(max_length=100,
+                     blank=False,
+                     unique=True)
 
     tags = TaggableManager()
 

@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- Main content -->
     <div class="content-wrapper">
-        <section class="content-header">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         {% include "generics/breadcrumbs.html" %}
-                    </div>
-                </div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
             </div><!-- /.container-fluid -->
-        </section>
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
                 <div class="card">
@@ -23,40 +25,35 @@
                                         <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
                                     {% endif %}
                                 {% endfor %}
-                                {% if form.non_field_errors %}
-                                    {{ form.non_field_errors }}
-                                {% endif %}
                             </div>
                         {% endif %}
-                        <form id="GlobalHookForm" class="form-horizontal" action="{% url 'service_catalog:globalhook_edit' global_hook.id %}" method="post" data-state-url="{% url 'service_catalog:ajax_load_model_state' %}">{% csrf_token %}
+                        <form id="GlobalHookForm" class="form-horizontal"
+                              action="{% url 'service_catalog:globalhook_edit'  object.pk %}" method="post"
+                              data-state-url="{% url 'service_catalog:ajax_load_model_state' %}"
+                              data-operation-url="{% url 'service_catalog:ajax_load_service_operations' %}"
+                        >{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                    <label for="{{field.name}}" class="col-sm-2 control-label">
+                                    <label for="{{ field.name }}" class="col-sm-2 control-label">
                                         {{ field.label }}
                                     </label>
-                                    <div class="col-sm-4">
-                                        {{ field }}
-                                        {% if field.help_text %}
-                                            <small id="emailHelp" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                        {% endif %}
-                                    </div>
+                                    {{ field }}
                                 </div>
                             {% endfor %}
 
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <!-- validate button -->
-                                    <button class="btn btn-success" type="submit">
-                                        <i class="nav-icon fas fa-shopping-cart"></i>
-                                        Edit global hook
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-save"></i>
+                                        Update
                                     </button>
                                 </div>
                             </div>
                         </form>
                     </div>
-
-                </div><!-- end container fluid -->
+                </div>
             </div>
         </div>
     </div>
@@ -66,8 +63,16 @@
         $("#id_model").change(function () {
             load_state($(this).val());
         });
-        $(document).ready( function () {
-            load_state("{{global_hook.model}}", "{{global_hook.state}}");
+        // by default we load Request Model
+        $(document).ready(function () {
+            load_state($("#id_model option:selected").val());
+        });
+        $("#id_service").change(function () {
+            load_operation($(this).val());
+        });
+        // by default None operation
+        $(document).ready(function () {
+            load_operation($("#id_service option:selected").val());
         });
     </script>
 {% endblock %}

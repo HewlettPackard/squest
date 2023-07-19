@@ -21,7 +21,7 @@ class TestAnnouncementUrls(BaseTest):
 
     def test_all_get(self):
         args_announcement = {
-            'announcement_id': self.my_announcement.id
+            'pk': self.my_announcement.id
         }
         urls_list = [
             reverse('service_catalog:announcement_list'),
@@ -43,14 +43,14 @@ class TestAnnouncementUrls(BaseTest):
 
     def test_all_delete_post(self):
         args_announcement = {
-            'announcement_id': self.my_announcement.id
+            'pk': self.my_announcement.id
         }
         response = self.client.post(reverse('service_catalog:announcement_delete', kwargs=args_announcement))
         self.assertEqual(302, response.status_code)
 
     def test_all_post_with_data(self):
         args_announcement = {
-            'announcement_id': self.my_announcement.id
+            'pk': self.my_announcement.id
         }
         test_list = [
             {'url': reverse('service_catalog:announcement_create'), 'data': {

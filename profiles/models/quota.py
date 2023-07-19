@@ -1,10 +1,13 @@
-from django.db.models import Model, ForeignKey, Sum
+from django.db.models import ForeignKey, Sum
 from django.db import models
 
+from Squest.utils.squest_model import SquestModel
 
-class Quota(Model):
+
+class Quota(SquestModel):
     class Meta:
         unique_together = ('scope', 'attribute_definition')
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
     scope = ForeignKey("Scope",
                        blank=False,
@@ -30,6 +33,9 @@ class Quota(Model):
 
     def get_absolute_url(self):
         return self.scope.get_absolute_url() + "#quotas"
+
+    def get_scopes(self):
+        return self.scope.get_scopes()
 
     @property
     def name(self):

@@ -42,14 +42,14 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_customer_cannot_access_service_list(self):
         url = reverse('service_catalog:service_list')
         response = self.client.get(url)
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_customer_service_request(self):
         args = {
             "service_id": self.service_test.id,
             "operation_id": self.create_operation_test.id
         }
-        url = reverse('service_catalog:customer_service_request', kwargs=args)
+        url = reverse('service_catalog:request_service', kwargs=args)
 
         data = {
             "squest_instance_name": "instance_1",
@@ -67,7 +67,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
             "service_id": self.service_test.id,
             "operation_id": self.create_operation_test.id
         }
-        url = reverse('service_catalog:customer_service_request', kwargs=args)
+        url = reverse('service_catalog:request_service', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
 
@@ -77,7 +77,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
             "service_id": self.service_test.id,
             "operation_id": self.create_operation_test.id
         }
-        url = reverse('service_catalog:customer_service_request', kwargs=args)
+        url = reverse('service_catalog:request_service', kwargs=args)
 
         data = {
             "squest_instance_name": "instance_1",
@@ -112,10 +112,10 @@ class TestCustomerCatalogViews(BaseTestRequest):
         }
         url = reverse('service_catalog:create_operation_list', kwargs=args)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
         args["operation_id"] = admin_create_operation.id
-        url = reverse('service_catalog:customer_service_request', kwargs=args)
+        url = reverse('service_catalog:request_service', kwargs=args)
 
         data = {
             "squest_instance_name": "instance_1",
@@ -124,4 +124,4 @@ class TestCustomerCatalogViews(BaseTestRequest):
             "request_comment": "here_is_a_comment"
         }
         response = self.client.post(url, data=data)
-        self.assertEqual(404, response.status_code)
+        self.assertEqual(403, response.status_code)

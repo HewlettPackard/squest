@@ -1,4 +1,21 @@
 {% load static %}
+{% has_perm request.user "service_catalog.list_instance" as can_list_instance %}
+{% has_perm request.user "service_catalog.list_request" as can_list_request %}
+{% has_perm request.user "service_catalog.list_support" as can_list_support %}
+{% has_perm request.user "service_catalog.list_doc" as can_list_doc %}
+{% has_perm request.user "resource_tracker_v2.list_attributedefinition" as can_list_attributedefinition %}
+{% has_perm request.user "resource_tracker_v2.list_resourcegroup" as can_list_resourcegroup %}
+{% has_perm request.user "profiles.list_organization" as can_list_organization %}
+{% has_perm request.user "profiles.list_team" as can_list_team %}
+{% has_perm request.user "auth.list_user" as can_list_user %}
+{% has_perm request.user "service_catalog.list_towerserver" as can_list_towerserver %}
+{% has_perm request.user "profiles.list_globalpermission" as can_list_globalpermission %}
+{% has_perm request.user "profiles.list_role" as can_list_role %}
+{% has_perm request.user "auth.list_permission" as can_list_permission %}
+{% has_perm request.user "service_catalog.list_globalhook" as can_list_globalhook %}
+{% has_perm request.user "service_catalog.list_announcement" as can_list_announcement %}
+{% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
+
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
     <!-- Brand Logo -->
@@ -22,36 +39,47 @@
                         <p>Service catalog</p>
                     </a>
                 </li>
-                <li class="nav-item menu-close">
-                    <a href="{% url 'service_catalog:request_list' %}"
-                       class="nav-link {% if '/request/' in request.path and '/service/' not in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-tasks"></i>
-                        <p>Requests <span class="badge badge-info right">{% submitted_request user %}</span></p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'service_catalog:instance_list' %}"
-                       class="nav-link {% if '/instance/' in request.path and not request.GET.state %}active{% endif %}">
-                        <i class="nav-icon fas fa-cubes"></i>
-                        <p>Instances</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
-                       class="nav-link {% if '/support/' in request.path and not '/instance/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fa fa-medkit"></i>
-                        <p>Supports <span class="badge badge-warning right">{% opened_support request.user %}</span></p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'service_catalog:doc_list' %}?state=OPENED"
-                       class="nav-link {% if '/doc/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>Docs</p>
-                    </a>
-                </li>
-                {% if user.is_superuser %}
+                {% if can_list_request %}
+                    <li class="nav-item menu-close">
+                        <a href="{% url 'service_catalog:request_list' %}"
+                           class="nav-link {% if '/request/' in request.path and '/service/' not in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-tasks"></i>
+                            <p>Requests <span class="badge badge-info right">{% submitted_request user %}</span></p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_instance %}
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:instance_list' %}"
+                           class="nav-link {% if '/instance/' in request.path and not request.GET.state %}active{% endif %}">
+                            <i class="nav-icon fas fa-cubes"></i>
+                            <p>Instances</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_support %}
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
+                           class="nav-link {% if '/support/' in request.path and not '/instance/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fa fa-medkit"></i>
+                            <p>Supports <span class="badge badge-warning right">{% opened_support request.user %}</span>
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_doc %}
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:doc_list' %}?state=OPENED"
+                           class="nav-link {% if '/doc/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Docs</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_resourcegroup or can_list_attributedefinition %}
                     <li class="nav-header">Resource tracking</li>
+                {% endif %}
+                {% if can_list_attributedefinition %}
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:attributedefinition_list' %}"
                            class="nav-link {% if '/resource_tracker/attributes/' in request.path %}active{% endif %}">
@@ -59,6 +87,8 @@
                             <p>Attributes</p>
                         </a>
                     </li>
+                {% endif %}
+                {% if can_list_resourcegroup %}
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:resourcegroup_list' %}"
                            class="nav-link {% if '/resource_tracker/resource_group/' in request.path %}active{% endif %}">
@@ -74,45 +104,56 @@
                         </a>
                     </li>
                 {% endif %}
+                {% if can_list_organization or can_list_team or can_list_user %}
+                    <li class="nav-header">Access</li>
+                {% endif %}
+                {% if can_list_organization %}
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:organization_list' %}"
+                           class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-building"></i>
+                            <p>Organizations</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_team %}
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:team_list' %}"
+                           class="nav-link {% if '/profiles/team/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-user-friends"></i>
+                            <p>Teams</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_user %}
 
-                <li class="nav-header">Access</li>
-
-                <li class="nav-item">
-                    <a href="{% url 'profiles:organization_list' %}"
-                       class="nav-link {% if '/profiles/organization/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-building"></i>
-                        <p>Organizations</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'profiles:team_list' %}"
-                       class="nav-link {% if '/profiles/team/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-user-friends"></i>
-                        <p>Teams</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'profiles:user_list' %}"
-                       class="nav-link {% if '/profiles/user/' in request.path %}active{% endif %}">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>Users</p>
-                    </a>
-                </li>
-
-
-                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:user_list' %}"
+                           class="nav-link {% if '/profiles/user/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if can_list_towerserver or can_list_role or can_list_permission or can_list_globalpermission or can_list_globalhook or can_list_announcement or can_list_customlink %}
 
                     <li class="nav-header">Administration</li>
+                {% endif %}
+                {% if can_list_towerserver %}
+
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:list_tower' %}"
+                        <a href="{% url 'service_catalog:towerserver_list' %}"
                            class="nav-link {% if '/tower/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-chess-rook"></i>
                             <p>Controllers</p>
                         </a>
                     </li>
+                {% endif %}
+                {% if can_list_globalpermission or can_list_permission or can_list_role %}
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link{% if '/profiles/global-permission/' in request.path or '/profiles/role/' in request.path or '/profiles/role/permission' in request.path %} active{% endif %}">
+                        <a href="#"
+                           class="nav-link{% if '/profiles/global-permission/' in request.path or '/profiles/role/' in request.path or '/profiles/role/permission' in request.path %} active{% endif %}">
                             <i class="nav-icon fas fa-user-check"></i>
                             <p>
                                 Access
@@ -120,31 +161,40 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'profiles:globalpermission_details' %}"
-                                   class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-globe"></i>
-                                    <p>Global permission</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'profiles:role_list' %}"
-                                   class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-user-tie"></i>
-                                    <p>Roles</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'profiles:permission_list' %}"
-                                        class="nav-link {% if '/profiles/permission/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-unlock"></i>
-                                    <p>Permissions</p>
-                                </a>
-                            </li>
+                            {% if can_list_globalpermission %}
 
+                                <li class="nav-item">
+                                    <a href="{% url 'profiles:globalpermission_details' %}"
+                                       class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-globe"></i>
+                                        <p>Global permission</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if can_list_role %}
+
+                                <li class="nav-item">
+                                    <a href="{% url 'profiles:role_list' %}"
+                                       class="nav-link {% if '/profiles/role/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-user-tie"></i>
+                                        <p>Roles</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if can_list_permission %}
+
+                                <li class="nav-item">
+                                    <a href="{% url 'profiles:permission_list' %}"
+                                       class="nav-link {% if '/profiles/permission/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-unlock"></i>
+                                        <p>Permissions</p>
+                                    </a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
-
+                {% endif %}
+                {% if can_list_globalhook %}
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:globalhook_list' %}"
                            class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">
@@ -152,6 +202,9 @@
                             <p>Global hooks</p>
                         </a>
                     </li>
+                {% endif %}
+                {% if can_list_announcement %}
+
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:announcement_list' %}"
                            class="nav-link {% if '/tool/announcement/' in request.path %}active{% endif %}">
@@ -159,6 +212,8 @@
                             <p>Announcements</p>
                         </a>
                     </li>
+                {% endif %}
+                {% if can_list_customlink %}
                     <li class="nav-item">
                         <a href="{% url 'service_catalog:customlink_list' %}"
                            class="nav-link {% if '/tool/custom-link/' in request.path %}active{% endif %}">

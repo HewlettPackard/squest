@@ -5,6 +5,7 @@ from django.db.models.signals import post_migrate
 
 logger = logging.getLogger(__name__)
 
+
 def create_roles(sender, **kwargs):
     logger.info("create_roles method called")
     from django.contrib.auth.models import Permission
@@ -23,22 +24,8 @@ def create_roles(sender, **kwargs):
                 role.permissions.add(permission)
 
 
-def create_permissions(sender, **kwargs):
-    from django.contrib.auth.models import Permission
-    from django.contrib.contenttypes.models import ContentType
-    from Squest.default_permissions import permissions
-    for permission in permissions:
-        content_type = ContentType.objects.get(app_label=permission["app_label"], model=permission["model"])
-        permission = Permission.objects.get_or_create(
-            codename=permission["codename"],
-            content_type=content_type,
-            defaults={"name": permission["name"]}
-        )
-
-
 class ProfilesConfig(AppConfig):
     name = 'profiles'
 
     def ready(self):
         post_migrate.connect(create_roles, sender=self)
-        post_migrate.connect(create_permissions, sender=self)

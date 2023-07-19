@@ -1,8 +1,8 @@
 <a title="Synchronize {{ record.name }} from Tower/AWX"
-   data-tower-id="{{ tower_id }}"
+   data-tower-id="{{ record.tower_server.id }}"
    data-job-template-id="{{ record.id }}"
-   data-url-sync="{% url 'service_catalog:sync_job_template' tower_id record.id %}"
-   data-url-job-template-detail="{% url 'api_job_template_details' tower_id record.id %}"
+   data-url-sync="{% url 'service_catalog:sync_job_template' record.tower_server.id record.id %}"
+   data-url-job-template-detail="{% url 'api_job_template_details' record.tower_server.id record.id %}"
    role="button" class="btn btn-default bg-sm ajax_sync_job_template">
     <i class="fas fa-sync"></i>
 </a>
@@ -10,7 +10,7 @@
    class="btn btn-default bg-sm">
     <i class="fas fa-external-link-square-alt"></i>
 </a>
-<a href="{% url 'service_catalog:delete_job_template' tower_id=record.tower_server.id job_template_id=record.id %}"
+<a href="{% url 'service_catalog:jobtemplate_delete' tower_id=record.tower_server.id pk=record.id %}"
    class="btn btn-danger bg-sm">
     <i class="fas fa-trash"></i>
 </a>

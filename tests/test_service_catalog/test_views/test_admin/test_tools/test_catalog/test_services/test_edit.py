@@ -9,9 +9,9 @@ class ServiceEditTestCase(BaseTest):
     def setUp(self):
         super(ServiceEditTestCase, self).setUp()
         args = {
-            "service_id": self.service_test.id
+            "pk": self.service_test.id
         }
-        self.url = reverse('service_catalog:edit_service', kwargs=args)
+        self.url = reverse('service_catalog:service_edit', kwargs=args)
         self.data = {
             "name": "service-test-updated",
             "description": "description-of-service-test-updated",
@@ -30,9 +30,9 @@ class ServiceEditTestCase(BaseTest):
     def test_standard_user_cannot_edit_service(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         response = self.client.get(self.url)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         response = self.client.post(self.url, data=self.data)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         self.service_test.refresh_from_db()
         self.assertEqual(self.service_test.name, "service-test")
         self.assertEqual(self.service_test.description, "description-of-service-test")

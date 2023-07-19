@@ -1,12 +1,10 @@
-<a href="{% url 'service_catalog:service_operation_edit_survey' service_id=service_id operation_id=record.id %}"
-   class="btn btn-primary bg-sm">
-    <i class="fas fa-clipboard-list"></i>
-</a>
-<a href="{% url 'service_catalog:edit_service_operation' service_id=service_id operation_id=record.id %}"
-   class="btn btn-default bg-sm">
-    <i class="fas fa-pencil-alt"></i>
-</a>
-<a href="{% url 'service_catalog:delete_service_operation' service_id=service_id operation_id=record.id %}"
-   class="btn btn-danger bg-sm">
-    <i class="fas fa-trash"></i>
-</a>
+{% has_perm request.user "service_catalog.change_operation" as can_change %}
+<span {% if not can_change %} title="Permission service_catalog.change_operation needed" {% endif %}>
+    <a href="{% url 'service_catalog:operation_edit_survey' service_id=record.service.id pk=record.id %}"
+       class="btn btn-primary bg-sm {% if not can_change %} disabled {% endif %}">
+        <i class="fas fa-clipboard-list"></i>
+    </a>
+</span>
+{% with parent_id=record.service.id %}
+    {% include 'custom_columns/generic_actions.html' %}
+{% endwith %}

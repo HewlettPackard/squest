@@ -15,6 +15,8 @@ class ServiceOperationForm(SquestModelForm):
         new_operation = super(ServiceOperationForm, self).save(commit=False)
         new_operation.service = self.service
         new_operation.save()
+        return new_operation
+
 
     class Meta:
         model = Operation

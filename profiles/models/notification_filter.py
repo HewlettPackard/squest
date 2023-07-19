@@ -1,8 +1,12 @@
-from django.db import models
 from django.db.models import ManyToManyField, TextField, CharField
 
+from Squest.utils.squest_model import SquestModel
 
-class NotificationFilter(models.Model):
+
+class NotificationFilter(SquestModel):
+    class Meta:
+        abstract = True
+
     name = CharField(max_length=100)
     services = ManyToManyField(
         "service_catalog.Service",
@@ -12,5 +16,5 @@ class NotificationFilter(models.Model):
     when = TextField(blank=True, null=True,
                      help_text="Ansible like 'when' with `request` as context. No Jinja brackets needed")
 
-    class Meta:
-        abstract = True
+    def __str__(self):
+        return self.name

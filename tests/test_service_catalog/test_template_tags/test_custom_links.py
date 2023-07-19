@@ -85,7 +85,7 @@ class TestCustomLinks(BaseTestRequest):
 
         result = custom_links(user=self.superuser, instance=self.test_instance)
         expected = ''
-        self.assertEqual(result, expected)
+        self.assertEqual(expected, result)
 
     def test_get_custom_link_admin_only(self):
         self.test_custom_link.is_admin_only = True

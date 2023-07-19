@@ -12,9 +12,9 @@ class OperationDeleteTestCase(BaseTest):
         # delete a "CREATE" type operation
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.create_operation_test.id
+            'pk': self.create_operation_test.id
         }
-        url = reverse('service_catalog:delete_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url)
@@ -25,9 +25,9 @@ class OperationDeleteTestCase(BaseTest):
         # delete an "UPDATE" type operation
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id
+            'pk': self.update_operation_test.id
         }
-        url = reverse('service_catalog:delete_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url)

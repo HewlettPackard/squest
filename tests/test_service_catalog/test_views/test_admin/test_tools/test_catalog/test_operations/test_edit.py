@@ -10,9 +10,9 @@ class OperationEditTestCase(BaseTest):
         super(OperationEditTestCase, self).setUp()
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id,
+            'pk': self.update_operation_test.id,
         }
-        self.url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        self.url = reverse('service_catalog:operation_edit', kwargs=args)
 
     def test_edit_operation(self):
         data = {
@@ -33,9 +33,9 @@ class OperationEditTestCase(BaseTest):
     def test_edit_a_create_operation(self):
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.create_operation_test.id,
+            'pk': self.create_operation_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",
@@ -55,9 +55,9 @@ class OperationEditTestCase(BaseTest):
     def test_transform_create_into_edit(self):
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.create_operation_test.id,
+            'pk': self.create_operation_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",
@@ -77,9 +77,9 @@ class OperationEditTestCase(BaseTest):
         self.client.logout()
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.create_operation_test.id,
+            'pk': self.create_operation_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",
@@ -96,9 +96,9 @@ class OperationEditTestCase(BaseTest):
     def test_transform_delete_into_create(self):
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.delete_operation_test.id,
+            'pk': self.delete_operation_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",
@@ -117,9 +117,9 @@ class OperationEditTestCase(BaseTest):
     def test_transform_update_into_create(self):
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id,
+            'pk': self.update_operation_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",
@@ -135,12 +135,12 @@ class OperationEditTestCase(BaseTest):
         self.update_operation_test.refresh_from_db()
         self.assertEqual("CREATE", self.update_operation_test.type)
 
-    def test_service_operation_edit_survey(self):
+    def test_operation_edit_survey(self):
         args = {
             'service_id': self.service_test.id,
-            'operation_id': self.update_operation_test.id,
+            'pk': self.update_operation_test.id,
         }
-        url = reverse('service_catalog:service_operation_edit_survey', kwargs=args)
+        url = reverse('service_catalog:operation_edit_survey', kwargs=args)
         data = {
             'form-0-id': self.update_operation_test.tower_survey_fields.get(name="text_variable").id,
             # 'form-0-enabled': "off",  not set means set to off
@@ -165,9 +165,9 @@ class OperationEditTestCase(BaseTest):
     def test_update_survey_when_job_template_on_operation_changed(self):
         args = {
             'service_id': self.service_empty_survey_test.id,
-            'operation_id': self.create_operation_empty_survey_test.id,
+            'pk': self.create_operation_empty_survey_test.id,
         }
-        url = reverse('service_catalog:edit_service_operation', kwargs=args)
+        url = reverse('service_catalog:operation_edit', kwargs=args)
 
         data = {
             "name": "updated",

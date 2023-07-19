@@ -6,15 +6,6 @@ from service_catalog.models.squest_settings import SquestSettings
 from tests.test_service_catalog.base import BaseTest
 from rest_framework.test import APIClient
 
-CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
-
-
-@override_settings(CACHES=CACHES)
 class TestSquestSettings(BaseTest):
 
     def _check_squest_access(self):

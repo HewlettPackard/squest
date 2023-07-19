@@ -7,12 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render
-from django.urls import reverse
+
 from django.utils.translation import gettext_lazy as _
 from martor.utils import LazyEncoder
-from service_catalog.models import Doc
 from .color import random_color
 
 
@@ -63,18 +60,3 @@ def markdown_uploader(request):
             return HttpResponse(data, content_type='application/json')
         return HttpResponse(_('Invalid request!'))
     return HttpResponse(_('Invalid request!'))
-
-
-@login_required
-def doc_show(request, doc_id):
-    doc = get_object_or_404(Doc, id=doc_id)
-    breadcrumbs = [
-        {'text': 'Documentations', 'url': reverse('service_catalog:doc_list')},
-        {'text': doc.title, 'url': ""}
-    ]
-    context = {
-        "doc": doc,
-        "breadcrumbs": breadcrumbs
-    }
-    return render(request,
-                  'service_catalog/common/documentation/doc-show.html', context)

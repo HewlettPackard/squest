@@ -6,7 +6,7 @@ import requests
 import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField
+from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, Q
 from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +24,19 @@ logger = logging.getLogger(__name__)
 
 
 class Request(SquestModel):
+    class Meta:
+        permissions = [
+            ("accept_request", "Can accept request"),
+            ("cancel_request", "Can cancel request"),
+            ("reject_request", "Can reject request"),
+            ("archive_request", "Can archive request"),
+            ("unarchive_request", "Can unarchive request"),
+            ("resubmit_request", "Can re-submit request"),
+            ("process_request", "Can process request"),
+            ("need_info_request", "Can ask info request"),
+        ]
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
     fill_in_survey = JSONField(default=dict, blank=True)
     admin_fill_in_survey = JSONField(default=dict, blank=True)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True)
@@ -42,20 +55,13 @@ class Request(SquestModel):
 
     @classmethod
     def get_queryset_for_user(cls, user, perm):
-        from profiles.models import Team
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
             return qs
-        app_label, codename = perm.split(".")
-        return Request.objects.filter(
-            instance__scopes__rbac__user=user,
-            instance__scopes__rbac__role__permissions__codename=codename,
-            instance__scopes__rbac__role__permissions__content_type__app_label=app_label
-        ) | Request.objects.filter(
-            instance__scopes__in=Team.objects.filter(org__rbac__user=user,
-                                                     org__rbac__role__permissions__codename=codename,
-                                                     org__rbac__role__permissions__content_type__app_label=app_label)
+        qs = Request.objects.filter(
+           instance__in=Instance.get_queryset_for_user(user,perm)
         )
+        return qs.distinct()
 
     def get_scopes(self):
         return self.instance.get_scopes()

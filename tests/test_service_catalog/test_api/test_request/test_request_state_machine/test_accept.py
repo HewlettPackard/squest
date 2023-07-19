@@ -67,7 +67,8 @@ class TestApiRequestAccept(BaseTestRequest):
     def test_admin_can_accept_request_on_empty_survey(self):
         test_instance = Instance.objects.create(name="test_instance_1",
                                                 service=self.service_test,
-                                                requester=self.standard_user)
+                                                requester=self.standard_user,
+                                                quota_scope=self.test_quota_scope)
         test_request = Request.objects.create(fill_in_survey={},
                                               instance=test_instance,
                                               operation=self.create_operation_empty_survey_test,
@@ -120,7 +121,7 @@ class TestApiRequestAccept(BaseTestRequest):
             print(state)
             self.test_request.state = state
             self.test_request.save()
-            self._get_form()
+            self._get_form(status=403)
             self._accept(status=403)
 
     def test_user_cannot_accept_request(self):

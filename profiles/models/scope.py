@@ -1,4 +1,4 @@
-from django.db.models import CharField, ManyToManyField, Prefetch
+from django.db.models import CharField, ManyToManyField, Prefetch, Q
 from django.contrib.auth.models import User
 
 from Squest.utils.squest_model import SquestModel
@@ -9,14 +9,6 @@ from profiles.models.rbac import RBAC
 class AbstractScope(SquestModel):
     name = CharField(max_length=500)
     description = CharField(max_length=500, blank=True)
-    roles = ManyToManyField(
-        Role,
-        blank=True,
-        help_text="The roles assigned to the scope.",
-        related_name="scopes",
-        related_query_name="scopes",
-        verbose_name="Default roles"
-    )
 
     def get_object(self):
         if hasattr(self, "scope"):
@@ -31,9 +23,12 @@ class AbstractScope(SquestModel):
         if qs.exists():
             return qs
         app_label, codename = perm.split(".")
-        return cls.objects.filter(rbac__user=user,
-                                  rbac__role__permissions__codename=codename,
-                                  rbac__role__permissions__content_type__app_label=app_label)
+        qs = cls.objects.filter(
+            rbac__user=user,
+            rbac__role__permissions__codename=codename,
+            rbac__role__permissions__content_type__app_label=app_label
+        )
+        return qs.distinct()
 
     def get_scopes(self):
         return self.get_object().get_scopes()
@@ -81,13 +76,23 @@ class AbstractScope(SquestModel):
 
 
 class Scope(AbstractScope):
+    class Meta:
+        permissions = [
+            ("consume_quota_scope", "Can consume quota of the scope"),
+        ]
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
+    roles = ManyToManyField(
+        Role,
+        blank=True,
+        help_text="The roles assigned to the scope.",
+        related_name="scopes",
+        related_query_name="scopes",
+        verbose_name="Default roles"
+    )
+
     def __str__(self):
         return str(self.get_object())
-
-    @staticmethod
-    def get_default_org():
-        from profiles.models import Organization
-        return Organization.objects.get_or_create(name="Default org")[0].id
 
     def get_object(self):
         if hasattr(self, "organization"):
@@ -101,7 +106,27 @@ class Scope(AbstractScope):
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
             return qs
-        app_label, codename = perm.split(".")
-        return cls.objects.filter(rbac__user=user,
-                                  rbac__role__permissions__codename=codename,
-                                  rbac__role__permissions__content_type__app_label=app_label)
+        from profiles.models import Team, Organization
+
+        qs = Scope.objects.filter(
+            Q(
+                id__in=Team.get_queryset_for_user(user, perm)
+            ) | Q(
+                id__in=Organization.get_queryset_for_user(user, perm)
+
+            )
+        )
+        return qs.distinct()
+
+    @classmethod
+    def get_Q(self, user, perm):
+
+        return Q(
+            rbac__user=user,
+            rbac__role__permissions__codename=codename,
+            rbac__role__permissions__content_type__app_label=app_label
+        ) | Q(
+            rbac__user=user,
+            roles__permissions__codename=codename,
+            roles__permissions__content_type__app_label=app_label
+        )

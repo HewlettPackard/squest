@@ -12,7 +12,7 @@ class PortfolioDeleteTestCase(BaseTest):
         self.service_test.save()
         old_count = Portfolio.objects.count()
         args = {
-            'portfolio_id': self.portfolio_test_2.id,
+            'pk': self.portfolio_test_2.id,
         }
         url = reverse('service_catalog:portfolio_delete', kwargs=args)
         response = self.client.get(url)
@@ -29,7 +29,7 @@ class PortfolioDeleteTestCase(BaseTest):
         self.service_test.save()
         old_count = Portfolio.objects.count()
         args = {
-            'portfolio_id': self.portfolio_test_1.id,
+            'pk': self.portfolio_test_1.id,
         }
         url = reverse('service_catalog:portfolio_delete', kwargs=args)
         response = self.client.get(url)
