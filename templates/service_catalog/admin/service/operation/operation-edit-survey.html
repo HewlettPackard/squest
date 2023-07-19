@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{% url 'service_catalog:service_operation_edit_survey' service_id=service.id operation_id=operation.id %}" method="post">{% csrf_token %}
+                <form class="form-horizontal" action="{% url 'service_catalog:operation_edit_survey' service_id=service.id pk=operation.id %}" method="post">{% csrf_token %}
                     {{ formset.management_form }}
                     {% for form in formset %}
                         <div class="card card-default">

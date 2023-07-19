@@ -20,12 +20,9 @@ class OperationRequestForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
         self.user = user
-        operation_id = kwargs.pop('operation_id', None)
-        instance_id = kwargs.pop('instance_id', None)
+        self.operation = kwargs.pop('operation', None)
+        self.instance = kwargs.pop('instance', None)
         super(OperationRequestForm, self).__init__(*args, **kwargs)
-
-        self.operation = Operation.objects.get(id=operation_id)
-        self.instance = Instance.objects.get(id=instance_id)
 
         # get all field that are not disabled by the admin
         purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,

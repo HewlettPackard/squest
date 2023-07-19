@@ -5,7 +5,7 @@ import random
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
-from profiles.models import Organization
+from profiles.models import Organization, Role
 from resource_tracker_v2.models import AttributeDefinition, Resource, ResourceGroup, Transformer
 from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request
 from service_catalog.models.operations import OperationType
@@ -41,10 +41,13 @@ class Command(BaseCommand):
         print('Launch celery to sync: celery - A service_catalog worker - l info')
         tower.sync()
 
-        billing_groups_name = ['5G', 'Assurance', 'Orchestration']
-        billing_groups = []
-        for billing_group in billing_groups_name:
-            billing_groups.append(Organization.objects.get_or_create(name=billing_group)[0])
+        organization_name = ['5G', 'Assurance', 'Orchestration']
+        organization = []
+        for billing_group in organization_name:
+            organization.append(Organization.objects.get_or_create(name=billing_group)[0])
+
+
+        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Team member"))
 
         job_templates = JobTemplate.objects.all()
         services = dict()
@@ -70,7 +73,7 @@ class Command(BaseCommand):
                         continue
                     user = users[username]
                     new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
-                                                           requester=user, quota_scope=random.choice(billing_groups))
+                                                           requester=user, quota_scope=random.choice(organization))
                     # create the request
                     new_request, _ = Request.objects.get_or_create(instance=new_instance,
                                                                    operation=service.operations.filter(

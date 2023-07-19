@@ -10,20 +10,20 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
     def setUp(self):
         super(AdminTowerUpdateViewsTest, self).setUp()
         self.args = {
-            'tower_id': self.tower_server_test.id,
+            'pk': self.tower_server_test.id,
         }
         self.data = {
             "name": "tower-server-test-updated",
             "host": "https://tower-updated.domain.local",
             "token": "xxxx-updated"
         }
-        self.url = reverse('service_catalog:update_tower', kwargs=self.args)
+        self.url = reverse('service_catalog:towerserver_edit', kwargs=self.args)
 
     def test_get_page(self):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
 
-    def test_update_tower(self):
+    def test_towerserver_edit(self):
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
             mock_tower_lib.return_value = None
             response = self.client.post(self.url, data=self.data)

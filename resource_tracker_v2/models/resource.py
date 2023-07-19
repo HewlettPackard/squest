@@ -1,40 +1,43 @@
-from django.db import models
+from django.db.models import ForeignKey, CASCADE, SET_NULL, BooleanField, CharField
 from django.urls import reverse
 from taggit.managers import TaggableManager
+
+from Squest.utils.squest_model import SquestModel
 
 
 class InvalidAttributeDefinition(Exception):
     pass
 
 
-class Resource(models.Model):
-    name = models.CharField(max_length=100,
-                            blank=False)
-    resource_group = models.ForeignKey('ResourceGroup',
-                                       on_delete=models.CASCADE,
-                                       related_name='resources',
-                                       related_query_name='resource')
+class Resource(SquestModel):
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+        unique_together = ('name', 'resource_group')
 
-    service_catalog_instance = models.ForeignKey('service_catalog.Instance',
-                                                 on_delete=models.SET_NULL,
-                                                 related_name='resources',
-                                                 related_query_name='resource',
-                                                 null=True,
-                                                 blank=True)
+    name = CharField(max_length=100,
+                     blank=False)
+    resource_group = ForeignKey('ResourceGroup',
+                                on_delete=CASCADE,
+                                related_name='resources',
+                                related_query_name='resource')
+
+    service_catalog_instance = ForeignKey('service_catalog.Instance',
+                                          on_delete=SET_NULL,
+                                          related_name='resources',
+                                          related_query_name='resource',
+                                          null=True,
+                                          blank=True)
 
     tags = TaggableManager()
 
-    is_deleted_on_instance_deletion = models.BooleanField(default=True,
-                                                          verbose_name="Delete this resource on instance deletion")
-
-    class Meta:
-        unique_together = ('name', 'resource_group')
+    is_deleted_on_instance_deletion = BooleanField(default=True,
+                                                   verbose_name="Delete this resource on instance deletion")
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('resource_tracker_v2:resourcegroup_resource_list', args=[self.resource_group.id])
+        return reverse('resource_tracker_v2:resource_list', args=[self.resource_group.id])
 
     def set_attribute(self, attribute_definition, value):
         from resource_tracker_v2.models import Transformer

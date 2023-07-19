@@ -20,10 +20,10 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <form action='{% url 'service_catalog:delete_service_operation' service_id=service.id operation_id=operation.id %}' method='POST'>{% csrf_token %}
+                        <form action='{% url 'service_catalog:operation_delete' service_id=service.id pk=operation.id %}' method='POST'>{% csrf_token %}
                             <p>Do you want to delete the service operation "{{ operation.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'service_catalog:service_operations' service.id %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'service_catalog:operation_list' service.id %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

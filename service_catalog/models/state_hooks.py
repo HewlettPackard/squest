@@ -1,9 +1,11 @@
 import logging
 
-from django.db.models import TextChoices, Model, ForeignKey, CASCADE, CharField, JSONField, SET_NULL
+from django.db.models import TextChoices, ForeignKey, CASCADE, CharField, JSONField, SET_NULL
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from rest_framework.reverse import reverse_lazy
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.services import Service
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operations import Operation
@@ -16,23 +18,7 @@ class HookModel(TextChoices):
     Instance = 'Instance', _('Instance')
 
 
-class ServiceStateHook(Model):
-    instance = ForeignKey(Service,
-                                 on_delete=CASCADE,
-                                 related_name='instances',
-                                 related_query_name='instance',
-                                 null=True)
-    model = CharField(max_length=100, choices=HookModel.choices)
-    state = CharField(max_length=100)
-    job_template = ForeignKey(JobTemplate, on_delete=CASCADE)
-    extra_vars = JSONField(default=dict, blank=True)
-
-    def clean(self):
-        if self.extra_vars is None or not isinstance(self.extra_vars, dict):
-            raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
-
-
-class GlobalHook(Model):
+class GlobalHook(SquestModel):
     name = CharField(unique=True, max_length=100)
     model = CharField(max_length=100, choices=HookModel.choices)
     state = CharField(max_length=100)
@@ -49,7 +35,8 @@ class GlobalHook(Model):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
-
+    def get_absolute_url(self):
+        return reverse_lazy("service_catalog:globalhook_list")
 class HookManager(object):
 
     @classmethod

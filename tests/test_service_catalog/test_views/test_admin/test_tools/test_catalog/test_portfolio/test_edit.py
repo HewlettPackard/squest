@@ -13,7 +13,7 @@ class PortfolioEditTestCase(BaseTest):
 
     def _edit_portfolio(self, data=None, get_status=200, post_status=302):
         data = data if data else self.data
-        url = reverse('service_catalog:portfolio_edit', kwargs={'portfolio_id': self.portfolio_test_1.id})
+        url = reverse('service_catalog:portfolio_edit', kwargs={'pk': self.portfolio_test_1.id})
         response = self.client.get(url)
         self.assertEqual(get_status, response.status_code)
         response = self.client.post(url, data=data)
@@ -28,7 +28,7 @@ class PortfolioEditTestCase(BaseTest):
 
     def test_customer_cannot_edit_portfolio(self):
         self.client.force_login(self.standard_user)
-        self._edit_portfolio(get_status=302, post_status=302)
+        self._edit_portfolio(get_status=403, post_status=403)
 
     def test_cannot_edit_portfolio_when_logout(self):
         self.client.logout()

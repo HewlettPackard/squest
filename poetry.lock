@@ -583,21 +583,6 @@ files = [
 ]
 
 [[package]]
-name = "django-guardian"
-version = "2.4.0"
-description = "Implementation of per object permissions for Django."
-category = "main"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "django-guardian-2.4.0.tar.gz", hash = "sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0"},
-    {file = "django_guardian-2.4.0-py3-none-any.whl", hash = "sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697"},
-]
-
-[package.dependencies]
-Django = ">=2.2"
-
-[[package]]
 name = "django-mysql"
 version = "4.9.0"
 description = "Django-MySQL extends Django's built-in MySQL and MariaDB support their specific features not available on other databases."
@@ -1769,4 +1754,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1b6b801892eb610812266dc27081bd0c4e3a666db4304b71382bb8353c7ec990"
+content-hash = "87bfbbadeadead8578bfd3a00498f6110a0727b7a9b90068fc22758a81cd4258"

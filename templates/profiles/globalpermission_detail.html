@@ -5,17 +5,17 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-    {% if request.user.is_superuser %}
-        <div class="float-right">
-            <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
-               class="btn btn-success"> <i class="fas fa-plus"></i> Add users
-            </a>
-            <a href="{% url 'profiles:globalpermission_edit'%}"
-               class="btn btn-primary">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
-        </div>
-    {% endif %}
+    {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
+    {% has_perm request.user "profiles.change_globalpermission" object as can_add_users %}
+    <div class="float-right">
+        <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
+           class="btn btn-success{% if not can_add_users %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
+        </a>
+        <a href="{% url 'profiles:globalpermission_edit' %}"
+           class="btn btn-primary">
+            <i class="fas fa-pencil-alt{% if not can_change %} disabled{% endif %}"></i>
+        </a>
+    </div>
 {% endblock %}
 
 {% block main %}
@@ -27,7 +27,8 @@
                         <ul class="nav nav-pills" id="tabs">
                             <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#user_permissions" data-toggle="tab">User
+                                permissions</a></li>
 
                         </ul>
                     </div>
@@ -36,8 +37,8 @@
                             <div class="tab-pane active" id="users">
                                 {% render_table users %}
                             </div>
-                            <div class="tab-pane" id="roles">
-                                {% render_table roles %}
+                            <div class="tab-pane" id="user_permissions">
+                                {% render_table user_permissions %}
                             </div>
                         </div>
                     </div>

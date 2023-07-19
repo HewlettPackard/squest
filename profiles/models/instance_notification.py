@@ -1,4 +1,5 @@
 from django.db.models import CASCADE, ForeignKey, CharField
+from django.urls import reverse_lazy
 from django_mysql.models import ListCharField
 
 from Squest.utils.ansible_when import AnsibleWhen
@@ -35,3 +36,6 @@ class InstanceNotification(NotificationFilter):
             "instance": InstanceSerializer(instance).data
         }
         return AnsibleWhen.when_render(context=context, when_string=self.when)
+
+    def get_absolute_url(self):
+        return f"{reverse_lazy('profiles:profile')}#instance-notifications"

@@ -12,7 +12,7 @@ class AdminTowerCreateViewsTest(BaseTestTower):
 
     def setUp(self):
         super(AdminTowerCreateViewsTest, self).setUp()
-        self.url = reverse('service_catalog:add_tower')
+        self.url = reverse('service_catalog:towerserver_create')
         self.data = {
             "name": "tower1",
             "host": "tower.domain.local",
@@ -91,5 +91,5 @@ class AdminTowerCreateViewsTest(BaseTestTower):
     def test_user_cannot_create_tower_server(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         response = self.client.post(self.url, data=self.data)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         self.assertEqual(self.number_tower_before, TowerServer.objects.all().count())

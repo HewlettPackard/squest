@@ -34,11 +34,11 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEqual(302, response.status_code)
         self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())
 
-    def test_admin_request_need_info(self):
+    def test_request_need_info(self):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_need_info', kwargs=args)
+        url = reverse('service_catalog:request_need_info', kwargs=args)
         data = {
             "content": "admin message"
         }
@@ -54,7 +54,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_need_info', kwargs=args)
+        url = reverse('service_catalog:request_need_info', kwargs=args)
         data = {
             "message": "admin message"
         }
@@ -66,14 +66,14 @@ class AdminRequestViewTest(BaseTestRequest):
             response = self.client.post(url, data=data)
             self.assertEqual(403, response.status_code)
 
-    def test_admin_request_re_submit(self):
+    def test_request_re_submit(self):
         self.test_request.state = RequestState.NEED_INFO
         self.test_request.save()
         args = {
             'request_id': self.test_request.id
         }
         data = {'content': 're-submited'}
-        url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
+        url = reverse('service_catalog:request_re_submit', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
@@ -86,7 +86,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'request_id': self.test_request.id
         }
         data = {'content': 're-submited'}
-        url = reverse('service_catalog:admin_request_re_submit', kwargs=args)
+        url = reverse('service_catalog:request_re_submit', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
                             RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.SUBMITTED]
         for forbidden_state in forbidden_states:
@@ -95,11 +95,11 @@ class AdminRequestViewTest(BaseTestRequest):
             response = self.client.post(url, data=data)
             self.assertEqual(403, response.status_code)
 
-    def test_admin_request_reject(self):
+    def test_request_reject(self):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_reject', kwargs=args)
+        url = reverse('service_catalog:request_reject', kwargs=args)
         data = {
             "content": "admin message"
         }
@@ -115,7 +115,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_reject', kwargs=args)
+        url = reverse('service_catalog:request_reject', kwargs=args)
         data = {
             "message": "admin message"
         }
@@ -148,7 +148,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'float_var': '0.6'
             }
 
-        url = reverse('service_catalog:admin_request_accept', kwargs=args)
+        url = reverse('service_catalog:request_accept', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         response = self.client.post(url, data=data)
@@ -283,7 +283,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_process', kwargs=args)
+        url = reverse('service_catalog:request_process', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
@@ -454,7 +454,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': request_update.id
         }
-        url = reverse('service_catalog:admin_request_process', kwargs=args)
+        url = reverse('service_catalog:request_process', kwargs=args)
         response = self.client.post(url)
         self.assertEqual(403, response.status_code)
 
@@ -470,7 +470,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def _validate_access_request_details(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_details', kwargs=args)
         response = self.client.get(url)
@@ -478,7 +478,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def _refused_access_request_details(self, status_code=302):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_details', kwargs=args)
         response = self.client.get(url)
@@ -494,7 +494,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_can_delete_request(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_delete', kwargs=args)
         response = self.client.get(url)
@@ -505,26 +505,26 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_customer_cannot_delete_request(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_delete', kwargs=args)
         response = self.client.get(url)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
         self.client.post(url)
         self.assertTrue(Request.objects.filter(id=self.test_request.id).exists())
 
-    def test_admin_request_archive_toggle(self):
+    def test_request_archive_toggle(self):
         self.test_request.state = RequestState.COMPLETE
         self.test_request.save()
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_archive', kwargs=args)
+        url = reverse('service_catalog:request_archive', kwargs=args)
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, RequestState.ARCHIVED)
-        url = reverse('service_catalog:admin_request_unarchive', kwargs=args)
+        url = reverse('service_catalog:request_unarchive', kwargs=args)
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
@@ -534,7 +534,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_archive', kwargs=args)
+        url = reverse('service_catalog:request_archive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
                             RequestState.REJECTED, RequestState.SUBMITTED, RequestState.NEED_INFO,
                             RequestState.ARCHIVED]
@@ -548,7 +548,7 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:admin_request_unarchive', kwargs=args)
+        url = reverse('service_catalog:request_unarchive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
                             RequestState.REJECTED, RequestState.SUBMITTED, RequestState.NEED_INFO,
                             RequestState.COMPLETE]
@@ -587,7 +587,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_customer_cannot_edit_request(self):
         self.client.force_login(self.standard_user)
-        self._edit_request(302)
+        self._edit_request(403)
 
     def test_cannot_edit_request_when_logout(self):
         self.client.logout()
@@ -595,7 +595,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def _edit_request(self, status_code=200):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         data = {
             "fill_in_survey": "{}",
