@@ -5,12 +5,16 @@
         <div class="content-header">
         </div>
         <section class="content">
-            <div class="error-page align-content-center">
+            <div class="error-page align-content-center" style="width:60%">
                 <h2 class="headline text-warning text-center">403</h2>
                 <div class="error-content align-content-center">
                     <h3><i class="fas fa-exclamation-triangle text-warning"></i> Access denied</h3>
-                    <p>The page you are trying to access has restricted access.
-                    Please refer to your system administrator.</p>
+                    <p>
+                        The page you are trying to access has restricted access.
+                        <br>
+                        {{ exception }}
+                    </p>
+
                 </div>
             </div>
         </section>

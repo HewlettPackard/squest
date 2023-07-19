@@ -1,6 +1,5 @@
 from .notification_filter_table import *
 from .organization_table import *
-from .rbac_table import *
 from .role_table import *
 from .team_table import *
 from .user_table import *

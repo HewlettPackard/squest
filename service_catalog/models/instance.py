@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT, Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django_fsm import FSMField, transition, post_transition
@@ -20,11 +20,20 @@ logger = logging.getLogger(__name__)
 
 
 class Instance(SquestModel):
+    class Meta:
+        permissions = [
+            ("request_on_instance", "Can request a day2 operation on instance"),
+            ("admin_request_on_instance", "Can request an admin day2 operation on instance"),
+            ("view_admin_spec_instance", "Can view admin spec on instance"),
+            ("change_admin_spec_instance", "Can change admin spec on instance"),
+        ]
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
     name = CharField(verbose_name="Instance name", max_length=100)
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
     service = ForeignKey(Service, blank=True, null=True, on_delete=SET_NULL)
-    requester = ForeignKey(User, null=True, help_text='Initial request', verbose_name="Requester", on_delete=SET_NULL)
+    requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Requester", on_delete=SET_NULL)
     scopes = ManyToManyField(
         Scope,
         blank=True,
@@ -36,8 +45,7 @@ class Instance(SquestModel):
         Scope,
         related_name="quota_instances",
         related_query_name="quota_instance",
-        on_delete=PROTECT,
-        default=Scope.get_default_org
+        on_delete=PROTECT
     )
     state = FSMField(default=InstanceState.PENDING)
     date_available = DateTimeField(null=True, blank=True)
@@ -49,24 +57,73 @@ class Instance(SquestModel):
         if qs.exists():
             return qs
         app_label, codename = perm.split(".")
-        return Instance.objects.filter(
-            scopes__rbac__user=user,
-            scopes__rbac__role__permissions__codename=codename,
-            scopes__rbac__role__permissions__content_type__app_label=app_label
-        ) | Instance.objects.filter(
-            scopes__in=Team.objects.filter(org__rbac__user=user,
-                                           org__rbac__role__permissions__codename=codename,
-                                           org__rbac__role__permissions__content_type__app_label=app_label)
+        qs = Instance.objects.filter(
+            # Scopes
+            ## Scopes - Org - User
+            Q(
+                scopes__rbac__user=user,
+                scopes__rbac__role__permissions__codename=codename,
+                scopes__rbac__role__permissions__content_type__app_label=app_label
+            ) |
+            ### Scopes - Org - Default roles
+            Q(
+                scopes__rbac__user=user,
+                scopes__roles__permissions__codename=codename,
+                scopes__roles__permissions__content_type__app_label=app_label
+            ) |
+            ## Scopes - Team - User
+            Q(
+                scopes__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__rbac__role__permissions__codename=codename,
+                    org__rbac__role__permissions__content_type__app_label=app_label
+                )
+            ) |
+            ## Scopes - Team - Default roles
+            Q(
+                scopes__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__roles__permissions__codename=codename,
+                    org__roles__permissions__content_type__app_label=app_label
+                )
+            ) |
+            # Quota scope
+            ## Quota scope - Org - User
+            Q(
+                quota_scope__rbac__user=user,
+                quota_scope__rbac__role__permissions__codename=codename,
+                quota_scope__rbac__role__permissions__content_type__app_label=app_label
+            ) |
+            ## Quota scope - Org - Default roles
+            Q(
+                quota_scope__rbac__user=user,
+                quota_scope__roles__permissions__codename=codename,
+                quota_scope__roles__permissions__content_type__app_label=app_label
+            ) |
+            ## Quota scope - Team - User
+            Q(
+                quota_scope__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__rbac__role__permissions__codename=codename,
+                    org__rbac__role__permissions__content_type__app_label=app_label
+                )
+            ) |
+            ## Quota scope - Team - Default roles
+            Q(
+                quota_scope__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__roles__permissions__codename=codename,
+                    org__roles__permissions__content_type__app_label=app_label
+                )
+            )
         )
-
-    def get_absolute_url(self):
-        return reverse("service_catalog:instance_details", args=[self.pk])
+        return qs.distinct()
 
     def get_scopes(self):
-        qs = Scope.objects.none()
+        qs = self.quota_scope.get_scopes()
         for scope in self.scopes.all():
             qs = qs | scope.get_scopes()
-        return qs
+        return qs.distinct()
 
     def __str__(self):
         return f"{self.name} (#{self.id})"
@@ -168,11 +225,3 @@ post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
     instance.delete_linked_resources()
-
-
-def add_quota_scope_to_scopes(sender, instance, created, **kwargs):
-    if instance.quota_scope not in instance.scopes.all():
-        instance.scopes.add(instance.quota_scope)
-
-
-post_save.connect(add_quota_scope_to_scopes, sender=Instance)

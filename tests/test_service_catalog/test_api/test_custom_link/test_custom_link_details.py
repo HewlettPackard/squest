@@ -37,7 +37,7 @@ class TestApiCustomLinkDetails(BaseTestCustomLink):
     def test_customer_get_custom_link_detail(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.get(self.get_custom_link_details_url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_cannot_get_custom_link_details_when_logout(self):
         self.client.logout()

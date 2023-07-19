@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, unique=True)),
                 ('description', models.CharField(blank=True, max_length=500)),
-                ('permissions', models.ManyToManyField(blank=True, help_text='Permissions linked to this role.', to='auth.Permission')),
+                ('permissions', models.ManyToManyField(blank=True, help_text='Permissions linked to this role.', limit_choices_to={'content_type__app_label__in': ['service_catalog', 'profiles', 'resource_tracker_v2']}, to='auth.Permission')),
             ],
             options={
                 'abstract': False,

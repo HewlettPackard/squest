@@ -6,14 +6,19 @@ from profiles.models import Profile
 
 
 class ProfileSerializer(ModelSerializer):
-
     class Meta:
         model = Profile
-        fields = ['request_notification_enabled', 'support_notification_enabled',
+        fields = ['request_notification_enabled', 'instance_notification_enabled',
                   'request_notification_filters', 'instance_notification_filters']
 
 
 class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'email', 'profile', 'first_name', 'last_name', 'is_staff',
+                  'is_superuser', 'is_active', 'groups']
+        read_only_fields = ('id', 'groups')
+
     profile = ProfileSerializer(required=False)
     password = CharField(
         write_only=True,
@@ -22,13 +27,6 @@ class UserSerializer(ModelSerializer):
         style={'input_type': 'password', 'placeholder': 'Password'}
     )
 
-
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super(UserSerializer, self).create(validated_data)
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'password', 'email', 'profile', 'first_name', 'last_name', 'is_staff',
-                  'is_superuser', 'is_active', 'groups']
-        read_only_fields = ('id', 'groups')

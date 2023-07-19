@@ -10,11 +10,7 @@ from Squest.utils.squest_views import SquestListView
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(login_required, name='dispatch')
 class TagFilterListView(SquestListView):
-    table_pagination = {'per_page': 10}
-    template_name = 'generics/list.html'
-
     @property
     def tag_session_key(self):
         return f'{self.request.path}__tag'
@@ -24,8 +20,6 @@ class TagFilterListView(SquestListView):
         return f'{self.request.path}__tag_filter_type'
 
     def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied
         tags_from_session = self.request.session.get(self.tag_session_key, [])
         tag_filter_type_from_session = self.request.session.get(self.tag_filter_type_session_key, "OR")
         if not self.request.GET and (tags_from_session != [] or tag_filter_type_from_session != "OR"):

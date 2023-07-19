@@ -1,19 +1,14 @@
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import ProtectedError
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.views.generic import DetailView, UpdateView, DeleteView
 from django_fsm import can_proceed
-from guardian.decorators import permission_required_or_403
 from jinja2 import UndefinedError
-from rest_framework.reverse import reverse_lazy
 
-from Squest.utils.squest_rbac import SquestObjectPermissions, SquestPermissionRequiredMixin
-from Squest.utils.squest_views import SquestListView
+from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
+    SquestPermissionDenied
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
 from service_catalog.models.instance import Instance
@@ -26,81 +21,72 @@ from service_catalog.models.documentation import Doc
 from service_catalog.tables.instance_tables import InstanceTable
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
-from service_catalog.views.support_list_view import SupportTable
+from service_catalog.tables.support_tables import SupportTable
 
 
 class InstanceListView(SquestListView):
-    table_pagination = {'per_page': 10}
     table_class = InstanceTable
     model = Instance
-    template_name = 'generics/list.html'
     filterset_class = InstanceFilter
 
-    def get_table_data(self, **kwargs):
-        filtered = super().get_table_data().distinct()
-        return Instance.get_queryset_for_user(
-            self.request.user,
-            'service_catalog.view_instance').distinct().order_by("-date_available") & filtered
+    def get_queryset(self):
+        return Instance.get_queryset_for_user(self.request.user, "service_catalog.view_instance")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_superuser:
-            context['html_button_path'] = 'generics/buttons/delete_button.html'
+        context['html_button_path'] = ''
+        context['action_url'] = ''
+
+        if self.request.user.has_perm("service_catalog.delete_instance"):
+            context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
             context['action_url'] = reverse('service_catalog:instance_bulk_delete_confirm')
         return context
 
 
-class InstanceDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, DetailView):
+class InstanceDetailView(SquestDetailView):
     model = Instance
     filterset_class = InstanceFilter
-    permission_required = "service_catalog.view_instance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-                                     {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-                                     {'text': f"{self.object.name} ({self.object.id})", 'url': ""},
-                                 ],
-        context['instance'] = self.object
-        context['operations_table'] = OperationTableFromInstanceDetails(self.object.service.operations.all())
-        context['requests_table'] = RequestTable(self.object.request_set.all(),
-                                                 hide_fields=["instance__name", "instance__service__name"])
-        context['supports_table'] = SupportTable(self.object.supports.all(), hide_fields=["instance__name"])
+
+        # operations
+        if self.request.user.has_perm("service_catalog.request_on_instance"):
+            context['operations_table'] = OperationTableFromInstanceDetails(
+                self.object.service.operations.filter(is_admin_operation=False)
+            )
+        # admin operations
+        if self.request.user.has_perm("service_catalog.admin_request_on_instance"):
+            context['admin_operations_table'] = OperationTableFromInstanceDetails(
+                self.object.service.operations.filter(is_admin_operation=True)
+            )
+
+        # requests
+        if self.request.user.has_perm("service_catalog.view_request", self.object):
+            context['requests_table'] = RequestTable(
+                self.object.request_set.distinct(),
+                hide_fields=["instance", "instance__service"]
+            )
+        # support
+        if self.request.user.has_perm("service_catalog.view_support", self.object):
+            context['supports_table'] = SupportTable(
+                self.object.supports.distinct(),
+                hide_fields=["instance"]
+            )
         return context
 
 
-class InstanceEditView(SquestPermissionRequiredMixin, UpdateView):
+class InstanceEditView(SquestUpdateView):
     model = Instance
-    template_name = 'generics/generic_form.html'
     form_class = InstanceForm
 
-    permission_required = "service_catalog.change_instance"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        breadcrumbs = [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{self.object.name} ({self.object.id})",
-             'url': self.object.get_absolute_url()},
-        ]
-        context['breadcrumbs'] = breadcrumbs
-
-        context['action'] = "edit"
-        return context
-
-
-class InstanceDeleteView(SquestPermissionRequiredMixin, DeleteView):
+class InstanceDeleteView(SquestDeleteView):
     model = Instance
     template_name = 'generics/confirm-delete-template.html'
-    success_url = reverse_lazy("service_catalog:instance_list")
-    permission_required = "service_catalog.delete_instance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f'{self.object}', 'url': ""},
-        ]
         context['confirm_text'] = mark_safe(f"Confirm deletion of <strong>{self.object.name}</strong>?")
         context['details'] = {
             'warning_sentence': 'Warning: all requests related to this instance will be deleted:',
@@ -108,33 +94,29 @@ class InstanceDeleteView(SquestPermissionRequiredMixin, DeleteView):
                              self.object.request_set.all()]} if self.object.request_set.count() != 0 else None
         return context
 
-    def delete(self, request, *args, **kwargs):
-        try:
-            return super().delete(request, *args, **kwargs)
-        except ProtectedError as e:
-            error_message = f"{e.args[0]}"
-
-            context = self.get_context_data(object=self.object, error_message=error_message,
-                                            protected_objects=e.protected_objects)
-            return self.render_to_response(context)
-
 
 @login_required
-@permission_required_or_403('service_catalog.request_operation_on_instance', (Instance, 'id', 'instance_id'))
 def instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
-    if instance.state not in [InstanceState.AVAILABLE, InstanceState.UPDATING]:
-        raise PermissionDenied
     operation = get_object_or_404(Operation, id=operation_id)
-    allowed_operations = Operation.objects.filter(service=instance.service, enabled=True,
-                                                  type__in=[OperationType.UPDATE, OperationType.DELETE])
-    if operation.is_admin_operation and not request.user.is_superuser:
-        raise PermissionDenied
-    if operation not in allowed_operations:
-        raise PermissionDenied
+    if not operation.is_admin_operation and not request.user.has_perm('service_catalog.request_on_instance',
+                                                                      instance):
+        raise SquestPermissionDenied(permission='service_catalog.request_on_instance')
+    if operation.is_admin_operation and not request.user.has_perm('service_catalog.admin_request_on_instance',
+                                                                  instance):
+        raise SquestPermissionDenied(permission="service_catalog.admin_request_on_instance")
+    if instance.state not in [InstanceState.AVAILABLE]:
+        raise PermissionDenied("Instance not available")
+    if operation.enabled is False:
+        raise PermissionDenied(f"Operation is not enabled.")
+    if operation.service.id != instance.service.id:
+        raise PermissionDenied("Operation service and instance service doesn't match")
+    if operation.type not in [OperationType.UPDATE, OperationType.DELETE]:
+        raise PermissionDenied("Operation type UPDATE and DELETE only")
+
     parameters = {
-        'operation_id': operation_id,
-        'instance_id': instance_id
+        'operation': operation,
+        'instance': instance
     }
     if request.method == 'POST':
         form = OperationRequestForm(request.user, request.POST, **parameters)
@@ -163,41 +145,43 @@ def instance_request_new_operation(request, instance_id, operation_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.delete_instance', (Instance, 'id', 'instance_id'))
 def instance_archive(request, instance_id):
-    target_instance = get_object_or_404(Instance, id=instance_id)
+    instance = get_object_or_404(Instance, id=instance_id)
+    if not request.user.has_perm('service_catalog.delete_instance', instance):
+        raise PermissionDenied
     if request.method == "POST":
-        if not can_proceed(target_instance.archive):
+        if not can_proceed(instance.archive):
             raise PermissionDenied
-        target_instance.archive()
-        target_instance.save()
+        instance.archive()
+        instance.save()
 
         return redirect('service_catalog:instance_list')
     context = {
-        "instance": target_instance
+        "instance": instance
     }
-    return render(request, "service_catalog/customer/instance/instance-archive.html", context)
+    return render(request, "service_catalog/instance-archive.html", context)
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def instance_new_support(request, pk):
-    target_instance = get_object_or_404(Instance, id=pk)
+    instance = get_object_or_404(Instance, id=pk)
+    if not request.user.has_perm("service_catalog.add_support", instance):
+        raise PermissionDenied
     parameters = {
         'instance_id': pk
     }
 
-    if target_instance.service.external_support_url is not None and target_instance.service.external_support_url != '':
+    if instance.service.external_support_url is not None and instance.service.external_support_url != '':
         from jinja2 import Template
         spec_config = {
-            "instance": target_instance,
+            "instance": instance,
         }
-        template_url = Template(target_instance.service.external_support_url)
+        template_url = Template(instance.service.external_support_url)
         try:
             template_url_rendered = template_url.render(spec_config)
         except UndefinedError:
             # in case of any error we just use the given URL with the jinja so the admin can see the templating error
-            template_url_rendered = target_instance.service.external_support_url
+            template_url_rendered = instance.service.external_support_url
 
         return redirect(template_url_rendered)
 
@@ -205,15 +189,15 @@ def instance_new_support(request, pk):
         form = SupportRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
-            return redirect(reverse('service_catalog:instance_details', args=[target_instance.id]) + "#support")
+            return redirect(reverse('service_catalog:instance_details', args=[instance.id]) + "#support")
     else:
         form = SupportRequestForm(request.user, **parameters)
     context = {
         'form': form,
-        'instance': target_instance,
+        'instance': instance,
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{target_instance.name} ({target_instance.id})",
+            {'text': f"{instance.name} ({instance.id})",
              'url': reverse('service_catalog:instance_details', args=[pk])},
         ],
         'color_button': 'success',
@@ -224,15 +208,16 @@ def instance_new_support(request, pk):
 
 
 @login_required
-@permission_required_or_403('service_catalog.view_support', (Instance, 'id', 'instance_id'))
 def instance_support_details(request, instance_id, support_id):
     instance = get_object_or_404(Instance, id=instance_id)
+    if not request.user.has_perm('service_catalog.view_instance', instance):
+        raise PermissionDenied
     support = get_object_or_404(Support, id=support_id)
     messages = SupportMessage.objects.filter(support=support)
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, sender=request.user, support=support)
         if form.is_valid():
-            if not request.user.has_perm("service_catalog.comment_support", support):
+            if not request.user.has_perm('service_catalog.add_supportmessage', instance):
                 raise PermissionDenied
             if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
                 form.save()
@@ -256,12 +241,10 @@ def instance_support_details(request, instance_id, support_id):
 
 
 @login_required
-@permission_required_or_403('service_catalog.request_support_on_instance', (Instance, 'id', 'instance_id'))
 def support_message_edit(request, instance_id, support_id, message_id):
-    if request.user.is_superuser:
-        support_message = get_object_or_404(SupportMessage, id=message_id)
-    else:
-        support_message = get_object_or_404(SupportMessage, id=message_id, sender=request.user)
+    support_message = get_object_or_404(SupportMessage, id=message_id)
+    if not request.user.has_perm('service_catalog.change_supportmessage', support_message):
+        raise PermissionDenied
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, request.FILES or None, sender=support_message.sender,
                                   support=support_message.support, instance=support_message)
@@ -288,7 +271,7 @@ def support_message_edit(request, instance_id, support_id, message_id):
     return render(request, "generics/generic_form.html", context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
 def instance_bulk_delete_confirm(request):
     context = {
         'confirm_text': mark_safe(f"Confirm deletion of the following instances?"),
@@ -300,17 +283,23 @@ def instance_bulk_delete_confirm(request):
         ]}
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        context['object_list'] = Instance.objects.filter(pk__in=pks)
+        context['object_list'] = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance').filter(
+            pk__in=pks)
+        if context['object_list'].count() != len(pks):
+            raise PermissionDenied
         if context['object_list']:
             return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
     messages.warning(request, 'No instances were selected for deletion.')
     return redirect('service_catalog:instance_list')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
 def instance_bulk_delete(request):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_instances = Instance.objects.filter(pk__in=pks)
+        selected_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance').filter(
+            pk__in=pks)
+        if selected_instances.count() != len(pks):
+            raise PermissionDenied
         selected_instances.delete()
     return redirect("service_catalog:instance_list")

@@ -1,65 +1,72 @@
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
-from profiles.forms.request_notification_filter_forms import RequestNotificationFilterForm
+from Squest.utils.squest_views import *
+from profiles.forms.request_notification_form import RequestNotificationForm
 from profiles.models import RequestNotification
 
 
 @login_required
-def request_notification_switch(request):
+def requestnotification_switch(request):
     request.user.profile.request_notification_enabled = not request.user.profile.request_notification_enabled
     request.user.save()
-    return redirect(reverse('profiles:profile') + '#request-notifications')
+    return redirect(reverse_lazy('profiles:profile') + '#request-notifications')
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def request_notification_create(request):
-    if request.method == 'POST':
-        form = RequestNotificationFilterForm(request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('profiles:profile') + '#request-notifications')
-    else:
-        form = RequestNotificationFilterForm(request.user)
+class RequestNotificationCreateView(SquestCreateView):
+    model = RequestNotification
+    form_class = RequestNotificationForm
 
-    context = {
-        'breadcrumbs': [
-            {'text': 'Profile', 'url': reverse('profiles:profile') + '#request-notifications'},
-            {'text': 'Create a new request notification filter', 'url': ""},
-        ],
-        'form': form,
-        'action': 'create',
-        'form_header': 'profiles/forms/form_headers/request_notification_filter_header.html'
-    }
-    return render(request, 'generics/generic_form.html', context)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_header'] = 'profiles/forms/form_headers/request_notification_filter_header.html'
+        context['breadcrumbs'] = [
+            {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#request-notifications'},
+            {'text': 'New request notification', 'url': ""},
+        ]
+        return context
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def request_notification_delete(request, request_notification_id):
-    request_notification = get_object_or_404(RequestNotification, id=request_notification_id)
-    if request_notification in request.user.profile.request_notification_filters.all():
-        request_notification.delete()
-    else:
-        raise PermissionDenied
-    return redirect(reverse('profiles:profile') + '#request-notifications')
+class RequestNotificationDeleteView(SquestDeleteView):
+    model = RequestNotification
+
+    def get_success_url(self):
+        return f"{reverse_lazy('profiles:profile')}#request-notifications"
+
+    def get_queryset(self):
+        return RequestNotification.objects.filter(profile=self.request.user.profile)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
+            {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#request-notifications'},
+            {'text': self.get_object(), 'url': ""},
+        ]
+        return context
 
 
-def request_notification_edit(request, request_notification_id):
-    request_notification = get_object_or_404(RequestNotification, id=request_notification_id)
-    form = RequestNotificationFilterForm(request.user, request.POST or None, instance=request_notification)
-    if form.is_valid():
-        form.save()
-        return redirect(reverse('profiles:profile') + '#request-notifications')
-    context = {
-        'form': form,
-        'request_notification': request_notification,
-        'object_name': "request_notification",
-        'breadcrumbs': [
-            {'text': 'Profile', 'url': reverse('profiles:profile') + '#request-notifications'},
-            {'text': request_notification.name, 'url': ""},
-        ],
-        'action': "edit"
-    }
-    return render(request, 'generics/generic_form.html', context)
+class RequestNotificationEditView(SquestUpdateView):
+    model = RequestNotification
+    form_class = RequestNotificationForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_queryset(self):
+        return RequestNotification.objects.filter(profile=self.request.user.profile)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_header'] = 'profiles/forms/form_headers/request_notification_filter_header.html'
+        context['breadcrumbs'] = [
+            {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#request-notifications'},
+            {'text': self.get_object(), 'url': ""},
+        ]
+        return context

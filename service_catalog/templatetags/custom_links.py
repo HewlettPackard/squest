@@ -15,33 +15,25 @@ logger = logging.getLogger(__name__)
 
 def get_disabled_button(tittle, button_name):
     return f'<a class="btn btn-sm btn-outline-dark ml-1" disabled="disabled" title="{tittle}">' \
-                                     f'<i class="fas fa-exclamation-triangle"></i> {button_name}</a>\n'
+           f'<i class="fas fa-exclamation-triangle"></i> {button_name}</a>\n'
 
 
 @register.simple_tag
 def custom_links(user, instance):
-
     rendered_buttons = ""
+    # prepare a context for jinja templating
+    context = {
+        "instance": instance,
+    }
 
-    for custom_link in CustomLink.objects.filter(services=instance.service):
+    if user.has_perm("service_catalog.view_admin_customlink"):
+        all_custom_link = CustomLink.objects.filter(services=instance.service, enabled=True)
+    else:
+        all_custom_link = CustomLink.objects.filter(services=instance.service, is_admin_only=False, enabled=True)
 
-        if custom_link.enabled and (not custom_link.is_admin_only or (custom_link.is_admin_only and user.is_superuser)):
-            # prepare a context for jinja templating
-            context = {
-                "instance": instance,
-            }
-
-            # check the when
-            if custom_link.when:
-                if not AnsibleWhen.when_render(context=context, when_string=custom_link.when):
-                    continue
-
-            if custom_link.loop:
-                # set button as dropdown button
-                rendered_buttons += get_dropdown_button(custom_link=custom_link, context=context)
-            else:
-                # single button
-                rendered_buttons += get_single_button(custom_link=custom_link, context=context)
+    # Custom links for user
+    for custom_link in all_custom_link:
+        rendered_buttons += render_custom_link(custom_link, context)
 
     return mark_safe(rendered_buttons)
 
@@ -116,3 +108,17 @@ def get_dropdown_button(custom_link, context):
     templated_dropdown = Template(dropdown_button)
     rendered_dropdown = templated_dropdown.render(dropdown_context)
     return rendered_dropdown
+
+
+def render_custom_link(custom_link, context):
+    # check the when
+    if custom_link.when:
+        if not AnsibleWhen.when_render(context=context, when_string=custom_link.when):
+            return ""
+
+    if custom_link.loop:
+        # set button as dropdown button
+        return get_dropdown_button(custom_link=custom_link, context=context)
+    else:
+        # single button
+        return get_single_button(custom_link=custom_link, context=context)

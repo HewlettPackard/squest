@@ -1,19 +1,15 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAdminUser
-
+from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from profiles.api.serializers import OrganizationSerializer
 from profiles.filters import OrganizationFilter
 from profiles.models import Organization
 
 
-class OrganizationDetails(RetrieveUpdateDestroyAPIView):
+class OrganizationDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = OrganizationSerializer
-    permission_classes = [IsAdminUser]
     queryset = Organization.objects.all()
 
 
-class OrganizationListCreate(ListCreateAPIView):
+class OrganizationListCreate(SquestListCreateAPIView):
     serializer_class = OrganizationSerializer
-    permission_classes = [IsAdminUser]
     queryset = Organization.objects.all()
     filterset_class = OrganizationFilter

@@ -60,3 +60,11 @@ pre {
 div.dt-button-collection {
     width: auto !important;
 }
+
+.list-group li:last-child{
+    border-bottom: 0;
+}
+
+.list-group li:first-child{
+    border-top: 0;
+}

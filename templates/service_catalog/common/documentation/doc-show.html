@@ -14,7 +14,7 @@
                         {% include "generics/breadcrumbs.html" %}
                     </div>
                     <div class="col-sm-6">
-                        {% if request.user.is_superuser %}
+                        {% if request.user.is_staff %}
                             <a class="btn btn-default float-sm-right" href="{% url 'admin:service_catalog_doc_change' doc.id %}">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
@@ -27,7 +27,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        <div class="martor-preview">
+                        <div class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
                             {{ doc.content|safe_markdown }}
                         </div>
                     </div>

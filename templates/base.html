@@ -25,11 +25,11 @@
     <link href="{% static 'plugins/css/ace.min.css' %}" type="text/css" media="all" rel="stylesheet"/>
     <link href="{% static 'martor/css/martor.bootstrap.min.css' %}" type="text/css" media="all" rel="stylesheet"/>
     <link href="{% static '@fortawesome/fontawesome-free/css/all.css' %}" rel="stylesheet">
-    <link href="{% static '@highlightjs/cdn-assets/styles/github.min.css' %}" rel="stylesheet" >
+    <link href="{% static '@highlightjs/cdn-assets/styles/github.min.css' %}" rel="stylesheet">
     <!-- Datatable -->
-    <link href="{% static 'datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet" >
-    <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet" >
-    <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet" >
+    <link href="{% static 'datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet">
 
     <!-- custom squest css -->
     <link rel="stylesheet" type="text/css" href="{% static 'squest/css/squest.css' %}">
@@ -41,101 +41,108 @@
 
     <title>{% if title %}{{ title }}{% else %}{% block title %}Squest{% endblock title %}{% endif %}</title>
 </head>
-<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed {% if request.user %}{% if request.user.profile.theme == "dark" %}dark-mode{% endif %}{% endif %}">
-{% if 'login' not in request.path %}
-    {% include 'navbar.html' %}
-    {% include 'sidebar.html' %}
-{% endif %}
+<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed
+        {% if request.user %}{% if request.user.profile.theme == "dark" %}dark-mode{% endif %}{% endif %}">
+<div class="wrapper">
+    {% if 'login' not in request.path %}
+        {% include 'navbar.html' %}
+        {% include 'sidebar.html' %}
+    {% endif %}
 
-{% block content %}
-    {% block start_content %}{% endblock %}
-    <div class="content-wrapper" style="min-height: 278px;">
-        {% block header %}
-            <div class="content-header">
-                <div class="container-fluid">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags | lower }} alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                {{ message }}
+    {% block content %}
+        <div class="content-wrapper">
+            {% block begin_content %}{% endblock %}
+            {% block header %}
+                <div class="content-header">
+                    <div class="container-fluid">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags | lower }} alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                {% include "generics/breadcrumbs.html" %}
                             </div>
-                        {% endfor %}
-                    {% endif %}
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            {% include "generics/breadcrumbs.html" %}
+                            <div class="col-sm-6">
+                                <div class="float-right">
+                                    {% block header_button %}{% endblock %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            {% block header_button %}{% endblock %}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            {% block custom_links %}{% endblock %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                {% block custom_links %}{% endblock %}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+            {% endblock %}
+            <div class="content">
+                {% block main %}{% endblock %}
             </div>
-        {% endblock %}
-        <div class="content">
-            {% block main %}{% endblock %}
+
+            {% block end_content %}{% endblock %}
         </div>
-    </div>
-    {% block end_content %}{% endblock %}
-
-{% endblock %}
-
-{% load maintenance %}
-{% load version %}
-{% is_dev_server as is_dev_server_bool %}
-<!-- Footer -->
-{% if 'login' not in request.path %}
-    <footer class="main-footer {% if is_dev_server_bool %}bg-warning{% endif %}">
-        <div class="d-sm-inline justify-content-around">
-            <a class="text-secondary" href="https://hewlettpackard.github.io/squest/{% squest_version %}"><i
-                    class="fas fa-book"></i>
-                Docs</a>
-            <a class="text-secondary" href="{% url 'schema-swagger-ui' %}"><i class="fas fa-laptop-code"></i>
-                API</a>
-            <a class="text-secondary" href="https://github.com/HewlettPackard/squest"><i class="fas fa-code"></i>
-                Code</a>
-            {% if request.user.is_superuser %}
+    {% endblock %}
+    {% block right_aside %}
+    {% endblock %}
+    {% load maintenance %}
+    {% load version %}
+    {% is_dev_server as is_dev_server_bool %}
+    <!-- Footer -->
+    {% if 'login' not in request.path %}
+        <footer class="main-footer {% if is_dev_server_bool %}bg-warning{% endif %}">
+            <div class="d-sm-inline justify-content-around">
+                <a class="text-secondary" href="https://hewlettpackard.github.io/squest/{% squest_version %}"><i
+                        class="fas fa-book"></i>
+                    Docs</a>
+                <a class="text-secondary" href="{% url 'schema-swagger-ui' %}"><i class="fas fa-laptop-code"></i>
+                    API</a>
+                <a class="text-secondary" href="https://github.com/HewlettPackard/squest"><i class="fas fa-code"></i>
+                    Code</a>
                 <a class="text-secondary" href="https://gitter.im/HewlettPackard/squest"><i class="fas fa-comments"></i>
                     Squest community chat</a>
-                </div>
-            {% endif %}
+            </div>
 
-        <div class="float-right d-none d-sm-inline">
-            {% if is_dev_server_bool %}
-                <strong class="text-white">DEV SERVER</strong>
-            {% endif %}
-            v{% squest_version %} - {% commit_sha %}
-        </div>
-    </footer>
-{% endif %}
-<!-- Bootstrap JS -->
-<script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-<!-- datatable -->
-<script src="{% static 'datatables.net/js/jquery.dataTables.js' %}"></script>
-<script src="{% static 'datatables.net-bs4/js/dataTables.bootstrap4.js' %}"></script>
-<script src="{% static 'datatables.net-buttons/js/dataTables.buttons.js' %}"></script>
-<script src="{% static 'datatables.net-fixedcolumns/js/dataTables.fixedColumns.js' %}"></script>
-<script src="{% static 'datatables.net-fixedcolumns-bs4/js/fixedColumns.bootstrap4.js' %}"></script>
-<script src="{% static 'datatables.net-buttons-bs4/js/buttons.bootstrap4.js' %}"></script>
-<script src="{% static 'datatables.net-buttons/js/buttons.html5.js' %}"></script>
-<script src="{% static 'datatables.net-buttons/js/buttons.colVis.js' %}"></script>
-<!-- adminlte -->
-<script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
-<!-- Font Awesome Free -->
-<script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}"></script>
-<!-- Bootstrap select -->
-<script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
-<!-- highlightjs -->
-<script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
-<!-- Tower Service Catalog -->
-<script src="{% static 'squest/js/squest.js' %}"></script>
-{% block custom_script %}
-{% endblock %}
-<script>hljs.highlightAll();</script>
+            <div class="float-right d-none d-sm-inline">
+                {% if is_dev_server_bool %}
+                    <strong class="text-white">DEV SERVER</strong>
+                {% endif %}
+                v{% squest_version %} - {% commit_sha %}
+            </div>
+        </footer>
+    {% endif %}
+    <!-- Bootstrap JS -->
+    <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- datatable -->
+    <script src="{% static 'datatables.net/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'datatables.net-bs4/js/dataTables.bootstrap4.js' %}"></script>
+    <script src="{% static 'datatables.net-buttons/js/dataTables.buttons.js' %}"></script>
+    <script src="{% static 'datatables.net-fixedcolumns/js/dataTables.fixedColumns.js' %}"></script>
+    <script src="{% static 'datatables.net-fixedcolumns-bs4/js/fixedColumns.bootstrap4.js' %}"></script>
+    <script src="{% static 'datatables.net-buttons-bs4/js/buttons.bootstrap4.js' %}"></script>
+    <script src="{% static 'datatables.net-buttons/js/buttons.html5.js' %}"></script>
+    <script src="{% static 'datatables.net-buttons/js/buttons.colVis.js' %}"></script>
+    <!-- adminlte -->
+    <script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+    <!-- Font Awesome Free -->
+    <script src="{% static '@fortawesome/fontawesome-free/js/all.js' %}"></script>
+    <!-- Bootstrap select -->
+    <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+    <!-- highlightjs -->
+    <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
+    <!-- Tower Service Catalog -->
+    <script src="{% static 'squest/js/squest.js' %}"></script>
+    {% block custom_script %}
+    {% endblock %}
+    <script>hljs.highlightAll();</script>
+    <div id="sidebar-overlay"></div>
+</div>
 </body>
 </html>

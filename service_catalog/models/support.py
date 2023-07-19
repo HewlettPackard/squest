@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.db.models import TextChoices, Model, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL
+from django.db.models import TextChoices, Model, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL, Q
 from django_fsm import FSMField, transition
 
 from Squest.utils.squest_model import SquestModel
@@ -48,20 +48,13 @@ class Support(SquestModel):
 
     @classmethod
     def get_queryset_for_user(cls, user, perm):
-        from profiles.models import Team
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
             return qs
-        app_label, codename = perm.split(".")
-        return Support.objects.filter(
-            instance__scopes__rbac__user=user,
-            instance__scopes__rbac__role__permissions__codename=codename,
-            instance__scopes__rbac__role__permissions__content_type__app_label=app_label
-        ) | Support.objects.filter(
-            instance__scopes__in=Team.objects.filter(org__rbac__user=user,
-                                                     org__rbac__role__permissions__codename=codename,
-                                                     org__rbac__role__permissions__content_type__app_label=app_label)
+        qs = Support.objects.filter(
+           instance__in=Instance.get_queryset_for_user(user,perm)
         )
+        return qs.distinct()
 
     def get_scopes(self):
         return self.instance.get_scopes()

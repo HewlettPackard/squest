@@ -1,8 +1,10 @@
-from django.db.models import Model, CharField, ManyToManyField
+from django.db.models import CharField, ManyToManyField
 from martor.models import MartorField
 
+from Squest.utils.squest_model import SquestModel
 
-class Doc(Model):
+
+class Doc(SquestModel):
     title = CharField(max_length=100)
     content = MartorField()
     services = ManyToManyField(

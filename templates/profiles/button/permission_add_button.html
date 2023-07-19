@@ -1,0 +1,6 @@
+{% with kwargs=kwargs|default:"" %}
+    <a class="btn btn-success float-sm-right"
+       href="{% url "profiles:"|add:django_content_type.model|add:"_create"|add:kwargs %}">
+        <i class="fas fa-plus"></i> Add
+    </a>
+{% endwith %}
