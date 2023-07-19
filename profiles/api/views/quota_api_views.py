@@ -1,17 +1,16 @@
 import copy
 
-from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
-from rest_framework.permissions import IsAdminUser
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from profiles.api.serializers.quata_serializer import QuotaSerializer, QuotaReadSerializer
 from profiles.models import Quota, Scope
 
 
-class QuotaListCreateView(ListCreateAPIView):
+class QuotaListCreateView(SquestListCreateAPIView):
     serializer_class = QuotaReadSerializer
-    permission_classes = [IsAdminUser]
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -28,12 +27,11 @@ class QuotaListCreateView(ListCreateAPIView):
         if serializer.is_valid():
             new_quota = serializer.save()
             read_serializer = QuotaReadSerializer(instance=new_quota)
-            return Response(read_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(read_serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
-class QuotaDetails(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
+class QuotaDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = QuotaReadSerializer
 
     def get_queryset(self):

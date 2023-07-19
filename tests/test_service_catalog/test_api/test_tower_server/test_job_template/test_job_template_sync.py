@@ -35,12 +35,12 @@ class TestApiJobTemplateSyncAll(BaseTest):
 
     def _check_cannot_sync_when_not_admin(self):
         self.client.force_login(user=self.standard_user_2)
-        response = self.client.get(self.url, format='json')
+        response = self.client.post(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def _check_cannot_sync_when_logout(self):
         self.client.logout()
-        response = self.client.get(self.url, format='json')
+        response = self.client.post(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_sync_all(self):

@@ -2,14 +2,16 @@ from django.db.models import Model, CharField, ForeignKey, BooleanField, Integer
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.services import Service
 
 
-class Operation(Model):
+class Operation(SquestModel):
     name = CharField(max_length=100, verbose_name="Operation name")
     description = CharField(max_length=500, blank=True, null=True)
     type = CharField(
@@ -26,7 +28,8 @@ class Operation(Model):
     process_timeout_second = IntegerField(default=60, verbose_name="Process timeout (s)")
     enabled = BooleanField(default=True, blank=True)
     extra_vars = JSONField(default=dict, blank=True)
-    is_admin_operation = BooleanField(default=False, blank=True)
+    is_admin_operation = BooleanField(default=False, blank=True, verbose_name="Admin operation",
+                                      help_text='Create operations are protected by "service_catalog.admin_request_on_service", others by "service_catalog.admin_request_on_instance".')
     default_inventory_id = CharField(max_length=500, blank=True, null=True,
                                      help_text="Jinja supported with context {{ request }}. "
                                                "Id of the inventory to use by default. "
@@ -50,6 +53,9 @@ class Operation(Model):
 
     def __str__(self):
         return f"{self.name} ({self.service})"
+
+    def get_absolute_url(self):
+        return reverse(f"service_catalog:operation_edit", args=[self.service.id, self.pk])
 
     def clean(self):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
@@ -108,8 +114,6 @@ def on_change(sender, instance: Operation, **kwargs):
         if instance.type == OperationType.CREATE and instance.enabled and previous.enabled != instance.enabled and instance.service.can_be_enabled():
             instance.service.enabled = True
             instance.service.save()
-
-
 
 
 @receiver(post_save, sender=Operation)

@@ -65,7 +65,7 @@ class TestApiOperationRequestCreate(BaseTestRequestAPI):
         self.client.force_login(self.standard_user_2)
         request_count = Request.objects.count()
         response = self.client.post(self.url, data=self.data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(request_count, Request.objects.count())
 
     def test_cannot_create_when_logout(self):

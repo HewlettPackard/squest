@@ -32,20 +32,18 @@ class ServiceRequestForm(SquestForm):
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
         self.user = user
-        service_id = kwargs.pop('service_id', None)
-        operation_id = kwargs.pop('operation_id', None)
+        self.service = kwargs.pop('service', None)
+        self.operation = kwargs.pop('operation', None)
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
-        self.service = Service.objects.get(id=service_id)
-        self.create_operation = Operation.objects.get(id=operation_id)
         self.fields['quota_scope'].queryset = Scope.get_queryset_for_user(user, 'profiles.consume_quota_scope')
 
         # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(job_template_survey=self.create_operation.job_template.survey,
-                                                       operation_survey=self.create_operation.tower_survey_fields)
+        purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
+                                                       operation_survey=self.operation.tower_survey_fields)
         purged_survey_with_default = FormUtils.apply_jinja_template_to_survey(job_template_survey=purged_survey,
-                                                                              operation_survey=self.create_operation.tower_survey_fields)
+                                                                              operation_survey=self.operation.tower_survey_fields)
         purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(job_template_survey=purged_survey_with_default,
-                                                                                operation_survey=self.create_operation.tower_survey_fields)
+                                                                                operation_survey=self.operation.tower_survey_fields)
         self.fields.update(get_fields_from_survey(purged_survey_with_validator))
         self.fields['squest_instance_name'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
 
@@ -61,7 +59,7 @@ class ServiceRequestForm(SquestForm):
                                                requester=self.user)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
-                                             operation=self.create_operation,
+                                             operation=self.operation,
                                              fill_in_survey=user_provided_survey_fields,
                                              user=self.user)
 

@@ -5,6 +5,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import profiles.models.scope
 
+
 def billing_group_to_org(apps, schema_editor):
     from profiles.models.default_rbac import roles_list
     Role = apps.get_model('profiles', 'Role')
@@ -28,6 +29,18 @@ def billing_group_to_org(apps, schema_editor):
         org.quota_instances.add(*list(billing.instances.all()))
 
 
+def get_default_org():
+    from profiles.models import Organization
+    return Organization.objects.get_or_create(name="Default org")[0].id
+
+
+def remove_default_org_if_unused(apps, schema_editor):
+    Organization = apps.get_model('profiles', 'Organization')
+    default_org = Organization.objects.get(name="Default org")
+    if default_org.quota_instances.count() == 0:
+        default_org.delete()
+
+
 class Migration(migrations.Migration):
     dependencies = [
         ('profiles', '0012_auto_20230622_1722'),
@@ -36,10 +49,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='instance',
-            name='spoc',
-        ),
         migrations.RemoveField(
             model_name='service',
             name='billing_group_id',
@@ -56,12 +65,10 @@ class Migration(migrations.Migration):
             model_name='service',
             name='billing_groups_are_restricted',
         ),
-        migrations.AddField(
+        migrations.RenameField(
             model_name='instance',
-            name='requester',
-            field=models.ForeignKey(help_text='Initial request', null=True,
-                                    on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL,
-                                    verbose_name='Requester'),
+            old_name='spoc',
+            new_name='requester',
         ),
         migrations.AddField(
             model_name='instance',
@@ -72,7 +79,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='instance',
             name='quota_scope',
-            field=models.ForeignKey(default=profiles.models.scope.Scope.get_default_org,
+            field=models.ForeignKey(default=get_default_org,
                                     on_delete=django.db.models.deletion.PROTECT, related_name='quota_instances',
                                     related_query_name='quota_instance', to='profiles.scope'),
         ),
@@ -94,4 +101,5 @@ class Migration(migrations.Migration):
             model_name='instance',
             name='billing_group',
         ),
+        migrations.RunPython(remove_default_org_if_unused),
     ]

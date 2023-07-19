@@ -1,12 +1,11 @@
 from django.http import QueryDict
 from django_fsm import can_proceed
 from drf_yasg.utils import swagger_auto_schema
-from guardian.shortcuts import get_objects_for_user
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
@@ -14,16 +13,11 @@ from service_catalog.api.serializers import AcceptRequestSerializer, RequestSeri
     RequestMessageSerializer, AdminRequestSerializer
 from service_catalog.mail_utils import send_mail_request_update, send_email_request_canceled
 from service_catalog.models.request import Request
-from service_catalog.views import process_request
+from service_catalog.views import try_process_request
 
 
 class RequestStateMachine(ViewSet):
-    def get_permissions(self):
-        if self.action == 'cancel':
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(request_body=AcceptRequestSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
@@ -33,6 +27,8 @@ class RequestStateMachine(ViewSet):
         All fields of the survey is required, you can check the state the survey by performing a GET on this url.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.accept_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.accept):
             raise PermissionDenied
         serializer = AcceptRequestSerializer(data=request.data, target_request=target_request, user=request.user,
@@ -51,6 +47,10 @@ class RequestStateMachine(ViewSet):
         Get the survey prefilled by user/admin.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.accept_request', target_request):
+            raise PermissionDenied
+        if not can_proceed(target_request.accept):
+            raise PermissionDenied
         serializer = AcceptRequestSerializer(target_request.full_survey, target_request=target_request, user=request.user, read_only_form=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -61,6 +61,8 @@ class RequestStateMachine(ViewSet):
         Reject the request : change the state of the request to 'REJECTED'.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.reject_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.reject):
             raise PermissionDenied
         data = QueryDict.copy(request.data)
@@ -81,6 +83,8 @@ class RequestStateMachine(ViewSet):
         Re-submit the request : change the state of the request to 'SUBMITTED'.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.resubmit_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.re_submit):
             raise PermissionDenied
         data = QueryDict.copy(request.data)
@@ -101,6 +105,8 @@ class RequestStateMachine(ViewSet):
         Ask for more info : change the state of the request to 'NEED_INFO'.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.need_info_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.need_info):
             raise PermissionDenied
         data = QueryDict.copy(request.data)
@@ -121,9 +127,11 @@ class RequestStateMachine(ViewSet):
         Process the Tower/AWX job : change the state of the request to 'PROCESSING' then 'COMPLETE' or 'FAILED' depending on Tower/AWX job status.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.process_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.process):
             raise PermissionDenied
-        message = process_request(request.user, target_request)
+        message = try_process_request(request.user, target_request)
         if message:
             return Response(message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
@@ -134,8 +142,9 @@ class RequestStateMachine(ViewSet):
         """
         Cancel the request : change the state of the request to 'CANCELED', when instance still in 'PENDING' state it will be deleted.
         """
-        user_requests = get_objects_for_user(request.user, 'service_catalog.cancel_request')
-        target_request = get_object_or_404(user_requests, id=pk)
+        target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.cancel_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
         if target_request.cancel():
@@ -154,6 +163,8 @@ class RequestStateMachine(ViewSet):
         Archive the request : change the state of the request to 'ARCHIVED'.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.archive_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.archive):
             raise PermissionDenied
         target_request.archive()
@@ -167,6 +178,8 @@ class RequestStateMachine(ViewSet):
         Unarchive the request : change the state of the request to 'COMPLETE'.
         """
         target_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.unarchive_request', target_request):
+            raise PermissionDenied
         if not can_proceed(target_request.unarchive):
             raise PermissionDenied
         target_request.unarchive()

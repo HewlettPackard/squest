@@ -1,3 +1,4 @@
+from django.utils.html import format_html
 from django_tables2 import TemplateColumn, LinkColumn, CheckBoxColumn
 from django_tables2.utils import A
 
@@ -8,12 +9,9 @@ from Squest.utils.squest_table import SquestTable
 class RequestTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     id = LinkColumn("service_catalog:request_details", args=[A("id")])
-    actions = TemplateColumn(template_name='custom_columns/request_actions.html', orderable=False)
     date_submitted = TemplateColumn(template_name='custom_columns/generic_date_format.html')
-    state = TemplateColumn(template_name='custom_columns/request_state.html')
-    operation__name = TemplateColumn(template_name='custom_columns/request_operation_name.html')
-    instance__name = LinkColumn("service_catalog:instance_details", args=[A("instance__id")],
-                                verbose_name="Instance")
+    operation = LinkColumn()
+    instance = LinkColumn()
 
     def before_render(self, request):
         if request.user.is_superuser:
@@ -26,5 +24,9 @@ class RequestTable(SquestTable):
     class Meta:
         model = Request
         attrs = {"id": "request_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "id", "instance__name", "user__username", "date_submitted", "instance__service__name", "operation__name",
-                  "state", "actions")
+        fields = ("selection", "id", "instance", "user__username", "date_submitted", "instance__service", "operation",
+                  "state")
+
+    def render_state(self, record, value):
+        from service_catalog.views import map_request_state
+        return format_html(f'<strong class="text-{ map_request_state(value) }">{ value }</strong>')

@@ -19,8 +19,8 @@ class CustomerRequestCommentTest(BaseTestRequest):
             'comment_id': self.comment.id
         }
         self.data_to_edit = {"content": "comment edited"}
-        self.create_url = reverse('service_catalog:request_comment', kwargs=request)
-        self.edit_url = reverse('service_catalog:request_comment_edit', kwargs={**request, **comment})
+        self.create_url = reverse('service_catalog:requestmessage_create', kwargs=request)
+        self.edit_url = reverse('service_catalog:requestmessage_edit', kwargs={**request, **comment})
 
     def _assert_can_list_comment(self):
         response = self.client.get(self.create_url)
@@ -52,7 +52,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
         args = {
             'request_id': self.test_request.id
         }
-        url = reverse('service_catalog:request_comment', kwargs=args)
+        url = reverse('service_catalog:requestmessage_create', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(403, response.status_code)
 

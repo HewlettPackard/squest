@@ -13,7 +13,7 @@ class ServiceCreateTestCase(BaseTest):
 
     def setUp(self):
         super(ServiceCreateTestCase, self).setUp()
-        self.url = reverse('service_catalog:create_service')
+        self.url = reverse('service_catalog:service_create')
 
     def test_create_service(self):
         data = {

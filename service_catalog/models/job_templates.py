@@ -4,12 +4,17 @@ from django.db.models import Model, CharField, IntegerField, JSONField, ForeignK
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from Squest.utils.squest_model import SquestModel
 from . import BootstrapType, ExceptionServiceCatalog, TowerServer
 
 logger = logging.getLogger(__name__)
 
 
-class JobTemplate(Model):
+class JobTemplate(SquestModel):
+    class Meta:
+        unique_together = ('tower_id', 'tower_server',)
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
     name = CharField(max_length=100)
     tower_id = IntegerField()
     survey = JSONField(default=dict)
@@ -20,9 +25,6 @@ class JobTemplate(Model):
     @property
     def tower_url(self):
         return f"{self.tower_server.url}/#/templates/job_template/{self.tower_id}"
-
-    class Meta:
-        unique_together = ('tower_id', 'tower_server',)
 
     def __str__(self):
         return f"{self.name} ({self.tower_server.name})"

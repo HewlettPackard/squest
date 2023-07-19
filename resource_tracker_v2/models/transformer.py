@@ -1,21 +1,24 @@
-from django.db.models import Model, ForeignKey, CASCADE, FloatField, IntegerField, SET_NULL, CheckConstraint, F, Q
+from django.db.models import ForeignKey, CASCADE, FloatField, IntegerField, SET_NULL, CheckConstraint, F, Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 
+from Squest.utils.squest_model import SquestModel
 from resource_tracker_v2.models.attribute_definition import AttributeDefinition
 from resource_tracker_v2.models.resource_attribute import ResourceAttribute
 from resource_tracker_v2.models.resource_group import ResourceGroup
 
 
-class Transformer(Model):
-
+class Transformer(SquestModel):
     class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
         unique_together = (('resource_group', 'attribute_definition'),
-                           ('resource_group', 'attribute_definition', 'consume_from_resource_group', 'consume_from_attribute_definition'))
+                           ('resource_group', 'attribute_definition', 'consume_from_resource_group',
+                            'consume_from_attribute_definition'))
 
         constraints = [
-            CheckConstraint(name='cannot_consume_from_itself', check=~Q(resource_group=F('consume_from_resource_group')))
+            CheckConstraint(name='cannot_consume_from_itself',
+                            check=~Q(resource_group=F('consume_from_resource_group')))
         ]
 
     resource_group = ForeignKey(ResourceGroup, null=False, on_delete=CASCADE,
@@ -49,7 +52,8 @@ class Transformer(Model):
                        kwargs={"resource_group_id": self.resource_group.id})
 
     @classmethod
-    def is_loop_consumption_detected(cls, source_resource_group, source_attribute, target_resource_group, target_attribute):
+    def is_loop_consumption_detected(cls, source_resource_group, source_attribute, target_resource_group,
+                                     target_attribute):
         source_transformer = Transformer.objects.filter(resource_group=source_resource_group,
                                                         attribute_definition=source_attribute)
         if not source_transformer.exists():
@@ -105,9 +109,11 @@ class Transformer(Model):
     def progress_bar_color(self):
         reversed_color = self.yellow_threshold_percent_consumed < self.red_threshold_percent_consumed
         if isinstance(self.percent_consumed, int):
-            if int(self.percent_consumed) < self.yellow_threshold_percent_consumed and not int(self.percent_consumed) > self.red_threshold_percent_consumed:
+            if int(self.percent_consumed) < self.yellow_threshold_percent_consumed and not int(
+                    self.percent_consumed) > self.red_threshold_percent_consumed:
                 return "green" if reversed_color else "red"
-            if int(self.percent_consumed) > self.red_threshold_percent_consumed and not int(self.percent_consumed) < self.yellow_threshold_percent_consumed:
+            if int(self.percent_consumed) > self.red_threshold_percent_consumed and not int(
+                    self.percent_consumed) < self.yellow_threshold_percent_consumed:
                 return "red" if reversed_color else "green"
             return "yellow"
         return "gray"

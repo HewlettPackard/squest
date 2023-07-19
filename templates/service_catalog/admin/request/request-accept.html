@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
- #{{ target_request.id }} | Accept
+ #{{ object.id }} | Accept
 {%  endblock %}
 {% load static %}
 {% block main %}
@@ -18,11 +18,11 @@
                 <div class="row">
                     <div class="col-12 col-sm-6">
                         <strong>User spec</strong>
-                        <pre><code class="language-json">{{ target_request.instance.user_spec | pretty_json }}</code></pre>
+                        <pre><code class="language-json">{{ object.instance.user_spec | pretty_json }}</code></pre>
                     </div>
                     <div class="col-12 col-sm-6">
                         <strong>Admin spec</strong>
-                        <pre><code class="language-json">{{ target_request.instance.spec | pretty_json }}</code></pre>
+                        <pre><code class="language-json">{{ object.instance.spec | pretty_json }}</code></pre>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                             </div>
                         {% endif %}
                         <form class="form-horizontal"
-                              action="{% url 'service_catalog:admin_request_accept' target_request.id %}"
+                              action="{% url 'service_catalog:request_accept' object.id %}"
                               method="post">{% csrf_token %}
                             {% regroup form|dictsort:"field.group" by field.group as field_groups %}
                             {% for field_group in field_groups %}

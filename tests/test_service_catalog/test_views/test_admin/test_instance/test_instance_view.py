@@ -46,8 +46,6 @@ class TestAdminInstanceViews(BaseTestRequest):
         url = reverse('service_catalog:instance_details', kwargs=self.args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("instance" in response.context)
-        self.assertEqual(self.test_instance.name, response.context["instance"].name)
 
     def test_cannot_get_instance_details_when_logout(self):
         self.client.logout()

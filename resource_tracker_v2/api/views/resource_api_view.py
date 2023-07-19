@@ -1,17 +1,16 @@
 import copy
 
-from rest_framework import generics, status
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
+from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from resource_tracker_v2.api.serializers.resource_serializer import ResourceSerializer, ResourceCreateSerializer
 from resource_tracker_v2.filters.resource_filter import ResourceFilter
 from resource_tracker_v2.models import Resource, ResourceGroup
 
 
-class ResourceListCreate(generics.ListCreateAPIView):
-    permission_classes = [IsAdminUser]
+class ResourceListCreate(SquestListCreateAPIView):
     serializer_class = ResourceSerializer
     filterset_class = ResourceFilter
 
@@ -31,12 +30,11 @@ class ResourceListCreate(generics.ListCreateAPIView):
         if serializer.is_valid():
             new_resource = serializer.save()
             read_serializer = ResourceSerializer(instance=new_resource)
-            return Response(read_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(read_serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
-class ResourceDetails(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
+class ResourceDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = ResourceSerializer
 
     def get_queryset(self):

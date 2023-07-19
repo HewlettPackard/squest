@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="content-wrapper" style="min-height: 278px;">
+    <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
@@ -60,15 +60,15 @@
             load_state($(this).val());
         });
         // by default we load Request Model
-        $(document).ready( function () {
-            load_state("Request");
+        $(document).ready(function () {
+            load_state($("#id_model option:selected").val());
         });
         $("#id_service").change(function () {
             load_operation($(this).val());
         });
         // by default None operation
-        $(document).ready( function () {
-            load_operation('0');
+        $(document).ready(function () {
+            load_operation($("#id_service option:selected").val());
         });
     </script>
 {% endblock %}
