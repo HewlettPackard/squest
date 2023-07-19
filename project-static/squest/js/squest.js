@@ -156,7 +156,7 @@ function sync_job_template() {
         },
     }).done((res) => {
         $(document).Toasts('create', {
-            title: 'Job template sync from Tower/AWX',
+            title: 'Job template sync from Ansible Controller',
             body: 'Started',
             autohide: true,
             delay: 3000,
@@ -171,7 +171,7 @@ function sync_job_template() {
     }).fail((err) => {
         alert_error("Error during API call");
         $(document).Toasts('create', {
-            title: 'Job template sync from Tower/AWX',
+            title: 'Job template sync from Ansible Controller',
             body: 'Error',
             autohide: true,
             delay: 3000,

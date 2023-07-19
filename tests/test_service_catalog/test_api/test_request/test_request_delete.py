@@ -42,7 +42,7 @@ class TestApiRequestDelete(BaseTestRequest):
         self.client.logout()
         self.client.force_login(user=self.standard_user)
         response = self.client.delete(self.get_request_details_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_delete_request_when_logout(self):
         self.client.logout()

@@ -20,7 +20,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <form action='{% url 'service_catalog:delete_service' object.id %}' method='POST'>{% csrf_token %}
+                        <form action='{% url 'service_catalog:service_delete' object.id %}' method='POST'>{% csrf_token %}
                             <p>Do you want to delete the service "{{ object.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
                             <a class="btn btn-default" href="{% url 'service_catalog:service_list' %}">Cancel</a>

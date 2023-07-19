@@ -1,7 +1,4 @@
-{% has_perm request.user "service_catalog.request_operation_on_instance" instance as request_operation_perms %}
-{% if instance.state == 'AVAILABLE' %}
-    <a href="{% url 'service_catalog:instance_request_new_operation' instance_id=instance.id operation_id=record.id %}"
-       class="btn btn-info bg-sm{% if not request_operation_perms %} disabled{% endif %}">
-        <i class="fas fa-play"></i> Request
-    </a>
-{% endif %}
+<a href="{% url 'service_catalog:instance_request_new_operation' instance_id=object.id operation_id=record.id %}"
+   class="btn btn-info bg-sm">
+    <i class="fas fa-play" ></i> Request
+</a>

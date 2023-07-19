@@ -21,6 +21,6 @@ class TestUserSerializer(BaseTest):
         self.assertEqual(serializer.data['email'], self.superuser.email)
         self.assertEqual(serializer.data['username'], self.superuser.username)
         self.assertEqual(serializer.data['profile']['request_notification_enabled'], True)
-        self.assertEqual(serializer.data['profile']['support_notification_enabled'], True)
+        self.assertEqual(serializer.data['profile']['instance_notification_enabled'], True)
         self.assertEqual(serializer.data['profile']['request_notification_filters'], [])
         self.assertEqual(serializer.data['profile']['instance_notification_filters'], [])

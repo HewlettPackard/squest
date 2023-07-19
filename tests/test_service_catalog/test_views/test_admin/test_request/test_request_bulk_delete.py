@@ -36,7 +36,7 @@ class RequestBulkDeleteTest(BaseTestRequest):
     def test_user_cannot_confirm_bulk_delete(self):
         self.client.force_login(self.standard_user)
         response = self.client.post(self.url_confirm, data=self.data)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 403)
 
     def test_cannot_confirm_bulk_delete_when_logout(self):
         self.client.logout()
@@ -57,7 +57,7 @@ class RequestBulkDeleteTest(BaseTestRequest):
     def test_user_cannot_bulk_delete(self):
         self.client.force_login(self.standard_user)
         response = self.client.post(self.url_delete, data=self.data)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Request.objects.filter(id__in=self.request_to_delete_list).count(), 5)
 
     def test_cannot_bulk_delete_when_logout(self):

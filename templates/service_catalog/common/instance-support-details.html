@@ -4,9 +4,9 @@
 {% endblock %}
 {% load static %}
 {% block content %}
-    {% has_perm request.user "service_catalog.comment_support" instance as can_comment_support %}
+    {% has_perm request.user "service_catalog.add_supportmessage" instance as can_comment_support %}
     {% has_perm request.user "service_catalog.close_support" instance as can_close_support %}
-    {% has_perm request.user "service_catalog.open_support" instance as can_open_support %}
+    {% has_perm request.user "service_catalog.change_support" instance as can_change_support %}
     <!-- Main content -->
     <div class="content-wrapper">
         <section class="content-header">
@@ -32,7 +32,7 @@
                                     <div class="post">
                                         <div class="user-block">
                                             <img class="img-circle img-bordered-sm" src="
-                                            {% if message.sender.is_superuser %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}"
+                                            {% if message.sender.is_staff %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}"
                                                  alt="user image">
                                             <span class="username">
                                                 <a href="#">{{ message.sender.username }}</a>
@@ -77,7 +77,7 @@
                                 {% endif %}
                                 {% if support.state == "CLOSED" %}
                                     <a href="{% url 'service_catalog:instance_support_reopen' instance_id=instance.id support_id=support.id %}"
-                                       class="btn btn-success{% if not can_open_support %} disabled{% endif %}">
+                                       class="btn btn-success{% if not can_change_support %} disabled{% endif %}">
                                         <i class="fas fa-undo"></i> Re-open
                                     </a>
                                 {% endif %}

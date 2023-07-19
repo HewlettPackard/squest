@@ -59,26 +59,42 @@ def is_action_dropdown_disabled(args):
     if target_action == "cancel":
         if not can_proceed(target_request.cancel):
             return "disabled"
-    if target_action == "need_info":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "need_info":
         if not can_proceed(target_request.need_info):
             return "disabled"
-    if target_action == "reject":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "reject":
         if not can_proceed(target_request.reject):
             return "disabled"
-    if target_action == "accept":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "accept":
         if not can_proceed(target_request.accept):
             return "disabled"
-    if target_action == "process":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "process":
         if not can_proceed(target_request.process):
             return "disabled"
-    if target_action == "re_submit":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "re_submit":
         if not can_proceed(target_request.re_submit):
             return "disabled"
-    if target_action == "archive":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "archive":
         if not can_proceed(target_request.archive):
             return "disabled"
-    if target_action == "unarchive":
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
+            return "disabled"
+    elif target_action == "unarchive":
         if not can_proceed(target_request.unarchive):
+            return "disabled"
+        elif not user.has_perm('service_catalog.cancel_request', target_request):
             return "disabled"
     return ""
 
@@ -163,6 +179,6 @@ def squest_date_format(date_to_format):
 @register.filter(name="get_field_type")
 def get_field_type(tower_survey_field):
     for survey in tower_survey_field.operation.job_template.survey["spec"]:
-        if survey["question_name"] == tower_survey_field.name:
+        if survey["variable"] == tower_survey_field.name:
             return survey["type"]
     return ""

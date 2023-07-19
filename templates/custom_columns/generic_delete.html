@@ -1,8 +1,25 @@
 {% with app=record|to_app_name|lower %}
     {% with class=record|to_class_name|lower %}
-        <a href="{% url app|add:":"|add:class|add:"_delete" record.id %}" class="btn btn-danger bg-sm"
-           title="Delete">
-            <i class="fas fa-trash"></i>
-        </a>
+        {% with perm=app|add:".delete_"|add:class %}
+            {% has_perm request.user perm as can_delete %}
+            {% if parent_id %}
+                <span {% if not can_delete %} title="Permission {{ perm }} needed" {% endif %}>
+
+                <a href="{% url app|add:":"|add:class|add:"_delete" parent_id record.id %}"
+                   class="btn btn-danger bg-sm{% if not can_delete %} disabled{% endif %}"
+                   title="Delete">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </span>
+            {% else %}
+                <span {% if not can_delete %} title="Permission {{ perm }} needed" {% endif %}>
+                <a href="{% url app|add:":"|add:class|add:"_delete" record.id %}"
+                   class="btn btn-danger bg-sm{% if not can_delete %} disabled{% endif %}"
+                   title="Delete">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </span>
+            {% endif %}
+        {% endwith %}
     {% endwith %}
 {% endwith %}

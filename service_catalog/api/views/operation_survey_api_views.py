@@ -1,19 +1,18 @@
-from django.http import Http404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from service_catalog.api.serializers.operation_survey_serializer import TowerSurveyFieldSerializer
-from service_catalog.models import Service, Operation
+from service_catalog.models import Operation
 from service_catalog.models.tower_survey_field import TowerSurveyField
 
 
 class OperationSurveyAPI(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     @staticmethod
     def get_object(operation_id, obj_name):
@@ -32,22 +31,17 @@ class OperationSurveyAPI(APIView):
 
     @swagger_auto_schema(responses={200: TowerSurveyFieldSerializer(many=True)})
     def get(self, request, service_id, pk):
-        service = get_object_or_404(Service, id=service_id)
-        try:
-            operation = Operation.objects.get(id=pk, service=service)
-        except Operation.DoesNotExist:
-            raise Http404
+        operation = get_object_or_404(Operation, pk=pk, service__id=service_id)
+        if not request.user.has_perm('service_catalog.change_operation', operation):
+            raise PermissionDenied
         serializer = TowerSurveyFieldSerializer(TowerSurveyField.objects.filter(operation=operation), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: TowerSurveyFieldSerializer(many=True)})
     def put(self, request, service_id, pk, *args, **kwargs):
-        service = get_object_or_404(Service, id=service_id)
-        try:
-            operation = Operation.objects.get(id=pk, service=service)
-        except Operation.DoesNotExist:
-            raise Http404
-
+        operation = get_object_or_404(Operation, pk=pk, service__id=service_id)
+        if not request.user.has_perm('service_catalog.change_operation', operation):
+            raise PermissionDenied
         data = request.data
         names = [field['name'] for field in data]
         self.validate_name_as_an_id(operation_id=operation.id, name_list=names)

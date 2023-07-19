@@ -1,0 +1,8 @@
+{% with perm=django_content_type.app_label|add:".add_"|add:django_content_type.model %}
+    {% has_perm request.user perm as can_add %}
+    <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
+        <a class="btn btn-success {% if not can_add %} disabled{% endif %}" href="{{ add_url }}">
+            <i class="fas fa-plus"></i> Add
+        </a>
+    </span>
+{% endwith %}

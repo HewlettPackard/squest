@@ -47,7 +47,7 @@ def _get_admin_emails(object_to_filter):
     email_admins = list()
     for admin in admins:
         if admin.email:
-            if isinstance(object_to_filter, Instance) and admin.profile.support_notification_enabled:
+            if isinstance(object_to_filter, Instance) and admin.profile.instance_notification_enabled:
                 if admin.profile.is_notification_authorized_for_instance(object_to_filter):
                     email_admins.append(admin.email)
             elif isinstance(object_to_filter, Request) and admin.profile.request_notification_enabled:

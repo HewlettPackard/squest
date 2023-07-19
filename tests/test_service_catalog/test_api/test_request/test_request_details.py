@@ -71,13 +71,12 @@ class TestApiRequestDetails(BaseTestRequest):
         check_data_in_dict(self, self.expected_data_list, data_list)
         self.assertIn('admin_fill_in_survey', response.data.keys())
 
-
     def test_customer_cannot_get_non_own_request_detail(self):
         self.client.force_login(user=self.standard_user)
         self.kwargs['pk'] = self.test_request_standard_user_2.id
         url = reverse('api_request_details', kwargs=self.kwargs)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_get_request_details_when_logout(self):
         self.client.logout()

@@ -1,6 +1,0 @@
-{% with kwargs=kwargs|default:"" %}
-    <a class="btn btn-success float-sm-right"
-       href="{% url app_name|add:":"|add:object_name|add:"_create"|add:kwargs %}">
-        <i class="fas fa-plus"></i> Add
-    </a>
-{% endwith %}

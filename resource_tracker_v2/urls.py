@@ -36,7 +36,7 @@ urlpatterns = [
     path('tool/resource_group/load-resource-group-attribute/', views.ajax_load_attribute,
          name='ajax_load_attribute'),
     path('resource_group/<int:resource_group_id>/resources/', views.ResourceListView.as_view(),
-         name='resourcegroup_resource_list'),
+         name='resource_list'),
     path('resource_group/<int:resource_group_id>/resources/create/', views.ResourceCreateView.as_view(),
          name='resourcegroup_resource_create'),
     path('resource_group/<int:resource_group_id>/resources/<int:resource_id>/edit/', views.ResourceEditView.as_view(),

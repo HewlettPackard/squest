@@ -13,7 +13,24 @@
         </div>
         <div class="content">
             <div class="container-fluid">
-                <div class="card card-danger">
+                {% if error_message %}
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ error_message }}</h3>
+                        </div>
+                        {% if protected_objects %}
+                            <div class="card-body">
+                                <a href="{{ object.get_absolute_url }}">{{ object }}</a> still referenced in:
+                                <ul>
+                                    {% for obj in protected_objects %}
+                                        <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="card card-danger">
                     <div class="card-header">
                         <h3 class="card-title">{{ confirm_text }}</h3>
                     </div>
@@ -37,6 +54,7 @@
                             </button>
                         </form>
                     </div>
+                {% endif %}
                 </div>
             </div>
         </div>
