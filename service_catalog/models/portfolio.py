@@ -1,7 +1,10 @@
-from django.db.models import Model, ForeignKey, SET_NULL, CharField, ImageField
+from django.db.models import ForeignKey, SET_NULL, CharField, ImageField
+from django.urls import reverse_lazy
+
+from Squest.utils.squest_model import SquestModel
 
 
-class Portfolio(Model):
+class Portfolio(SquestModel):
     name = CharField(max_length=100)
     description = CharField(max_length=500, blank=True)
     image = ImageField(upload_to='portfolio_image', blank=True)
@@ -15,6 +18,9 @@ class Portfolio(Model):
     )
     description_doc = ForeignKey('service_catalog.Doc', blank=True, null=True, on_delete=SET_NULL,
                                  verbose_name='Description documentation')
+
+    def get_absolute_url(self):
+        return reverse_lazy("service_catalog:portfolio_list")
 
     def __str__(self):
         return self.name

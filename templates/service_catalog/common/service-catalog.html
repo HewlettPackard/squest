@@ -1,26 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}
- Service catalog
-{%  endblock %}
+    Service catalog
+{% endblock %}
 {% load static %}
 {% block header_button %}
-    {% if request.user.is_superuser %}
-        <a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:service_list' %}">
-            <i class="fas fa-list"></i> All services
-        </a>
-        <a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:portfolio_list' %}">
-            <i class="fas fa-list"></i> All portfolios
-        </a>
-    {% endif %}
+{% has_perm request.user "service_catalog.list_service" as can_list_service %}
+{% has_perm request.user "service_catalog.list_portfolio" as can_list_portfolio %}
+{% if can_list_service %}
+    <a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:service_list' %}">
+        <i class="fas fa-list"></i> All services
+    </a>
+{% endif %}
+{% if can_list_portfolio %}
+<a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:portfolio_list' %}">
+    <i class="fas fa-list"></i> All portfolios
+</a>
+{% endif %}
 {% endblock %}
 {% block main %}
     <div class="col-md-12">
         <div class="row">
-            {%  if portfolio_list %}
+            {% if portfolio_list %}
                 {% for portfolio in portfolio_list %}
                     <div class="col-sm-12 col-lg-2 mb-4">
                         <div class="card h-100">
-                            <img class="card-img-top" src="{% if portfolio.image %}{{ portfolio.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                            <img class="card-img-top" src="
+                                    {% if portfolio.image %}{{ portfolio.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Portfolio image">
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -32,7 +37,8 @@
                                 <a href="{% url 'service_catalog:service_catalog_list' %}?parent_portfolio={{ portfolio.id }}"
                                    class="btn btn-default">Open</a>
                                 {% if portfolio.description_doc %}
-                                    <a title="Description documentation" href="{% url 'service_catalog:doc_show' portfolio.description_doc.id %}"
+                                    <a title="Description documentation"
+                                       href="{% url 'service_catalog:doc_show' portfolio.description_doc.id %}"
                                        class="text-info float-right"><i class="fas fa-2x fa-info-circle"></i></a>
                                 {% endif %}
                             </div>
@@ -40,11 +46,12 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            {%  if service_list %}
+            {% if service_list %}
                 {% for service in service_list %}
                     <div class="col-sm-12 col-lg-2 mb-4">
                         <div class="card h-100">
-                            <img class="card-img-top" src="{% if service.image %}{{ service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                            <img class="card-img-top" src="
+                                    {% if service.image %}{{ service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Service image">
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -56,7 +63,8 @@
                                 <a href="{% url 'service_catalog:create_operation_list' service.id %}"
                                    class="btn btn-primary">Order</a>
                                 {% if service.description_doc %}
-                                    <a title="Description documentation" href="{% url 'service_catalog:doc_show' service.description_doc.id %}"
+                                    <a title="Description documentation"
+                                       href="{% url 'service_catalog:doc_show' service.description_doc.id %}"
                                        class="text-info float-right"><i class="fas fa-2x fa-info-circle"></i></a>
                                 {% endif %}
                             </div>

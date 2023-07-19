@@ -36,7 +36,7 @@ class TestGraphViews(BaseTestResourceTrackerV2):
         self.client.login(username=self.standard_user.username, password=self.common_password)
         url = reverse('resource_tracker_v2:resource_tracker_graph')
         response = self.client.get(url)
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(403, response.status_code)
 
     def test_cannot_get_resource_tracker_graph_logout(self):
         self.client.logout()

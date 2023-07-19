@@ -1,22 +1,20 @@
 {% extends 'base.html' %}
 {% load render_table from django_tables2 %}
-
+{% block begin_content %}
+    {% with action_url=action_url|default:"" %}
+        <form method="post" action="{{ action_url }}">
+        {% csrf_token %}
+    {% endwith %}
+{% endblock %}
 {% block header_button %}
-    {% if filter %}
-        <a class="btn btn-default float-right ml-1" data-widget="control-sidebar">
-            <i class="fas fa-sliders-h"></i>
-        </a>
-    {% endif %}
     {% if html_button_path %}
         {% include html_button_path %}
     {% endif %}
-{% endblock %}
-
-{% block start_content %}
-    {% with action_url=action_url|default:"" %}
-        <form method="post" action={{ action_url }}>
-            {% csrf_token %}
-    {% endwith %}
+    {% if filter %}
+        <a class="btn btn-default" data-widget="control-sidebar">
+            <i class="fas fa-sliders-h"></i>
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -24,45 +22,26 @@
         <div class="row">
             <div class="col-12">
                 {% if table.data.data %}
-                <div class="card">
-                    <div class="card-body">
-                        {% render_table table %}
-                        </form>
+                    <div class="card">
+                        <div class="card-body">
+                            {% render_table table %}
+                        </div>
                     </div>
-                </div>
                 {% else %}
                     <div class="alert alert-info alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                         <h4><i class="icon fas fa-info }}"></i> No data</h4>
-                        There is no data to show
+                        There is no data to show or you don't have required permission
                     </div>
-                    </form>
                 {% endif %}
             </div>
-            {% if filter %}
-                <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }}" style="display: block; width: 700px">
-                    <div class="row">
-                        <a class="nav-link float-left" data-widget="control-sidebar">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </div>
-                    <div class="p-3 control-sidebar-content">
-                        <div class="row pb-3">
-                            <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
-                        </div>
-
-                        <!-- /.card-header -->
-                        {% include 'generics/form_edit.html' with form=filter.form action='apply' method='get' %}
-                    </div>
-                </aside>
-            {% endif %}
         </div>
     </div>
     {% load static %}
     <script>
         function toggle(source) {
             checkboxes = document.getElementsByName('selection');
-            for(var i in checkboxes)
+            for (var i in checkboxes)
                 checkboxes[i].checked = source.checked;
         }
     </script>
@@ -72,5 +51,26 @@
 {% endblock %}
 
 {% block end_content %}
-        </form>
+    </form>
+{% endblock %}
+
+
+{% block right_aside %}
+    {% if filter %}
+        <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }}"
+               style="display: block; width: 50%">
+            <div class="row">
+                <a class="nav-link float-left" data-widget="control-sidebar">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="p-3 control-sidebar-content">
+                <div class="row pb-3">
+                    <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+                </div>
+                {% include 'generics/form_edit.html' with form=filter.form action='apply' method='get' %}
+
+            </div>
+        </aside>
+    {% endif %}
 {% endblock %}

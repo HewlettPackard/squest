@@ -20,7 +20,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.ocp_projects.id
         }
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_resource_list', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:resource_list', kwargs=args))
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data),
                          Resource.objects.filter(resource_group=self.ocp_projects).count())

@@ -13,7 +13,7 @@ class GlobalHookDeleteViewsTest(BaseTest):
                                                           state="PROVISIONING",
                                                           job_template=self.job_template_test)
         args = {
-            "globalhook_id": self.global_hook_test.id
+            "pk": self.global_hook_test.id
         }
         self.url = reverse('service_catalog:globalhook_delete', kwargs=args)
 

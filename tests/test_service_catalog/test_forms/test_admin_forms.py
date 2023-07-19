@@ -17,7 +17,7 @@ class TestServiceRequestForm(BaseTest):
             'float_var': '0.6'
         }
         self.test_instance = Instance.objects.create(name="test_instance_1", service=self.service_test,
-                                                     requester=self.standard_user)
+                                                     requester=self.standard_user, quota_scope=self.test_quota_scope)
         # add a first request
         self.test_request = Request.objects.create(fill_in_survey=data,
                                                    instance=self.test_instance,

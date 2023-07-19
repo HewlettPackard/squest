@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_celery_results',
     'django_celery_beat',
-    'guardian',
     'tempus_dominus',
     'django_node_assets',
     'django_filters',
@@ -184,6 +183,7 @@ if LDAP_ENABLED and not TESTING:
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
         'django_auth_ldap.backend.LDAPBackend',
+        'Squest.utils.squest_rbac.SquestRBACBackend',
     )
 
 # Internationalization

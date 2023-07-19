@@ -9,6 +9,7 @@ from Squest.utils.squest_model_form import SquestModelForm
 
 class AnnouncementForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super(AnnouncementForm, self).__init__(*args, **kwargs)
         self.fields['date_start'].widget = DateTimePicker(
             options={
@@ -55,3 +56,9 @@ class AnnouncementForm(SquestModelForm):
     class Meta:
         model = Announcement
         fields = ['title', 'message', 'date_start', 'date_stop', 'type']
+
+    def save(self, commit=True):
+        announcement = super().save(commit=False)
+        announcement.created_by = self.user
+        announcement.save()
+        return announcement

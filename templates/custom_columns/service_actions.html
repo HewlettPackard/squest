@@ -1,11 +1,4 @@
 <a href="{% url 'service_catalog:create_operation_list' record.id %}" class="btn btn-info{% if not record.enabled %} disabled{% endif %}" title="Request">
     <i class="fas fa-clipboard-check"></i>
 </a>
-{% if request.user.is_superuser %}
-<a href="{% url 'service_catalog:edit_service' record.id %}" class="btn btn-primary bg-sm" title="Edit">
-    <i class="fas fa-pencil-alt"></i>
-</a>
-<a href="{% url 'service_catalog:delete_service' record.id %}" class="btn btn-danger bg-sm" title="Delete">
-    <i class="fas fa-trash"></i>
-</a>
-{% endif %}
+{% include 'custom_columns/generic_actions.html' %}

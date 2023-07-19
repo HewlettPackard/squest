@@ -19,27 +19,27 @@ urlpatterns = [
     path('user/<int:pk>/', views.UserDetailsView.as_view(), name='user_details'),
 
     # request notifications
-    path('notification/request/switch/', views.request_notification_switch, name='request_notification_switch'),
-    path('notification/notification_filter/request/create/', views.request_notification_create,
-         name='request_notification_create'),
-    path('notification/notification_filter/request/<int:request_notification_id>/delete/',
-         views.request_notification_delete,
-         name='request_notification_delete'),
-    path('notification/notification_filter/request/<int:request_notification_id>/edit/',
-         views.request_notification_edit,
-         name='request_notification_edit'),
+    path('notification/request/switch/', views.requestnotification_switch, name='requestnotification_switch'),
+    path('notification/notification_filter/request/create/', views.RequestNotificationCreateView.as_view(),
+         name='requestnotification_create'),
+    path('notification/notification_filter/request/<int:pk>/delete/',
+         views.RequestNotificationDeleteView.as_view(),
+         name='requestnotification_delete'),
+    path('notification/notification_filter/request/<int:pk>/edit/',
+         views.RequestNotificationEditView.as_view(),
+         name='requestnotification_edit'),
 
-    # support notifications
-    path('notification/support/switch/', views.support_notification_switch,
-         name='support_notification_switch'),
-    path('notification/notification_filter/support/create/', views.support_notification_create,
-         name='support_notification_create'),
-    path('notification/notification_filter/support/<int:support_notification_id>/delete/',
-         views.support_notification_delete,
-         name='support_notification_delete'),
-    path('notification/notification_filter/support/<int:support_notification_id>/edit/',
-         views.support_notification_edit,
-         name='support_notification_edit'),
+    # instance notifications
+    path('notification/instance/switch/', views.instancenotification_switch,
+         name='instancenotification_switch'),
+    path('notification/notification_filter/instance/create/', views.InstanceNotificationCreateView.as_view(),
+         name='instancenotification_create'),
+    path('notification/notification_filter/instance/<int:pk>/delete/',
+         views.InstanceNotificationDeleteView.as_view(),
+         name='instancenotification_delete'),
+    path('notification/notification_filter/instance/<int:pk>/edit/',
+         views.InstanceNotificationEditView.as_view(),
+         name='instancenotification_edit'),
 
     # Scope
     path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
@@ -65,8 +65,6 @@ urlpatterns = [
     path('organization/<int:pk>/edit/', views.OrganizationEditView.as_view(), name="organization_edit"),
     path('organization/<int:pk>/delete/', views.OrganizationDeleteView.as_view(), name="organization_delete"),
     path('organization/<int:pk>/', views.OrganizationDetailView.as_view(), name="organization_details"),
-
-    path('organization/<int:pk>/team/create/', views.OrganizationTeamCreateView.as_view(), name="organization_team_create"),
 
 
     # Team

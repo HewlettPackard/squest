@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}
-    #{{ instance.id }} | Instance
+    #{{ object.id }} | Instance
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
+
 {% block header_button %}
     <div class="float-right">
+        {% has_perm request.user "service_catalog.add_support" object as can_add_support %}
+        {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
+            <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
+               href="{% url 'service_catalog:instance_new_support' object.id %}">
+                <i class="fas fa-link"></i> Open new support
+            </a>
+        {% else %}
+            <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
+               href="{% url 'service_catalog:instance_new_support' object.id %}">
+                <i class="fas fa-plus"></i> Open new support
+            </a>
+        {% endif %}
         {% has_perm request.user "service_catalog.change_instance" object as permission_edit %}
         {% if permission_edit %}
-            <a href="{% url 'service_catalog:instance_edit' instance.id %}"
+            <a href="{% url 'service_catalog:instance_edit' object.id %}"
                class="btn btn-primary">
                 <i class="fas fa-pencil-alt"></i>
             </a>
@@ -16,144 +29,179 @@
         {% has_perm request.user "service_catalog.delete_instance" object as permission_delete %}
         {% if permission_delete %}
 
-            <a href="{% url 'service_catalog:instance_delete' instance.id %}"
+            <a href="{% url 'service_catalog:instance_delete' object.id %}"
                class="btn btn-danger">
                 <i class="fas fa-trash"></i>
             </a>
         {% endif %}
-
     </div>
 {% endblock %}
 {% block custom_links %}
     <div class="float-right">
         {% load custom_links %}
         <div class="btn-toolbar">
-            {% custom_links request.user instance %}
+            {% custom_links request.user object %}
         </div>
     </div>
 {% endblock %}
 {% block main %}
-    {% load guardian_tags %}
-    {% get_obj_perms request.user for instance as "instance_perms" %}
-    <div class="container-fluid">
-        <div class="row">
-            <section class="col-lg-3">
-                <div class="card card-{{ instance.state |map_instance_state }}">
-                    <div class="card-header">
-                        <h3 class="card-title">Details</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <img class="card-img-top" src="
+<div class="container-fluid">
+    <div class="row">
+        <section class="col-lg-3">
+            <div class="card card-{{ object.state |map_instance_state }}">
+                <div class="card-header">
+                    <h3 class="card-title">Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <img class="card-img-top" src="
 
-                                    {% if instance.service.image %}{{ instance.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
-                                 alt="Service image">
-                        </div>
-                        <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item">
-                                <b>Name</b> <a class="float-right">{{ instance.name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Service</b> {% if request.user.is_superuser %}
-                                <a href="{% url 'service_catalog:edit_service' instance.service.id %}"
-                                   class="float-right">{{ instance.service.name }}</a>{% else %}
-                                <a class="float-right">{{ instance.service.name }}</a>{% endif %}
-                            </li>
-                            <li class="list-group-item">
-                                <b>State</b> <strong
-                                    class="float-right text-{{ instance.state |map_instance_state }}">{{ instance.state }}</strong>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Quota scope</b> <a href="{{ instance.quota_scope.get_absolute_url }}"
-                                                      class="float-right">{{ instance.quota_scope }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>RBAC scope</b>
-                                <a href="{{ instance.scopes.get_absolute_url }}"
-                                   class="float-right">{{ instance.quota_scope }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>SPOC</b> <a href="mailto:{{ instance.spoc.email }}"
-                                               class="float-right">{{ instance.spoc.username }}</a>
-                            </li>
-                            {% if request.user.is_superuser %}
-                                <li class="list-group-item">
-                                    <b>Resources</b>
-                                    {% for resource in instance.resources.all %}
-                                        <a class="float-right"
-                                           href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
-                                            {{ resource.name }}
-                                        </a> <br>
-                                    {% endfor %}
-                                </li>
+
+
+
+                                {% if object.service.image %}{{ object.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                             alt="Service image">
+                    </div>
+                    <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item">
+                            <b>Name</b> <a class="float-right">{{ object.name }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Service</b>
+                            {% has_perm request.user "service_catalog.change_service" object.service as can_edit_service %}
+
+                            {% if can_edit_service %}
+                                <a href="{% url 'service_catalog:service_edit' object.service.id %}"
+                                   class="float-right">{{ object.service.name }}</a>
+                            {% else %}
+                                <a class="float-right">{{ object.service.name }}</a>
                             {% endif %}
-                            <li class="list-group-item border-bottom-0">
-                                <b>Docs</b>
-                                {% for doc in instance.docs %}
-                                    <a class="float-right" href="{% url 'service_catalog:doc_show' doc.id %}">
-                                        {{ doc.title }}
+                        </li>
+                        <li class="list-group-item">
+                            <b>State</b> <strong
+                                class="float-right text-{{ object.state |map_instance_state }}">{{ object.state }}</strong>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Quota scope</b> <a href="{{ object.quota_scope.get_absolute_url }}"
+                                                  class="float-right">{{ object.quota_scope }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>RBAC scope</b>
+                            {% for scope in object.get_scopes %}
+                                <a class="float-right" href="{{ scope.get_absolute_url }}">
+                                    {{ scope }}
+                                </a> <br>
+                            {% endfor %}
+                        </li>
+                        <li class="list-group-item">
+                            <b>Requester</b> <a href="mailto:{{ object.requester.email }}"
+                                                class="float-right">{{ object.requester.username }}</a>
+                        </li>
+                        {% has_perm request.user "resource_tracker_v2.change_resource" object as can_change_resource %}
+                        {% if can_change_resource %}
+                            <li class="list-group-item">
+                                <b>Resources</b>
+                                {% for resource in object.resources.all %}
+                                    <a class="float-right"
+                                       href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
+                                        {{ resource.name }}
                                     </a> <br>
                                 {% endfor %}
                             </li>
-                        </ul>
-                    </div>
+                        {% endif %}
+                        <li class="list-group-item border-bottom-0">
+                            <b>Docs</b>
+                            {% for doc in object.docs %}
+                                <a class="float-right" href="{% url 'service_catalog:doc_show' doc.id %}">
+                                    {{ doc.title }}
+                                </a> <br>
+                            {% endfor %}
+                        </li>
+                    </ul>
                 </div>
-            </section>
-            <section class="col-lg-9">
-                <div class="card">
-                    <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#operations" data-toggle="tab">Operations</a>
+            </div>
+        </section>
+        <section class="col-lg-9">
+            <div class="card">
+                <div class="card-header p-2">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active" href="#operations"
+                                                data-toggle="tab">Operations</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#admin-operations" data-toggle="tab">Admin
+                            operations</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
+                        {% has_perm request.user "service_catalog.view_admin_spec_instance" object as can_view_admin_spec_instance %}
+                        {% if can_view_admin_spec_instance %}
+                            <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
-                            {% if request.user.is_superuser %}
-                                <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a>
-                                </li>{% endif %}
-                            <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="active tab-pane" id="operations">
-                                {% render_table operations_table %}
-                            </div>
-                            <div class="tab-pane" id="support">
-                                {% if instance.service.external_support_url is not None and instance.service.external_support_url != '' %}
-                                    <p class="text-muted">Supports for this service are redirected to an external
-                                        tool</p>
-                                    <a class="btn btn-success"
-                                       href="{% url 'service_catalog:instance_new_support' instance.id %}">
-                                        <i class="fas fa-link"></i> Open new support
-                                    </a>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="active tab-pane" id="operations">
+                            {% if operations_table %}
+                                {% if object.state == "AVAILABLE" %}
+                                    {% render_table operations_table %}
                                 {% else %}
-                                    <a href="{% url 'service_catalog:instance_new_support' instance.id %}"
-                                       class="float-right btn btn-success">
-                                        <i class="fas fa-plus"></i> Open new support
-                                    </a>
-                                    {% render_table supports_table %}
+                                    <p> Instance not available</p>
                                 {% endif %}
-                            </div>
-                            {% if request.user.is_superuser %}
-                                <div class="tab-pane" id="spec">
-                                    <pre><code style="border: 0; padding: 0; margin: 0;"
-                                               class="language-json">{{ instance.spec | pretty_json }}</code></pre>
-                                </div>
+                            {% else %}
+                                <p> Permission <b>service_catalog.request_on_instance</b>
+                                    required</p>
                             {% endif %}
-                            <div class="tab-pane" id="user-spec">
+
+                        </div>
+                        <div class="tab-pane" id="admin-operations">
+                            {% if admin_operations_table %}
+                                {% if object.state == "AVAILABLE" %}
+                                    {% render_table admin_operations_table %}
+                                {% else %}
+                                    <p> Instance not available</p>
+                                {% endif %}
+                            {% else %}
+                                <p> Permission
+                                    <b>service_catalog.admin_request_on_instance</b> required
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="support">
+                            {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
+                                <p class="text-muted">Supports for this service are redirected to an external
+                                    tool</p>
+                            {% elif supports_table %}
+                                {% render_table supports_table %}
+                            {% else %}
+                                <p> Permission <b>service_catalog.view_support</b> required</p>
+                            {% endif %}
+                        </div>
+                        {% if can_view_admin_spec_instance %}
+                            <div class="tab-pane" id="spec">
+                                    <pre><code style="border: 0; padding: 0; margin: 0;"
+                                               class="language-json">{{ object.spec | pretty_json }}</code></pre>
+                            </div>
+                        {% endif %}
+                        <div class="tab-pane" id="user-spec">
                                 <pre><code style="border: 0; padding: 0; margin: 0;"
-                                           class="language-json">{{ instance.user_spec | pretty_json }}</code></pre>
-                            </div>
-                            <div class="tab-pane" id="requests">
+                                           class="language-json">{{ object.user_spec | pretty_json }}</code></pre>
+                        </div>
+                        <div class="tab-pane" id="requests">
+                            {% if requests_table %}
                                 {% render_table requests_table %}
-                            </div>
+                            {% else %}
+                                <p> Permission <b>service_catalog.view_request</b> required</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </div>
+</div>
 {% endblock %}
 {% block custom_script %}
     <script>add_tab_management();</script>

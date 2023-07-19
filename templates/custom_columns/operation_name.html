@@ -1,7 +1,0 @@
-{% if request.user.is_superuser %}
-<a href="{% url 'service_catalog:edit_service_operation' record.service.id record.id  %}">
-    {{ record.name }}
-</a>
-{% else %}
-{{ record.name }}
-{% endif %}

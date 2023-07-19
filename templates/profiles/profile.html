@@ -117,7 +117,7 @@
                                     <div class="icon">
                                         <i class="fas fa-bell{% if not user.profile.request_notification_enabled %}-slash{% endif %}"></i>
                                     </div>
-                                    <a href="{% url "profiles:request_notification_switch" %}" class="small-box-footer">
+                                    <a href="{% url "profiles:requestnotification_switch" %}" class="small-box-footer">
                                         {% if user.profile.request_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.request_notification_enabled %}-slash{% endif %}"></i>
                                     </a>
                                 </div>
@@ -127,7 +127,7 @@
                             <div class="col-12">
                                 {% if request.user.is_superuser and user.profile.request_notification_enabled %}
                                     <a title="Add a notification filter" class="btn btn-default mb-2"
-                                       href="{% url "profiles:request_notification_create" %}">
+                                       href="{% url "profiles:requestnotification_create" %}">
                                         <i class="fas fa-plus"></i> Add a request notification filter
                                     </a>
                                     {% if request.user.profile.request_notification_filters.count == 0 %}
@@ -147,24 +147,24 @@
                     <div id="support-notifications" class="tab-pane">
                         <dl class="row">
                             <div class="col-md-3 col-6">
-                                <div class="small-box bg{% if user.profile.support_notification_enabled %}-success{% else %}-gray{% endif %}">
+                                <div class="small-box bg{% if user.profile.instance_notification_enabled %}-success{% else %}-gray{% endif %}">
                                     <div class="inner">
-                                        <p><strong>Support</strong> notifications are <strong>{% if user.profile.support_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
+                                        <p><strong>Support</strong> notifications are <strong>{% if user.profile.instance_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
                                     </div>
                                     <div class="icon">
-                                        <i class="fas fa-bell{% if not user.profile.support_notification_enabled %}-slash{% endif %}"></i>
+                                        <i class="fas fa-bell{% if not user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
                                     </div>
                                     <a href="{% url "profiles:support_notification_switch" %}" class="small-box-footer">
-                                        {% if user.profile.support_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.support_notification_enabled %}-slash{% endif %}"></i>
+                                        {% if user.profile.instance_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
                                     </a>
                                 </div>
                             </div>
                         </dl>
                         <div class="row">
                             <div class="col-12">
-                                {% if request.user.is_superuser and user.profile.support_notification_enabled %}
+                                {% if request.user.is_superuser and user.profile.instance_notification_enabled %}
                                     <a title="Add a notification filter" class="btn btn-default mb-2"
-                                       href="{% url "profiles:support_notification_create" %}">
+                                       href="{% url "profiles:instancenotification_create" %}">
                                         <i class="fas fa-plus"></i> Add a support notification filter
                                     </a>
                                     {% if request.user.profile.instance_notification_filters.count == 0 %}

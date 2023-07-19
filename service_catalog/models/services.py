@@ -1,13 +1,22 @@
 from django.core.exceptions import ValidationError
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Model, CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField
+from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.operation_type import OperationType
 
 
-class Service(Model):
+class Service(SquestModel):
+    class Meta:
+        permissions = [
+            ("request_on_service", "Can request operation on service"),
+            ("admin_request_on_service", "Can request an admin operation on service"),
+        ]
+        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
     name = CharField(verbose_name="Service name", max_length=100)
     description = CharField(max_length=500, blank=True)
     external_support_url = CharField(max_length=2000, blank=True)
@@ -23,6 +32,9 @@ class Service(Model):
     )
     extra_vars = JSONField(default=dict, blank=True)
     description_doc = ForeignKey('service_catalog.Doc', blank=True, null=True, on_delete=SET_NULL, verbose_name='Description documentation')
+
+    def get_absolute_url(self):
+        return reverse_lazy('service_catalog:operation_list', kwargs={"service_id": self.id})
 
     def can_be_enabled(self):
         operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)

@@ -5,18 +5,10 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-    {% if request.user.is_superuser %}
-        <div class="float-right">
-            <a href="{% url 'profiles:role_edit' object.id %}"
-               class="btn btn-primary">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
-            <a href="{% url 'profiles:role_delete' object.id %}"
-               class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-            </a>
-        </div>
-    {% endif %}
+<div class="float-right">
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
+</div>
 {% endblock %}
 
 {% block main %}
@@ -27,10 +19,11 @@
                     <div class="card-header">
                         <h3 class="card-title"><b>{{ object.name }}</b></h3>
                     </div>
-                    <div class="card-body pt-0 pb-0">
+                    <div class="card-body">
                         <ul class="list-group list-group-unbordered">
-                            <li class="list-group-item bt-0 bb-0">
-                                <u>Description</u> <p class="float-right">{{ object.description }}</p>
+                            <li class="list-group-item">
+                                <u>Description</u>
+                                <p class="float-right">{{ object.description }}</p>
                             </li>
                         </ul>
                     </div>

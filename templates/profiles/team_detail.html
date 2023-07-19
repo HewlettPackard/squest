@@ -4,25 +4,25 @@
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
+{% has_perm request.user "profiles.view_users_team" object as can_view_user %}
+{% has_perm request.user "profiles.add_users_team" object as can_add_user %}
+{% has_perm request.user "profiles.delete_users_team" object as can_delete_user %}
+{% has_perm request.user "profiles.change_quota" object as can_change_quota %}
 {% block header_button %}
-    {% if request.user.is_superuser %}
-        <div class="float-right">
+    <div class="float-right">
+        {% if can_change_quota %}
             <a href="{% url 'profiles:team_quota_edit' object.id %}"
                class="btn btn-primary"> <i class="fas fa-chart-pie"></i> Set quotas
             </a>
+        {% endif %}
+        {% if can_add_user %}
             <a href="{% url 'profiles:team_rbac_create' object.id %}"
                class="btn btn-success"> <i class="fas fa-plus"></i> Add users
             </a>
-            <a href="{% url 'profiles:team_edit' object.id %}"
-               class="btn btn-primary">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
-            <a href="{% url 'profiles:team_delete' object.id %}"
-               class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-            </a>
-        </div>
-    {% endif %}
+        {% endif %}
+        {% include 'generics/buttons/edit_button.html' %}
+        {% include 'generics/buttons/delete_button.html' %}
+    </div>
 {% endblock %}
 
 {% block main %}
@@ -37,10 +37,12 @@
 
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item border-top-0">
-                                <u>Organization</u> <a class="float-right" href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
+                                <u>Organization</u> <a class="float-right"
+                                                       href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
                             </li>
                             <li class="list-group-item border-bottom-0">
-                                <u>Description</u> <p class="float-right">{{ object.description }}</p>
+                                <u>Description</u>
+                                <p class="float-right">{{ object.description }}</p>
                             </li>
                         </ul>
                     </div>

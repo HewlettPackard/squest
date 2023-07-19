@@ -1,6 +1,4 @@
-{% if request.user.is_superuser %}
-    {% include 'generics/buttons/delete_button.html' %}
-{% endif %}
-<a class="btn btn-default float-right mr-1" href="{% url "service_catalog:request_archived_list" %}">
+{% include 'generics/buttons/bulk_delete_button.html' %}
+<a class="btn btn-default" href="{% url "service_catalog:request_archived_list" %}">
     <i class="fas fa-archive"></i> Archived requests
 </a>
