@@ -108,9 +108,9 @@ The survey of an operation can be edited to change the behavior of the generated
     Squest can only disable the ones that you don't want to be filled by your end users.
     Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
 
-### Enabled fields
+### End user field
 
-An **enabled** field is displayed into the end user survey.
+An **end user field**  is a field that will be displayed into the end user survey.
 By default, all fields are enabled when creating a new operation.
 
 !!! note

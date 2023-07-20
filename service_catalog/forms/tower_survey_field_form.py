@@ -32,4 +32,4 @@ class TowerSurveyFieldForm(SquestModelForm):
 
     class Meta:
         model = TowerSurveyField
-        fields = ["enabled", "default", "validators", "attribute_definition"]
+        fields = ["is_customer_field", "default", "validators", "attribute_definition"]

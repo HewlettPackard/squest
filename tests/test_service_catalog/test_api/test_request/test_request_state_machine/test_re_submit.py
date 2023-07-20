@@ -4,7 +4,7 @@ from service_catalog.models import RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
-AUTHORIZED_STATES = [RequestState.NEED_INFO]
+AUTHORIZED_STATES = [RequestState.NEED_INFO, RequestState.REJECTED]
 
 
 class TestApiRequestReSubmit(BaseTestRequest):

@@ -146,7 +146,7 @@ class OperationEditTestCase(BaseTest):
             # 'form-0-enabled': "off",  not set means set to off
             'form-0-default': "default_var",
             'form-1-id': self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").id,
-            'form-1-enabled': "on",
+            'form-1-is_customer_field': "on",
             'form-1-default': "default_var",
             'form-TOTAL_FORMS': 2,
             'form-INITIAL_FORMS': 2
@@ -154,13 +154,13 @@ class OperationEditTestCase(BaseTest):
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="text_variable").enabled)
-        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").enabled)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="text_variable").is_customer_field)
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").is_customer_field)
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.update_operation_test.refresh_from_db()
-        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="text_variable").enabled)
-        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").enabled)
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="text_variable").is_customer_field)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").is_customer_field)
 
     def test_update_survey_when_job_template_on_operation_changed(self):
         args = {

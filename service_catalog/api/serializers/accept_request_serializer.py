@@ -1,5 +1,5 @@
 from service_catalog.api.serializers.dynamic_survey_serializer import DynamicSurveySerializer
-from service_catalog.forms import FormUtils
+from service_catalog.forms.form_utils import FormUtils
 
 
 class AcceptRequestSerializer(DynamicSurveySerializer):

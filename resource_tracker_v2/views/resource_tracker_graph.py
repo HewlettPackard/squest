@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851b', 'resource_group': '#17a2b8',
           'available': '#ffc107', "green": "#28a745", "yellow": "#ffc107", "red": "#dc3545",
-          'transparent': '#ffffff00', 'gray': '#6c757d'}
+          'transparent': '#ffffff00', 'gray': '#6c757d', 'light': '#f8f9fa'}
 
 
 @login_required
@@ -75,10 +75,12 @@ def create_resource_group_svg(resource_group: ResourceGroup):
         'href': reverse('resource_tracker_v2:resourcegroup_edit',
                         kwargs={'resource_group_id': resource_group.id})}
     context['count'] = {
-        'display': resource_group.resources.count(),
-        'tooltip': f"Go to {resource_group}'s resources",
-        'href': reverse('resource_tracker_v2:resource_list',
-                        kwargs={'resource_group_id': resource_group.id})}
+                           'display': resource_group.resources.count(),
+                           'tooltip': f"Go to {resource_group}'s resources",
+                           'href': reverse('resource_tracker_v2:resourcegroup_resource_list',
+                                           kwargs={'resource_group_id': resource_group.id}),
+                           'color': COLORS["light"]
+                       }
     context['transformers'] = [
         {
             'name': {
@@ -89,14 +91,17 @@ def create_resource_group_svg(resource_group: ResourceGroup):
                                         'attribute_id': transformer.attribute_definition.id})},
             'produced': {
                 'display': round(transformer.total_produced),
-                'tooltip': f"Sum of resource on this attribute"
+                'tooltip': f"Sum of resource on this attribute",
+                'color': COLORS["light"]
             },
             'consumed': {
                 'display': f"{round(transformer.total_consumed)}",
-                'tooltip': f"Sum of resource on this attribute from other resource group"
+                'tooltip': f"Sum of resource on this attribute from other resource group",
+                'color': COLORS["light"]
             },
             'available': {
-                'display': f"{round(transformer.available)}"
+                'display': f"{round(transformer.available)}",
+                'color': COLORS["light"]
             },
             'percent': {
                 'display': f"{transformer.percent_consumed}",
