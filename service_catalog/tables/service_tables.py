@@ -1,7 +1,7 @@
 from django_tables2 import TemplateColumn
 
-from service_catalog.models import Service
 from Squest.utils.squest_table import SquestTable
+from service_catalog.models import Service
 
 
 class ServiceTable(SquestTable):

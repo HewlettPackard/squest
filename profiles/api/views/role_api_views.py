@@ -1,5 +1,3 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from profiles.api.serializers import RoleSerializer
 from profiles.filters import RoleFilter

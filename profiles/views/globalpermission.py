@@ -1,10 +1,9 @@
+from django.urls import reverse
+
 from Squest.utils.squest_views import *
 from profiles.forms import GlobalPermissionForm
 from profiles.models import GlobalPermission
-
-from django.urls import reverse
-
-from profiles.tables import UserRoleTable, ScopeRoleTable, PermissionTable
+from profiles.tables import UserRoleTable, PermissionTable
 
 
 class GlobalPermissionDetailView(SquestDetailView):

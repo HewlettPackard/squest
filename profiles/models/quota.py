@@ -1,5 +1,5 @@
-from django.db.models import ForeignKey, Sum
 from django.db import models
+from django.db.models import ForeignKey, Sum
 
 from Squest.utils.squest_model import SquestModel
 

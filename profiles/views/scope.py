@@ -1,14 +1,14 @@
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from Squest.utils.squest_views import SquestFormView, SquestDeleteView
 from profiles.forms.scope_form import ScopeCreateRBACForm
 from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope, Team
-from django.urls import reverse
-from django.contrib.auth.models import User
 
 
 def get_breadcrumbs_for_scope(scope):

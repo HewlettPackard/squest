@@ -1,5 +1,5 @@
-from profiles.models import RequestNotification, InstanceNotification
 from Squest.utils.squest_filter import SquestFilter
+from profiles.models import RequestNotification, InstanceNotification
 
 
 class RequestNotificationFilterFilter(SquestFilter):

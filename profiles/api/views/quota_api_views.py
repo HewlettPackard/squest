@@ -1,8 +1,8 @@
 import copy
 
-from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
 from profiles.api.serializers.quata_serializer import QuotaSerializer, QuotaReadSerializer

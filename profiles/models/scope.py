@@ -1,5 +1,5 @@
-from django.db.models import CharField, ManyToManyField, Prefetch, Q
 from django.contrib.auth.models import User
+from django.db.models import CharField, ManyToManyField, Prefetch, Q
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Role

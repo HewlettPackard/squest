@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from django.forms import SelectMultiple, HiddenInput
 from django_filters import MultipleChoiceFilter
 
+from Squest.utils.squest_filter import SquestFilter
 from service_catalog.models import Request
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
-from Squest.utils.squest_filter import SquestFilter
 
 
 class RequestFilter(SquestFilter):

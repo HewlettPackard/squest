@@ -1,7 +1,7 @@
-from django.db.models import Model, CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField
+from django.core.exceptions import ValidationError
+from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 

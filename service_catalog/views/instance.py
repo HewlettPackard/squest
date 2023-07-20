@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -11,13 +11,13 @@ from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUp
     SquestPermissionDenied
 from service_catalog.filters.instance_filter import InstanceFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
-from service_catalog.models.instance import Instance
-from service_catalog.models.support import Support
-from service_catalog.models.operations import Operation
-from service_catalog.models.instance_state import InstanceState
-from service_catalog.models.operation_type import OperationType
-from service_catalog.models.message import SupportMessage
 from service_catalog.models.documentation import Doc
+from service_catalog.models.instance import Instance
+from service_catalog.models.instance_state import InstanceState
+from service_catalog.models.message import SupportMessage
+from service_catalog.models.operation_type import OperationType
+from service_catalog.models.operations import Operation
+from service_catalog.models.support import Support
 from service_catalog.tables.instance_tables import InstanceTable
 from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable

@@ -1,5 +1,4 @@
 from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited

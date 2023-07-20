@@ -1,7 +1,8 @@
 from django.forms import SelectMultiple
 from django_filters import ModelMultipleChoiceFilter
-from service_catalog.models import Doc, Service
+
 from Squest.utils.squest_filter import SquestFilter
+from service_catalog.models import Doc, Service
 
 
 class ServiceFilter(ModelMultipleChoiceFilter):

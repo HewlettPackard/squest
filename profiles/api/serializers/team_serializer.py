@@ -1,5 +1,5 @@
 from profiles.api.serializers import ScopeSerializer
-from profiles.models import Team, Organization
+from profiles.models import Team
 
 
 class TeamSerializer(ScopeSerializer):

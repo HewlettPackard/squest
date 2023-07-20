@@ -1,5 +1,5 @@
-from profiles.models import GlobalPermission
 from Squest.utils.squest_model_form import SquestModelForm
+from profiles.models import GlobalPermission
 
 
 class GlobalPermissionForm(SquestModelForm):

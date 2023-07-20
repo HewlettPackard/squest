@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from Squest.utils.squest_views import *
 from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.forms import ServiceForm

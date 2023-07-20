@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.db.models import TextChoices, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.db.models import TextChoices, Model, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL, Q
 from django_fsm import FSMField, transition
 
 from Squest.utils.squest_model import SquestModel

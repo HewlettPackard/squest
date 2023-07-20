@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 
 from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
-from Squest.utils.squest_views import SquestPermissionDenied
 from profiles.models import Scope
 from service_catalog.models import Service, OperationType, Instance, Operation, Request, RequestMessage
 
