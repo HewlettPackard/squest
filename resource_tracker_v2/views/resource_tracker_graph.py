@@ -77,7 +77,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['count'] = {
                            'display': resource_group.resources.count(),
                            'tooltip': f"Go to {resource_group}'s resources",
-                           'href': reverse('resource_tracker_v2:resourcegroup_resource_list',
+                           'href': reverse('resource_tracker_v2:resource_list',
                                            kwargs={'resource_group_id': resource_group.id}),
                            'color': COLORS["light"]
                        }
