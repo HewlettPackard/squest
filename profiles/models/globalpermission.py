@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User, Permission
+from django.core.cache import cache
 from django.db.models import ManyToManyField
 from django.urls import reverse
+
 from profiles.models import AbstractScope
-from django.core.cache import cache
+
 default_user_permissions = [
     # Lists
     'service_catalog.list_instance',

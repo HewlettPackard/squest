@@ -1,14 +1,14 @@
 import logging
 
+from django.core.exceptions import ValidationError
 from django.db.models import TextChoices, ForeignKey, CASCADE, CharField, JSONField, SET_NULL
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
 from rest_framework.reverse import reverse_lazy
 
 from Squest.utils.squest_model import SquestModel
-from service_catalog.models.services import Service
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operations import Operation
+from service_catalog.models.services import Service
 
 logger = logging.getLogger(__name__)
 

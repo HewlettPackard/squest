@@ -2,9 +2,8 @@ import logging
 
 from rest_framework.serializers import Serializer, ChoiceField, CharField, MultipleChoiceField, IntegerField, FloatField
 
-from service_catalog.forms.utils import get_choices_as_tuples_list
 from Squest.utils.plugin_controller import PluginController
-
+from service_catalog.forms.utils import get_choices_as_tuples_list
 
 logger = logging.getLogger(__name__)
 

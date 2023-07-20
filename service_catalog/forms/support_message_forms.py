@@ -1,7 +1,7 @@
 from django import forms
 
-from service_catalog.models import SupportMessage
 from Squest.utils.squest_model_form import SquestModelForm
+from service_catalog.models import SupportMessage
 
 
 class SupportMessageForm(SquestModelForm):
@@ -26,4 +26,3 @@ class SupportMessageForm(SquestModelForm):
         from service_catalog.mail_utils import send_mail_new_support_message
         send_mail_new_support_message(message)
         return message.save()
-

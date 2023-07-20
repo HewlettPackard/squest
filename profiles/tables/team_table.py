@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.html import format_html
-from django_tables2 import LinkColumn, Column
+from django_tables2 import Column
 
 from Squest.utils.squest_table import SquestTable
 from profiles.models import Team

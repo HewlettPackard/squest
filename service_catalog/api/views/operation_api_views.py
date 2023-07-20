@@ -1,13 +1,13 @@
 from rest_framework.generics import get_object_or_404
 
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView, \
-    SquestListAPIView, SquestObjectPermissions
+    SquestListAPIView
+from service_catalog.api.serializers import OperationSerializer
 from service_catalog.filters.operation_filter import OperationFilter
-from service_catalog.models.services import Service
+from service_catalog.models.instance import Instance
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.operations import Operation
-from service_catalog.models.instance import Instance
-from service_catalog.api.serializers import OperationSerializer
+from service_catalog.models.services import Service
 
 
 class OperationListCreate(SquestListCreateAPIView):

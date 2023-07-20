@@ -1,5 +1,6 @@
 import json
 
+import markdown as md
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.defaultfilters import stringfilter
@@ -9,15 +10,12 @@ from django.utils.text import slugify
 from django_fsm import can_proceed
 from markdown.extensions.toc import TocExtension
 
+from service_catalog.models import BootstrapType
 from service_catalog.models import Request
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.operations import OperationType
-import markdown as md
-
 from service_catalog.models.support import SupportState
-
 from .color import map_dict_request_state, map_dict_instance_state, map_dict_step_state
-from service_catalog.models import BootstrapType
 
 
 @register.filter(name='map_instance_state')

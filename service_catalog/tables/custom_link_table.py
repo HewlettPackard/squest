@@ -1,5 +1,4 @@
-from django_tables2 import tables, TemplateColumn, LinkColumn, Column
-from django_tables2.utils import A
+from django_tables2 import tables, TemplateColumn
 
 from service_catalog.models import CustomLink
 

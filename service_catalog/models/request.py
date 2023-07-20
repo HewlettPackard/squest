@@ -8,9 +8,8 @@ import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
-    OneToOneField, Q
+    OneToOneField
 from django.db.models.signals import post_save, pre_save
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask

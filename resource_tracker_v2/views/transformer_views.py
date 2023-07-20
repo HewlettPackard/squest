@@ -1,7 +1,4 @@
-from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
 
 from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.transformer_filter import TransformerFilter
