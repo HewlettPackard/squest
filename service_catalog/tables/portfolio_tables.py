@@ -5,7 +5,7 @@ from service_catalog.models import Portfolio
 
 
 class PortfolioTable(SquestTable):
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
         model = Portfolio

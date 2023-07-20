@@ -11,12 +11,12 @@ class OperationTable(SquestTable):
         fields = ("enabled", "name", "type", "job_template", "auto_accept", "auto_process",
                   "is_admin_operation", "actions")
 
-    enabled = TemplateColumn(template_name='custom_columns/generic_boolean.html')
-    type = TemplateColumn(template_name='custom_columns/operation_type.html')
-    auto_accept = TemplateColumn(template_name='custom_columns/generic_boolean.html')
-    auto_process = TemplateColumn(template_name='custom_columns/generic_boolean.html')
-    is_admin_operation = TemplateColumn(template_name='custom_columns/generic_boolean.html')
-    actions = TemplateColumn(template_name='custom_columns/operation_actions.html', orderable=False)
+    enabled = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
+    type = TemplateColumn(template_name='service_catalog/custom_columns/operation_type.html')
+    auto_accept = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
+    auto_process = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
+    is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
+    actions = TemplateColumn(template_name='service_catalog/custom_columns/operation_actions.html', orderable=False)
 
 
 class OperationTableFromInstanceDetails(SquestTable):
@@ -26,9 +26,9 @@ class OperationTableFromInstanceDetails(SquestTable):
         fields = ("name", "description", "type", "is_admin_operation", "request")
 
     name = LinkColumn()
-    type = TemplateColumn(template_name='custom_columns/operation_type.html')
-    request = TemplateColumn(template_name='custom_columns/operation_request.html', orderable=False)
-    is_admin_operation = TemplateColumn(template_name='custom_columns/generic_boolean.html')
+    type = TemplateColumn(template_name='service_catalog/custom_columns/operation_type.html')
+    request = TemplateColumn(template_name='service_catalog/custom_columns/operation_request.html', orderable=False)
+    is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
 
 
 class CreateOperationTable(SquestTable):
@@ -38,5 +38,5 @@ class CreateOperationTable(SquestTable):
         fields = ("name", "description", "is_admin_operation", "request")
 
     name = LinkColumn()
-    request = TemplateColumn(template_name='custom_columns/create_operation_request.html', orderable=False)
-    is_admin_operation = TemplateColumn(template_name='custom_columns/generic_boolean.html')
+    request = TemplateColumn(template_name='service_catalog/custom_columns/create_operation_request.html', orderable=False)
+    is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
