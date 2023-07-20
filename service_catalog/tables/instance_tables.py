@@ -9,7 +9,7 @@ from Squest.utils.squest_table import SquestTable
 class InstanceTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     service = LinkColumn()
-    opened_support_count = TemplateColumn(template_name='custom_columns/instance_opened_support.html',
+    opened_support_count = TemplateColumn(template_name='service_catalog/custom_columns/instance_opened_support.html',
                                           verbose_name="Opened support")
     name = LinkColumn("service_catalog:instance_details", args=[A("id")], verbose_name="Name")
     quota_scope = LinkColumn()

@@ -32,6 +32,6 @@ class ResourceTable(SquestTable):
                     extra_context={'attribute_name': attribute_name},
                     orderable=False
                 )
-            type(self).base_columns["actions"] = TemplateColumn(template_name='custom_columns/resource_operations.html',
+            type(self).base_columns["actions"] = TemplateColumn(template_name='resource_tracking_v2/resource_group/resources/custom_columns/resource_operations.html',
                                                                 orderable=False)
             self.columns = BoundColumns(self, type(self).base_columns)

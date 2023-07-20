@@ -9,7 +9,7 @@ from Squest.utils.squest_table import SquestTable
 class RequestTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     id = LinkColumn("service_catalog:request_details", args=[A("id")])
-    date_submitted = TemplateColumn(template_name='custom_columns/generic_date_format.html')
+    date_submitted = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
     operation = LinkColumn()
     instance = LinkColumn()
 

@@ -38,7 +38,7 @@ class RequestListView(SquestListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['html_button_path'] = "generics/buttons/request-archived-list.html"
+        context['html_button_path'] = "service_catalog/buttons/request-archived-list.html"
         if self.request.user.is_superuser:
             context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
         return context
