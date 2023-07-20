@@ -6,7 +6,7 @@ from Squest.utils.squest_table import SquestTable
 
 
 class AnnouncementTable(SquestTable):
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
     created_by__username = Column(verbose_name='Owner')
 
     class Meta:
