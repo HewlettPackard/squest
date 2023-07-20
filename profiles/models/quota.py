@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import ForeignKey, Sum
+from django.db.models import ForeignKey, Sum, Q
 
 from Squest.utils.squest_model import SquestModel
 
@@ -69,3 +69,44 @@ class Quota(SquestModel):
                 consumed = consumed + team_consumed
 
         return consumed
+
+    @classmethod
+    def get_queryset_for_user(cls, user, perm):
+        from profiles.models import Team
+        qs = super().get_queryset_for_user(user, perm)
+        if qs.exists():
+            return qs
+        app_label, codename = perm.split(".")
+        qs = Quota.objects.filter(
+            # Scopes
+            ## Scopes - Org - User
+            Q(
+                scope__rbac__user=user,
+                scope__rbac__role__permissions__codename=codename,
+                scope__rbac__role__permissions__content_type__app_label=app_label
+            ) |
+            ### Scopes - Org - Default roles
+            Q(
+                scope__rbac__user=user,
+                scope__roles__permissions__codename=codename,
+                scope__roles__permissions__content_type__app_label=app_label
+            ) |
+            ## Scopes - Team - User
+            Q(
+                scope__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__rbac__role__permissions__codename=codename,
+                    org__rbac__role__permissions__content_type__app_label=app_label
+                )
+            ) |
+            ## Scopes - Team - Default roles
+            Q(
+                scope__in=Team.objects.filter(
+                    org__rbac__user=user,
+                    org__roles__permissions__codename=codename,
+                    org__roles__permissions__content_type__app_label=app_label
+                )
+            )
+
+        )
+        return qs.distinct()
