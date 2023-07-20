@@ -2,9 +2,9 @@ from django import forms
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
-from service_catalog.models.bootstrap_type import BootstrapType
-from service_catalog.models.announcement import Announcement
 from Squest.utils.squest_model_form import SquestModelForm
+from service_catalog.models.announcement import Announcement
+from service_catalog.models.bootstrap_type import BootstrapType
 
 
 class AnnouncementForm(SquestModelForm):

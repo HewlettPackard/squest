@@ -7,9 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
-
 from django.utils.translation import gettext_lazy as _
 from martor.utils import LazyEncoder
+
 from .color import random_color
 
 

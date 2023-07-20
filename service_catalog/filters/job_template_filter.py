@@ -1,5 +1,5 @@
-from service_catalog.models import JobTemplate
 from Squest.utils.squest_filter import SquestFilter
+from service_catalog.models import JobTemplate
 
 
 class JobTemplateFilter(SquestFilter):

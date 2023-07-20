@@ -1,9 +1,9 @@
 from Squest.utils.squest_views import *
 from profiles.filters import OrganizationFilter
-from profiles.forms import OrganizationForm
-from profiles.models import Organization, Team
-from profiles.tables import OrganizationTable, ScopeRoleTable, TeamTable, UserRoleTable
 from profiles.filters.user_filter import UserFilter
+from profiles.forms import OrganizationForm
+from profiles.models import Organization
+from profiles.tables import OrganizationTable, ScopeRoleTable, TeamTable, UserRoleTable
 from profiles.tables.quota_table import QuotaTable
 
 

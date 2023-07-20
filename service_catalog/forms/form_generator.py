@@ -7,7 +7,7 @@ from jinja2 import Template
 from jinja2.exceptions import UndefinedError
 
 from Squest.utils.plugin_controller import PluginController
-from service_catalog.models import OperationType, ApprovalState
+from service_catalog.models import ApprovalState
 
 logger = logging.getLogger(__name__)
 

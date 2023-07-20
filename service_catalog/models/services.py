@@ -1,9 +1,9 @@
 from django.core.exceptions import ValidationError
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
 from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.operation_type import OperationType

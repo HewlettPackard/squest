@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import Model, CharField, IntegerField, JSONField, ForeignKey, CASCADE, BooleanField
+from django.db.models import CharField, IntegerField, JSONField, ForeignKey, CASCADE, BooleanField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 

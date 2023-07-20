@@ -1,8 +1,9 @@
 from django.forms import SelectMultiple, HiddenInput
 from django_filters import MultipleChoiceFilter
+
+from Squest.utils.squest_filter import SquestFilter
 from service_catalog.models import Support
 from service_catalog.models.support import SupportState
-from Squest.utils.squest_filter import SquestFilter
 
 
 class SupportFilter(SquestFilter):

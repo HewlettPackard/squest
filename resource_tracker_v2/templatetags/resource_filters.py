@@ -1,6 +1,6 @@
 from django.template.defaulttags import register
 
-from resource_tracker_v2.models import ResourceAttribute, AttributeDefinition
+from resource_tracker_v2.models import ResourceAttribute
 
 
 @register.filter(name='v2_get_attribute_value_from_name')

@@ -1,8 +1,5 @@
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-
 
 from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.resource_filter import ResourceFilter

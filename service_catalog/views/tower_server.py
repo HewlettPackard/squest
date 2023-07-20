@@ -1,11 +1,12 @@
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django_celery_results.models import TaskResult
-from django.http import JsonResponse
-from service_catalog import tasks
+
 from Squest.utils.squest_views import SquestListView, SquestCreateView, SquestDeleteView, SquestUpdateView
+from service_catalog import tasks
 from service_catalog.filters.tower_server_filter import TowerServerFilter
 from service_catalog.forms import TowerServerForm
 from service_catalog.models import TowerServer

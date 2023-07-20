@@ -1,9 +1,8 @@
-from django.urls import reverse
 from Squest.utils.squest_views import *
 from profiles.filters.team_filter import TeamFilter
 from profiles.forms.team_forms import TeamForm
-from profiles.models.team import Team
 from profiles.models.organization import Organization
+from profiles.models.team import Team
 from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
 from profiles.tables.quota_table import QuotaTable
 

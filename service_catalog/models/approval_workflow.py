@@ -1,5 +1,4 @@
 from django.db.models import CharField, Model, ForeignKey, ManyToManyField, CASCADE
-from django.db.transaction import commit
 
 from service_catalog.models import ApprovalStep
 
