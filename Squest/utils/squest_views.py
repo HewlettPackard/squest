@@ -1,3 +1,5 @@
+import traceback
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
@@ -11,6 +13,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
+from utils import logger
 
 
 class SquestPermissionDenied(PermissionDenied):
@@ -62,7 +65,8 @@ class SquestListView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleTa
                 self.request.user,
                 f"{self.django_content_type.app_label}.view_{self.django_content_type.model}"
             )
-        except AttributeError:
+        except AttributeError as e:
+            traceback.print_exc()
             qs = self.model.objects.all()
         return qs
 

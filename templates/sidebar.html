@@ -112,7 +112,7 @@
 
                     <li class="nav-item">
                         <a href="{% url 'profiles:globalpermission_details' %}"
-                            class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
+                           class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-globe"></i>
                             <p>Global permission</p>
                         </a>
@@ -160,16 +160,16 @@
                         </a>
                     </li>
                 {% endif %}
-                                {% if  can_list_approval %}
+                {% if  can_list_approval %}
 
-                <li class="nav-item">
-                                        <a href="{% url 'service_catalog:approvalworkflow_list' %}"
+                    <li class="nav-item">
+                        <a href="{% url 'service_catalog:approvalworkflow_list' %}"
                            class="nav-link {% if '/administration/approval_workflow/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-thumbs-up"></i>
                             <p>Approval workflows</p>
                         </a>
                     </li>
-                    {% endif %}
+                {% endif %}
                 {% if  can_list_permission or can_list_role %}
 
                     <li class="nav-item">
@@ -207,9 +207,10 @@
                         </ul>
                     </li>
                 {% endif %}
-                {% if can_list_globalhook %}
+                {% if can_list_globalhook or can_list_announcement or can_list_customlink %}
                     <li class="nav-item">
-                        <a href="#" class="nav-link{% if '/administration/global_hook/' in request.path or '/administration/announcement/' in request.path or '/administration/custom-link/' in request.path %} active{% endif %}">
+                        <a href="#"
+                           class="nav-link{% if '/administration/global_hook/' in request.path or '/administration/announcement/' in request.path or '/administration/custom-link/' in request.path %} active{% endif %}">
                             <i class="nav-icon fas fa-stream"></i>
                             <p>
                                 Extras
@@ -217,49 +218,38 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:globalhook_list' %}"
-                                   class="nav-link {% if '/administration/global_hook/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-file-code"></i>
-                                    <p>Global hooks</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:announcement_list' %}"
-                                   class="nav-link {% if '/administration/announcement/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-bullhorn"></i>
-                                    <p>Announcements</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'service_catalog:customlink_list' %}"
-                                   class="nav-link {% if '/administration/custom-link/' in request.path %}active{% endif %}">
-                                    <i class="nav-icon fas fa-link"></i>
-                                    <p>Custom links</p>
-                                </a>
-                            </li>
+                            {% if can_list_globalhook %}
+                                <li class="nav-item">
+                                    <a href="{% url 'service_catalog:globalhook_list' %}"
+                                       class="nav-link {% if '/administration/global_hook/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-file-code"></i>
+                                        <p>Global hooks</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if can_list_announcement %}
+
+                                <li class="nav-item">
+                                    <a href="{% url 'service_catalog:announcement_list' %}"
+                                       class="nav-link {% if '/tool/announcement/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-bullhorn"></i>
+                                        <p>Announcements</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if can_list_customlink %}
+                                <li class="nav-item">
+                                    <a href="{% url 'service_catalog:customlink_list' %}"
+                                       class="nav-link {% if '/tool/custom-link/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-link"></i>
+                                        <p>Custom links</p>
+                                    </a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
                 {% endif %}
-                {% if can_list_announcement %}
 
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:announcement_list' %}"
-                           class="nav-link {% if '/tool/announcement/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-bullhorn"></i>
-                            <p>Announcements</p>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if can_list_customlink %}
-                    <li class="nav-item">
-                        <a href="{% url 'service_catalog:customlink_list' %}"
-                           class="nav-link {% if '/tool/custom-link/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-link"></i>
-                            <p>Custom links</p>
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

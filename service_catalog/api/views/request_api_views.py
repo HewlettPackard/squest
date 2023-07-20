@@ -66,10 +66,14 @@ class OperationRequestCreate(SquestCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         operation = get_object_or_404(
-            Operation.get_queryset_for_user(request.user, 'service_catalog.request_on_service'),
+            Operation,
             id=kwargs.get('operation_id'), type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True)
-        if operation.is_admin_operation and not self.request.user.is_superuser:
+
+        if operation.is_admin_operation and not self.request.user.has_perm("service_catalog.admin_request_on_instance"):
             raise PermissionDenied
+        if not operation.is_admin_operation and not self.request.user.has_perm("service_catalog.request_on_instance"):
+            raise PermissionDenied
+
         serializer = self.get_serializer(operation=operation, instance=self.get_object(), user=request.user,
                                          data=request.data)
         serializer.is_valid(raise_exception=True)
