@@ -10,4 +10,4 @@ class AttributeDefinitionTable(SquestTable):
         attrs = {"id": "attribute_definition_table", "class": "table squest-pagination-tables"}
         fields = ("name", "description", "actions")
 
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)

@@ -14,7 +14,7 @@ class UserListView(SquestListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['html_button_path'] = "generics/buttons/manage_all_users.html"
+        context['html_button_path'] = "profiles/buttons/manage_all_users.html"
         return context
 
 
