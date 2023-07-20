@@ -33,7 +33,7 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/delete/',
          views.TransformerDeleteView.as_view(),
          name='resourcegroup_attribute_delete'),
-    path('tool/resource_group/load-resource-group-attribute/', views.ajax_load_attribute,
+    path('administration/resource_group/load-resource-group-attribute/', views.ajax_load_attribute,
          name='ajax_load_attribute'),
     path('resource_group/<int:resource_group_id>/resources/', views.ResourceListView.as_view(),
          name='resource_list'),

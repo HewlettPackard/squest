@@ -8,11 +8,17 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+from django.views.generic import DetailView, FormView
 from django_fsm import can_proceed
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.request_filter import RequestFilter, RequestArchivedFilter
 
+from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
+from service_catalog.forms import RequestMessageForm
+from service_catalog.forms.approve_workflow_step_form import ApproveWorkflowStepForm
+from service_catalog.models import Request, RequestMessage
 from service_catalog.models.instance import InstanceState
 from service_catalog.mail_utils import send_email_request_canceled
 from service_catalog.tables.request_tables import RequestTable
@@ -129,6 +135,12 @@ def request_comment(request, request_id):
             return redirect('service_catalog:requestmessage_create', target_request.id)
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
+    breadcrumbs = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': target_request.id, 'url': reverse('service_catalog:request_details',
+                                                   kwargs={'request_id': target_request.id})},
+        {'text': "Comments", 'url': ""}
+    ]
     context = {
         'form': form,
         'target_request': target_request,
@@ -445,3 +457,38 @@ def request_bulk_delete(request):
             raise PermissionDenied
         selected_requests.delete()
     return redirect("service_catalog:request_list")
+
+
+class RequestApproveView(FormView):
+    template_name = 'generics/generic_form.html'
+    form_class = ApproveWorkflowStepForm
+    pk_url_kwarg = "request_id"
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.target_request.get_absolute_url()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        request_id = self.kwargs['request_id']
+        self.target_request = get_object_or_404(Request, pk=request_id)
+        kwargs.update({'target_request': self.target_request, 'user': self.request.user})
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        breadcrumbs = [
+            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+            {'text': self.target_request.id, 'url': reverse('service_catalog:request_details',
+                                                            kwargs={'request_id': self.target_request.id})},
+            {'text': f'Approve step', 'url': ""},
+        ]
+        context['breadcrumbs'] = breadcrumbs
+        context['action'] = "edit"
+        context['icon_button'] = "fas fa-thumbs-up"
+        context['text_button'] = "Approve"
+        context['color_button'] = "primary"
+        return context

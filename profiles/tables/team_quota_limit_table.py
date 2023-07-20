@@ -15,3 +15,7 @@ class TeamQuotaLimitTable(tables.Table):
     def render_limit(self, value, record):
         link = reverse("profiles:team_quota_edit", kwargs={'scope_id': record.scope.id})
         return format_html(f'<a href="{link}">{value}</a>')
+
+    def render_scope(self, value, record):
+        link = reverse("profiles:team_details", kwargs={'pk': record.scope.id})
+        return format_html(f'<a href="{link}">{value}</a>')

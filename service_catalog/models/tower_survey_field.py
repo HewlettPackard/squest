@@ -17,7 +17,7 @@ class TowerSurveyField(SquestModel):
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
     name = CharField(null=False, blank=False, max_length=200, verbose_name="Field name")
-    enabled = BooleanField(default=True, null=False, blank=False)
+    is_customer_field = BooleanField(default=True, null=False, blank=False)
     default = CharField(null=True, blank=True, max_length=200, verbose_name="Default value")
     operation = ForeignKey(Operation,
                            on_delete=CASCADE,
@@ -38,13 +38,13 @@ class TowerSurveyField(SquestModel):
 def on_change(sender, instance: TowerSurveyField, **kwargs):
     if instance.id is not None:
         previous = TowerSurveyField.objects.get(id=instance.id)
-        if previous.enabled != instance.enabled:
+        if previous.is_customer_field != instance.is_customer_field:
             # update all request that use this tower field survey. Move filled fields between user and admin survey
             for request in instance.operation.request_set.all():
-                if instance.name in request.admin_fill_in_survey.keys() and instance.enabled:
+                if instance.name in request.admin_fill_in_survey.keys() and instance.is_customer_field:
                     old = request.admin_fill_in_survey.pop(instance.name)
                     request.fill_in_survey[instance.name] = old
-                elif instance.name in request.fill_in_survey.keys() and not instance.enabled:
+                elif instance.name in request.fill_in_survey.keys() and not instance.is_customer_field:
                     old = request.fill_in_survey.pop(instance.name)
                     request.admin_fill_in_survey[instance.name] = old
                 else:

@@ -31,56 +31,12 @@
             <div class="col-6">
                 <div class="card">
                     <div class="card-body">
-                        {% if form.errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for field in form %}
-                                    {% if field.errors %}
-                                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if form.non_field_errors %}
-                                    {{ form.non_field_errors }}
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                        <form class="form-horizontal"
-                              action="{% url 'service_catalog:request_accept' object.id %}"
-                              method="post">{% csrf_token %}
-                            {% regroup form|dictsort:"field.group" by field.group as field_groups %}
-                            {% for field_group in field_groups %}
-                                <h5 class="text-primary">{{ field_group.grouper }}</h5>
-                                {% for field in field_group.list %}
-                                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                        <label for="{{ field.name }}" class="control-label">
-                                            {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                                        </label>
-                                        <div>
-                                            {{ field }}
-                                            {% if field.help_text %}
-                                                <small id="emailHelp"
-                                                       class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button class="btn btn-primary" type="submit" name="accept_only">
-                                        <i class="fas fa-thumbs-up"></i> Accept the request
-                                    </button>
-                                    <button class="btn btn-success" type="submit" name="accept_and_process">
-                                        <i class="fas fa-play"></i> Accept and process the request
-                                    </button>
-                                </div>
-                            </div>
-                            <small class="form-text text-muted"><span class="text-danger">*</span> Required field</small>
-                        </form>
+                        {% include "generics/form_edit.html" %}
                     </div>
                 </div>
             </div>
             <div class="col-6">
-                {% include 'service_catalog/common/request-messages.html' %}
+                {% include 'service_catalog/request_details/request-messages.html' %}
             </div>
         </div>
     </div>

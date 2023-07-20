@@ -2,12 +2,12 @@ from json import dumps, loads
 from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, CharField, ValidationError
+from rest_framework.serializers import ModelSerializer, CharField
 
 from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import Scope
-from service_catalog.forms import FormUtils
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models.request import Request
 from service_catalog.models.message import RequestMessage
 from service_catalog.models.services import Service

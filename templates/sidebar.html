@@ -15,6 +15,7 @@
 {% has_perm request.user "service_catalog.list_globalhook" as can_list_globalhook %}
 {% has_perm request.user "service_catalog.list_announcement" as can_list_announcement %}
 {% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
+{% has_perm request.user "service_catalog.list_approvalworkflow" as can_list_approval %}
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
@@ -104,8 +105,18 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if can_list_organization or can_list_team or can_list_user %}
+                {% if can_list_globalpermission or can_list_organization or can_list_team or can_list_user %}
                     <li class="nav-header">Access</li>
+                {% endif %}
+                {% if can_list_globalpermission %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'profiles:globalpermission_details' %}"
+                            class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-globe"></i>
+                            <p>Global permission</p>
+                        </a>
+                    </li>
                 {% endif %}
                 {% if can_list_organization %}
                     <li class="nav-item">
@@ -149,28 +160,30 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if can_list_globalpermission or can_list_permission or can_list_role %}
+                                {% if  can_list_approval %}
+
+                <li class="nav-item">
+                                        <a href="{% url 'service_catalog:approvalworkflow_list' %}"
+                           class="nav-link {% if '/administration/approval_workflow/' in request.path %}active{% endif %}">
+                            <i class="nav-icon fas fa-thumbs-up"></i>
+                            <p>Approval workflows</p>
+                        </a>
+                    </li>
+                    {% endif %}
+                {% if  can_list_permission or can_list_role %}
 
                     <li class="nav-item">
                         <a href="#"
                            class="nav-link{% if '/profiles/global-permission/' in request.path or '/profiles/role/' in request.path or '/profiles/role/permission' in request.path %} active{% endif %}">
+
+
                             <i class="nav-icon fas fa-user-check"></i>
                             <p>
-                                Access
+                                RBAC
                                 <i class="right fas fa-angle-down"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {% if can_list_globalpermission %}
-
-                                <li class="nav-item">
-                                    <a href="{% url 'profiles:globalpermission_details' %}"
-                                       class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
-                                        <i class="nav-icon fas fa-globe"></i>
-                                        <p>Global permission</p>
-                                    </a>
-                                </li>
-                            {% endif %}
                             {% if can_list_role %}
 
                                 <li class="nav-item">
@@ -196,11 +209,36 @@
                 {% endif %}
                 {% if can_list_globalhook %}
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:globalhook_list' %}"
-                           class="nav-link {% if '/tool/global_hook/' in request.path %}active{% endif %}">
-                            <i class="nav-icon fas fa-file-code"></i>
-                            <p>Global hooks</p>
+                        <a href="#" class="nav-link{% if '/administration/global_hook/' in request.path or '/administration/announcement/' in request.path or '/administration/custom-link/' in request.path %} active{% endif %}">
+                            <i class="nav-icon fas fa-stream"></i>
+                            <p>
+                                Extras
+                                <i class="right fas fa-angle-down"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'service_catalog:globalhook_list' %}"
+                                   class="nav-link {% if '/administration/global_hook/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-file-code"></i>
+                                    <p>Global hooks</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'service_catalog:announcement_list' %}"
+                                   class="nav-link {% if '/administration/announcement/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-bullhorn"></i>
+                                    <p>Announcements</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'service_catalog:customlink_list' %}"
+                                   class="nav-link {% if '/administration/custom-link/' in request.path %}active{% endif %}">
+                                    <i class="nav-icon fas fa-link"></i>
+                                    <p>Custom links</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 {% endif %}
                 {% if can_list_announcement %}
