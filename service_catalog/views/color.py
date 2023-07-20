@@ -1,3 +1,4 @@
+from service_catalog.models import ApprovalState
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 
@@ -24,6 +25,12 @@ map_dict_instance_state = {
     InstanceState.UPDATE_FAILED: "warning",
     InstanceState.DELETED: "danger",
     InstanceState.ARCHIVED: "dark",
+}
+
+map_dict_step_state = {
+    ApprovalState.APPROVED: "success",
+    ApprovalState.REJECTED: "danger",
+    ApprovalState.PENDING: "info",
 }
 
 map_class_to_color = {

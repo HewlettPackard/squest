@@ -1,18 +1,15 @@
 import copy
 import logging
 
-import urllib3
 from jinja2 import Template
 from jinja2.exceptions import UndefinedError
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
 
 class FormUtils:
     @classmethod
-    def get_available_fields(cls, job_template_survey, operation_survey):
+    def get_available_fields(cls, job_template_survey, operation_survey, skip_admin_fields=True):
         """
         Return survey fields from the job template that are active in the operation
         :return: survey dict
@@ -25,26 +22,9 @@ class FormUtils:
         # loop the original survey
         for survey_filled in job_template_survey.get("spec", []):
             target_tower_field = operation_survey.get(name=survey_filled["variable"])
-            if target_tower_field.enabled:
+            if not skip_admin_fields or (skip_admin_fields and target_tower_field.is_customer_field):
                 returned_dict["spec"].append(survey_filled)
         return returned_dict
-
-    @classmethod
-    def apply_jinja_template_to_survey(cls, job_template_survey, operation_survey, context=None):
-        """
-        Apply the "default" field of the operation survey
-        :param job_template_survey: json job template config
-        :param operation_survey: list of TowerSurveyField
-        :param context: dict context to be passed to the template
-        :return: Updated survey with templated string from spec
-        """
-        for survey_filled in job_template_survey.get("spec", []):   # loop all survey config from tower
-            target_tower_field = operation_survey.get(name=survey_filled["variable"])
-            # jinja templating default values
-            if target_tower_field.default is not None and target_tower_field.default != "":
-                survey_filled["default"] = cls.template_field(target_tower_field.default, context)
-
-        return job_template_survey
 
     @classmethod
     def apply_user_validator_to_survey(cls, job_template_survey, operation_survey):

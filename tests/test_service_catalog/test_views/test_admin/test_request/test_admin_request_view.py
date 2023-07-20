@@ -88,7 +88,7 @@ class AdminRequestViewTest(BaseTestRequest):
         data = {'content': 're-submited'}
         url = reverse('service_catalog:request_re_submit', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
-                            RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.SUBMITTED]
+                            RequestState.COMPLETE, RequestState.ARCHIVED, RequestState.SUBMITTED]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
@@ -137,8 +137,6 @@ class AdminRequestViewTest(BaseTestRequest):
             data = custom_data
         else:
             data = {
-                'squest_instance_name': self.test_request.instance.name,
-                'quota_scope_id': self.test_quota_scope.id,
                 'text_variable': 'my_var',
                 'multiplechoice_variable': 'choice1',
                 'multiselect_var': 'multiselect_1',
@@ -159,8 +157,6 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEqual(self.test_instance.state, expected_instance_state)
         if response.status_code == 302:
             self.assertEqual(self.test_request.accepted_by, self.superuser)
-            quota_scope_id = self.test_request.instance.quota_scope.id
-            self.assertEqual(data['quota_scope_id'], quota_scope_id)
 
     def test_admin_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
@@ -218,15 +214,8 @@ class AdminRequestViewTest(BaseTestRequest):
     def test_admin_request_accept_accepted_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
-        self.test_instance.quota_scope = self.test_quota_scope_org
-        self.test_instance.save()
-        self.test_request.refresh_from_db()
         old_survey = self.test_request.fill_in_survey
-        quota_scope = Scope.objects.exclude(id=self.test_request.instance.quota_scope.id).first()
-        new_instance_name = f"{self.test_request.instance.name} modified by admin"
         data = {
-            'squest_instance_name': new_instance_name,
-            'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'var',
             'multiplechoice_variable': 'choice1',
             'multiselect_var': 'multiselect_1',
@@ -247,10 +236,9 @@ class AdminRequestViewTest(BaseTestRequest):
             'integer_var': self.test_quota_scope.id,
             'float_var': 0.8
         }
-        self.assertEqual(self.test_request.instance.name, new_instance_name)
-        self.assertEqual(self.test_request.instance.quota_scope, self.test_quota_scope)
         self.assertDictEqual(self.test_request.full_survey, data_expected)
-        self.assertNotEqual(self.test_request.fill_in_survey, old_survey)
+        self.assertEqual(self.test_request.fill_in_survey, old_survey)
+        self.assertEqual(self.test_request.admin_fill_in_survey, data_expected)
 
     def test_admin_request_accept_failed_update(self):
         self.test_instance.state = InstanceState.UPDATE_FAILED

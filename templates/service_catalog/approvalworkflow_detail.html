@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ instance.id }} | Approval
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    <div class="float-right">
+        {% has_perm request.user "service_catalog.change_instance" object as permission_edit %}
+        {% if permission_edit %}
+            <a href="{% url 'service_catalog:approvalworkflow_edit' object.id %}"
+               class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+        {% endif %}
+        {% has_perm request.user "service_catalog.delete_instance" object as permission_delete %}
+        {% if permission_delete %}
+            <a href="{% url 'service_catalog:approvalworkflow_delete' object.id %}"
+               class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ object.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item border-top-0">
+                                <b>ID</b><span class="float-right">{{ object.id }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Name</b><span class="float-right">{{ object.name }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Operation</b>
+                                <span class="float-right">{{ object.operation.name }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Scopes</b>
+                                <span class="float-right">
+                                    {% for scope in object.scopes.distinct %}
+                                        <span class="badge bg-primary">{{ scope.name }}</span>
+                                    {% endfor %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-sort-numeric-down"></i> Steps
+                        </h3>
+                        <div class="card-tools">
+                            <a href="{% url 'service_catalog:approvalstep_create' object.id %}" type="button" class="btn btn-tool btn-success">
+                                <i class="fas fa-plus"></i> Add a step
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="callout callout-info">
+                                    <p>Drag and drop steps to reorganize the order</p>
+                                </div>
+                                <div id="draggableApprovalStepList" data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
+                                    {% for approval_step in object.approval_steps.all|dictsort:"position" %}
+                                        <div id="{{ approval_step.id }}" class="card card-default">
+                                            <div class="card-header">
+                                                <h3 class="card-title"><strong>{{ approval_step.name }}</strong></h3>
+                                                <div class="card-tools">
+                                                    <a href="{% url 'service_catalog:approvalstep_edit' approval_step.approval_workflow.id approval_step.id %}" class="btn btn-tool btn-primary">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    <a href="{% url 'service_catalog:approvalstep_delete' approval_step.approval_workflow.id approval_step.id %}" type="button" class="btn btn-tool btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <dl class="row">
+                                                    <dt class="col-sm-4">Permission</dt>
+                                                    <dd class="col-sm-8">{{ approval_step.permission }}</dd>
+
+                                                    <dt class="col-sm-4">Read survey fields</dt>
+                                                    <dd class="col-sm-8">
+                                                        {% for field in approval_step.readable_fields.all %}
+                                                            <span class="badge bg-secondary">{{ field.name }}</span>
+                                                        {% endfor %}
+                                                    </dd>
+
+                                                    <dt class="col-sm-4">Write survey fields</dt>
+                                                    <dd class="col-sm-8">
+                                                        {% for field in approval_step.editable_fields.all %}
+                                                            <span class="badge bg-primary">{{ field.name }}</span>
+                                                        {% endfor %}
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

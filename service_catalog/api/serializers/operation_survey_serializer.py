@@ -7,5 +7,5 @@ class TowerSurveyFieldSerializer(ModelSerializer):
 
     class Meta:
         model = TowerSurveyField
-        fields = ('name', 'enabled', 'default', 'validators')
+        fields = ('name', 'is_customer_field', 'default', 'validators')
         read_only_fields = ('name',)
