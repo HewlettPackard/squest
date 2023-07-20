@@ -21,6 +21,8 @@ urlpatterns = [
     path('request/<int:request_id>/process/', views.request_process, name='request_process'),
     path('request/<int:request_id>/archive/', views.request_archive, name='request_archive'),
     path('request/<int:request_id>/unarchive/', views.request_unarchive, name='request_unarchive'),
+    path('request/<int:request_id>/approve/', views.RequestApproveView.as_view(), name='request_approve'),
+
 
     # Request bulk delete
     path('request/delete-confirm/', views.request_bulk_delete_confirm, name='request_bulk_delete_confirm'),
@@ -130,19 +132,36 @@ urlpatterns = [
     # Global Hook AJAX
     path('tool/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
-    path('tool/global_hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
+    path('administration/global_hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
          name='ajax_load_service_operations'),
 
     # Announcement CRUD
-    path('tool/announcement/', views.AnnouncementListView.as_view(), name='announcement_list'),
-    path('tool/announcement/create/', views.AnnouncementCreateView.as_view(), name='announcement_create'),
-    path('tool/announcement/<int:pk>/edit/', views.AnnouncementEditView.as_view(), name='announcement_edit'),
-    path('tool/announcement/<int:pk>/delete/', views.AnnouncementDeleteView.as_view(), name='announcement_delete'),
+    path('administration/announcement/', views.AnnouncementListView.as_view(), name='announcement_list'),
+    path('administration/announcement/create/', views.AnnouncementCreateView.as_view(), name='announcement_create'),
+    path('administration/announcement/<int:pk>/edit/', views.AnnouncementEditView.as_view(), name='announcement_edit'),
+    path('administration/announcement/<int:pk>/delete/', views.AnnouncementDeleteView.as_view(), name='announcement_delete'),
 
     # Custom Link CRUD
-    path('tool/custom-link/', views.CustomLinkListView.as_view(), name='customlink_list'),
-    path('tool/custom-link/create/', views.CustomLinkCreateView.as_view(), name='customlink_create'),
-    path('tool/custom-link/<int:pk>/edit/', views.CustomLinkEditView.as_view(), name='customlink_edit'),
-    path('tool/custom-link/<int:pk>/delete/', views.CustomLinkDeleteView.as_view(), name='customlink_delete'),
+    path('administration/custom-link/', views.CustomLinkListView.as_view(), name='customlink_list'),
+    path('administration/custom-link/create/', views.CustomLinkCreateView.as_view(), name='customlink_create'),
+    path('administration/custom-link/<int:pk>/edit/', views.CustomLinkEditView.as_view(), name='customlink_edit'),
+    path('administration/custom-link/<int:pk>/delete/', views.CustomLinkDeleteView.as_view(), name='customlink_delete'),
+
+    path('administration/approval/', ApprovalWorkflowListView.as_view(), name='approvalworkflow_list'),
+    path('administration/approval/<int:pk>/', ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
+    path('administration/approval/create/', ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
+    path('administration/approval/<int:pk>/edit/', ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
+    path('administration/approval/<int:pk>/delete/', AttributeDefinitionDeleteView.as_view(), name='approvalworkflow_delete'),
+    path('administration/approval/step_position_update/',
+         ajax_approval_step_position_update, name='ajax_approval_step_position_update'),
+
+    path('administration/approval/<int:approval_workflow_id>/approval-step/create/', ApprovalStepCreateView.as_view(),
+         name='approvalstep_create'),
+    path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/edit/',
+         ApprovalStepEditView.as_view(),
+         name='approvalstep_edit'),
+    path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/delete/',
+         ApprovalStepDeleteView.as_view(),
+         name='approvalstep_delete'),
 
 ]

@@ -81,7 +81,7 @@ class TestTowerServer(BaseTest):
         # check that the operation tower_survey_fields has been updated
         updated_operation = Operation.objects.get(id=self.create_operation_test.id)
         for field in updated_template.survey["spec"]:
-            self.assertTrue(updated_operation.tower_survey_fields.filter(name=field["variable"], enabled=True).exists())
+            self.assertTrue(updated_operation.tower_survey_fields.filter(name=field["variable"], is_customer_field=True).exists())
 
     @patch('service_catalog.models.tower_server.TowerServer._update_job_template_from_tower')
     @patch('towerlib.towerlib.Tower.get_job_template_by_id')

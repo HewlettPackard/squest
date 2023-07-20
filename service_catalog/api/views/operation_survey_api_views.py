@@ -50,7 +50,7 @@ class OperationSurveyAPI(APIView):
             obj = self.get_object(operation_id=operation.id, obj_name=tower_survey_field['name'])
             serializer = TowerSurveyFieldSerializer(instance=obj, data=tower_survey_field, partial=True)
             if serializer.is_valid():
-                obj.enabled = tower_survey_field['enabled']
+                obj.is_customer_field = tower_survey_field['is_customer_field']
                 obj.default = tower_survey_field['default']
                 if "validators" in tower_survey_field:
                     obj.validators = tower_survey_field['validators']

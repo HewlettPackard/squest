@@ -5,7 +5,7 @@ from django.forms import CharField, TextInput, ChoiceField, MultipleChoiceField
 from jinja2 import TemplateSyntaxError
 
 from service_catalog.api.serializers import RequestSerializer
-from service_catalog.forms import FormUtils
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.utils import str_to_bool
 
 logger = logging.getLogger(__name__)
@@ -200,9 +200,9 @@ class ProcessRequestForm(forms.Form):
         Return True if all field of the tower survey are visible only to the end user or only to admin
         """
         all_fields_for_admin = self.target_request.operation.tower_survey_fields.filter(
-            enabled=False).count() == self.target_request.operation.tower_survey_fields.all().count()
+            is_customer_field=False).count() == self.target_request.operation.tower_survey_fields.all().count()
         all_fields_for_user = self.target_request.operation.tower_survey_fields.filter(
-            enabled=True).count() == self.target_request.operation.tower_survey_fields.all().count()
+            is_customer_field=True).count() == self.target_request.operation.tower_survey_fields.all().count()
         return all_fields_for_admin or all_fields_for_user
 
     def _get_templated_initial(self, jinja_string):

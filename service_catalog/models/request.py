@@ -2,22 +2,25 @@ import copy
 import json
 import logging
 from datetime import datetime, timedelta
+
 import requests
 import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, Q
+from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
+    OneToOneField, Q
 from django.db.models.signals import post_save, pre_save
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition, can_proceed
 
 from Squest.utils.squest_model import SquestModel
-from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.exceptions import ExceptionServiceCatalog
-from service_catalog.models.request_state import RequestState
 from service_catalog.models.instance import Instance, InstanceState
+from service_catalog.models.operations import Operation, OperationType
+from service_catalog.models.request_state import RequestState
 from service_catalog.models.state_hooks import HookManager
 
 logger = logging.getLogger(__name__)
@@ -52,6 +55,15 @@ class Request(SquestModel):
     failure_message = TextField(blank=True, null=True)
     accepted_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="accepted_requests")
     processed_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="processed_requests")
+    approval_workflow_state = OneToOneField(
+        "service_catalog.ApprovalWorkflowState",
+        blank=True,
+        null=True,
+        on_delete=CASCADE
+    )
+
+    def get_absolute_url(self):
+        return reverse("service_catalog:request_details", kwargs={'request_id': self.id})
 
     @classmethod
     def get_queryset_for_user(cls, user, perm):
@@ -67,11 +79,17 @@ class Request(SquestModel):
         return self.instance.get_scopes()
 
     def __str__(self):
-        return f"{self.operation.name} - {self.instance.name} (#{self.id})"
+        return f"#{self.id}"
 
     @property
     def full_survey(self):
-        return {k: v for k, v in {**self.fill_in_survey, **self.admin_fill_in_survey}.items() if v is not None}
+        # by default the survey is composed by what the end user provided, overriden by what the admin provided
+        full_survey = {k: v for k, v in {**self.fill_in_survey, **self.admin_fill_in_survey}.items() if v is not None}
+        # when an approval workflow is used, we override with the content provided by each step
+        if self.approval_workflow_state is not None:
+            for step in self.approval_workflow_state.approval_step_states.all():
+                full_survey.update(step.fill_in_survey)
+        return full_survey
 
     def clean(self):
         if self.fill_in_survey is None:
@@ -79,9 +97,9 @@ class Request(SquestModel):
 
     def update_fill_in_surveys_accept_request(self, admin_provided_survey_fields):
         for key, value in admin_provided_survey_fields.items():
-            if self.operation.tower_survey_fields.filter(enabled=True, name=key).exists():
+            if self.operation.tower_survey_fields.filter(is_customer_field=True, name=key).exists():
                 self.fill_in_survey[key] = value
-            if self.operation.tower_survey_fields.filter(enabled=False, name=key).exists():
+            if self.operation.tower_survey_fields.filter(is_customer_field=False, name=key).exists():
                 self.admin_fill_in_survey[key] = value
         self.save()
 
@@ -101,9 +119,10 @@ class Request(SquestModel):
     def need_info(self):
         pass
 
-    @transition(field=state, source=RequestState.NEED_INFO, target=RequestState.SUBMITTED)
+    @transition(field=state, source=[RequestState.NEED_INFO, RequestState.REJECTED], target=RequestState.SUBMITTED)
     def re_submit(self):
-        pass
+        if self.approval_workflow_state is not None:
+            self.approval_workflow_state.reset_current_step_to_pending()
 
     @transition(field=state, source=[RequestState.SUBMITTED,
                                      RequestState.NEED_INFO,
@@ -272,6 +291,15 @@ class Request(SquestModel):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
+    def setup_approval_workflow(self):
+        from service_catalog.models import ApprovalWorkflow
+        worfkflow = ApprovalWorkflow.objects.filter(operation=self.operation, scopes__in=[self.instance.quota_scope]).first()
+        if worfkflow:
+            logger.debug(f"Workflow found: {worfkflow.name}")
+            # create pending steps
+            self.approval_workflow_state = worfkflow.instantiate()
+            self.save()
+
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
         """
@@ -301,12 +329,26 @@ class Request(SquestModel):
                                  *args, **kwargs)
 
     @classmethod
-    def on_create_call_hook_manager(cls, sender, instance, created, *args, **kwargs):
+    def on_create(cls, sender, instance, created, *args, **kwargs):
         if created:
+            # notify hook manager
             HookManager.trigger_hook(sender=sender, instance=instance, name="create", source="create",
                                      target=RequestState.SUBMITTED, *args, **kwargs)
 
+            # create approval step if approval workflow is set
+            instance.setup_approval_workflow()
 
+    @classmethod
+    def on_change(cls, sender, instance, *args, **kwargs):
+        # reset all approval step to pending if an approval workflow was attached to the request
+        if instance.id is not None:
+            previous = Request.objects.get(id=instance.id)
+            if previous.state != RequestState.SUBMITTED and instance.state == RequestState.SUBMITTED:
+                if instance.approval_workflow_state is not None:
+                    instance.approval_workflow_state.reset_all_steps()
+
+
+pre_save.connect(Request.on_change, sender=Request)
 post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
-post_save.connect(Request.on_create_call_hook_manager, sender=Request)
+post_save.connect(Request.on_create, sender=Request)
