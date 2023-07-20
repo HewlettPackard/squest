@@ -62,16 +62,13 @@ class Request(SquestModel):
         on_delete=CASCADE
     )
 
-    def get_absolute_url(self):
-        return reverse("service_catalog:request_details", kwargs={'request_id': self.id})
-
     @classmethod
     def get_queryset_for_user(cls, user, perm):
         qs = super().get_queryset_for_user(user, perm)
         if qs.exists():
             return qs
         qs = Request.objects.filter(
-           instance__in=Instance.get_queryset_for_user(user,perm)
+            instance__in=Instance.get_queryset_for_user(user, perm)
         )
         return qs.distinct()
 
@@ -293,7 +290,8 @@ class Request(SquestModel):
 
     def setup_approval_workflow(self):
         from service_catalog.models import ApprovalWorkflow
-        worfkflow = ApprovalWorkflow.objects.filter(operation=self.operation, scopes__in=[self.instance.quota_scope]).first()
+        worfkflow = ApprovalWorkflow.objects.filter(operation=self.operation,
+                                                    scopes__in=[self.instance.quota_scope]).first()
         if worfkflow:
             logger.debug(f"Workflow found: {worfkflow.name}")
             # create pending steps

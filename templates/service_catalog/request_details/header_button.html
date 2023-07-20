@@ -32,47 +32,10 @@
             {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
                 <a class="btn btn-info {{ args_filter |is_action_dropdown_disabled }}"
                    title="Reset to submitted"
-                   href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
+                   href="{% url 'service_catalog:request_re_submit' target_request.id %}">
                     <i class="fas fa-redo"></i>
                 </a>
             {% endwith %}
         {% endif %}
-    {% endif %}
-{#    {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}#}
-{#        <a class="btn btn-secondary {{ args_filter |is_action_dropdown_disabled }}"#}
-{#           title="Cancel"#}
-{#           href="{% url 'service_catalog:request_cancel' target_request.id %}">#}
-{#            <i class="fas fa-window-close"></i>#}
-{#        </a>#}
-{#    {% endwith %}#}
-    {% if request.user.is_superuser %}
-{#        {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}#}
-{#            <a class="btn btn-warning {{ args_filter |is_action_dropdown_disabled }}"#}
-{#               title="Ask more info"#}
-{#               href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">#}
-{#                <i class="fas fa-info-circle"></i>#}
-{#            </a>#}
-{#        {% endwith %}#}
-{#        {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}#}
-{#            <a class="btn btn-danger {{ args_filter |is_action_dropdown_disabled }}"#}
-{#               title="Reject"#}
-{#               href="{% url 'service_catalog:admin_request_reject' target_request.id %}">#}
-{#                <i class="fas fa-ban"></i>#}
-{#            </a>#}
-{#        {% endwith %}#}
-{#        {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}#}
-{#            <a class="btn btn-primary {{ args_filter |is_action_dropdown_disabled }}"#}
-{#               title="Review"#}
-{#               href="{% url 'service_catalog:admin_request_accept' target_request.id %}">#}
-{#                <i class="fas fa-clipboard-check"></i>#}
-{#            </a>#}
-{#        {% endwith %}#}
-{#        {% with args_filter="process,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}#}
-{#            <a class="btn btn-success {{ args_filter |is_action_dropdown_disabled }}"#}
-{#               title="Process"#}
-{#               href="{% url 'service_catalog:admin_request_process' target_request.id %}">#}
-{#                <i class="fas fa-play"></i>#}
-{#            </a>#}
-{#        {% endwith %}#}
     {% endif %}
 </div>

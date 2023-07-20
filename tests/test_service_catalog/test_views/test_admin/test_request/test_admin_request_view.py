@@ -27,7 +27,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_request_cancel(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.post(url)
@@ -36,7 +36,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_request_need_info(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_need_info', kwargs=args)
         data = {
@@ -52,7 +52,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_cannot_request_need_info_on_forbidden_states(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_need_info', kwargs=args)
         data = {
@@ -70,7 +70,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.state = RequestState.NEED_INFO
         self.test_request.save()
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         data = {'content': 're-submited'}
         url = reverse('service_catalog:request_re_submit', kwargs=args)
@@ -83,7 +83,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_cannot_request_re_submit_on_forbidden_states(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         data = {'content': 're-submited'}
         url = reverse('service_catalog:request_re_submit', kwargs=args)
@@ -97,7 +97,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_request_reject(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_reject', kwargs=args)
         data = {
@@ -113,7 +113,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_cannot_request_reject_on_forbidden_states(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_reject', kwargs=args)
         data = {
@@ -131,7 +131,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def _accept_request_with_expected_state(self, expected_request_state, expected_instance_state, custom_data=None,
                                             status=302):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         if custom_data:
             data = custom_data
@@ -158,11 +158,11 @@ class AdminRequestViewTest(BaseTestRequest):
         if response.status_code == 302:
             self.assertEqual(self.test_request.accepted_by, self.superuser)
 
-    def test_admin_request_accept_pending_instance(self):
+    def test_request_accept_pending_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
 
-    def test_admin_request_accept_and_request_pending_instance(self):
+    def test_request_accept_and_request_pending_instance(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
             'quota_scope_id': self.test_quota_scope.id,
@@ -181,7 +181,7 @@ class AdminRequestViewTest(BaseTestRequest):
                                                      custom_data=data)
             mock_towerlib_call.assert_called()
 
-    def test_admin_request_accept_pending_instance_missing_not_required_field(self):
+    def test_request_accept_pending_instance_missing_not_required_field(self):
         data = {
             'squest_instance_name': self.test_request.instance.name,
             'quota_scope_id': self.test_quota_scope.id,
@@ -211,7 +211,7 @@ class AdminRequestViewTest(BaseTestRequest):
                                                  custom_data=data,
                                                  status=200)
 
-    def test_admin_request_accept_accepted_instance(self):
+    def test_request_accept_accepted_instance(self):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
         old_survey = self.test_request.fill_in_survey
@@ -240,7 +240,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.assertEqual(self.test_request.fill_in_survey, old_survey)
         self.assertEqual(self.test_request.admin_fill_in_survey, data_expected)
 
-    def test_admin_request_accept_failed_update(self):
+    def test_request_accept_failed_update(self):
         self.test_instance.state = InstanceState.UPDATE_FAILED
         self.test_instance.save()
         self.test_request.state = RequestState.FAILED
@@ -248,7 +248,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.AVAILABLE)
 
-    def test_admin_request_accept_failed_provisioning(self):
+    def test_request_accept_failed_provisioning(self):
         self.test_instance.state = InstanceState.PROVISION_FAILED
         self.test_instance.save()
         self.test_request.state = RequestState.FAILED
@@ -256,7 +256,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
 
-    def test_admin_request_accept_failed_delete(self):
+    def test_request_accept_failed_delete(self):
         self.test_instance.state = InstanceState.DELETE_FAILED
         self.test_instance.save()
         self.test_request.state = RequestState.FAILED
@@ -269,7 +269,7 @@ class AdminRequestViewTest(BaseTestRequest):
         if mock_value is None:
             mock_value = 10
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_process', kwargs=args)
         response = self.client.get(url)
@@ -337,12 +337,12 @@ class AdminRequestViewTest(BaseTestRequest):
                         self.assertIn(key_var, data.keys())
                         self.assertEqual(val_var, data[key_var])
 
-    def test_admin_request_process_new_instance(self):
+    def test_request_process_new_instance(self):
         self.test_request.state = RequestState.ACCEPTED
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
-    def test_admin_request_process_new_instance_full_survey_enabled(self):
+    def test_request_process_new_instance_full_survey_enabled(self):
         enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': True,
@@ -371,7 +371,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
-    def test_admin_request_process_new_instance_full_survey_disabled(self):
+    def test_request_process_new_instance_full_survey_disabled(self):
         enabled_survey_fields = {
             'text_variable': False,
             'multiplechoice_variable': False,
@@ -400,7 +400,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISIONING)
 
-    def test_admin_request_process_update_instance(self):
+    def test_request_process_update_instance(self):
         self.test_instance.state = InstanceState.AVAILABLE
         self.test_instance.save()
         self.test_request.state = RequestState.ACCEPTED
@@ -408,7 +408,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.UPDATING)
 
-    def test_admin_request_process_update_instance_with_attached_resource(self):
+    def test_request_process_update_instance_with_attached_resource(self):
         self.resource_server.service_catalog_instance = self.test_instance
         self.resource_server.save()
         self.test_instance.state = InstanceState.AVAILABLE
@@ -418,7 +418,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.UPDATING)
 
-    def test_admin_request_process_delete_instance(self):
+    def test_request_process_delete_instance(self):
         self.test_instance.state = InstanceState.AVAILABLE
         self.test_instance.save()
         self.test_request.state = RequestState.ACCEPTED
@@ -440,13 +440,13 @@ class AdminRequestViewTest(BaseTestRequest):
         request_update.state = RequestState.ACCEPTED
         request_update.save()
         args = {
-            'request_id': request_update.id
+            'pk': request_update.id
         }
         url = reverse('service_catalog:request_process', kwargs=args)
         response = self.client.post(url)
         self.assertEqual(403, response.status_code)
 
-    def test_admin_request_process_new_instance_on_non_exist_job_template_id(self):
+    def test_request_process_new_instance_on_non_exist_job_template_id(self):
         self.test_request.state = RequestState.ACCEPTED
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISION_FAILED, RequestState.FAILED,
@@ -505,7 +505,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.state = RequestState.COMPLETE
         self.test_request.save()
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_archive', kwargs=args)
         response = self.client.post(url)
@@ -520,7 +520,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_cannot_request_archive_on_forbidden_states(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_archive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
@@ -534,7 +534,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_cannot_request_unarchive_on_forbidden_states(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_unarchive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
