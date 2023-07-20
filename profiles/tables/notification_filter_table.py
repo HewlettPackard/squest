@@ -4,7 +4,7 @@ from profiles.models import InstanceNotification, RequestNotification
 
 
 class RequestNotificationFilterTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
         model = RequestNotification
@@ -13,7 +13,7 @@ class RequestNotificationFilterTable(tables.Table):
 
 
 class SupportNotificationFilterTable(tables.Table):
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
         model = InstanceNotification
