@@ -68,3 +68,7 @@ div.dt-button-collection {
 .list-group li:first-child{
     border-top: 0;
 }
+
+#draggableApprovalStepList .card-header {
+    cursor: move;
+}

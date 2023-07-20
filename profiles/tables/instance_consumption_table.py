@@ -13,5 +13,5 @@ class InstanceConsumptionTable(tables.Table):
         fields = ("resource", "value")
 
     def render_resource(self, record, value):
-        link = reverse("service_catalog:instance_details", kwargs={'instance_id': record.resource.service_catalog_instance.id})
+        link = reverse("service_catalog:instance_details", kwargs={'pk': record.resource.service_catalog_instance.id})
         return format_html(f'<a href="{link}">{record.resource.service_catalog_instance.name}</a>')

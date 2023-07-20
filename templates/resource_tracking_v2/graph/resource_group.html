@@ -2,7 +2,7 @@
 <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
     <TR>
         <TD COLSPAN="10" HREF="{{ name.href }}" TITLE="{{ name.tooltip }}" BGCOLOR="{{ color }}"><font color="white"><b>{{ name.display }}</b></font></TD>
-        <TD COLSPAN="2" HREF="{{ count.href }}" TITLE="{{ count.tooltip }}"><font color="blue">{{ count.display }}</font></TD>
+        <TD COLSPAN="2"  BGCOLOR="{{ count.color }}"  HREF="{{ count.href }}" TITLE="{{ count.tooltip }}"><font color="blue">{{ count.display }}</font></TD>
     </TR>
     <TR>
         <TD BGCOLOR="white" COLSPAN="4" HREF="{% url 'resource_tracker_v2:resourcegroup_attribute_list' resource_group.id %}"><font color="blue">Attribute</font></TD>
@@ -14,9 +14,9 @@
     {% for transformer in transformers %}
         <TR>
             <TD COLSPAN="4" BGCOLOR="white" PORT="{{transformer.name.display}}" HREF="{{transformer.name.href}}" TITLE="{{transformer.name.tooltip}}"><font color="blue">{{ transformer.name.display }}</font></TD>
-            <TD COLSPAN="2" HREF="{{ transformer.produced.href }}" TITLE="{{ transformer.produced.tooltip }}">{{ transformer.produced.display }}</TD>
-            <TD COLSPAN="2" HREF="{{ transformer.consumed.href }}" TITLE="{{ transformer.consumed.tooltip }}">{{ transformer.consumed.display }}</TD>
-            <TD COLSPAN="2" TITLE="{{ transformer.available.display }}">{{ transformer.available.display }}</TD>
+            <TD COLSPAN="2" BGCOLOR="{{ transformer.produced.color }}" HREF="{{ transformer.produced.href }}" TITLE="{{ transformer.produced.tooltip }}">{{ transformer.produced.display }}</TD>
+            <TD COLSPAN="2" BGCOLOR="{{ transformer.consumed.color }}"  HREF="{{ transformer.consumed.href }}" TITLE="{{ transformer.consumed.tooltip }}">{{ transformer.consumed.display }}</TD>
+            <TD COLSPAN="2" BGCOLOR="{{ transformer.available.color }}" TITLE="{{ transformer.available.display }}">{{ transformer.available.display }}</TD>
             <TD COLSPAN="2" BGCOLOR="{{ transformer.percent.color }}"  HREF="{{transformer.percent.href}}" TITLE="{{transformer.percent.tooltip}}"><font color="white">{{ transformer.percent.display }}{% if transformer.percent.display != "N/A" %} %{% endif %}</font></TD>
         </TR>
     {% endfor %}

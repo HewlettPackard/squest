@@ -16,7 +16,7 @@ import markdown as md
 
 from service_catalog.models.support import SupportState
 
-from .color import map_dict_request_state, map_dict_instance_state
+from .color import map_dict_request_state, map_dict_instance_state, map_dict_step_state
 from service_catalog.models import BootstrapType
 
 
@@ -28,6 +28,11 @@ def map_instance_state(value):
 @register.filter(name='map_request_state')
 def map_request_state(value):
     return map_dict_request_state[value]
+
+
+@register.filter(name='map_approvalstep_state')
+def map_approvalstep_state(approvalstep):
+    return map_dict_step_state[approvalstep.state]
 
 
 @register.filter(name='map_operation_type')

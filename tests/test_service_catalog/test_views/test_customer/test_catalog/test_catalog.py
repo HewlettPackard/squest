@@ -51,16 +51,25 @@ class TestCustomerCatalogViews(BaseTestRequest):
         }
         url = reverse('service_catalog:request_service', kwargs=args)
 
-        data = {
-            "squest_instance_name": "instance_1",
-            "text_variable": "text_value_1",
-            "multiplechoice_variable": "text_value_2",
-            "quota_scope": self.test_quota_scope_org.id
+        data_form1 = {
+            "0-squest_instance_name": "instance_1",
+            "0-quota_scope": self.test_quota_scope.id,
+            "service_request_wizard_view-current_step": "0",
+        }
+        data_form2 = {
+            "1-text_variable": "text_value_1",
+            "1-multiplechoice_variable": "text_value_2",
+            "service_request_wizard_view-current_step": "1",
         }
         number_request_before = Request.objects.all().count()
-        response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(number_request_before + 1, Request.objects.all().count())
+        STEPS_DATA = [data_form1, data_form2]
+        for step, data_step in enumerate(STEPS_DATA, 1):
+            response = self.client.post(url, data=data_step)
+            if step == len(STEPS_DATA):
+                self.assertEqual(302, response.status_code)
+                self.assertEqual(number_request_before + 1, Request.objects.all().count())
+            else:
+                self.assertEqual(response.status_code, 200)
 
     def test_customer_service_request_without_survey(self):
         args = {
@@ -79,19 +88,31 @@ class TestCustomerCatalogViews(BaseTestRequest):
         }
         url = reverse('service_catalog:request_service', kwargs=args)
 
-        data = {
-            "squest_instance_name": "instance_1",
-            "quota_scope": self.test_quota_scope.id,
-            "text_variable": "text_value_1",
-            "multiplechoice_variable": "text_value_2",
-            "request_comment": "here_is_a_comment"
+        data_form1 = {
+            "0-squest_instance_name": "instance_1",
+            "0-quota_scope": self.test_quota_scope.id,
+            "service_request_wizard_view-current_step": "0",
         }
+        data_form2 = {
+            "1-text_variable": "text_value_1",
+            "1-multiplechoice_variable": "text_value_2",
+            "1-request_comment": "here_is_a_comment",
+            "service_request_wizard_view-current_step": "1",
+        }
+
+        STEPS_DATA = [data_form1, data_form2]
         number_request_before = Request.objects.all().count()
         number_comment_before = RequestMessage.objects.all().count()
-        response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(number_request_before + 1, Request.objects.all().count())
-        self.assertEqual(number_comment_before + 1, RequestMessage.objects.all().count())
+
+        for step, data_step in enumerate(STEPS_DATA, 1):
+            response = self.client.post(url, data=data_step)
+
+            if step == len(STEPS_DATA):
+                self.assertEqual(302, response.status_code)
+                self.assertEqual(number_request_before + 1, Request.objects.all().count())
+                self.assertEqual(number_comment_before + 1, RequestMessage.objects.all().count())
+            else:
+                self.assertEqual(response.status_code, 200)
 
         created_request = Request.objects.latest('id')
         self.assertEqual(created_request.comments.count(), 1)
@@ -117,11 +138,18 @@ class TestCustomerCatalogViews(BaseTestRequest):
         args["operation_id"] = admin_create_operation.id
         url = reverse('service_catalog:request_service', kwargs=args)
 
-        data = {
-            "squest_instance_name": "instance_1",
-            "text_variable": "text_value_1",
-            "multiplechoice_variable": "text_value_2",
-            "request_comment": "here_is_a_comment"
+        data_form1 = {
+            "0-squest_instance_name": "instance_1",
+            "0-quota_scope": self.test_quota_scope.id,
+            "service_request_wizard_view-current_step": "0",
         }
-        response = self.client.post(url, data=data)
-        self.assertEqual(403, response.status_code)
+        data_form2 = {
+            "1-text_variable": "text_value_1",
+            "1-multiplechoice_variable": "text_value_2",
+            "1-request_comment": "here_is_a_comment",
+            "service_request_wizard_view-current_step": "1",
+        }
+        STEPS_DATA = [data_form1, data_form2]
+        for step, data_step in enumerate(STEPS_DATA, 1):
+            response = self.client.post(url, data=data_step)
+            self.assertEqual(403, response.status_code)
