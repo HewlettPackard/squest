@@ -50,6 +50,6 @@ urlpatterns = [
          name='api_job_template_sync'),
     path('portfolio/', PortfolioListCreate.as_view(), name='api_portfolio_list_create'),
     path('portfolio/<int:pk>/', PortfolioDetails.as_view(), name='api_portfolio_details'),
-    path('tool/custom-link/', CustomLinkListCreate.as_view(), name='api_custom_link_list_create'),
-    path('tool/custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_custom_link_details'),
+    path('administration/custom-link/', CustomLinkListCreate.as_view(), name='api_custom_link_list_create'),
+    path('administration/custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_custom_link_details'),
 ]

@@ -71,14 +71,14 @@ class Operation(SquestModel):
 
             from service_catalog.models.tower_survey_field import TowerSurveyField
             for field_name in to_add:
-                TowerSurveyField.objects.create(name=field_name, enabled=True, operation=self)
+                TowerSurveyField.objects.create(name=field_name, is_customer_field=True, operation=self)
             for field_name in to_remove:
                 TowerSurveyField.objects.get(name=field_name, operation=self).delete()
 
     def switch_tower_fields_enable_from_dict(self, dict_of_field):
         for key, enabled in dict_of_field.items():
             field = self.tower_survey_fields.get(name=key)
-            field.enabled = enabled
+            field.is_customer_field = enabled
             field.save()
 
     @classmethod
@@ -92,7 +92,9 @@ class Operation(SquestModel):
             default_survey = instance.job_template.survey
             if "spec" in default_survey:
                 for survey_field in default_survey["spec"]:
-                    TowerSurveyField.objects.create(name=survey_field["variable"], enabled=True, operation=instance)
+                    TowerSurveyField.objects.create(name=survey_field["variable"],
+                                                    is_customer_field=True,
+                                                    operation=instance)
 
     @classmethod
     def update_survey_after_job_template_update(cls, job_template):

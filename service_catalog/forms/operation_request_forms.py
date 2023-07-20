@@ -1,13 +1,9 @@
-import urllib3
 from django import forms
 
-from service_catalog.forms.form_utils import FormUtils
-from service_catalog.forms.utils import get_fields_from_survey
 from service_catalog.models import Operation, Instance, Request, RequestMessage
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from service_catalog.forms.form_generator import FormGenerator
 
-FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
-EXCLUDED_SURVEY_FIELDS = ["billing_group_id", "request_comment", "squest_instance_name"]
+EXCLUDED_SURVEY_FIELDS = ["request_comment"]
 
 
 class OperationRequestForm(forms.Form):
@@ -23,23 +19,8 @@ class OperationRequestForm(forms.Form):
         self.operation = kwargs.pop('operation', None)
         self.instance = kwargs.pop('instance', None)
         super(OperationRequestForm, self).__init__(*args, **kwargs)
-
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(job_template_survey=self.operation.job_template.survey,
-                                                       operation_survey=self.operation.tower_survey_fields)
-
-        from service_catalog.api.serializers import InstanceReadSerializer
-        context = {
-            "instance": InstanceReadSerializer(self.instance).data
-        }
-        purged_survey_with_default = FormUtils.apply_jinja_template_to_survey(job_template_survey=purged_survey,
-                                                                             operation_survey=self.operation.tower_survey_fields,
-                                                                             context=context)
-        purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
-            job_template_survey=purged_survey_with_default,
-            operation_survey=self.operation.tower_survey_fields)
-        self.fields.update(get_fields_from_survey(purged_survey_with_validator, form_title="2. Operation fields"))
-        self.fields['request_comment'].form_title = FIRST_BLOCK_FORM_FIELD_TITTLE
+        form_generator = FormGenerator(operation=self.operation, squest_instance=self.instance)
+        self.fields.update(form_generator.generate_form())
 
     def save(self):
         user_provided_survey_fields = dict()

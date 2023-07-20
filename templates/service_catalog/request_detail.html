@@ -5,183 +5,20 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-    <div class="float-right">
         {% include 'generics/buttons/edit_button.html' %}
         {% include 'generics/buttons/delete_button.html' %}
-        {% with args_filter="archive,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-default {{ args_filter |is_action_dropdown_disabled }}"
-               title="Archive"
-               href="{% url 'service_catalog:request_archive' object.id %}">
-                <i class="fas fa-archive"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="unarchive,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-success {{ args_filter |is_action_dropdown_disabled }}"
-               title="Unarchive"
-               href="{% url 'service_catalog:request_unarchive' object.id %}">
-                <i class="fas fa-box-open"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-info {{ args_filter |is_action_dropdown_disabled }}"
-               title="Reset to submitted"
-               href="{% url 'service_catalog:request_re_submit' object.id %}">
-                <i class="fas fa-redo"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-secondary {{ args_filter |is_action_dropdown_disabled }}"
-               title="Cancel"
-               href="{% url 'service_catalog:request_cancel' object.id %}">
-                <i class="fas fa-window-close"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-warning {{ args_filter |is_action_dropdown_disabled }}"
-               title="Ask more info"
-               href="{% url 'service_catalog:request_need_info' object.id %}">
-                <i class="fas fa-info-circle"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-danger {{ args_filter |is_action_dropdown_disabled }}"
-               title="Reject"
-               href="{% url 'service_catalog:request_reject' object.id %}">
-                <i class="fas fa-ban"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-primary {{ args_filter |is_action_dropdown_disabled }}"
-               title="Review"
-               href="{% url 'service_catalog:request_accept' object.id %}">
-                <i class="fas fa-clipboard-check"></i>
-            </a>
-        {% endwith %}
-        {% with args_filter="process,"|addstr:request.user.id|addstr:","|addstr:object.id %}
-            <a class="btn btn-success {{ args_filter |is_action_dropdown_disabled }}"
-               title="Process"
-               href="{% url 'service_catalog:request_process' object.id %}">
-                <i class="fas fa-play"></i>
-            </a>
-        {% endwith %}
-    </div>
 {% endblock %}
 {% block main %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-3">
-                <div class="card card-{{ object.state |map_request_state }}">
-                    <div class="card-header">
-                        <h3 class="card-title">Details</h3>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item border-top-0">
-                                <b>ID</b><span class="float-right">{{ object.id }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Instance</b><a
-                                    href="{% url 'service_catalog:instance_details' object.instance.id %}"
-                                    class="float-right">{{ object.instance.name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Service</b><span
-                                    class="float-right">{{ object.operation.service.name }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Operation</b><span class="float-right">{{ object.operation.name }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Operation type</b><strong
-                                    class="float-right text-{{ object.operation.type |map_operation_type }}">{{ object.operation.type }}</strong>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Request state</b><strong
-                                    class="float-right text-{{ object.state |map_request_state }}">{{ object.state }}</strong>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Instance state</b><strong
-                                    class="float-right text-{{ object.instance.state |map_instance_state }}">{{ object.instance.state }}</strong>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Requester</b><span class="float-right">{{ object.user.username }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Date submitted</b><span
-                                    class="float-right">{{ object.date_submitted |squest_date_format }}</span>
-                            </li>
-                            {% if object.date_complete %}
-                                <li class="list-group-item">
-                                    <b>Date complete</b><span
-                                        class="float-right">{{ object.date_complete |squest_date_format }}</span>
-                                </li>
-                            {% endif %}
-                            {% if object.accepted_by %}
-                                <li class="list-group-item">
-                                    <b>Accepted by</b><span
-                                        class="float-right">{{ object.accepted_by.username }}</span>
-                                </li>
-                            {% endif %}
-                            {% if object.processed_by %}
-                                <li class="list-group-item">
-                                    <b>Processed by</b><span
-                                        class="float-right">{{ object.processed_by.username }}</span>
-                                </li>
-                            {% endif %}
-                            {% if object.date_archived %}
-                                <li class="list-group-item">
-                                    <b>Date archived</b><span
-                                        class="float-right">{{ object.date_archived |squest_date_format }}</span>
-                                </li>
-                            {% endif %}
-                            {% if request.user.is_superuser %}
-                                <li class="list-group-item">
-                                    <b>Tower job</b>
-                                    <a href="{{ object.tower_job_url }}"
-                                       class="float-right">{{ object.tower_job_id }}</a>
-                                </li>
-                            {% endif %}
-                            {% if object.state == "FAILED" %}
-                                <li class="list-group-item border-bottom-0">
-                                    <b>Failure message</b><span
-                                        class="float-right">{{ object.failure_message }}</span>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="active tab-pane" id="survey">
-                                {% if request.user.is_superuser %}
-                                    <pre>
-                                        <code style="border: 0; padding: 0; margin: 0;"
-                                              class="language-json">{{ object.full_survey | pretty_json }}
-                                        </code>
-                                    </pre>
-                                {% else %}
-                                    <pre>
-                                        <code style="border: 0; padding: 0; margin: 0;"
-                                              class="language-json">{{ object.fill_in_survey | pretty_json }}
-                                        </code>
-                                    </pre>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% include 'service_catalog/request_details/details_left.html' %}
             </div>
             <div class="col-lg-5">
-                {% include 'service_catalog/common/request-messages.html' %}
+                {% include 'service_catalog/request_details/approval.html' %}
+            </div>
+            <div class="col-lg-4">
+                {% include 'service_catalog/request_details/request-messages.html' %}
             </div>
         </div>
     </div><!-- end container fluid -->

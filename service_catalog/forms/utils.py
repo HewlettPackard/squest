@@ -35,14 +35,14 @@ class SquestFloatField(SquestField, FloatField):
 
 
 def _get_field_group(field_name, operation_survey):
-    all_fields_for_admin = operation_survey.filter(enabled=False).count() == operation_survey.all().count()
+    all_fields_for_admin = operation_survey.filter(is_customer_field=False).count() == operation_survey.all().count()
     if all_fields_for_admin:
         return "2. Admin fields"
-    all_fields_for_user = operation_survey.filter(enabled=True).count() == operation_survey.all().count()
+    all_fields_for_user = operation_survey.filter(is_customer_field=True).count() == operation_survey.all().count()
     if all_fields_for_user:
         return "2. User fields"
 
-    if operation_survey.get(name=field_name).enabled:
+    if operation_survey.get(name=field_name).is_customer_field:
         return "3. User fields"
     else:
         return "2. Admin fields"
@@ -56,11 +56,15 @@ def get_choices_as_tuples_list(choices, default=None):
     return default + [(choice, choice) for choice in choices]
 
 
-def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Service fields"):
+def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Service fields", list_disabled_field=None):
+    if not list_disabled_field:
+        list_disabled_field = list()
     fields = {}
     for survey_field in survey["spec"]:
+        disabled = survey_field["variable"] in list_disabled_field
         if survey_field["type"] == "text":
             fields[survey_field['variable']] = SquestCharField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=survey_field['default'],
                 required=survey_field['required'],
@@ -73,6 +77,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "textarea":
             fields[survey_field['variable']] = SquestCharField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=survey_field['default'],
                 required=survey_field['required'],
@@ -85,6 +90,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "password":
             fields[survey_field['variable']] = SquestCharField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 required=survey_field['required'],
                 help_text=survey_field['question_description'],
@@ -96,6 +102,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "multiplechoice":
             fields[survey_field['variable']] = SquestChoiceField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=survey_field['default'],
                 required=survey_field['required'],
@@ -108,6 +115,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "multiselect":
             fields[survey_field['variable']] = SquestMultipleChoiceField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=survey_field['default'].split("\n"),
                 required=survey_field['required'],
@@ -119,6 +127,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "integer":
             fields[survey_field['variable']] = SquestIntegerField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=None if not survey_field['default'] else int(survey_field['default']),
                 required=survey_field['required'],
@@ -131,6 +140,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
 
         elif survey_field["type"] == "float":
             fields[survey_field['variable']] = SquestFloatField(
+                disabled=disabled,
                 label=survey_field['question_name'],
                 initial=None if not survey_field['default'] else float(survey_field['default']),
                 required=survey_field['required'],
@@ -154,19 +164,7 @@ def get_fields_from_survey(survey, tower_survey_fields=None, form_title="2. Serv
         if tower_survey_fields:
             fields[survey_field['variable']].group = _get_field_group(field_name=survey_field['variable'],
                                                                       operation_survey=tower_survey_fields)
-    if fields:
+    if fields and form_title != "":
         fields[next(iter(fields))].separator = True
         fields[next(iter(fields))].form_title = form_title
     return fields
-
-
-def prefill_form_with_user_values(fields: dict, fill_in_survey: dict, admin_fill_in_survey: dict):
-    skipped_fields = ['squest_instance_name', 'billing_group_id']
-    for field, value in fill_in_survey.items():
-        if field not in skipped_fields:
-            fields.get(field).initial = value
-            fields.get(field).default = value
-    for field, value in admin_fill_in_survey.items():
-        if field not in skipped_fields:
-            fields.get(field).initial = value
-            fields.get(field).default = value

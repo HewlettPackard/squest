@@ -1,4 +1,4 @@
-from service_catalog.forms import AcceptRequestForm
+from service_catalog.forms.accept_request_forms import AcceptRequestForm
 from service_catalog.forms.utils import _get_field_group
 from service_catalog.models import Request, Instance
 from tests.test_service_catalog.base import BaseTest
@@ -72,21 +72,3 @@ class TestServiceRequestForm(BaseTest):
         expected_result = "2. User fields"
         self.assertEqual(expected_result,
                          _get_field_group(field_name, self.test_request.operation.tower_survey_fields.all()))
-
-    def test_accept_forms_field_count(self):
-        parameters = {
-            'request': self.test_request
-        }
-        data = {
-            'squest_instance_name': self.test_request.instance.name,
-            'quota_scope_id': self.test_request.instance.quota_scope_id,
-            'multiselect_var': ['multiselect_2', 'multiselect_3'],
-            'text_var': ['text_val'],
-            'textarea_var': ['text_area'],
-            'password_var': ['aa'],
-            'choice_var': ['choice_2'],
-            'integer_var': ['1'],
-            'float_var': ['1.5']
-        }
-        form = AcceptRequestForm(self.superuser, data, **parameters)
-        self.assertEqual(len(self.test_request.fill_in_survey), len(form.fields) - 2)

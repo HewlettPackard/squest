@@ -9,6 +9,51 @@ $(document).ready(function () {
     $('.ajax_sync_all_job_template').click(sync_all_job_template);
     $('.ajax_sync_job_template').click(sync_job_template);
 
+    // approval step drag and drop
+    var panelList = $('#draggableApprovalStepList');
+    const url_sync = panelList.data('url-sync-step');
+    var listStepToUpdate = [];
+    panelList.sortable({
+        // Only make the .card-header child elements support dragging.
+        handle: '.card-header',
+        update: function() {
+            $('.card', panelList).each(function(index, elem) {
+                var $listItem = $(elem), newPosition = $listItem.index();
+                // Persist the new positions
+                var dictStep = {
+                    id: elem.id,
+                    position: newPosition
+                };
+                listStepToUpdate.push(dictStep);
+            });
+            console.log(listStepToUpdate);
+            $.ajax({
+                url: url_sync,
+                method: 'POST',
+                data: {
+                    listStepToUpdate: JSON.stringify(listStepToUpdate),
+                    csrfmiddlewaretoken: csrf_token
+                },
+            }).done((res) => {
+                // $(document).Toasts('create', {
+                //     title: 'Update step order',
+                //     body: 'Complete',
+                //     autohide: true,
+                //     delay: 3000,
+                //     class: 'bg-success mr-3 my-3'
+                // });
+            }).fail((err) => {
+                $(document).Toasts('create', {
+                    title: 'Update step order',
+                    body: 'Error',
+                    autohide: true,
+                    delay: 3000,
+                    class: 'bg-danger mr-3 my-3'
+                });
+            });
+        }
+    });
+
 });
 
 

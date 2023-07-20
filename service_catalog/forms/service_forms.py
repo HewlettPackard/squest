@@ -1,8 +1,7 @@
 from django import forms
 
-from profiles.models.scope import Scope
-from service_catalog.models.services import Service
 from Squest.utils.squest_model_form import SquestModelForm
+from service_catalog.models.services import Service
 
 
 class ServiceForm(SquestModelForm):

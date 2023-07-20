@@ -1,4 +1,5 @@
-from service_catalog.forms import utils, FormUtils
+from service_catalog.forms import utils
+from service_catalog.forms.form_utils import FormUtils
 from tests.test_service_catalog.base import BaseTest
 
 
