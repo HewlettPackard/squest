@@ -15,7 +15,7 @@ class SquestRBAC(Model):
     @classmethod
     def get_queryset_for_user(cls, user, perm):
         if user.is_superuser:
-            return cls.objects.all()
+            return cls.objects.distinct()
 
         app_label, codename = perm.split(".")
 
@@ -32,7 +32,7 @@ class SquestRBAC(Model):
                   codename=codename,
                   content_type__app_label=app_label)
         ).exists():
-            return cls.objects.all()
+            return cls.objects.distinct()
         return cls.objects.none()
 
     def get_scopes(self):
