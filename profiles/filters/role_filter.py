@@ -1,5 +1,5 @@
-from profiles.models import Role
 from Squest.utils.squest_filter import SquestFilter
+from profiles.models import Role
 
 
 class RoleFilter(SquestFilter):

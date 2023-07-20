@@ -1,5 +1,5 @@
-from service_catalog.models import Request
 from Squest.utils.squest_model_form import SquestModelForm
+from service_catalog.models import Request
 
 
 class RequestForm(SquestModelForm):

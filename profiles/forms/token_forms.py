@@ -1,8 +1,9 @@
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
-from profiles.models import Token
 from Squest.utils.squest_model_form import SquestModelForm
+from profiles.models import Token
+
 
 class TokenForm(SquestModelForm):
     class Meta:

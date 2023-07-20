@@ -2,8 +2,8 @@ from django.utils.html import format_html
 from django_tables2 import TemplateColumn, LinkColumn, CheckBoxColumn
 from django_tables2.utils import A
 
-from service_catalog.models import Instance
 from Squest.utils.squest_table import SquestTable
+from service_catalog.models import Instance
 
 
 class InstanceTable(SquestTable):

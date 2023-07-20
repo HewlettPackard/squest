@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Permission
+
 from Squest.utils.squest_api_views import SquestListAPIView, SquestRetrieveAPIView
 from profiles.api.serializers import PermissionSerializer
 from profiles.filters import PermissionFilter

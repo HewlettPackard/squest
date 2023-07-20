@@ -1,8 +1,8 @@
 from django_tables2 import TemplateColumn, LinkColumn
 from django_tables2.utils import A
 
-from service_catalog.models import TowerServer
 from Squest.utils.squest_table import SquestTable
+from service_catalog.models import TowerServer
 
 
 class TowerServerTable(SquestTable):

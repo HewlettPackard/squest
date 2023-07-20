@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
 from django.forms import HiddenInput, CheckboxInput
+from django.utils.translation import gettext_lazy as _
 from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
 
+from Squest.utils.squest_filter import SquestFilter
 from service_catalog.models import Instance, Service
 from service_catalog.models.instance import InstanceState
-from Squest.utils.squest_filter import SquestFilter
 
 
 def validate_json_field(value):

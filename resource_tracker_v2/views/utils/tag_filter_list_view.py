@@ -1,9 +1,6 @@
 import logging
 
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
-from django.utils.decorators import method_decorator
 
 from Squest.utils.squest_views import SquestListView
 

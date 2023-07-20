@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, BooleanField, JSONField
-from towerlib import Tower
 from django.utils.translation import gettext_lazy as _
+from towerlib import Tower
 
 from Squest.utils.squest_model import SquestModel
 

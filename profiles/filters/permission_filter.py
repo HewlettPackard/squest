@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Permission
+
 from Squest.utils.squest_filter import SquestFilter
 
 

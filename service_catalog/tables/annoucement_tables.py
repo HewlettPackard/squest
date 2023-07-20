@@ -1,8 +1,8 @@
 from django.utils.html import format_html
 from django_tables2 import TemplateColumn, Column
 
-from service_catalog.models import Announcement
 from Squest.utils.squest_table import SquestTable
+from service_catalog.models import Announcement
 
 
 class AnnouncementTable(SquestTable):

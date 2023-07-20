@@ -1,5 +1,3 @@
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-
 from Squest.utils.squest_api_views import SquestRetrieveUpdateDestroyAPIView, SquestListCreateAPIView
 from profiles.api.serializers.support_notification_filter_serializer import SupportNotificationFilterSerializer
 from profiles.filters.notification_filter_filter import InstanceNotificationFilterFilter
