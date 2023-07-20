@@ -1,5 +1,5 @@
-from profiles.models import Organization
 from Squest.utils.squest_model_form import SquestModelForm
+from profiles.models import Organization
 
 
 class OrganizationForm(SquestModelForm):

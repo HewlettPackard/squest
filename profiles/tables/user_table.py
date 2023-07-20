@@ -2,10 +2,9 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.html import format_html
 from django_tables2 import TemplateColumn, LinkColumn, Column
-
-from Squest.utils.squest_table import SquestTable
 from django_tables2.utils import A
 
+from Squest.utils.squest_table import SquestTable
 
 
 class UserTable(SquestTable):

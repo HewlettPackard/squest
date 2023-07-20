@@ -1,4 +1,3 @@
-from django.urls import reverse
 from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker_v2.forms.resource_group_form import ResourceGroupForm

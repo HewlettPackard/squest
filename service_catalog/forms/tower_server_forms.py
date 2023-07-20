@@ -1,12 +1,15 @@
 import re
+
 import requests
 import towerlib
 import urllib3
 from django import forms
 from django.core.exceptions import ValidationError
 from towerlib import Tower
-from service_catalog.models import TowerServer
+
 from Squest.utils.squest_model_form import SquestModelForm
+from service_catalog.models import TowerServer
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 

@@ -1,4 +1,5 @@
 from django_tables2 import tables, TemplateColumn, Column
+
 from profiles.models import Role
 
 

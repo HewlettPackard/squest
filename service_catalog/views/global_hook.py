@@ -1,15 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-
-from service_catalog.forms import GlobalHookForm
-from service_catalog.models.services import Service
-from service_catalog.models.instance import InstanceState
-from service_catalog.models.request import RequestState
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.global_hook_filter import GlobalHookFilter
+from service_catalog.forms import GlobalHookForm
 from service_catalog.models import GlobalHook
+from service_catalog.models.instance import InstanceState
+from service_catalog.models.request import RequestState
+from service_catalog.models.services import Service
 from service_catalog.tables.global_hook_tables import GlobalHookTable
 
 

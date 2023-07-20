@@ -13,8 +13,6 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
-from utils import logger
-
 
 class SquestPermissionDenied(PermissionDenied):
     def __init__(self, permission, *args, **kwargs):

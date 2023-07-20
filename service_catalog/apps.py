@@ -3,7 +3,6 @@ import sys
 
 from django.apps import AppConfig
 
-
 logger = logging.getLogger(__name__)
 
 

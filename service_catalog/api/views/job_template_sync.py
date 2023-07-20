@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from service_catalog import tasks
-from service_catalog.models import TowerServer, JobTemplate
 from service_catalog.api.serializers import TaskResultSerializer
+from service_catalog.models import TowerServer, JobTemplate
 
 
 class JobTemplateSync(APIView):

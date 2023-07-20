@@ -1,6 +1,7 @@
 from django import forms
-from resource_tracker_v2.models import Resource, ResourceAttribute, AttributeDefinition
+
 from Squest.utils.squest_model_form import SquestModelForm
+from resource_tracker_v2.models import Resource, ResourceAttribute, AttributeDefinition
 
 
 class ResourceForm(SquestModelForm):
