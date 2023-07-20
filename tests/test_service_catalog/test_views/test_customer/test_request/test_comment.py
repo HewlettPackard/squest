@@ -10,13 +10,13 @@ class CustomerRequestCommentTest(BaseTestRequest):
         super(CustomerRequestCommentTest, self).setUp()
         # add one comment
         self.comment = RequestMessage.objects.create(sender=self.standard_user,
-                                      request=self.test_request,
-                                      content="first test message")
+                                                     request=self.test_request,
+                                                     content="first test message")
         request = {
             'request_id': self.test_request.id
         }
         comment = {
-            'comment_id': self.comment.id
+            'pk': self.comment.id
         }
         self.data_to_edit = {"content": "comment edited"}
         self.create_url = reverse('service_catalog:requestmessage_create', kwargs=request)
@@ -36,7 +36,7 @@ class CustomerRequestCommentTest(BaseTestRequest):
         response = self.client.post(self.create_url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_message_before + 1,
-                          RequestMessage.objects.filter(request=self.test_request).count())
+                         RequestMessage.objects.filter(request=self.test_request).count())
 
     def test_cannot_get_comment_list_when_logout(self):
         self.client.logout()
@@ -45,7 +45,6 @@ class CustomerRequestCommentTest(BaseTestRequest):
 
     def test_admin_can_list_request_comment(self):
         self._assert_can_list_comment()
-
 
     def test_non_owner_cannot_list_request_comment(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
@@ -73,7 +72,6 @@ class CustomerRequestCommentTest(BaseTestRequest):
         self.comment.refresh_from_db()
         self.assertEqual(self.comment.content, "comment edited")
         self.assertEqual(self.comment.sender, self.standard_user)
-
 
     def test_admin_can_edit_comment(self):
         self.client.force_login(self.superuser)

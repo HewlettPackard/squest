@@ -12,7 +12,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
 
     def _assert_can_cancel(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.get(url)
@@ -23,7 +23,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
 
     def _assert_cannot_cancel(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
 
         url = reverse('service_catalog:request_cancel', kwargs=args)
@@ -48,7 +48,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
 
     def test_admin_can_cancel_from_admin_view(self):
         args = {
-            'request_id': self.test_request.id
+            'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.post(url)

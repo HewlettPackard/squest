@@ -5,11 +5,11 @@
     <div>
         <i class="fas fa-shopping-cart bg-blue"></i>
         <div class="timeline-item">
-            <span class="time"><i class="fas fa-clock"></i> {{ target_request.date_submitted }}</span>
-            <h3 class="timeline-header">Requested by <a href="{% url 'profiles:user_details' target_request.user.id %}">{{ target_request.user }}</a></h3>
+            <span class="time"><i class="fas fa-clock"></i> {{ object.date_submitted }}</span>
+            <h3 class="timeline-header">Requested by <a href="{% url 'profiles:user_details' object.user.id %}">{{ object.user }}</a></h3>
             <div class="timeline-body">
                 <dl class="row">
-                    {% for variable_name, value in target_request.fill_in_survey.items %}
+                    {% for variable_name, value in object.fill_in_survey.items %}
                         <dt class="col-sm-2">{{ variable_name }}</dt>
                         <dd class="col-sm-10">{{ value }}</dd>
                     {% endfor %}
@@ -18,8 +18,8 @@
 
         </div>
     </div>
-    {% if target_request.approval_workflow_state %}
-        {% for step in target_request.approval_workflow_state.approval_step_states.all %}
+    {% if object.approval_workflow_state %}
+        {% for step in object.approval_workflow_state.approval_step_states.all %}
             <div>
                 <i class="fas fa-clipboard{% if step.state == "APPROVED" %}-check{% endif %} bg-{{ step |map_approvalstep_state }}"></i>
                 <div class="timeline-item">
@@ -48,7 +48,7 @@
                                 <div class="timeline-footer">
                                     <a class="btn btn-sm btn-default"
                                        title="Review"
-                                       href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
+                                       href="{% url 'service_catalog:request_re_submit' object.id %}">
                                         <i class="fas fa-redo"></i> Undo
                                     </a>
                                 </div>
@@ -59,12 +59,12 @@
                                     <div class="timeline-footer">
                                         <a class="btn btn-lg btn-primary"
                                            title="Review"
-                                           href="{% url 'service_catalog:request_approve' target_request.id %}">
+                                           href="{% url 'service_catalog:request_approve' object.id %}">
                                             <i class="fas fa-clipboard-check"></i> Review
                                         </a>
                                         <a class="btn btn-lg btn-danger"
                                            title="Reject"
-                                           href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
+                                           href="{% url 'service_catalog:request_reject' object.id %}">
                                             <i class="fas fa-ban"></i> Reject
                                         </a>
                                     </div>
@@ -81,63 +81,63 @@
         {% endfor %}
     {% else %}
         <div>
-            <i class="fas fa-clipboard-check bg-{{ target_request.state |map_request_state }}"></i>
+            <i class="fas fa-clipboard-check bg-{{ object.state |map_request_state }}"></i>
             <div class="timeline-item">
                     <span class="time">
-                        <span class="badge bg-{{ target_request.state |map_request_state }}">
-                            {{ target_request.state }}
+                        <span class="badge bg-{{ object.state |map_request_state }}">
+                            {{ object.state }}
                         </span>
                     </span>
                 <h3 class="timeline-header">Admin review</h3>
                 <div class="timeline-body">
-                    {% if target_request.state == "ACCEPTED" %}
+                    {% if object.state == "ACCEPTED" %}
                         <dl class="row">
-                            {% for variable_name, value in target_request.admin_fill_in_survey.items %}
+                            {% for variable_name, value in object.admin_fill_in_survey.items %}
                                 <dt class="col-sm-2">{{ variable_name }}</dt>
                                 <dd class="col-sm-10">{{ value }}</dd>
                             {% endfor %}
                         </dl>
                         <blockquote class="quote-success">
-                            <i class="fas fa-check text-success"></i> Accepted by <strong>{{ target_request.accepted_by }}</strong>
+                            <i class="fas fa-check text-success"></i> Accepted by <strong>{{ object.accepted_by }}</strong>
                         </blockquote>
                     {% else %}
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
-                                {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                                {% with args_filter="cancel,"|addstr:request.user.id|addstr:","|addstr:object.id %}
                                     <a class="btn btl-lg btn-secondary {{ args_filter |is_action_dropdown_disabled }}"
                                        title="Cancel"
-                                       href="{% url 'service_catalog:request_cancel' target_request.id %}">
+                                       href="{% url 'service_catalog:request_cancel' object.id %}">
                                         <i class="fas fa-window-close"></i> Cancel
                                     </a>
                                 {% endwith %}
-                                {% if target_request.state != "NEED_INFO" %}
-                                    {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                                {% if object.state != "NEED_INFO" %}
+                                    {% with args_filter="need_info,"|addstr:request.user.id|addstr:","|addstr:object.id %}
                                         <a class="btn btl-lg btn-warning {{ args_filter |is_action_dropdown_disabled }}"
                                            title="Ask more info"
-                                           href="{% url 'service_catalog:admin_request_need_info' target_request.id %}">
+                                           href="{% url 'service_catalog:request_need_info' object.id %}">
                                             <i class="fas fa-info-circle"></i> Ask info
                                         </a>
                                     {% endwith %}
                                 {% else %}
-                                    {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                                    {% with args_filter="re_submit,"|addstr:request.user.id|addstr:","|addstr:object.id %}
                                         <a class="btn btl-lg btn-info {{ args_filter |is_action_dropdown_disabled }}"
                                            title="Reset to submit"
-                                           href="{% url 'service_catalog:admin_request_re_submit' target_request.id %}">
+                                           href="{% url 'service_catalog:request_re_submit' object.id %}">
                                             <i class="fas fa-undo"></i> Reset to submitted
                                         </a>
                                     {% endwith %}
                                 {% endif %}
-                                {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                                {% with args_filter="reject,"|addstr:request.user.id|addstr:","|addstr:object.id %}
                                     <a class="btn btl-lg btn-danger {{ args_filter |is_action_dropdown_disabled }}"
                                        title="Reject"
-                                       href="{% url 'service_catalog:admin_request_reject' target_request.id %}">
+                                       href="{% url 'service_catalog:request_reject' object.id %}">
                                         <i class="fas fa-ban"></i> Reject
                                     </a>
                                 {% endwith %}
-                                {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:target_request.id %}
+                                {% with args_filter="accept,"|addstr:request.user.id|addstr:","|addstr:object.id %}
                                     <a class="btn btl-lg btn-primary {{ args_filter |is_action_dropdown_disabled }}"
                                        title="Review"
-                                       href="{% url 'service_catalog:admin_request_accept' target_request.id %}">
+                                       href="{% url 'service_catalog:request_accept' object.id %}">
                                         <i class="fas fa-clipboard-check"></i> Review
                                     </a>
                                 {% endwith %}
@@ -148,17 +148,17 @@
             </div>
         </div>
     {% endif %}
-    {% if target_request.state == "REJECTED" %}
+    {% if object.state == "REJECTED" %}
         <div class="time-label">
             <span class="bg-danger">Rejected</span>
         </div>
     {% else %}
         <div class="time-label">
-            <span class="bg-{% if target_request.state == "ACCEPTED" %}success{% else %}secondary{% endif %}">Accepted</span>
+            <span class="bg-{% if object.state == "ACCEPTED" %}success{% else %}secondary{% endif %}">Accepted</span>
         </div>
     {% endif %}
     <div>
-        <i class="fas fa-play fa-lg bg-{% if target_request.state == "ACCEPTED" %}success{% else %}secondary{% endif %}"></i>
+        <i class="fas fa-play fa-lg bg-{% if object.state == "ACCEPTED" %}success{% else %}secondary{% endif %}"></i>
         <div class="timeline-item">
             <span class="time">
                 <span class="badge bg-secondary">
@@ -169,9 +169,9 @@
             <div class="timeline-body">
                 <div class="row justify-content-md-center">
                     <div class="timeline-footer">
-                        <a class="btn btn-lg btn-success {% if not target_request.state == "ACCEPTED" %}disabled{% endif %}"
+                        <a class="btn btn-lg btn-success {% if not object.state == "ACCEPTED" %}disabled{% endif %}"
                            title="Process"
-                           href="{% url 'service_catalog:admin_request_process' target_request.id %}">
+                           href="{% url 'service_catalog:request_process' object.id %}">
                             <i class="fas fa-play"></i> Process
                         </a>
                     </div>
@@ -180,6 +180,6 @@
         </div>
     </div>
     <div class="time-label">
-        <span class="bg-{% if target_request.state == "COMPLETE" %}success{% else %}secondary{% endif %}">Complete</span>
+        <span class="bg-{% if object.state == "COMPLETE" %}success{% else %}secondary{% endif %}">Complete</span>
     </div>
 </div>

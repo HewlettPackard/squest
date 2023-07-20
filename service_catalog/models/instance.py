@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 class Instance(SquestModel):
     class Meta:
         permissions = [
+            ("archive_instance", "Can archive instance"),
             ("request_on_instance", "Can request a day2 operation on instance"),
             ("admin_request_on_instance", "Can request an admin day2 operation on instance"),
             ("view_admin_spec_instance", "Can view admin spec on instance"),
