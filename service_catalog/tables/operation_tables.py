@@ -1,7 +1,7 @@
 from django_tables2 import TemplateColumn, LinkColumn
 
-from service_catalog.models import Operation
 from Squest.utils.squest_table import SquestTable
+from service_catalog.models import Operation
 
 
 class OperationTable(SquestTable):

@@ -3,10 +3,11 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ChoiceField
 
+from Squest.utils.squest_model_form import SquestModelForm
 from service_catalog.models import GlobalHook
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
-from Squest.utils.squest_model_form import SquestModelForm
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 

@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
+from rest_framework.fields import MultipleChoiceField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from profiles.api.serializers import RBACSerializer
 from profiles.models import Scope
-from rest_framework.fields import MultipleChoiceField
 
 
 class ScopeSerializer(ModelSerializer):

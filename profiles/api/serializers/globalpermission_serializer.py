@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer
+
 from profiles.api.serializers import RBACSerializer
-
-
 from profiles.models import GlobalPermission
 
 

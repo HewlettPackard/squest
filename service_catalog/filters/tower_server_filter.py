@@ -1,5 +1,5 @@
-from service_catalog.models import TowerServer
 from Squest.utils.squest_filter import SquestFilter
+from service_catalog.models import TowerServer
 
 
 class TowerServerFilter(SquestFilter):

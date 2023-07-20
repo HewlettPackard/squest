@@ -1,10 +1,11 @@
 from django.forms import SelectMultiple
 from django_filters import MultipleChoiceFilter
+
+from Squest.utils.squest_filter import SquestFilter
 from service_catalog.models import GlobalHook
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from service_catalog.models.state_hooks import HookModel
-from Squest.utils.squest_filter import SquestFilter
 
 
 class GlobalHookFilter(SquestFilter):

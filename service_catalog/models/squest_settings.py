@@ -1,6 +1,5 @@
-from django.db.models import BooleanField
 from django.contrib import admin
-
+from django.db.models import BooleanField
 
 from Squest.models.singleton_model import SingletonModel
 

@@ -1,10 +1,10 @@
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
 
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView
+from service_catalog.api.serializers import ServiceSerializer
 from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.models import Service
-from service_catalog.api.serializers import ServiceSerializer, ServiceSerializer
 
 
 class ServiceListCreate(SquestListCreateAPIView):
@@ -37,4 +37,3 @@ class ServiceDetails(SquestRetrieveUpdateDestroyAPIView):
         if self.request.user.is_superuser:
             return Service.objects.all()
         return Service.objects.filter(enabled=True)
-

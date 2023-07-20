@@ -1,19 +1,18 @@
 import logging
 
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT, Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition, post_transition
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from profiles.models.scope import Scope
-from service_catalog.models.services import Service
 from service_catalog.models.instance_state import InstanceState
+from service_catalog.models.services import Service
 from service_catalog.models.state_hooks import HookManager
 
 logger = logging.getLogger(__name__)

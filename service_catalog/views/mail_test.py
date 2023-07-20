@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from Squest import settings
-from service_catalog.models import Instance, Request, RequestMessage
+from service_catalog.models import Request, RequestMessage
 
 
 def mail_test(request):
