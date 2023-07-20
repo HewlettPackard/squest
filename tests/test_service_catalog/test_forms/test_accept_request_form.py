@@ -1,4 +1,4 @@
-from service_catalog.forms import AcceptRequestForm
+from service_catalog.forms.accept_request_forms import AcceptRequestForm
 from service_catalog.models import Request, Instance
 from tests.test_service_catalog.base import BaseTest
 
@@ -44,11 +44,10 @@ class TestAcceptRequestForm(BaseTest):
             'request': self.test_request
         }
         data = {
-            'squest_instance_name': self.test_request.instance.name,
-            'quota_scope_id': None,
             'text_variable': '',
         }
         form = AcceptRequestForm(self.superuser, data, **parameters)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertEqual(self.test_request.fill_in_survey["text_variable"], "")
+        self.assertEqual(self.test_request.fill_in_survey["text_variable"], "variable_set_by_user")
+        self.assertEqual(self.test_request.admin_fill_in_survey["text_variable"], "")

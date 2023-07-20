@@ -60,11 +60,11 @@ class Command(BaseCommand):
             service = services[service_name]
             Operation.objects.get_or_create(name=service.name,
                                             service=service,
-                                            job_template=job_templates[1])
+                                            job_template=job_templates.get(name="Demo Job Template"))
             Operation.objects.get_or_create(name="Delete my resource",
                                             type=OperationType.DELETE,
                                             service=service,
-                                            job_template=job_templates[1])
+                                            job_template=job_templates.get(name="Demo Job Template"))
             states = [RequestState.SUBMITTED, RequestState.FAILED, RequestState.ACCEPTED, RequestState.NEED_INFO,
                       RequestState.REJECTED, RequestState.CANCELED, RequestState.PROCESSING, RequestState.COMPLETE]
             for i in range(random.randint(1, 3)):
@@ -88,7 +88,7 @@ class Command(BaseCommand):
         # layer 1: vcenter
         core_attribute = AttributeDefinition.objects.create(name="core")
         memory_attribute = AttributeDefinition.objects.create(name="memory")
-        three_par_attribute = AttributeDefinition.objects.create(name="3PAR")
+        disk = AttributeDefinition.objects.create(name="disk")
         cluster = ResourceGroup.objects.create(name="cluster")
         # cluster --> core
         Transformer.objects.create(resource_group=cluster,
@@ -98,7 +98,7 @@ class Command(BaseCommand):
                                    attribute_definition=memory_attribute)
         # cluster --> 3par
         Transformer.objects.create(resource_group=cluster,
-                                   attribute_definition=three_par_attribute)
+                                   attribute_definition=disk)
 
         server1 = Resource.objects.create(name="server1", resource_group=cluster)
         server1.set_attribute(core_attribute, 10)

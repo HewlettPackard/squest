@@ -1,15 +1,15 @@
 from django.test import override_settings
 
-from service_catalog.api.serializers import InstanceSerializer
-from service_catalog.forms import FormUtils, ServiceRequestForm
+from service_catalog.forms import ServiceRequestForm2
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base import BaseTest
 
 
-class TestServiceRequestForm(BaseTest):
+class TestFormUtils(BaseTest):
 
     def setUp(self):
-        super(TestServiceRequestForm, self).setUp()
+        super(TestFormUtils, self).setUp()
         enabled_survey_fields = {
             'text_variable': True,
             'multiplechoice_variable': False,
@@ -44,154 +44,6 @@ class TestServiceRequestForm(BaseTest):
         self.assertEqual(expected_result,
                          FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
                                                         operation_survey=self.create_operation_test.tower_survey_fields))
-
-    def test_apply_jinja_template_to_survey_empty_default(self):
-        self.job_template_test.survey = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.job_template_test.save()
-        # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.default = ""
-        target_field.save()
-        expected_result = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.assertEqual(expected_result,
-                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
-
-    def test_apply_jinja_template_to_survey_override_default(self):
-        self.job_template_test.survey = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "this_was_the_default",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.job_template_test.save()
-        # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.default = "this_is_the_new_default"
-        target_field.save()
-        expected_result = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "this_is_the_new_default",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.assertEqual(expected_result,
-                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
-
-    def test_apply_jinja_template_to_survey_with_spec_variable(self):
-        self.job_template_test.survey = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "this_was_the_default",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.job_template_test.save()
-        # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.default = "{{ instance.spec.os }}"
-        target_field.save()
-        context = {
-            "instance": {
-                "spec": {
-                    "os": "linux"
-                }
-            }
-
-        }
-        expected_result = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "linux",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.assertEqual(expected_result,
-                         FormUtils.apply_jinja_template_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                  operation_survey=self.create_operation_test.tower_survey_fields,
-                                                                  context=context
-                                                                  ))
 
     def test_template_field_no_default_no_spec(self):
         default_template_config = ""
@@ -371,27 +223,30 @@ class TestServiceRequestForm(BaseTest):
 
         # not valid because not even number
         data = {
+            "user": self.standard_user,
             "squest_instance_name": "instance test",
-            "quota_scope": self.test_quota_scope.id,
+            "quota_scope": self.test_quota_scope,
             "text_variable": "3"
         }
-        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        form = ServiceRequestForm2(data, **parameters)
         self.assertFalse(form.is_valid())
 
         # not valid because not superior to 10
         data = {
+            "user": self.standard_user,
             "squest_instance_name": "instance test",
-            "quota_scope": self.test_quota_scope.id,
+            "quota_scope": self.test_quota_scope,
             "text_variable": "9"
         }
-        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        form = ServiceRequestForm2(data, **parameters)
         self.assertFalse(form.is_valid())
 
         # valid because superior to 10 and even number
         data = {
+            "user": self.standard_user,
             "squest_instance_name": "instance test",
-            "quota_scope": self.test_quota_scope.id,
+            "quota_scope": self.test_quota_scope,
             "text_variable": "12"
         }
-        form = ServiceRequestForm(self.standard_user, data, **parameters)
+        form = ServiceRequestForm2(data, **parameters)
         self.assertTrue(form.is_valid())

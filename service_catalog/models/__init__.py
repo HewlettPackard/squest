@@ -20,3 +20,8 @@ from service_catalog.models.custom_link import CustomLink
 from service_catalog.models.inventory import Inventory
 from service_catalog.models.credential import Credential
 from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.approval_state import ApprovalState
+from service_catalog.models.approval_step import ApprovalStep
+from service_catalog.models.approval_step_state import ApprovalStepState
+from service_catalog.models.approval_workflow import ApprovalWorkflow
+from service_catalog.models.approval_workflow_state import ApprovalWorkflowState
