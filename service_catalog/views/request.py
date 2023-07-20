@@ -1,33 +1,23 @@
 import logging
 
 import requests
-
-from django.contrib.auth.decorators import login_required
-
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.views.generic import DetailView, FormView
 from django_fsm import can_proceed
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.request_filter import RequestFilter, RequestArchivedFilter
-
-from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
 from service_catalog.forms import RequestMessageForm
+from service_catalog.forms.accept_request_forms import AcceptRequestForm
 from service_catalog.forms.approve_workflow_step_form import ApproveWorkflowStepForm
-from service_catalog.models import Request, RequestMessage
-from service_catalog.models.instance import InstanceState
-from service_catalog.mail_utils import send_email_request_canceled
-from service_catalog.tables.request_tables import RequestTable
-
-from service_catalog.forms import RequestMessageForm, AcceptRequestForm
 from service_catalog.forms.process_request_form import ProcessRequestForm
 from service_catalog.forms.request_forms import RequestForm
+from service_catalog.mail_utils import send_email_request_canceled
 from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import Request, RequestMessage
+from service_catalog.models.instance import InstanceState
+from service_catalog.tables.request_tables import RequestTable
 
 logger = logging.getLogger(__name__)
 
@@ -89,8 +79,8 @@ class RequestDeleteView(SquestDeleteView):
 
 
 @login_required
-def request_cancel(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_cancel(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.cancel_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.cancel):
@@ -109,10 +99,10 @@ def request_cancel(request, request_id):
     context = {
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': request_id, 'url': ""},
+            {'text': pk, 'url': ""},
         ],
         'confirm_text': mark_safe(f"Do you want to cancel the request <strong>{target_request.id}</strong>?"),
-        'action_url': reverse('service_catalog:request_cancel', kwargs={'request_id': request_id}),
+        'action_url': reverse('service_catalog:request_cancel', kwargs={'pk': pk}),
         'button_text': 'Confirm cancel request',
         'details': {
             'warning_sentence': f"Canceling this request will delete the instance {target_request.instance.name}."
@@ -138,7 +128,7 @@ def request_comment(request, request_id):
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
         {'text': target_request.id, 'url': reverse('service_catalog:request_details',
-                                                   kwargs={'request_id': target_request.id})},
+                                                   kwargs={'pk': target_request.id})},
         {'text': "Comments", 'url': ""}
     ]
     context = {
@@ -147,15 +137,16 @@ def request_comment(request, request_id):
         'messages': messages,
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': request_id, 'url': ""},
+            {'text': target_request, 'url': ""},
         ]
     }
     return render(request, "service_catalog/common/request-comment.html", context)
 
 
 @login_required
-def requestmessage_edit(request, request_id, comment_id):
-    request_message = get_object_or_404(RequestMessage, id=comment_id)
+def requestmessage_edit(request, request_id, pk):
+    request_message = get_object_or_404(RequestMessage, id=pk)
+    squest_request = get_object_or_404(Request, id=request_id)
     if not request.user.has_perm('service_catalog.change_requestmessage', request_message):
         raise PermissionDenied
     if request.method == "POST":
@@ -171,8 +162,7 @@ def requestmessage_edit(request, request_id, comment_id):
         'form': form,
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': request_id, 'url': reverse('service_catalog:request_details',
-                                                kwargs={'pk': request_id})},
+            {'text': squest_request, 'url': squest_request.get_absolute_url()},
         ],
         'action': 'edit'
     }
@@ -180,8 +170,8 @@ def requestmessage_edit(request, request_id, comment_id):
 
 
 @login_required
-def request_need_info(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_need_info(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.need_info_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.need_info):
@@ -199,7 +189,7 @@ def request_need_info(request, request_id):
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
+        {'text': pk, 'url': ""},
     ]
     context = {
         'form': form,
@@ -210,8 +200,8 @@ def request_need_info(request, request_id):
 
 
 @login_required
-def request_re_submit(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_re_submit(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.resubmit_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.re_submit):
@@ -229,7 +219,7 @@ def request_re_submit(request, request_id):
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
+        {'text': pk, 'url': ""},
     ]
     context = {
         'form': form,
@@ -240,8 +230,8 @@ def request_re_submit(request, request_id):
 
 
 @login_required
-def request_reject(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_reject(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.reject_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.reject):
@@ -251,6 +241,10 @@ def request_reject(request, request_id):
                                   target_request=target_request)
         if form.is_valid():
             message = form.save(send_notification=False)
+            # reject the current step if exist
+            if target_request.approval_workflow_state is not None:
+                target_request.approval_workflow_state.reject_current_step(request.user)
+            # reject the request
             target_request.reject(request.user)
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
@@ -259,7 +253,7 @@ def request_reject(request, request_id):
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
+        {'text': pk, 'url': ""},
     ]
     context = {
         'form': form,
@@ -270,8 +264,8 @@ def request_reject(request, request_id):
 
 
 @login_required
-def request_accept(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_accept(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.accept_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.accept):
@@ -294,13 +288,14 @@ def request_accept(request, request_id):
                     return redirect('service_catalog:request_list')
             return redirect('service_catalog:request_process', target_request.id)
     else:
-        form = AcceptRequestForm(request.user, initial=target_request.fill_in_survey, **parameters)
+        form = AcceptRequestForm(request.user, **parameters)
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
+        {'text': pk, 'url': reverse('service_catalog:request_details', args=[pk])},
     ]
     comment_messages = RequestMessage.objects.filter(request=target_request)
     context = {
+        'custom_buttons_html': "service_catalog/accept_request_custom_buttons.html",
         'form': form,
         'object': target_request,
         'breadcrumbs': breadcrumbs,
@@ -310,8 +305,8 @@ def request_accept(request, request_id):
 
 
 @login_required
-def request_process(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_process(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.process_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.process):
@@ -350,7 +345,8 @@ def request_process(request, request_id):
 
     breadcrumbs = [
         {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': request_id, 'url': ""},
+        {'text': pk, 'url': reverse('service_catalog:request_details', args=[pk])},
+        {'text': "Process", 'url': ""},
     ]
 
     context = {
@@ -366,8 +362,8 @@ def request_process(request, request_id):
 
 
 @login_required
-def request_archive(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_archive(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.archive_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.archive):
@@ -378,8 +374,8 @@ def request_archive(request, request_id):
 
 
 @login_required
-def request_unarchive(request, request_id):
-    target_request = get_object_or_404(Request, id=request_id)
+def request_unarchive(request, pk):
+    target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.unarchive_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.unarchive):
@@ -462,7 +458,6 @@ def request_bulk_delete(request):
 class RequestApproveView(FormView):
     template_name = 'generics/generic_form.html'
     form_class = ApproveWorkflowStepForm
-    pk_url_kwarg = "request_id"
 
     def form_valid(self, form):
         form.save()
@@ -473,8 +468,7 @@ class RequestApproveView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        request_id = self.kwargs['request_id']
-        self.target_request = get_object_or_404(Request, pk=request_id)
+        self.target_request = get_object_or_404(Request, pk=self.kwargs['pk'])
         kwargs.update({'target_request': self.target_request, 'user': self.request.user})
         return kwargs
 
@@ -482,8 +476,7 @@ class RequestApproveView(FormView):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': self.target_request.id, 'url': reverse('service_catalog:request_details',
-                                                            kwargs={'request_id': self.target_request.id})},
+            {'text': self.target_request.id, 'url': self.target_request.get_absolute_url()},
             {'text': f'Approve step', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs

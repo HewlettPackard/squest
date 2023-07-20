@@ -87,7 +87,7 @@ class OperationRequestSerializer(ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         self.operation = kwargs.pop('operation', None)
-        self.instance = kwargs.pop('instance', None)
+        self.squest_instance = kwargs.pop('instance', None)
         self.user = kwargs.pop('user', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
         # get all field that are not disabled by the admin
@@ -101,7 +101,7 @@ class OperationRequestSerializer(ModelSerializer):
 
     def save(self, **kwargs):
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
-        new_request = Request.objects.create(instance=self.instance,
+        new_request = Request.objects.create(instance=self.squest_instance,
                                              operation=self.operation,
                                              fill_in_survey=fill_in_survey,
                                              user=self.user)

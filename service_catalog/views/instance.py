@@ -147,7 +147,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
 @login_required
 def instance_archive(request, instance_id):
     instance = get_object_or_404(Instance, id=instance_id)
-    if not request.user.has_perm('service_catalog.delete_instance', instance):
+    if not request.user.has_perm('service_catalog.archive_instance', instance):
         raise PermissionDenied
     if request.method == "POST":
         if not can_proceed(instance.archive):

@@ -1,78 +1,78 @@
-<div class="card card-{{ target_request.state |map_request_state }}">
+<div class="card card-{{ object.state |map_request_state }}">
     <div class="card-header">
-        <h3 class="card-title">Request #{{ target_request.id }}</h3>
+        <h3 class="card-title">Request #{{ object.id }}</h3>
     </div>
     <div class="card-body">
         <ul class="list-group list-group-unbordered mb-3">
             <li class="list-group-item border-top-0">
-                <b>ID</b><span class="float-right">{{ target_request.id }}</span>
+                <b>ID</b><span class="float-right">{{ object.id }}</span>
             </li>
             <li class="list-group-item">
                 <b>Instance</b><a
-                    href="{% url 'service_catalog:instance_details' target_request.instance.id %}"
-                    class="float-right">{{ target_request.instance.name }}</a>
+                    href="{% url 'service_catalog:instance_details' object.instance.id %}"
+                    class="float-right">{{ object.instance.name }}</a>
             </li>
             <li class="list-group-item">
                 <b>Service</b><span
-                    class="float-right">{{ target_request.operation.service.name }}</span>
+                    class="float-right">{{ object.operation.service.name }}</span>
             </li>
             <li class="list-group-item">
-                <b>Operation</b><span class="float-right">{{ target_request.operation.name }}</span>
+                <b>Operation</b><span class="float-right">{{ object.operation.name }}</span>
             </li>
             <li class="list-group-item">
                 <b>Operation type</b><strong
-                    class="float-right text-{{ target_request.operation.type |map_operation_type }}">{{ target_request.operation.type }}</strong>
+                    class="float-right text-{{ object.operation.type |map_operation_type }}">{{ object.operation.type }}</strong>
             </li>
             <li class="list-group-item">
                 <b>Request state</b><strong
-                    class="float-right text-{{ target_request.state |map_request_state }}">{{ target_request.state }}</strong>
+                    class="float-right text-{{ object.state |map_request_state }}">{{ object.state }}</strong>
             </li>
             <li class="list-group-item">
                 <b>Instance state</b><strong
-                    class="float-right text-{{ target_request.instance.state |map_instance_state }}">{{ target_request.instance.state }}</strong>
+                    class="float-right text-{{ object.instance.state |map_instance_state }}">{{ object.instance.state }}</strong>
             </li>
             <li class="list-group-item">
-                <b>Requester</b><span class="float-right">{{ target_request.user.username }}</span>
+                <b>Requester</b><span class="float-right">{{ object.user.username }}</span>
             </li>
             <li class="list-group-item">
                 <b>Date submitted</b><span
-                    class="float-right">{{ target_request.date_submitted |squest_date_format }}</span>
+                    class="float-right">{{ object.date_submitted |squest_date_format }}</span>
             </li>
-            {% if target_request.date_complete %}
+            {% if object.date_complete %}
                 <li class="list-group-item">
                     <b>Date complete</b><span
-                        class="float-right">{{ target_request.date_complete |squest_date_format }}</span>
+                        class="float-right">{{ object.date_complete |squest_date_format }}</span>
                 </li>
             {% endif %}
-            {% if target_request.accepted_by %}
+            {% if object.accepted_by %}
                 <li class="list-group-item">
                     <b>Accepted by</b><span
-                        class="float-right">{{ target_request.accepted_by.username }}</span>
+                        class="float-right">{{ object.accepted_by.username }}</span>
                 </li>
             {% endif %}
-            {% if target_request.processed_by %}
+            {% if object.processed_by %}
                 <li class="list-group-item">
                     <b>Processed by</b><span
-                        class="float-right">{{ target_request.processed_by.username }}</span>
+                        class="float-right">{{ object.processed_by.username }}</span>
                 </li>
             {% endif %}
-            {% if target_request.date_archived %}
+            {% if object.date_archived %}
                 <li class="list-group-item">
                     <b>Date archived</b><span
-                        class="float-right">{{ target_request.date_archived |squest_date_format }}</span>
+                        class="float-right">{{ object.date_archived |squest_date_format }}</span>
                 </li>
             {% endif %}
             {% if request.user.is_superuser %}
                 <li class="list-group-item">
                     <b>Tower job</b>
-                    <a href="{{ target_request.tower_job_url }}"
-                       class="float-right">{{ target_request.tower_job_id }}</a>
+                    <a href="{{ object.tower_job_url }}"
+                       class="float-right">{{ object.tower_job_id }}</a>
                 </li>
             {% endif %}
-            {% if target_request.state == "FAILED" %}
+            {% if object.state == "FAILED" %}
                 <li class="list-group-item border-bottom-0">
                     <b>Failure message</b><span
-                        class="float-right">{{ target_request.failure_message }}</span>
+                        class="float-right">{{ object.failure_message }}</span>
                 </li>
             {% endif %}
         </ul>

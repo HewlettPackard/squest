@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .forms import ServiceRequestForm1, ServiceRequestForm2
 
 app_name = 'service_catalog'
 urlpatterns = [
@@ -13,15 +14,15 @@ urlpatterns = [
     path('request/<int:pk>/delete/', views.RequestDeleteView.as_view(), name='request_delete'),
 
     # Request State Machine
-    path('request/<int:request_id>/cancel/', views.request_cancel, name='request_cancel'),
-    path('request/<int:request_id>/need-info/', views.request_need_info, name='request_need_info'),
-    path('request/<int:request_id>/re-submit/', views.request_re_submit, name='request_re_submit'),
-    path('request/<int:request_id>/reject/', views.request_reject, name='request_reject'),
-    path('request/<int:request_id>/accept/', views.request_accept, name='request_accept'),
-    path('request/<int:request_id>/process/', views.request_process, name='request_process'),
-    path('request/<int:request_id>/archive/', views.request_archive, name='request_archive'),
-    path('request/<int:request_id>/unarchive/', views.request_unarchive, name='request_unarchive'),
-    path('request/<int:request_id>/approve/', views.RequestApproveView.as_view(), name='request_approve'),
+    path('request/<int:pk>/cancel/', views.request_cancel, name='request_cancel'),
+    path('request/<int:pk>/need-info/', views.request_need_info, name='request_need_info'),
+    path('request/<int:pk>/re-submit/', views.request_re_submit, name='request_re_submit'),
+    path('request/<int:pk>/reject/', views.request_reject, name='request_reject'),
+    path('request/<int:pk>/accept/', views.request_accept, name='request_accept'),
+    path('request/<int:pk>/process/', views.request_process, name='request_process'),
+    path('request/<int:pk>/archive/', views.request_archive, name='request_archive'),
+    path('request/<int:pk>/unarchive/', views.request_unarchive, name='request_unarchive'),
+    path('request/<int:pk>/approve/', views.RequestApproveView.as_view(), name='request_approve'),
 
 
     # Request bulk delete
@@ -32,7 +33,7 @@ urlpatterns = [
     path('request/archived/', views.RequestArchivedListView.as_view(), name='request_archived_list'),
 
     # Request comments CRUD
-    path('request/<int:request_id>/comment/<int:comment_id>/', views.requestmessage_edit,
+    path('request/<int:request_id>/comment/<int:pk>/', views.requestmessage_edit,
          name='requestmessage_edit'),
     path('request/<int:request_id>/comment/', views.request_comment, name='requestmessage_create'),
 
@@ -55,8 +56,9 @@ urlpatterns = [
     path('service/<int:service_id>/operation/<int:pk>/edit/', views.OperationEditView.as_view(), name='operation_edit'),
 
     # Request operation endpoints
-    path('service/<int:service_id>/operation/<int:operation_id>/request/', views.request_service,
-         name='request_service'),
+    path('service/<int:service_id>/operation/<int:operation_id>/request/',
+         views.ServiceRequestWizardView.as_view([ServiceRequestForm1, ServiceRequestForm2]), name='request_service'),
+
     path('service/<int:service_id>/operation/request/', views.CreateOperationListView.as_view(),
          name='create_operation_list'),
 
@@ -147,21 +149,21 @@ urlpatterns = [
     path('administration/custom-link/<int:pk>/edit/', views.CustomLinkEditView.as_view(), name='customlink_edit'),
     path('administration/custom-link/<int:pk>/delete/', views.CustomLinkDeleteView.as_view(), name='customlink_delete'),
 
-    path('administration/approval/', ApprovalWorkflowListView.as_view(), name='approvalworkflow_list'),
-    path('administration/approval/<int:pk>/', ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
-    path('administration/approval/create/', ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
-    path('administration/approval/<int:pk>/edit/', ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
-    path('administration/approval/<int:pk>/delete/', AttributeDefinitionDeleteView.as_view(), name='approvalworkflow_delete'),
+    path('administration/approval/', views.ApprovalWorkflowListView.as_view(), name='approvalworkflow_list'),
+    path('administration/approval/<int:pk>/', views.ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
+    path('administration/approval/create/', views.ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
+    path('administration/approval/<int:pk>/edit/', views.ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
+    path('administration/approval/<int:pk>/delete/', views.AttributeDefinitionDeleteView.as_view(), name='approvalworkflow_delete'),
     path('administration/approval/step_position_update/',
-         ajax_approval_step_position_update, name='ajax_approval_step_position_update'),
+         views.ajax_approval_step_position_update, name='ajax_approval_step_position_update'),
 
-    path('administration/approval/<int:approval_workflow_id>/approval-step/create/', ApprovalStepCreateView.as_view(),
+    path('administration/approval/<int:approval_workflow_id>/approval-step/create/', views.ApprovalStepCreateView.as_view(),
          name='approvalstep_create'),
     path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/edit/',
-         ApprovalStepEditView.as_view(),
+         views.ApprovalStepEditView.as_view(),
          name='approvalstep_edit'),
     path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/delete/',
-         ApprovalStepDeleteView.as_view(),
+         views.ApprovalStepDeleteView.as_view(),
          name='approvalstep_delete'),
 
 ]
