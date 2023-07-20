@@ -17,3 +17,5 @@ from .tower_server import *
 from .job_template import *
 from .global_hook import *
 from .tower_survey_field import *
+from .approval_step_views import *
+from .approval_workflow_views import *
