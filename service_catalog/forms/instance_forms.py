@@ -1,8 +1,10 @@
 import urllib3
 from django import forms
+
+from Squest.utils.squest_model_form import SquestModelForm
 from service_catalog.models import Instance
 from service_catalog.models.instance import InstanceState
-from Squest.utils.squest_model_form import SquestModelForm
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 

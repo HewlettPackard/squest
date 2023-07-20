@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
+
 from Squest.utils.squest_views import SquestListView, SquestDetailView
 from profiles.filters.user_filter import UserFilter
 from profiles.tables.user_table import UserTable
-from django.contrib.auth.models import User
 from service_catalog.tables.instance_tables import InstanceTable
 from service_catalog.tables.request_tables import RequestTable
 

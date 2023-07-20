@@ -1,7 +1,7 @@
 from django import forms
 
-from service_catalog.models import Operation, Instance, Request, RequestMessage
 from service_catalog.forms.form_generator import FormGenerator
+from service_catalog.models import Request, RequestMessage
 
 EXCLUDED_SURVEY_FIELDS = ["request_comment"]
 
