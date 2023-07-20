@@ -5,8 +5,8 @@ from Squest.utils.squest_table import SquestTable
 
 
 class GlobalHookTable(SquestTable):
-    state = TemplateColumn(template_name='custom_columns/global_hook_state.html')
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    state = TemplateColumn(template_name='service_catalog/custom_columns/global_hook_state.html')
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
         model = GlobalHook

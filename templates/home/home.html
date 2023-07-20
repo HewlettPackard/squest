@@ -19,14 +19,14 @@
                 </div>
             </div>
         {% endfor %}
-        <div class="row">
+        <div class="row justify-content-center">
             {% if can_list_request %}
                 <div class="mt-2 col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                     <div class="h-100 small-box d-flex flex-column bg-info">
                         <!-- small card -->
                         <div class="inner flex-grow-1">
                             <h3>{{ total_request }}</h3>
-                            <p>New Request</p>
+                            <p>Submitted requests</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-shopping-cart"></i>
@@ -65,7 +65,7 @@
                     <div class="h-100 small-box d-flex flex-column bg-warning">
                         <div class="inner flex-grow-1">
                             <h3>{{ total_support_opened }}</h3>
-                            <p>Opened support</p>
+                            <p>Opened supports</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-medkit"></i>
@@ -112,77 +112,95 @@
                 </div>
             {% endif %}
         </div>
+
         {% if can_list_service %}
-            <div class="row mt-5">
-                {% for service in service_details.values %}
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="row mt-4 justify-content-center">
+                <div class="card ml-2">
 
-                        <div class="card card-widget widget-user-2">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table w-auto">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"></th>
+                                    <th class="text-center">Service</th>
 
-                            <div class="widget-user-header bg-{% if request.user.profile.theme == "dark" %}dark{% else %}white{% endif %}">
-                                <div class="widget-user-image">
-                                    <img class="img elevation-2" src="
+                                    <th class="text-center">Submitted</th>
 
-
-                                            {% if service.service.image %}{{ service.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
-                                         alt="Illustration for {{ service.service.name }}">
-                                </div>
-
-                                <h3 class="widget-user-username">{{ service.service.name }}</h3>
-                                <h5 class="widget-user-username"
-                                    title="Available instances of {{ service.service.name }}"><a
-                                        class="text-dark"
-                                        href="{% url 'service_catalog:instance_list' %}?service={{ service.service.id }}&state=AVAILABLE">Instances
-                                    available: <strong class="text-success">{{ service.instances }}</strong></a></h5>
-                            </div>
-                            <div class="card-footer p-0">
-                                <ul class="nav flex-column">
-                                    {% has_perm request.user "service_catalog.list_support" as can_list_support %}
+                                    <th class="text-center">Accepted</th>
+                                    <th class="text-center">Need info</th>
+                                    <th class="text-center">Failed</th>
                                     {% if can_list_support %}
-                                        <li class="nav-item">
-                                            <a href="{% url 'service_catalog:support_list' %}?state=OPENED&instance__service={{ service.service.id }}"
-                                               class="nav-link">
-                                                Opened supports<span
-                                                    class="float-right badge bg-warning">{{ service.opened_supports }}</span>
-                                            </a>
-                                        </li>
+                                        <th class="text-center">Supports</th>
                                     {% endif %}
-                                    <li class="nav-item">
-                                        <a href="{% url 'service_catalog:request_list' %}?&state=ACCEPTED&instance__service__id={{ service.service.id }}"
-                                           class="nav-link">
-                                            Accepted requests <span
-                                                class="float-right badge bg-primary">{{ service.accepted_requests }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'service_catalog:request_list' %}?&state=SUBMITTED&instance__service__id={{ service.service.id }}"
-                                           class="nav-link">
-                                            Submitted requests <span
-                                                class="float-right badge bg-info">{{ service.submitted_requests }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'service_catalog:request_list' %}?state=FAILED&instance__service__id={{ service.service.id }}"
-                                           class="nav-link">
-                                            Failed requests <span
-                                                class="float-right badge bg-danger">{{ service.failed_requests }}</span>
-                                        </a>
-                                    </li>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'service_catalog:request_list' %}?state=NEED_INFO&instance__service__id={{ service.service.id }}"
-                                           class="nav-link">
-                                            Need info requests <span
-                                                class="float-right badge bg-warning">{{ service.need_info_requests }}</span>
-                                        </a>
-                                    </li>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for service in service_details.values %}
 
-                                </ul>
-                            </div>
+                                    <tr>
+                                        <td class="align-middle text-center">
+                                            <img src="
+
+
+                                                    {% if service.service.image %}{{ service.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                                 lt="Illustration for {{ service.service.name }}"
+                                                 class="img-circle img-size-32 mr-2">
+
+
+                                        </td>
+                                        <td class="align-middle text-center">
+
+                                            <a href="{{ service.service.get_absolute_url }}">
+                                                {{ service.service.name }}
+                                            </a>
+                                        </td>
+
+
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {% if service.submitted_requests %}
+                                                <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&instance__service__id={{ service.service.id }}"
+                                                   class="btn btn-info bg-sm">{{ service.submitted_requests }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {% if service.accepted_requests %}
+                                                <a href="{% url 'service_catalog:request_list' %}?&state=ACCEPTED&instance__service__id={{ service.service.id }}"
+                                                   class="btn btn-primary bg-sm">{{ service.accepted_requests }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {% if service.need_info_requests %}
+                                                <a href="{% url 'service_catalog:request_list' %}?state=NEED_INFO&instance__service__id={{ service.service.id }}"
+                                                   class="btn btn-default bg-sm">{{ service.need_info_requests }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {% if service.failed_requests %}
+                                                <a href="{% url 'service_catalog:request_list' %}?state=FAILED&instance__service__id={{ service.service.id }}"
+                                                   class="btn btn-danger bg-sm">{{ service.failed_requests }}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        {% if can_list_support %}
+                                            <td class="align-middle text-center">
+                                            {% if service.opened_supports %}
+                                                <a href="{% url 'service_catalog:support_list' %}?state=OPENED&instance__service={{ service.service.id }}"
+                                                   class="btn btn-warning bg-sm">{{ service.opened_supports }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-
                     </div>
-                {% endfor %}
+                </div>
             </div>
         {% endif %}
     </div>

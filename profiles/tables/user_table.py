@@ -19,7 +19,7 @@ class UserTable(SquestTable):
 
 class UserRoleTable(SquestTable):
     username = Column()
-    roles = TemplateColumn(template_name='custom_columns/user_roles.html', orderable=False)
+    roles = TemplateColumn(template_name='profiles/custom_columns/user_roles.html', orderable=False)
 
     class Meta:
         model = User
