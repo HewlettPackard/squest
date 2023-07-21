@@ -17,7 +17,7 @@ class ApprovalWorkflowListView(SquestListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['html_button_path'] = "generics/buttons/generic_add_button.html"
+        context['html_button_path'] = "generics/buttons/add_button.html"
         return context
 
 
