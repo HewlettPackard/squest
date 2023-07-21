@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
-from django.db.models import Model, ForeignKey, CASCADE, CharField, SET_NULL, JSONField, DateTimeField
+from django.db.models import ForeignKey, CASCADE, CharField, SET_NULL, JSONField, DateTimeField
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models.approval_state import ApprovalState
 
 
-class ApprovalStepState(Model):
+class ApprovalStepState(SquestModel):
 
     class Meta:
         unique_together = ('approval_workflow_state', 'approval_step')
