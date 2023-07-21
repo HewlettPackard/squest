@@ -107,7 +107,7 @@ class ResourceMoveView(SquestUpdateView):
 def resource_group_resource_bulk_delete(request, resource_group_id):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_resources = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource').filter(pk__in=pks)
+        selected_resources = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource', unique=False).filter(pk__in=pks)
         if selected_resources.count() != len(pks):
             raise PermissionDenied
         selected_resources.delete()

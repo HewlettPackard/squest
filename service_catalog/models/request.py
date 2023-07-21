@@ -8,7 +8,7 @@ import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
-    OneToOneField
+    OneToOneField, Q
 from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -62,14 +62,10 @@ class Request(SquestModel):
     )
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
-        qs = Request.objects.filter(
-            instance__in=Instance.get_queryset_for_user(user, perm)
+    def get_q_filter(cls, user, perm):
+        return Q(
+           instance__in=Instance.get_queryset_for_user(user, perm)
         )
-        return qs.distinct()
 
     def get_scopes(self):
         return self.instance.get_scopes()

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from django.db.models import TextChoices, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL
+from django.db.models import TextChoices, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL, Q
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_fsm import FSMField, transition
@@ -47,14 +47,10 @@ class Support(SquestModel):
         return list(intervenant_list)
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
-        qs = Support.objects.filter(
-           instance__in=Instance.get_queryset_for_user(user,perm)
+    def get_q_filter(cls, user, perm):
+        return Q(
+           instance__in=Instance.get_queryset_for_user(user, perm)
         )
-        return qs.distinct()
 
     def get_scopes(self):
         return self.instance.get_scopes()

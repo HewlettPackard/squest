@@ -10,11 +10,7 @@ from service_catalog.models import Service
 class ServiceListCreate(SquestListCreateAPIView):
     filterset_class = ServiceFilter
     queryset = Service.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.user.is_superuser:
-            return ServiceSerializer
-        return ServiceSerializer
+    serializer_class = ServiceSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -25,15 +21,9 @@ class ServiceListCreate(SquestListCreateAPIView):
 
 
 class ServiceDetails(SquestRetrieveUpdateDestroyAPIView):
-
-    def get_serializer_class(self):
-        if self.request.user.is_superuser:
-            return ServiceSerializer
-        return ServiceSerializer
+    serializer_class = ServiceSerializer
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Service.objects.none()
-        if self.request.user.is_superuser:
-            return Service.objects.all()
-        return Service.objects.filter(enabled=True)
+        return Service.objects.all()
