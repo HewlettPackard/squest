@@ -14,6 +14,7 @@ from django_tables2 import SingleTableMixin
 
 from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
 
+
 class SquestPermissionDenied(PermissionDenied):
     def __init__(self, permission, *args, **kwargs):
         self.permission = permission
@@ -43,8 +44,6 @@ class SquestView(View):
 class SquestListView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleTableMixin, SquestView, FilterView):
     table_pagination = {'per_page': 10}
     template_name = 'generics/list.html'
-
-
 
     def get_permission_required(self):
         return f"{self.django_content_type.app_label}.list_{self.django_content_type.model}"
@@ -85,7 +84,8 @@ class SquestCreateView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
                 },
                 {
                     'text': f'New {self.django_content_type.name}',
-                    'url': ""},
+                    'url': ""
+                },
             ]
         except NoReverseMatch:
             pass
@@ -110,7 +110,12 @@ class SquestUpdateView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
                 },
                 {
                     'text': self.object,
-                    'url': ""},
+                    'url': self.object.get_absolute_url()
+                },
+                {
+                    'text': 'Edit',
+                    'url': ""
+                },
             ]
         except NoReverseMatch:
             pass
@@ -130,27 +135,28 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context['breadcrumbs'] = [
-                {
-                    'text': self.django_content_type.name.capitalize(),
-                    'url': self.get_generic_url('list')
-                },
-                {
-                    'text': self.object,
-                    'url': ""},
-            ]
-        except NoReverseMatch:
-            pass
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': self.object,
+                'url': self.object.get_absolute_url()
+            },
+            {
+                'text': 'Delete',
+                'url': ""
+            },
+        ]
+
         context['confirm_text'] = mark_safe(f"Confirm deletion of <strong>{self.object}</strong>?")
-        try:
-            context['action_url'] = reverse_lazy(
-                f'{self.django_content_type.app_label}:{self.django_content_type.model}_delete',
-                args=[self.object.id])
-        except NoReverseMatch:
-            pass
+        context['action_url'] = self.get_generic_url("delete")
         context['button_text'] = 'Delete'
         return context
+
+    def get_generic_url_kwargs(self):
+        return {'pk': self.object.id}
 
     def delete(self, request, *args, **kwargs):
         try:
@@ -173,18 +179,16 @@ class SquestDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context['breadcrumbs'] = [
-                {
-                    'text': self.django_content_type.name.capitalize(),
-                    'url': self.get_generic_url('list')
-                },
-                {
-                    'text': self.object,
-                    'url': ""},
-            ]
-        except NoReverseMatch:
-            pass
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': f'New {self.django_content_type.name}',
+                'url': ""
+            },
+        ]
         return context
 
 
@@ -201,17 +205,19 @@ class SquestFormView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleOb
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
-        try:
-            context['breadcrumbs'] = [
-                {
-                    'text': self.django_content_type.name.capitalize(),
-                    'url': self.get_generic_url('list')
-                },
-                {
-                    'text': self.object,
-                    'url': self.object.get_absolute_url()},
-            ]
-        except NoReverseMatch:
-            pass
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': self.object,
+                'url': self.object.get_absolute_url()
+            },
+            {
+                'text': "New",
+                'url': ""
+            },
+        ]
         context['action'] = "edit"
         return context
