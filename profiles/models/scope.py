@@ -18,17 +18,13 @@ class AbstractScope(SquestModel):
         raise Exception("This scope is not implemented")
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
+    def get_q_filter(cls, user, perm):
         app_label, codename = perm.split(".")
-        qs = cls.objects.filter(
+        return Q(
             rbac__user=user,
             rbac__role__permissions__codename=codename,
             rbac__role__permissions__content_type__app_label=app_label
         )
-        return qs.distinct()
 
     def get_scopes(self):
         return self.get_object().get_scopes()
@@ -102,21 +98,14 @@ class Scope(AbstractScope):
         raise Exception("This scope is not implemented")
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
+    def get_q_filter(cls, user, perm):
         from profiles.models import Team, Organization
-
-        qs = Scope.objects.filter(
-            Q(
+        return Q(
                 id__in=Team.get_queryset_for_user(user, perm)
             ) | Q(
                 id__in=Organization.get_queryset_for_user(user, perm)
 
             )
-        )
-        return qs.distinct()
 
     @classmethod
     def get_Q(self, user, perm):

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}
- Profile
-{%  endblock %}
+    Profile
+{% endblock %}
 {% load render_table from django_tables2 %}
 
 {% block main %}
@@ -112,34 +112,36 @@
                             <div class="col-md-3 col-6">
                                 <div class="small-box bg{% if user.profile.request_notification_enabled %}-success{% else %}-gray{% endif %}">
                                     <div class="inner">
-                                        <p><strong>Request</strong> notifications are <strong>{% if user.profile.request_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
+                                        <p><strong>Request</strong> notifications are <strong>
+                                            {% if user.profile.request_notification_enabled %}enabled{% else %}
+                                                disabled{% endif %}</strong></p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-bell{% if not user.profile.request_notification_enabled %}-slash{% endif %}"></i>
                                     </div>
                                     <a href="{% url "profiles:requestnotification_switch" %}" class="small-box-footer">
-                                        {% if user.profile.request_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.request_notification_enabled %}-slash{% endif %}"></i>
+                                        {% if user.profile.request_notification_enabled %}Disable{% else %}
+                                            Enable{% endif %} <i
+                                            class="fas fa-bell{% if user.profile.request_notification_enabled %}-slash{% endif %}"></i>
                                     </a>
                                 </div>
                             </div>
                         </dl>
                         <div class="row">
                             <div class="col-12">
-                                {% if request.user.is_superuser and user.profile.request_notification_enabled %}
-                                    <a title="Add a notification filter" class="btn btn-default mb-2"
-                                       href="{% url "profiles:requestnotification_create" %}">
-                                        <i class="fas fa-plus"></i> Add a request notification filter
-                                    </a>
-                                    {% if request.user.profile.request_notification_filters.count == 0 %}
-                                        <div class="callout callout-warning mt-3">
-                                            <h5><i class="fas fa-info"></i> Note:</h5>
-                                            You haven't created any request filters. You will receive all notifications.
-                                        </div>
-                                    {%  else %}
-                                        {% with object_name='request_notification' %}
-                                            {% render_table request_filter_table %}
-                                        {% endwith %}
-                                    {% endif %}
+                                <a title="Add a notification filter" class="btn btn-default mb-2"
+                                   href="{% url "profiles:requestnotification_create" %}">
+                                    <i class="fas fa-plus"></i> Add a request notification filter
+                                </a>
+                                {% if request.user.profile.request_notification_filters.count == 0 %}
+                                    <div class="callout callout-warning mt-3">
+                                        <h5><i class="fas fa-info"></i> Note:</h5>
+                                        You haven't created any request filters. You will receive all notifications.
+                                    </div>
+                                {% else %}
+                                    {% with object_name='request_notification' %}
+                                        {% render_table request_filter_table %}
+                                    {% endwith %}
                                 {% endif %}
                             </div>
                         </div>
@@ -149,34 +151,36 @@
                             <div class="col-md-3 col-6">
                                 <div class="small-box bg{% if user.profile.instance_notification_enabled %}-success{% else %}-gray{% endif %}">
                                     <div class="inner">
-                                        <p><strong>Support</strong> notifications are <strong>{% if user.profile.instance_notification_enabled %}enabled{% else %}disabled{% endif %}</strong></p>
+                                        <p><strong>Support</strong> notifications are <strong>
+                                            {% if user.profile.instance_notification_enabled %}enabled{% else %}
+                                                disabled{% endif %}</strong></p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-bell{% if not user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
                                     </div>
                                     <a href="{% url "profiles:support_notification_switch" %}" class="small-box-footer">
-                                        {% if user.profile.instance_notification_enabled %}Disable{% else %}Enable{% endif %} <i class="fas fa-bell{% if user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
+                                        {% if user.profile.instance_notification_enabled %}Disable{% else %}
+                                            Enable{% endif %} <i
+                                            class="fas fa-bell{% if user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
                                     </a>
                                 </div>
                             </div>
                         </dl>
                         <div class="row">
                             <div class="col-12">
-                                {% if request.user.is_superuser and user.profile.instance_notification_enabled %}
-                                    <a title="Add a notification filter" class="btn btn-default mb-2"
-                                       href="{% url "profiles:instancenotification_create" %}">
-                                        <i class="fas fa-plus"></i> Add a support notification filter
-                                    </a>
-                                    {% if request.user.profile.instance_notification_filters.count == 0 %}
-                                        <div class="callout callout-warning mt-3">
-                                            <h5><i class="fas fa-info"></i> Note:</h5>
-                                            You haven't created any support filters. You will receive all notifications.
-                                        </div>
-                                    {%  else %}
-                                        {% with object_name='support_notification' %}
-                                            {% render_table support_filter_table %}
-                                        {% endwith %}
-                                    {% endif %}
+                                <a title="Add a notification filter" class="btn btn-default mb-2"
+                                   href="{% url "profiles:instancenotification_create" %}">
+                                    <i class="fas fa-plus"></i> Add a support notification filter
+                                </a>
+                                {% if request.user.profile.instance_notification_filters.count == 0 %}
+                                    <div class="callout callout-warning mt-3">
+                                        <h5><i class="fas fa-info"></i> Note:</h5>
+                                        You haven't created any support filters. You will receive all notifications.
+                                    </div>
+                                {% else %}
+                                    {% with object_name='support_notification' %}
+                                        {% render_table support_filter_table %}
+                                    {% endwith %}
                                 {% endif %}
                             </div>
                         </div>

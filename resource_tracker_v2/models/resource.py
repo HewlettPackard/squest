@@ -1,8 +1,9 @@
-from django.db.models import ForeignKey, CASCADE, SET_NULL, BooleanField, CharField
+from django.db.models import ForeignKey, CASCADE, SET_NULL, BooleanField, CharField, Q
 from django.urls import reverse
 from taggit.managers import TaggableManager
 
 from Squest.utils.squest_model import SquestModel
+from service_catalog.models import Instance
 
 
 class InvalidAttributeDefinition(Exception):
@@ -71,3 +72,12 @@ class Resource(SquestModel):
         for attribute in self.resource_attributes.all():
             if attribute.attribute_definition == attribute_definition:
                 attribute.delete()
+
+    def get_scopes(self):
+        return self.service_catalog_instance.get_scopes()
+
+    @classmethod
+    def get_q_filter(cls, user, perm):
+        return Q(
+            service_catalog_instance__in=Instance.get_queryset_for_user(user, perm)
+        )

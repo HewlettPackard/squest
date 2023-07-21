@@ -14,11 +14,7 @@ class RequestTable(SquestTable):
     instance = LinkColumn()
 
     def before_render(self, request):
-        if request.user.is_superuser:
-            self.columns.show('user__username')
-            self.columns.show('selection')
-        else:
-            self.columns.hide('user__username')
+        if request.user.has_perm('service_catalog.delete_request'):
             self.columns.hide('selection')
 
     def render_id(self, value, record):
