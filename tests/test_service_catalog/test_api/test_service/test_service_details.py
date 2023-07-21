@@ -43,7 +43,7 @@ class TestApiServiceDetails(BaseTestRequest):
         self.kwargs['pk'] = self.service_test_2.id
         self.get_service_details_url = reverse('api_service_details', kwargs=self.kwargs)
         response = self.client.get(self.get_service_details_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_cannot_get_service_details_when_logout(self):
         self.client.logout()

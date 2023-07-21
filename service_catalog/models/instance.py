@@ -51,73 +51,58 @@ class Instance(SquestModel):
     date_available = DateTimeField(null=True, blank=True)
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
+    def get_q_filter(cls, user, perm):
         from profiles.models import Team
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
         app_label, codename = perm.split(".")
-        qs = Instance.objects.filter(
-            # Scopes
-            ## Scopes - Org - User
-            Q(
-                scopes__rbac__user=user,
-                scopes__rbac__role__permissions__codename=codename,
-                scopes__rbac__role__permissions__content_type__app_label=app_label
-            ) |
+        return Q(
+            scopes__rbac__user=user,
+            scopes__rbac__role__permissions__codename=codename,
+            scopes__rbac__role__permissions__content_type__app_label=app_label
+        ) | Q(
             ### Scopes - Org - Default roles
-            Q(
-                scopes__rbac__user=user,
-                scopes__roles__permissions__codename=codename,
-                scopes__roles__permissions__content_type__app_label=app_label
-            ) |
+            scopes__rbac__user=user,
+            scopes__roles__permissions__codename=codename,
+            scopes__roles__permissions__content_type__app_label=app_label
+        ) | Q(
             ## Scopes - Team - User
-            Q(
-                scopes__in=Team.objects.filter(
-                    org__rbac__user=user,
-                    org__rbac__role__permissions__codename=codename,
-                    org__rbac__role__permissions__content_type__app_label=app_label
-                )
-            ) |
+            scopes__in=Team.objects.filter(
+                org__rbac__user=user,
+                org__rbac__role__permissions__codename=codename,
+                org__rbac__role__permissions__content_type__app_label=app_label
+            )
+        ) | Q(
             ## Scopes - Team - Default roles
-            Q(
-                scopes__in=Team.objects.filter(
-                    org__rbac__user=user,
-                    org__roles__permissions__codename=codename,
-                    org__roles__permissions__content_type__app_label=app_label
-                )
-            ) |
+            scopes__in=Team.objects.filter(
+                org__rbac__user=user,
+                org__roles__permissions__codename=codename,
+                org__roles__permissions__content_type__app_label=app_label
+            )
+        ) | Q(
             # Quota scope
             ## Quota scope - Org - User
-            Q(
-                quota_scope__rbac__user=user,
-                quota_scope__rbac__role__permissions__codename=codename,
-                quota_scope__rbac__role__permissions__content_type__app_label=app_label
-            ) |
+            quota_scope__rbac__user=user,
+            quota_scope__rbac__role__permissions__codename=codename,
+            quota_scope__rbac__role__permissions__content_type__app_label=app_label
+        ) | Q(
             ## Quota scope - Org - Default roles
-            Q(
-                quota_scope__rbac__user=user,
-                quota_scope__roles__permissions__codename=codename,
-                quota_scope__roles__permissions__content_type__app_label=app_label
-            ) |
+            quota_scope__rbac__user=user,
+            quota_scope__roles__permissions__codename=codename,
+            quota_scope__roles__permissions__content_type__app_label=app_label
+        ) | Q(
             ## Quota scope - Team - User
-            Q(
-                quota_scope__in=Team.objects.filter(
-                    org__rbac__user=user,
-                    org__rbac__role__permissions__codename=codename,
-                    org__rbac__role__permissions__content_type__app_label=app_label
-                )
-            ) |
+            quota_scope__in=Team.objects.filter(
+                org__rbac__user=user,
+                org__rbac__role__permissions__codename=codename,
+                org__rbac__role__permissions__content_type__app_label=app_label
+            )
+        ) | Q(
             ## Quota scope - Team - Default roles
-            Q(
-                quota_scope__in=Team.objects.filter(
-                    org__rbac__user=user,
-                    org__roles__permissions__codename=codename,
-                    org__roles__permissions__content_type__app_label=app_label
-                )
+            quota_scope__in=Team.objects.filter(
+                org__rbac__user=user,
+                org__roles__permissions__codename=codename,
+                org__roles__permissions__content_type__app_label=app_label
             )
         )
-        return qs.distinct()
 
     def get_scopes(self):
         qs = self.quota_scope.get_scopes()
