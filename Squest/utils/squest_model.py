@@ -13,27 +13,39 @@ class SquestRBAC(Model):
         return reverse(f"{content_type.app_label}:{content_type.model}_details", args=[self.pk])
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
+    def get_q_filter(cls, user, perm):
+        return Q(pk=None)
+
+    @classmethod
+    def get_queryset_for_user(cls, user, perm, unique=True):
+        # superuser
         if user.is_superuser:
-            return cls.objects.distinct()
-
+            return cls.objects.distinct() if unique else cls.objects.all()
         app_label, codename = perm.split(".")
-
         from profiles.models import GlobalPermission
         squest_scope = GlobalPermission.load()
+        # Global permission (Class based)
         if Permission.objects.filter(
                 # Permissions for all user
-                Q(globalpermission=squest_scope,
-                  codename=codename,
-                  content_type__app_label=app_label) |
+                Q(
+                    globalpermission=squest_scope,
+                    codename=codename,
+                    content_type__app_label=app_label
                 # Global perm groups
-                Q(role__rbac__scope=squest_scope,
-                  role__rbac__user=user,
-                  codename=codename,
-                  content_type__app_label=app_label)
+                ) | Q(
+                    role__rbac__scope=squest_scope,
+                    role__rbac__user=user,
+                    codename=codename,
+                    content_type__app_label=app_label
+                )
+
         ).exists():
-            return cls.objects.distinct()
-        return cls.objects.none()
+            return cls.objects.distinct() if unique else cls.objects.all()
+        # Permission (Object based)
+        qs = cls.objects.filter(cls.get_q_filter(user, perm))
+        if unique:
+            qs = qs.distinct()
+        return qs
 
     def get_scopes(self):
         from profiles.models import GlobalPermission

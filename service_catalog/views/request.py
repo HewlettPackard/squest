@@ -35,8 +35,7 @@ class RequestListView(SquestListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = "service_catalog/buttons/request-archived-list.html"
-        if self.request.user.is_superuser:
-            context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
+        context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
         return context
 
 
@@ -447,8 +446,8 @@ def request_bulk_delete_confirm(request):
 def request_bulk_delete(request):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_requests = Request.get_queryset_for_user(request.user, 'service_catalog.delete_request').filter(
-            pk__in=pks)
+        selected_requests = Request.get_queryset_for_user(request.user, 'service_catalog.delete_request',
+                                                          unique=False).filter(pk__in=pks)
         if selected_requests.count() != len(pks):
             raise PermissionDenied
         selected_requests.delete()

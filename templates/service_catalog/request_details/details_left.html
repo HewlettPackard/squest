@@ -1,3 +1,4 @@
+{% has_perm request.user "service_catalog.view_towerserver" object.operation.job_template.tower_server as can_view_towerserver %}
 <div class="card card-{{ object.state |map_request_state }}">
     <div class="card-header">
         <h3 class="card-title">Request #{{ object.id }}</h3>
@@ -62,7 +63,7 @@
                         class="float-right">{{ object.date_archived |squest_date_format }}</span>
                 </li>
             {% endif %}
-            {% if request.user.is_superuser %}
+            {% if can_view_towerserver %}
                 <li class="list-group-item">
                     <b>Tower job</b>
                     <a href="{{ object.tower_job_url }}"
