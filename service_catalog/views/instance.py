@@ -51,15 +51,15 @@ class InstanceDetailView(SquestDetailView):
         context = super().get_context_data(**kwargs)
 
         # operations
+        operations = Operation.objects.none()
         if self.request.user.has_perm("service_catalog.request_on_instance"):
-            context['operations_table'] = OperationTableFromInstanceDetails(
-                self.object.service.operations.filter(is_admin_operation=False)
-            )
+            operations = operations | self.object.service.operations.filter(is_admin_operation=False)
+
         # admin operations
         if self.request.user.has_perm("service_catalog.admin_request_on_instance"):
-            context['admin_operations_table'] = OperationTableFromInstanceDetails(
-                self.object.service.operations.filter(is_admin_operation=True)
-            )
+            operations = operations | self.object.service.operations.filter(is_admin_operation=True)
+
+        context['operations_table'] = OperationTableFromInstanceDetails(operations)
 
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):
