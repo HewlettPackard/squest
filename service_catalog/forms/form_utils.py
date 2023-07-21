@@ -58,3 +58,11 @@ class FormUtils:
             logger.warning(f"[template_field] templating error: {e.message}")
             pass
         return templated_string
+
+    @classmethod
+    def get_choices_as_tuples_list(cls, choices, default=None):
+        if default is None:
+            default = [('', "Select an option")]
+        if not isinstance(choices, list):
+            choices = choices.splitlines()
+        return default + [(choice, choice) for choice in choices]

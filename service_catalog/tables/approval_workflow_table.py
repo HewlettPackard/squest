@@ -6,7 +6,7 @@ from service_catalog.models import ApprovalWorkflow
 
 class ApprovalWorkflowTable(tables.Table):
     name = LinkColumn("service_catalog:approvalworkflow_details", args=[A("id")])
-    actions = TemplateColumn(template_name='custom_columns/generic_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
         model = ApprovalWorkflow
