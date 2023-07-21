@@ -61,14 +61,14 @@
         });
         // by default we load Request Model
         $(document).ready(function () {
-            load_state($("#id_model option:selected").val());
+            load_state("Request");
         });
         $("#id_service").change(function () {
             load_operation($(this).val());
         });
         // by default None operation
         $(document).ready(function () {
-            load_operation($("#id_service option:selected").val());
+            load_operation("0");
         });
     </script>
 {% endblock %}
