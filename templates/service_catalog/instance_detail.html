@@ -129,12 +129,7 @@
                                                 data-toggle="tab">Operations</a>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
-                        {% has_perm request.user "service_catalog.view_admin_spec_instance" object as can_view_admin_spec_instance %}
-                        {% if can_view_admin_spec_instance %}
-                            <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Admin spec</a>
-                            </li>
-                        {% endif %}
-                        <li class="nav-item"><a class="nav-link" href="#user-spec" data-toggle="tab">Spec</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Specs</a></li>
                         <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
                         </li>
                     </ul>
@@ -164,16 +159,40 @@
                                 <p> Permission <b>service_catalog.view_support</b> required</p>
                             {% endif %}
                         </div>
-                        {% if can_view_admin_spec_instance %}
-                            <div class="tab-pane" id="spec">
-                                    <pre><code style="border: 0; padding: 0; margin: 0;"
-                                               class="language-json">{{ object.spec | pretty_json }}</code></pre>
+                        <div class="tab-pane" id="spec">
+                            <div class="wrapper d-flex flex-wrap">
+                                <div class="card card-primary card-outline flex-grow-1 m-2">
+                                    <div class="card-header">
+                                        <h3 class="card-title">User spec</h3>
+                                    </div>
+                                    <div class="card-body pt-0 pb-0">
+                                    <pre>
+                                        <code style="border: 0; padding: 0; margin: 0;"
+                                              class="language-json">{{ object.user_spec | pretty_json }}
+                                        </code>
+                                    </pre>
+                                    </div>
+                                </div>
+
+                                {% has_perm request.user "service_catalog.view_admin_spec_instance" object as can_view_admin_spec_instance %}
+
+                                {% if can_view_admin_spec_instance %}
+                                <div class="card card-primary card-outline flex-grow-1 m-2">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Admin spec</h3>
+                                        </div>
+                                    <div class="card-body pt-0 pb-0">
+                                        <pre>
+                                            <code style="border: 0; padding: 0; margin: 0;"
+                                                  class="language-json">{{ object.spec | pretty_json }}
+                                            </code>
+                                        </pre>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                        <div class="tab-pane" id="user-spec">
-                                <pre><code style="border: 0; padding: 0; margin: 0;"
-                                           class="language-json">{{ object.user_spec | pretty_json }}</code></pre>
                         </div>
+
                         <div class="tab-pane" id="requests">
                             {% if requests_table %}
                                 {% render_table requests_table %}
