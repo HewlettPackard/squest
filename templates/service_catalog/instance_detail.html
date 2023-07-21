@@ -128,8 +128,6 @@
                         <li class="nav-item"><a class="nav-link active" href="#operations"
                                                 data-toggle="tab">Operations</a>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="#admin-operations" data-toggle="tab">Admin
-                            operations</a></li>
                         <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
                         {% has_perm request.user "service_catalog.view_admin_spec_instance" object as can_view_admin_spec_instance %}
                         {% if can_view_admin_spec_instance %}
@@ -155,19 +153,6 @@
                                     required</p>
                             {% endif %}
 
-                        </div>
-                        <div class="tab-pane" id="admin-operations">
-                            {% if admin_operations_table %}
-                                {% if object.state == "AVAILABLE" %}
-                                    {% render_table admin_operations_table %}
-                                {% else %}
-                                    <p> Instance not available</p>
-                                {% endif %}
-                            {% else %}
-                                <p> Permission
-                                    <b>service_catalog.admin_request_on_instance</b> required
-                                </p>
-                            {% endif %}
                         </div>
                         <div class="tab-pane" id="support">
                             {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
