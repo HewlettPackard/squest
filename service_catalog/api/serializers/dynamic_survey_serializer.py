@@ -3,7 +3,7 @@ import logging
 from rest_framework.serializers import Serializer, ChoiceField, CharField, MultipleChoiceField, IntegerField, FloatField
 
 from Squest.utils.plugin_controller import PluginController
-from service_catalog.forms.utils import get_choices_as_tuples_list
+from service_catalog.forms.form_utils import FormUtils
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class DynamicSurveySerializer(Serializer):
                     initial=survey_field['default'],
                     required=False if self.read_only_form else survey_field['required'],
                     help_text=survey_field['question_description'],
-                    choices=get_choices_as_tuples_list(survey_field["choices"]),
+                    choices=FormUtils.get_choices_as_tuples_list(survey_field["choices"]),
                     error_messages={'required': 'At least you must select one choice'}
                 )
 
@@ -68,7 +68,7 @@ class DynamicSurveySerializer(Serializer):
                     initial=survey_field['default'].split("\n"),
                     required=False if self.read_only_form else survey_field['required'],
                     help_text=survey_field['question_description'],
-                    choices=get_choices_as_tuples_list(survey_field["choices"]),
+                    choices=FormUtils.get_choices_as_tuples_list(survey_field["choices"]),
                 )
 
             elif survey_field["type"] == "integer":
