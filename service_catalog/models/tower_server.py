@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, BooleanField, JSONField
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from towerlib import Tower
 
@@ -106,3 +107,6 @@ class TowerServer(SquestModel):
         # update data
         credential.name = credential_from_tower.name
         credential.save()
+
+    def get_absolute_url(self):
+        return reverse_lazy('service_catalog:towerserver_list')
