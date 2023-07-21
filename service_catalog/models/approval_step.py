@@ -1,8 +1,10 @@
 from django.contrib.auth.models import Permission
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, Model, ManyToManyField
+from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField
+
+from Squest.utils.squest_model import SquestModel
 
 
-class ApprovalStep(Model):
+class ApprovalStep(SquestModel):
     class Meta:
         unique_together = (('id', 'approval_workflow'), ('name', 'approval_workflow'))
         permissions = [('can_approve_approvalstep', 'Can approve an approval step')]

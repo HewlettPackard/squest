@@ -47,6 +47,7 @@ class InstanceNotificationDeleteView(SquestDeleteView):
         context['breadcrumbs'] = [
             {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#instance-notifications'},
             {'text': self.get_object(), 'url': ""},
+            {'text': "Delete", 'url': ""},
         ]
         return context
 
@@ -69,5 +70,6 @@ class InstanceNotificationEditView(SquestUpdateView):
         context['breadcrumbs'] = [
             {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#instance-notifications'},
             {'text': self.get_object(), 'url': ""},
+            {'text': "Edit", 'url': ""},
         ]
         return context
