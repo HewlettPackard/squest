@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from django.db.models import Model, ForeignKey, CASCADE
+from django.db.models import ForeignKey, CASCADE
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models import ApprovalState
 
 
-class ApprovalWorkflowState(Model):
+class ApprovalWorkflowState(SquestModel):
     approval_workflow = ForeignKey(
         "service_catalog.ApprovalWorkflow",
         blank=False,
