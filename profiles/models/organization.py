@@ -45,14 +45,9 @@ class Organization(Scope):
         return super(SquestModel, self).get_absolute_url()
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
-        qs = super(SquestModel, Organization).get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
-
+    def get_q_filter(cls, user, perm):
         app_label, codename = perm.split(".")
-        qs = Organization.objects.filter(
-            Q(
+        return Q(
                 # Groups
                 rbac__user=user,
                 rbac__role__permissions__codename=codename,
@@ -63,5 +58,3 @@ class Organization(Scope):
                 roles__permissions__codename=codename,
                 roles__permissions__content_type__app_label=app_label
             )
-        )
-        return qs.distinct()
