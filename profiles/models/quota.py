@@ -71,42 +71,30 @@ class Quota(SquestModel):
         return consumed
 
     @classmethod
-    def get_queryset_for_user(cls, user, perm):
+    def get_q_filter(cls, user, perm):
         from profiles.models import Team
-        qs = super().get_queryset_for_user(user, perm)
-        if qs.exists():
-            return qs
         app_label, codename = perm.split(".")
-        qs = Quota.objects.filter(
-            # Scopes
-            ## Scopes - Org - User
-            Q(
+        return Q(
                 scope__rbac__user=user,
                 scope__rbac__role__permissions__codename=codename,
                 scope__rbac__role__permissions__content_type__app_label=app_label
-            ) |
+            ) | Q(
             ### Scopes - Org - Default roles
-            Q(
-                scope__rbac__user=user,
+            scope__rbac__user=user,
                 scope__roles__permissions__codename=codename,
                 scope__roles__permissions__content_type__app_label=app_label
-            ) |
+            ) | Q(
             ## Scopes - Team - User
-            Q(
-                scope__in=Team.objects.filter(
+            scope__in=Team.objects.filter(
                     org__rbac__user=user,
                     org__rbac__role__permissions__codename=codename,
                     org__rbac__role__permissions__content_type__app_label=app_label
                 )
-            ) |
+            ) | Q(
             ## Scopes - Team - Default roles
-            Q(
-                scope__in=Team.objects.filter(
+            scope__in=Team.objects.filter(
                     org__rbac__user=user,
                     org__roles__permissions__codename=codename,
                     org__roles__permissions__content_type__app_label=app_label
                 )
             )
-
-        )
-        return qs.distinct()

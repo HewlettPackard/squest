@@ -15,7 +15,6 @@ class DocListView(SquestListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_super'] = self.request.user.is_superuser
         context['html_button_path'] = "service_catalog/buttons/manage_docs.html"
         return context
 

@@ -297,8 +297,8 @@ def instance_bulk_delete_confirm(request):
 def instance_bulk_delete(request):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance').filter(
-            pk__in=pks)
+        selected_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance',
+                                                            unique=False).filter(pk__in=pks)
         if selected_instances.count() != len(pks):
             raise PermissionDenied
         selected_instances.delete()
