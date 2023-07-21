@@ -4,15 +4,14 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, DeleteView
 
+from Squest.utils.squest_views import SquestCreateView, SquestUpdateView, SquestDeleteView
 from service_catalog.forms.approval_step_form import ApprovalStepForm
 from service_catalog.models import ApprovalStep, ApprovalWorkflow
 
 
-class ApprovalStepCreateView(CreateView):
+class ApprovalStepCreateView(SquestCreateView):
     model = ApprovalStep
-    template_name = 'generics/generic_form.html'
     form_class = ApprovalStepForm
 
     def get_form_kwargs(self):
@@ -52,9 +51,8 @@ def ajax_approval_step_position_update(request):
         return JsonResponse({"update_success": True}, status=202)
 
 
-class ApprovalStepEditView(UpdateView):
+class ApprovalStepEditView(SquestUpdateView):
     model = ApprovalStep
-    template_name = 'generics/generic_form.html'
     form_class = ApprovalStepForm
 
     def get_form_kwargs(self):
@@ -70,8 +68,6 @@ class ApprovalStepEditView(UpdateView):
         context = super().get_context_data(**kwargs)
         approval_workflow_id = self.kwargs.get('approval_workflow_id')
         approval_workflow = get_object_or_404(ApprovalWorkflow, id=approval_workflow_id)
-        context['title'] = f'Edit approval step'
-        context['action'] = "edit"
         context["breadcrumbs"] = [
             {'text': 'Approval workflow', 'url': reverse('service_catalog:approvalworkflow_list')},
             {'text': f"{self.object.approval_workflow.name}", 'url': reverse('service_catalog:approvalworkflow_details',
@@ -81,9 +77,8 @@ class ApprovalStepEditView(UpdateView):
         return context
 
 
-class ApprovalStepDeleteView(DeleteView):
+class ApprovalStepDeleteView(SquestDeleteView):
     model = ApprovalStep
-    template_name = 'generics/delete.html'
 
     def get_success_url(self):
         approval_workflow_id = self.kwargs.get('approval_workflow_id')

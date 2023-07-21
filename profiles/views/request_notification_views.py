@@ -45,7 +45,8 @@ class RequestNotificationDeleteView(SquestDeleteView):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
             {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#request-notifications'},
-            {'text': self.get_object(), 'url': ""},
+            {'text': self.get_object(), 'url': self.get_object().get_absolute_url()},
+            {'text': 'Delete', 'url': ""},
         ]
         return context
 
@@ -67,6 +68,7 @@ class RequestNotificationEditView(SquestUpdateView):
         context['form_header'] = 'profiles/forms/form_headers/request_notification_filter_header.html'
         context['breadcrumbs'] = [
             {'text': 'Profile', 'url': reverse_lazy('profiles:profile') + '#request-notifications'},
-            {'text': self.get_object(), 'url': ""},
+            {'text': self.get_object(), 'url': self.get_object().get_absolute_url()},
+            {'text': 'Edit', 'url': ""},
         ]
         return context
