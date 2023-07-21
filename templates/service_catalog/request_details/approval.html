@@ -6,14 +6,17 @@
         <i class="fas fa-shopping-cart bg-blue"></i>
         <div class="timeline-item">
             <span class="time"><i class="fas fa-clock"></i> {{ object.date_submitted }}</span>
-            <h3 class="timeline-header">Requested by <a href="{% url 'profiles:user_details' object.user.id %}">{{ object.user }}</a></h3>
+            <h3 class="timeline-header">Requested by <a
+                    href="{% url 'profiles:user_details' object.user.id %}">{{ object.user }}</a></h3>
             <div class="timeline-body">
-                <dl class="row">
+                <table class="row">
                     {% for variable_name, value in object.fill_in_survey.items %}
-                        <dt class="col-sm-2">{{ variable_name }}</dt>
-                        <dd class="col-sm-10">{{ value }}</dd>
+                        <tr>
+                            <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                            <td class="col-sm-10">{{ value }}</td>
+                        </tr>
                     {% endfor %}
-                </dl>
+                </table>
             </div>
 
         </div>
@@ -31,18 +34,22 @@
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
                         {% if step.state == "APPROVED" %}
-                            <dl class="row">
+                            <table class="row">
                                 {% for variable_name, value in step.fill_in_survey.items %}
-                                    <dt class="col-sm-2">{{ variable_name }}</dt>
-                                    <dd class="col-sm-10">{{ value }}</dd>
+                                    <tr>
+                                        <td class="col-sm-2">{{ variable_name }}</td>
+                                        <td class="col-sm-10">{{ value }}</td>
+                                    </tr>
                                 {% endfor %}
-                            </dl>
+                            </table>
                             <blockquote class="quote-success">
-                                <i class="fas fa-check text-success"></i> Approved by <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
+                                <i class="fas fa-check text-success"></i> Approved by
+                                <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
                             </blockquote>
-                        {% elif step.state == "REJECTED"  %}
+                        {% elif step.state == "REJECTED" %}
                             <blockquote class="quote-danger">
-                                <i class="fas fa-ban text-danger"></i> Rejected by <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
+                                <i class="fas fa-ban text-danger"></i> Rejected by
+                                <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
                             </blockquote>
                             <div class="row justify-content-md-center">
                                 <div class="timeline-footer">
@@ -91,14 +98,19 @@
                 <h3 class="timeline-header">Admin review</h3>
                 <div class="timeline-body">
                     {% if object.state == "ACCEPTED" %}
-                        <dl class="row">
+                        <table class="row">
                             {% for variable_name, value in object.admin_fill_in_survey.items %}
-                                <dt class="col-sm-2">{{ variable_name }}</dt>
-                                <dd class="col-sm-10">{{ value }}</dd>
+                                <tr>
+
+
+                                    <td class="col-sm-2">{{ variable_name }}</td>
+                                    <td class="col-sm-10">{{ value }}</td>
+                                </tr>
                             {% endfor %}
-                        </dl>
+                        </table>
                         <blockquote class="quote-success">
-                            <i class="fas fa-check text-success"></i> Accepted by <strong>{{ object.accepted_by }}</strong>
+                            <i class="fas fa-check text-success"></i> Accepted by
+                            <strong>{{ object.accepted_by }}</strong>
                         </blockquote>
                     {% else %}
                         <div class="row justify-content-md-center">
