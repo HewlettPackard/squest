@@ -12,6 +12,7 @@ class SquestObjectPermissions(DjangoObjectPermissions):
         return True
 
     def has_object_permission(self, request, view, obj):
+        # Override to raise 403 instead of 404
         # authentication checks have already executed via has_permission
         queryset = self._queryset(view)
         model_cls = queryset.model
