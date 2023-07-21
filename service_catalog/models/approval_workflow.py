@@ -1,9 +1,10 @@
-from django.db.models import CharField, Model, ForeignKey, ManyToManyField, CASCADE
+from django.db.models import CharField, ForeignKey, ManyToManyField, CASCADE
 
+from Squest.utils.squest_model import SquestModel
 from service_catalog.models import ApprovalStep
 
 
-class ApprovalWorkflow(Model):
+class ApprovalWorkflow(SquestModel):
     name = CharField(max_length=100, blank=False, unique=True)
 
     operation = ForeignKey(
