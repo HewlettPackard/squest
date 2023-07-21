@@ -41,7 +41,6 @@
             {% endif %}
 
             {% if can_list_instance %}
-
                 <div class="mt-2 col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                     <!-- small card -->
                     <div class="h-100 small-box d-flex flex-column bg-success">
@@ -124,9 +123,7 @@
                                 <tr>
                                     <th class="text-center"></th>
                                     <th class="text-center">Service</th>
-
                                     <th class="text-center">Submitted</th>
-
                                     <th class="text-center">Accepted</th>
                                     <th class="text-center">Need info</th>
                                     <th class="text-center">Failed</th>
@@ -140,17 +137,11 @@
 
                                     <tr>
                                         <td class="align-middle text-center">
-                                            <img src="
-
-
-                                                    {% if service.service.image %}{{ service.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
-                                                 lt="Illustration for {{ service.service.name }}"
+                                            <img src="{% if service.service.image %}{{ service.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                                 alt="Illustration for {{ service.service.name }}"
                                                  class="img-circle img-size-32 mr-2">
-
-
                                         </td>
                                         <td class="align-middle text-center">
-
                                             <a href="{{ service.service.get_absolute_url }}">
                                                 {{ service.service.name }}
                                             </a>
