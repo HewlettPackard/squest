@@ -35,7 +35,7 @@ class TeamCreateView(SquestCreateView):
     form_class = TeamForm
 
     def get_form(self, form_class=None):
-        form = super(TeamCreateView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.fields["org"].queryset = Organization.get_queryset_for_user(self.request.user, "profiles.add_team")
         return form
 
@@ -48,7 +48,7 @@ class TeamEditView(SquestUpdateView):
     form_class = TeamForm
 
     def get_form(self, form_class=None):
-        form = super(TeamCreateView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.fields["org"].queryset = Organization.get_queryset_for_user(self.request.user, "profiles.add_team")
         return form
 
