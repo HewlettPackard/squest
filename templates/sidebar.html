@@ -16,6 +16,7 @@
 {% has_perm request.user "service_catalog.list_announcement" as can_list_announcement %}
 {% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
 {% has_perm request.user "service_catalog.list_approvalworkflow" as can_list_approval %}
+{% has_perm request.user "service_catalog.list_quota" as can_list_quota %}
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
@@ -89,7 +90,7 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if can_list_resourcegroup %}
+                {% if can_list_resourcegroup or can_list_quota %}
                     <li class="nav-item">
                         <a href="{% url 'resource_tracker_v2:resourcegroup_list' %}"
                            class="nav-link {% if '/resource_tracker/resource_group/' in request.path %}active{% endif %}">
@@ -104,6 +105,15 @@
                             <p>Graph</p>
                         </a>
                     </li>
+                    {% if can_list_quota %}
+                        <li class="nav-item">
+                            <a href="{% url 'profiles:quota_list' %}"
+                               class="nav-link {% if '/profiles/quota/' in request.path %}active{% endif %}">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <p>Quotas</p>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
                 {% if can_list_globalpermission or can_list_organization or can_list_team or can_list_user %}
                     <li class="nav-header">Access</li>

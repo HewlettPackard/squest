@@ -1,8 +1,33 @@
 from Squest.utils.squest_views import *
+from profiles.models import Quota
+from profiles.tables.quota_table import QuotaTable
 from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
 from resource_tracker_v2.forms.attribute_definition_form import AttributeDefinitionForm
 from resource_tracker_v2.models import AttributeDefinition, ResourceGroup, Transformer
 from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefinitionTable
+
+
+class AttributeDefinitionDetailView(SquestDetailView):
+    model = AttributeDefinition
+    pk_url_kwarg = "attribute_definition_id"
+    template_name = "resource_tracking_v2/attributedefinition_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['quotas'] = QuotaTable(
+            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct()
+        )
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': self.get_object().name,
+                'url': ""
+            },
+        ]
+        return context
 
 
 class AttributeDefinitionListView(SquestListView):
