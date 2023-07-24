@@ -1,11 +1,6 @@
-import urllib3
 from django import forms
 
 from service_catalog.models import Instance, Support, SupportMessage
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-FIRST_BLOCK_FORM_FIELD_TITTLE = "1. Squest fields"
 
 
 class SupportRequestForm(forms.Form):

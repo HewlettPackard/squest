@@ -31,11 +31,9 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
             kwargs.update({'service': self.service})
             kwargs.update({'operation': self.operation})
             # add data from step 0
-            kwargs.update({'squest_instance_name': self.storage.data['step_data']['0']['0-squest_instance_name'][0]})
             scope_id = self.storage.data['step_data']['0']['0-quota_scope'][0]
             get_object_or_404(Scope, id=scope_id)
             kwargs.update({'quota_scope': scope_id})
-
         return kwargs
 
     def get_template_names(self):
@@ -48,8 +46,7 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
         create_operation = get_object_or_404(Operation, id=operation_id)
 
         # get data from the first form
-        squest_instance_name = form_list[0].cleaned_data["squest_instance_name"]
-        quota_scope = form_list[0].cleaned_data["quota_scope"]
+        new_instance = form_list[0].save()
 
         # get data from the second form
         comment = form_list[1].cleaned_data["request_comment"]
@@ -58,9 +55,6 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
             if field_key not in EXCLUDED_SURVEY_FIELDS:
                 user_provided_survey_fields[field_key] = value
 
-        # create the instance
-        new_instance = Instance.objects.create(service=service, name=squest_instance_name, quota_scope=quota_scope,
-                                               requester=self.request.user)
         # create the request
         new_request = Request.objects.create(instance=new_instance,
                                              operation=create_operation,

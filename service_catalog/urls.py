@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .forms import ServiceRequestForm1, ServiceRequestForm2
+from .forms import ServiceInstanceForm, ServiceRequestForm
 
 app_name = 'service_catalog'
 urlpatterns = [
@@ -57,7 +57,7 @@ urlpatterns = [
 
     # Request operation endpoints
     path('service/<int:service_id>/operation/<int:operation_id>/request/',
-         views.ServiceRequestWizardView.as_view([ServiceRequestForm1, ServiceRequestForm2]), name='request_service'),
+         views.ServiceRequestWizardView.as_view([ServiceInstanceForm, ServiceRequestForm]), name='request_service'),
 
     path('service/<int:service_id>/operation/request/', views.CreateOperationListView.as_view(),
          name='create_operation_list'),
