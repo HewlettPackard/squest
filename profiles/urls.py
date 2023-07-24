@@ -59,7 +59,9 @@ urlpatterns = [
     path('permission/<int:pk>/edit/', views.PermissionEditView.as_view(), name="permission_edit"),
     path('permission/<int:pk>/delete/', views.PermissionDeleteView.as_view(), name="permission_delete"),
 
-    # Organization
+    path('permission/create/approvalstep', views.ApprovalStepPermissionCreateView.as_view(), name="approvalstep_permission_create"),
+
+                  # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
     path('organization/create/', views.OrganizationCreateView.as_view(), name="organization_create"),
     path('organization/<int:pk>/edit/', views.OrganizationEditView.as_view(), name="organization_edit"),
