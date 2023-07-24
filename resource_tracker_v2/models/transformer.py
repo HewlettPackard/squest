@@ -29,7 +29,7 @@ class Transformer(SquestModel):
                                              related_name="consume_from_resource_group")
     consume_from_attribute_definition = ForeignKey(AttributeDefinition, null=True, blank=True, on_delete=SET_NULL,
                                                    related_name="consume_from_attribute_definition")
-    factor = FloatField(null=True, blank=True)
+    factor = FloatField(default=1)
     total_consumed = IntegerField(default=0)
     total_produced = IntegerField(default=0)
     yellow_threshold_percent_consumed = IntegerField(
@@ -140,8 +140,7 @@ class Transformer(SquestModel):
         transformers = Transformer.objects.filter(consume_from_attribute_definition=self.attribute_definition,
                                                   consume_from_resource_group=self.resource_group)
         for transformer in transformers:
-            factor = transformer.factor if transformer.factor is not None else 1
-            total_consumed += transformer.total_produced / factor
+            total_consumed += transformer.total_produced / transformer.factor
         self.total_consumed = total_consumed
         self.save()
         return self.total_consumed
@@ -185,6 +184,6 @@ class Transformer(SquestModel):
 
 
 @receiver(post_save, sender=Transformer)
-def create_user_profile(sender, instance, created, **kwargs):
+def notfiy_parent_post_save(sender, instance, created, **kwargs):
     if not created:
         instance.notify_parent()
