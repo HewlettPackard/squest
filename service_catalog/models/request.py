@@ -114,7 +114,7 @@ class Request(SquestModel):
     @transition(field=state, source=[RequestState.NEED_INFO, RequestState.REJECTED], target=RequestState.SUBMITTED)
     def re_submit(self):
         if self.approval_workflow_state is not None:
-            self.approval_workflow_state.reset_current_step_to_pending()
+            self.approval_workflow_state.current_step.reset_to_pending()
 
     @transition(field=state, source=[RequestState.SUBMITTED,
                                      RequestState.NEED_INFO,
@@ -338,7 +338,7 @@ class Request(SquestModel):
             previous = Request.objects.get(id=instance.id)
             if previous.state != RequestState.SUBMITTED and instance.state == RequestState.SUBMITTED:
                 if instance.approval_workflow_state is not None:
-                    instance.approval_workflow_state.reset_all_steps()
+                    instance.approval_workflow_state.reset()
 
 
 pre_save.connect(Request.on_change, sender=Request)
