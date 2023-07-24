@@ -4,14 +4,14 @@ version: '3.7'
 services:
 
   db:
-    image: mariadb:latest
+    image: mariadb:11.0.2
     env_file: docker/environment_variables/db.env
     volumes:
       - db_data:/var/lib/mysql
       - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
 
   rabbitmq:
-    image: "rabbitmq:3-management"
+    image: rabbitmq:3.10.23-management
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -20,7 +20,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   redis-cache:
-    image: redis:6-alpine
+    image: redis:6.0.20-alpine3.18
     ports:
       - "6379:6379"
     command:
@@ -46,7 +46,7 @@ services:
 
   nginx:
     command: nginx -c /etc/nginx/squest/nginx.conf
-    image: nginx:alpine
+    image: nginx:1.23.4-bullseye
     depends_on:
       - django
     volumes:
@@ -55,7 +55,7 @@ services:
       - ./docker/nginx.conf:/etc/nginx/squest/nginx.conf:ro
 
   maintenance:
-    image: nginx:alpine
+    image: nginx:1.23.4-bullseye
     volumes:
       - ./docker/maintenance.html:/usr/share/nginx/html/index.html
       - ./docker/maintenance.nginx.conf:/etc/nginx/conf.d/default.conf
