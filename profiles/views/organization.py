@@ -5,9 +5,6 @@ from profiles.forms import OrganizationForm
 from profiles.models import Organization, Team, Role, Quota
 from profiles.tables import OrganizationTable, ScopeRoleTable, TeamTable, UserRoleTable
 from profiles.tables.quota_table import QuotaTable
-from service_catalog.models import Request, Instance
-from service_catalog.tables.instance_tables import InstanceTable
-from service_catalog.tables.request_tables import RequestTable
 
 
 class OrganizationListView(SquestListView):
@@ -25,7 +22,8 @@ class OrganizationDetailView(SquestDetailView):
         context = super().get_context_data(**kwargs)
         context['users'] = UserRoleTable(self.object.users.all())
         context['quotas'] = QuotaTable(
-            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct()
+            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct(),
+            hide_fields=["scope"]
         )
         context['teams'] = TeamTable(
             Team.get_queryset_for_user(self.request.user, "profiles.view_team") & self.object.teams.distinct()

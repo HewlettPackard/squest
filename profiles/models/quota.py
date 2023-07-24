@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import ForeignKey, Sum, Q
+from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 
@@ -14,7 +15,7 @@ class Quota(SquestModel):
                        help_text="The attribute definitions linked to this quota.",
                        related_name="quotas",
                        related_query_name="quota",
-                       verbose_name="Quota",
+                       verbose_name="Scope",
                        on_delete=models.CASCADE
                        )
     limit = models.PositiveIntegerField(default=0)
@@ -24,7 +25,7 @@ class Quota(SquestModel):
         help_text="The attribute definitions linked to this quota.",
         related_name="quotas",
         related_query_name="quota",
-        verbose_name="Quota",
+        verbose_name="Attribute",
         on_delete=models.CASCADE
     )
 
@@ -32,7 +33,7 @@ class Quota(SquestModel):
         return self.attribute_definition.name
 
     def get_absolute_url(self):
-        return self.scope.get_absolute_url() + "#quotas"
+        return reverse("profiles:quota_details", kwargs={'scope_id': self.scope.id, 'quota_id': self.id})
 
     def get_scopes(self):
         return self.scope.get_scopes()

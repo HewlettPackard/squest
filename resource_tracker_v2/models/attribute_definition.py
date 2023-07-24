@@ -25,4 +25,4 @@ class AttributeDefinition(SquestModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("resource_tracker_v2:attributedefinition_list")
+        return reverse("resource_tracker_v2:attributedefinition_detail", args=[self.pk])

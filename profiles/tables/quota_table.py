@@ -1,17 +1,19 @@
-from django.urls import reverse
 from django.utils.html import format_html
-from django_tables2 import tables
+from django_tables2 import LinkColumn, Table
 
+from Squest.utils.squest_table import SquestTable
 from profiles.models import Quota
 
 
-class QuotaTable(tables.Table):
+class QuotaTable(SquestTable):
+    scope = LinkColumn()
+    attribute_definition = LinkColumn()
 
     class Meta:
         model = Quota
         attrs = {"id": "quota_table", "class": "table squest-pagination-tables "}
-        fields = ("attribute_definition", "limit", "consumed", "available")
+        fields = ("scope", "attribute_definition", "limit", "consumed", "available")
 
     def render_consumed(self, value, record):
-        link = reverse("profiles:quota_details", kwargs={'scope_id': record.scope.id, 'quota_id': record.id})
+        link = record.get_absolute_url()
         return format_html(f'<a href="{link}" class="btn btn-default bg-sm">{value}</a>')

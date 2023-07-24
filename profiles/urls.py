@@ -61,7 +61,7 @@ urlpatterns = [
 
     path('permission/create/approvalstep', views.ApprovalStepPermissionCreateView.as_view(), name="approvalstep_permission_create"),
 
-                  # Organization
+    # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
     path('organization/create/', views.OrganizationCreateView.as_view(), name="organization_create"),
     path('organization/<int:pk>/edit/', views.OrganizationEditView.as_view(), name="organization_edit"),
@@ -85,7 +85,7 @@ urlpatterns = [
     path('role/<int:pk>/', views.RoleDetailView.as_view(), name="role_details"),
 
     # Quota
-
+    path('quota/', views.QuotaListView.as_view(), name="quota_list"),
     path('organization/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
          name="organization_quota_edit"),
     path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
