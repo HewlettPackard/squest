@@ -16,12 +16,6 @@ class ApprovalStepForm(SquestModelForm):
                                                required=False,
                                                queryset=TowerSurveyField.objects.none())
 
-    permission = ModelChoiceField(
-        label="Permission",
-        queryset=Permission.objects.all(),
-        required=True,
-    )
-
     class Meta:
         model = ApprovalStep
         fields = ['name', 'permission', 'readable_fields', 'editable_fields', 'approval_workflow']
@@ -35,7 +29,7 @@ class ApprovalStepForm(SquestModelForm):
         self.fields['approval_workflow'].widget = HiddenInput()
         self.fields['approval_workflow'].initial = self.approval_workflow.id
 
-        self.fields['permission'].help_text = f"Create a <a href='{reverse('profiles:permission_create')}'>permission</a>"
+        self.fields['permission'].help_text = f"Create a <a href='{reverse('profiles:approvalstep_permission_create')}'>permission</a>"
         default_perm = Permission.objects.get(codename="can_approve_approvalstep")
         self.fields['permission'].initial = (default_perm.id, default_perm.name)
 
