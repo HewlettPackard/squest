@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Permission
 from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField
+from django.db.models.signals import post_save
 
 from Squest.utils.squest_model import SquestModel
 
@@ -54,3 +55,16 @@ class ApprovalStep(SquestModel):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def on_create_set_position(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            if instance.position == 0:
+                previous_steps = ApprovalStep.objects.filter(
+                    approval_workflow=instance.approval_workflow).order_by('position').exclude(id=instance.id)
+                if previous_steps.exists():
+                    instance.position = previous_steps.last().position + 1
+                    instance.save()
+
+
+post_save.connect(ApprovalStep.on_create_set_position, sender=ApprovalStep)
