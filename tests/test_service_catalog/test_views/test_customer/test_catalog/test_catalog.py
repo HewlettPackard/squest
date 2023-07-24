@@ -52,7 +52,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:request_service', kwargs=args)
 
         data_form1 = {
-            "0-squest_instance_name": "instance_1",
+            "0-name": "instance_1",
             "0-quota_scope": self.test_quota_scope.id,
             "service_request_wizard_view-current_step": "0",
         }
@@ -89,7 +89,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:request_service', kwargs=args)
 
         data_form1 = {
-            "0-squest_instance_name": "instance_1",
+            "0-name": "instance_1",
             "0-quota_scope": self.test_quota_scope.id,
             "service_request_wizard_view-current_step": "0",
         }
@@ -139,7 +139,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         url = reverse('service_catalog:request_service', kwargs=args)
 
         data_form1 = {
-            "0-squest_instance_name": "instance_1",
+            "0-name": "instance_1",
             "0-quota_scope": self.test_quota_scope.id,
             "service_request_wizard_view-current_step": "0",
         }
