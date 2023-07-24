@@ -4,7 +4,6 @@ from django.urls import reverse
 
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
-from profiles.models import Scope
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -164,7 +163,6 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_request_accept_and_request_pending_instance(self):
         data = {
-            'squest_instance_name': self.test_request.instance.name,
             'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
@@ -183,7 +181,6 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_request_accept_pending_instance_missing_not_required_field(self):
         data = {
-            'squest_instance_name': self.test_request.instance.name,
             'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
@@ -198,7 +195,7 @@ class AdminRequestViewTest(BaseTestRequest):
 
     def test_admin_request_cannot_accept_pending_instance_missing_required_field(self):
         data = {
-            'squest_instance_name': self.test_request.instance.name,
+            'name': self.test_request.instance.name,
             'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
             'multiplechoice_variable': 'choice1',
