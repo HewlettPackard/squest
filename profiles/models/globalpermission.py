@@ -5,43 +5,6 @@ from django.urls import reverse
 
 from profiles.models import AbstractScope
 
-default_user_permissions = [
-    # Lists
-    'service_catalog.list_instance',
-    'service_catalog.list_request',
-    'service_catalog.list_support',
-    'profiles.list_organization',
-    'profiles.list_team',
-    # Custom link
-    'service_catalog.view_customlink',
-    # Doc
-    'service_catalog.list_doc',
-    'service_catalog.view_doc',
-    # Portfolio
-    'service_catalog.list_portfolio',
-    'service_catalog.view_portfolio',
-    # Service
-    'service_catalog.list_service',
-    'service_catalog.view_service',
-    # Operation
-    'service_catalog.list_operation',
-    'service_catalog.view_operation',
-    'service_catalog.request_on_service',
-    # Request notification
-    'profiles.list_requestnotification',
-    'profiles.add_requestnotification',
-    'profiles.view_requestnotification',
-    'profiles.change_requestnotification',
-    'profiles.delete_requestnotification',
-    # Instance notification
-    'profiles.list_instancenotification',
-    'profiles.add_instancenotification',
-    'profiles.view_instancenotification',
-    'profiles.change_instancenotification',
-    'profiles.delete_instancenotification',
-]
-
-
 
 class GlobalPermission(AbstractScope):
     class Meta:
@@ -79,11 +42,7 @@ class GlobalPermission(AbstractScope):
     def load(cls):
         if cache.get(cls.__name__) is None:
             obj, created = GlobalPermission.objects.get_or_create(name="GlobalPermission")
-            if created:
-                codenames = list(map(lambda user_permissions: user_permissions.split('.')[1], default_user_permissions))
-                app_labels = list(map(lambda user_permissions: user_permissions.split('.')[0], default_user_permissions))
-                obj.user_permissions.add(*Permission.objects.filter(codename__in=codenames, content_type__app_label__in=app_labels))
-            else:
+            if not created:
                 obj.set_cache()
             return obj
         return cache.get(cls.__name__)
