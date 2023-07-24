@@ -1,4 +1,4 @@
-from django_tables2 import TemplateColumn
+from django_tables2 import TemplateColumn, LinkColumn
 
 from Squest.utils.squest_table import SquestTable
 from resource_tracker_v2.models import AttributeDefinition
@@ -11,3 +11,4 @@ class AttributeDefinitionTable(SquestTable):
         fields = ("name", "description", "actions")
 
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
+    name = LinkColumn()

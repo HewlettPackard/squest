@@ -2,11 +2,20 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 
 from Squest.utils.squest_views import *
+from profiles.filters.quota import QuotaFilter
 from profiles.forms.quota_forms import QuotaForm
 from profiles.models import Scope, Quota
 from profiles.tables.instance_consumption_table import InstanceConsumptionTable
+from profiles.tables.quota_table import QuotaTable
 from profiles.tables.team_quota_limit_table import TeamQuotaLimitTable
 from resource_tracker_v2.models import ResourceAttribute
+
+
+class QuotaListView(SquestListView):
+    model = Quota
+    filterset_class = QuotaFilter
+    table_class = QuotaTable
+    ordering = 'name'
 
 
 class QuotaEditView(SquestFormView):
