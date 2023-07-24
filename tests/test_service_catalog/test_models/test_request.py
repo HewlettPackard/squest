@@ -131,7 +131,7 @@ class TestRequest(BaseTestRequest):
         self._process_with_job_template_execution_failure(expected_instance_state)
 
     def _check_request_after_create(self, expected_state, check_execution_called):
-        form_data = {'squest_instance_name': 'test instance', 'text_variable': 'my_var'}
+        form_data = {'name': 'test instance', 'text_variable': 'my_var'}
 
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             mock_job_execute.return_value = 10
