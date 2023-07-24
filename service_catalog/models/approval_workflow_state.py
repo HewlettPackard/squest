@@ -25,7 +25,7 @@ class ApprovalWorkflowState(SquestModel):
         related_query_name='current_approval_workflow_state'
     )
 
-    def move_to_next_step(self):
+    def get_next_step(self):
         next_step = self.approval_step_states.filter(approval_step__position=self.current_step.approval_step.position + 1)
         if next_step.exists():
             return next_step.first()
@@ -37,7 +37,7 @@ class ApprovalWorkflowState(SquestModel):
         self.current_step.date_updated = datetime.now()
         self.current_step.updated_by = user
         self.current_step.save()
-        self.current_step = self.move_to_next_step()
+        self.current_step = self.get_next_step()
         self.save()
         if self.current_step is None:
             self.request.accept(user)
@@ -48,20 +48,18 @@ class ApprovalWorkflowState(SquestModel):
         self.current_step.updated_by = user
         self.current_step.save()
 
-    def reset_current_step_to_pending(self):
-        self.current_step.state = ApprovalState.PENDING
-        self.current_step.date_updated = None
-        self.current_step.updated_by = None
-        self.current_step.save()
-
-    def reset_all_steps(self):
-        for step in self.approval_step_states.all():
-            step.date_updated = None
-            step.updated_by = None
-            step.state = ApprovalState.PENDING
-            step.save()
-        # place back the current step of the workflow on the first step of the workflow
+    @property
+    def first_step(self):
         first_step = self.approval_step_states.filter(approval_step__position=0)
         if first_step.exists():
-            self.current_step = first_step.first()
-            self.save()
+            return first_step.first()
+        return None
+
+    def reset(self):
+        """
+        reset the workflow to the beginning
+        """
+        for step in self.approval_step_states.all():
+            step.reset_to_pending()
+        self.current_step = self.first_step
+        self.save()

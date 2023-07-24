@@ -50,3 +50,9 @@ class ApprovalStepState(SquestModel):
         if self.approval_workflow_state.current_step == self:
             return True
         return False
+
+    def reset_to_pending(self):
+        self.date_updated = None
+        self.updated_by = None
+        self.state = ApprovalState.PENDING
+        self.save()
