@@ -185,7 +185,7 @@ class SquestDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
                 'url': self.get_generic_url('list')
             },
             {
-                'text': f'New {self.django_content_type.name}',
+                'text': self.django_content_type.name,
                 'url': ""
             },
         ]
