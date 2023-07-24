@@ -39,15 +39,15 @@ class ApprovalStepForm(SquestModelForm):
         default_perm = Permission.objects.get(codename="can_approve_approvalstep")
         self.fields['permission'].initial = (default_perm.id, default_perm.name)
 
-    def save(self, commit=True):
-        self.instance = super(ApprovalStepForm, self).save(commit=False)
-        previous_steps = ApprovalStep.objects.filter(approval_workflow=self.instance.approval_workflow).order_by('position')
-        if previous_steps.exists():
-            self.instance.position = previous_steps.last().position + 1
-        if commit:
-            self.instance.save()
-            self.save_m2m()
-        return self.instance
+    # def save(self, commit=True):
+    #     self.instance = super(ApprovalStepForm, self).save(commit=False)
+    #     previous_steps = ApprovalStep.objects.filter(approval_workflow=self.instance.approval_workflow).order_by('position')
+    #     if previous_steps.exists():
+    #         self.instance.position = previous_steps.last().position + 1
+    #     if commit:
+    #         self.instance.save()
+    #         self.save_m2m()
+    #     return self.instance
 
     def clean(self):
         cleaned_data = super().clean()
