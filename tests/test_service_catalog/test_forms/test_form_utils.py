@@ -1,6 +1,6 @@
 from django.test import override_settings
 
-from service_catalog.forms import ServiceRequestForm2
+from service_catalog.forms import ServiceRequestForm
 from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base import BaseTest
@@ -224,29 +224,29 @@ class TestFormUtils(BaseTest):
         # not valid because not even number
         data = {
             "user": self.standard_user,
-            "squest_instance_name": "instance test",
+            "name": "instance test",
             "quota_scope": self.test_quota_scope,
             "text_variable": "3"
         }
-        form = ServiceRequestForm2(data, **parameters)
+        form = ServiceRequestForm(data, **parameters)
         self.assertFalse(form.is_valid())
 
         # not valid because not superior to 10
         data = {
             "user": self.standard_user,
-            "squest_instance_name": "instance test",
+            "name": "instance test",
             "quota_scope": self.test_quota_scope,
             "text_variable": "9"
         }
-        form = ServiceRequestForm2(data, **parameters)
+        form = ServiceRequestForm(data, **parameters)
         self.assertFalse(form.is_valid())
 
         # valid because superior to 10 and even number
         data = {
             "user": self.standard_user,
-            "squest_instance_name": "instance test",
+            "name": "instance test",
             "quota_scope": self.test_quota_scope,
             "text_variable": "12"
         }
-        form = ServiceRequestForm2(data, **parameters)
+        form = ServiceRequestForm(data, **parameters)
         self.assertTrue(form.is_valid())
