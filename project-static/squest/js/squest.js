@@ -9,6 +9,48 @@ $(document).ready(function () {
     $('.ajax_sync_all_job_template').click(sync_all_job_template);
     $('.ajax_sync_job_template').click(sync_job_template);
 
+
+    function containsAny(str, substrings) {
+        for (var i = 0; i !== substrings.length; i++) {
+           var substring = substrings[i];
+           if (str.indexOf(substring) !== - 1) {
+                // console.log("found:" + str );
+                return true;
+           }
+        }
+        return false;
+    }
+
+
+    // pool table
+    var disabled_column_list = [" factor"];
+    var poolTable = $('#resource_group_table_csv').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'colvis', 'pageLength'
+        ],
+        lengthMenu: [
+            [50, 100, 200, -1],
+            [50, 100, 200, 'All'],
+        ],
+        fixedColumns: {
+            left: 1,
+        }
+    });
+
+
+    // Apply the filter to remove refactors by default
+    var titles = $('#resource_group_table_csv thead th');
+    poolTable.columns().eq(0).each(function (colIdx) {
+        var column = poolTable.columns(colIdx);
+        var title = titles.eq(colIdx).text();
+        if (containsAny(title, disabled_column_list)) {
+            console.log("disable colum id:" + colIdx)
+            column.visible(false, false);
+        }
+    });
+    poolTable.reload();
+
     // approval step drag and drop
     var panelList = $('#draggableApprovalStepList');
     const url_sync = panelList.data('url-sync-step');
@@ -16,8 +58,8 @@ $(document).ready(function () {
     panelList.sortable({
         // Only make the .card-header child elements support dragging.
         handle: '.card-header',
-        update: function() {
-            $('.card', panelList).each(function(index, elem) {
+        update: function () {
+            $('.card', panelList).each(function (index, elem) {
                 var $listItem = $(elem), newPosition = $listItem.index();
                 // Persist the new positions
                 var dictStep = {
@@ -54,7 +96,8 @@ $(document).ready(function () {
         }
     });
 
-});
+})
+;
 
 
 function add_tab_management() {
@@ -229,7 +272,7 @@ function sync_job_template() {
 function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_detail, interval_id) {
     const sync_button_id = "job_template_" + job_template_id;
     const icon_id = "icon_" + job_template_id;
-    const html_name = $("#job_template_"+job_template_id+" td.job_template_name");
+    const html_name = $("#job_template_" + job_template_id + " td.job_template_name");
     $.ajax({
         url: `/api/tasks/${taskID}/`,
         method: 'GET',

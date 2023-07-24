@@ -8,6 +8,8 @@ urlpatterns = [
     # attributes
     path('attributes/', views.AttributeDefinitionListView.as_view(), name='attributedefinition_list'),
     path('attributes/create/', views.AttributeDefinitionCreateView.as_view(), name='attributedefinition_create'),
+    path('attributes/<int:attribute_definition_id>/', views.AttributeDefinitionDetailView.as_view(),
+         name='attributedefinition_detail'),
     path('attributes/<int:attribute_definition_id>/edit/', views.AttributeDefinitionEditView.as_view(),
          name='attributedefinition_edit'),
     path('attributes/<int:attribute_definition_id>/delete/', views.AttributeDefinitionDeleteView.as_view(),
