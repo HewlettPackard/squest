@@ -36,7 +36,8 @@ class ApprovalStep(SquestModel):
         null=True,
         default=None,
         on_delete=SET_NULL,
-        related_name="previous"
+        related_name="previous",
+        limit_choices_to={"content_type__app_label": "service_catalog", "content_type__model": "approvalstep"}
     )
 
     readable_fields = ManyToManyField(
