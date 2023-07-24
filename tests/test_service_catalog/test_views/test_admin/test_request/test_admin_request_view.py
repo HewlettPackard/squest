@@ -233,7 +233,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'multiselect_var': ['multiselect_1'],
             'textarea_var': '1',
             'password_var': 'password',
-            'integer_var': self.test_quota_scope.id,
+            'integer_var': 2,
             'float_var': 0.8
         }
         self.assertDictEqual(self.test_request.full_survey, data_expected)
