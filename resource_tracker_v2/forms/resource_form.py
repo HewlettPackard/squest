@@ -13,6 +13,8 @@ class ResourceForm(SquestModelForm):
         self.resource_group = kwargs.pop('resource_group', None)
         super(ResourceForm, self).__init__(*args, **kwargs)
         self.attributes_name_list = list()
+        self.fields['resource_group'].widget = forms.HiddenInput()
+        self.fields['resource_group'].initial = self.resource_group.id
         for transformer in self.resource_group.transformers.all():
             initial_value = None
             if self.instance is not None:
@@ -28,8 +30,7 @@ class ResourceForm(SquestModelForm):
                                            help_text=transformer.attribute_definition.description,
                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
             self.fields[transformer.attribute_definition.name] = new_field
-            self.fields['resource_group'].widget = forms.HiddenInput()
-            self.fields['resource_group'].initial = self.resource_group.id
+
             self.attributes_name_list.append(transformer.attribute_definition.name)
 
     def save(self, **kwargs):
