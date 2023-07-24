@@ -17,6 +17,7 @@ urlpatterns = [
 
     # resource group
     path('resource_group/', views.ResourceGroupListView.as_view(), name='resourcegroup_list'),
+    path('resource_group/table', views.ResourceGroupListViewCSV.as_view(), name='resourcegroup_list_table'),
     path('resource_group/create/', views.ResourceGroupCreateView.as_view(), name='resourcegroup_create'),
     path('resource_group/<int:resource_group_id>/edit/', views.ResourceGroupEditView.as_view(),
          name='resourcegroup_edit'),
