@@ -30,7 +30,6 @@
     <!-- Datatable -->
     <link href="{% static 'datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
     <link href="{% static 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet">
-    <link href="{% static 'datatables.net-fixedcolumns-bs4/css/fixedColumns.bootstrap4.css' %}" rel="stylesheet">
 
     <!-- custom squest css -->
     <link rel="stylesheet" type="text/css" href="{% static 'squest/css/squest.css' %}">
@@ -71,7 +70,12 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="float-right">
-                                    {% block header_button %}{% endblock %}
+                                    {% if extra_html_button_path %}
+                                        {% include extra_html_button_path %}
+                                    {% endif %}
+                                    {% block header_button %}
+
+                                    {% endblock %}
                                 </div>
                             </div>
                         </div>

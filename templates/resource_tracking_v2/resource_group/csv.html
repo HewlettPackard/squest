@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block extra_button %}
+    {% include "resource_tracking_v2/resource_group/button_switch_csv.html" %}
+{% endblock extra_button %}
+{% block main %}
+    <div class="content">
+        <div class="row">
+            <div class="col-12 connectedSortable ui-sortable">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table id="resource_group_table_csv" class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>Pool name</th>
+                                            {% for attribute_name in list_attribute_name %}
+                                                <th>{{ attribute_name }} produced</th>
+                                                <th>{{ attribute_name }} consumed</th>
+                                                <th>{{ attribute_name }} available</th>
+                                                <th>{{ attribute_name }} factor</th>
+
+                                            {% endfor %}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for rg_name, attributes in data.items %}
+                                            <tr>
+                                                <td>{{ rg_name }}</td>
+                                                {% for attribute_name,attribute in attributes.items %}
+                                                    <td>{{ attribute.produced }}</td>
+                                                    <td>{{ attribute.consumed }}</td>
+                                                    <td>{{ attribute.available }}</td>
+                                                    <td>{{ attribute.factor }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
