@@ -45,7 +45,7 @@ $(document).ready(function () {
         var column = poolTable.columns(colIdx);
         var title = titles.eq(colIdx).text();
         if (containsAny(title, disabled_column_list)) {
-            console.log("disable colum id:" + colIdx)
+            console.log("disable column id:" + colIdx)
             column.visible(false, false);
         }
     });
