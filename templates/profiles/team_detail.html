@@ -10,16 +10,17 @@
 {% has_perm request.user "profiles.change_quota" object as can_change_quota %}
 {% block header_button %}
     <div class="float-right">
-        {% if can_change_quota %}
+        <span {% if not can_change_quota %} title="Permission profiles.change_quota needed" {% endif %}>
             <a href="{% url 'profiles:team_quota_edit' object.id %}"
-               class="btn btn-primary"> <i class="fas fa-chart-pie"></i> Set quotas
+               class="btn btn-primary{% if can_change_quota %} disabled{% endif %}"> <i class="fas fa-chart-pie"></i> Set
+                quotas
             </a>
-        {% endif %}
-        {% if can_add_user %}
+        </span>
+        <span {% if not can_add_user %} title="Permission profiles.add_users_team needed" {% endif %}>
             <a href="{% url 'profiles:team_rbac_create' object.id %}"
-               class="btn btn-success"> <i class="fas fa-plus"></i> Add users
+               class="btn btn-success{% if can_add_user %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
             </a>
-        {% endif %}
+        </span>
         {% include 'generics/buttons/edit_button.html' %}
         {% include 'generics/buttons/delete_button.html' %}
     </div>
