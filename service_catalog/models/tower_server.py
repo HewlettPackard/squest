@@ -9,8 +9,6 @@ from Squest.utils.squest_model import SquestModel
 
 class TowerServer(SquestModel):
     class Meta:
-        verbose_name = "controller"
-        verbose_name_plural = "controllers"
         permissions = [
             ("sync_towerserver", "Can sync Controller"),
         ]
