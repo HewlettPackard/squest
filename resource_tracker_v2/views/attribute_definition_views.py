@@ -21,6 +21,11 @@ class AttributeDefinitionEditView(SquestUpdateView):
     form_class = AttributeDefinitionForm
     pk_url_kwarg = "attribute_definition_id"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'][0]['url'] = reverse_lazy('resource_tracker_v2:attributedefinition_list')
+        return context
+
 
 class AttributeDefinitionDeleteView(SquestDeleteView):
     model = AttributeDefinition
@@ -32,6 +37,7 @@ class AttributeDefinitionDeleteView(SquestDeleteView):
             id__in=Transformer.objects.filter(
                 attribute_definition=kwargs.get("object"))
             .values_list("resource_group__id", flat=True))
+        context['breadcrumbs'][0]['url'] = reverse_lazy('resource_tracker_v2:attributedefinition_list')
         context['details'] = {
             'warning_sentence': 'Warning: This attribute is in use by following resource groups:',
             'details_list': [f"{rg}," for rg in impacted_resource_group]
