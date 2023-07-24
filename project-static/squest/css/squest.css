@@ -72,3 +72,7 @@ div.dt-button-collection {
 #draggableApprovalStepList .card-header {
     cursor: move;
 }
+
+.dtfc-fixed-left{
+    background-color: white; !important;
+}
