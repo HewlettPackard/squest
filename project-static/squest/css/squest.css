@@ -77,3 +77,7 @@ div.dt-button-collection {
     background-color: white; !important;
     z-index: 1;
 }
+
+aside {
+    min-height: 100vh
+}
