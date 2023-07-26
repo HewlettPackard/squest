@@ -4,8 +4,6 @@
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
-{% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %} {# For UserRoleTable actions #}
-
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
     <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
@@ -21,6 +19,7 @@
 {% endblock %}
 
 {% block main %}
+    {% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %} {# For UserRoleTable actions #}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
