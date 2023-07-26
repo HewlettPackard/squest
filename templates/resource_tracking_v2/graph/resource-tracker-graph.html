@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}
- Graph
-{%  endblock %}
+    Graph
+{% endblock %}
 {% block content %}
     <!-- Main content -->
     <div class="content-wrapper">
@@ -16,43 +16,41 @@
                             <a class="btn btn-success" href="{% url 'resource_tracker_v2:resourcegroup_create' %}">
                                 <i class="fas fa-plus"></i> New resource group
                             </a>
+                            <a class="btn btn-default" data-widget="control-sidebar">
+                                <i class="fas fa-sliders-h"></i>
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
         </section>
         <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="card float-sm-left">
-                            <div class="card-header">
-                                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <form method="get">
-                                    {{ resource_graph.form.as_p }}
-                                    <button class="btn btn-primary" type="submit">Apply</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-10">
-                        {% if display_graph %}
-                            {{ svg }}
-                        {% else %}
-                            Nothing to display
-                        {% endif %}
-                    </div>
-                </div>
-
+            <div class="container-fluid overflow-scroll">
+                {% if display_graph %}
+                    {{ svg }}
+                {% else %}
+                    Nothing to display
+                {% endif %}
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            $('body').css({'background-color': '#F4F6F9'});
-        });
-    </script>
+{% endblock %}
+
+{% block right_aside %}
+    <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }}"
+           style="display: block; width: 50%">
+        <div class="row">
+            <a class="nav-link float-left" data-widget="control-sidebar">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+        <div class="p-3 control-sidebar-content">
+            <div class="row pb-3">
+                <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
+            </div>
+            {% include 'generics/form_edit.html' with form=resource_graph.form action='apply' method='get' %}
+
+        </div>
+    </aside>
 {% endblock %}
