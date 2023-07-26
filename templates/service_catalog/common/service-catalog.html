@@ -3,19 +3,19 @@
     Service catalog
 {% endblock %}
 {% load static %}
-{% block header_button %}
-{% has_perm request.user "service_catalog.list_service" as can_list_service %}
-{% has_perm request.user "service_catalog.list_portfolio" as can_list_portfolio %}
-{% if can_list_service %}
-    <a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:service_list' %}">
-        <i class="fas fa-list"></i> All services
-    </a>
-{% endif %}
-{% if can_list_portfolio %}
-<a class="btn btn-default float-sm-right ml-1" href="{% url 'service_catalog:portfolio_list' %}">
-    <i class="fas fa-list"></i> All portfolios
-</a>
-{% endif %}
+{% block extra_header_button %}
+    {% has_perm request.user "service_catalog.list_service" as can_list_service %}
+    {% has_perm request.user "service_catalog.list_portfolio" as can_list_portfolio %}
+    {% if can_list_service %}
+        <a class="btn btn-default ml-1" href="{% url 'service_catalog:service_list' %}">
+            <i class="fas fa-list"></i> All services
+        </a>
+    {% endif %}
+    {% if can_list_portfolio %}
+        <a class="btn btn-default ml-1" href="{% url 'service_catalog:portfolio_list' %}">
+            <i class="fas fa-list"></i> All portfolios
+        </a>
+    {% endif %}
 {% endblock %}
 {% block main %}
     <div class="col-md-12">

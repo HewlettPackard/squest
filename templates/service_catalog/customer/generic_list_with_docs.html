@@ -2,9 +2,7 @@
 {% load martortags %}
 {% block header_button %}
     {% if html_button_path %}
-        <div class="float-right">
-            {% include html_button_path %}
-        </div>
+        {% include html_button_path %}
     {% endif %}
 {% endblock %}
 {% block main %}
