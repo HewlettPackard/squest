@@ -14,10 +14,11 @@ class AttributeDefinitionDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['quotas'] = QuotaTable(
-            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct(),
-            hide_fields=["attribute_definition"]
-        )
+        if self.request.user.has_perm("profiles.view_quota", self.get_object()):
+            context['quotas'] = QuotaTable\
+                (self.object.quotas.distinct(),
+                hide_fields=["attribute_definition"]
+            )
         context['breadcrumbs'] = [
             {
                 'text': self.django_content_type.name.capitalize(),
