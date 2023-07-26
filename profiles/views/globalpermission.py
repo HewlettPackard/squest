@@ -20,7 +20,8 @@ class GlobalPermissionDetailView(SquestDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = None
-        context['users'] = UserRoleTable(self.object.users)
+        if self.request.user.has_perm("profiles.view_users_globalpermission", self.get_object()):
+            context['users'] = UserRoleTable(self.object.users)
         permission_table = PermissionTable(self.object.user_permissions.all())
         permission_table.exclude = ("actions",)
 
