@@ -38,7 +38,7 @@ class ScopeRBACCreateView(SquestFormView):
 
     def get_permission_required(self):
         django_content_type = ContentType.objects.get_for_model(self.get_object().get_object().__class__)
-        return f"{django_content_type.app_label}.change_{django_content_type.model}"
+        return f"{django_content_type.app_label}.add_users_{django_content_type.model}"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -54,6 +54,10 @@ class ScopeRBACCreateView(SquestFormView):
 
 class ScopeRBACDeleteView(SquestDeleteView):
     model = AbstractScope
+
+    def get_permission_required(self):
+        django_content_type = ContentType.objects.get_for_model(self.get_object().get_object().__class__)
+        return f"{django_content_type.app_label}.delete_users_{django_content_type.model}"
 
     def get_object(self, queryset=None):
         abstract_scope = super().get_object(queryset)
