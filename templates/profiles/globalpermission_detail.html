@@ -36,7 +36,11 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active" id="users">
-                                {% render_table users %}
+                                {% if users %}
+                                    {% render_table users %}
+                                {% else %}
+                                    <p> Permission <b>profiles.view_users_globalpermission</b> required</p>
+                                {% endif %}
                             </div>
                             <div class="tab-pane" id="user_permissions">
                                 {% render_table user_permissions %}

@@ -9,9 +9,9 @@ from profiles.models import AbstractScope
 class GlobalPermission(AbstractScope):
     class Meta:
         permissions = [
-            ("view_users_globalpermission", "Can view users in GlobalPermission"),
-            ("add_users_globalpermission", "Can add users in GlobalPermission"),
-            ("delete_users_globalpermission", "Can delete users in GlobalPermission"),
+            ("view_users_globalpermission", "Can view users in global permission"),
+            ("add_users_globalpermission", "Can add users in global permission"),
+            ("delete_users_globalpermission", "Can delete users in global permission"),
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
