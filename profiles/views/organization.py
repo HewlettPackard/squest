@@ -20,17 +20,17 @@ class OrganizationDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['users'] = UserRoleTable(self.object.users.all())
-        context['quotas'] = QuotaTable(
-            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct(),
-            hide_fields=["scope"]
-        )
+        if self.request.user.has_perm("profiles.view_users_organization", self.get_object()):
+            context['users'] = UserRoleTable(self.object.users.all())
+
+        if self.request.user.has_perm("profiles.view_quota", self.get_object()):
+            context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]
+                                           )
         context['teams'] = TeamTable(
             Team.get_queryset_for_user(self.request.user, "profiles.view_team") & self.object.teams.distinct()
         )
-        context['roles'] = ScopeRoleTable(
-            Role.get_queryset_for_user(self.request.user, "profiles.view_role") & self.object.roles.distinct()
-        )
+
+        context['roles'] = ScopeRoleTable(self.object.roles.distinct())
         return context
 
 

@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
         migrations.AlterModelOptions(
             name='globalpermission',
             options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'),
-                     'permissions': [('view_users_team', 'Can view users in team'),
-                                     ('add_users_team', 'Can add users in team'),
-                                     ('delete_users_team', 'Can delete users in team')]},
+                     'permissions': [('view_users_globalpermission', 'Can view users in global permission'),
+                                     ('add_users_globalpermission', 'Can add users in global permission'),
+                                     ('delete_users_globalpermission', 'Can delete users in global permission')]},
         ),
         migrations.AlterModelOptions(
             name='organization',

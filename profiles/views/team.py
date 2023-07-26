@@ -24,9 +24,13 @@ class TeamDetailView(SquestDetailView):
                                      {'text': f'{self.object.org}', 'url': reverse('profiles:organization_details',
                                                                                    kwargs={'pk': self.object.org.id})},
                                  ] + context['breadcrumbs']
-        context['users'] = UserRoleTable(self.object.users)
-        context['roles'] = ScopeRoleTable(self.object.roles.all())
-        context['quotas'] = QuotaTable(self.object.quotas.all())
+        if self.request.user.has_perm("profiles.view_users_team", self.get_object()):
+            context['users'] = UserRoleTable(self.object.users.all())
+
+        if self.request.user.has_perm("profiles.view_quota", self.get_object()):
+            context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]
+                                           )
+        context['roles'] = ScopeRoleTable(self.object.roles.distinct())
         return context
 
 
