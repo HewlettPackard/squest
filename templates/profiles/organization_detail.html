@@ -78,13 +78,21 @@
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="teams">
-                                {% render_table teams %}
+                                {% if teams %}
+                                    {% render_table teams %}
+                                {% else %}
+                                    <p> Permission <b>profiles.view_team</b> required</p>
+                                {% endif %}
                             </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
                             </div>
                             <div class="tab-pane" id="quotas">
-                                {% render_table quotas %}
+                                {% if quotas %}
+                                    {% render_table quotas %}
+                                {% else %}
+                                    <p> Permission <b>profiles.view_quota</b> required</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
