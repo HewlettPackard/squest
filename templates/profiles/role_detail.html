@@ -5,10 +5,8 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-<div class="float-right">
     {% include 'generics/buttons/edit_button.html' %}
     {% include 'generics/buttons/delete_button.html' %}
-</div>
 {% endblock %}
 
 {% block main %}

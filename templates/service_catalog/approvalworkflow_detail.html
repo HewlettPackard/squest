@@ -5,22 +5,8 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
-    <div class="float-right">
-        {% has_perm request.user "service_catalog.change_instance" object as permission_edit %}
-        {% if permission_edit %}
-            <a href="{% url 'service_catalog:approvalworkflow_edit' object.id %}"
-               class="btn btn-primary">
-                <i class="fas fa-pencil-alt"></i>
-            </a>
-        {% endif %}
-        {% has_perm request.user "service_catalog.delete_instance" object as permission_delete %}
-        {% if permission_delete %}
-            <a href="{% url 'service_catalog:approvalworkflow_delete' object.id %}"
-               class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-            </a>
-        {% endif %}
-    </div>
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
 {% endblock %}
 
 {% block main %}
@@ -62,7 +48,8 @@
                             <i class="fas fa-sort-numeric-down"></i> Steps
                         </h3>
                         <div class="card-tools">
-                            <a href="{% url 'service_catalog:approvalstep_create' object.id %}" type="button" class="btn btn-tool btn-success">
+                            <a href="{% url 'service_catalog:approvalstep_create' object.id %}" type="button"
+                               class="btn btn-tool btn-success">
                                 <i class="fas fa-plus"></i> Add a step
                             </a>
                         </div>
@@ -73,16 +60,19 @@
                                 <div class="callout callout-info">
                                     <p>Drag and drop steps to reorganize the order</p>
                                 </div>
-                                <div id="draggableApprovalStepList" data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
+                                <div id="draggableApprovalStepList"
+                                     data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
                                     {% for approval_step in object.approval_steps.all|dictsort:"position" %}
                                         <div id="{{ approval_step.id }}" class="card card-default">
                                             <div class="card-header">
                                                 <h3 class="card-title"><strong>{{ approval_step.name }}</strong></h3>
                                                 <div class="card-tools">
-                                                    <a href="{% url 'service_catalog:approvalstep_edit' approval_step.approval_workflow.id approval_step.id %}" class="btn btn-tool btn-primary">
+                                                    <a href="{% url 'service_catalog:approvalstep_edit' approval_step.approval_workflow.id approval_step.id %}"
+                                                       class="btn btn-tool btn-primary">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a href="{% url 'service_catalog:approvalstep_delete' approval_step.approval_workflow.id approval_step.id %}" type="button" class="btn btn-tool btn-danger">
+                                                    <a href="{% url 'service_catalog:approvalstep_delete' approval_step.approval_workflow.id approval_step.id %}"
+                                                       type="button" class="btn btn-tool btn-danger">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                 </div>
