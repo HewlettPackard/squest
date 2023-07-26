@@ -17,6 +17,10 @@ class QuotaListView(SquestListView):
     table_class = QuotaTable
     ordering = 'name'
 
+    def get_context_data(self, **kwargs):
+        context = super(QuotaListView, self).get_context_data(**kwargs)
+        context['html_button_path'] = ""
+        return context
 
 class QuotaEditView(SquestFormView):
     model = Scope
