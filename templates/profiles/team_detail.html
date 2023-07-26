@@ -63,13 +63,21 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active" id="users">
-                                {% render_table users %}
+                                {% if users %}
+                                    {% render_table users %}
+                                {% else %}
+                                    <p> Permission <b>profiles.view_users_team</b> required</p>
+                                {% endif %}
                             </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
                             </div>
                             <div class="tab-pane" id="quotas">
-                                {% render_table quotas %}
+                                {% if quotas %}
+                                    {% render_table quotas %}
+                                {% else %}
+                                    <p> Permission <b>profiles.view_quota</b> required</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
