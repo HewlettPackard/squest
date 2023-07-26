@@ -15,7 +15,8 @@ class AttributeDefinitionDetailView(SquestDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['quotas'] = QuotaTable(
-            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct()
+            Quota.get_queryset_for_user(self.request.user, "profiles.view_quota") & self.object.quotas.distinct(),
+            hide_fields=["attribute_definition"]
         )
         context['breadcrumbs'] = [
             {
