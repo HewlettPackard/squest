@@ -4,18 +4,20 @@
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
-{% block header_button %}
+{% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %} {# For UserRoleTable actions #}
+
+{% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
-    {% has_perm request.user "profiles.change_globalpermission" object as can_add_users %}
-    <div class="float-right">
-        <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
-           class="btn btn-success{% if not can_add_users %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
-        </a>
-        <a href="{% url 'profiles:globalpermission_edit' %}"
-           class="btn btn-primary">
-            <i class="fas fa-pencil-alt{% if not can_change %} disabled{% endif %}"></i>
-        </a>
-    </div>
+    <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
+       class="btn btn-success{% if not can_add_users %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
+    </a>
+{% endblock %}
+{% block header_button %}
+    {% has_perm request.user "profiles.change_globalpermission" object as can_change_global_perm %}
+    <a href="{% url 'profiles:globalpermission_edit' %}"
+       class="btn btn-primary">
+        <i class="fas fa-pencil-alt {% if not can_change %} disabled{% endif %}"></i>
+    </a>
 {% endblock %}
 
 {% block main %}
