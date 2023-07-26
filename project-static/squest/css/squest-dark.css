@@ -5,4 +5,5 @@
 }
 .dtfc-fixed-left{
     background-color: #343a40 !important;
+    z-index: 1;
 }
