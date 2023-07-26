@@ -75,4 +75,5 @@ div.dt-button-collection {
 
 .dtfc-fixed-left{
     background-color: white; !important;
+    z-index: 1;
 }
