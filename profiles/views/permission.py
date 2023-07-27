@@ -25,6 +25,7 @@ class PermissionCreateView(SquestCreateView):
     model = Permission
     form_class = PermissionForm
     app_label = "profiles"
+    success_url = reverse_lazy('profiles:permission_list')
 
 
 class PermissionEditView(SquestUpdateView):

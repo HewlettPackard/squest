@@ -13,14 +13,6 @@ class TestQuota(BaseTestProfile):
         self.resource_server.service_catalog_instance = self.test_instance
         self.resource_server.save()
 
-        self.test_quota_team = Quota.objects.create(scope=self.team1,
-                                                    attribute_definition=self.cpu_attribute,
-                                                    limit=100)
-
-        self.test_quota_org = Quota.objects.create(scope=self.test_org,
-                                                   attribute_definition=self.cpu_attribute,
-                                                   limit=150)
-
     def _add_resource_on_instance(self, instance):
         new_resource = Resource.objects.create(name=f"new_resource{instance.id}",
                                                resource_group=self.rg_physical_servers)
