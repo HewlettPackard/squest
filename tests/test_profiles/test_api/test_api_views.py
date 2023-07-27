@@ -10,13 +10,10 @@ class TestQuotaAPIView(BaseTestProfileAPI):
 
     def setUp(self):
         super(TestQuotaAPIView, self).setUp()
-        self.cpu_quota = Quota.objects.create(limit=200,
-                                              scope=self.test_org,
-                                              attribute_definition=self.cpu_attribute)
 
         self._list_create_url = reverse('quota_org_list_create',  kwargs={"scope_id": self.test_org.id})
         self._details_url = reverse('quota_org_details', kwargs={"scope_id": self.test_org.id,
-                                                                 "pk": self.cpu_quota.id})
+                                                                 "pk": self.test_quota_org.id})
 
     def test_list_quota(self):
         response = self.client.get(self._list_create_url, format='json')
@@ -28,9 +25,8 @@ class TestQuotaAPIView(BaseTestProfileAPI):
             self.assertTrue("limit" in quota)
 
     def test_create_quota(self):
-        other_attribute = AttributeDefinition.objects.create(name="other_attribute")
         data = {
-            "attribute_definition": other_attribute.id,
+            "attribute_definition": self.other_attribute.id,
             "limit": 20
         }
         response = self.client.post(self._list_create_url, data=data, format='json')
@@ -43,11 +39,11 @@ class TestQuotaAPIView(BaseTestProfileAPI):
         }
         response = self.client.patch(self._details_url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.cpu_quota.refresh_from_db()
-        self.assertEqual(self.cpu_quota.limit, 20)
+        self.test_quota_org.refresh_from_db()
+        self.assertEqual(self.test_quota_org.limit, 20)
 
     def test_delete_quota(self):
-        id_to_delete = self.cpu_quota.id
+        id_to_delete = self.test_quota_org.id
         data = {
             "attribute_definition": self.cpu_attribute.id,
             "limit": 20

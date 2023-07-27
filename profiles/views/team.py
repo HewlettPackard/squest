@@ -40,10 +40,12 @@ class TeamCreateView(SquestCreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        # Only organizations for which a team can be created are listed.
         form.fields["org"].queryset = Organization.get_queryset_for_user(self.request.user, "profiles.add_team")
         return form
 
     def has_permission(self):
+        # Permission is checked through the "org" field.
         return True
 
 
@@ -53,6 +55,7 @@ class TeamEditView(SquestUpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        # Only organizations for which a team can be created are listed.
         form.fields["org"].queryset = Organization.get_queryset_for_user(self.request.user, "profiles.add_team")
         return form
 

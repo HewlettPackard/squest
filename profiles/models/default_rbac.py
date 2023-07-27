@@ -6,18 +6,21 @@ roles_list = {
                 "permissions": [
                     "view_organization",
                     "view_users_organization",
+                    "add_users_organization",
+                    "delete_users_organization",
                 ]
             },
-            # "profiles.team": {
-            #     "permissions": [
-            #         "create_team",
-            #         "view_team",
-            #         "edit_team",
-            #         "delete_team",
-            #         "view_users_team",
-            #         "edit_users_team",
-            #     ]
-            # },
+            "profiles.team": {
+                "permissions": [
+                    "add_team",
+                    "view_team",
+                    "change_team",
+                    "delete_team",
+                    "view_users_team",
+                    "add_users_team",
+                    "delete_users_team",
+                ]
+            },
             "service_catalog.instance": {
                 "permissions": [
                     "view_instance",
@@ -30,14 +33,22 @@ roles_list = {
                     "view_request",
                 ]
             },
-            # "service_catalog.message": {
-            #     "permissions": [
-            #         "create_message",
-            #         "view_message",
-            #         "edit_message",
-            #         "delete_message",
-            #     ]
-            # },
+            "service_catalog.requestmessage": {
+                "permissions": [
+                    "add_requestmessage",
+                    "view_requestmessage",
+                    "change_requestmessage",
+                    "delete_requestmessage",
+                ]
+            },
+            "service_catalog.supportmessage": {
+                "permissions": [
+                    "add_supportmessage",
+                    "view_supportmessage",
+                    "change_supportmessage",
+                    "delete_supportmessage",
+                ]
+            },
             "service_catalog.support": {
                 "permissions": [
                     "add_support",
@@ -51,13 +62,14 @@ roles_list = {
     "Team administrator": {
         "description": "An administrator of the organization can view and manage the Team and all Objects linked.",
         "model_names": {
-            # "profiles.team": {
-            #     "permissions": [
-            #         "view_team",
-            #         "view_users_team",
-            #         "edit_users_team",
-            #     ]
-            # },
+            "profiles.team": {
+                "permissions": [
+                    "view_team",
+                    "view_users_team",
+                    "add_users_team",
+                    "delete_users_team",
+                ]
+            },
             "service_catalog.instance": {
                 "permissions": [
                     "view_instance",
@@ -70,14 +82,22 @@ roles_list = {
                     "view_request",
                 ]
             },
-            # "service_catalog.message": {
-            #     "permissions": [
-            #         "create_message",
-            #         "view_message",
-            #         "edit_message",
-            #         "delete_message",
-            #     ]
-            # },
+            "service_catalog.requestmessage": {
+                "permissions": [
+                    "add_requestmessage",
+                    "view_requestmessage",
+                    "change_requestmessage",
+                    "delete_requestmessage",
+                ]
+            },
+            "service_catalog.supportmessage": {
+                "permissions": [
+                    "add_supportmessage",
+                    "view_supportmessage",
+                    "change_supportmessage",
+                    "delete_supportmessage",
+                ]
+            },
             "service_catalog.support": {
                 "permissions": [
                     "add_support",

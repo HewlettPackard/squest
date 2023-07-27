@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from profiles.models import Organization, Scope, Role, GlobalPermission
+from profiles.models import Organization, Scope, Role, GlobalPermission, Team
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
@@ -13,8 +13,12 @@ class BaseTestCommon(TransactionTestCase):
 
     def setUp(self):
         # Organization
-        self.test_quota_scope_org = Organization.objects.create(name='Test Org 1')
-        self.test_quota_scope_org2 = Organization.objects.create(name='Test Org 2')
+        self.test_quota_scope_org = Organization.objects.create(name='Test Organization 1')
+        self.test_quota_scope_org2 = Organization.objects.create(name='Test Organization 2')
+
+        # Team
+        self.test_quota_scope_team = Team.objects.create(name='Test Team 1', org=self.test_quota_scope_org)
+        self.test_quota_scope_team2 = Team.objects.create(name='Test Team 2', org=self.test_quota_scope_org2)
 
         # Scopes
         self.test_quota_scope = Scope.objects.get(id=self.test_quota_scope_org.id)
@@ -33,8 +37,10 @@ class BaseTestCommon(TransactionTestCase):
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
 
 
+        self.organization_admin_role = Role.objects.get(name="Organization administrator")
         self.team_member_role = Role.objects.get(name="Team member")
         self.test_quota_scope.add_user_in_role(self.standard_user, self.team_member_role)
+        self.test_quota_scope_team.add_user_in_role(self.standard_user, self.team_member_role)
         # ------------------------------
         # Tower
         # ------------------------------
