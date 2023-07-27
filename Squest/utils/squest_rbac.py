@@ -54,11 +54,6 @@ class SquestRBACBackend(BaseBackend):
                                                              role__rbac__user=user_obj,
 
                                                              codename=codename,
-                                                             content_type__app_label=app_label) |
-
-                                                           Q(role__scopes__rbac__user=user_obj,
-
-                                                             codename=codename,
                                                              content_type__app_label=app_label)
                                                            ).exists()
         else:
@@ -66,7 +61,7 @@ class SquestRBACBackend(BaseBackend):
                 scopes = obj.get_scopes()
             except AttributeError:
                 logger.debug("get_scopes method not found")
-                scopes = GlobalPermission.load().get_scopes()
+                return user_obj.has_perm(perm) # If get_scopes not implement, call has_perm with obj=None
             permission_granted = Permission.objects.filter(Q(globalpermission__in=scopes,
 
                                                              codename=codename,
