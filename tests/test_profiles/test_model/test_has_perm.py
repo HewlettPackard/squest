@@ -21,14 +21,8 @@ class TestModelHasPerm(TransactionTestCase):
         self.user3 = User.objects.create_user('user3', 'user3@hpe.com', "password")
         self.superuser = User.objects.create_superuser("superuser")
 
-        self.role_view_instance = Role.objects.create(name="View global instances")
         self.empty_role = Role.objects.create(name="Empty role")
-        self.permission = "service_catalog.view_request"
-        app_label, codename = self.permission.split('.')
-        self.permission_object = Permission.objects.get(content_type__app_label=app_label,
-                                                        content_type__model="request",
-                                                        codename=codename)
-        self.role_view_instance.permissions.add(self.permission_object)
+
         self.global_perm = GlobalPermission.load()
         self.global_perm.user_permissions.set([])
 
@@ -67,17 +61,11 @@ class TestModelHasPerm(TransactionTestCase):
 
     def __test_has_perm_generic_with_global_perm_user_permission(self, obj, action):
 
-        # if action is view, it will check that user cannot add, change, delete or list
-        generic_actions = ["add", "view", "change", "delete", "list"]
-        generic_actions.remove(action)
-
         permission = self._get_perm(obj, action)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
 
         # Add {action}_{object} to everyone
         self.global_perm.user_permissions.add(permission)
@@ -85,8 +73,6 @@ class TestModelHasPerm(TransactionTestCase):
         # user1 can see it
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
 
         # Remove view_instance to everyone
         self.global_perm.user_permissions.remove(permission)
@@ -94,8 +80,6 @@ class TestModelHasPerm(TransactionTestCase):
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
 
     def test_has_perm_instance_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
@@ -131,11 +115,6 @@ class TestModelHasPerm(TransactionTestCase):
 
     def __test_has_perm_generic_with_global_perm_role(self, obj, action):
 
-        # if action is view, it will check that user cannot add, change, delete or list
-        generic_actions = ["add", "view", "change", "delete", "list"]
-        if action in generic_actions:
-            generic_actions.remove(action)
-
         permission = self._get_perm(obj, action)
         role = Role.objects.create(name=f"{action} on {obj.__class__._meta.model_name}")
         role.permissions.add(permission)
@@ -144,9 +123,7 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        for generic_action in generic_actions:
-            self._assert_user_cant(generic_action, self.user1, obj)
-            self._assert_user_cant(generic_action, self.user2, obj)
+
 
         # Add {action}_{object} to everyone
         self.global_perm.add_user_in_role(self.user1, role)
@@ -155,9 +132,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
         # Remove view_instance to everyone
         self.global_perm.remove_user_in_role(self.user1, role)
@@ -166,9 +140,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
     def test_has_perm_instance_global_perm_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
@@ -204,11 +175,6 @@ class TestModelHasPerm(TransactionTestCase):
 
     def __test_has_perm_generic_with_scope_role(self, obj, action, scope):
 
-        # if action is view, it will check that user cannot add, change, delete or list
-        generic_actions = ["add", "view", "change", "delete", "list"]
-        if action in generic_actions:
-            generic_actions.remove(action)
-
         permission = self._get_perm(obj, action)
         role = Role.objects.create(name=f"{action} on {obj.__class__._meta.model_name}")
         role.permissions.add(permission)
@@ -217,9 +183,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
         # Add {action}_{object} to everyone
         scope.add_user_in_role(self.user1, role)
@@ -228,9 +191,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
         # Remove view_instance to everyone
         scope.remove_user_in_role(self.user1, role)
@@ -239,9 +199,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
     def test_has_perm_instance_org_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
@@ -275,15 +232,10 @@ class TestModelHasPerm(TransactionTestCase):
         for action in ["add", "view", "change", "delete", "list"]:
             org1 = Organization.objects.create(name="Organization #1")
             team1 = Team.objects.create(name="Team #1", org=org1)
-            org1.add_user_in_role(self.user1,self.empty_role)
+            org1.add_user_in_role(self.user1, self.empty_role)
             self.__test_has_perm_generic_with_scope_role(team1, action, team1)
 
     def __test_has_perm_generic_with_scope_role(self, obj, action, scope):
-
-        # if action is view, it will check that user cannot add, change, delete or list
-        generic_actions = ["add", "view", "change", "delete", "list"]
-        if action in generic_actions:
-            generic_actions.remove(action)
 
         permission = self._get_perm(obj, action)
         role = Role.objects.create(name=f"{action} on {obj.__class__._meta.model_name}")
@@ -293,9 +245,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
         # Add {action}_{object} to everyone
         scope.add_user_in_role(self.user1, role)
@@ -304,9 +253,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
         # Remove view_instance to everyone
         scope.remove_user_in_role(self.user1, role)
@@ -315,9 +261,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
 
     def test_has_perm_instance_org_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
@@ -338,11 +281,6 @@ class TestModelHasPerm(TransactionTestCase):
 
     def __test_has_perm_generic_with_org_default_role(self, obj, action, scope):
 
-        # if action is view, it will check that user cannot add, change, delete or list
-        generic_actions = ["add", "view", "change", "delete", "list"]
-        if action in generic_actions:
-            generic_actions.remove(action)
-
         permission = self._get_perm(obj, action)
         role = Role.objects.create(name=f"{action} on {obj.__class__._meta.model_name}")
         role.permissions.add(permission)
@@ -352,10 +290,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
         # Empty role to user1 so he can't see
         scope.add_user_in_role(self.user1, self.empty_role)
@@ -365,10 +299,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
         # Add {action}_{object} to everyone -> user 1 will have it as he is in org
         scope.roles.add(role)
@@ -378,10 +308,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
         scope.add_user_in_role(self.user2, self.empty_role)
 
@@ -390,10 +316,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_can(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
         # Remove user2 from org
         scope.remove_user_in_role(self.user2, self.empty_role)
@@ -403,25 +325,17 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
         # Remove {action}_{object} to everyone
         scope.roles.remove(role)
 
         # Only superuser can see
-        self._assert_user_cant(action, self.user1, obj)  # self._assert_user_cant(generic_action, self.user3, obj)
+        self._assert_user_cant(action, self.user1, obj)
 
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_cant(action, self.user3, obj)
 
         self._assert_user_can(action, self.superuser, obj)
-        # for generic_action in generic_actions:
-        #     self._assert_user_cant(generic_action, self.user1, obj)
-        #     self._assert_user_cant(generic_action, self.user2, obj)
-        #     self._assert_user_cant(generic_action, self.user3, obj)
 
     def test_has_perm_instance_org_default_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
