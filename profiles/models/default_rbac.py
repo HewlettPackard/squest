@@ -131,7 +131,7 @@ roles_list = {
     "Team member": {
         "description": "An member of the team",
         "model_names": {
-            'profiles.quota': {
+            'profiles.scope': {
                 'permissions': [
                     'consume_quota_scope'
                 ]
