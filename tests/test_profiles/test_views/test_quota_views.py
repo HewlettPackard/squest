@@ -9,10 +9,6 @@ class TestQuotaViews(BaseTestProfile):
 
     def setUp(self):
         super(TestQuotaViews, self).setUp()
-        self.test_cpu_quota = Quota.objects.create(limit=200,
-                                                   scope=self.test_org,
-                                                   attribute_definition=self.cpu_attribute)
-        self.other_attribute = AttributeDefinition.objects.create(name="other_attribute")
         args = {
             "scope_id": self.test_org.id
         }
@@ -25,7 +21,7 @@ class TestQuotaViews(BaseTestProfile):
 
     def test_quota_details(self):
         response = self.client.get(reverse('profiles:quota_details', kwargs={'scope_id': self.test_org.id,
-                                                                             'quota_id': self.test_cpu_quota.id}))
+                                                                             'quota_id': self.test_quota_org.id}))
         self.assertEqual(200, response.status_code)
         self.assertTrue("quotas_teams_consumption" in response.context)
         self.assertTrue("team_limit_table" in response.context)
@@ -43,10 +39,9 @@ class TestQuotaViews(BaseTestProfile):
             f"attribute_definition_{self.other_attribute.id}": 50
         }
         number_quota_before = Quota.objects.count()
-        self.assertEqual(self.test_cpu_quota.limit, 200)
-        response = self.client.post(self.create_url,
-                                    data=data)
+        self.assertEqual(self.test_quota_org.limit, 150)
+        response = self.client.post(self.create_url, data=data)
         self.assertEqual(302, response.status_code)
-        self.test_cpu_quota.refresh_from_db()
-        self.assertEqual(self.test_cpu_quota.limit, 100)
+        self.test_quota_org.refresh_from_db()
+        self.assertEqual(self.test_quota_org.limit, 100)
         self.assertEqual(number_quota_before + 1, Quota.objects.count())
