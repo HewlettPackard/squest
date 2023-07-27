@@ -4,7 +4,7 @@ from rest_framework.reverse import reverse
 from service_catalog.models import Portfolio
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
-EXCEPTED_FIELDS = ['id', 'name', 'parent_portfolio', 'image', 'portfolio_list', 'service_list']
+EXPECTED_FIELDS = ['id', 'name', 'parent_portfolio', 'image', 'portfolio_list', 'service_list']
 
 
 class TestApiPortfolioCreate(BaseTestRequest):
@@ -24,7 +24,7 @@ class TestApiPortfolioCreate(BaseTestRequest):
         self.assertEqual(post_status, response.status_code)
         if post_status == status.HTTP_201_CREATED:
             expected_count += 1
-            for field_name in EXCEPTED_FIELDS:
+            for field_name in EXPECTED_FIELDS:
                 self.assertIn(field_name, response.data)
         self.assertEqual(expected_count, Portfolio.objects.filter(parent_portfolio__id=parent_portfolio).count())
 

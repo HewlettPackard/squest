@@ -19,6 +19,7 @@ class SquestPermissionRequiredMixin(PermissionRequiredMixin):
         except AttributeError:
             obj = None
         return self.request.user.has_perm(self.get_permission_required(), obj)
+
     def get_permission_denied_message(self):
         return mark_safe(f"Permission <b>{self.get_permission_required()}</b> required")
 
@@ -65,7 +66,7 @@ class SquestRBACBackend(BaseBackend):
                 scopes = obj.get_scopes()
             except AttributeError:
                 logger.debug("get_scopes method not found")
-                return False
+                scopes = GlobalPermission.load().get_scopes()
             permission_granted = Permission.objects.filter(Q(globalpermission__in=scopes,
 
                                                              codename=codename,

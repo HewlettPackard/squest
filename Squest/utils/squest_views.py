@@ -76,19 +76,16 @@ class SquestCreateView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context['breadcrumbs'] = [
-                {
-                    'text': self.django_content_type.name.capitalize(),
-                    'url': self.get_generic_url('list')
-                },
-                {
-                    'text': f'New {self.django_content_type.name}',
-                    'url': ""
-                },
-            ]
-        except NoReverseMatch:
-            pass
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': f'New {self.django_content_type.name}',
+                'url': ""
+            },
+        ]
         context['action'] = "create"
         return context
 
@@ -103,22 +100,23 @@ class SquestUpdateView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            context['breadcrumbs'] = [
-                {
-                    'text': self.django_content_type.name.capitalize(),
-                    'url': self.get_generic_url('list')
-                },
-                {
-                    'text': self.object,
-                    'url': self.object.get_absolute_url()
-                },
-                {
-                    'text': 'Edit',
-                    'url': ""
-                },
-            ]
-        except NoReverseMatch:
-            pass
+            object_url = self.object.get_absolute_url()
+        except AttributeError:
+            object_url = ""
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': self.object,
+                'url': object_url
+            },
+            {
+                'text': 'Edit',
+                'url': ""
+            },
+        ]
         context['action'] = "edit"
         return context
 
@@ -135,6 +133,10 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        try:
+            object_url = self.object.get_absolute_url()
+        except AttributeError:
+            object_url = ""
         context['breadcrumbs'] = [
             {
                 'text': self.django_content_type.name.capitalize(),
@@ -142,7 +144,7 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
             },
             {
                 'text': self.object,
-                'url': self.object.get_absolute_url()
+                'url': object_url
             },
             {
                 'text': 'Delete',
@@ -154,9 +156,6 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
         context['action_url'] = self.get_generic_url("delete")
         context['button_text'] = 'Delete'
         return context
-
-    def get_generic_url_kwargs(self):
-        return {'pk': self.object.id}
 
     def delete(self, request, *args, **kwargs):
         try:

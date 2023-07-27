@@ -108,8 +108,8 @@ class Scope(AbstractScope):
             )
 
     @classmethod
-    def get_Q(self, user, perm):
-
+    def get_q_filter(cls, user, perm):
+        app_label, codename = perm.split(".")
         return Q(
             rbac__user=user,
             rbac__role__permissions__codename=codename,

@@ -32,26 +32,26 @@ class Team(Scope):
     def get_q_filter(cls, user, perm):
         app_label, codename = perm.split(".")
         return Q(
-                # Organization role
-                org__rbac__user=user,
-                org__rbac__role__permissions__codename=codename,
-                org__rbac__role__permissions__content_type__app_label=app_label
-            ) | Q(
-                # Organization default_role
-                org__rbac__user=user,
-                org__roles__permissions__codename=codename,
-                org__roles__permissions__content_type__app_label=app_label
-            ) | Q(
-                # Team role
-                rbac__user=user,
-                rbac__role__permissions__codename=codename,
-                rbac__role__permissions__content_type__app_label=app_label
-            ) | Q(
-                # Team default roles
-                rbac__user=user,
-                roles__permissions__codename=codename,
-                roles__permissions__content_type__app_label=app_label
-            )
+            # Organization role
+            org__rbac__user=user,
+            org__rbac__role__permissions__codename=codename,
+            org__rbac__role__permissions__content_type__app_label=app_label
+        ) | Q(
+            # Organization default_role
+            org__rbac__user=user,
+            org__roles__permissions__codename=codename,
+            org__roles__permissions__content_type__app_label=app_label
+        ) | Q(
+            # Team role
+            rbac__user=user,
+            rbac__role__permissions__codename=codename,
+            rbac__role__permissions__content_type__app_label=app_label
+        ) | Q(
+            # Team default roles
+            rbac__user=user,
+            roles__permissions__codename=codename,
+            roles__permissions__content_type__app_label=app_label
+        )
 
     def get_scopes(self):
         from profiles.models.scope import AbstractScope
@@ -66,8 +66,9 @@ class Team(Scope):
                 f"The User {user}(#{user.id}) must be in the Organization {self.org}(#{self.org.id} to be added in the Team")
         super(Team, self).add_user_in_role(user, role)
 
-    def clean(self):
-        if Team.objects.exclude(id=self.id).filter(name=self.name, org=self.org).exists():
+    def validate_unique(self, exclude=None):
+        super().validate_unique(exclude)
+        if Team.objects.exclude(id=self.id).filter(name=self.name, org__id=self.org_id).exists():
             raise ValidationError(f"Team with this name already exist in {self.org}")
 
     def __str__(self):
