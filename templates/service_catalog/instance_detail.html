@@ -113,30 +113,35 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#operations"
-                                                    data-toggle="tab">Operations</a>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            {% if operations_table %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#operations" data-toggle="tab">Operations</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#support" data-toggle="tab">Support</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#support" data-toggle="tab">Support</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#spec" data-toggle="tab">Specs</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#spec" data-toggle="tab">Specs</a>
                             </li>
+                            {% if requests_table %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="active tab-pane" id="operations">
+                            <div class="tab-pane" id="operations">
                                 {% if operations_table %}
                                     {% if object.state == "AVAILABLE" %}
                                         {% render_table operations_table %}
                                     {% else %}
                                         <p> Instance not available</p>
                                     {% endif %}
-                                {% else %}
-                                    <p> Permission <b>service_catalog.request_on_instance</b>
-                                        required</p>
                                 {% endif %}
-
                             </div>
                             <div class="tab-pane" id="support">
                                 {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
@@ -144,8 +149,6 @@
                                         tool</p>
                                 {% elif supports_table %}
                                     {% render_table supports_table %}
-                                {% else %}
-                                    <p> Permission <b>service_catalog.view_support</b> required</p>
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="spec">
@@ -185,8 +188,6 @@
                             <div class="tab-pane" id="requests">
                                 {% if requests_table %}
                                     {% render_table requests_table %}
-                                {% else %}
-                                    <p> Permission <b>service_catalog.view_request</b> required</p>
                                 {% endif %}
                             </div>
                         </div>
