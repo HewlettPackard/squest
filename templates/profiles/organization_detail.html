@@ -37,7 +37,8 @@
 {% endblock %}
 
 {% block main %}
-    {% has_perm request.user "profiles.delete_users_organization" object as can_delete_user %} {# For UserRoleTable actions #}
+    {% has_perm request.user "profiles.delete_users_organization" object as can_delete_user %}
+    {# For UserRoleTable actions #}
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
@@ -59,39 +60,46 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills" id="tabs">
-                            <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#roles" data-toggle="tab">Roles</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#teams" data-toggle="tab">Teams</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a></li>
+                            {% if users %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#users" data-toggle="tab">Users</a>
+                                </li>
+                            {% endif %}
+                            {% if teams %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#teams" data-toggle="tab">Teams</a>
+                                </li>
+                            {% endif %}
+                            {% if quotas %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a>
+                                </li>
+                            {% endif %}
 
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active" id="users">
+                            <div class="tab-pane" id="roles">
+                                {% render_table roles %}
+                            </div>
+                            <div class="tab-pane" id="users">
                                 {% if users %}
                                     {% render_table users %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_users_organization</b> required</p>
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="teams">
                                 {% if teams %}
                                     {% render_table teams %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_team</b> required</p>
                                 {% endif %}
-                            </div>
-                            <div class="tab-pane" id="roles">
-                                {% render_table roles %}
                             </div>
                             <div class="tab-pane" id="quotas">
                                 {% if quotas %}
                                     {% render_table quotas %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_quota</b> required</p>
                                 {% endif %}
                             </div>
                         </div>
