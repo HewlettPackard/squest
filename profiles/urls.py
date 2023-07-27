@@ -7,16 +7,15 @@ from . import views
 app_name = 'profiles'
 
 urlpatterns = [
-    # common URLs
+    # Personal URLs ####################################################################################################
+
+    # profile URLs
     path('profile/', views.profile, name='profile'),
     path('profile/theme-switch/', views.dark_light_theme_switch, name='dark_light_theme_switch'),
     path('profile/token/create/', views.token_create, name='token_create'),
     path('profile/token/<int:token_id>/generate/', views.token_generate, name='token_generate'),
     path('profile/token/<int:token_id>/edit/', views.token_edit, name='token_edit'),
     path('profile/token/<int:token_id>/delete/', views.token_delete, name='token_delete'),
-
-    path('user/', views.UserListView.as_view(), name='user_list'),
-    path('user/<int:pk>/', views.UserDetailsView.as_view(), name='user_details'),
 
     # request notifications
     path('notification/request/switch/', views.requestnotification_switch, name='requestnotification_switch'),
@@ -41,25 +40,17 @@ urlpatterns = [
          views.InstanceNotificationEditView.as_view(),
          name='instancenotification_edit'),
 
-    # Scope
-    path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
-    path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),
-    path('organization/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="organization_rbac_create"),
-    path('organization/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="organization_rbac_delete"),
-    path('team/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="team_rbac_create"),
-    path('team/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="team_rbac_delete"),
+    ####################################################################################################################
+
+    # User
+    path('user/', views.UserListView.as_view(), name='user_list'),
+    path('user/<int:pk>/', views.UserDetailsView.as_view(), name='user_details'),
 
     # Global Permission
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
     path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
-
-    # permission_list
-    path('permission/', views.PermissionListView.as_view(), name="permission_list"),
-    path('permission/create/', views.PermissionCreateView.as_view(), name="permission_create"),
-    path('permission/<int:pk>/edit/', views.PermissionEditView.as_view(), name="permission_edit"),
-    path('permission/<int:pk>/delete/', views.PermissionDeleteView.as_view(), name="permission_delete"),
-
-    path('permission/create/approvalstep', views.ApprovalStepPermissionCreateView.as_view(), name="approvalstep_permission_create"),
+    path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
+    path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
@@ -67,7 +58,8 @@ urlpatterns = [
     path('organization/<int:pk>/edit/', views.OrganizationEditView.as_view(), name="organization_edit"),
     path('organization/<int:pk>/delete/', views.OrganizationDeleteView.as_view(), name="organization_delete"),
     path('organization/<int:pk>/', views.OrganizationDetailView.as_view(), name="organization_details"),
-
+    path('organization/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="organization_rbac_create"),
+    path('organization/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="organization_rbac_delete"),
 
     # Team
     path('team/', views.TeamListView.as_view(), name="team_list"),
@@ -75,7 +67,16 @@ urlpatterns = [
     path('team/<int:pk>/edit/', views.TeamEditView.as_view(), name="team_edit"),
     path('team/<int:pk>/delete/', views.TeamDeleteView.as_view(), name="team_delete"),
     path('team/<int:pk>/', views.TeamDetailView.as_view(), name="team_details"),
+    path('team/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="team_rbac_create"),
+    path('team/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="team_rbac_delete"),
 
+    # Permission
+    path('permission/', views.PermissionListView.as_view(), name="permission_list"),
+    path('permission/create/', views.PermissionCreateView.as_view(), name="permission_create"),
+    path('permission/<int:pk>/edit/', views.PermissionEditView.as_view(), name="permission_edit"),
+    path('permission/<int:pk>/delete/', views.PermissionDeleteView.as_view(), name="permission_delete"),
+    # Specific permission
+    path('permission/create/approvalstep', views.ApprovalStepPermissionCreateView.as_view(), name="approvalstep_permission_create"),
 
     # Role
     path('role/', views.RoleListView.as_view(), name="role_list"),
