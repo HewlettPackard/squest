@@ -37,14 +37,14 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#instances" data-toggle="tab">Instances</a></li>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item"><a class="nav-link" href="#instances" data-toggle="tab">Instances</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a></li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="active tab-pane" id="instances">
+                            <div class="tab-pane" id="instances">
                                 {% render_table instances %}
                             </div>
                             <div class="tab-pane" id="requests">

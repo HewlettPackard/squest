@@ -31,18 +31,19 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills" id="tabs">
-                            <li class="nav-item"><a class="nav-link active" href="#quotas" data-toggle="tab">Quotas</a></li>
-
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            {% if quotas %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active" id="quotas">
+                            <div class="tab-pane" id="quotas">
                                 {% if quotas %}
                                     {% render_table quotas %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_quota</b> required</p>
                                 {% endif %}
                             </div>
                         </div>
