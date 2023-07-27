@@ -32,14 +32,14 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#survey" data-toggle="tab">Survey</a></li>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item"><a class="nav-link" href="#survey" data-toggle="tab">Survey</a></li>
                             <li class="nav-item"><a class="nav-link" href="#data" data-toggle="tab">Data</a></li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="active tab-pane" id="survey">
+                            <div class="tab-pane" id="survey">
                                 <pre><code class="language-json">{{ object.survey.spec | pretty_json}}</code></pre>
                             </div>
                             <div class="tab-pane" id="data">
