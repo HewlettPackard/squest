@@ -52,31 +52,37 @@
             <section class="col-lg-9">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills" id="tabs">
-                            <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#roles" data-toggle="tab">Roles</a>
                             </li>
-                            <li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Roles</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a></li>
+                            {% if users %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#users" data-toggle="tab">Users</a>
+                                </li>
+                            {% endif %}
+                            {% if quotas %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a>
+                                </li>
+                            {% endif %}
 
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active" id="users">
-                                {% if users %}
-                                    {% render_table users %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_users_team</b> required</p>
-                                {% endif %}
-                            </div>
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
                             </div>
+                            <div class="tab-pane" id="users">
+                                {% if users %}
+                                    {% render_table users %}
+                                {% endif %}
+                            </div>
+
                             <div class="tab-pane" id="quotas">
                                 {% if quotas %}
                                     {% render_table quotas %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_quota</b> required</p>
                                 {% endif %}
                             </div>
                         </div>

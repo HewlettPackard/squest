@@ -53,13 +53,17 @@ class InstanceDetailView(SquestDetailView):
         # operations
         operations = Operation.objects.none()
         if self.request.user.has_perm("service_catalog.request_on_instance"):
-            operations = operations | self.object.service.operations.filter(is_admin_operation=False)
+            operations = operations | self.object.service.operations.filter(is_admin_operation=False,
+                                                                            type__in=[OperationType.UPDATE,
+                                                                                      OperationType.DELETE])
 
         # admin operations
         if self.request.user.has_perm("service_catalog.admin_request_on_instance"):
-            operations = operations | self.object.service.operations.filter(is_admin_operation=True)
-
-        context['operations_table'] = OperationTableFromInstanceDetails(operations.filter(type__in=[OperationType.UPDATE,OperationType.DELETE]))
+            operations = operations | self.object.service.operations.filter(is_admin_operation=True,
+                                                                            type__in=[OperationType.UPDATE,
+                                                                                      OperationType.DELETE])
+        if operations.exists():
+            context['operations_table'] = OperationTableFromInstanceDetails(operations)
 
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):

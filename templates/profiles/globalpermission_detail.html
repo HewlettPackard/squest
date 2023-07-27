@@ -19,32 +19,34 @@
 {% endblock %}
 
 {% block main %}
-    {% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %} {# For UserRoleTable actions #}
+    {% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %}
+    {# For UserRoleTable actions #}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header p-2">
-                        <ul class="nav nav-pills" id="tabs">
-                            <li class="nav-item"><a class="nav-link active" href="#users" data-toggle="tab">Users</a>
-                            </li>
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
                             <li class="nav-item"><a class="nav-link" href="#user_permissions" data-toggle="tab">User
                                 permissions</a></li>
+                            {% if users %}
+
+                                <li class="nav-item"><a class="nav-link" href="#users" data-toggle="tab">Users</a></li>
+                            {% endif %}
 
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active" id="users">
-                                {% if users %}
-                                    {% render_table users %}
-                                {% else %}
-                                    <p> Permission <b>profiles.view_users_globalpermission</b> required</p>
-                                {% endif %}
-                            </div>
                             <div class="tab-pane" id="user_permissions">
                                 {% render_table user_permissions %}
                             </div>
+                            <div class="tab-pane" id="users">
+                                {% if users %}
+                                    {% render_table users %}
+                                {% endif %}
+                            </div>
+
                         </div>
                     </div>
                 </div>
