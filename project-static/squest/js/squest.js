@@ -1,4 +1,9 @@
 $(document).ready(function () {
+
+    if ($("ul#tabs.squest-default-active li.nav-item a.active").length === 0) {
+        $("ul#tabs.squest-default-active li.nav-item a:first").trigger( "click" );
+    }
+
     $('[data-toggle="popover"]').popover({
         placement: 'top',
         trigger: 'hover'
@@ -38,18 +43,19 @@ $(document).ready(function () {
         }
     });
 
+    if (poolTable.context.length !== 0){
 
-    // Apply the filter to remove refactors by default
-    var titles = $('#resource_group_table_csv thead th');
-    poolTable.columns().eq(0).each(function (colIdx) {
-        var column = poolTable.columns(colIdx);
-        var title = titles.eq(colIdx).text();
-        if (containsAny(title, disabled_column_list)) {
-            console.log("disable column id:" + colIdx)
-            column.visible(false, false);
-        }
-    });
-    poolTable.reload();
+        // Apply the filter to remove refactors by default
+        var titles = $('#resource_group_table_csv thead th');
+        poolTable.columns().eq(0).each(function (colIdx) {
+            var column = poolTable.columns(colIdx);
+            var title = titles.eq(colIdx).text();
+            if (containsAny(title, disabled_column_list)) {
+                console.log("disable column id:" + colIdx)
+                column.visible(false, false);
+            }
+        });
+    }
 
     // approval step drag and drop
     var panelList = $('#draggableApprovalStepList');
