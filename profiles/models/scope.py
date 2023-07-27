@@ -101,21 +101,8 @@ class Scope(AbstractScope):
     def get_q_filter(cls, user, perm):
         from profiles.models import Team, Organization
         return Q(
-                id__in=Team.get_queryset_for_user(user, perm)
-            ) | Q(
-                id__in=Organization.get_queryset_for_user(user, perm)
-
-            )
-
-    @classmethod
-    def get_q_filter(cls, user, perm):
-        app_label, codename = perm.split(".")
-        return Q(
-            rbac__user=user,
-            rbac__role__permissions__codename=codename,
-            rbac__role__permissions__content_type__app_label=app_label
+            id__in=Team.get_queryset_for_user(user, perm)
         ) | Q(
-            rbac__user=user,
-            roles__permissions__codename=codename,
-            roles__permissions__content_type__app_label=app_label
+            id__in=Organization.get_queryset_for_user(user, perm)
+
         )
