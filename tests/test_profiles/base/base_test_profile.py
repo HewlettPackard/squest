@@ -1,7 +1,8 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from profiles.models import Organization, Team
+from profiles.models import Organization, Team, Quota
+from resource_tracker_v2.models import AttributeDefinition
 from service_catalog.models import Request, RequestState, InstanceState, Instance
 from tests.test_service_catalog.base_test_request import BaseTestRequestCommon
 
@@ -46,6 +47,14 @@ class BaseTestProfileCommon(BaseTestRequestCommon):
 
         self.test_org = Organization.objects.create(name="test_org")
         self.team1 = Team.objects.create(org=self.test_org, name="team1")
+        self.other_attribute = AttributeDefinition.objects.create(name="other_attribute")
+        self.test_quota_team = Quota.objects.create(scope=self.team1,
+                                                    attribute_definition=self.cpu_attribute,
+                                                    limit=100)
+
+        self.test_quota_org = Quota.objects.create(scope=self.test_org,
+                                                   attribute_definition=self.cpu_attribute,
+                                                   limit=150)
 
 
 class BaseTestProfile(TestCase, BaseTestProfileCommon):
