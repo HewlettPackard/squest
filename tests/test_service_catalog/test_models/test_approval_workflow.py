@@ -1,8 +1,8 @@
-from service_catalog.models import ApprovalWorkflow, ApprovalStep, ApprovalStepState
-from tests.test_service_catalog.base import BaseTest
+from service_catalog.models import ApprovalWorkflow, ApprovalStepState, ApprovalStep
+from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
-class TestApprovalWorkflow(BaseTest):
+class TestApprovalWorkflow(BaseTestRequest):
 
     def setUp(self):
         super(TestApprovalWorkflow, self).setUp()
@@ -27,6 +27,7 @@ class TestApprovalWorkflow(BaseTest):
         new_approval_workflow_state = self.test_approval_workflow.instantiate()
         self.assertEqual(number_step_state_before + 2, ApprovalStepState.objects.all().count())
 
-        created_steps = ApprovalStepState.objects.filter(approval_workflow_state__approval_workflow=self.test_approval_workflow).order_by('approval_step__position')
+        created_steps = ApprovalStepState.objects.filter(
+            approval_workflow_state__approval_workflow=self.test_approval_workflow).order_by('approval_step__position')
         first_step = created_steps.first()
         self.assertEqual(new_approval_workflow_state.current_step, first_step)
