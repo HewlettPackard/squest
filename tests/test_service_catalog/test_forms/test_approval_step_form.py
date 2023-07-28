@@ -29,7 +29,7 @@ class TestApprovalStepForm(BaseTest):
         form = ApprovalStepForm(data, **parameters)
         self.assertTrue(form.is_valid())
 
-    def test_cannot_set_field_as_admin_and_customer_field(self):
+    def test_cannot_set_field_as_editable_and_readable_field(self):
         parameters = {
             'approval_workflow': self.test_approval_workflow
         }

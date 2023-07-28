@@ -455,28 +455,38 @@ def request_bulk_delete(request):
     return redirect("service_catalog:request_list")
 
 
-class RequestApproveView(FormView):
+class RequestApproveView(SquestFormView):
     template_name = 'generics/generic_form.html'
     form_class = ApproveWorkflowStepForm
+    model = Request
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().approval_workflow_state.current_step is None:
+            return redirect(self.get_success_url())
+        return super(RequestApproveView, self).dispatch(request, *args, **kwargs)
+
+    def get_permission_required(self):
+        return self.get_object().approval_workflow_state.current_step.approval_step.permission.get_permission_str()
 
     def form_valid(self, form):
-        form.save()
         return super().form_valid(form)
 
     def get_success_url(self):
-        return self.target_request.get_absolute_url()
+        return self.get_object().get_absolute_url()
+
+    def get_object(self, queryset=None):
+        return Request.objects.get(id=self.kwargs['pk'])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.target_request = get_object_or_404(Request, pk=self.kwargs['pk'])
-        kwargs.update({'target_request': self.target_request, 'user': self.request.user})
+        kwargs.update({'target_request': self.get_object(), 'user': self.request.user})
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         breadcrumbs = [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': self.target_request.id, 'url': self.target_request.get_absolute_url()},
+            {'text': self.get_object().id, 'url': self.get_object().get_absolute_url()},
             {'text': f'Approve step', 'url': ""},
         ]
         context['breadcrumbs'] = breadcrumbs

@@ -25,6 +25,9 @@ class ApprovalWorkflowState(SquestModel):
         related_query_name='current_approval_workflow_state'
     )
 
+    def get_scopes(self):
+        return self.request.get_scopes()
+
     def get_next_step(self):
         next_step = self.approval_step_states.filter(approval_step__position=self.current_step.approval_step.position + 1)
         if next_step.exists():

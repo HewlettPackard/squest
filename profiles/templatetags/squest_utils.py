@@ -19,6 +19,7 @@ def to_app_name(value):
         return "profiles"
     return content_type.app_label
 
+
 @register.simple_tag()
 def has_perm(user, permission, object=None):
     return user.has_perm(permission, object)
