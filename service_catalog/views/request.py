@@ -147,7 +147,7 @@ def request_comment(request, request_id):
 def requestmessage_edit(request, request_id, pk):
     request_message = get_object_or_404(RequestMessage, id=pk)
     squest_request = get_object_or_404(Request, id=request_id)
-    if not request.user.has_perm('service_catalog.change_requestmessage', request_message):
+    if request.user != request_message.sender or not request.user.has_perm('service_catalog.change_requestmessage', request_message):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request_message.sender,

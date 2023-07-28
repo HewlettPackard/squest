@@ -247,7 +247,7 @@ def instance_support_details(request, instance_id, support_id):
 @login_required
 def support_message_edit(request, instance_id, support_id, message_id):
     support_message = get_object_or_404(SupportMessage, id=message_id)
-    if not request.user.has_perm('service_catalog.change_supportmessage', support_message):
+    if request.user != support_message.sender or not request.user.has_perm('service_catalog.change_supportmessage', support_message):
         raise PermissionDenied
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, request.FILES or None, sender=support_message.sender,
