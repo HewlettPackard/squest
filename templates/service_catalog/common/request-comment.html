@@ -36,7 +36,7 @@
                                             <img class="img-circle img-bordered-sm" src="{% if message.sender.is_staff %}{% static '/squest/img/admin.png' %}{% else %}{% static '/squest/img/user.png' %}{% endif %}" alt="user image">
                                             <span class="username">
                                                 <a href="#">{{ message.sender.username }}</a>
-                                                {% if request.user.is_superuser or message.sender == request.user %}
+                                                {% if message.sender == request.user %}
                                                     <a title="Edit"
                                                        class="btn btn-primary float-right"
                                                        href="{% url "service_catalog:requestmessage_edit" message.request.id message.id %}">
