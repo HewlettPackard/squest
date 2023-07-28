@@ -44,3 +44,7 @@ class ApprovalWorkflow(SquestModel):
                 new_approval_workflow_state.current_step = new_app_workflow_state
         new_approval_workflow_state.save()
         return new_approval_workflow_state
+
+    def reset_all_approval_workflow_state(self):
+        for approval_workflow_state in self.approval_workflow_states.all():
+            approval_workflow_state.reset()

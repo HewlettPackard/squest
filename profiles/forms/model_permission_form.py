@@ -18,4 +18,5 @@ class ModelPermissionForm(SquestModelForm):
     def save(self, commit=True):
         permission = super().save(False)
         permission.content_type = self.permission_content_type
+        permission.save()
         return permission

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Permission
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField
+from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT
 from django.db.models.signals import post_save
 
 from Squest.utils.squest_model import SquestModel
@@ -32,10 +32,7 @@ class ApprovalStep(SquestModel):
 
     permission = ForeignKey(
         Permission,
-        blank=True,
-        null=True,
-        default=None,
-        on_delete=SET_NULL,
+        on_delete=PROTECT,
         related_name="previous",
         limit_choices_to={"content_type__app_label": "service_catalog", "content_type__model": "approvalstep"}
     )
@@ -66,6 +63,12 @@ class ApprovalStep(SquestModel):
                 if previous_steps.exists():
                     instance.position = previous_steps.last().position + 1
                     instance.save()
+
+    def save(self, *args, **kwargs):
+        # set the default permission
+        if not hasattr(self, "permission"):
+            self.permission = Permission.objects.get(codename="can_approve_approvalstep")
+        super().save(*args, **kwargs)
 
 
 post_save.connect(ApprovalStep.on_create_set_position, sender=ApprovalStep)
