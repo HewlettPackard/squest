@@ -1,16 +1,12 @@
 from django.contrib.auth.models import User, Permission
 
 from profiles.models import Organization, GlobalPermission, Role, Team
-from django.test.testcases import TransactionTestCase
 
 from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, TowerServer, Support
+from tests.utils import TransactionTestUtils
 
 
-class TestModelHasPerm(TransactionTestCase):
-
-    def assertQuerysetEqualID(self, qs1, qs2):
-        self.assertEqual(qs1.model, qs2.model)
-        self.assertListEqual(list(qs1.values_list("id", flat=True)), list(qs2.values_list("id", flat=True)))
+class TestModelHasPerm(TransactionTestUtils):
 
     def setUp(self):
         super(TestModelHasPerm, self).setUp()
@@ -123,7 +119,6 @@ class TestModelHasPerm(TransactionTestCase):
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user2, obj)
         self._assert_user_can(action, self.superuser, obj)
-
 
         # Add {action}_{object} to everyone
         self.global_perm.add_user_in_role(self.user1, role)

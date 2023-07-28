@@ -1,16 +1,11 @@
 from django.contrib.auth.models import User, Permission
 
 from profiles.models import Team, Organization, GlobalPermission, Role, Scope
-from django.test.testcases import TransactionTestCase
+
+from tests.utils import TransactionTestUtils
 
 
-class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
-    def assertQuerysetEqualID(self, qs1, qs2):
-        self.assertEqual(qs1.model, qs2.model)
-        self.assertListEqual(
-            list(qs1.order_by('id').values_list("id", flat=True)),
-            list(qs2.order_by('id').values_list("id", flat=True))
-        )
+class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
 
     def setUp(self):
         super(TestModelScopeGetQuerysetConsumeQuota, self).setUp()
@@ -35,7 +30,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_organization_by_querying_scope_with_global_permission_role(self):
         """
-        Test that we can see Organization by querying Scope if permission is given in a GlobalPermission's role
+        Test that we can consume all quota by querying Scope if permission is given in a GlobalPermission's role
         """
 
         # Only superuser can see
@@ -70,7 +65,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_organization_by_querying_scope_with_global_permission__user_permissions(self):
         """
-        Test that we can see Organization by querying if permission is given in a GlobalPermission's perm
+        Test that we can consume Organization quota by querying Scope if permission is given in a GlobalPermission's perm
         """
 
         # Only superuser can see
@@ -103,7 +98,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_global_permission_role(self):
         """
-        Test that we can see Team if permission is given in a GlobalPermission's role
+        Test that we can consume Team quota by querying Scope if permission is given in a GlobalPermission's role
         """
         # Only superuser can see
         self._assert_cannot_consume_quota(self.user1)
@@ -129,7 +124,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
         self._assert_can_consume_only_quota_qs(self.superuser,
                                                quota_qs=Scope.objects.filter(id__in=[org1.id, team1.id]))
 
-        # Rmove role to user1
+        # Remove role to user1
         self.global_perm.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
@@ -140,7 +135,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_global_permission__user_permissions(self):
         """
-        Test that we can see Team if permission is given in a GlobalPermission's perm
+        Test that we can consume Team quota if permission is given in a GlobalPermission's perm
         """
         # Only superuser can see
         self._assert_cannot_consume_quota(self.user1)
@@ -173,7 +168,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_organization_by_querying_scope_with_organization_role(self):
         """
-        Test that we can see Organization if permission is given in an Organization's role
+        Test that we can consume Orga quotanization if permission is given in an Organization's role
         """
 
         # Only superuser can see
@@ -213,7 +208,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_organization_by_querying_scope_with_organization_default_role(self):
         """
-        Test that we can see Organization if permission is given in a Organization's default role
+        Test that we can consume Orga quotanization if permission is given in a Organization's default role
         """
 
         # Only superuser can see it
@@ -270,7 +265,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_organization_role(self):
         """
-        Test that we can see Team if permission is given in a Organization's role
+        Test that we can consume Team quota if permission is given in a Organization's role
         """
 
         # Only superuser can see
@@ -313,7 +308,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_organization_default_role(self):
         """
-        Test that we can see Team if permission is given in a Organization's default role
+        Test that we can consume Team quota if permission is given in a Organization's default role
         """
         # No instances
         self._assert_cannot_consume_quota(self.superuser)
@@ -374,7 +369,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_team_role(self):
         """
-        Test that we can see Team if permission is given in a Team's role
+        Test that we can consume Team quota if permission is given in a Team's role
         """
 
         # Only superuser can see
@@ -418,7 +413,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestCase):
 
     def test_get_queryset_team_by_querying_scope_with_team_default_role(self):
         """
-        Test that we can see Team if permission is given in a Team's default role
+        Test that we can consume Team quota if permission is given in a Team's default role
         """
         # No instances
         self._assert_cannot_consume_quota(self.superuser)
