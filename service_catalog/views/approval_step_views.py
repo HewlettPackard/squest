@@ -40,14 +40,20 @@ class ApprovalStepCreateView(SquestCreateView):
 @login_required
 @permission_required('service_catalog.change_approvalstep')
 def ajax_approval_step_position_update(request):
+    workflows_to_reset = list()
     if request.method == 'POST':
         list_step_to_update = json.loads(request.POST["listStepToUpdate"])
         for step in list_step_to_update:
             step_to_update = ApprovalStep.objects.filter(id=step["id"])
             if step_to_update.exists():
                 step_to_update = step_to_update.first()
+                if step_to_update.approval_workflow not in workflows_to_reset:
+                    workflows_to_reset.append(step_to_update.approval_workflow)
                 step_to_update.position = step["position"]
                 step_to_update.save()
+        for workflow in workflows_to_reset:
+            workflow.reset_all_approval_workflow_state()
+
         return JsonResponse({"update_success": True}, status=202)
 
 

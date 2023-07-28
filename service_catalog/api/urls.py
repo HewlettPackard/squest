@@ -31,6 +31,15 @@ urlpatterns = [
          name='api_request_need_info'),
     path('request/<int:pk>/cancel/', RequestStateMachine.as_view({'post': 'cancel'}),
          name='api_request_cancel'),
+    path('request/<int:pk>/approval_workflow_state/', ApprovalWorkflowStateDetails.as_view(),
+         name='api_request_approval_workflow_state'),
+    path('request/<int:pk>/approval_workflow_state/approve/',
+         ApproveCurrentStep.as_view({'get': 'get_survey', 'post': 'approve'}),
+         name='api_request_approval_workflow_state_approve'),
+    path('request/<int:pk>/approval_workflow_state/reject/',
+         ApproveCurrentStep.as_view({'get': 'get_survey', 'post': 'reject'}),
+         name='api_request_approval_workflow_state_reject'),
+
     path('service/', ServiceListCreate.as_view(), name='api_service_list_create'),
     path('service/<int:pk>/', ServiceDetails.as_view(), name='api_service_details'),
     path('service/<int:service_id>/operation/', OperationListCreate.as_view(), name='api_operation_list_create'),
@@ -52,4 +61,11 @@ urlpatterns = [
     path('portfolio/<int:pk>/', PortfolioDetails.as_view(), name='api_portfolio_details'),
     path('administration/custom-link/', CustomLinkListCreate.as_view(), name='api_custom_link_list_create'),
     path('administration/custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_custom_link_details'),
+
+    path('administration/approval/', ApprovalWorkflowListCreate.as_view(), name='approvalworkflow_list_create'),
+    path('administration/approval/<int:pk>/', ApprovalWorkflowDetails.as_view(), name='approvalworkflow_details'),
+    path('administration/approval/<int:approval_workflow_id>/approval-step/', ApprovalStepListCreate.as_view(),
+         name='approvalstep_list_create'),
+    path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/', ApprovalStepDetails.as_view(),
+         name='approvalstep_details'),
 ]

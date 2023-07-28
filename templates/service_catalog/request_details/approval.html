@@ -34,14 +34,17 @@
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
                         {% if step.state == "APPROVED" %}
-                            <table class="row">
-                                {% for variable_name, value in step.fill_in_survey.items %}
-                                    <tr>
-                                        <td class="col-sm-2">{{ variable_name }}</td>
-                                        <td class="col-sm-10">{{ value }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
+                            {% has_perm request.user step.approval_step.permission.get_permission_str step as can_view_step %}
+                            {% if can_view_step  %}
+                                <table class="row">
+                                    {% for variable_name, value in step.fill_in_survey.items %}
+                                        <tr>
+                                            <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                            <td class="col-sm-10">{{ value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            {% endif %}
                             <blockquote class="quote-success">
                                 <i class="fas fa-check text-success"></i> Approved by
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}

@@ -56,3 +56,6 @@ class ApprovalStepState(SquestModel):
         self.updated_by = None
         self.state = ApprovalState.PENDING
         self.save()
+
+    def get_scopes(self):
+        return self.approval_workflow_state.get_scopes()
