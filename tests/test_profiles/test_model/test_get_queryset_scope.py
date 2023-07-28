@@ -1,13 +1,11 @@
 from django.contrib.auth.models import User, Permission
 
 from profiles.models import Team, Organization, GlobalPermission, Role
-from django.test.testcases import TransactionTestCase
+
+from tests.utils import TransactionTestUtils
 
 
-class TestModelScopeGetQueryset(TransactionTestCase):
-    def assertQuerysetEqualID(self, qs1, qs2):
-        self.assertEqual(qs1.model, qs2.model)
-        self.assertListEqual(list(qs1.values_list("id", flat=True)), list(qs2.values_list("id", flat=True)))
+class TestModelScopeGetQueryset(TransactionTestUtils):
 
     def setUp(self):
         super(TestModelScopeGetQueryset, self).setUp()
@@ -197,7 +195,7 @@ class TestModelScopeGetQueryset(TransactionTestCase):
         self._assert_can_see_nothing(Team, self.user2)
         self._assert_can_see_everything(Team, self.superuser)
 
-        # Rmove role to user1
+        # Remove role to user1
         self.global_perm.remove_user_in_role(self.user1, role)
 
         # Only superuser can see

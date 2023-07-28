@@ -1,16 +1,12 @@
 from django.contrib.auth.models import User, Permission
 
 from profiles.models import Team, Organization, GlobalPermission, Role
-from django.test.testcases import TransactionTestCase
 
 from service_catalog.models import Instance
+from tests.utils import TransactionTestUtils
 
 
-class TestModelScopeGetQuerysetInstance(TransactionTestCase):
-
-    def assertQuerysetEqualID(self, qs1, qs2):
-        self.assertEqual(qs1.model, qs2.model)
-        self.assertListEqual(list(qs1.values_list("id", flat=True)), list(qs2.values_list("id", flat=True)))
+class TestModelScopeGetQuerysetInstance(TransactionTestUtils):
 
     def setUp(self):
         super(TestModelScopeGetQuerysetInstance, self).setUp()
@@ -383,8 +379,6 @@ class TestModelScopeGetQuerysetInstance(TransactionTestCase):
         self._assert_can_see_nothing(self.user1)
         self._assert_can_see_nothing(self.user2)
 
-
-
         # Create org1 and team1
         org1 = Organization.objects.create(name="Organization #1")
         team1 = Team.objects.create(name="Team #1", org=org1)
@@ -393,7 +387,6 @@ class TestModelScopeGetQuerysetInstance(TransactionTestCase):
         instance1 = Instance.objects.create(name="Instance #1", quota_scope=team1)
         self.assertTrue(instance1 in Instance.objects.all())
         self.assertEqual(Instance.objects.count(), 1)
-
 
         # No user in org1 so only superuser can see
         self._assert_can_see_everything(self.superuser)
