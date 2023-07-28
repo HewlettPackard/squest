@@ -1,16 +1,12 @@
 from django.contrib.auth.models import User, Permission
 
 from profiles.models import Team, Organization, GlobalPermission, Role
-from django.test.testcases import TransactionTestCase
 
 from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, TowerServer
+from tests.utils import TransactionTestUtils
 
 
-class TestModelScopeGetQuerysetRequest(TransactionTestCase):
-
-    def assertQuerysetEqualID(self, qs1, qs2):
-        self.assertEqual(qs1.model, qs2.model)
-        self.assertListEqual(list(qs1.values_list("id", flat=True)), list(qs2.values_list("id", flat=True)))
+class TestModelScopeGetQuerysetRequest(TransactionTestUtils):
 
     def setUp(self):
         super(TestModelScopeGetQuerysetRequest, self).setUp()
