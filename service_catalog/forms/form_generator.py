@@ -3,6 +3,12 @@ import logging
 
 from django.forms import CharField, TextInput, Textarea, PasswordInput, ChoiceField, Select, MultipleChoiceField, \
     SelectMultiple, IntegerField, NumberInput, FloatField, Field
+from rest_framework.serializers import ChoiceField as DjangoRestChoiceField
+from rest_framework.serializers import CharField as DjangoRestCharField
+from rest_framework.serializers import MultipleChoiceField as DjangoRestMultipleChoiceField
+from rest_framework.serializers import IntegerField as DjangoRestIntegerField
+from rest_framework.serializers import FloatField as DjangoRestFloatField
+
 from jinja2 import Template
 from jinja2.exceptions import UndefinedError
 
@@ -48,10 +54,11 @@ class SquestFloatField(SquestField, FloatField):
 
 class FormGenerator:
 
-    def __init__(self, operation=None, squest_request=None, squest_instance=None):
+    def __init__(self, operation=None, squest_request=None, squest_instance=None, is_api_form=False):
         self.operation = operation
         self.squest_request = squest_request
         self.squest_instance = squest_instance
+        self.is_api_form = is_api_form
         self.is_initial_form = False
         if (self.operation and not self.squest_request and not self.squest_instance) or (self.operation and self.squest_instance):
             self.is_initial_form = True
@@ -68,7 +75,8 @@ class FormGenerator:
 
         self._apply_jinja_template_to_survey()
         self._apply_user_validator_to_survey()
-        self._apply_quota_to_survey()
+        if not self.is_api_form:
+            self._apply_quota_to_survey()
 
         django_form = self._get_django_fields_from_survey()
 
@@ -183,93 +191,160 @@ class FormGenerator:
         for survey_field in self.survey_as_dict["spec"]:
             disabled = survey_field.get("disabled", False)
             if survey_field["type"] == "text":
-                fields[survey_field['variable']] = SquestCharField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=survey_field['default'],
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    min_length=survey_field['min'],
-                    max_length=survey_field['max'],
-                    widget=TextInput(attrs={'class': 'form-control'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestCharField(
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max']
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestCharField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max'],
+                        widget=TextInput(attrs={'class': 'form-control'}),
+                        quota=survey_field['quota']
+                    )
 
             elif survey_field["type"] == "textarea":
-                fields[survey_field['variable']] = SquestCharField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=survey_field['default'],
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    min_length=survey_field['min'],
-                    max_length=survey_field['max'],
-                    widget=Textarea(attrs={'class': 'form-control'}),
-                    quota=survey_field['quota']
-                )
-
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestCharField(
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max']
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestCharField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max'],
+                        widget=Textarea(attrs={'class': 'form-control'}),
+                        quota=survey_field['quota']
+                    )
             elif survey_field["type"] == "password":
-                fields[survey_field['variable']] = SquestCharField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    min_length=survey_field['min'],
-                    max_length=survey_field['max'],
-                    widget=PasswordInput(render_value=True, attrs={'class': 'form-control'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestCharField(
+                        label=survey_field['question_name'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max'],
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestCharField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_length=survey_field['min'],
+                        max_length=survey_field['max'],
+                        widget=PasswordInput(render_value=True, attrs={'class': 'form-control'}),
+                        quota=survey_field['quota']
+                    )
 
             elif survey_field["type"] == "multiplechoice":
-                fields[survey_field['variable']] = SquestChoiceField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=survey_field['default'],
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    choices=get_choices_as_tuples_list(survey_field["choices"]),
-                    error_messages={'required': 'At least you must select one choice'},
-                    widget=Select(attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestChoiceField(
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        choices=get_choices_as_tuples_list(survey_field["choices"]),
+                        error_messages={'required': 'At least you must select one choice'}
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestChoiceField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'],
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        choices=get_choices_as_tuples_list(survey_field["choices"]),
+                        error_messages={'required': 'At least you must select one choice'},
+                        widget=Select(attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}),
+                        quota=survey_field['quota']
+                    )
 
             elif survey_field["type"] == "multiselect":
-                fields[survey_field['variable']] = SquestMultipleChoiceField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=survey_field['default'].split("\n"),
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    choices=get_choices_as_tuples_list(survey_field["choices"], []),
-                    widget=SelectMultiple(attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestMultipleChoiceField(
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'].split("\n"),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        choices=get_choices_as_tuples_list(survey_field["choices"]),
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestMultipleChoiceField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=survey_field['default'].split("\n"),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        choices=get_choices_as_tuples_list(survey_field["choices"], []),
+                        widget=SelectMultiple(attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'}),
+                        quota=survey_field['quota']
+                    )
 
             elif survey_field["type"] == "integer":
-                fields[survey_field['variable']] = SquestIntegerField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=None if not survey_field['default'] else int(survey_field['default']),
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    min_value=None if not survey_field['min'] else int(survey_field['min']),
-                    max_value=None if not survey_field['max'] else int(survey_field['max']),
-                    widget=NumberInput(attrs={'class': 'form-control'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestIntegerField(
+                        label=survey_field['question_name'],
+                        initial=0 if not survey_field['default'] else int(survey_field['default']),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_value=survey_field['min'],
+                        max_value=survey_field['max'],
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestIntegerField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=None if not survey_field['default'] else int(survey_field['default']),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_value=None if not survey_field['min'] else int(survey_field['min']),
+                        max_value=None if not survey_field['max'] else int(survey_field['max']),
+                        widget=NumberInput(attrs={'class': 'form-control'}),
+                        quota=survey_field['quota']
+                    )
 
             elif survey_field["type"] == "float":
-                fields[survey_field['variable']] = SquestFloatField(
-                    disabled=disabled,
-                    label=survey_field['question_name'],
-                    initial=None if not survey_field['default'] else float(survey_field['default']),
-                    required=survey_field['required'],
-                    help_text=survey_field['question_description'],
-                    min_value=None if not survey_field['min'] else float(survey_field['min']),
-                    max_value=None if not survey_field['max'] else float(survey_field['max']),
-                    widget=NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
-                    quota=survey_field['quota']
-                )
+                if self.is_api_form:
+                    fields[survey_field['variable']] = DjangoRestFloatField(
+                        label=survey_field['question_name'],
+                        initial=0 if not survey_field['default'] else float(survey_field['default']),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_value=survey_field['min'],
+                        max_value=survey_field['max'],
+                    )
+                else:
+                    fields[survey_field['variable']] = SquestFloatField(
+                        disabled=disabled,
+                        label=survey_field['question_name'],
+                        initial=None if not survey_field['default'] else float(survey_field['default']),
+                        required=survey_field['required'],
+                        help_text=survey_field['question_description'],
+                        min_value=None if not survey_field['min'] else float(survey_field['min']),
+                        max_value=None if not survey_field['max'] else float(survey_field['max']),
+                        widget=NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+                        quota=survey_field['quota']
+                    )
 
             if survey_field["validators"] is not None and len(survey_field["validators"]) > 0:
                 list_validator_def = list()
@@ -287,9 +362,9 @@ class FormGenerator:
         for step in self.squest_request.approval_workflow_state.approval_step_states.order_by(
                 'approval_step__position'):
             if step.state == ApprovalState.APPROVED:
-                skipped_fields = ['squest_instance_name', 'quota_scope']
                 for field, value in step.fill_in_survey.items():
-                    if field not in skipped_fields:
-                        django_form.get(field).initial = value
-                        django_form.get(field).default = value
+                    django_field = django_form.get(field)
+                    if django_field:
+                        django_field.initial = value
+                        django_field.default = value
         return django_form

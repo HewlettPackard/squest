@@ -193,6 +193,7 @@ class SquestDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
 
 class SquestFormView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleObjectMixin, SquestView, FormView):
     template_name = 'generics/generic_form.html'
+    context_object_name = "object"
 
     def form_valid(self, form):
         form.save()
