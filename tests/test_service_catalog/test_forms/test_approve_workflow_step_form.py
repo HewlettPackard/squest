@@ -1,25 +1,14 @@
 from unittest import mock
 
 from service_catalog.forms.approve_workflow_step_form import ApproveWorkflowStepForm
-from service_catalog.models import ApprovalWorkflow, ApprovalStep
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_approval import BaseTestApproval
 
 
-class TestApproveWorkflowStepForm(BaseTestRequest):
+class TestApproveWorkflowStepForm(BaseTestApproval):
 
     def setUp(self):
         super(TestApproveWorkflowStepForm, self).setUp()
         self.create_operation_test.update_survey()
-        self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
-
-        self.test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
-                                                                approval_workflow=self.test_approval_workflow)
-        self.test_approval_workflow_state = self.test_approval_workflow.instantiate()
-        self.test_request.approval_workflow_state = self.test_approval_workflow_state
-        self.test_request.save()
-        self.test_approval_step_1.readable_fields.set([self.create_operation_test.tower_survey_fields.all()[0]])
-        self.test_approval_step_1.editable_fields.set([self.create_operation_test.tower_survey_fields.all()[1]])
 
     def test_approve_workflow_step(self):
         parameters = {

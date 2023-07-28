@@ -25,10 +25,9 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
 
     def get_form_kwargs(self, step):
         kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        kwargs.update({'user': self.request.user, 'service': self.service})
 
         if step == "1":
-            kwargs.update({'service': self.service})
             kwargs.update({'operation': self.operation})
             # add data from step 0
             scope_id = self.storage.data['step_data']['0']['0-quota_scope'][0]

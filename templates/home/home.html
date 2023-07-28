@@ -146,9 +146,6 @@
                                                 {{ service.service.name }}
                                             </a>
                                         </td>
-
-
-                                        </td>
                                         <td class="align-middle text-center">
                                             {% if service.submitted_requests %}
                                                 <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&instance__service__id={{ service.service.id }}"

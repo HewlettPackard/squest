@@ -14,11 +14,13 @@ class ServiceInstanceForm(SquestModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
+        self.service = kwargs.pop('service', None)
         super(ServiceInstanceForm, self).__init__(*args, **kwargs)
         self.fields['quota_scope'].queryset = Scope.get_queryset_for_user(self.user, 'profiles.consume_quota_scope')
 
     def save(self, commit=True):
         squest_instance = super().save(False)
+        squest_instance.service = self.service
         squest_instance.requester = self.user
         squest_instance.save()
         return squest_instance

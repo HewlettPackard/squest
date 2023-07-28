@@ -83,3 +83,9 @@ class ProfilesConfig(AppConfig):
     def ready(self):
         post_migrate.connect(create_roles, sender=self)
         post_migrate.connect(insert_default_user_permissions, sender=self)
+
+        def get_permission_str(self):
+            return f"{self.content_type.app_label}.{self.codename}"
+
+        from django.contrib.auth.models import Permission
+        Permission.add_to_class('get_permission_str', get_permission_str)

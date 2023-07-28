@@ -1,21 +1,11 @@
-from service_catalog.models import ApprovalWorkflow, ApprovalStep, ApprovalStepState, RequestState, ApprovalState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from service_catalog.models import ApprovalStepState, RequestState, ApprovalState
+from tests.test_service_catalog.base_test_approval import BaseTestApproval
 
 
-class TestApprovalWorkflowState(BaseTestRequest):
+class TestApprovalWorkflowState(BaseTestApproval):
 
     def setUp(self):
         super(TestApprovalWorkflowState, self).setUp()
-
-        self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
-        self.test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
-                                                                approval_workflow=self.test_approval_workflow)
-        self.test_approval_step_2 = ApprovalStep.objects.create(name="test_approval_step_2",
-                                                                approval_workflow=self.test_approval_workflow)
-        self.test_approval_workflow_state = self.test_approval_workflow.instantiate()
-        self.test_request.approval_workflow_state = self.test_approval_workflow_state
-        self.test_request.save()
 
     def test_get_next_step(self):
         all_approval_step_states = ApprovalStepState.objects.filter(approval_workflow_state=self.test_approval_workflow_state)
