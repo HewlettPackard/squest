@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
+from profiles.models.squest_permission import Permission
 from django.urls import reverse, NoReverseMatch
 
 from profiles.models import GlobalPermission, Role

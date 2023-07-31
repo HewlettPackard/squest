@@ -24,7 +24,8 @@ class SquestPermissionDenied(PermissionDenied):
 class SquestView(View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.django_content_type = ContentType.objects.get_for_model(self.model)
+        self.django_content_type = ContentType.objects.get_by_natural_key(app_label=self.model._meta.app_label,
+                                                                          model=self.model._meta.model_name)
 
     def get_generic_url_kwargs(self):
         return {}
