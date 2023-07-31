@@ -67,19 +67,17 @@ class CustomerRequestCommentTest(BaseTestRequest):
         self.assertEqual(403, response.status_code)
 
     def test_sender_can_edit_comment(self):
+        self.client.force_login(user=self.standard_user)
         response = self.client.post(self.edit_url, data=self.data_to_edit)
         self.assertEqual(302, response.status_code)
         self.comment.refresh_from_db()
         self.assertEqual(self.comment.content, "comment edited")
         self.assertEqual(self.comment.sender, self.standard_user)
 
-    def test_admin_can_edit_comment(self):
+    def test_admin_cannot_edit_user_comment(self):
         self.client.force_login(self.superuser)
         response = self.client.post(self.edit_url, data=self.data_to_edit)
-        self.assertEqual(302, response.status_code)
-        self.comment.refresh_from_db()
-        self.assertEqual(self.comment.content, "comment edited")
-        self.assertEqual(self.comment.sender, self.standard_user)
+        self.assertEqual(403, response.status_code)
 
     def test_non_sender_cannot_edit_comment(self):
         self.client.force_login(self.standard_user_2)
