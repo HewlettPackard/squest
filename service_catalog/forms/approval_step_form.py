@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField, HiddenInput
 from django.urls import reverse

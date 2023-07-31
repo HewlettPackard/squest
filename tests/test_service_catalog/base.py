@@ -1,9 +1,10 @@
 import tempfile
 from django.test.testcases import TransactionTestCase
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
+from profiles.models.squest_permission import Permission
 from profiles.models import Organization, Scope, Role, Team
 from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
@@ -36,13 +37,20 @@ class BaseTestCommon(TransactionTestCase):
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
 
-
         self.organization_admin_role = Role.objects.get(name="Organization manager")
         self.team_member_role = Role.objects.create(name="Team member for tests")
-        self.team_member_role.permissions.add(Permission.objects.get_by_natural_key(codename="view_instance",app_label="service_catalog",model="instance"))
-        self.team_member_role.permissions.add(Permission.objects.get_by_natural_key(codename="request_on_service",app_label="service_catalog",model="service"))
-        self.team_member_role.permissions.add(Permission.objects.get_by_natural_key(codename="change_requestmessage",app_label="service_catalog",model="requestmessage"))
-        self.team_member_role.permissions.add(Permission.objects.get_by_natural_key(codename="consume_quota_scope",app_label="profiles",model="scope"))
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="view_instance", app_label="service_catalog",
+                                                        model="instance"))
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="request_on_service", app_label="service_catalog",
+                                                        model="service"))
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="change_requestmessage", app_label="service_catalog",
+                                                        model="requestmessage"))
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="consume_quota_scope", app_label="profiles",
+                                                        model="scope"))
         self.test_quota_scope.add_user_in_role(self.standard_user, self.team_member_role)
         self.test_quota_scope_team.add_user_in_role(self.standard_user, self.team_member_role)
         # ------------------------------
