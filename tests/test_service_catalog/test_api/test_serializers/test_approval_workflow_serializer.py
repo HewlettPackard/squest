@@ -19,4 +19,14 @@ class TestApprovalWorkflowSerializer(BaseTestApprovalAPI):
         }
         serializer = ApprovalWorkflowSerializer(data=data)
         self.assertFalse(serializer.is_valid())
-        self.assertIn("Has Already An Approval Workflow Based On This Operation", serializer.errors["scopes"][0].title())
+        self.assertIn("has already an approval workflow based on this operation", serializer.errors["scopes"][0])
+
+
+    def test_can_add_another_scope_to_scopes(self):
+        data = {
+            "name": "test_workflow",
+            "operation": self.create_operation_test.id,
+            "scopes": [self.test_quota_scope.id, self.test_quota_scope2.id]
+        }
+        serializer = ApprovalWorkflowSerializer(instance=self.test_approval_workflow,data=data)
+        self.assertTrue(serializer.is_valid())
