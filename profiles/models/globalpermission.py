@@ -1,9 +1,10 @@
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db.models import ManyToManyField
 from django.urls import reverse
 
 from profiles.models import AbstractScope
+from profiles.models.squest_permission import Permission
 
 
 class GlobalPermission(AbstractScope):

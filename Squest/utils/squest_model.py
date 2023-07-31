@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, Q
 from django.urls import reverse
@@ -8,16 +7,14 @@ class SquestRBAC(Model):
     class Meta:
         abstract = True
 
-    def get_absolute_url(self):
-        content_type = ContentType.objects.get_for_model(self.__class__)
-        return reverse(f"{content_type.app_label}:{content_type.model}_details", args=[self.pk])
-
     @classmethod
     def get_q_filter(cls, user, perm):
         return Q(pk=None)
 
     @classmethod
     def get_queryset_for_user(cls, user, perm, unique=True):
+        from profiles.models.squest_permission import Permission
+
         # superuser
         if user.is_superuser:
             return cls.objects.distinct() if unique else cls.objects.all()
@@ -31,7 +28,7 @@ class SquestRBAC(Model):
                     globalpermission=squest_scope,
                     codename=codename,
                     content_type__app_label=app_label
-                # Global perm groups
+                    # Global perm groups
                 ) | Q(
                     role__rbac__scope=squest_scope,
                     role__rbac__user=user,
@@ -62,3 +59,10 @@ class SquestModel(SquestRBAC, SquestChangelog):
     class Meta:
         abstract = True
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
+
+    def get_content_type(self):
+        return ContentType.objects.get_by_natural_key(app_label=self._meta.app_label, model=self._meta.model_name)
+
+    def get_absolute_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return reverse(f"{content_type.app_label}:{content_type.model}_details", args=[self.pk])
