@@ -1,6 +1,7 @@
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 
 from profiles.models import Organization, GlobalPermission, Role, Team
+from profiles.models.squest_permission import Permission
 
 from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, TowerServer, Support
 from tests.utils import TransactionTestUtils

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 from django_tables2 import tables, TemplateColumn
 
 

@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import ForeignKey, PROTECT, Q
+from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Organization
@@ -26,7 +27,7 @@ class Team(Scope):
     )
 
     def get_absolute_url(self):
-        return super(SquestModel, self).get_absolute_url()
+        return reverse(f"profiles:team_details", args=[self.pk])
 
     @classmethod
     def get_q_filter(cls, user, perm):

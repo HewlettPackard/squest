@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
+from profiles.models.squest_permission import Permission
 from django.core.exceptions import ValidationError
 
 from profiles.models import Team, Organization, AbstractScope, Scope, GlobalPermission, Role

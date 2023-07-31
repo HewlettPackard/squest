@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 

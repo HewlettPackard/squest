@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 
 from service_catalog.forms.approval_step_form import ApprovalStepForm
 from service_catalog.models import ApprovalWorkflow
