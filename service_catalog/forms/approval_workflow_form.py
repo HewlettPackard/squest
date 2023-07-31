@@ -15,7 +15,8 @@ class ApprovalWorkflowForm(SquestModelForm):
         operation = cleaned_data.get("operation")
         scopes = cleaned_data.get("scopes")
         # check that selected scopes are not already in use by another approval workflow for the selected operation
+        exclude_id = self.instance.id if self.instance else None
         for scope in scopes:
-            if scope.approval_workflows.filter(operation=operation).exists():
+            if scope.approval_workflows.filter(operation=operation).exclude(id=exclude_id).exists():
                 raise ValidationError({"scopes": f"The scope {scope} has already an approval workflow "
                                                  f"based on this operation"})
