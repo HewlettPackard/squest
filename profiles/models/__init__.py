@@ -9,3 +9,4 @@ from profiles.models.instance_notification import InstanceNotification
 from profiles.models.scope import AbstractScope, Scope
 from profiles.models.globalpermission import GlobalPermission
 from profiles.models.quota import Quota
+from profiles.models.squest_permission import Permission

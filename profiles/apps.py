@@ -3,14 +3,15 @@ import logging
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
+
 logger = logging.getLogger(__name__)
 
 
 def create_roles(sender, **kwargs):
     logger.info("create_roles method called")
-    from django.contrib.auth.models import Permission
     from profiles.models import Role
     from profiles.default_rbac.default_roles import default_roles
+    from profiles.models.squest_permission import Permission
 
     role_migration_filter = Role.objects.filter(name="Organization member migration/0014_auto_20230622_1722")
     if role_migration_filter.exists():
@@ -53,7 +54,7 @@ def create_roles(sender, **kwargs):
 def insert_default_user_permissions(sender, **kwargs):
     from profiles.default_rbac.default_user_permissions import default_user_permissions
     from profiles.models import GlobalPermission
-    from django.contrib.auth.models import Permission
+    from profiles.models.squest_permission import Permission
     global_permission, created = GlobalPermission.objects.get_or_create(name="GlobalPermission")
     if created:
         codenames = list(
@@ -74,9 +75,3 @@ class ProfilesConfig(AppConfig):
     def ready(self):
         post_migrate.connect(create_roles, sender=self)
         post_migrate.connect(insert_default_user_permissions, sender=self)
-
-        def get_permission_str(self):
-            return f"{self.content_type.app_label}.{self.codename}"
-
-        from django.contrib.auth.models import Permission
-        Permission.add_to_class('get_permission_str', get_permission_str)

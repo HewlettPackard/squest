@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 
 from profiles.models import Organization, Role
 from tests.test_profiles.base.base_test_profile import BaseTestProfile
@@ -215,18 +215,17 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
     def test_permission_views(self):
         permission = Permission.objects.filter(content_type__app_label='service_catalog').first()
         testing_view_list = [
-            # TODO: to be tested when Permission has been replaced by SquestPermission (list_permission permission not defined)
-            # TestingGetUIViews(
-            #     url='profiles:permission_list',
-            #     perm_str='profiles.list_permission',
-            # ),
+            TestingGetUIViews(
+                url='profiles:permission_list',
+                perm_str='profiles.list_permission',
+            ),
             TestingGetUIViews(
                 url='profiles:permission_create',
-                perm_str='auth.add_permission',
+                perm_str='profiles.add_permission',
             ),
             TestingPostUIViews(
                 url='profiles:permission_create',
-                perm_str='auth.add_permission',
+                perm_str='profiles.add_permission',
                 data={
                     'name': 'New permission',
                     'codename': 'the_code_name',
@@ -235,12 +234,12 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
             ),
             TestingGetUIViews(
                 url='profiles:permission_edit',
-                perm_str='auth.change_permission',
+                perm_str='profiles.change_permission',
                 url_kwargs={'pk': permission.id}
             ),
             TestingPostUIViews(
                 url='profiles:permission_edit',
-                perm_str='auth.change_permission',
+                perm_str='profiles.change_permission',
                 url_kwargs={'pk': permission.id},
                 data={
                     'name': 'Permission updated',
@@ -250,12 +249,12 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
             ),
             TestingGetUIViews(
                 url='profiles:permission_delete',
-                perm_str='auth.delete_permission',
+                perm_str='profiles.delete_permission',
                 url_kwargs={'pk': permission.id}
             ),
             TestingPostUIViews(
                 url='profiles:permission_delete',
-                perm_str='auth.delete_permission',
+                perm_str='profiles.delete_permission',
                 url_kwargs={'pk': permission.id},
 
             )

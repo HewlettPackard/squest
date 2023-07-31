@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 
 from service_catalog.models import ApprovalWorkflow, ApprovalStep
 from tests.test_service_catalog.base import BaseTest
