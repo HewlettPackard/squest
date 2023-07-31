@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class Request(SquestModel):
     class Meta:
+        ordering = ["-date_submitted"]
         permissions = [
             ("accept_request", "Can accept request"),
             ("cancel_request", "Can cancel request"),
