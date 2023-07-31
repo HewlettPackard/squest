@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 
 from service_catalog.api.serializers.approval_step_serializer import ApprovalStepSerializer
 from tests.test_service_catalog.base_test_approval import BaseTestApprovalAPI

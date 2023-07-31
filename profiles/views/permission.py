@@ -1,10 +1,9 @@
-from django.contrib.auth.models import Permission
-
 from Squest.utils.squest_views import *
 from profiles.filters import PermissionFilter
 from profiles.forms.model_permission_form import ModelPermissionForm
 from profiles.forms.permission_form import PermissionForm
 from profiles.tables import PermissionTable
+from profiles.models import Permission
 from service_catalog.models import ApprovalStep
 
 
@@ -13,7 +12,6 @@ class PermissionListView(SquestListView):
     filterset_class = PermissionFilter
     table_class = PermissionTable
     ordering = 'name'
-    app_label = "profiles"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -24,7 +22,6 @@ class PermissionListView(SquestListView):
 class PermissionCreateView(SquestCreateView):
     model = Permission
     form_class = PermissionForm
-    app_label = "profiles"
     success_url = reverse_lazy('profiles:permission_list')
 
 
@@ -32,18 +29,15 @@ class PermissionEditView(SquestUpdateView):
     model = Permission
     form_class = PermissionForm
     success_url = reverse_lazy('profiles:permission_list')
-    app_label = "profiles"
 
 
 class PermissionDeleteView(SquestDeleteView):
     model = Permission
-    app_label = "profiles"
 
 
 class ApprovalStepPermissionCreateView(SquestCreateView):
     model = Permission
     form_class = ModelPermissionForm
-    app_label = "profiles"
     success_url = reverse_lazy('profiles:permission_list')
 
     def get_form_kwargs(self):

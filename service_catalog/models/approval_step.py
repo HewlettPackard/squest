@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from profiles.models.squest_permission import Permission
 from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT
 from django.db.models.signals import post_save
 
