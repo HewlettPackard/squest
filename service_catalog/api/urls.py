@@ -64,6 +64,8 @@ urlpatterns = [
 
     path('administration/approval/', ApprovalWorkflowListCreate.as_view(), name='approvalworkflow_list_create'),
     path('administration/approval/<int:pk>/', ApprovalWorkflowDetails.as_view(), name='approvalworkflow_details'),
+    path('administration/approval/<int:pk>/update_steps_position', ApprovalWorkflowUpdateStepsPosition.as_view(),
+         name='approvalworkflow_update_steps_position'),
     path('administration/approval/<int:approval_workflow_id>/approval-step/', ApprovalStepListCreate.as_view(),
          name='approvalstep_list_create'),
     path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/', ApprovalStepDetails.as_view(),
