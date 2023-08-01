@@ -1,6 +1,6 @@
-<a href="{% url "resource_tracker_v2:resourcegroup_attribute_edit" record.resource_group.id record.attribute_definition.id %}" class="btn btn-primary bg-sm" title="Edit">
+<a href="{% url "resource_tracker_v2:transformer_edit" record.resource_group.id record.attribute_definition.id %}" class="btn btn-primary bg-sm" title="Edit">
     <i class="fas fa-pencil-alt"></i>
 </a>
-<a href="{% url "resource_tracker_v2:resourcegroup_attribute_delete" record.resource_group.id record.attribute_definition.id %}" class="btn btn-danger bg-sm" title="Delete">
+<a href="{% url "resource_tracker_v2:transformer_delete" record.resource_group.id record.attribute_definition.id %}" class="btn btn-danger bg-sm" title="Delete">
     <i class="fas fa-trash"></i>
 </a>
