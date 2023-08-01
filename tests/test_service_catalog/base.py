@@ -37,7 +37,7 @@ class BaseTestCommon(TransactionTestCase):
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
 
 
-        self.organization_admin_role = Role.objects.get(name="Organization administrator")
+        self.organization_admin_role = Role.objects.get(name="Organization manager")
         self.team_member_role = Role.objects.get(name="Team member")
         self.test_quota_scope.add_user_in_role(self.standard_user, self.team_member_role)
         self.test_quota_scope_team.add_user_in_role(self.standard_user, self.team_member_role)
