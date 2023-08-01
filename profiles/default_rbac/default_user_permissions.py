@@ -33,19 +33,3 @@ default_user_permissions = [
     'profiles.change_instancenotification',
     'profiles.delete_instancenotification',
 ]
-
-
-def insert_default_user_permissions(apps, schema_editor):
-    GlobalPermission = apps.get_model('profiles', 'GlobalPermission')
-    Permission = apps.get_model('auth', 'Permission')
-    global_permission, created = GlobalPermission.objects.get_or_create(name="GlobalPermission")
-    codenames = list(
-        map(lambda user_permissions: user_permissions.split('.')[1], default_user_permissions))
-    app_labels = list(
-        map(lambda user_permissions: user_permissions.split('.')[0], default_user_permissions))
-    global_permission.user_permissions.add(
-        *Permission.objects.filter(
-            codename__in=codenames,
-            content_type__app_label__in=app_labels
-        )
-    )
