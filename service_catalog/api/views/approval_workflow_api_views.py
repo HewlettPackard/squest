@@ -1,18 +1,20 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView, \
     SquestRetrieveAPIView
+from service_catalog.api.serializers.approval_step_serializer import ApprovalStepPositionSerializer
 from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer
 from service_catalog.api.serializers.approval_workflow_state_serializer import ApprovalWorkflowStateSerializer
 from service_catalog.api.serializers.approve_workflow_step_serializer import ApproveWorkflowStepSerializer
 from service_catalog.filters.approval_workflow_filter import ApprovalWorkflowFilter
-from service_catalog.models import ApprovalWorkflow, ApprovalWorkflowState, Request
+from service_catalog.models import ApprovalWorkflow, ApprovalWorkflowState, Request, ApprovalStep
 
 
 class ApprovalWorkflowListCreate(SquestListCreateAPIView):
@@ -85,3 +87,32 @@ class ApproveCurrentStep(ViewSet):
         target_request.save()
         # send_mail_request_update(target_request, user_applied_state=request.user, message=message)
         return Response({"success": "Step rejected"}, status=HTTP_200_OK)
+
+
+class ApprovalWorkflowUpdateStepsPosition(APIView):
+
+    def post(self, request, pk):
+        approval_workflow = get_object_or_404(ApprovalWorkflow, pk=pk)
+        instances = approval_workflow.approval_steps
+        serializer = ApprovalStepPositionSerializer(instance=instances, data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+
+        # check that given step id belong to the workflow
+        list_approval_step = approval_workflow.approval_steps.all()
+        for step_to_update in serializer.initial_data:
+            if step_to_update["id"] not in [step.id for step in list_approval_step]:
+                raise ValidationError(f"Invalid step ID for the approval workflow ID '{approval_workflow.id}'")
+        # check that the given number of step correspond to the number of step present in the workflow
+        if len(serializer.initial_data) != len(list_approval_step):
+            raise ValidationError(f"Missing position. Given: {len(serializer.initial_data)}. "
+                                  f"Required: {len(list_approval_step)}")
+        # check that all position are given (from zero to number of step)
+        for position_value in range(0, len(serializer.initial_data)):
+            if not any(step["position"] == position_value for step in serializer.initial_data):
+                raise ValidationError(f"Missing position {position_value}")
+        # save the new given positions
+        for step_to_update in serializer.initial_data:
+            step = ApprovalStep.objects.get(id=step_to_update["id"])
+            step.position = step_to_update["position"]
+            step.save()
+        return Response(serializer.data, status=HTTP_200_OK)
