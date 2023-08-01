@@ -13,7 +13,6 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.ocp_projects.id
         }
-        self.url_confirm = reverse('resource_tracker_v2:resource_bulk_delete_confirm', kwargs=args)
         self.url_delete = reverse('resource_tracker_v2:resource_bulk_delete', kwargs=args)
 
     def test_resource_group_resources_list(self):
@@ -105,7 +104,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         resource_list_to_delete = [self.server1.id, self.server2.id]
         data = {"selection": resource_list_to_delete}
 
-        response = self.client.post(self.url_confirm, data=data)
+        response = self.client.get(self.url_delete, data=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             set([resource.id for resource in response.context['object_list']]),
@@ -113,7 +112,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         )
 
     def test_admin_get_message_on_confirm_bulk_delete_with_empty_data(self):
-        response = self.client.post(self.url_confirm)
+        response = self.client.get(self.url_delete)
         self.assertEqual(response.status_code, 302)
 
     def test_admin_can_bulk_delete(self):
