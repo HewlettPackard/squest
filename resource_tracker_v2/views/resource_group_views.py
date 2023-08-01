@@ -24,12 +24,10 @@ class ResourceGroupCreateView(SquestCreateView):
 class ResourceGroupEditView(SquestUpdateView):
     model = ResourceGroup
     form_class = ResourceGroupForm
-    pk_url_kwarg = "resource_group_id"
 
 
 class ResourceGroupDeleteView(SquestDeleteView):
     model = ResourceGroup
-    pk_url_kwarg = "resource_group_id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

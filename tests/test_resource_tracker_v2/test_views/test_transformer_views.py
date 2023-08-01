@@ -14,7 +14,7 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
             "resource_group_id": self.ocp_projects.id
         }
 
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_attribute_list', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:transformer_list', kwargs=args))
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data),
                          Transformer.objects.filter(resource_group=self.ocp_projects).count())
@@ -27,7 +27,7 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
             "attribute_definition": self.three_par_attribute.id,
         }
         number_transformer_before = Transformer.objects.all().count()
-        response = self.client.post(reverse('resource_tracker_v2:resourcegroup_attribute_create', kwargs=args),
+        response = self.client.post(reverse('resource_tracker_v2:transformer_create', kwargs=args),
                                     data=data)
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_transformer_before + 1, Transformer.objects.all().count())
@@ -44,11 +44,11 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
         number_transformer_before = Transformer.objects.all().count()
 
         # get
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_attribute_create', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:transformer_create', kwargs=args))
         self.assertEqual(200, response.status_code)
 
         # post
-        response = self.client.post(reverse('resource_tracker_v2:resourcegroup_attribute_create', kwargs=args),
+        response = self.client.post(reverse('resource_tracker_v2:transformer_create', kwargs=args),
                                     data=data)
         self.assertEqual(302, response.status_code)
         self.assertEqual(number_transformer_before + 1, Transformer.objects.all().count())
@@ -68,11 +68,11 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
         self.assertEqual(self.request_cpu_from_vcpu.consume_from_attribute_definition.id, self.vcpu_attribute.id)
 
         # get
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_attribute_edit', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:transformer_edit', kwargs=args))
         self.assertEqual(200, response.status_code)
 
         # post
-        response = self.client.post(reverse('resource_tracker_v2:resourcegroup_attribute_edit', kwargs=args),
+        response = self.client.post(reverse('resource_tracker_v2:transformer_edit', kwargs=args),
                                     data=data)
         self.assertEqual(302, response.status_code)
         self.request_cpu_from_vcpu.refresh_from_db()
@@ -89,11 +89,11 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
         }
 
         # get
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_attribute_delete', kwargs=args))
+        response = self.client.get(reverse('resource_tracker_v2:transformer_delete', kwargs=args))
         self.assertEqual(200, response.status_code)
 
         # post
-        response = self.client.post(reverse('resource_tracker_v2:resourcegroup_attribute_delete', kwargs=args))
+        response = self.client.post(reverse('resource_tracker_v2:transformer_delete', kwargs=args))
         self.assertEqual(302, response.status_code)
         self.server1.refresh_from_db()
         self.server2.refresh_from_db()
