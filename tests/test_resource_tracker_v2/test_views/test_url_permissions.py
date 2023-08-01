@@ -238,16 +238,14 @@ class TestResourceTrackerV2PermissionsViews(BaseTestResourceTrackerV2, TestPermi
     def test_resource_views_bulk_delete(self):
         testing_view_list = [
 
-            TestingPostUIViews(
-                url='resource_tracker_v2:resource_bulk_delete_confirm',
+            TestingGetUIViews(
+                url='resource_tracker_v2:resource_bulk_delete',
                 perm_str='resource_tracker_v2.delete_resource',
                 url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
                     'selection': [resource.id for resource in self.single_vms.resources.all()]
 
-                },
-                expected_status_code=200
-            ),
+                }),
             TestingPostUIViews(
                 url='resource_tracker_v2:resource_bulk_delete',
                 perm_str='resource_tracker_v2.delete_resource',

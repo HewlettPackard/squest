@@ -2,8 +2,7 @@
 {% load render_table from django_tables2 %}
 {% block begin_content %}
     {% with action_url=action_url|default:"" %}
-        <form method="post" action="{{ action_url }}">
-        {% csrf_token %}
+        <form method="get" action="{{ action_url }}">
     {% endwith %}
 {% endblock %}
 {% block header_button %}
