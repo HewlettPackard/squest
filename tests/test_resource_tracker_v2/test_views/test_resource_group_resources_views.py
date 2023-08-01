@@ -13,8 +13,8 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.ocp_projects.id
         }
-        self.url_confirm = reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete_confirm', kwargs=args)
-        self.url_delete = reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete', kwargs=args)
+        self.url_confirm = reverse('resource_tracker_v2:resource_bulk_delete_confirm', kwargs=args)
+        self.url_delete = reverse('resource_tracker_v2:resource_bulk_delete', kwargs=args)
 
     def test_resource_group_resources_list(self):
         args = {
@@ -29,7 +29,7 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
         args = {
             "resource_group_id": self.cluster.id
         }
-        url = reverse('resource_tracker_v2:resourcegroup_resource_create', kwargs=args)
+        url = reverse('resource_tracker_v2:resource_create', kwargs=args)
 
         # test GET
         response = self.client.get(url)
@@ -59,9 +59,9 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
     def test_resource_group_resources_edit(self):
         args = {
             "resource_group_id": self.cluster.id,
-            "resource_id": self.server1.id
+            "pk": self.server1.id
         }
-        url = reverse('resource_tracker_v2:resourcegroup_resource_edit', kwargs=args)
+        url = reverse('resource_tracker_v2:resource_edit', kwargs=args)
 
         # test GET
         response = self.client.get(url)
@@ -87,9 +87,9 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
     def test_resource_group_resources_delete(self):
         args = {
             "resource_group_id": self.cluster.id,
-            "resource_id": self.server1.id
+            "pk": self.server1.id
         }
-        url = reverse('resource_tracker_v2:resourcegroup_resource_delete', kwargs=args)
+        url = reverse('resource_tracker_v2:resource_delete', kwargs=args)
 
         # test GET
         response = self.client.get(url)
@@ -126,9 +126,9 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
     def test_resource_group_resources_move(self):
         args = {
             "resource_group_id": self.cluster.id,
-            "resource_id": self.server1.id
+            "pk": self.server1.id
         }
-        url = reverse('resource_tracker_v2:resourcegroup_resource_move', kwargs=args)
+        url = reverse('resource_tracker_v2:resource_move', kwargs=args)
 
         # test GET
         response = self.client.get(url)

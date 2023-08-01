@@ -9,7 +9,6 @@ from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefini
 
 class AttributeDefinitionDetailView(SquestDetailView):
     model = AttributeDefinition
-    pk_url_kwarg = "attribute_definition_id"
     template_name = "resource_tracking_v2/attributedefinition_detail.html"
 
     def get_context_data(self, **kwargs):
@@ -46,7 +45,6 @@ class AttributeDefinitionCreateView(SquestCreateView):
 class AttributeDefinitionEditView(SquestUpdateView):
     model = AttributeDefinition
     form_class = AttributeDefinitionForm
-    pk_url_kwarg = "attribute_definition_id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,7 +54,6 @@ class AttributeDefinitionEditView(SquestUpdateView):
 
 class AttributeDefinitionDeleteView(SquestDeleteView):
     model = AttributeDefinition
-    pk_url_kwarg = "attribute_definition_id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
