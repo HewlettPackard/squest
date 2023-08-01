@@ -21,7 +21,7 @@ class QuotaFormTests(BaseTestProfile):
         form = QuotaForm(data, **self.parameters)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertEqual(number_quota_before + 1, Quota.objects.count())
+        self.assertEqual(number_quota_before + 2, Quota.objects.count())
 
     def test_quota_form_update(self):
         cpu_quota = Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)
@@ -35,7 +35,7 @@ class QuotaFormTests(BaseTestProfile):
         cpu_quota.refresh_from_db()
         self.assertEqual(cpu_quota.limit, 100)
 
-    def test_quota_form_create_no_quota_inserted_when_limit_zero(self):
+    def test_quota_form_create_quota_inserted_when_limit_zero(self):
         Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)
         number_quota_before = Quota.objects.count()
         # update cpu quota but leave the other attribute limit to 0
@@ -46,7 +46,7 @@ class QuotaFormTests(BaseTestProfile):
         form = QuotaForm(data, **self.parameters)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertEqual(number_quota_before, Quota.objects.count())
+        self.assertEqual(number_quota_before + 1, Quota.objects.count())
 
     def test_quota_form_initial_values(self):
         Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)

@@ -87,6 +87,7 @@ urlpatterns = [
 
     # Quota
     path('quota/', views.QuotaListView.as_view(), name="quota_list"),
+    path('quota/<int:pk>/delete/', views.QuotaDeleteView.as_view(), name="quota_delete"),
     path('organization/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
          name="organization_quota_edit"),
     path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(),

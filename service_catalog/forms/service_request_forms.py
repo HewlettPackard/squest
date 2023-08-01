@@ -1,4 +1,5 @@
 from django import forms
+from django.shortcuts import get_object_or_404
 
 from Squest.utils.squest_form import SquestForm
 from Squest.utils.squest_model_form import SquestModelForm
@@ -38,5 +39,5 @@ class ServiceRequestForm(SquestForm):
         self.quota_scope = kwargs.pop('quota_scope', None)
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
 
-        form_generator = FormGenerator(operation=self.create_operation)
+        form_generator = FormGenerator(operation=self.create_operation, quota_scope=self.quota_scope)
         self.fields.update(form_generator.generate_form())

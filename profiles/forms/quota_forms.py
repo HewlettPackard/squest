@@ -18,10 +18,10 @@ class QuotaForm(SquestForm):
             for attribute_definition in AttributeDefinition.objects.all():
                 # get the value if exist already
                 default_value = Quota.objects.filter(scope=self.scope, attribute_definition=attribute_definition).first()
-                default_value = default_value.limit if default_value is not None else 0
+                default_value = default_value.limit if default_value is not None else None
                 self.fields[f"attribute_definition_{attribute_definition.id}"] = \
                     IntegerField(label=attribute_definition.name,
-                                 required=True,
+                                 required=False,
                                  initial=default_value,
                                  widget=forms.NumberInput(attrs={'step': '1',
                                                                  'class': 'form-control'}))
@@ -31,10 +31,10 @@ class QuotaForm(SquestForm):
                 # get the value if exist already for the team
                 default_value = Quota.objects.filter(scope=self.scope,
                                                      attribute_definition=quota.attribute_definition).first()
-                default_value = default_value.limit if default_value is not None else 0
+                default_value = default_value.limit if default_value is not None else None
                 self.fields[f"attribute_definition_{quota.attribute_definition.id}"] = \
                     IntegerField(label=quota.attribute_definition.name,
-                                 required=True,
+                                 required=False,
                                  initial=default_value,
                                  max_value=quota.available,  # TODO: add the current team consumption to available
                                  help_text=f"Available a organization level: {quota.available}",
@@ -49,5 +49,5 @@ class QuotaForm(SquestForm):
                 initial_value.limit = limit
                 initial_value.save()
             else:
-                if limit != 0:
+                if limit is not None:
                     Quota.objects.create(scope=self.scope, attribute_definition_id=int(attribute_id), limit=limit)
