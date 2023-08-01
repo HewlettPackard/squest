@@ -18,7 +18,7 @@ class ResourceListView(TagFilterListView):
         return super().get_queryset().filter(resource_group_id=self.kwargs.get('resource_group_id'))
 
     def get_context_data(self, **kwargs):
-        resource_group = get_object_or_404(ResourceGroup,id=self.kwargs.get('resource_group_id'))
+        resource_group = get_object_or_404(ResourceGroup, id=self.kwargs.get('resource_group_id'))
         context = super().get_context_data(**kwargs)
         context['resource_group_id'] = resource_group.id
         context['breadcrumbs'] = [
@@ -26,6 +26,11 @@ class ResourceListView(TagFilterListView):
             {'text': resource_group, 'url': ""},
             {'text': "Resource", 'url': ""}
         ]
+        context['action_url'] = reverse(
+            'resource_tracker_v2:resource_bulk_delete', kwargs={
+                "resource_group_id": resource_group.id
+            }
+        )
         context['html_button_path'] = "resource_tracking_v2/resource_group/resources/resource_list_buttons.html"
         return context
 
@@ -102,35 +107,37 @@ class ResourceMoveView(SquestUpdateView):
 
 
 def resource_group_resource_bulk_delete(request, resource_group_id):
-    if request.method == "POST":
-        pks = request.POST.getlist("selection")
-        selected_resources = Resource.get_queryset_for_user(request.user, 'resource_tracker_v2.delete_resource', unique=False).filter(pk__in=pks)
-        if selected_resources.count() != len(pks):
-            raise PermissionDenied
-        selected_resources.delete()
-    return redirect("resource_tracker_v2:resource_list", resource_group_id)
-
-
-def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
-    context = {
-        'breadcrumbs': [
-            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': 'Resources', 'url': reverse('resource_tracker_v2:resource_list',
-                                                 kwargs={'resource_group_id': resource_group_id})},
-            {'text': "Delete multiple", 'url': ""}
-        ],
-        'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
-        'action_url': reverse('resource_tracker_v2:resource_bulk_delete', kwargs={
+    context = dict()
+    context['breadcrumbs'] = [
+        {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+        {'text': 'Resources', 'url': reverse('resource_tracker_v2:resource_list',
+                                             kwargs={'resource_group_id': resource_group_id})},
+        {'text': "Delete multiple", 'url': ""}
+    ]
+    context['confirm_text'] = mark_safe(f"Confirm deletion of the following resources?")
+    context['action_url'] = reverse(
+        'resource_tracker_v2:resource_bulk_delete', kwargs={
             "resource_group_id": resource_group_id
-        }),
-        'button_text': 'Delete',
-    }
+        }
+    )
+    context['button_text'] = 'Delete'
+    if request.method == "GET":
+        pks = request.GET.getlist("selection")
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        context['object_list'] = Resource.get_queryset_for_user(request.user, 'resource_tracker_v2.delete_resource').filter(pk__in=pks)
-        if context['object_list'].count() != len(pks):
-            raise PermissionDenied
-        if context['object_list']:
-            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
-    messages.warning(request, 'No resources selected for deletion.')
-    return redirect('resource_tracker_v2:resource_list', resource_group_id=resource_group_id)
+
+    context["object_list"] = Resource.get_queryset_for_user(request.user, 'resource_tracker_v2.delete_resource',
+                                                            unique=False).filter(pk__in=pks)
+    if context['object_list'].count() != len(pks):
+        raise PermissionDenied
+
+    if not context['object_list']:
+        messages.warning(request, 'Empty selection.')
+        return redirect('resource_tracker_v2:resource_list', resource_group_id=resource_group_id)
+
+    if request.method == "GET":
+        return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+
+    elif request.method == "POST":
+        context['object_list'].delete()
+        return redirect("resource_tracker_v2:resource_list", resource_group_id)

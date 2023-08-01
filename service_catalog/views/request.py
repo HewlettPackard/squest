@@ -36,7 +36,7 @@ class RequestListView(SquestListView):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ""
         context['extra_html_button_path'] = "service_catalog/buttons/request-archived-list.html"
-        context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
+        context['action_url'] = reverse('service_catalog:request_bulk_delete')
         return context
 
 
@@ -52,7 +52,7 @@ class RequestArchivedListView(SquestListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
-        context['action_url'] = reverse('service_catalog:request_bulk_delete_confirm')
+        context['action_url'] = reverse('service_catalog:request_bulk_delete')
         context['breadcrumbs'] = [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
             {'text': 'Archived requests', 'url': ""}
@@ -147,7 +147,8 @@ def request_comment(request, request_id):
 def requestmessage_edit(request, request_id, pk):
     request_message = get_object_or_404(RequestMessage, id=pk)
     squest_request = get_object_or_404(Request, id=request_id)
-    if request.user != request_message.sender or not request.user.has_perm('service_catalog.change_requestmessage', request_message):
+    if request.user != request_message.sender or not request.user.has_perm('service_catalog.change_requestmessage',
+                                                                           request_message):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request_message.sender,
@@ -421,38 +422,38 @@ def try_process_request(user, target_request, inventory_override=None, credentia
 
 
 @login_required
-def request_bulk_delete_confirm(request):
-    context = {
-        'confirm_text': mark_safe(f"Confirm deletion of the following requests?"),
-        'action_url': reverse('service_catalog:request_bulk_delete'),
-        'button_text': 'Delete',
-        'breadcrumbs': [
-            {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': "Delete multiple", 'url': ""}
-        ]
-    }
-    if request.method == "POST":
-        pks = request.POST.getlist("selection")
-        context['object_list'] = Request.get_queryset_for_user(request.user, 'service_catalog.delete_request').filter(
-            pk__in=pks)
-        if context['object_list'].count() != len(pks):
-            raise PermissionDenied
-        if context['object_list']:
-            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
-    messages.warning(request, 'No requests were selected for deletion.')
-    return redirect('service_catalog:request_list')
-
-
-@login_required
 def request_bulk_delete(request):
+    context = dict()
+    context['confirm_text'] = mark_safe(f"Confirm deletion of the following requests?")
+    context['action_url'] = reverse('service_catalog:request_bulk_delete')
+    context['button_text'] = 'Delete'
+    context['breadcrumbs'] = [
+        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
+        {'text': "Delete multiple", 'url': ""}
+    ]
+
+    if request.method == "GET":
+        pks = request.GET.getlist("selection")
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_requests = Request.get_queryset_for_user(request.user, 'service_catalog.delete_request',
-                                                          unique=False).filter(pk__in=pks)
-        if selected_requests.count() != len(pks):
-            raise PermissionDenied
-        selected_requests.delete()
-    return redirect("service_catalog:request_list")
+
+    context['object_list'] = Request.get_queryset_for_user(request.user, 'service_catalog.delete_request',
+                                                           unique=False).filter(
+        pk__in=pks)
+
+    if context['object_list'].count() != len(pks):
+        raise PermissionDenied
+
+    if not context['object_list']:
+        messages.warning(request, 'Empty selection.')
+        return redirect("service_catalog:request_list")
+
+    if request.method == "GET":
+        return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+
+    elif request.method == "POST":
+        context['object_list'].delete()
+        return redirect("service_catalog:request_list")
 
 
 class RequestApproveView(SquestFormView):

@@ -18,11 +18,10 @@ class InstanceBulkDeleteTest(BaseTestRequest):
                 ).id
             )
         self.data = {"selection": self.instance_to_delete_list}
-        self.url_confirm = reverse('service_catalog:instance_bulk_delete_confirm')
         self.url_delete = reverse('service_catalog:instance_bulk_delete')
 
     def test_admin_can_confirm_bulk_delete(self):
-        response = self.client.post(self.url_confirm, data=self.data)
+        response = self.client.get(self.url_delete, data=self.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             set([instance.id for instance in response.context['object_list']]),
@@ -30,17 +29,17 @@ class InstanceBulkDeleteTest(BaseTestRequest):
         )
 
     def test_admin_get_message_on_confirm_bulk_delete_with_empty_data(self):
-        response = self.client.post(self.url_confirm)
+        response = self.client.get(self.url_delete)
         self.assertEqual(response.status_code, 302)
 
     def test_user_cannot_confirm_bulk_delete(self):
         self.client.force_login(self.standard_user)
-        response = self.client.post(self.url_confirm, data=self.data)
+        response = self.client.get(self.url_delete, data=self.data)
         self.assertEqual(response.status_code, 403)
 
     def test_cannot_confirm_bulk_delete_when_logout(self):
         self.client.logout()
-        response = self.client.post(self.url_confirm, data=self.data)
+        response = self.client.get(self.url_delete, data=self.data)
         self.assertEqual(response.status_code, 302)
 
     def test_admin_can_bulk_delete(self):
