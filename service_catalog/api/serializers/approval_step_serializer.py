@@ -9,7 +9,7 @@ class ApprovalStepSerializer(ModelSerializer):
 
     class Meta:
         model = ApprovalStep
-        fields = ['id', 'name', 'position', 'permission', 'readable_fields', 'editable_fields']
+        fields = ['id', 'name', 'permission', 'readable_fields', 'editable_fields']
         read_only_fields = ['id']
 
     readable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.none())
@@ -30,3 +30,11 @@ class ApprovalStepSerializer(ModelSerializer):
         if field_in_both_list:
             raise ValidationError({"readable_fields": f"A field cannot be declared as read and write"})
         return data
+
+
+class ApprovalStepPositionSerializer(ModelSerializer):
+
+    class Meta:
+        model = ApprovalStep
+        fields = ['position']
+        read_only_fields = ['id']
