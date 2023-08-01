@@ -3,17 +3,14 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import profiles.models.scope
 
 
 def billing_group_to_org(apps, schema_editor):
-    from profiles.models.default_rbac import roles_list
     Role = apps.get_model('profiles', 'Role')
-    for role_name, role_params in roles_list.items():
-        role, created = Role.objects.get_or_create(
-            name=role_name,
-            description=role_params['description'],
-        )
+    role_org_member, _ = Role.objects.get_or_create(
+        name="Organization member migration/0014_auto_20230622_1722",
+        defaults={'description': 'Can view organization'},
+    )
     BillingGroup = apps.get_model('profiles', 'BillingGroup')
     Organization = apps.get_model('profiles', 'Organization')
     RBAC = apps.get_model('profiles', 'RBAC')
@@ -22,8 +19,8 @@ def billing_group_to_org(apps, schema_editor):
         for user in billing.user_set.all():
             group, _ = RBAC.objects.get_or_create(
                 scope=org,
-                name=f'group_role_{org.name}_Organization member',
-                role=Role.objects.get(name="Organization member")
+                role=role_org_member,
+                defaults={'name': f'RBAC - Scope#{org.id}, Role#{role_org_member.id}'}
             )
             group.user_set.add(user)
         org.quota_instances.add(*list(billing.instances.all()))
