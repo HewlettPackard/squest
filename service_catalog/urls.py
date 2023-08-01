@@ -26,8 +26,7 @@ urlpatterns = [
 
 
     # Request bulk delete
-    path('request/delete-confirm/', views.request_bulk_delete_confirm, name='request_bulk_delete_confirm'),
-    path('request/delete-force/', views.request_bulk_delete, name='request_bulk_delete'),
+    path('request/delete/', views.request_bulk_delete, name='request_bulk_delete'),
 
     # Archived request list
     path('request/archived/', views.RequestArchivedListView.as_view(), name='request_archived_list'),
@@ -72,8 +71,7 @@ urlpatterns = [
     path('instance/<int:pk>/', views.InstanceDetailView.as_view(), name='instance_details'),
 
     # Instance bulk delete
-    path('instance/delete-confirm/', views.instance_bulk_delete_confirm, name='instance_bulk_delete_confirm'),
-    path('instance/delete-force/', views.instance_bulk_delete, name='instance_bulk_delete'),
+    path('instance/delete/', views.instance_bulk_delete, name='instance_bulk_delete'),
 
     # Instance message
     path('instance/<int:instance_id>/support/<int:support_id>/message/<int:message_id>/', views.support_message_edit,

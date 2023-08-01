@@ -28,7 +28,7 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/attributes/<int:attribute_id>/delete/', views.TransformerDeleteView.as_view(), name='transformer_delete'),
     # Transformer AJAX
     path('resource_group/load-resource-group-attribute/', views.ajax_load_attribute, name='ajax_load_attribute'),
-    
+
     # Resource CRUD
     path('resource_group/<int:resource_group_id>/resources/', views.ResourceListView.as_view(), name='resource_list'),
     path('resource_group/<int:resource_group_id>/resources/create/', views.ResourceCreateView.as_view(), name='resource_create'),
@@ -36,6 +36,5 @@ urlpatterns = [
     path('resource_group/<int:resource_group_id>/resources/<int:pk>/delete/', views.ResourceDeleteView.as_view(), name='resource_delete'),
     # Resource particular urls
     path('resource_group/<int:resource_group_id>/resources/<int:pk>/move/', views.ResourceMoveView.as_view(), name='resource_move'),
-    path('resource_group/<int:resource_group_id>/resources/delete-confirm/', views.resource_group_resource_bulk_delete_confirm, name='resource_bulk_delete_confirm'),
-    path('resource_group/<int:resource_group_id>/resources/delete-force/', views.resource_group_resource_bulk_delete, name='resource_bulk_delete'),
+    path('resource_group/<int:resource_group_id>/resources/delete/', views.resource_group_resource_bulk_delete, name='resource_bulk_delete')
 ]
