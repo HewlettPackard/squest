@@ -10,8 +10,7 @@
     <span {% if not can_change_quota %} title="Permission profiles.change_quota needed" {% endif %}>
             <a href="{% url 'profiles:team_quota_edit' object.id %}"
                class="btn btn-primary{% if not can_change_quota %} disabled{% endif %}"> <i
-                    class="fas fa-chart-pie"></i> Set
-                quotas
+                    class="fas fa-chart-pie"></i> Set quotas
             </a>
     </span>
     <span {% if not can_add_user %} title="Permission profiles.add_users_team needed" {% endif %}>

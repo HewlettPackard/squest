@@ -6,6 +6,8 @@ from tempus_dominus.widgets import DateTimePicker
 
 class SquestModelForm(ModelForm):
 
+    help_text = None
+
     def __init__(self, *args, **kwargs):
         super(SquestModelForm, self).__init__(*args, **kwargs)
         for field_name, current_field in self.fields.items():
