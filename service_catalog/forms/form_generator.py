@@ -1,6 +1,7 @@
 import copy
 import logging
 
+from django.core.exceptions import ValidationError
 from django.forms import CharField, TextInput, Textarea, PasswordInput, ChoiceField, Select, MultipleChoiceField, \
     SelectMultiple, IntegerField, NumberInput, FloatField, Field
 from rest_framework.serializers import ChoiceField as DjangoRestChoiceField
@@ -54,12 +55,21 @@ class SquestFloatField(SquestField, FloatField):
 
 class FormGenerator:
 
-    def __init__(self, operation=None, squest_request=None, squest_instance=None, is_api_form=False):
+    def __init__(self, operation=None, squest_request=None, squest_instance=None, is_api_form=False, quota_scope=None):
         self.operation = operation
         self.squest_request = squest_request
         self.squest_instance = squest_instance
         self.is_api_form = is_api_form
         self.is_initial_form = False
+        self.quota_scope = quota_scope
+        if self.quota_scope is None:
+            # try to get the quota scope from the instance
+            if self.squest_request is not None:
+                self.quota_scope = self.squest_request.instance.quota_scope
+            elif self.squest_instance is not None:
+                self.quota_scope = self.squest_instance.quota_scope
+            else:
+                raise ValidationError("No quota scope provided")
         if (self.operation and not self.squest_request and not self.squest_instance) or (self.operation and self.squest_instance):
             self.is_initial_form = True
         if self.operation is None:
@@ -75,8 +85,7 @@ class FormGenerator:
 
         self._apply_jinja_template_to_survey()
         self._apply_user_validator_to_survey()
-        if not self.is_api_form:
-            self._apply_quota_to_survey()
+        self._apply_quota_to_survey()
 
         django_form = self._get_django_fields_from_survey()
 
@@ -139,7 +148,16 @@ class FormGenerator:
             target_tower_field = self.operation.tower_survey_fields.get(name=survey_filled["variable"])
             survey_filled["quota"] = None
             if target_tower_field.attribute_definition:
-                survey_filled["quota"] = target_tower_field.attribute_definition.name
+                quota_string = target_tower_field.attribute_definition.name
+                # by default, we only show the impacted quota
+                survey_filled["quota"] = quota_string
+                # get the quota scope
+                quota_scope_quota = self.quota_scope.quotas.filter(attribute_definition=target_tower_field.attribute_definition)
+                if quota_scope_quota.exists():
+                    quota_scope_quota = quota_scope_quota.first()
+                    survey_filled["max"] = quota_scope_quota.available
+                    quota_string += f" - available: {quota_scope_quota.available}"
+                survey_filled["quota"] = quota_string
 
     def _template_field(self, jinja_template_string, template_data_dict):
         """
@@ -185,6 +203,22 @@ class FormGenerator:
             django_form.get(field).initial = value
             django_form.get(field).default = value
         return django_form
+
+    @staticmethod
+    def cast_integer_or_default(value, default=None):
+        try:
+            returned_value = int(value)
+        except (ValueError, TypeError):
+            returned_value = default
+        return returned_value
+
+    @staticmethod
+    def cast_float_or_default(value, default=None):
+        try:
+            returned_value = float(value)
+        except (ValueError, TypeError):
+            returned_value = default
+        return returned_value
 
     def _get_django_fields_from_survey(self):
         fields = {}
@@ -307,8 +341,8 @@ class FormGenerator:
                         initial=0 if not survey_field['default'] else int(survey_field['default']),
                         required=survey_field['required'],
                         help_text=survey_field['question_description'],
-                        min_value=survey_field['min'],
-                        max_value=survey_field['max'],
+                        min_value=self.cast_integer_or_default(survey_field['min']),
+                        max_value=self.cast_integer_or_default(survey_field['max']),
                     )
                 else:
                     fields[survey_field['variable']] = SquestIntegerField(
@@ -317,8 +351,8 @@ class FormGenerator:
                         initial=None if not survey_field['default'] else int(survey_field['default']),
                         required=survey_field['required'],
                         help_text=survey_field['question_description'],
-                        min_value=None if not survey_field['min'] else int(survey_field['min']),
-                        max_value=None if not survey_field['max'] else int(survey_field['max']),
+                        min_value=self.cast_integer_or_default(survey_field['min']),
+                        max_value=self.cast_integer_or_default(survey_field['max']),
                         widget=NumberInput(attrs={'class': 'form-control'}),
                         quota=survey_field['quota']
                     )
@@ -330,8 +364,8 @@ class FormGenerator:
                         initial=0 if not survey_field['default'] else float(survey_field['default']),
                         required=survey_field['required'],
                         help_text=survey_field['question_description'],
-                        min_value=survey_field['min'],
-                        max_value=survey_field['max'],
+                        min_value=self.cast_float_or_default(survey_field['min']),
+                        max_value=self.cast_integer_or_default(survey_field['max']),
                     )
                 else:
                     fields[survey_field['variable']] = SquestFloatField(
@@ -340,8 +374,8 @@ class FormGenerator:
                         initial=None if not survey_field['default'] else float(survey_field['default']),
                         required=survey_field['required'],
                         help_text=survey_field['question_description'],
-                        min_value=None if not survey_field['min'] else float(survey_field['min']),
-                        max_value=None if not survey_field['max'] else float(survey_field['max']),
+                        min_value=self.cast_float_or_default(survey_field['min']),
+                        max_value=self.cast_float_or_default(survey_field['max']),
                         widget=NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
                         quota=survey_field['quota']
                     )

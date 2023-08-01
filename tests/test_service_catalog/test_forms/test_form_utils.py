@@ -218,14 +218,14 @@ class TestFormUtils(BaseTest):
         target_field.save()
         parameters = {
             'service': self.service_test,
-            'operation': self.create_operation_test
+            'operation': self.create_operation_test,
+            "quota_scope": self.test_quota_scope,
+            "user": self.standard_user,
         }
 
         # not valid because not even number
         data = {
-            "user": self.standard_user,
             "name": "instance test",
-            "quota_scope": self.test_quota_scope,
             "text_variable": "3"
         }
         form = ServiceRequestForm(data, **parameters)
