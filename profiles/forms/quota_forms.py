@@ -15,28 +15,35 @@ class QuotaForm(SquestForm):
 
         if class_name == "Organization":
             # create a field for each attribute definition
-            for attribute_definition in AttributeDefinition.objects.all():
+            all_attributes = AttributeDefinition.objects.all()
+            if not all_attributes.exists():
+                self.help_text = f"To set quotas in an organization, you need first to create attributes"
+            for attribute_definition in all_attributes:
                 # get the value if exist already
-                default_value = Quota.objects.filter(scope=self.scope, attribute_definition=attribute_definition).first()
-                default_value = default_value.limit if default_value is not None else None
+                current_quota = Quota.objects.filter(scope=self.scope, attribute_definition=attribute_definition).first()
+                default_value = current_quota.limit if current_quota is not None else None
                 self.fields[f"attribute_definition_{attribute_definition.id}"] = \
                     IntegerField(label=attribute_definition.name,
+                                 min_value=0,
                                  required=False,
                                  initial=default_value,
                                  widget=forms.NumberInput(attrs={'step': '1',
                                                                  'class': 'form-control'}))
         elif class_name == "Team":
             target_team = self.scope.get_object()
-            for quota in Quota.objects.filter(scope_id=target_team.org.id):
+            all_quotas = Quota.objects.filter(scope_id=target_team.org.id)
+            if not all_quotas.exists():
+                self.help_text = f"To set quotas in a Team, you need first to set quotas on the parent Organization"
+            for quota in all_quotas:
                 # get the value if exist already for the team
-                default_value = Quota.objects.filter(scope=self.scope,
+                current_quota = Quota.objects.filter(scope=self.scope,
                                                      attribute_definition=quota.attribute_definition).first()
-                default_value = default_value.limit if default_value is not None else None
+                default_value = current_quota.limit if current_quota is not None else None
                 self.fields[f"attribute_definition_{quota.attribute_definition.id}"] = \
                     IntegerField(label=quota.attribute_definition.name,
                                  required=False,
                                  initial=default_value,
-                                 max_value=quota.available,  # TODO: add the current team consumption to available
+                                 max_value=quota.available,
                                  help_text=f"Available a organization level: {quota.available}",
                                  widget=forms.NumberInput(attrs={'step': '1',
                                                                  'class': 'form-control'}))
