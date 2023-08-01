@@ -24,7 +24,7 @@ class TransformerListView(SquestListView):
     def get_generic_url(self, action):
         url = super().get_generic_url(action)
         if action == 'create':
-            url = reverse_lazy('resource_tracker_v2:resourcegroup_attribute_create',
+            url = reverse_lazy('resource_tracker_v2:transformer_create',
                                kwargs={'resource_group_id': self.kwargs.get('resource_group_id')})
         return url
 
@@ -32,7 +32,7 @@ class TransformerListView(SquestListView):
         resource_group = ResourceGroup.objects.get(id=self.kwargs.get('resource_group_id'))
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
+            {'text': 'Resource group', 'url': resource_group.get_absolute_url()},
             {'text': resource_group, 'url': ""},
         ]
         return context
@@ -55,10 +55,10 @@ class TransformerCreateView(SquestCreateView):
         context = super().get_context_data(**kwargs)
         context["resource_group"] = resource_group
         context['breadcrumbs'] = [
-            {'text': 'Resource group', 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': resource_group, 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
+            {'text': "Resource group", 'url': resource_group.get_absolute_url()},
+            {'text': resource_group, 'url': reverse('resource_tracker_v2:transformer_list',
                                                     kwargs={"resource_group_id": resource_group.id})},
-            {'text': "Add attribute", 'url': ""},
+            {'text': 'Add attribute', 'url': ""}
         ]
         return context
 
@@ -89,18 +89,15 @@ class TransformerEditView(SquestUpdateView):
         context["resource_group"] = resource_group
         context["attribute"] = attribute
         context['breadcrumbs'] = [
-            {'text': "Resource group", 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': f"{resource_group}", 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
-                                                              kwargs={
-                                                                  'resource_group_id': resource_group.id,
-                                                              })},
-            {'text': f"{attribute}", 'url': ""}
+            {'text': "Resource group", 'url': resource_group.get_absolute_url()},
+            {'text': resource_group, 'url': self.get_object().get_absolute_url()},
+            {'text': attribute, 'url': ""}
         ]
         return context
 
 
 class TransformerDeleteView(SquestDeleteView):
-    model = AttributeDefinition
+    model = Transformer
     template_name = 'resource_tracking_v2/resource_group/resource-group-attribute-delete.html'
 
     def get_object(self, queryset=None):
@@ -112,7 +109,7 @@ class TransformerDeleteView(SquestDeleteView):
 
     def get_success_url(self):
         resource_group_id = self.kwargs.get('resource_group_id')
-        return reverse("resource_tracker_v2:resourcegroup_attribute_list",
+        return reverse("resource_tracker_v2:transformer_list",
                        kwargs={"resource_group_id": resource_group_id})
 
     def get_context_data(self, **kwargs):
@@ -128,25 +125,22 @@ class TransformerDeleteView(SquestDeleteView):
         context["attribute"] = attribute
         context["impacted_resources"] = impacted_resources
         context['breadcrumbs'] = [
-            {'text': "Resource group", 'url': reverse('resource_tracker_v2:resourcegroup_list')},
-            {'text': f"{resource_group}", 'url': reverse('resource_tracker_v2:resourcegroup_attribute_list',
-                                                              kwargs={
-                                                                  'resource_group_id': resource_group.id,
-                                                              })},
-            {'text': f"{attribute}", 'url': ""}
+            {'text': "Resource group", 'url': resource_group.get_absolute_url()},
+            {'text': resource_group, 'url': self.get_object().get_absolute_url()},
+            {'text': attribute, 'url': ""}
         ]
         return context
 
 
 def ajax_load_attribute(request):
-    if not request.user.has_perm('profiles.list_transformer'):
+    if not request.user.has_perm('resource_tracker_v2.list_transformer'):
         raise PermissionDenied
     current_resource_group_id = request.GET.get('current_resource_group_id')
     target_resource_group_id = request.GET.get('target_resource_group_id')
     current_resource_group = ResourceGroup.objects.get(id=current_resource_group_id)
     target_resource_group = ResourceGroup.objects.get(id=target_resource_group_id)
-    all_available_attribute_to_target_rg = Transformer.objects\
-        .filter(resource_group=target_resource_group)\
+    all_available_attribute_to_target_rg = Transformer.objects \
+        .filter(resource_group=target_resource_group) \
         .exclude(resource_group=current_resource_group, consume_from_resource_group=target_resource_group)
 
     options = [(transformer.attribute_definition.id, transformer.attribute_definition.name) for transformer in

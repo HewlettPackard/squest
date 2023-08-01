@@ -24,7 +24,7 @@ COLORS = {'consumer': '#28a745', 'provider': '#dc3545', 'resource_pool': '#ff851
 
 @login_required
 def resource_tracker_graph(request):
-    if not request.user.has_perm('profiles.list_resource_group'):
+    if not request.user.has_perm('resource_tracker_v2.list_resourcegroup'):
         raise PermissionDenied
     redirect_url = tag_session_manager(request)
     if redirect_url:
@@ -73,7 +73,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
         'display': resource_group.name,
         'tooltip': f"Go to {resource_group}",
         'href': reverse('resource_tracker_v2:resourcegroup_edit',
-                        kwargs={'resource_group_id': resource_group.id})}
+                        kwargs={'pk': resource_group.id})}
     context['count'] = {
                            'display': resource_group.resources.count(),
                            'tooltip': f"Go to {resource_group}'s resources",
@@ -86,7 +86,7 @@ def create_resource_group_svg(resource_group: ResourceGroup):
             'name': {
                 'display': transformer.attribute_definition.name,
                 'tooltip': f"Edit transformer {transformer.attribute_definition.name}",
-                'href': reverse('resource_tracker_v2:resourcegroup_attribute_edit',
+                'href': reverse('resource_tracker_v2:transformer_edit',
                                 kwargs={'resource_group_id': resource_group.id,
                                         'attribute_id': transformer.attribute_definition.id})},
             'produced': {

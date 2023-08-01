@@ -29,7 +29,7 @@ class TestAttributeDefinitionViews(BaseTestResourceTrackerV2):
 
     def test_attribute_edit(self):
         args = {
-            "attribute_definition_id": self.core_attribute.id,
+            "pk": self.core_attribute.id,
         }
         url = reverse('resource_tracker_v2:attributedefinition_edit', kwargs=args)
 
@@ -46,7 +46,7 @@ class TestAttributeDefinitionViews(BaseTestResourceTrackerV2):
 
     def test_attribute_delete(self):
         args = {
-            "attribute_definition_id": self.core_attribute.id,
+            "pk": self.core_attribute.id,
         }
         url = reverse('resource_tracker_v2:attributedefinition_delete', kwargs=args)
 

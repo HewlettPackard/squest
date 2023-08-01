@@ -51,7 +51,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
 
     def test_resource_group_edit(self):
         args = {
-            "resource_group_id": self.cluster.id,
+            "pk": self.cluster.id,
         }
         url = reverse('resource_tracker_v2:resourcegroup_edit', kwargs=args)
 
@@ -69,7 +69,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
     def test_resource_group_delete(self):
         id_to_delete = copy(self.cluster.id)
         args = {
-            'resource_group_id': self.cluster.id,
+            'pk': self.cluster.id,
         }
         url = reverse('resource_tracker_v2:resourcegroup_delete', kwargs=args)
         response = self.client.get(url)

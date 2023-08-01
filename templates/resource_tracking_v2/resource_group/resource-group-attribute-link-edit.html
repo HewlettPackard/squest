@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form id="ResourceGroupLinkForm" class="form-horizontal" action="{% url 'resource_tracker_v2:resourcegroup_attribute_edit' resource_group.id attribute.id %}" method="post" current-resource-group-id="{{ resource_group.id }}" data-attribute-url="{% url 'resource_tracker_v2:ajax_load_attribute' %}">{% csrf_token %}
+                        <form id="ResourceGroupLinkForm" class="form-horizontal" action="{% url 'resource_tracker_v2:transformer_edit' resource_group.id attribute.id %}" method="post" current-resource-group-id="{{ resource_group.id }}" data-attribute-url="{% url 'resource_tracker_v2:ajax_load_attribute' %}">{% csrf_token %}
 
                             {% for field in form %}
                                 <div class="form-group {% if field.errors %}has-error{% endif %}">
