@@ -92,7 +92,7 @@
                                     <b>Resources</b>
                                     {% for resource in object.resources.all %}
                                         <a class="float-right"
-                                           href="{% url 'resource_tracker_v2:resourcegroup_resource_edit' resource.resource_group.id resource.id %}">
+                                           href="{% url 'resource_tracker_v2:resource_edit' resource.resource_group.id resource.id %}">
                                             {{ resource.name }}
                                         </a> <br>
                                     {% endfor %}

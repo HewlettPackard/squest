@@ -57,7 +57,6 @@ class ResourceEditView(SquestUpdateView):
     model = Resource
     form_class = ResourceForm
     template_name = 'generics/generic_form.html'
-    pk_url_kwarg = "resource_id"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -80,7 +79,6 @@ class ResourceEditView(SquestUpdateView):
 
 class ResourceDeleteView(SquestDeleteView):
     model = Resource
-    pk_url_kwarg = "resource_id"
 
     def get_generic_url_kwargs(self):
         return {"resource_group_id": self.kwargs.get('resource_group_id')}
@@ -88,7 +86,6 @@ class ResourceDeleteView(SquestDeleteView):
 
 class ResourceMoveView(SquestUpdateView):
     model = Resource
-    pk_url_kwarg = "resource_id"
     form_class = ResourceMoveForm
 
     def get_context_data(self, **kwargs):
@@ -107,7 +104,7 @@ class ResourceMoveView(SquestUpdateView):
 def resource_group_resource_bulk_delete(request, resource_group_id):
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_resources = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource', unique=False).filter(pk__in=pks)
+        selected_resources = Resource.get_queryset_for_user(request.user, 'resource_tracker_v2.delete_resource', unique=False).filter(pk__in=pks)
         if selected_resources.count() != len(pks):
             raise PermissionDenied
         selected_resources.delete()
@@ -123,14 +120,14 @@ def resource_group_resource_bulk_delete_confirm(request, resource_group_id):
             {'text': "Delete multiple", 'url': ""}
         ],
         'confirm_text': mark_safe(f"Confirm deletion of the following resources?"),
-        'action_url': reverse('resource_tracker_v2:resourcegroup_resource_bulk_delete', kwargs={
+        'action_url': reverse('resource_tracker_v2:resource_bulk_delete', kwargs={
             "resource_group_id": resource_group_id
         }),
         'button_text': 'Delete',
     }
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        context['object_list'] = Resource.get_queryset_for_user(request.user, 'profiles.delete_resource').filter(pk__in=pks)
+        context['object_list'] = Resource.get_queryset_for_user(request.user, 'resource_tracker_v2.delete_resource').filter(pk__in=pks)
         if context['object_list'].count() != len(pks):
             raise PermissionDenied
         if context['object_list']:
