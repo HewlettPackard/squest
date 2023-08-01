@@ -39,7 +39,7 @@ class InstanceListView(SquestListView):
 
         if self.request.user.has_perm("service_catalog.delete_instance"):
             context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
-            context['action_url'] = reverse('service_catalog:instance_bulk_delete_confirm')
+            context['action_url'] = reverse('service_catalog:instance_bulk_delete')
         return context
 
 
@@ -247,7 +247,8 @@ def instance_support_details(request, instance_id, support_id):
 @login_required
 def support_message_edit(request, instance_id, support_id, message_id):
     support_message = get_object_or_404(SupportMessage, id=message_id)
-    if request.user != support_message.sender or not request.user.has_perm('service_catalog.change_supportmessage', support_message):
+    if request.user != support_message.sender or not request.user.has_perm('service_catalog.change_supportmessage',
+                                                                           support_message):
         raise PermissionDenied
     if request.method == "POST":
         form = SupportMessageForm(request.POST or None, request.FILES or None, sender=support_message.sender,
@@ -276,34 +277,33 @@ def support_message_edit(request, instance_id, support_id, message_id):
 
 
 @login_required
-def instance_bulk_delete_confirm(request):
-    context = {
-        'confirm_text': mark_safe(f"Confirm deletion of the following instances?"),
-        'action_url': reverse('service_catalog:instance_bulk_delete'),
-        'button_text': 'Delete',
-        'breadcrumbs': [
-            {'text': 'Instance', 'url': reverse('service_catalog:instance_list')},
-            {'text': "Delete multiple", 'url': ""}
-        ]}
-    if request.method == "POST":
-        pks = request.POST.getlist("selection")
-        context['object_list'] = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance').filter(
-            pk__in=pks)
-        if context['object_list'].count() != len(pks):
-            raise PermissionDenied
-        if context['object_list']:
-            return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
-    messages.warning(request, 'No instances were selected for deletion.')
-    return redirect('service_catalog:instance_list')
-
-
-@login_required
 def instance_bulk_delete(request):
+    context = dict()
+    context['confirm_text'] = mark_safe(f"Confirm deletion of the following instances?")
+    context['action_url'] = reverse('service_catalog:instance_bulk_delete')
+    context['button_text'] = 'Delete'
+    context['breadcrumbs'] = [
+        {'text': 'Instance', 'url': reverse('service_catalog:instance_list')},
+        {'text': "Delete multiple", 'url': ""}
+    ]
+
+    if request.method == "GET":
+        pks = request.GET.getlist("selection")
     if request.method == "POST":
         pks = request.POST.getlist("selection")
-        selected_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance',
+
+    context["object_list"] = Instance.get_queryset_for_user(request.user, 'service_catalog.delete_instance',
                                                             unique=False).filter(pk__in=pks)
-        if selected_instances.count() != len(pks):
-            raise PermissionDenied
-        selected_instances.delete()
-    return redirect("service_catalog:instance_list")
+    if context['object_list'].count() != len(pks):
+        raise PermissionDenied
+
+    if not context['object_list']:
+        messages.warning(request, 'Empty selection.')
+        return redirect("service_catalog:instance_list")
+
+    if request.method == "GET":
+        return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
+
+    elif request.method == "POST":
+        context['object_list'].delete()
+        return redirect("service_catalog:instance_list")
