@@ -22,6 +22,7 @@ class QuotaListView(SquestListView):
         context['html_button_path'] = ""
         return context
 
+
 class QuotaEditView(SquestFormView):
     model = Scope
     form_class = QuotaForm
@@ -81,3 +82,35 @@ class QuotaDetailsView(SquestDetailView):
         instances_consumption = resources.all().aggregate(consumed=Sum("value")).get("consumed", 0)
         context['instances_consumption'] = instances_consumption
         return context
+
+
+class QuotaDeleteView(SquestDeleteView):
+    model = Quota
+    # form_class = QuotaForm
+    # pk_url_kwarg = "scope_id"
+
+    # def get_permission_required(self):
+    #     return f"profiles.change_quota"
+    #
+    # def get_success_url(self):
+    #     return self.scope.get_absolute_url() + "#quotas"
+    #
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     scope_id = self.kwargs['scope_id']
+    #     self.scope = get_object_or_404(Scope, pk=scope_id)
+    #     kwargs.update({'scope': self.scope})
+    #     return kwargs
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     class_name = self.scope.get_object().__class__.__name__
+    #     breadcrumbs = [
+    #         {'text': class_name, 'url': reverse_lazy(f"profiles:{class_name.lower()}_list")},
+    #         {'text': f"{self.scope.name}",
+    #          'url': self.scope.get_absolute_url() + "#quotas"},
+    #         {'text': f'Quotas', 'url': ""},
+    #     ]
+    #     context['breadcrumbs'] = breadcrumbs
+    #     context['action'] = "edit"
+    #     return context
