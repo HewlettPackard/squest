@@ -4,6 +4,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from profiles.models import Quota
 from service_catalog.models import Request, Instance
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
@@ -146,3 +147,37 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
         }
         response = self.client.post(url, data=self.data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_cannot_create_when_quota_limit_reached(self):
+        url = reverse('api_service_request_create', kwargs=self.kwargs)
+        # set a quota on cpu_attribute and link it to integer_var field
+        Quota.objects.create(scope=self.test_quota_scope, limit=10, attribute_definition=self.cpu_attribute)
+        integer_var_field = self.create_operation_test.tower_survey_fields.get(name="integer_var")
+        integer_var_field.attribute_definition = self.cpu_attribute
+        integer_var_field.save()
+
+        # change the survey to ask only for the integer field
+        enabled_survey_fields = {
+            'text_variable': False,
+            'multiplechoice_variable': False,
+            'multiselect_var': False,
+            'textarea_var': False,
+            'password_var': False,
+            'float_var': False,
+            'integer_var': True
+        }
+        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+
+        self.client.force_login(user=self.standard_user)
+
+        self.data = {
+            'squest_instance_name': 'instance test',
+            'quota_scope': self.test_quota_scope.id,
+            'fill_in_survey': {
+                "integer_var": "12"
+            },
+        }
+        response = self.client.post(url, data=self.data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        loaded_content = json.loads(response.content)
+        self.assertTrue('Quota limit reached' in loaded_content["fill_in_survey"][0])
