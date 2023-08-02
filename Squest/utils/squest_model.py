@@ -73,5 +73,5 @@ class SquestModel(SquestRBAC, SquestChangelog):
         return ContentType.objects.get_by_natural_key(app_label=self._meta.app_label, model=self._meta.model_name)
 
     def get_absolute_url(self):
-        content_type = ContentType.objects.get_for_model(self.__class__)
+        content_type = self.get_content_type()
         return reverse(f"{content_type.app_label}:{content_type.model}_details", args=[self.pk])
