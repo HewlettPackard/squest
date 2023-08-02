@@ -26,18 +26,17 @@ class RequestStateMachine(ViewSet):
         Accept the request and validate/complete the survey : change the state of the request to 'ACCEPTED'.
         All fields of the survey is required, you can check the state the survey by performing a GET on this url.
         """
-        target_request = get_object_or_404(Request, id=pk)
-        if not request.user.has_perm('service_catalog.accept_request', target_request):
+        squest_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.accept_request', squest_request):
             raise PermissionDenied
-        if not can_proceed(target_request.accept):
+        if not can_proceed(squest_request.accept):
             raise PermissionDenied
-        serializer = AcceptRequestSerializer(data=request.data, target_request=target_request, user=request.user,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=request.data, squest_request=squest_request, user=request.user)
         if serializer.is_valid():
-            target_request = serializer.save()
-            target_request.accept(request.user)
-            send_mail_request_update(target_request, user_applied_state=request.user)
-            return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
+            squest_request = serializer.save()
+            squest_request.accept(request.user)
+            send_mail_request_update(squest_request, user_applied_state=request.user)
+            return Response(AdminRequestSerializer(squest_request).data, status=status.HTTP_200_OK)
         return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(responses={200: 'Survey in JSON'})
@@ -46,12 +45,12 @@ class RequestStateMachine(ViewSet):
         """
         Get the survey prefilled by user/admin.
         """
-        target_request = get_object_or_404(Request, id=pk)
-        if not request.user.has_perm('service_catalog.accept_request', target_request):
+        squest_request = get_object_or_404(Request, id=pk)
+        if not request.user.has_perm('service_catalog.accept_request', squest_request):
             raise PermissionDenied
-        if not can_proceed(target_request.accept):
+        if not can_proceed(squest_request.accept):
             raise PermissionDenied
-        serializer = AcceptRequestSerializer(target_request.full_survey, target_request=target_request, user=request.user, read_only_form=True)
+        serializer = AcceptRequestSerializer(squest_request=squest_request)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
