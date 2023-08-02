@@ -68,8 +68,6 @@ class FormGenerator:
                 self.quota_scope = self.squest_request.instance.quota_scope
             elif self.squest_instance is not None:
                 self.quota_scope = self.squest_instance.quota_scope
-            else:
-                raise ValidationError("No quota scope provided")
         if (self.operation and not self.squest_request and not self.squest_instance) or (self.operation and self.squest_instance):
             self.is_initial_form = True
         if self.operation is None:
@@ -77,6 +75,9 @@ class FormGenerator:
         self.survey_as_dict = copy.copy(self.operation.job_template.survey)
 
     def generate_form(self):
+        if not self.operation.job_template.has_a_survey():
+            # empty survey, no fields to generate
+            return {}
         if self.is_initial_form:
             # get all field that are not disabled by the admin
             self._get_customer_field_only()
@@ -85,7 +86,8 @@ class FormGenerator:
 
         self._apply_jinja_template_to_survey()
         self._apply_user_validator_to_survey()
-        self._apply_quota_to_survey()
+        if self.quota_scope is not None:
+            self._apply_quota_to_survey()
 
         django_form = self._get_django_fields_from_survey()
 
@@ -105,7 +107,7 @@ class FormGenerator:
         :rtype dict
         """
         # copy the dict from the job template survey
-        new_survey = copy.copy(self.operation.job_template.tower_job_template_data)
+        new_survey = copy.copy(self.operation.job_template.survey)
         # cleanup the list
         new_survey["spec"] = list()
         # loop the original survey
@@ -277,6 +279,7 @@ class FormGenerator:
                         help_text=survey_field['question_description'],
                         min_length=survey_field['min'],
                         max_length=survey_field['max'],
+                        initial=survey_field['default'],
                     )
                 else:
                     fields[survey_field['variable']] = SquestCharField(
@@ -287,7 +290,8 @@ class FormGenerator:
                         min_length=survey_field['min'],
                         max_length=survey_field['max'],
                         widget=PasswordInput(render_value=True, attrs={'class': 'form-control'}),
-                        quota=survey_field['quota']
+                        quota=survey_field['quota'],
+                        initial=survey_field['default']
                     )
 
             elif survey_field["type"] == "multiplechoice":
@@ -365,7 +369,7 @@ class FormGenerator:
                         required=survey_field['required'],
                         help_text=survey_field['question_description'],
                         min_value=self.cast_float_or_default(survey_field['min']),
-                        max_value=self.cast_integer_or_default(survey_field['max']),
+                        max_value=self.cast_float_or_default(survey_field['max']),
                     )
                 else:
                     fields[survey_field['variable']] = SquestFloatField(
@@ -384,7 +388,10 @@ class FormGenerator:
                 list_validator_def = list()
                 for validator_file in survey_field["validators"]:
                     # load dynamically the user provided validator
-                    loaded_class_plugin = PluginController.get_ui_field_validator_def(validator_file)
+                    if self.is_api_form:
+                        loaded_class_plugin = PluginController.get_api_field_validator_def(validator_file)
+                    else:
+                        loaded_class_plugin = PluginController.get_ui_field_validator_def(validator_file)
                     if loaded_class_plugin is not None:
                         list_validator_def.append(loaded_class_plugin)
                         logger.info(f"[Form utils] User validator plugin loaded: {validator_file}")

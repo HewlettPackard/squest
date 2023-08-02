@@ -1,32 +1,29 @@
-from service_catalog.api.serializers.dynamic_survey_serializer import DynamicSurveySerializer
-from service_catalog.forms.form_utils import FormUtils
+from rest_framework.serializers import Serializer
+
+from service_catalog.forms import FormGenerator
 
 
-class AcceptRequestSerializer(DynamicSurveySerializer):
+class AcceptRequestSerializer(Serializer):
+
     def __init__(self, *args, **kwargs):
-        self.target_request = kwargs.pop('target_request')
-        self.user = kwargs.pop('user')
-        self.read_only_form = kwargs.get('read_only_form', False)
-        kwargs['fill_in_survey'] = FormUtils.apply_user_validator_to_survey(
-            job_template_survey=self.target_request.operation.job_template.survey,
-            operation_survey= self.target_request.operation.tower_survey_fields)
+        self.user = kwargs.pop('user', None)
+        self.squest_request = kwargs.pop('squest_request', None)
         super(AcceptRequestSerializer, self).__init__(*args, **kwargs)
-        if self.read_only_form:
-            self._set_initial_and_default(self.target_request.fill_in_survey)
-            self._set_initial_and_default(self.target_request.admin_fill_in_survey)
+        form_generator = FormGenerator(is_api_form=True,
+                                       squest_request=self.squest_request)
+        self.fields.update(form_generator.generate_form())
 
     def save(self, **kwargs):
-        if not self.read_only_form:
-            user_provided_survey_fields = dict()
-            for field_key, value in self.validated_data.items():
-                # tower doesnt allow empty value for choices fields
-                if isinstance(value, set):
-                    user_provided_survey_fields[field_key] = list(value)
-                elif value != '':
-                    user_provided_survey_fields[field_key] = value
-            self.target_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
-            self.target_request.save()
-            # reset the instance state if it was failed (in case of resetting the state)
-            self.target_request.instance.reset_to_last_stable_state()
-            self.target_request.instance.save()
-            return self.target_request
+        user_provided_survey_fields = dict()
+        for field_key, value in self.validated_data.items():
+            # tower doesnt allow empty value for choices fields
+            if isinstance(value, set):
+                user_provided_survey_fields[field_key] = list(value)
+            elif value != '':
+                user_provided_survey_fields[field_key] = value
+        self.squest_request.update_fill_in_surveys_accept_request(user_provided_survey_fields)
+        self.squest_request.save()
+        # reset the instance state if it was failed (in case of resetting the state)
+        self.squest_request.instance.reset_to_last_stable_state()
+        self.squest_request.instance.save()
+        return self.squest_request
