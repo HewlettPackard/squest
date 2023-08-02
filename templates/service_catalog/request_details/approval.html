@@ -35,16 +35,24 @@
                     <div class="timeline-body">
                         {% if step.state == "APPROVED" %}
                             {% has_perm request.user step.approval_step.permission.get_permission_str step as can_view_step %}
-                            {% if can_view_step  %}
                                 <table class="row">
-                                    {% for variable_name, value in step.fill_in_survey.items %}
-                                        <tr>
-                                            <td class="col-sm-2"><b>{{ variable_name }}</b></td>
-                                            <td class="col-sm-10">{{ value }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                    {% if can_view_step %}
+                                        {% for variable_name, value in step.fill_in_survey.items %}
+                                            <tr>
+                                                <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                                <td class="col-sm-10">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% get_full_survey_user object step as user_survey %}
+                                        {% for variable_name, value in user_survey.items %}
+                                            <tr>
+                                                <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                                <td class="col-sm-10">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
                                 </table>
-                            {% endif %}
                             <blockquote class="quote-success">
                                 <i class="fas fa-check text-success"></i> Approved by
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
@@ -102,14 +110,22 @@
                 <div class="timeline-body">
                     {% if object.state == "ACCEPTED" %}
                         <table class="row">
-                            {% for variable_name, value in object.admin_fill_in_survey.items %}
-                                <tr>
-
-
-                                    <td class="col-sm-2">{{ variable_name }}</td>
-                                    <td class="col-sm-10">{{ value }}</td>
-                                </tr>
-                            {% endfor %}
+                            {% has_perm request.user "service_catalog.view_admin_survey" object as can_view_adminsurvey %}
+                            {% if can_view_adminsurvey %}
+                                {% for variable_name, value in object.full_survey.items %}
+                                    <tr>
+                                        <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                        <td class="col-sm-10">{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for variable_name, value in object.full_survey_user.items %}
+                                    <tr>
+                                        <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                        <td class="col-sm-10">{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
                         </table>
                         <blockquote class="quote-success">
                             <i class="fas fa-check text-success"></i> Accepted by
