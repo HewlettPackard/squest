@@ -1,5 +1,4 @@
 from django import forms
-from django.shortcuts import get_object_or_404
 
 from Squest.utils.squest_form import SquestForm
 from Squest.utils.squest_model_form import SquestModelForm

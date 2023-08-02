@@ -21,30 +21,6 @@ class TestFormUtils(BaseTest):
         }
         self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
 
-    def test_get_available_fields(self):
-        expected_result = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-
-        self.assertEqual(expected_result,
-                         FormUtils.get_available_fields(job_template_survey=self.job_template_test.survey,
-                                                        operation_survey=self.create_operation_test.tower_survey_fields))
-
     def test_template_field_no_default_no_spec(self):
         default_template_config = ""
         spec_config = ""
@@ -162,55 +138,6 @@ class TestFormUtils(BaseTest):
         self.assertEqual(expected_result,
                          FormUtils.template_field(default_template_config, spec_config))
 
-    def test_apply_user_validator_to_survey(self):
-        self.job_template_test.survey = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable"
-                }
-            ]
-        }
-        self.job_template_test.save()
-        # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.validators = "even_number,superior_to_10"
-        target_field.save()
-        expected_result = {
-            "name": "test-survey",
-            "description": "test-survey-description",
-            "spec": [
-                {
-                    "choices": "",
-                    "default": "",
-                    "max": 1024,
-                    "min": 0,
-                    "new_question": True,
-                    "question_description": "",
-                    "question_name": "String variable",
-                    "quota": None,
-                    "required": True,
-                    "type": "text",
-                    "variable": "text_variable",
-                    "validators": ["even_number", "superior_to_10"]
-                }
-            ],
-        }
-        self.maxDiff = None
-        self.assertEqual(expected_result,
-                         FormUtils.apply_user_validator_to_survey(job_template_survey=self.job_template_test.survey,
-                                                                  operation_survey=self.create_operation_test.tower_survey_fields))
-
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
     def test_service_request_form_with_validators(self):
         target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
@@ -225,7 +152,6 @@ class TestFormUtils(BaseTest):
 
         # not valid because not even number
         data = {
-            "name": "instance test",
             "text_variable": "3"
         }
         form = ServiceRequestForm(data, **parameters)
@@ -233,9 +159,6 @@ class TestFormUtils(BaseTest):
 
         # not valid because not superior to 10
         data = {
-            "user": self.standard_user,
-            "name": "instance test",
-            "quota_scope": self.test_quota_scope,
             "text_variable": "9"
         }
         form = ServiceRequestForm(data, **parameters)
@@ -243,9 +166,6 @@ class TestFormUtils(BaseTest):
 
         # valid because superior to 10 and even number
         data = {
-            "user": self.standard_user,
-            "name": "instance test",
-            "quota_scope": self.test_quota_scope,
             "text_variable": "12"
         }
         form = ServiceRequestForm(data, **parameters)

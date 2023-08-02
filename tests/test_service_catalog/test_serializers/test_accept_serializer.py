@@ -23,32 +23,27 @@ class TestAcceptRequestSerializer(BaseTestRequest):
 
     def test_multiplechoice_field_wrong_format(self):
         self.data["multiplechoice_variable"] = 4
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
     def test_multiselect_field_wrong_format(self):
         self.data["multiselect_var"] = 4
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
     def test_password_field_too_short(self):
         self.data["password_var"] = 4
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
     def test_float_field_wrong_format(self):
         self.data["float_var"] = "toto"
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
     def test_integer_field_wrong_format(self):
         self.data["integer_var"] = 4.5
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
@@ -58,16 +53,13 @@ class TestAcceptRequestSerializer(BaseTestRequest):
         target_field.save()
 
         self.data["text_variable"] = "9"
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
         self.data["text_variable"] = "13"
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertFalse(serializer.is_valid())
 
         self.data["text_variable"] = "12"
-        serializer = AcceptRequestSerializer(data=self.data, target_request=self.test_request, user=self.superuser,
-                                             read_only_form=False)
+        serializer = AcceptRequestSerializer(data=self.data, squest_request=self.test_request, user=self.superuser)
         self.assertTrue(serializer.is_valid())
