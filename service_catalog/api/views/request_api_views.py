@@ -21,26 +21,19 @@ class RequestList(SquestListAPIView):
         return Request.get_queryset_for_user(self.request.user, 'service_catalog.view_request')
 
     def get_serializer_class(self):
-        # TODO: remove is_superuser
-        if self.request.user.is_superuser:
+        if self.request.user.has_perm("service_catalog.view_admin_survey"):
             return AdminRequestSerializer
-        return RequestSerializer
-
+        else:
+            return RequestSerializer
 
 class RequestDetails(SquestRetrieveUpdateDestroyAPIView):
     queryset = Request.objects.all()
 
     def get_serializer_class(self):
-        # TODO: remove is_superuser
-        if self.request.user.is_superuser:
+        if self.request.user.has_perm("service_catalog.view_admin_survey",self.get_object()):
             return AdminRequestSerializer
-        return RequestSerializer
-
-    def delete(self, request, *args, **kwargs):
-        if self.get_object().state != RequestState.CANCELED and not request.user.has_perm('service_catalog.cancel_request', self.get_object()):
-            return Response({"Error": "Request state must be 'CANCELED' to delete this request."},
-                            status=status.HTTP_403_FORBIDDEN)
-        return super().delete(request, *args, **kwargs)
+        else:
+            return RequestSerializer
 
 
 class SquestRequestOperationCreate(SquestObjectPermissions):
