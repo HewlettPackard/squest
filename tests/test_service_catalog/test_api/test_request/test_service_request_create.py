@@ -26,12 +26,12 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
             }
         }
         self.expected = ['id', 'instance', 'user', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
-                         'tower_job_id', 'state', 'operation', 'processed_by', 'accepted_by', 'approval_workflow_state']
+                         'tower_job_id', 'state', 'operation', 'processed_by', 'accepted_by', 'approval_workflow_state',
+                         'last_updated', 'created']
         self.expected.sort()
 
     def test_can_create(self):
         self._check_create()
-
 
     def test_cannot_create_when_service_is_disabled(self):
         self.service_test.enabled = False
@@ -45,7 +45,6 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
     def test_cannot_create_on_non_existing_service(self):
         self.kwargs['pk'] = 9999999
         self._check_create(status.HTTP_404_NOT_FOUND)
-
 
     def test_cannot_create_with_non_existing_quota_scope(self):
         self.service_test.quota_scope_is_selectable = True

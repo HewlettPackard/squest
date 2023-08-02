@@ -13,6 +13,8 @@ class InstanceTable(SquestTable):
                                           verbose_name="Opened support")
     name = LinkColumn("service_catalog:instance_details", args=[A("id")], verbose_name="Name")
     quota_scope = LinkColumn()
+
+    last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
     def before_render(self, request):
         if not request.user.has_perm("service_catalog.delete_instance"):
             self.columns.hide('selection')
