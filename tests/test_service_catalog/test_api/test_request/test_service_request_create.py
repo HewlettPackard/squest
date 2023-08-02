@@ -4,7 +4,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from service_catalog.models import Request, Instance, OperationType
+from service_catalog.models import Request, Instance
 from service_catalog.models.tower_survey_field import TowerSurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
