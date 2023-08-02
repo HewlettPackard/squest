@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Model, Q
+from django.db.models import Model, Q, DateTimeField
 from django.urls import reverse
 
 
@@ -54,7 +54,16 @@ class SquestChangelog(Model):
     class Meta:
         abstract = True
 
-
+    created = DateTimeField(
+        auto_now_add=True,
+        blank=True,
+        null=True
+    )
+    last_updated = DateTimeField(
+        auto_now=True,
+        blank=True,
+        null=True
+    )
 class SquestModel(SquestRBAC, SquestChangelog):
     class Meta:
         abstract = True

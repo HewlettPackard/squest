@@ -9,9 +9,10 @@ class RequestTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     id = Column(linkify=True, verbose_name="Request")
     date_submitted = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
-    instance__quota_scope__name = Column(linkify=True, verbose_name="Scope")
+    instance__quota_scope__name = Column(linkify=True, verbose_name="Quota scope")
     operation = LinkColumn()
     instance = LinkColumn()
+    last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
 
     def before_render(self, request):
         if not request.user.has_perm('service_catalog.delete_request'):
@@ -26,8 +27,8 @@ class RequestTable(SquestTable):
     class Meta:
         model = Request
         attrs = {"id": "request_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "id",  "user__username", "instance__quota_scope__name", "date_submitted",
-                  "instance__service", "operation", "state", "instance")
+        fields = ("selection", "id",  "user__username", "instance__quota_scope__name",
+                  "instance__service", "operation", "state", "instance", "date_submitted", "last_updated")
 
     def render_state(self, record, value):
         from service_catalog.views import map_request_state

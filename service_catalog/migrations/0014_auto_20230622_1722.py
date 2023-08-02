@@ -26,9 +26,18 @@ def billing_group_to_org(apps, schema_editor):
         org.quota_instances.add(*list(billing.instances.all()))
 
 
-def get_default_org():
-    from profiles.models import Organization
-    return Organization.objects.get_or_create(name="Default org")[0].id
+def create_default_org(apps, schema_editor):
+    Organization = apps.get_model('profiles', 'Organization')
+    Organization.objects.create(name="Default org")
+
+
+def assign_default_to_instances(apps, schema_editor):
+    Organization = apps.get_model('profiles', 'Organization')
+    default_org = Organization.objects.get(name="Default org")
+    Instance = apps.get_model('service_catalog', 'Instance')
+    for instance in Instance.objects.filter(quota_scope__isnull=True):
+        instance.quota_scope = default_org
+        instance.save()
 
 
 def remove_default_org_if_unused(apps, schema_editor):
@@ -73,13 +82,15 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(blank=True, related_name='instances', related_query_name='instance',
                                          to='profiles.Scope')
         ),
+        migrations.RunPython(create_default_org),
         migrations.AddField(
             model_name='instance',
             name='quota_scope',
-            field=models.ForeignKey(default=get_default_org,
+            field=models.ForeignKey(null=True,
                                     on_delete=django.db.models.deletion.PROTECT, related_name='quota_instances',
                                     related_query_name='quota_instance', to='profiles.scope'),
         ),
+        migrations.RunPython(assign_default_to_instances),
         migrations.AlterField(
             model_name='instance',
             name='scopes',
@@ -87,6 +98,12 @@ class Migration(migrations.Migration):
                                          related_query_name='scope_instance', to='profiles.Scope'),
         ),
         migrations.RunPython(billing_group_to_org),
+        migrations.AlterField(
+            model_name='instance',
+            name='quota_scope',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='quota_instances',
+                                    related_query_name='quota_instance', to='profiles.scope'),
+        ),
         migrations.AddField(
             model_name='towersurveyfield',
             name='attribute_definition',
