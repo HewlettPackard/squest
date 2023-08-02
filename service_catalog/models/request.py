@@ -75,6 +75,20 @@ class Request(SquestModel):
     def __str__(self):
         return f"#{self.id}"
 
+    def full_survey_user(self, approval_step_state=None):
+
+        if self.approval_workflow_state is not None and approval_step_state is not None:
+            full_survey = dict()
+            for tower_survey_field in approval_step_state.approval_step.editable_fields.all():
+                if tower_survey_field.name in self.fill_in_survey:
+
+                    full_survey.update({tower_survey_field.name: approval_step_state.fill_in_survey[tower_survey_field.name]})
+        else:
+            full_survey = {
+                k: v for k, v in self.full_survey.items() if k in self.fill_in_survey
+            }
+        return full_survey
+
     @property
     def full_survey(self):
         # by default the survey is composed by what the end user provided, overriden by what the admin provided

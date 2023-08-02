@@ -33,7 +33,7 @@ class QuotaForm(SquestForm):
             target_team = self.scope.get_object()
             all_quotas = Quota.objects.filter(scope_id=target_team.org.id)
             if not all_quotas.exists():
-                self.help_text = f"To set quotas in a Team, you need first to set quotas on the parent Organization"
+                self.help_text = f"To set quotas in a team, you need first to set quotas on the parent organization"
             for quota in all_quotas:
                 # get the value if exist already for the team
                 current_quota = Quota.objects.filter(scope=self.scope,

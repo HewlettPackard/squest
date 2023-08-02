@@ -23,3 +23,8 @@ def to_app_name(value):
 @register.simple_tag()
 def has_perm(user, permission, object=None):
     return user.has_perm(permission, object)
+
+
+@register.simple_tag()
+def get_full_survey_user(squest_request, approval_step_state=None):
+    return squest_request.full_survey_user(approval_step_state)
