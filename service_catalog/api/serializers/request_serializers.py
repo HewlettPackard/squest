@@ -63,7 +63,8 @@ class ServiceRequestSerializer(ModelSerializer):
         instance_name = self.validated_data["squest_instance_name"]
         quota_scope = self.validated_data["quota_scope"]
 
-        new_instance = Instance.objects.create(service=self.operation.service, name=instance_name, quota_scope=quota_scope,
+        new_instance = Instance.objects.create(service=self.operation.service, name=instance_name,
+                                               quota_scope=quota_scope,
                                                requester=self.user)
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
         new_request = Request.objects.create(instance=new_instance,

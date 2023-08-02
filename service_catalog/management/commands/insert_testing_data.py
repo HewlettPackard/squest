@@ -47,7 +47,8 @@ class Command(BaseCommand):
             organization.append(Organization.objects.get_or_create(name=billing_group)[0])
 
 
-        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Team member"))
+        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Organization member"))
+        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Instance viewer"))
 
         job_templates = JobTemplate.objects.all()
         services = dict()
