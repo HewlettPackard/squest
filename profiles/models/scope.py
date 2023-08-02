@@ -106,3 +106,6 @@ class Scope(AbstractScope):
             id__in=Organization.get_queryset_for_user(user, perm)
 
         )
+
+    def get_absolute_url(self):
+        return self.get_object().get_absolute_url()
