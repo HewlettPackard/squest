@@ -144,7 +144,6 @@ class TestFormUtils(BaseTest):
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         parameters = {
-            'service': self.service_test,
             'operation': self.create_operation_test,
             "quota_scope": self.test_quota_scope,
             "user": self.standard_user,
