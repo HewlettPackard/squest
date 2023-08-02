@@ -88,13 +88,16 @@ default_roles = {
     "Workflow approver": {
         "description": "Can approve a step (for Approval Workflow only)",
         "permissions": [
-            "service_catalog.approve_request_approvalstep"
+            "service_catalog.approve_request_approvalstep",
+            "service_catalog.view_admin_fill_in_survey"
+
         ]
     },
     "Request approver": {
         "description": "Can approve a request",
         "permissions": [
-            "service_catalog.accept_request"
+            "service_catalog.accept_request",
+            "service_catalog.view_admin_fill_in_survey"
         ]
     },
 
