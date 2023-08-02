@@ -13,4 +13,4 @@ class Permission(SquestRBAC, Permission):
         return f"{self.content_type.app_label}.{self.codename}"
 
     def get_absolute_url(self):
-        return reverse(f"{self._meta.app_label}:{self._meta.model_name}_list")
+        return reverse(f"profiles:permission_list")
