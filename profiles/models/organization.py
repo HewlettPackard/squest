@@ -1,12 +1,7 @@
-from builtins import super
-
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.urls import reverse
 
-from Squest.utils.squest_model import SquestModel
 from profiles.models.scope import Scope
 
 
@@ -46,7 +41,8 @@ class Organization(Scope):
             raise ValidationError("Organization with this name already exist")
 
     def get_absolute_url(self):
-        return reverse(f"profiles:organization_details", args=[self.pk])
+        from profiles.models import AbstractScope
+        return super(AbstractScope, self).get_absolute_url()
 
     @classmethod
     def get_q_filter(cls, user, perm):
