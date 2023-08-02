@@ -27,7 +27,8 @@ class Team(Scope):
     )
 
     def get_absolute_url(self):
-        return reverse(f"profiles:team_details", args=[self.pk])
+        from profiles.models import AbstractScope
+        return super(AbstractScope, self).get_absolute_url()
 
     @classmethod
     def get_q_filter(cls, user, perm):
