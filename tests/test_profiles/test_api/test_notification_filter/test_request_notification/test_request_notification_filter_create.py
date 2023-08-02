@@ -19,7 +19,8 @@ class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()),
-                         {'id', 'name', 'profile', 'services', 'operations', 'request_states', 'when'})
+                         {'id', 'name', 'profile', 'services', 'operations', 'request_states', 'when', 'last_updated',
+                          'created'})
 
     def _create_notification_filter_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
@@ -33,7 +34,8 @@ class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
         self.post_data['profile'] = self.superuser_2.profile.id
         old_count = RequestNotification.objects.filter(profile=self.superuser.profile).count()
         self._create_notification_filter()
-        self.assertFalse(RequestNotification.objects.exclude(id=self.request_notification_filter_test_3.id).filter(profile=self.superuser_2.profile).exists())
+        self.assertFalse(RequestNotification.objects.exclude(id=self.request_notification_filter_test_3.id).filter(
+            profile=self.superuser_2.profile).exists())
         self.assertEqual(old_count + 1, RequestNotification.objects.filter(profile=self.superuser.profile).count())
 
     def test_customer_can_post_notification_filter(self):
