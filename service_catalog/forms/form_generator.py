@@ -186,11 +186,14 @@ class FormGenerator:
         new_survey["spec"] = list()
         # loop the original survey
         for survey_filled in self.survey_as_dict.get("spec", []):
+            # Readable fields
             if survey_filled["variable"] in [tower_field.name for tower_field
                                              in self.squest_request.approval_workflow_state.current_step.approval_step.readable_fields.all()]:
                 new_field = copy.copy(survey_filled)
                 new_field["disabled"] = True
+                new_field["required"] = False
                 new_survey["spec"].append(new_field)
+            # Writable fields
             if survey_filled["variable"] in [tower_field.name for tower_field in self.squest_request.approval_workflow_state.current_step.approval_step.editable_fields.all()]:
                 new_field = copy.copy(survey_filled)
                 new_field["disabled"] = False
