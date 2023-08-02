@@ -3,6 +3,7 @@ from rest_framework.reverse import reverse
 
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.models import Permission
 from service_catalog.models import Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
@@ -82,3 +83,33 @@ class TestApiRequestDetails(BaseTestRequest):
         self.client.logout()
         response = self.client.get(self.get_request_details_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_admin_fill_in_survey_permission_in_request_details_with_superuser(self):
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(self.get_request_details_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('admin_fill_in_survey', response.data)
+
+    def test_admin_fill_in_survey_permission_in_request_details_with_standarduser(self):
+        self.client.force_login(user=self.standard_user)
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="view_request", app_label="service_catalog",
+                                                  model="request")
+        )
+        response = self.client.get(self.get_request_details_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotIn('admin_fill_in_survey', response.data)
+
+
+    def test_admin_fill_in_survey_permission_in_request_details_with_standarduser_with_view_admin_survey_perm(self):
+        # Prepare roles and permissions
+        self.team_member_role.permissions.add(
+            Permission.objects.get_by_natural_key(codename="view_request", app_label="service_catalog",
+                                                  model="request"),
+            Permission.objects.get_by_natural_key(codename="view_admin_survey", app_label="service_catalog",
+                                                  model="request")
+        )
+        self.client.force_login(user=self.standard_user)
+        response = self.client.get(self.get_request_details_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('admin_fill_in_survey', response.data)

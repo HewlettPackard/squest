@@ -151,8 +151,7 @@ class RequestStateMachine(ViewSet):
         send_email_request_canceled(target_request,
                                     user_applied_state=request.user,
                                     request_owner_user=target_request.user)
-        # TODO: remove is_superuser
-        if request.user.is_superuser:
+        if self.request.user.has_perm("service_catalog.view_admin_survey", target_request):
             return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
         return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
 
