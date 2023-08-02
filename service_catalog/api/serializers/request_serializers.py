@@ -1,5 +1,6 @@
 from json import dumps, loads
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField
 
@@ -36,6 +37,26 @@ class ServiceRequestSerializer(ModelSerializer):
         self.user = kwargs.pop('user', None)
         super(ServiceRequestSerializer, self).__init__(*args, **kwargs)
         self.fields['fill_in_survey'] = DynamicSurveySerializer(operation=self.operation)
+
+    def validate(self, data):
+        super(ServiceRequestSerializer, self).validate(data)
+        quota_scope = data.get("quota_scope")
+        fill_in_survey = data.get("fill_in_survey")
+        # validate the quota if set on one of the fill_in_survey
+        if fill_in_survey is not None:
+            for field_name, value in fill_in_survey.items():
+                # get the tower field
+                tower_field = self.operation.tower_survey_fields.get(name=field_name)
+                if tower_field.attribute_definition is not None:
+                    # try to find the field in the quota linked to the scope
+                    quota_set_on_attribute = quota_scope.quotas.filter(attribute_definition=tower_field.attribute_definition)
+                    if quota_set_on_attribute.exists():
+                        quota_set_on_attribute = quota_set_on_attribute.first()
+                        if value > quota_set_on_attribute.available:
+                            raise ValidationError({"fill_in_survey":
+                                                   f"Quota limit reached on '{field_name}'. "
+                                                   f"Available: {quota_set_on_attribute.available}"})
+        return data
 
     def save(self):
         # create the instance
