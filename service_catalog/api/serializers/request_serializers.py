@@ -7,7 +7,6 @@ from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import Scope
 from service_catalog.api.serializers import DynamicSurveySerializer, InstanceReadSerializer
-from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models.instance import Instance
 from service_catalog.models.message import RequestMessage
 from service_catalog.models.request import Request
@@ -29,23 +28,14 @@ class ServiceRequestSerializer(ModelSerializer):
     )
 
     quota_scope = PrimaryKeyRelatedField(label='Quota', allow_null=True, default=None, required=False,
-                                           queryset=Scope.objects.all(),
-                                           help_text="Quota")
+                                         queryset=Scope.objects.all(),
+                                         help_text="Quota")
 
     def __init__(self, *args, **kwargs):
         self.operation = kwargs.pop('operation', None)
         self.user = kwargs.pop('user', None)
         super(ServiceRequestSerializer, self).__init__(*args, **kwargs)
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(
-            job_template_survey=self.operation.job_template.survey,
-            operation_survey=self.operation.tower_survey_fields)
-        purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
-            job_template_survey=purged_survey,
-            operation_survey=self.operation.tower_survey_fields)
-        self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey_with_validator)
-        if not purged_survey.get('spec'):
-            self.fields['fill_in_survey'].required = False
+        self.fields['fill_in_survey'] = DynamicSurveySerializer(operation=self.operation)
 
     def save(self):
         # create the instance
@@ -86,14 +76,7 @@ class OperationRequestSerializer(ModelSerializer):
         self.squest_instance = kwargs.pop('instance', None)
         self.user = kwargs.pop('user', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
-        # get all field that are not disabled by the admin
-        purged_survey = FormUtils.get_available_fields(
-            job_template_survey=self.operation.job_template.survey,
-            operation_survey=self.operation.tower_survey_fields)
-        purged_survey_with_validator = FormUtils.apply_user_validator_to_survey(
-            job_template_survey=purged_survey,
-            operation_survey=self.operation.tower_survey_fields)
-        self.fields['fill_in_survey'] = DynamicSurveySerializer(fill_in_survey=purged_survey_with_validator)
+        self.fields['fill_in_survey'] = DynamicSurveySerializer(operation=self.operation, instance=self.squest_instance)
 
     def save(self, **kwargs):
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))

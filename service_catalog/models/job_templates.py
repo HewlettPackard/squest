@@ -80,6 +80,11 @@ class JobTemplate(SquestModel):
     def is_ask_variables_on_launch_compliant(self):
         return self.tower_job_template_data['ask_variables_on_launch']
 
+    def has_a_survey(self):
+        if self.survey is not None and "spec" in self.survey:
+            return True
+        return False
+
 
 @receiver(pre_delete, sender=JobTemplate)
 def job_template_delete(sender, instance, using, **kwargs):
