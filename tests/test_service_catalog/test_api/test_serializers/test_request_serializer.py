@@ -23,7 +23,7 @@ class TestRequestSerializer(BaseTestRequest):
         self.assertEqual(set(serializer.data.keys()),
                          {'id', 'fill_in_survey', 'admin_fill_in_survey', 'date_submitted', 'date_complete',
                           'date_archived', 'instance', 'operation', 'state', 'tower_job_id', 'user',
-                          'processed_by', 'accepted_by', 'approval_workflow_state'})
+                          'processed_by', 'accepted_by', 'approval_workflow_state', 'last_updated', 'created'})
 
     def test_request_serializer_field_content(self):
         serializer = RequestSerializer(instance=self.local_test_request)
