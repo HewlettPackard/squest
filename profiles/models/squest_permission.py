@@ -1,10 +1,10 @@
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 
-from Squest.utils.squest_model import SquestModel
+from Squest.utils.squest_model import SquestRBAC
 
 
-class Permission(SquestModel, Permission):
+class Permission(SquestRBAC, Permission):
     class Meta:
         proxy = True
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
