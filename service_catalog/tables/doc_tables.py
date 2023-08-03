@@ -9,7 +9,7 @@ class DocTable(SquestTable):
     actions = TemplateColumn(template_name='service_catalog/custom_columns/doc_actions.html', orderable=False)
     services = TemplateColumn(template_name='service_catalog/custom_columns/doc_services.html', verbose_name="Linked services")
     operations = TemplateColumn(template_name='service_catalog/custom_columns/doc_operations.html', verbose_name="Linked operations")
-    title = LinkColumn("service_catalog:doc_show", args=[A("id")])
+    title = LinkColumn("service_catalog:doc_details", args=[A("id")])
 
     class Meta:
         model = Doc
