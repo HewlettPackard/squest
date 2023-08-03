@@ -1,8 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db.models import ForeignKey, PROTECT, Q
-from django.urls import reverse
-
-from Squest.utils.squest_model import SquestModel
 from profiles.models import Organization
 from profiles.models.scope import Scope
 
