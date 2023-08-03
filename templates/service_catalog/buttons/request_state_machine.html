@@ -1,0 +1,20 @@
+{% has_perm request.user "service_catalog.archive_request" object as can_archive_request %}
+{% has_perm request.user "service_catalog.unarchive_request" object as can_unarchive_request %}
+{% with args_filter="archive,"|addstr:object.id %}
+    {% if args_filter|can_proceed_request_action and can_archive_request %}
+        <a class="btn btn-default"
+           title="Archive"
+           href="{% url 'service_catalog:request_archive' object.id %}">
+            <i class="fas fa-archive"></i>
+        </a>
+    {% endif %}
+{% endwith %}
+{% with args_filter="unarchive,"|addstr:object.id %}
+    {% if args_filter|can_proceed_request_action and can_unarchive_request %}
+        <a class="btn btn-success"
+           title="Unarchive"
+           href="{% url 'service_catalog:request_unarchive' object.id %}">
+            <i class="fas fa-box-open"></i>
+        </a>
+    {% endif %}
+{% endwith %}

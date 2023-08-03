@@ -1,0 +1,32 @@
+{% has_perm request.user "service_catalog.add_support" object as can_add_support %}
+{% has_perm request.user "service_catalog.archive_instance" object as can_archive_instance %}
+{% has_perm request.user "service_catalog.unarchive_instance" object as can_unarchive_instance %}
+{% with args_filter="archive,"|addstr:object.id %}
+    {% if can_archive_instance and args_filter|can_proceed_instance_action %}
+        <a class="btn btn-default"
+           title="Archive"
+           href="{% url 'service_catalog:instance_archive' object.id %}">
+            <i class="fas fa-archive"></i>
+        </a>
+    {% endif %}
+{% endwith %}
+{% with args_filter="unarchive,"|addstr:object.id %}
+    {% if can_unarchive_instance and args_filter|can_proceed_instance_action %}
+        <a class="btn btn-default"
+           title="Unarchive"
+           href="{% url 'service_catalog:instance_unarchive' object.id %}">
+            <i class="fas fa-box-open"></i>
+        </a>
+    {% endif %}
+{% endwith %}
+{% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
+    <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
+       href="{% url 'service_catalog:support_create' object.id %}">
+        <i class="fas fa-link"></i> Open new support
+    </a>
+{% else %}
+    <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
+       href="{% url 'service_catalog:support_create' object.id %}">
+        <i class="fas fa-plus"></i> Open new support
+    </a>
+{% endif %}
