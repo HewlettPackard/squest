@@ -5,6 +5,7 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
+        {% include 'service_catalog/buttons/request_state_machine.html' %}
         {% include 'generics/buttons/edit_button.html' %}
         {% include 'generics/buttons/delete_button.html' %}
 {% endblock %}

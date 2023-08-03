@@ -175,6 +175,8 @@ class SquestDetailView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
     context_object_name = "object"
 
     def get_permission_required(self):
+        if self.permission_required is not None:
+            return self.permission_required
         return f"{self.django_content_type.app_label}.view_{self.django_content_type.model}"
 
     def get_context_data(self, **kwargs):

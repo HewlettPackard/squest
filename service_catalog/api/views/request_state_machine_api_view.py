@@ -82,7 +82,7 @@ class RequestStateMachine(ViewSet):
         Re-submit the request : change the state of the request to 'SUBMITTED'.
         """
         target_request = get_object_or_404(Request, id=pk)
-        if not request.user.has_perm('service_catalog.resubmit_request', target_request):
+        if not request.user.has_perm('service_catalog.re_submit_request', target_request):
             raise PermissionDenied
         if not can_proceed(target_request.re_submit):
             raise PermissionDenied

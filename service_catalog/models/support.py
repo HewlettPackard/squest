@@ -17,6 +17,11 @@ class SupportState(TextChoices):
 
 
 class Support(SquestModel):
+    class Meta(SquestModel.Meta):
+        permissions = [
+            ("close_support", "Can close support"),
+            ("reopen_support", "Can reopen support"),
+        ]
     title = CharField(max_length=100)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True, blank=True, related_name="supports",
                           related_query_name="support")
@@ -29,7 +34,7 @@ class Support(SquestModel):
         return f"{self.title} (#{self.id})"
 
     def get_absolute_url(self):
-        return reverse("service_catalog:instance_support_details", args=[self.instance.id, self.pk])
+        return reverse("service_catalog:support_details", args=[self.instance.id, self.pk])
 
     @transition(field=state, source=SupportState.OPENED, target=SupportState.CLOSED)
     def do_close(self):
