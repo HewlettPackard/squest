@@ -2,7 +2,6 @@ import json
 
 import markdown as md
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
@@ -54,52 +53,56 @@ def map_color_to_icon(value):
     return map_dict[value]
 
 
-@register.filter(name='is_action_dropdown_disabled')
-def is_action_dropdown_disabled(args):
+@register.filter(name='can_proceed_request_action')
+def can_proceed_request_action(args):
     target_action = args.split(',')[0]
-    user = User.objects.get(id=int(args.split(',')[1]))
-    target_request = Request.objects.get(id=args.split(',')[2])
+    target_request = Request.objects.get(id=args.split(',')[1])
     if target_action == "cancel":
-        if not can_proceed(target_request.cancel):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.cancel)
     elif target_action == "need_info":
-        if not can_proceed(target_request.need_info):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.need_info)
     elif target_action == "reject":
-        if not can_proceed(target_request.reject):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.reject)
     elif target_action == "accept":
-        if not can_proceed(target_request.accept):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.accept)
     elif target_action == "process":
-        if not can_proceed(target_request.process):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.process)
     elif target_action == "re_submit":
-        if not can_proceed(target_request.re_submit):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.re_submit)
     elif target_action == "archive":
-        if not can_proceed(target_request.archive):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
+        return can_proceed(target_request.archive)
     elif target_action == "unarchive":
-        if not can_proceed(target_request.unarchive):
-            return "disabled"
-        elif not user.has_perm('service_catalog.cancel_request', target_request):
-            return "disabled"
-    return ""
+        return can_proceed(target_request.unarchive)
+    return False
+
+
+@register.filter(name='can_proceed_instance_action')
+def can_proceed_instance_action(args):
+    target_action = args.split(',')[0]
+    target_instance = Instance.objects.get(id=args.split(',')[1])
+    if target_action == 'pending':
+        return can_proceed(target_instance.pending)
+    elif target_action == 'provision_failed':
+        return can_proceed(target_instance.provisioning_has_failed)
+    elif target_action == 'provisioning':
+        return can_proceed(target_instance.provisioning)
+    elif target_action == 'updating':
+        return can_proceed(target_instance.updating)
+    elif target_action == 'update_failed':
+        return can_proceed(target_instance.update_has_failed)
+    elif target_action == 'deleting':
+        return can_proceed(target_instance.deleting)
+    elif target_action == 'deleted':
+        return can_proceed(target_instance.deleting)
+    elif target_action == 'delete_failed':
+        return can_proceed(target_instance.delete_has_failed)
+    elif target_action == "archive":
+        return can_proceed(target_instance.archive)
+    elif target_action == "unarchive":
+        return can_proceed(target_instance.unarchive)
+    elif target_action == "available":
+        return can_proceed(target_instance.available)
+    return False
 
 
 @register.filter(name='get_action_text_class')
