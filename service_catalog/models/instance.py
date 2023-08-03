@@ -22,6 +22,7 @@ class Instance(SquestModel):
     class Meta:
         permissions = [
             ("archive_instance", "Can archive instance"),
+            ("unarchive_instance", "Can unarchive instance"),
             ("request_on_instance", "Can request a day2 operation on instance"),
             ("admin_request_on_instance", "Can request an admin day2 operation on instance"),
             ("view_admin_spec_instance", "Can view admin spec on instance"),
@@ -178,6 +179,10 @@ class Instance(SquestModel):
 
     @transition(field=state, source=InstanceState.DELETED, target=InstanceState.ARCHIVED)
     def archive(self):
+        pass
+
+    @transition(field=state, source=InstanceState.ARCHIVED, target=InstanceState.DELETED)
+    def unarchive(self):
         pass
 
     def reset_to_last_stable_state(self):

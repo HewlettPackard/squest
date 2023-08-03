@@ -38,7 +38,7 @@
                                    class="btn btn-default">Open</a>
                                 {% if portfolio.description_doc %}
                                     <a title="Description documentation"
-                                       href="{% url 'service_catalog:doc_show' portfolio.description_doc.id %}"
+                                       href="{% url 'service_catalog:doc_details' portfolio.description_doc.id %}"
                                        class="text-info float-right"><i class="fas fa-2x fa-info-circle"></i></a>
                                 {% endif %}
                             </div>
@@ -64,7 +64,7 @@
                                    class="btn btn-primary">Order</a>
                                 {% if service.description_doc %}
                                     <a title="Description documentation"
-                                       href="{% url 'service_catalog:doc_show' service.description_doc.id %}"
+                                       href="{% url 'service_catalog:doc_details' service.description_doc.id %}"
                                        class="text-info float-right"><i class="fas fa-2x fa-info-circle"></i></a>
                                 {% endif %}
                             </div>

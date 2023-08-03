@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='instance',
-            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('archive_instance', 'Can archive instance'), ('request_on_instance', 'Can request a day2 operation on instance'), ('admin_request_on_instance', 'Can request an admin day2 operation on instance'), ('view_admin_spec_instance', 'Can view admin spec on instance'), ('change_admin_spec_instance', 'Can change admin spec on instance')]},
+            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('archive_instance', 'Can archive instance'), ('unarchive_instance', 'Can unarchive instance'), ('request_on_instance', 'Can request a day2 operation on instance'), ('admin_request_on_instance', 'Can request an admin day2 operation on instance'), ('view_admin_spec_instance', 'Can view admin spec on instance'), ('change_admin_spec_instance', 'Can change admin spec on instance')]},
         ),
         migrations.AlterModelOptions(
             name='inventory',
@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='request',
-            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('accept_request', 'Can accept request'), ('cancel_request', 'Can cancel request'), ('reject_request', 'Can reject request'), ('archive_request', 'Can archive request'), ('unarchive_request', 'Can unarchive request'), ('resubmit_request', 'Can re-submit request'), ('process_request', 'Can process request'), ('need_info_request', 'Can ask info request')]},
+            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('accept_request', 'Can accept request'), ('cancel_request', 'Can cancel request'), ('reject_request', 'Can reject request'), ('archive_request', 'Can archive request'), ('unarchive_request', 'Can unarchive request'), ('re_submit_request', 'Can re-submit request'), ('process_request', 'Can process request'), ('need_info_request', 'Can ask info request')]},
         ),
         migrations.AlterModelOptions(
             name='requestmessage',

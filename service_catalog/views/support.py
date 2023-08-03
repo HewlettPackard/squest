@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import redirect
 
 from Squest.utils.squest_views import *
@@ -22,10 +23,11 @@ class SupportListView(SquestListView):
 
 class ReOpenSupportView(SquestDetailView):
     model = Support
-    permission_required = "service_catalog.change_support"
-    pk_url_kwarg = "support_id"
+    permission_required = "service_catalog.reopen_support"
 
     def dispatch(self, request, *args, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(['GET'])
         super(ReOpenSupportView, self).dispatch(request, *args, **kwargs)
         support = self.get_object()
         support.do_open()
@@ -36,9 +38,10 @@ class ReOpenSupportView(SquestDetailView):
 class CloseSupportView(SquestDetailView):
     model = Support
     permission_required = "service_catalog.close_support"
-    pk_url_kwarg = "support_id"
 
     def dispatch(self, request, *args, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(['GET'])
         super(CloseSupportView, self).dispatch(request, *args, **kwargs)
         support = self.get_object()
         support.do_close()
