@@ -3,6 +3,8 @@ import logging
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ViewDoesNotExist
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
 
@@ -86,9 +88,6 @@ def request_cancel(request, pk):
     if not can_proceed(target_request.cancel):
         raise PermissionDenied
     if request.method == "POST":
-        # check that we can cancel the request
-        if not can_proceed(target_request.cancel):
-            raise PermissionDenied
         send_email_request_canceled(target_request,
                                     user_applied_state=request.user,
                                     request_owner_user=target_request.user)
@@ -203,7 +202,7 @@ def request_need_info(request, pk):
 @login_required
 def request_re_submit(request, pk):
     target_request = get_object_or_404(Request, id=pk)
-    if not request.user.has_perm('service_catalog.resubmit_request', target_request):
+    if not request.user.has_perm('service_catalog.re_submit_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.re_submit):
         raise PermissionDenied
@@ -364,6 +363,8 @@ def request_process(request, pk):
 
 @login_required
 def request_archive(request, pk):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.archive_request', target_request):
         raise PermissionDenied
@@ -371,11 +372,12 @@ def request_archive(request, pk):
         raise PermissionDenied
     target_request.archive()
     target_request.save()
-    return redirect('service_catalog:request_list')
-
+    return redirect(target_request.get_absolute_url())
 
 @login_required
 def request_unarchive(request, pk):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.unarchive_request', target_request):
         raise PermissionDenied
@@ -383,7 +385,8 @@ def request_unarchive(request, pk):
         raise PermissionDenied
     target_request.unarchive()
     target_request.save()
-    return redirect('service_catalog:request_list')
+    return redirect(target_request.get_absolute_url())
+
 
 
 def try_process_request(user, target_request, inventory_override=None, credentials_override=None, tags_override=None,

@@ -68,10 +68,11 @@ class JobTemplateDeleteView(SquestDeleteView):
 
 
 @login_required
-@permission_required('service_catalog.view_jobtemplate')
 def job_template_compliancy(request, tower_id, pk):
     tower_server = get_object_or_404(TowerServer, id=tower_id)
     job_template = get_object_or_404(JobTemplate, id=pk)
+    if not request.user.has_perm('service_catalog.view_jobtemplate', job_template):
+        raise PermissionDenied
     breadcrumbs = [
         {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
         {'text': tower_server.name, 'url': ""},

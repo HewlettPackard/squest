@@ -505,12 +505,12 @@ class AdminRequestViewTest(BaseTestRequest):
             'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_archive', kwargs=args)
-        response = self.client.post(url)
+        response = self.client.get(url)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, RequestState.ARCHIVED)
         url = reverse('service_catalog:request_unarchive', kwargs=args)
-        response = self.client.post(url)
+        response = self.client.get(url)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, RequestState.COMPLETE)
@@ -526,7 +526,7 @@ class AdminRequestViewTest(BaseTestRequest):
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
-            response = self.client.post(url)
+            response = self.client.get(url)
             self.assertEqual(403, response.status_code)
 
     def test_admin_cannot_request_unarchive_on_forbidden_states(self):
@@ -540,7 +540,7 @@ class AdminRequestViewTest(BaseTestRequest):
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
-            response = self.client.post(url)
+            response = self.client.get(url)
             self.assertEqual(403, response.status_code)
 
     def test_customer_can_list_his_archived_requests(self):

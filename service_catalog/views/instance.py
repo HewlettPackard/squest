@@ -149,30 +149,73 @@ def instance_request_new_operation(request, instance_id, operation_id):
 
 
 @login_required
-def instance_archive(request, instance_id):
-    instance = get_object_or_404(Instance, id=instance_id)
+def instance_archive(request, pk):
+    instance = get_object_or_404(Instance, id=pk)
+    context = dict()
+    context['object'] = instance
+    context['action'] = 'archive'
+    context['breadcrumbs'] = [
+            {
+                'text': 'Instance',
+                'url': reverse('service_catalog:instance_list')
+            },
+            {
+                'text': instance,
+                'url': instance.get_absolute_url()
+            },
+            {
+                'text': context['action'].capitalize(),
+                'url': ""
+            },
+        ]
     if not request.user.has_perm('service_catalog.archive_instance', instance):
         raise PermissionDenied
+    if not can_proceed(instance.archive):
+        raise PermissionDenied
     if request.method == "POST":
-        if not can_proceed(instance.archive):
-            raise PermissionDenied
         instance.archive()
         instance.save()
+        return redirect(instance.get_absolute_url())
+    return render(request, "service_catalog/instance-archive.html", context)
 
-        return redirect('service_catalog:instance_list')
-    context = {
-        "instance": instance
-    }
+@login_required
+def instance_unarchive(request, pk):
+    instance = get_object_or_404(Instance, id=pk)
+    context = dict()
+    context['object'] = instance
+    context['action'] = 'unarchive'
+    context['breadcrumbs'] = [
+            {
+                'text': 'Instance',
+                'url': reverse('service_catalog:instance_list')
+            },
+            {
+                'text': instance,
+                'url': instance.get_absolute_url()
+            },
+            {
+                'text': context['action'].capitalize(),
+                'url': ""
+            },
+        ]
+    if not request.user.has_perm('service_catalog.unarchive_instance', instance):
+        raise PermissionDenied
+    if not can_proceed(instance.unarchive):
+        raise PermissionDenied
+    if request.method == "POST":
+        instance.unarchive()
+        instance.save()
+        return redirect(instance.get_absolute_url())
     return render(request, "service_catalog/instance-archive.html", context)
 
 
 @login_required
-def instance_new_support(request, pk):
-    instance = get_object_or_404(Instance, id=pk)
+def support_create(request, instance_id):
+    instance = get_object_or_404(Instance, id=instance_id)
     if not request.user.has_perm("service_catalog.add_support", instance):
         raise PermissionDenied
     parameters = {
-        'instance_id': pk
+        'instance_id': instance_id
     }
 
     if instance.service.external_support_url is not None and instance.service.external_support_url != '':
@@ -202,7 +245,7 @@ def instance_new_support(request, pk):
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
             {'text': f"{instance.name} ({instance.id})",
-             'url': reverse('service_catalog:instance_details', args=[pk])},
+             'url': reverse('service_catalog:instance_details', args=[instance_id])},
         ],
         'color_button': 'success',
         'text_button': 'Open new support',
@@ -212,41 +255,42 @@ def instance_new_support(request, pk):
 
 
 @login_required
-def instance_support_details(request, instance_id, support_id):
+def support_details(request, instance_id, pk):
     instance = get_object_or_404(Instance, id=instance_id)
-    if not request.user.has_perm('service_catalog.view_instance', instance):
-        raise PermissionDenied
-    support = get_object_or_404(Support, id=support_id)
-    messages = SupportMessage.objects.filter(support=support)
-    if request.method == "POST":
+    support = get_object_or_404(Support, id=pk)
+    if request.method == 'GET':
+        if not request.user.has_perm('service_catalog.view_support', support):
+            raise PermissionDenied
+    if request.method == 'POST':
+        if not request.user.has_perm('service_catalog.add_supportmessage', instance):
+            raise PermissionDenied
         form = SupportMessageForm(request.POST or None, sender=request.user, support=support)
         if form.is_valid():
-            if not request.user.has_perm('service_catalog.add_supportmessage', instance):
-                raise PermissionDenied
-            if form.cleaned_data["content"] is not None and form.cleaned_data["content"] != "":
+
+            if form.cleaned_data['content'] is not None and form.cleaned_data["content"] != "":
                 form.save()
-            return redirect('service_catalog:instance_support_details', instance.id, support.id)
+            return redirect('service_catalog:support_details', instance.id, support.id)
     else:
         form = SupportMessageForm(sender=request.user, support=support)
     context = {
-        "form": form,
-        "instance": instance,
-        "messages": messages,
-        "support": support,
+        'form': form,
+        'instance': instance,
+        'messages': SupportMessage.objects.filter(support=support),
+        'support': support,
         'breadcrumbs': [
             {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
-            {'text': f"{instance.name} ({instance.id})",
+            {'text': f'{instance.name} ({instance.id})',
              'url': reverse('service_catalog:instance_details', args=[instance_id])},
-            {'text': 'Support', 'url': ""},
-            {'text': support.title, 'url': ""},
+            {'text': 'Support', 'url': ''},
+            {'text': support.title, 'url': ''},
         ]
     }
-    return render(request, "service_catalog/common/instance-support-details.html", context)
+    return render(request, 'service_catalog/common/instance-support-details.html', context)
 
 
 @login_required
-def support_message_edit(request, instance_id, support_id, message_id):
-    support_message = get_object_or_404(SupportMessage, id=message_id)
+def supportmessage_edit(request, instance_id, support_id, pk):
+    support_message = get_object_or_404(SupportMessage, id=pk)
     if request.user != support_message.sender or not request.user.has_perm('service_catalog.change_supportmessage',
                                                                            support_message):
         raise PermissionDenied
@@ -255,7 +299,7 @@ def support_message_edit(request, instance_id, support_id, message_id):
                                   support=support_message.support, instance=support_message)
         if form.is_valid():
             form.save()
-            return redirect('service_catalog:instance_support_details', support_message.support.instance.id,
+            return redirect('service_catalog:support_details', support_message.support.instance.id,
                             support_message.support.id)
     else:
         form = SupportMessageForm(sender=support_message.sender, support=support_message.support,
@@ -268,8 +312,8 @@ def support_message_edit(request, instance_id, support_id, message_id):
              'url': reverse('service_catalog:instance_details', args=[instance_id])},
             {'text': 'Support', 'url': ""},
             {'text': support_message.support.title,
-             'url': reverse('service_catalog:instance_support_details',
-                            kwargs={'instance_id': instance_id, 'support_id': support_id})},
+             'url': reverse('service_catalog:support_details',
+                            kwargs={'instance_id': instance_id, 'pk': support_id})},
         ],
         'action': 'edit'
     }

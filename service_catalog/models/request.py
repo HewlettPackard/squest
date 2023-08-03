@@ -34,7 +34,7 @@ class Request(SquestModel):
             ("reject_request", "Can reject request"),
             ("archive_request", "Can archive request"),
             ("unarchive_request", "Can unarchive request"),
-            ("resubmit_request", "Can re-submit request"),
+            ("re_submit_request", "Can re-submit request"),
             ("process_request", "Can process request"),
             ("need_info_request", "Can ask info request"),
             ("view_admin_survey", "Can view admin survey"),

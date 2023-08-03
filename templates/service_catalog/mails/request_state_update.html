@@ -200,7 +200,7 @@
                         <ul>
                             {% for doc in request.instance.service.docs.all %}
                                 <li style="line-height: 19.6px; text-align: left;">
-                                    <a rel="noopener" href="{{ current_site }}{% url 'service_catalog:doc_show' doc.id %}"
+                                    <a rel="noopener" href="{{ current_site }}{% url 'service_catalog:doc_details' doc.id %}"
                                        target="_blank">{{ doc.title }}</a></li>
                             {% endfor %}
                         </ul>

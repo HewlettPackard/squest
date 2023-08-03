@@ -5,19 +5,7 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block extra_header_button %}
-
-    {% has_perm request.user "service_catalog.add_support" object as can_add_support %}
-    {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
-        <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
-           href="{% url 'service_catalog:instance_new_support' object.id %}">
-            <i class="fas fa-link"></i> Open new support
-        </a>
-    {% else %}
-        <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
-           href="{% url 'service_catalog:instance_new_support' object.id %}">
-            <i class="fas fa-plus"></i> Open new support
-        </a>
-    {% endif %}
+    {% include 'service_catalog/buttons/instance_buttons.html' %}
 {% endblock %}
 
 {% block header_button %}
@@ -42,13 +30,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <img class="card-img-top" src="
-
-
-
-
-
-                                    {% if object.service.image %}{{ object.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                            <img class="card-img-top" src="{% if object.service.image %}{{ object.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Service image">
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
@@ -101,7 +83,7 @@
                             <li class="list-group-item border-bottom-0">
                                 <b>Docs</b>
                                 {% for doc in object.docs %}
-                                    <a class="float-right" href="{% url 'service_catalog:doc_show' doc.id %}">
+                                    <a class="float-right" href="{% url 'service_catalog:doc_details' doc.id %}">
                                         {{ doc.title }}
                                     </a> <br>
                                 {% endfor %}

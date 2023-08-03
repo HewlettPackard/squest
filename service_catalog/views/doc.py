@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -21,8 +22,10 @@ class DocListView(SquestListView):
 
 
 @login_required
-def doc_show(request, doc_id):
-    doc = get_object_or_404(Doc, id=doc_id)
+def doc_details(request, pk):
+    doc = get_object_or_404(Doc, id=pk)
+    if not request.user.has_perm('service_catalog.view_doc', doc):
+        raise PermissionDenied
     breadcrumbs = [
         {'text': 'Documentations', 'url': reverse('service_catalog:doc_list')},
         {'text': doc.title, 'url': ""}
