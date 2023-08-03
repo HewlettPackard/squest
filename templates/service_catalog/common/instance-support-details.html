@@ -39,7 +39,7 @@
                                                 {% if can_comment_support and message.sender == request.user %}
                                                     <a title="Edit"
                                                        class="btn btn-primary float-right"
-                                                       href="{% url "service_catalog:support_message_edit" message.support.instance.id message.support.id message.id %}">
+                                                       href="{% url "service_catalog:supportmessage_edit" message.support.instance.id message.support.id message.id %}">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
                                                 {% endif %}
@@ -55,7 +55,7 @@
                             </div>
                             <div class="card-footer">
                                 {% if can_comment_support %}
-                                    <form action="{% url 'service_catalog:instance_support_details' instance_id=instance.id support_id=support.id %}"
+                                    <form action="{% url 'service_catalog:support_details' instance_id=instance.id pk=support.id %}"
                                           method="post" _lpchecked="1">{% csrf_token %}
                                         {{ form.as_p }}
                                         <div class="form-group">
@@ -70,13 +70,13 @@
                                     </form>
                                 {% endif %}
                                 {% if support.state == "OPENED" %}
-                                    <a href="{% url 'service_catalog:instance_support_close' instance_id=instance.id support_id=support.id %}"
+                                    <a href="{% url 'service_catalog:support_close' instance_id=instance.id pk=support.id %}"
                                        class="btn btn-danger{% if not can_close_support %} disabled{% endif %}">
                                         <i class="fas fa-times-circle"></i> Close
                                     </a>
                                 {% endif %}
                                 {% if support.state == "CLOSED" %}
-                                    <a href="{% url 'service_catalog:instance_support_reopen' instance_id=instance.id support_id=support.id %}"
+                                    <a href="{% url 'service_catalog:support_reopen' instance_id=instance.id pk=support.id %}"
                                        class="btn btn-success{% if not can_change_support %} disabled{% endif %}">
                                         <i class="fas fa-undo"></i> Re-open
                                     </a>

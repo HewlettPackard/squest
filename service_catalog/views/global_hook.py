@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import render
 
 from Squest.utils.squest_views import *
@@ -34,6 +35,8 @@ class GlobalHookDeleteView(SquestDeleteView):
 
 @login_required
 def ajax_load_model_state(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     if not request.user.has_perm('service_catalog.change_globalhook') and not request.user.has_perm(
             'service_catalog.add_globalhook'):
         raise PermissionDenied
@@ -49,6 +52,8 @@ def ajax_load_model_state(request):
 
 @login_required
 def ajax_load_service_operations(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     if not request.user.has_perm('service_catalog.change_globalhook') and not request.user.has_perm(
             'service_catalog.add_globalhook'):
         raise PermissionDenied

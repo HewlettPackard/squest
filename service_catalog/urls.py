@@ -31,7 +31,7 @@ urlpatterns = [
     # Archived request list
     path('request/archived/', views.RequestArchivedListView.as_view(), name='request_archived_list'),
 
-    # Request comments CRUD
+    # Request message CRUD
     path('request/<int:request_id>/comment/<int:pk>/', views.requestmessage_edit,
          name='requestmessage_edit'),
     path('request/<int:request_id>/comment/', views.request_comment, name='requestmessage_create'),
@@ -73,11 +73,9 @@ urlpatterns = [
     # Instance bulk delete
     path('instance/delete/', views.instance_bulk_delete, name='instance_bulk_delete'),
 
-    # Instance message
-    path('instance/<int:instance_id>/support/<int:support_id>/message/<int:message_id>/', views.support_message_edit,
-         name='support_message_edit'),
     # Instance State Machine
-    path('instance/<int:instance_id>/archive/', views.instance_archive, name='instance_archive'),
+    path('instance/<int:pk>/archive/', views.instance_archive, name='instance_archive'),
+    path('instance/<int:pk>/unarchive/', views.instance_unarchive, name='instance_unarchive'),
 
     # Instance request operation
     path('instance/<int:instance_id>/operation/<int:operation_id>/', views.instance_request_new_operation,
@@ -86,20 +84,20 @@ urlpatterns = [
     # Support CRUD
     path('support/', views.SupportListView.as_view(), name='support_list'),
     # Support CRUD under instance
-    path('instance/<int:pk>/support/create/', views.instance_new_support,
-         name='instance_new_support'),
-    path('instance/<int:instance_id>/support/<int:support_id>/', views.instance_support_details,
-         name='instance_support_details'),
+    path('instance/<int:instance_id>/support/create/', views.support_create, name='support_create'),
+    path('instance/<int:instance_id>/support/<int:pk>/', views.support_details, name='support_details'),
 
     # Support State Machine
-    path('instance/<int:instance_id>/support/<int:support_id>/close/', views.CloseSupportView.as_view(),
-         name='instance_support_close'),
-    path('instance/<int:instance_id>/support/<int:support_id>/reopen/', views.ReOpenSupportView.as_view(),
-         name='instance_support_reopen'),
+    path('instance/<int:instance_id>/support/<int:pk>/close/', views.CloseSupportView.as_view(), name='support_close'),
+    path('instance/<int:instance_id>/support/<int:pk>/reopen/', views.ReOpenSupportView.as_view(), name='support_reopen'),
+
+    # Support message
+    path('instance/<int:instance_id>/support/<int:support_id>/message/<int:pk>/', views.supportmessage_edit,
+         name='supportmessage_edit'),
 
     # Doc CRUD
     path('doc/', views.DocListView.as_view(), name='doc_list'),
-    path('doc/<int:doc_id>/', views.doc_show, name='doc_show'),
+    path('doc/<int:pk>/', views.doc_details, name='doc_details'),
 
     # Controller CRUD
     path('controller/', views.TowerServerListView.as_view(), name='towerserver_list'),
@@ -109,7 +107,7 @@ urlpatterns = [
 
     # Synchronize controller endpoints
     path('controller/<int:tower_id>/sync/', views.towerserver_sync, name='towerserver_sync'),
-    path('controller/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='sync_job_template'),
+    path('controller/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='jobtemplate_sync'),
 
     # Job Template CRUD
     path('controller/<int:tower_id>/job_template/', views.JobTemplateListView.as_view(),
@@ -147,14 +145,17 @@ urlpatterns = [
     path('administration/custom-link/<int:pk>/edit/', views.CustomLinkEditView.as_view(), name='customlink_edit'),
     path('administration/custom-link/<int:pk>/delete/', views.CustomLinkDeleteView.as_view(), name='customlink_delete'),
 
+    # Approval Workflow CRUD
     path('administration/approval/', views.ApprovalWorkflowListView.as_view(), name='approvalworkflow_list'),
     path('administration/approval/<int:pk>/', views.ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
     path('administration/approval/create/', views.ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
     path('administration/approval/<int:pk>/edit/', views.ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
     path('administration/approval/<int:pk>/delete/', views.AttributeDefinitionDeleteView.as_view(), name='approvalworkflow_delete'),
+    # Approval Workflow ajax
     path('administration/approval/step_position_update/',
          views.ajax_approval_step_position_update, name='ajax_approval_step_position_update'),
 
+    # Approval Step CRUD
     path('administration/approval/<int:approval_workflow_id>/approval-step/create/', views.ApprovalStepCreateView.as_view(),
          name='approvalstep_create'),
     path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/edit/',

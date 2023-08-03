@@ -73,4 +73,4 @@ class TestPermissionUIViews(TestCase):
             response = test_context.call_url(self.client)
             self.assertEqual(test_context.expected_status_code, response.status_code,
                              f"{test_context}: expected: {test_context.expected_status_code}, got: {response.status_code}")
-            self.empty_role.permissions.clear()
+            self.empty_role.permissions.remove(test_context.permission)

@@ -22,31 +22,31 @@ class TestAdminSupportViews(BaseTestRequest):
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
 
-    def test_admin_get_instance_support_details(self):
+    def test_admin_get_support_details(self):
         args = dict()
         args['instance_id'] = self.support_test.instance.id
-        args['support_id'] = self.support_test.id
-        url = reverse('service_catalog:instance_support_details', kwargs=args)
+        args['pk'] = self.support_test.id
+        url = reverse('service_catalog:support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertTrue("support" in response.context)
         self.assertEqual(self.support_test.title, response.context["support"].title)
 
 
-    def test_customer_cannot_get_instance_support_details_of_another_user(self):
+    def test_customer_cannot_get_support_details_of_another_user(self):
         self.client.login(username=self.standard_user_2, password=self.common_password)
         args = dict()
         args['instance_id'] = self.support_test.instance.id
-        args['support_id'] = self.support_test.id
-        url = reverse('service_catalog:instance_support_details', kwargs=args)
+        args['pk'] = self.support_test.id
+        url = reverse('service_catalog:support_details', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(403, response.status_code)
 
 
-    def test_admin_instance_new_support(self):
+    def test_admin_support_create(self):
         args = dict()
-        args['pk'] = self.support_test.instance.id
-        url = reverse('service_catalog:instance_new_support', kwargs=args)
+        args['instance_id'] = self.support_test.instance.id
+        url = reverse('service_catalog:support_create', kwargs=args)
         data = {
             "title": "test_support",
             "content": "test_support_content"

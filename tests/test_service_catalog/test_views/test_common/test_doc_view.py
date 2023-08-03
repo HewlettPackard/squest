@@ -66,5 +66,5 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.assertTrue("next=/admin", response.url)
 
     def test_get_doc_page(self):
-        response = self.client.get(reverse('service_catalog:doc_show', args=[self.new_doc.id]))
+        response = self.client.get(reverse('service_catalog:doc_details', args=[self.new_doc.id]))
         self.assertEqual(200, response.status_code)

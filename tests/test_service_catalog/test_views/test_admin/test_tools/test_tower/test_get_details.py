@@ -55,11 +55,11 @@ class AdminTowerGetViewsTest(BaseTestTower):
             self.assertEqual(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
                              target_number_job_template)
 
-    def test_sync_job_template(self):
+    def test_jobtemplate_sync(self):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
             args = copy.copy(self.args)
             args['pk'] = self.job_template_test.id
-            url = reverse('service_catalog:sync_job_template', kwargs=args)
+            url = reverse('service_catalog:jobtemplate_sync', kwargs=args)
             response = self.client.post(url)
             self.assertEqual(202, response.status_code)
             data = json.loads(response.content)
@@ -74,12 +74,12 @@ class AdminTowerGetViewsTest(BaseTestTower):
             self.assertEqual(403, response.status_code)
             mock_sync.assert_not_called()
 
-    def test_user_cannot_sync_job_template(self):
+    def test_user_cannot_jobtemplate_sync(self):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
             self.client.login(username=self.standard_user, password=self.common_password)
             args = copy.copy(self.args)
             args['pk'] = self.job_template_test.id
-            url = reverse('service_catalog:sync_job_template', kwargs=args)
+            url = reverse('service_catalog:jobtemplate_sync', kwargs=args)
             response = self.client.post(url)
             self.assertEqual(403, response.status_code)
             mock_sync.assert_not_called()

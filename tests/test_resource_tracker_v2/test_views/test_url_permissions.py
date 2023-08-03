@@ -256,5 +256,4 @@ class TestResourceTrackerV2PermissionsViews(BaseTestResourceTrackerV2, TestPermi
                 }
             )
         ]
-
         self.run_permissions_tests(testing_view_list)

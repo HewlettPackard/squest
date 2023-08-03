@@ -3,6 +3,7 @@ import logging
 from django.db.models import CharField, IntegerField, JSONField, ForeignKey, CASCADE, BooleanField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 from . import BootstrapType, ExceptionServiceCatalog, TowerServer
@@ -85,6 +86,8 @@ class JobTemplate(SquestModel):
             return True
         return False
 
+    def get_absolute_url(self):
+        return reverse('service_catalog:jobtemplate_list', kwargs={'tower_id': self.tower_server.id})
 
 @receiver(pre_delete, sender=JobTemplate)
 def job_template_delete(sender, instance, using, **kwargs):
