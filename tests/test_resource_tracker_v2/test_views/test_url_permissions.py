@@ -82,6 +82,11 @@ class TestResourceTrackerV2PermissionsViews(BaseTestResourceTrackerV2, TestPermi
                 }
             ),
             TestingGetUIViews(
+                url='resource_tracker_v2:resourcegroup_details',
+                perm_str='resource_tracker_v2.view_resourcegroup',
+                url_kwargs={'pk': self.cluster.id}
+            ),
+            TestingGetUIViews(
                 url='resource_tracker_v2:resourcegroup_edit',
                 perm_str='resource_tracker_v2.change_resourcegroup',
                 url_kwargs={'pk': self.cluster.id}
