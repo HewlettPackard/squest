@@ -44,6 +44,7 @@ django-cachalot = "^2.5.1"
 django-mysql = "^4.7.0"
 psycopg2 = "^2.9.5"
 django-formtools = "^2.4.1"
+tablib = "^3.5.0"
 
 [tool.poetry.dev-dependencies]
 

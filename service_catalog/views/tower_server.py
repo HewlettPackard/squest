@@ -5,11 +5,13 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django_celery_results.models import TaskResult
 
-from Squest.utils.squest_views import SquestListView, SquestCreateView, SquestDeleteView, SquestUpdateView
+from Squest.utils.squest_views import SquestListView, SquestCreateView, SquestDeleteView, SquestUpdateView, \
+    SquestDetailView
 from service_catalog import tasks
 from service_catalog.filters.tower_server_filter import TowerServerFilter
 from service_catalog.forms import TowerServerForm
 from service_catalog.models import TowerServer
+from service_catalog.tables.job_template_tables import JobTemplateTable
 from service_catalog.tables.tower_server_tables import TowerServerTable
 
 
@@ -18,6 +20,14 @@ class TowerServerListView(SquestListView):
     model = TowerServer
     filterset_class = TowerServerFilter
 
+
+class TowerServerDetailView(SquestDetailView):
+    model = TowerServer
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["jobtemplate_table"] = JobTemplateTable(self.object.jobtemplate_set.all())
+        return context
 
 class TowerServerCreateView(SquestCreateView):
     model = TowerServer

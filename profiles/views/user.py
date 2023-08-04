@@ -25,8 +25,20 @@ class UserDetailsView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': f"{self.object.username}",
+                'url': ""
+            },
+        ]
+
         # Requests
-        context['requests'] = RequestTable(self.object.request_set.all())
+        context['requests'] = RequestTable(self.object.request_set.all(),
+                                           hide_fields=["user__username", "instance__service"])
         # Instances
         context['instances'] = InstanceTable(self.object.instance_set.all())
         return context

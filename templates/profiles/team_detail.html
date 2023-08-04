@@ -15,7 +15,7 @@
     </span>
     <span {% if not can_add_user %} title="Permission profiles.add_users_team needed" {% endif %}>
             <a href="{% url 'profiles:team_rbac_create' object.id %}"
-               class="btn btn-success{% if not can_add_user %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
+               class="btn btn-success{% if not can_add_user %} disabled{% endif %}"> <i class="fas fa-user-plus"></i> Add RBAC
             </a>
     </span>
 {% endblock %}
@@ -52,19 +52,21 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills squest-default-active" id="tabs">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#roles" data-toggle="tab">Roles</a>
-                            </li>
-                            {% if users %}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#users" data-toggle="tab">Users</a>
-                                </li>
-                            {% endif %}
                             {% if quotas %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="#quotas" data-toggle="tab">Quotas</a>
                                 </li>
                             {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#roles" data-toggle="tab">Roles</a>
+                            </li>
+                            {% if users %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#rbac" title="Role Based Access Control"
+                                       data-toggle="tab">RBAC</a>
+                                </li>
+                            {% endif %}
+
 
                         </ul>
                     </div>
@@ -73,7 +75,7 @@
                             <div class="tab-pane" id="roles">
                                 {% render_table roles %}
                             </div>
-                            <div class="tab-pane" id="users">
+                            <div class="tab-pane" id="rbac">
                                 {% if users %}
                                     {% render_table users %}
                                 {% endif %}

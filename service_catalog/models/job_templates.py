@@ -87,7 +87,8 @@ class JobTemplate(SquestModel):
         return False
 
     def get_absolute_url(self):
-        return reverse('service_catalog:jobtemplate_list', kwargs={'tower_id': self.tower_server.id})
+        return reverse('service_catalog:jobtemplate_details', args=[self.tower_server.id, self.pk])
+
 
 @receiver(pre_delete, sender=JobTemplate)
 def job_template_delete(sender, instance, using, **kwargs):

@@ -23,11 +23,12 @@ class OperationTableFromInstanceDetails(SquestTable):
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "type", "is_admin_operation", "request")
+        fields = ("name", "description", "type", "is_admin_operation", "actions")
 
     name = LinkColumn()
     type = TemplateColumn(template_name='service_catalog/custom_columns/operation_type.html')
-    request = TemplateColumn(template_name='service_catalog/custom_columns/operation_request.html', orderable=False)
+    actions = TemplateColumn(template_name='service_catalog/custom_columns/operation_request.html', orderable=False,
+                             verbose_name="")
     is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
 
 
@@ -35,8 +36,9 @@ class CreateOperationTable(SquestTable):
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "is_admin_operation", "request")
+        fields = ("name", "description", "is_admin_operation", "action")
 
     name = LinkColumn()
-    request = TemplateColumn(template_name='service_catalog/custom_columns/create_operation_request.html', orderable=False)
+    action = TemplateColumn(template_name='service_catalog/custom_columns/create_operation_request.html',
+                            orderable=False)
     is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')

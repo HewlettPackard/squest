@@ -47,6 +47,9 @@ class Transformer(SquestModel):
                   " than the yellow threshold."
     )
 
+    def __str__(self):
+        return f"{self.attribute_definition} of {self.resource_group}"
+
     def get_absolute_url(self):
         return reverse("resource_tracker_v2:transformer_list",
                        kwargs={"resource_group_id": self.resource_group.id})

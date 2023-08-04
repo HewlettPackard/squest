@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Organization
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-12">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#attributes" data-toggle="tab">Attributes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#resources" data-toggle="tab">Resources</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="attributes">
+                                {% if attributes_table %}
+                                    {% render_table attributes_table %}
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="resources">
+                                {% if resources_table %}
+                                    {% render_table resources_table %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+{% endblock %}

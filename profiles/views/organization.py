@@ -27,7 +27,8 @@ class OrganizationDetailView(SquestDetailView):
             context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]
                                            )
         context['teams'] = TeamTable(
-            Team.get_queryset_for_user(self.request.user, "profiles.view_team") & self.object.teams.distinct()
+            Team.get_queryset_for_user(self.request.user, "profiles.view_team") & self.object.teams.distinct(),
+            hide_fields=('org',)
         )
 
         context['roles'] = ScopeRoleTable(self.object.roles.distinct())

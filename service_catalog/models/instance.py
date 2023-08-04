@@ -2,7 +2,8 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT, Q
+from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT, Q, \
+    CASCADE
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class Instance(SquestModel):
     class Meta:
+        ordering = ["-last_updated"]
         permissions = [
             ("archive_instance", "Can archive instance"),
             ("unarchive_instance", "Can unarchive instance"),
@@ -30,11 +32,15 @@ class Instance(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
+    exclude_object_type_list_for_delete = [
+        "RequestMessage",
+        "SupportMessage",
+    ]
     name = CharField(verbose_name="Instance name", max_length=100)
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
-    service = ForeignKey(Service, blank=True, null=True, on_delete=SET_NULL)
-    requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Requester", on_delete=SET_NULL)
+    service = ForeignKey(Service, blank=True, null=True, on_delete=CASCADE)
+    requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Requester", on_delete=PROTECT)
     scopes = ManyToManyField(
         Scope,
         blank=True,

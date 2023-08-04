@@ -71,16 +71,6 @@ class ScopeRBACDeleteView(SquestDeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if isinstance(self.scope, Organization):
-            team_name_list = RBAC.objects.filter(
-                scope__in=self.scope.teams.all(),
-                user__id=self.kwargs.get('user_id')
-            ).values_list("scope__name", flat=True)
-            context['details'] = {
-                'warning_sentence': 'Warning: User still in following Teams, it will be removed from them:',
-                'details_list': [f"{team}," for team in team_name_list]
-            } if team_name_list else None
-
         context['breadcrumbs'] = get_breadcrumbs_for_scope(self.scope)
         context['breadcrumbs'] += [
             {'text': self.rbac.role, 'url': ""},
