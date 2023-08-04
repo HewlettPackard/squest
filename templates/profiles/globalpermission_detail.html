@@ -28,7 +28,7 @@
                     <div class="card-header p-2">
                         <ul class="nav nav-pills squest-default-active" id="tabs">
                             <li class="nav-item">
-                                <a class="nav-link" href="#user_permissions" data-toggle="tab">Default permissions</a>
+                                <a class="nav-link" href="#default_permissions" data-toggle="tab">Default permissions</a>
                             </li>
                             {% if users %}
                                 <li class="nav-item">
@@ -40,12 +40,12 @@
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane" id="user_permissions">
+                            <div class="tab-pane" id="default_permissions">
                                 <div class="alert alert-info alert-dismissible">
                                     <i class="icon fas fa-info"></i>
                                     List of permissions granted to all users
                                 </div>
-                                {% render_table user_permissions %}
+                                {% render_table default_permissions %}
                             </div>
                             <div class="tab-pane" id="rbac">
                                 {% if users %}

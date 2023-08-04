@@ -19,10 +19,10 @@ def create_roles(sender, **kwargs):
         role_migration.name = "Organization member"
         role_migration.save()
         codenames = list(
-            map(lambda user_permissions: user_permissions.split('.')[1],
+            map(lambda default_permissions: default_permissions.split('.')[1],
                 default_roles[role_migration.name]['permissions']))
         app_labels = list(
-            map(lambda user_permissions: user_permissions.split('.')[0],
+            map(lambda default_permissions: default_permissions.split('.')[0],
                 default_roles[role_migration.name]['permissions']))
         role_migration.permissions.add(
             *Permission.objects.filter(
@@ -38,10 +38,10 @@ def create_roles(sender, **kwargs):
         )
         if created:
             codenames = list(
-                map(lambda user_permissions: user_permissions.split('.')[1], role_params['permissions'])
+                map(lambda default_permissions: default_permissions.split('.')[1], role_params['permissions'])
             )
             app_labels = list(
-                map(lambda user_permissions: user_permissions.split('.')[0], role_params['permissions'])
+                map(lambda default_permissions: default_permissions.split('.')[0], role_params['permissions'])
             )
             role.permissions.add(
                 *Permission.objects.filter(
@@ -58,10 +58,10 @@ def insert_default_user_permissions(sender, **kwargs):
     global_permission, created = GlobalPermission.objects.get_or_create(name="GlobalPermission")
     if created:
         codenames = list(
-            map(lambda user_permissions: user_permissions.split('.')[1], default_user_permissions))
+            map(lambda default_permissions: default_permissions.split('.')[1], default_user_permissions))
         app_labels = list(
-            map(lambda user_permissions: user_permissions.split('.')[0], default_user_permissions))
-        global_permission.user_permissions.add(
+            map(lambda default_permissions: default_permissions.split('.')[0], default_user_permissions))
+        global_permission.default_permissions.add(
             *Permission.objects.filter(
                 codename__in=codenames,
                 content_type__app_label__in=app_labels

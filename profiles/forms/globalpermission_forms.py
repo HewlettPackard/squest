@@ -5,4 +5,4 @@ from profiles.models import GlobalPermission
 class GlobalPermissionForm(SquestModelForm):
     class Meta:
         model = GlobalPermission
-        fields = ["user_permissions"]
+        fields = ["default_permissions"]
