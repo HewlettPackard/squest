@@ -57,7 +57,7 @@ class TestPermissionUIViews(TestCase):
     def setUp(self):
         super().setUp()
         self.global_permission = GlobalPermission.load()
-        self.global_permission.user_permissions.clear()
+        self.global_permission.default_permissions.clear()
         self.testing_user = User.objects.create_user('testing_view_user', 'testing_view_user@hpe.com', "password")
         self.empty_role = Role.objects.create(name='empty', description='empty for testing')
         self.global_permission.add_user_in_role(self.testing_user, self.empty_role)
