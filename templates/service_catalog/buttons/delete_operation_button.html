@@ -1,0 +1,9 @@
+{% with perm="service_catalog.delete_operation" %}
+    {% has_perm request.user perm object as can_delete %}
+    <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
+                <a href="{% url 'service_catalog:operation_delete' object.service.id object.id %}"
+                   class="btn btn-danger{% if not can_delete %} disabled{% endif %}">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </span>
+{% endwith %}

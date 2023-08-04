@@ -11,6 +11,7 @@ class OperationTable(SquestTable):
         fields = ("enabled", "name", "type", "job_template", "auto_accept", "auto_process",
                   "is_admin_operation", "actions")
 
+    name = LinkColumn()
     enabled = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
     type = TemplateColumn(template_name='service_catalog/custom_columns/operation_type.html')
     auto_accept = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')

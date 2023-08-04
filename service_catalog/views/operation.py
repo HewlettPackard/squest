@@ -50,9 +50,42 @@ class OperationCreateView(SquestCreateView):
         return context
 
 
+class OperationDetailView(SquestDetailView):
+    model = Operation
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
+            {
+                'text': 'Service catalog',
+                'url': reverse('service_catalog:service_catalog_list')
+            },
+            {
+                'text': 'Service',
+                'url': reverse('service_catalog:service_list')
+            },
+            {
+                'text': self.get_object().service,
+                'url': reverse('service_catalog:operation_list',
+                               args=[self.get_object().service.id])
+            },
+            {
+                'text': self.get_object(),
+                'url': ''
+            }
+        ]
+        return context
+
+
 class OperationEditView(SquestUpdateView):
     model = Operation
     form_class = ServiceOperationForm
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
 
     def get_success_url(self):
         return self.get_object().service.get_absolute_url()
@@ -76,6 +109,9 @@ class OperationEditView(SquestUpdateView):
 
 class OperationDeleteView(SquestDeleteView):
     model = Operation
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
 
     def get_generic_url_kwargs(self):
         return {'service_id': self.kwargs.get('service_id')}
@@ -101,9 +137,8 @@ class CreateOperationListView(SquestListView):
         return ""
 
     def get_queryset(self):
-        service_id = self.kwargs.get('service_id')
         return Operation.get_queryset_for_user(self.request.user, "service_catalog.view_operation").filter(
-            service__id=service_id,
+            service__id=self.kwargs.get('service_id'),
             enabled=True, type=OperationType.CREATE,
         )
 

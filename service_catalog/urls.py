@@ -53,6 +53,7 @@ urlpatterns = [
     path('service/<int:service_id>/operation/create/', views.OperationCreateView.as_view(), name='operation_create'),
     path('service/<int:service_id>/operation/<int:pk>/delete/', views.OperationDeleteView.as_view(), name='operation_delete'),
     path('service/<int:service_id>/operation/<int:pk>/edit/', views.OperationEditView.as_view(), name='operation_edit'),
+    path('service/<int:service_id>/operation/<int:pk>/', views.OperationDetailView.as_view(), name='operation_details'),
 
     # Request operation endpoints
     path('service/<int:service_id>/operation/<int:operation_id>/request/',
