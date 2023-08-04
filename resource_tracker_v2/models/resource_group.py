@@ -6,6 +6,11 @@ from Squest.utils.squest_model import SquestModel
 
 
 class ResourceGroup(SquestModel):
+
+    exclude_object_type_list_for_delete = [
+        "Transformer",
+        "ResourceAttribute",
+    ]
     name = CharField(max_length=100,
                      blank=False,
                      unique=True)
@@ -20,4 +25,4 @@ class ResourceGroup(SquestModel):
         return resource
 
     def get_absolute_url(self):
-        return reverse("resource_tracker_v2:resourcegroup_list")
+        return reverse("resource_tracker_v2:resourcegroup_details",args=[self.pk])

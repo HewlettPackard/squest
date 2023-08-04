@@ -37,6 +37,16 @@
                                     {% endfor %}
                                 </span>
                             </li>
+                        {% if object.get_unused_fields %}
+                            <li class="list-group-item">
+                                <b>Unused fields</b>
+                                <span class="float-right">
+                                    {% for field in object.get_unused_fields %}
+                                        <span class="badge bg-warning">{{ field }}</span>
+                                    {% endfor %}
+                                </span>
+                            </li>
+                        {% endif %}
                         </ul>
                     </div>
                 </div>

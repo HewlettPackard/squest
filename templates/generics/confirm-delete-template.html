@@ -35,13 +35,9 @@
                         <h3 class="card-title">{{ confirm_text }}</h3>
                     </div>
                     <div class="card-body">
-                        {% if details != None %}
-                            {{ details.warning_sentence }}
-                            <ul>
-                                {% for detail in details.details_list %}
-                                    <li>{{ detail }}</li>
-                                {% endfor %}
-                            </ul>
+                        {% if details.details_list %}
+                            <p>{{ details.warning_sentence }}</p>
+                            <ul>{{ details.details_list |unordered_list }}</ul>
                         {% endif %}
                         <form class="form-horizontal" method="post">{% csrf_token %}
                             <button class="btn btn-danger" type="submit">

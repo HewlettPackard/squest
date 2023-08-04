@@ -6,7 +6,7 @@ from service_catalog.models import TowerServer
 
 
 class TowerServerTable(SquestTable):
-    name = LinkColumn("service_catalog:towerserver_edit", args=[A("id")])
+    name = LinkColumn()
     host = TemplateColumn(template_name='service_catalog/custom_columns/tower_server_host.html')
     jobtemplate = TemplateColumn(template_name='service_catalog/custom_columns/tower_server_job_templates.html',
                                  verbose_name="Job templates")

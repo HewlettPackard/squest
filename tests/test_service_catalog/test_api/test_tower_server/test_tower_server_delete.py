@@ -9,9 +9,10 @@ class TestApiTowerServerDelete(BaseTestRequest):
 
     def setUp(self):
         super(TestApiTowerServerDelete, self).setUp()
-        self.tower_server_to_delete_id = self.tower_server_test.id
+        empty_tower = TowerServer.objects.create(name="test", host="tsst", token="test")
+        self.tower_server_to_delete_id = empty_tower.id
         self.kwargs = {
-            'pk': self.tower_server_test.id
+            'pk': self.tower_server_to_delete_id
         }
         self.tower_server_url = reverse('api_tower_server_details', kwargs=self.kwargs)
 
