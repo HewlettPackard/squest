@@ -36,9 +36,9 @@ class CreateOperationTable(SquestTable):
     class Meta:
         model = Operation
         attrs = {"id": "operation_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "is_admin_operation", "action")
+        fields = ("name", "description", "is_admin_operation", "actions")
 
     name = LinkColumn()
-    action = TemplateColumn(template_name='service_catalog/custom_columns/create_operation_request.html',
+    actions = TemplateColumn(template_name='service_catalog/custom_columns/create_operation_request.html',
                             orderable=False)
     is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
