@@ -48,6 +48,7 @@ urlpatterns = [
 
     # Global Permission
     path('global-permission/', views.GlobalPermissionDetailView.as_view(), name="globalpermission_details"),
+    path('global-permission/default-permission/', views.GlobalPermissionDefaultPermissionView.as_view(), name="default_permission_list"),
     path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
     path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
     path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),

@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}
-    Global Permission
+    Default permissions
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
-{% block extra_header_button %}
-    {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
-    <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
-       class="btn btn-success{% if not can_add_users %} disabled{% endif %}"><i class="fas fa-user-plus"></i> Add RBAC
+{% block header_button %}
+    {% has_perm request.user "profiles.change_globalpermission" object as can_change_global_perm %}
+    <a href="{% url 'profiles:globalpermission_edit' %}"
+       class="btn btn-primary">
+        <i class="fas fa-pencil-alt {% if not can_change %} disabled{% endif %}"></i>
     </a>
 {% endblock %}
 
 {% block main %}
-    {% has_perm request.user "profiles.delete_users_globalpermission" object as can_delete_user %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -20,9 +20,9 @@
                     <div class="card-body">
                         <div class="alert alert-info alert-dismissible">
                             <i class="icon fas fa-info"></i>
-                            Permissions granted at Squest level
+                            List of permissions granted to all users
                         </div>
-                        {% render_table users %}
+                        {% render_table default_permissions %}
                     </div>
                 </div>
             </div>
