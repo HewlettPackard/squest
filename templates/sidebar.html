@@ -17,6 +17,7 @@
 {% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
 {% has_perm request.user "service_catalog.list_approvalworkflow" as can_list_approval %}
 {% has_perm request.user "service_catalog.list_quota" as can_list_quota %}
+{% has_perm request.user "profiles.can_view_globalpermission" as can_view_globalpermission %}
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
@@ -156,7 +157,7 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if can_list_towerserver or can_list_role or can_list_permission or can_list_globalpermission or can_list_globalhook or can_list_announcement or can_list_customlink %}
+                {% if can_list_towerserver or can_list_role or can_list_permission or can_list_globalpermission or can_list_globalhook or can_list_announcement or can_list_customlink or can_view_globalpermission %}
 
                     <li class="nav-header">Administration</li>
                 {% endif %}
@@ -211,6 +212,15 @@
                                        class="nav-link {% if '/profiles/permission/' in request.path %}active{% endif %}">
                                         <i class="nav-icon fas fa-unlock"></i>
                                         <p>Permissions</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if can_view_globalpermission %}
+                                <li class="nav-item">
+                                    <a href="{% url 'profiles:default_permission_list' %}"
+                                       class="nav-link {% if '/profiles/default-permission/' in request.path %}active{% endif %}">
+                                        <i class="nav-icon fas fa-unlock"></i>
+                                        <p>Default permissions</p>
                                     </a>
                                 </li>
                             {% endif %}
