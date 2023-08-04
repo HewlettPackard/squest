@@ -32,10 +32,7 @@ class Instance(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    exclude_object_type_list_for_delete = [
-        "RequestMessage",
-        "SupportMessage",
-    ]
+
     name = CharField(verbose_name="Instance name", max_length=100)
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")

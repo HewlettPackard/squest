@@ -4,14 +4,25 @@ from django.db import router
 from django.db.models import Model, Q, DateTimeField
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.text import capfirst
 
 
 class SquestDeleteCascadeMixIn(Model):
     class Meta:
         abstract = True
 
-    exclude_object_type_list_for_delete = list()
+    class_displayed_in_cascade = ["Request",
+                                  "Instance",
+                                  "Support",
+                                  "Operation",
+                                  "JobTemplate",
+                                  "TowerServer",
+                                  "Resource",
+                                  "ResourceGroup",
+                                  "Organization",
+                                  "Team",
+                                  "ApprovalWorkflow",
+                                  "ApprovalStep",
+                                  ]
 
     @staticmethod
     def format_callback(squest_object):
@@ -24,23 +35,26 @@ class SquestDeleteCascadeMixIn(Model):
                                link,
                                squest_object)
 
-    def get_exclude_object_type_list_for_delete(self):
-        return self.exclude_object_type_list_for_delete
+    def get_class_displayed_in_cascade(self):
+        return self.class_displayed_in_cascade
 
     def get_related_objects_cascade(self):
         using = router.db_for_write(self._meta.model)
         collector = NestedObjects(using=using)
         collector.collect([self])
-        obj_list = list()
-        excluded_objects = self.get_exclude_object_type_list_for_delete()
+        class_displayed_in_cascade = self.get_class_displayed_in_cascade()
+        model_list = list()
         for model in collector.model_objs:
+            obj_list = list()
             for squest_object in collector.model_objs[model]:
                 if squest_object == self:
                     continue
-                if squest_object._meta.object_name in excluded_objects:
-                    continue
-                obj_list.append(SquestDeleteCascadeMixIn.format_callback(squest_object))
-        return obj_list
+                if squest_object._meta.object_name in class_displayed_in_cascade:
+                    obj_list.append(SquestDeleteCascadeMixIn.format_callback(squest_object))
+            if obj_list:
+                model_list.append(model._meta.object_name)
+                model_list.append(obj_list)
+        return model_list
 
 
 class SquestRBAC(Model):
