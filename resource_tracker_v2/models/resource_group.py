@@ -7,10 +7,6 @@ from Squest.utils.squest_model import SquestModel
 
 class ResourceGroup(SquestModel):
 
-    exclude_object_type_list_for_delete = [
-        "Transformer",
-        "ResourceAttribute",
-    ]
     name = CharField(max_length=100,
                      blank=False,
                      unique=True)

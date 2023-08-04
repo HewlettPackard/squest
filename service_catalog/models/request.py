@@ -41,10 +41,6 @@ class Request(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    exclude_object_type_list_for_delete = [
-        "RequestMessage",
-    ]
-
     fill_in_survey = JSONField(default=dict, blank=True)
     admin_fill_in_survey = JSONField(default=dict, blank=True)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True)

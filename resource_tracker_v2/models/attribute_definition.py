@@ -10,9 +10,7 @@ class AttributeDefinition(SquestModel):
                      blank=False)
 
     description = CharField(max_length=100, default='', null=True, blank=True)
-    exclude_object_type_list_for_delete = [
-        "ResourceAttribute",
-    ]
+
     def delete(self, using=None, keep_parents=False):
         # remove the pointer to this attribute in all transformer that were using it
         from resource_tracker_v2.models import Transformer
