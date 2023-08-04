@@ -16,6 +16,8 @@ class QuotaListView(SquestListView):
     filterset_class = QuotaFilter
     table_class = QuotaTable
     ordering = 'name'
+    no_data_message = 'To create quota, go to organization/team and click on "Set quotas"'
+    export_csv = True
 
     def get_context_data(self, **kwargs):
         context = super(QuotaListView, self).get_context_data(**kwargs)

@@ -31,7 +31,7 @@ class ResourceListView(TagFilterListView):
                 "resource_group_id": resource_group.id
             }
         )
-        context['html_button_path'] = "resource_tracking_v2/resource_group/resources/resource_list_buttons.html"
+        context['html_button_path'] = "resource_tracker_v2/resource_group/resources/resource_list_buttons.html"
         return context
 
 

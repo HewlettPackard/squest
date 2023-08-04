@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 
+from Squest.utils.squest_model import SquestDeleteCascadeMixIn
 from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.transformer_filter import TransformerFilter
 from resource_tracker_v2.forms.transformer_form import TransformerForm
-from resource_tracker_v2.models import Transformer, ResourceGroup, AttributeDefinition, ResourceAttribute
+from resource_tracker_v2.models import Transformer, ResourceGroup, AttributeDefinition, Resource
 from resource_tracker_v2.tables.transformer_table import TransformerTable
 
 
@@ -41,7 +42,7 @@ class TransformerListView(SquestListView):
 class TransformerCreateView(SquestCreateView):
     model = Transformer
     form_class = TransformerForm
-    template_name = 'resource_tracking_v2/resource_group/resource-group-attribute-link.html'
+    template_name = 'resource_tracker_v2/resource_group/resource-group-attribute-link.html'
 
     def get_form_kwargs(self):
         """Return the keyword arguments for instantiating the form."""
@@ -66,7 +67,7 @@ class TransformerCreateView(SquestCreateView):
 class TransformerEditView(SquestUpdateView):
     model = Transformer
     form_class = TransformerForm
-    template_name = 'resource_tracking_v2/resource_group/resource-group-attribute-link-edit.html'
+    template_name = 'resource_tracker_v2/resource_group/resource-group-attribute-link-edit.html'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -98,7 +99,6 @@ class TransformerEditView(SquestUpdateView):
 
 class TransformerDeleteView(SquestDeleteView):
     model = Transformer
-    template_name = 'resource_tracking_v2/resource_group/resource-group-attribute-delete.html'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -115,15 +115,19 @@ class TransformerDeleteView(SquestDeleteView):
     def get_context_data(self, **kwargs):
         resource_group = get_object_or_404(ResourceGroup, pk=self.kwargs['resource_group_id'])
         attribute = get_object_or_404(AttributeDefinition, pk=self.kwargs['attribute_id'])
-        transformer = Transformer.objects.get(resource_group=resource_group, attribute_definition=attribute)
-        impacted_resources = resource_group.resources.filter(
-            resource_attribute__in=[attribute for attribute
-                                    in ResourceAttribute.objects.filter(
-                    attribute_definition=transformer.attribute_definition).all()])
         context = super().get_context_data(**kwargs)
         context["resource_group"] = resource_group
         context["attribute"] = attribute
-        context["impacted_resources"] = impacted_resources
+        resource_impacted = [SquestDeleteCascadeMixIn.format_callback(squest_object) for squest_object in
+            Resource.objects.filter(
+                resource_group=self.get_object().resource_group,
+                resource_attribute__attribute_definition=self.get_object().attribute_definition
+            )
+        ]
+        context['details'] = {
+            'warning_sentence': 'Related will be impacted:',
+            'details_list': self.object.get_related_objects_cascade() + resource_impacted
+        }
         context['breadcrumbs'] = [
             {'text': "Resource group", 'url': resource_group.get_absolute_url()},
             {'text': resource_group, 'url': self.get_object().get_absolute_url()},

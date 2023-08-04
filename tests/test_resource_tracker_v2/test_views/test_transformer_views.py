@@ -25,6 +25,7 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
         }
         data = {
             "attribute_definition": self.three_par_attribute.id,
+            "factor":1
         }
         number_transformer_before = Transformer.objects.all().count()
         response = self.client.post(reverse('resource_tracker_v2:transformer_create', kwargs=args),
@@ -40,6 +41,7 @@ class TestTransformerViews(BaseTestResourceTrackerV2):
             "attribute_definition": self.three_par_attribute.id,
             "consume_from_resource_group": self.cluster.id,
             "consume_from_attribute_definition": self.three_par_attribute.id,
+            "factor": 1
         }
         number_transformer_before = Transformer.objects.all().count()
 

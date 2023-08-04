@@ -1,7 +1,7 @@
 from django.db.models import CharField, ForeignKey, ManyToManyField, CASCADE
 
 from Squest.utils.squest_model import SquestModel
-from service_catalog.models import ApprovalStep
+from service_catalog.models import ApprovalStep, TowerSurveyField
 
 
 class ApprovalWorkflow(SquestModel):
@@ -24,6 +24,14 @@ class ApprovalWorkflow(SquestModel):
     )
 
     @property
+    def get_unused_fields(self):
+        all_fields = set(TowerSurveyField.objects.filter(operation=self.operation).values_list('name', flat=True))
+        used_fields = set(
+            TowerSurveyField.objects.filter(approval_steps_as_write_field__approval_workflow=self).values_list('name',
+                                                                                                               flat=True))
+        return all_fields - used_fields
+
+    @property
     def first_step(self):
         first_step = ApprovalStep.objects.filter(approval_workflow=self, position=0)
         if first_step.exists():
@@ -38,8 +46,9 @@ class ApprovalWorkflow(SquestModel):
         from service_catalog.models import ApprovalWorkflowState
         new_approval_workflow_state = ApprovalWorkflowState.objects.create(approval_workflow=self)
         for approval_step in self.approval_steps.all():
-            new_app_workflow_state = ApprovalStepState.objects.create(approval_workflow_state=new_approval_workflow_state,
-                                                                      approval_step=approval_step)
+            new_app_workflow_state = ApprovalStepState.objects.create(
+                approval_workflow_state=new_approval_workflow_state,
+                approval_step=approval_step)
             if approval_step.position == 0:
                 new_approval_workflow_state.current_step = new_app_workflow_state
         new_approval_workflow_state.save()

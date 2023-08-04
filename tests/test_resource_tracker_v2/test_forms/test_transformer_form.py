@@ -16,7 +16,8 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
         number_transformer_before = Transformer.objects.count()
 
         data = {
-            "attribute_definition": self.disk_att.id
+            "attribute_definition": self.disk_att.id,
+            "factor": 1
         }
         form = TransformerForm(data, **self.parameters)
         form.is_valid()
@@ -29,6 +30,7 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
             "attribute_definition": self.disk_att.id,
             "consume_from_resource_group": self.cluster.id,
             "consume_from_attribute_definition": self.three_par_attribute.id,
+            "factor": 1
         }
         form = TransformerForm(data, **self.parameters)
         self.assertTrue(form.is_valid())
@@ -102,6 +104,7 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
             "attribute_definition": other_field.id,
             "consume_from_resource_group": other_vms.id,
             "consume_from_attribute_definition": self.vcpu_attribute.id,
+            "factor": 1
         }
         number_transformer_before = Transformer.objects.count()
         form = TransformerForm(data, **parameters)
@@ -117,6 +120,7 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
         data = {
             "consume_from_resource_group": self.cluster.id,
             "consume_from_attribute_definition": self.core_attribute.id,
+            "factor": 1
         }
 
         self.request_cpu_from_vcpu.refresh_from_db()

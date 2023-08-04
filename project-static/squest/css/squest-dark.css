@@ -7,3 +7,6 @@
     background-color: #343a40 !important;
     z-index: 1;
 }
+input.form-control[disabled] {
+  opacity: 0.4;
+}

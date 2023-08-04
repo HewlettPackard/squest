@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content-wrapper" style="min-height: 278px;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        {% include "generics/breadcrumbs.html" %}
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="ResourceGroupLinkForm" class="form-horizontal"
+                              action="{% url 'resource_tracker_v2:transformer_edit' resource_group.id attribute.id %}"
+                              method="post" current-resource-group-id="{{ resource_group.id }}"
+                              data-attribute-url="{% url 'resource_tracker_v2:ajax_load_attribute' %}">{% csrf_token %}
+
+                            {% include "generics/form_edit.html" %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'squest/js/resource_group_attributes.js' %}"></script>
+    <script>
+        // on resource group change we update the list of attribute
+        $("#id_consume_from_resource_group").change(function () {
+            load_resource_group_attributes($(this).val(),);
+        });
+
+    </script>
+{% endblock %}

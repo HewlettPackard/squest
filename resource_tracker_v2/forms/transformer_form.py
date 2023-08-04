@@ -49,9 +49,6 @@ class TransformerForm(SquestModelForm):
             self.fields['consume_from_attribute_definition'].choices = [(transformer.attribute_definition.id,
                                                                          transformer.attribute_definition.name) for transformer in target_transformer]
 
-        self.fields["factor"] = FloatField(required=False,
-                                           initial=1,
-                                           widget=forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}))
 
     def clean(self):
         cleaned_data = super().clean()

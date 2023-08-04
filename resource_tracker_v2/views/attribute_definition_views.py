@@ -9,7 +9,7 @@ from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefini
 
 class AttributeDefinitionDetailView(SquestDetailView):
     model = AttributeDefinition
-    template_name = "resource_tracking_v2/attributedefinition_detail.html"
+    template_name = "resource_tracker_v2/attributedefinition_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,8 +62,4 @@ class AttributeDefinitionDeleteView(SquestDeleteView):
                 attribute_definition=kwargs.get("object"))
             .values_list("resource_group__id", flat=True))
         context['breadcrumbs'][0]['url'] = reverse_lazy('resource_tracker_v2:attributedefinition_list')
-        context['details'] = {
-            'warning_sentence': 'Warning: This attribute is in use by following resource groups:',
-            'details_list': [f"{rg}," for rg in impacted_resource_group]
-        }
         return context

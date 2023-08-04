@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField
+from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField, PROTECT
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -12,6 +12,18 @@ from service_catalog.models.services import Service
 
 
 class Operation(SquestModel):
+
+    exclude_object_type_list_for_delete = [
+        "TowerSurveyField",
+        "ApprovalStep_readable_fields",
+        "ApprovalStep_editable_fields",
+        "ApprovalWorkflow",
+        "ApprovalStep",
+        "ApprovalStepState",
+        "ApprovalWorkflow_scopes",
+        "ApprovalWorkflowState",
+    ]
+
     name = CharField(max_length=100, verbose_name="Operation name")
     description = CharField(max_length=500, blank=True, null=True)
     type = CharField(
@@ -55,7 +67,7 @@ class Operation(SquestModel):
         return f"{self.name} ({self.service})"
 
     def get_absolute_url(self):
-        return reverse(f"service_catalog:operation_edit", args=[self.service.id, self.pk])
+        return reverse(f"service_catalog:operation_list", args=[self.service.id])
 
     def clean(self):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):

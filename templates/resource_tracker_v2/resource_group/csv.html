@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block extra_button %}
-    {% include "resource_tracking_v2/resource_group/button_switch_csv.html" %}
+    {% include "resource_tracker_v2/resource_group/button_switch_csv.html" %}
 {% endblock extra_button %}
 {% block main %}
     <div class="content">
@@ -14,7 +14,7 @@
                                     <table id="resource_group_table_csv" class="table table-sm">
                                         <thead>
                                         <tr>
-                                            <th>Pool name</th>
+                                            <th>Resource group</th>
                                             {% for attribute_name in list_attribute_name %}
                                                 <th>{{ attribute_name }} produced</th>
                                                 <th>{{ attribute_name }} consumed</th>

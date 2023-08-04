@@ -49,13 +49,6 @@ class JobTemplateDeleteView(SquestDeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        operations = self.get_object().operation_set.all()
-        context['details'] = {
-            'warning_sentence': 'Warning: some services/operations are still using this job template:',
-            'details_list': [
-                f"Service: \"{operation.service.name}\" / Operation: \"{operation.name}\"{' - This service will be disabled' if operation.type == OperationType.CREATE else ''}."
-                for operation in operations]
-        } if operations else None
         context['breadcrumbs'] = [
             {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
             {'text': self.get_object().tower_server.name, 'url': ""},
