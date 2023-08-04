@@ -28,6 +28,10 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
         testing_view_list = [
             TestingGetUIViews(
                 url='profiles:globalpermission_details',
+                perm_str='profiles.view_users_globalpermission',
+            ),
+            TestingGetUIViews(
+                url='profiles:default_permission_list',
                 perm_str='profiles.view_globalpermission',
             ),
             TestingGetUIViews(
