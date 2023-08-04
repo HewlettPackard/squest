@@ -12,9 +12,6 @@ from service_catalog.models.services import Service
 
 
 class Operation(SquestModel):
-
-
-
     name = CharField(max_length=100, verbose_name="Operation name")
     description = CharField(max_length=500, blank=True, null=True)
     type = CharField(
@@ -58,7 +55,7 @@ class Operation(SquestModel):
         return f"{self.name} ({self.service})"
 
     def get_absolute_url(self):
-        return reverse(f"service_catalog:operation_list", args=[self.service.id])
+        return reverse(f"service_catalog:operation_details", args=[self.service.id, self.pk])
 
     def clean(self):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):

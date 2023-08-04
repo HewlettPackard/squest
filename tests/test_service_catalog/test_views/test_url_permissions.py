@@ -402,6 +402,11 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                 }
             ),
             TestingGetUIViews(
+                url='service_catalog:operation_details',
+                perm_str='service_catalog.view_operation',
+                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+            ),
+            TestingGetUIViews(
                 url='service_catalog:operation_edit',
                 perm_str='service_catalog.change_operation',
                 url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
@@ -752,6 +757,11 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                     "token": "xxxx",
                     "extra_vars": "{}"
                 }
+            ),
+            TestingGetUIViews(
+                url='service_catalog:towerserver_details',
+                perm_str='service_catalog.view_towerserver',
+                url_kwargs={'pk': self.tower_server_test.id}
             ),
             TestingGetUIViews(
                 url='service_catalog:towerserver_edit',
