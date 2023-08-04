@@ -1,6 +1,46 @@
+from django.contrib.admin.utils import NestedObjects
 from django.contrib.contenttypes.models import ContentType
+from django.db import router
 from django.db.models import Model, Q, DateTimeField
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.text import capfirst
+
+
+class SquestDeleteCascadeMixIn(Model):
+    class Meta:
+        abstract = True
+
+    exclude_object_type_list_for_delete = list()
+
+    @staticmethod
+    def format_callback(squest_object):
+        try:
+            link = squest_object.get_absolute_url()
+        except Exception as e:
+            return f'{squest_object}'
+        else:
+            return format_html('<a href="{}">{}</a>',
+                               link,
+                               squest_object)
+
+    def get_exclude_object_type_list_for_delete(self):
+        return self.exclude_object_type_list_for_delete
+
+    def get_related_objects_cascade(self):
+        using = router.db_for_write(self._meta.model)
+        collector = NestedObjects(using=using)
+        collector.collect([self])
+        obj_list = list()
+        excluded_objects = self.get_exclude_object_type_list_for_delete()
+        for model in collector.model_objs:
+            for squest_object in collector.model_objs[model]:
+                if squest_object == self:
+                    continue
+                if squest_object._meta.object_name in excluded_objects:
+                    continue
+                obj_list.append(SquestDeleteCascadeMixIn.format_callback(squest_object))
+        return obj_list
 
 
 class SquestRBAC(Model):
@@ -64,7 +104,9 @@ class SquestChangelog(Model):
         blank=True,
         null=True
     )
-class SquestModel(SquestRBAC, SquestChangelog):
+
+
+class SquestModel(SquestRBAC, SquestChangelog, SquestDeleteCascadeMixIn):
     class Meta:
         abstract = True
         default_permissions = ('add', 'change', 'delete', 'view', 'list')

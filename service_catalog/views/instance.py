@@ -52,19 +52,20 @@ class InstanceDetailView(SquestDetailView):
 
         # operations
         operations = Operation.objects.none()
-        if self.request.user.has_perm("service_catalog.request_on_instance"):
+        if self.request.user.has_perm("service_catalog.request_on_instance", self.object):
             operations = operations | self.object.service.operations.filter(is_admin_operation=False,
                                                                             type__in=[OperationType.UPDATE,
                                                                                       OperationType.DELETE])
 
         # admin operations
-        if self.request.user.has_perm("service_catalog.admin_request_on_instance"):
+        if self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
             operations = operations | self.object.service.operations.filter(is_admin_operation=True,
                                                                             type__in=[OperationType.UPDATE,
                                                                                       OperationType.DELETE])
         if operations.exists():
             context['operations_table'] = OperationTableFromInstanceDetails(operations)
-
+            if not self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
+                context['operations_table'].exclude = ("is_admin_operation",)
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):
             context['requests_table'] = RequestTable(
@@ -87,16 +88,6 @@ class InstanceEditView(SquestUpdateView):
 
 class InstanceDeleteView(SquestDeleteView):
     model = Instance
-    template_name = 'generics/confirm-delete-template.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['confirm_text'] = mark_safe(f"Confirm deletion of <strong>{self.object.name}</strong>?")
-        context['details'] = {
-            'warning_sentence': 'Warning: all requests related to this instance will be deleted:',
-            'details_list': [f"ID: {request.id}, State: {request.state}" for request in
-                             self.object.request_set.all()]} if self.object.request_set.count() != 0 else None
-        return context
 
 
 @login_required

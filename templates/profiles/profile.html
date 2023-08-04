@@ -158,7 +158,7 @@
                                     <div class="icon">
                                         <i class="fas fa-bell{% if not user.profile.instance_notification_enabled %}-slash{% endif %}"></i>
                                     </div>
-                                    <a href="{% url "profiles:support_notification_switch" %}" class="small-box-footer">
+                                    <a href="{% url "profiles:instancenotification_switch" %}" class="small-box-footer">
                                         {% if user.profile.instance_notification_enabled %}Disable{% else %}
                                             Enable{% endif %} <i
                                             class="fas fa-bell{% if user.profile.instance_notification_enabled %}-slash{% endif %}"></i>

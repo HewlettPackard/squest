@@ -28,10 +28,10 @@ class ResourceTable(SquestTable):
             type(self).base_columns["service_catalog_instance"] = LinkColumn("service_catalog:instance_details", args=[A("service_catalog_instance__id")], verbose_name="Instance")
             for attribute_name in attribute_names:
                 type(self).base_columns[attribute_name] = TemplateColumn(
-                    template_name='resource_tracking_v2/resource_group/custom_columns/attribute_value.html',
+                    template_name='resource_tracker_v2/resource_group/custom_columns/attribute_value.html',
                     extra_context={'attribute_name': attribute_name},
                     orderable=False
                 )
-            type(self).base_columns["actions"] = TemplateColumn(template_name='resource_tracking_v2/resource_group/resources/custom_columns/resource_operations.html',
+            type(self).base_columns["actions"] = TemplateColumn(template_name='resource_tracker_v2/resource_group/resources/custom_columns/resource_operations.html',
                                                                 orderable=False)
             self.columns = BoundColumns(self, type(self).base_columns)

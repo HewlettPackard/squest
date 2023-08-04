@@ -7,34 +7,7 @@
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <section class="col-lg-3">
-                <div class="card card-gray">
-                    <div class="card-header">
-                        <h3 class="card-title">Details</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <img class="card-img-top" src="{% static '/squest/img/no_image.png' %}"
-                                 alt="User image">
-                        </div>
-                        <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item">
-                                <b>Username</b> <a class="float-right">{{ object.username }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>First name</b> <a class="float-right">{{ object.first_name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Last name</b> <a class="float-right">{{ object.last_name }}</a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Email</b> <a class="float-right">{{ object.email }}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            <section class="col-lg-9">
+            <section class="col">
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills squest-default-active" id="tabs">

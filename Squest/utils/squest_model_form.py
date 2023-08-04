@@ -1,5 +1,5 @@
-
-from django.forms import ModelForm, Select, CheckboxInput, CheckboxSelectMultiple, RadioSelect, FileInput, DateTimeInput
+from django.forms import ModelForm, Select, CheckboxInput, CheckboxSelectMultiple, RadioSelect, FileInput, \
+    DateTimeInput, JSONField
 from django.utils import timezone
 from tempus_dominus.widgets import DateTimePicker
 
@@ -32,5 +32,8 @@ class SquestModelForm(ModelForm):
                         'icon_toggle': True,
                     }
                 )
+            elif isinstance(current_field, JSONField):
+                current_field.widget.attrs['class'] = 'form-control json'
+                current_field.widget.attrs['onblur'] = 'reformatJSON(this)'
             else:
                 current_field.widget.attrs['class'] = 'form-control'
