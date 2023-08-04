@@ -16,7 +16,7 @@ class GlobalPermission(AbstractScope):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    user_permissions = ManyToManyField(
+    default_permissions = ManyToManyField(
         Permission,
         blank=True,
         help_text="Permissions assigned to all users without exception.",

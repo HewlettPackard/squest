@@ -21,7 +21,7 @@ class TestModelHasPerm(TransactionTestUtils):
         self.empty_role = Role.objects.create(name="Empty role")
 
         self.global_perm = GlobalPermission.load()
-        self.global_perm.user_permissions.set([])
+        self.global_perm.default_permissions.set([])
 
         survey = {
             "name": "test-survey",
@@ -65,14 +65,14 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj)
 
         # Add {action}_{object} to everyone
-        self.global_perm.user_permissions.add(permission)
+        self.global_perm.default_permissions.add(permission)
 
         # user1 can see it
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
 
         # Remove view_instance to everyone
-        self.global_perm.user_permissions.remove(permission)
+        self.global_perm.default_permissions.remove(permission)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj)

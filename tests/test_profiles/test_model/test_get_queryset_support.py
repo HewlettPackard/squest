@@ -38,9 +38,9 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self.assertQuerysetEqualID(Support.get_queryset_for_user(user, self.permission),
                                    Support.objects.none())
 
-    def test_get_queryset_globalpermission_user_permissions(self):
+    def test_get_queryset_globalpermission_default_permissions(self):
         """
-        Test the user_permissions in global permission
+        Test the default_permissions in global permission
         """
 
         # No instances
@@ -54,14 +54,14 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self.assertEqual(Support.objects.count(), 1)
 
         # add global perm
-        self.global_perm.user_permissions.add(self.permission_object)
+        self.global_perm.default_permissions.add(self.permission_object)
 
         # everyone can see
         self._assert_can_see_everything(self.superuser)
         self._assert_can_see_everything(self.user1)
 
         # remove global perm
-        self.global_perm.user_permissions.remove(self.permission_object)
+        self.global_perm.default_permissions.remove(self.permission_object)
 
         # only super can see
         self._assert_can_see_everything(self.superuser)
