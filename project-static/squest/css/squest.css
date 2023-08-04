@@ -81,3 +81,8 @@ div.dt-button-collection {
 aside {
     min-height: 100vh
 }
+
+
+input.form-control[disabled] {
+  cursor: not-allowed;
+}

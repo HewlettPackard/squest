@@ -57,7 +57,7 @@ def resource_tracker_graph(request):
 
     return render(
         request,
-        'resource_tracking_v2/graph/resource-tracker-graph.html',
+        'resource_tracker_v2/graph/resource-tracker-graph.html',
         context={
             'svg': svg,
             'display_graph': display_graph,
@@ -114,5 +114,5 @@ def create_resource_group_svg(resource_group: ResourceGroup):
     context['color'] = COLORS['resource_group']
     context['resource_group'] = resource_group
 
-    tm = get_template('resource_tracking_v2/graph/resource_group.html').template
+    tm = get_template('resource_tracker_v2/graph/resource_group.html').template
     return tm.render(context=Context(context))

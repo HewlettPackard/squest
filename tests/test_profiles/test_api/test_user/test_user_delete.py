@@ -9,7 +9,8 @@ class TestApiUserDelete(BaseTestRequest):
 
     def setUp(self):
         super(TestApiUserDelete, self).setUp()
-        self.user_to_delete_id = self.standard_user.id
+        standard_user = User.objects.create(username="test")
+        self.user_to_delete_id = standard_user.id
         self.kwargs = {
             'pk': self.user_to_delete_id
         }
