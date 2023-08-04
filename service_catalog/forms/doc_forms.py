@@ -1,11 +1,8 @@
-import urllib3
 from martor.fields import MartorFormField
 from martor.widgets import AdminMartorWidget
 
 from Squest.utils.squest_model_form import SquestModelForm
 from service_catalog.models.documentation import Doc
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class DocForm(SquestModelForm):

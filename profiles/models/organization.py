@@ -13,7 +13,10 @@ class Organization(Scope):
             ("delete_users_organization", "Can delete users in organization"),
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
-
+    exclude_object_type_list_for_delete = [
+        "Scope",
+        "AbstractScope",
+    ]
     def __str__(self):
         return self.name
 

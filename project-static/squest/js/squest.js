@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    if ($("ul#tabs.squest-default-active li.nav-item a.active").length === 0) {
-        $("ul#tabs.squest-default-active li.nav-item a:first").trigger( "click" );
-    }
 
     $('[data-toggle="popover"]').popover({
         placement: 'top',
@@ -101,19 +98,36 @@ $(document).ready(function () {
             });
         }
     });
+    var jsonTextareas = document.querySelectorAll('textarea.json');
 
-})
-;
+    jsonTextareas.forEach(function (textarea) {
+        reformatJSON(textarea);
+    });
 
+});
+
+function reformatJSON(element) {
+    try {
+        var jsonObject = JSON.parse(element.value.trim());
+        var formattedJsonString = JSON.stringify(jsonObject, null, 4);
+        element.value = formattedJsonString;
+    } catch (error) {
+    }
+}
 
 function add_tab_management() {
-    var hash = window.location.hash;
-    hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show');
+
     $('ul.nav.nav-pills a').click(function (e) {
         $(this).tab('show');
-        var scrollmem = $('body').scrollTop();
         window.location.hash = this.hash;
+        $(document).scrollTop(0);
     });
+    var hash = window.location.hash;
+    if (hash) {
+        $('ul#tabs.squest-default-active li.nav-item a[href="' + hash + '"]').trigger('click');
+    } else {
+        $("ul#tabs.squest-default-active li.nav-item a:first").trigger("click");
+    }
 }
 
 function getCookie(name) {

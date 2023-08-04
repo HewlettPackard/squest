@@ -15,6 +15,10 @@ class Resource(SquestModel):
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
         unique_together = ('name', 'resource_group')
 
+    exclude_object_type_list_for_delete = [
+        "ResourceAttribute",
+    ]
+
     name = CharField(max_length=100,
                      blank=False)
     resource_group = ForeignKey('ResourceGroup',

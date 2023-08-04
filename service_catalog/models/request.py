@@ -8,7 +8,7 @@ import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
-    OneToOneField, Q
+    OneToOneField, Q, PROTECT
 from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 class Request(SquestModel):
     class Meta:
-        ordering = ["-date_submitted"]
+        ordering = ["-last_updated"]
         permissions = [
             ("accept_request", "Can accept request"),
             ("cancel_request", "Can cancel request"),
@@ -41,11 +41,15 @@ class Request(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
+    exclude_object_type_list_for_delete = [
+        "RequestMessage",
+    ]
+
     fill_in_survey = JSONField(default=dict, blank=True)
     admin_fill_in_survey = JSONField(default=dict, blank=True)
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True)
     operation = ForeignKey(Operation, on_delete=CASCADE)
-    user = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
+    user = ForeignKey(User, blank=True, null=True, on_delete=PROTECT)
     date_submitted = DateTimeField(auto_now_add=True, blank=True, null=True)
     date_complete = DateTimeField(blank=True, null=True)
     date_archived = DateTimeField(blank=True, null=True)
@@ -54,14 +58,15 @@ class Request(SquestModel):
     periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
     periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = TextField(blank=True, null=True)
-    accepted_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="accepted_requests")
-    processed_by = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True, related_name="processed_requests")
+    accepted_by = ForeignKey(User, on_delete=PROTECT, blank=True, null=True, related_name="accepted_requests")
+    processed_by = ForeignKey(User, on_delete=PROTECT, blank=True, null=True, related_name="processed_requests")
     approval_workflow_state = OneToOneField(
         "service_catalog.ApprovalWorkflowState",
         blank=True,
         null=True,
         on_delete=CASCADE
     )
+
 
     @classmethod
     def get_q_filter(cls, user, perm):

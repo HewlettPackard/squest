@@ -102,6 +102,7 @@ urlpatterns = [
     # Controller CRUD
     path('controller/', views.TowerServerListView.as_view(), name='towerserver_list'),
     path('controller/create/', views.TowerServerCreateView.as_view(), name='towerserver_create'),
+    path('controller/<int:pk>/', views.TowerServerDetailView.as_view(), name='towerserver_details'),
     path('controller/<int:pk>/edit/', views.TowerServerEditView.as_view(), name='towerserver_edit'),
     path('controller/<int:pk>/delete/', views.TowerServerDeleteView.as_view(), name='towerserver_delete'),
 

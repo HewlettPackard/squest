@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Instance
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block header_button %}
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
+{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                        </div>
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>Name</b> <a class="float-right">{{ object.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Host</b> <strong
+                                    class="float-right">{{ object.host }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Secure</b> <strong
+                                    class="float-right">{{ object.secure }}</strong>
+                            </li>
+                            <li class="list-group-item">
+                                <b>SSL verify</b> <strong
+                                    class="float-right">{{ object.ssl_verify }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#jobtemplates" data-toggle="tab">Job templates</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#extra_vars" data-toggle="tab">Extra vars</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="jobtemplates">
+                                {% if jobtemplate_table %}
+                                    {% render_table jobtemplate_table %}
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="extra_vars">
+                                <div class="wrapper d-flex flex-wrap">
+                                    <div class="card card-primary card-outline flex-grow-1 m-2">
+                                        <div class="card-body pt-0 pb-0">
+                                            <pre>
+                                                <code style="border: 0; padding: 0; margin: 0;"
+                                                      class="language-json">{{ object.extra_vars | pretty_json }}
+                                                </code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+{% endblock %}

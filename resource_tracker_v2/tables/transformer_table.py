@@ -13,14 +13,14 @@ class TransformerTable(SquestTable):
 
     attribute = TemplateColumn(
         verbose_name="Attribute",
-        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_attribute_name.html',
+        template_name='resource_tracker_v2/resource_group/custom_columns/resource_group_attributes_attribute_name.html',
         orderable=True)
     consume_from = TemplateColumn(
         verbose_name="Consume from",
-        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_consume.html',
+        template_name='resource_tracker_v2/resource_group/custom_columns/resource_group_attributes_consume.html',
         orderable=True)
     on_attribute = TemplateColumn(
         verbose_name="On attribute",
-        template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attributes_on_attribute.html',
+        template_name='resource_tracker_v2/resource_group/custom_columns/resource_group_attributes_on_attribute.html',
         orderable=True)
-    actions = TemplateColumn(template_name='resource_tracking_v2/resource_group/custom_columns/resource_group_attribute_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='resource_tracker_v2/resource_group/custom_columns/resource_group_attribute_actions.html', orderable=False)

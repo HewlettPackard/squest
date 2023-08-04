@@ -3,9 +3,10 @@
 {% else %}
     {% has_perm request.user "service_catalog.request_on_service" as can_request_operation %}
 {% endif %}
+
 <span {% if not can_request_operation %}title="Permission {% if record.is_admin_operation %}service_catalog.admin_request_on_service{% else %}service_catalog.request_on_service{% endif %} required"{% endif %}>
 <a href="{% url 'service_catalog:request_service' service_id=service_id operation_id=record.id %}"
    class="btn btn-info bg-sm {% if not can_request_operation %}disabled{% endif %}">
-    <i class="fas fa-play"></i> Request
+    <i class="fas fa-shopping-cart"></i>
 </a>
 </span>

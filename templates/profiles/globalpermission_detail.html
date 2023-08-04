@@ -7,7 +7,7 @@
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
     <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
-       class="btn btn-success{% if not can_add_users %} disabled{% endif %}"> <i class="fas fa-plus"></i> Add users
+       class="btn btn-success{% if not can_add_users %} disabled{% endif %}"><i class="fas fa-user-plus"></i></i> Add RBAC
     </a>
 {% endblock %}
 {% block header_button %}
@@ -27,11 +27,13 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills squest-default-active" id="tabs">
-                            <li class="nav-item"><a class="nav-link" href="#user_permissions" data-toggle="tab">User
-                                permissions</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#user_permissions" data-toggle="tab">Default permissions</a>
+                            </li>
                             {% if users %}
-
-                                <li class="nav-item"><a class="nav-link" href="#users" data-toggle="tab">Users</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#rbac" title="Role Based Access Control" data-toggle="tab">RBAC</a>
+                                </li>
                             {% endif %}
 
                         </ul>
@@ -39,9 +41,13 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane" id="user_permissions">
+                                <div class="alert alert-info alert-dismissible">
+                                    <i class="icon fas fa-info"></i>
+                                    List of permissions granted to all users
+                                </div>
                                 {% render_table user_permissions %}
                             </div>
-                            <div class="tab-pane" id="users">
+                            <div class="tab-pane" id="rbac">
                                 {% if users %}
                                     {% render_table users %}
                                 {% endif %}
