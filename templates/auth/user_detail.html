@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-{{ object.username }} | User
+    {{ object.username }} | User
 {%  endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
@@ -11,12 +11,29 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item"><a class="nav-link" href="#details" data-toggle="tab">Details</a></li>
                             <li class="nav-item"><a class="nav-link" href="#instances" data-toggle="tab">Instances</a></li>
                             <li class="nav-item"><a class="nav-link" href="#requests" data-toggle="tab">Requests</a></li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
+                            <div class="tab-pane" id="details">
+                                <dl class="row ml-4">
+                                    <dt class="col-sm-4">First name</dt>
+                                    <dd class="col-sm-8">{{ object.first_name }}</dd>
+                                    <dt class="col-sm-4">Last name</dt>
+                                    <dd class="col-sm-8">{{ object.last_name }}</dd>
+                                    <dt class="col-sm-4">Email</dt>
+                                    <dd class="col-sm-8">{{ object.email }}</dd>
+                                    <dt class="col-sm-4">Is active</dt>
+                                    <dd class="col-sm-8">{% if object.is_active %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
+                                    <dt class="col-sm-4">Is staff</dt>
+                                    <dd class="col-sm-8">{% if object.is_staff %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
+                                    <dt class="col-sm-4">Is admin</dt>
+                                    <dd class="col-sm-8">{% if object.is_superuser %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
+                                </dl>
+                            </div>
                             <div class="tab-pane" id="instances">
                                 {% render_table instances %}
                             </div>
