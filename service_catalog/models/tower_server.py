@@ -14,7 +14,6 @@ class TowerServer(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    exclude_object_type_list_for_delete = ["Inventory", "Credential"]
     name = CharField(max_length=100,)
     host = CharField(max_length=200, unique=True)
     token = CharField(max_length=200)

@@ -17,17 +17,6 @@ class Service(SquestModel):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    exclude_object_type_list_for_delete = [
-        "TowerSurveyField",
-        "ApprovalStep_readable_fields",
-        "ApprovalStep_editable_fields",
-        "ApprovalWorkflow",
-        "ApprovalStep",
-        "ApprovalStepState",
-        "ApprovalWorkflow_scopes",
-        "ApprovalWorkflowState",
-    ]
-
     name = CharField(verbose_name="Service name", max_length=100)
     description = CharField(max_length=500, blank=True)
     external_support_url = CharField(max_length=2000, blank=True)

@@ -167,7 +167,7 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
             },
         ]
         context['details'] = {
-            'warning_sentence': 'Related will be deleted:',
+            'warning_sentence': 'Following objects will be deleted or impacted:',
             'details_list': self.object.get_related_objects_cascade()
         }
         context['confirm_text'] = mark_safe(f"Confirm deletion of <strong>{self.object}</strong>?")
