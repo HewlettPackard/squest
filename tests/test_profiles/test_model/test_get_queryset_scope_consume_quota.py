@@ -64,7 +64,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
         self._assert_cannot_consume_quota(self.user2)
         self._assert_can_consume_only_quota_qs(self.superuser, quota_qs=Scope.objects.filter(id__in=[org1.id]))
 
-    def test_get_queryset_organization_by_querying_scope_with_global_permission__user_permissions(self):
+    def test_get_queryset_organization_by_querying_scope_with_global_permission__default_permissions(self):
         """
         Test that we can consume Organization quota by querying Scope if permission is given in a GlobalPermission's perm
         """
@@ -77,7 +77,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
         # Create Permission/Role_scope")
 
         # Assign permission to all users
-        self.global_perm.user_permissions.add(self.permission_object)
+        self.global_perm.default_permissions.add(self.permission_object)
 
         # Create a new organization
         org1 = Organization.objects.create(name="Organization #1")
@@ -90,7 +90,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
         self._assert_can_consume_only_quota_qs(self.superuser, quota_qs=Scope.objects.filter(id__in=[org1.id]))
 
         # Remove permission to all users
-        self.global_perm.user_permissions.remove(self.permission_object)
+        self.global_perm.default_permissions.remove(self.permission_object)
 
         # Only superuser can see
         self._assert_cannot_consume_quota(self.user1)
@@ -134,7 +134,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
         self._assert_can_consume_only_quota_qs(self.superuser,
                                                quota_qs=Scope.objects.filter(id__in=[org1.id, team1.id]))
 
-    def test_get_queryset_team_by_querying_scope_with_global_permission__user_permissions(self):
+    def test_get_queryset_team_by_querying_scope_with_global_permission__default_permissions(self):
         """
         Test that we can consume Team quota if permission is given in a GlobalPermission's perm
         """
@@ -144,7 +144,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
         self._assert_cannot_consume_quota(self.superuser)
 
         # Create Permission/Role
-        self.global_perm.user_permissions.add(self.permission_object)
+        self.global_perm.default_permissions.add(self.permission_object)
 
         # Create a new organization/team
         org1 = Organization.objects.create(name="Organization #1")
@@ -159,7 +159,7 @@ class TestModelScopeGetQuerysetConsumeQuota(TransactionTestUtils):
                                                quota_qs=Scope.objects.filter(id__in=[org1.id, team1.id]))
 
         # Remove role to everyone
-        self.global_perm.user_permissions.remove(self.permission_object)
+        self.global_perm.default_permissions.remove(self.permission_object)
 
         # Only superuser can see
         self._assert_cannot_consume_quota(self.user1)

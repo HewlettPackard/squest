@@ -17,6 +17,6 @@ class TestApprovalStepSerializer(BaseTestApprovalAPI):
         self.assertTrue("fill_in_survey" not in representation)
 
         # give the perm to the user
-        self.global_perm.user_permissions.add(self.test_request.approval_workflow_state.current_step.approval_step.permission)
+        self.global_perm.default_permissions.add(self.test_request.approval_workflow_state.current_step.approval_step.permission)
         representation = serializer.to_representation(self.test_request.approval_workflow_state.current_step)
         self.assertTrue("fill_in_survey" in representation)

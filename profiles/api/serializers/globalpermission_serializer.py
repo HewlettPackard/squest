@@ -9,4 +9,4 @@ class GlobalPermissionSerializer(ModelSerializer):
 
     class Meta:
         model = GlobalPermission
-        fields = ('user_permissions', 'rbac')
+        fields = ('default_permissions', 'rbac')
