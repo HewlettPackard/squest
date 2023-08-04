@@ -61,7 +61,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_nothing(GlobalPermission, self.user2)
         self._assert_can_see_everything(GlobalPermission, self.superuser)
 
-    def test_get_queryset_global_permission_with_global_user_permissions(self):
+    def test_get_queryset_global_permission_with_global_default_permissions(self):
         """
         Test that we can see GlobalPermission if permission is given in a GlobalPermission's permission
         """
@@ -77,7 +77,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
                                                    codename="view_globalpermission")
 
         # Assign permission to all squest user without exception
-        self.global_perm.user_permissions.add(permission_object)
+        self.global_perm.default_permissions.add(permission_object)
 
         # Everyone can see it
         self._assert_can_see_everything(GlobalPermission, self.user1)
@@ -85,7 +85,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(GlobalPermission, self.superuser)
 
         # Remove permission to all squest user without exception
-        self.global_perm.user_permissions.remove(permission_object)
+        self.global_perm.default_permissions.remove(permission_object)
 
         # Only superuser can see
         self._assert_can_see_nothing(GlobalPermission, self.user1)
@@ -130,7 +130,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_nothing(Organization, self.user2)
         self._assert_can_see_everything(Organization, self.superuser)
 
-    def test_get_queryset_organization_with_global_permission__user_permissions(self):
+    def test_get_queryset_organization_with_global_permission__default_permissions(self):
         """
         Test that we can see Organization if permission is given in a GlobalPermission's perm
         """
@@ -146,7 +146,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
                                                    codename="view_organization")
 
         # Assign permission to all users
-        self.global_perm.user_permissions.add(permission_object)
+        self.global_perm.default_permissions.add(permission_object)
 
         # Create a new organization
         org1 = Organization.objects.create(name="Organization #1")
@@ -159,7 +159,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Organization, self.superuser)
 
         # Remove permission to all users
-        self.global_perm.user_permissions.remove(permission_object)
+        self.global_perm.default_permissions.remove(permission_object)
 
         # Only superuser can see
         self._assert_can_see_nothing(Organization, self.user1)
@@ -204,7 +204,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_nothing(Team, self.user2)
         self._assert_can_see_everything(Team, self.superuser)
 
-    def test_get_queryset_team_with_global_permission__user_permissions(self):
+    def test_get_queryset_team_with_global_permission__default_permissions(self):
         """
         Test that we can see Team if permission is given in a GlobalPermission's perm
         """
@@ -217,7 +217,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         permission_object = Permission.objects.get(content_type__app_label="profiles",
                                                    content_type__model="team",
                                                    codename="view_team")
-        self.global_perm.user_permissions.add(permission_object)
+        self.global_perm.default_permissions.add(permission_object)
 
         # Create a new organization/team
         org1 = Organization.objects.create(name="Organization #1")
@@ -231,7 +231,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Team, self.superuser)
 
         # Remove role to everyone
-        self.global_perm.user_permissions.remove(permission_object)
+        self.global_perm.default_permissions.remove(permission_object)
 
         # Only superuser can see
         self._assert_can_see_nothing(Team, self.user1)
