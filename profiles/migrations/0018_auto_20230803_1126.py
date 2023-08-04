@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='globalpermission',
-            name='user_permissions',
+            name='default_permissions',
             field=models.ManyToManyField(blank=True, help_text='Permissions assigned to all users without exception.', limit_choices_to={'content_type__app_label__in': ['service_catalog', 'profiles', 'resource_tracker_v2', 'auth']}, to='profiles.Permission'),
         ),
         migrations.AlterField(
