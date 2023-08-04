@@ -13,16 +13,7 @@ from service_catalog.models.services import Service
 
 class Operation(SquestModel):
 
-    exclude_object_type_list_for_delete = [
-        "TowerSurveyField",
-        "ApprovalStep_readable_fields",
-        "ApprovalStep_editable_fields",
-        "ApprovalWorkflow",
-        "ApprovalStep",
-        "ApprovalStepState",
-        "ApprovalWorkflow_scopes",
-        "ApprovalWorkflowState",
-    ]
+
 
     name = CharField(max_length=100, verbose_name="Operation name")
     description = CharField(max_length=500, blank=True, null=True)

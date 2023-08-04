@@ -36,8 +36,13 @@
                     </div>
                     <div class="card-body">
                         {% if details.details_list %}
-                            <p>{{ details.warning_sentence }}</p>
-                            <ul>{{ details.details_list |unordered_list }}</ul>
+                            <blockquote class="quote-warning">
+                                <h5>Warning</h5>
+                                <p>{{ details.warning_sentence }}</p>
+                                <ul>
+                                     <ul>{{ details.details_list | unordered_list }}</ul>
+                                </ul>
+                            </blockquote>
                         {% endif %}
                         <form class="form-horizontal" method="post">{% csrf_token %}
                             <button class="btn btn-danger" type="submit">

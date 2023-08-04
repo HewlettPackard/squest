@@ -34,6 +34,6 @@ class SquestModelForm(ModelForm):
                 )
             elif isinstance(current_field, JSONField):
                 current_field.widget.attrs['class'] = 'form-control json'
-                current_field.widget.attrs['onblur'] = 'reformatJSON(this)'
+                # current_field.widget.attrs['onblur'] = 'reformatJSON(this)'
             else:
                 current_field.widget.attrs['class'] = 'form-control'
