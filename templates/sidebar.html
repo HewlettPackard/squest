@@ -9,7 +9,6 @@
 {% has_perm request.user "profiles.list_team" as can_list_team %}
 {% has_perm request.user "auth.list_user" as can_list_user %}
 {% has_perm request.user "service_catalog.list_towerserver" as can_list_towerserver %}
-{% has_perm request.user "profiles.list_globalpermission" as can_list_globalpermission %}
 {% has_perm request.user "profiles.list_role" as can_list_role %}
 {% has_perm request.user "auth.list_permission" as can_list_permission %}
 {% has_perm request.user "service_catalog.list_globalhook" as can_list_globalhook %}
@@ -17,7 +16,8 @@
 {% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
 {% has_perm request.user "service_catalog.list_approvalworkflow" as can_list_approval %}
 {% has_perm request.user "service_catalog.list_quota" as can_list_quota %}
-{% has_perm request.user "profiles.can_view_globalpermission" as can_view_globalpermission %}
+{% has_perm request.user "profiles.view_users_globalpermission" as can_view_users_globalpermission %}
+{% has_perm request.user "profiles.view_globalpermission" as can_view_globalpermission %}
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
@@ -116,13 +116,12 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if can_list_globalpermission or can_list_organization or can_list_team or can_list_user %}
+                {% if can_view_users_globalpermission or can_list_organization or can_list_team or can_list_user %}
                     <li class="nav-header">Access</li>
                 {% endif %}
-                {% if can_list_globalpermission %}
-
+                {% if can_view_users_globalpermission %}
                     <li class="nav-item">
-                        <a href="{% url 'profiles:globalpermission_details' %}"
+                        <a href="{% url 'profiles:globalpermission_rbac' %}"
                            class="nav-link {% if '/profiles/global-permission/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-globe"></i>
                             <p>Global permission</p>
@@ -181,7 +180,7 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if  can_list_permission or can_list_role %}
+                {% if  can_list_permission or can_list_role or can_view_globalpermission %}
 
                     <li class="nav-item">
                         <a href="#"
@@ -217,7 +216,7 @@
                             {% endif %}
                             {% if can_view_globalpermission %}
                                 <li class="nav-item">
-                                    <a href="{% url 'profiles:default_permission_list' %}"
+                                    <a href="{% url 'profiles:globalpermission_default_permissions' %}"
                                        class="nav-link {% if '/profiles/default-permission/' in request.path %}active{% endif %}">
                                         <i class="nav-icon fas fa-unlock"></i>
                                         <p>Default permissions</p>
