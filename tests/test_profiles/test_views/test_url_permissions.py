@@ -27,11 +27,11 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
     def test_globalpermission(self):
         testing_view_list = [
             TestingGetUIViews(
-                url='profiles:globalpermission_details',
+                url='profiles:globalpermission_rbac',
                 perm_str='profiles.view_users_globalpermission',
             ),
             TestingGetUIViews(
-                url='profiles:default_permission_list',
+                url='profiles:globalpermission_default_permissions',
                 perm_str='profiles.view_globalpermission',
             ),
             TestingGetUIViews(

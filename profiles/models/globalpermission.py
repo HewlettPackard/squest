@@ -34,7 +34,7 @@ class GlobalPermission(AbstractScope):
         cache.set(self.__class__.__name__, self)
 
     def get_absolute_url(self):
-        return reverse("profiles:globalpermission_details")
+        return reverse("profiles:globalpermission_rbac")
 
     def delete(self, *args, **kwargs):
         pass
