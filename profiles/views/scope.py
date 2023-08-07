@@ -14,7 +14,7 @@ from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope,
 def get_breadcrumbs_for_scope(scope):
     class_name = scope.__class__.__name__
     if isinstance(scope, GlobalPermission):
-        breadcrumbs = [{'text': 'Global permission', 'url': reverse('profiles:globalpermission_details')}]
+        breadcrumbs = [{'text': 'Global permission', 'url': reverse('profiles:globalpermission_rbac')}]
     else:
         breadcrumbs = [
             {'text': class_name, 'url': reverse(f'profiles:{class_name.lower()}_list')},
