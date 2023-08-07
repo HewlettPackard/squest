@@ -1,3 +1,10 @@
+# 1.10.2 2023-08-07
+
+## Fix
+
+- freeze image versions in docker-compose
+- mariadb command is used instead of mysql command (since mariadb 11 msql command is no longer compatible) 
+
 # 1.10.2 2023-04-28
 
 ## Fix
