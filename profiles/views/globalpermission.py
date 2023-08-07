@@ -6,8 +6,9 @@ from profiles.models import GlobalPermission
 from profiles.tables import UserRoleTable, PermissionTable
 
 
-class GlobalPermissionDetailView(SquestDetailView):
+class GlobalPermissionRBACView(SquestDetailView):
     model = GlobalPermission
+    template_name = "profiles/globalpermission_rbac_detail.html"
 
     def get_permission_required(self):
         return "profiles.view_users_globalpermission"
@@ -30,7 +31,7 @@ class GlobalPermissionDetailView(SquestDetailView):
 
 class GlobalPermissionDefaultPermissionView(SquestDetailView):
     model = GlobalPermission
-    template_name = "profiles/default_permission_detail.html"
+    template_name = "profiles/global_permission_default_permission_detail.html"
 
     def get_object(self, queryset=None):
         return GlobalPermission.load()
@@ -58,7 +59,7 @@ class GlobalPermissionEditView(SquestUpdateView):
         return GlobalPermission.load()
 
     def get_generic_url(self, action):
-        return reverse_lazy('profiles:globalpermission_details')
+        return reverse_lazy('profiles:globalpermission_rbac')
 
     def dispatch(self, request, *args, **kwargs):
         self.kwargs['pk'] = self.get_object().id
@@ -68,7 +69,7 @@ class GlobalPermissionEditView(SquestUpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Global permission', 'url': reverse('profiles:globalpermission_details')},
+            {'text': 'Global permission', 'url': reverse('profiles:globalpermission_rbac')},
             {'text': f'Edit', 'url': ""},
         ]
         return context
