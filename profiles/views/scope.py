@@ -90,3 +90,41 @@ class ScopeRBACDeleteView(SquestDeleteView):
             context = self.get_context_data(object=self.object, error_message=error_message,
                                             protected_objects=e.protected_objects)
             return self.render_to_response(context)
+
+class ScopeRBACDeleteUserView(SquestDeleteView):
+    model = AbstractScope
+
+    def get_permission_required(self):
+        django_content_type = ContentType.objects.get_for_model(self.get_object().get_object().__class__)
+        return f"{django_content_type.app_label}.delete_users_{django_content_type.model}"
+
+    def get_object(self, queryset=None):
+        abstract_scope = super().get_object(queryset)
+        self.scope = abstract_scope.get_object()
+        self.user = get_object_or_404(User, id=self.kwargs.get('user_id'))
+        return abstract_scope
+
+    def get_success_url(self):
+        return self.scope.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = get_breadcrumbs_for_scope(self.scope)
+        context['breadcrumbs'] += [
+            {'text': self.scope, 'url': ""},
+            {'text': "User", 'url': ""},
+            {'text': self.user, 'url': ""},
+        ]
+        context['confirm_text'] = mark_safe(
+            f"Confirm to remove <strong>{self.user}</strong> from <strong>{self.scope}</strong>?")
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            self.get_object().get_object().remove_user(self.user)
+            return HttpResponseRedirect(self.get_success_url())
+        except ProtectedError as e:
+            error_message = f"{e.args[0]}"
+            context = self.get_context_data(object=self.object, error_message=error_message,
+                                            protected_objects=e.protected_objects)
+            return self.render_to_response(context)

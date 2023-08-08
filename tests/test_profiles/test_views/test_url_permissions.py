@@ -25,6 +25,7 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
         self.run_permissions_tests(testing_view_list)
 
     def test_globalpermission(self):
+        self.global_permission.add_user_in_role(self.standard_user, self.empty_role)
         testing_view_list = [
             TestingGetUIViews(
                 url='profiles:globalpermission_rbac',
@@ -60,14 +61,31 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
                 perm_str='profiles.delete_users_globalpermission',
                 url_kwargs={
                     'pk': self.global_permission.id,
-                    'user_id': self.testing_user.id,
+                    'user_id': self.standard_user.id,
                     'role_id': self.empty_role.id
+                },
+            ),
+            TestingGetUIViews(
+                url='profiles:globalpermission_rbac_delete',
+                perm_str='profiles.delete_users_globalpermission',
+                url_kwargs={
+                    'pk': self.global_permission.id,
+                    'user_id': self.testing_user.id,
+                },
+            ),
+            TestingPostUIViews(
+                url='profiles:globalpermission_rbac_delete',
+                perm_str='profiles.delete_users_globalpermission',
+                url_kwargs={
+                    'pk': self.global_permission.id,
+                    'user_id': self.testing_user.id,
                 },
             )
         ]
         self.run_permissions_tests(testing_view_list)
 
     def test_organization_views(self):
+        self.test_quota_scope_org.add_user_in_role(self.standard_user, self.empty_role)
         # organization delete is protected when organization have instances
         organization_to_delete = Organization.objects.create(name="To delete")
         testing_view_list = [
@@ -129,6 +147,22 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
                 },
             ),
             TestingGetUIViews(
+                url='profiles:organization_rbac_delete',
+                perm_str='profiles.delete_users_organization',
+                url_kwargs={
+                    'pk': self.test_quota_scope_org.id,
+                    'user_id': self.standard_user.id,
+                },
+            ),
+            TestingPostUIViews(
+                url='profiles:organization_rbac_delete',
+                perm_str='profiles.delete_users_organization',
+                url_kwargs={
+                    'pk': self.test_quota_scope_org.id,
+                    'user_id': self.standard_user.id,
+                },
+            ),
+            TestingGetUIViews(
                 url='profiles:organization_delete',
                 perm_str='profiles.delete_organization',
                 url_kwargs={'pk': organization_to_delete.id}
@@ -146,6 +180,10 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
         add_team_role = Role.objects.create(name="Add team role")
         add_team_role.permissions.add(Permission.objects.get(content_type__app_label='profiles', codename='add_team'))
         self.test_quota_scope_org2.add_user_in_role(self.testing_user, add_team_role)
+
+        self.test_quota_scope_team.org.add_user_in_role(self.standard_user, self.empty_role)
+        self.test_quota_scope_team.add_user_in_role(self.standard_user, self.empty_role)
+
         testing_view_list = [
             TestingGetUIViews(
                 url='profiles:team_list',
@@ -185,6 +223,22 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
                     'pk': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
                     'role_id': self.team_member_role.id
+                },
+            ),
+            TestingGetUIViews(
+                url='profiles:team_rbac_delete',
+                perm_str='profiles.delete_users_team',
+                url_kwargs={
+                    'pk': self.test_quota_scope_team.id,
+                    'user_id': self.standard_user.id,
+                },
+            ),
+            TestingPostUIViews(
+                url='profiles:team_rbac_delete',
+                perm_str='profiles.delete_users_team',
+                url_kwargs={
+                    'pk': self.test_quota_scope_team.id,
+                    'user_id': self.standard_user.id,
                 },
             ),
             TestingGetUIViews(

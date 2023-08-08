@@ -19,7 +19,7 @@ class TeamTable(SquestTable):
 
     def render_users(self, value, record):
         link = reverse("profiles:team_details", kwargs={'pk': record.id})
-        return format_html(f'<a href="{link}#users" class="btn btn-default bg-sm">{record.users.count()}</a>')
+        return format_html(f'<a href="{link}#rbac" class="btn btn-default bg-sm">{record.users.count()}</a>')
 
 
 class TeamUserTable(SquestTable):
