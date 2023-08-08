@@ -1,4 +1,10 @@
-# 1.10.2 2023-08-07
+# 1.10.4 2023-08-08
+
+## Fix
+
+- freeze caddy image to 2.6 [(2.7 is not stable yet)](https://github.com/caddyserver/caddy/releases/tag/v2.7.1)
+
+# 1.10.3 2023-08-07
 
 ## Fix
 
