@@ -1,0 +1,10 @@
+{# can_delete_user come from {organization,team,globalpermission}_detail.html#}
+{% with class_name=object|to_class_name|lower %}
+    <span {% if not can_delete_user %} title="Permission 'profiles.delete_role' needed" {% endif %}>
+        <a href="{% url "profiles:"|add:class_name|add:"_rbac_delete" object.id record.id %}"
+           class="btn btn-danger bg-sm{% if not can_delete_user %} disabled{% endif %}"
+           title="Delete">
+            <i class="fas fa-trash"></i>
+        </a>
+    </span>
+{% endwith %}
