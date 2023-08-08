@@ -20,7 +20,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   redis-cache:
-    image: redis:6.0.20-alpine3.18
+    image: redis:6.2.13-alpine
     ports:
       - "6379:6379"
     command:
@@ -46,7 +46,7 @@ services:
 
   nginx:
     command: nginx -c /etc/nginx/squest/nginx.conf
-    image: nginx:1.23.4-bullseye
+    image: nginx:1.23.4-alpine
     depends_on:
       - django
     volumes:
@@ -55,7 +55,7 @@ services:
       - ./docker/nginx.conf:/etc/nginx/squest/nginx.conf:ro
 
   maintenance:
-    image: nginx:1.23.4-bullseye
+    image: nginx:1.23.4-alpine
     volumes:
       - ./docker/maintenance.html:/usr/share/nginx/html/index.html
       - ./docker/maintenance.nginx.conf:/etc/nginx/conf.d/default.conf
