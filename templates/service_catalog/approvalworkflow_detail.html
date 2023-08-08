@@ -39,7 +39,9 @@
                             </li>
                         {% if object.get_unused_fields %}
                             <li class="list-group-item">
-                                <b>Unused fields</b>
+                                <span title="Fields that are not used in any steps.">
+                                    <b>Unused fields</b>
+                                </span>
                                 <span class="float-right">
                                     {% for field in object.get_unused_fields %}
                                         <span class="badge bg-warning">{{ field }}</span>
