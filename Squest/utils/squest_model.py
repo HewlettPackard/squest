@@ -36,6 +36,14 @@ class SquestDeleteCascadeMixIn(Model):
                                squest_object)
 
     def get_class_displayed_in_cascade(self):
+        # Remove current class from displayed objects
+        class_name = self._meta.object_name
+        if class_name == "AbstractScope":
+            class_name = self.get_object()._meta.object_name
+        try:
+            self.class_displayed_in_cascade.remove(class_name)
+        except ValueError:
+            pass
         return self.class_displayed_in_cascade
 
     def get_related_objects_cascade(self):
