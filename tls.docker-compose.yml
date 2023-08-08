@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   tls:
-    image: caddy:2-alpine
+    image: caddy:2.6.4-alpine
     depends_on:
       - nginx
     volumes:
