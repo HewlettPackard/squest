@@ -52,6 +52,7 @@ urlpatterns = [
     path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
     path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
     path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),
+    path('global-permission/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="globalpermission_rbac_delete"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),
@@ -61,6 +62,7 @@ urlpatterns = [
     path('organization/<int:pk>/', views.OrganizationDetailView.as_view(), name="organization_details"),
     path('organization/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="organization_rbac_create"),
     path('organization/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="organization_rbac_delete"),
+    path('organization/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="organization_rbac_delete"),
 
     # Team
     path('team/', views.TeamListView.as_view(), name="team_list"),
@@ -70,6 +72,7 @@ urlpatterns = [
     path('team/<int:pk>/', views.TeamDetailView.as_view(), name="team_details"),
     path('team/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="team_rbac_create"),
     path('team/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="team_rbac_delete"),
+    path('team/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="team_rbac_delete"),
 
     # Permission
     path('permission/', views.PermissionListView.as_view(), name="permission_list"),
