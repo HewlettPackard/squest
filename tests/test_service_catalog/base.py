@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from profiles.models.squest_permission import Permission
 from profiles.models import Organization, Scope, Role, Team
-from service_catalog.models import TowerServer, JobTemplate, Operation, Service, Portfolio
+from service_catalog.models import AnsibleController, JobTemplate, Operation, Service, Portfolio
 from service_catalog.models.operations import OperationType
 
 
@@ -48,10 +48,10 @@ class BaseTestCommon(TransactionTestCase):
         self.test_quota_scope.add_user_in_role(self.standard_user, self.team_member_role)
         self.test_quota_scope_team.add_user_in_role(self.standard_user, self.team_member_role)
         # ------------------------------
-        # Tower
+        # Ansible controller
         # ------------------------------
-        self.tower_server_test = TowerServer.objects.create(name="tower-server-test", host="localhost", token="xxx")
-        self.tower_server_test_2 = TowerServer.objects.create(name="tower-server-test-2", host="my-tower.com",
+        self.ansible_controller_test = AnsibleController.objects.create(name="ansible-controller-server-test", host="localhost", token="xxx")
+        self.ansible_controller_test_2 = AnsibleController.objects.create(name="ansible-controller-server-test-2", host="my-ansible-controller.com",
                                                               token="xxx")
         self.job_template_testing_data = {'id': 7, 'type': 'job_template', 'url': '/api/v2/job_templates/7/',
                                           'related': {'created_by': '/api/v2/users/1/',
@@ -270,14 +270,14 @@ class BaseTestCommon(TransactionTestCase):
         }
         self.job_template_test = JobTemplate.objects.create(name="job-template-test",
                                                             survey=self.testing_survey,
-                                                            tower_id=1,
-                                                            tower_server=self.tower_server_test,
-                                                            tower_job_template_data=self.job_template_testing_data)
+                                                            remote_id=1,
+                                                            ansible_controller=self.ansible_controller_test,
+                                                            remote_job_template_data=self.job_template_testing_data)
         self.job_template_test_2 = JobTemplate.objects.create(name="job-template-test",
                                                               survey=self.testing_survey,
-                                                              tower_id=1,
-                                                              tower_server=self.tower_server_test_2,
-                                                              tower_job_template_data=self.job_template_testing_data)
+                                                              remote_id=1,
+                                                              ansible_controller=self.ansible_controller_test_2,
+                                                              remote_job_template_data=self.job_template_testing_data)
 
         # ---------------------------------------------------
         # Portfolio test 1
@@ -310,12 +310,12 @@ class BaseTestCommon(TransactionTestCase):
             'float_var': False,
             'integer_var': False
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         self.update_operation_test = Operation.objects.create(name="update test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
                                                               type=OperationType.UPDATE)
-        self.update_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.update_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         self.delete_operation_test = Operation.objects.create(name="delete test",
                                                               service=self.service_test,
                                                               job_template=self.job_template_test,
@@ -332,13 +332,13 @@ class BaseTestCommon(TransactionTestCase):
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test)
 
-        self.create_operation_test_2.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test_2.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         self.update_operation_test_2 = Operation.objects.create(name="update test",
                                                                 service=self.service_test_2,
                                                                 job_template=self.job_template_test,
                                                                 type=OperationType.UPDATE)
 
-        self.update_operation_test_2.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.update_operation_test_2.switch_survey_fields_enable_from_dict(enabled_survey_fields)
 
         self.delete_operation_test_2 = Operation.objects.create(name="delete test",
                                                                 service=self.service_test_2,
@@ -354,9 +354,9 @@ class BaseTestCommon(TransactionTestCase):
         self.job_template_empty_survey_test = JobTemplate.objects.create(
             name="job-template-empty-survey-test",
             survey=self.testing_empty_survey,
-            tower_id=2,
-            tower_server=self.tower_server_test,
-            tower_job_template_data=self.job_template_testing_data
+            remote_id=2,
+            ansible_controller=self.ansible_controller_test,
+            remote_job_template_data=self.job_template_testing_data
         )
         self.service_empty_survey_test = Service.objects.create(name="service-empty-test",
                                                                 description="description-of-service-test")
@@ -420,9 +420,9 @@ class BaseTestCommon(TransactionTestCase):
         self.job_template_small_survey_test = JobTemplate.objects.create(
             name="job-template-small-survey-test",
             survey=self.testing_small_survey,
-            tower_id=3,
-            tower_server=self.tower_server_test,
-            tower_job_template_data=self.job_template_testing_data
+            remote_id=3,
+            ansible_controller=self.ansible_controller_test,
+            remote_job_template_data=self.job_template_testing_data
         )
 
 

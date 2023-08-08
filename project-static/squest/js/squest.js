@@ -149,10 +149,10 @@ function getCookie(name) {
 const csrf_token = getCookie('csrftoken');
 
 function sync_all_job_template() {
-    const tower_id = $(this).data('tower-id');
+    const ansible_controller_id = $(this).data('ansible-controller-id');
     const url_sync = $(this).data('url-sync');
     const url_job_template = $(this).data('url-job-template');
-    const sync_button_id = "tower_" + tower_id;
+    const sync_button_id = "ansible_controller_" + ansible_controller_id;
     $.ajax({
         url: url_sync,
         method: 'POST',
@@ -161,7 +161,7 @@ function sync_all_job_template() {
         },
     }).done((res) => {
         $(document).Toasts('create', {
-            title: 'Tower sync',
+            title: 'Ansible controller sync',
             body: 'Started',
             autohide: true,
             delay: 3000,
@@ -170,13 +170,13 @@ function sync_all_job_template() {
         // disable sync button
         document.getElementById(sync_button_id).classList.add('disabled');
         var interval_id = setInterval(function () {
-            getTowerUpdateStatus(res.task_id, tower_id, url_job_template, interval_id);
+            getAnsibleControllerUpdateStatus(res.task_id, ansible_controller_id, url_job_template, interval_id);
         }, 2000);
 
     }).fail((err) => {
         alert_error("Error during API call");
         $(document).Toasts('create', {
-            title: 'Tower sync',
+            title: 'Ansible controller sync',
             body: 'Error',
             autohide: true,
             delay: 3000,
@@ -186,9 +186,9 @@ function sync_all_job_template() {
     });
 }
 
-function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
-    const sync_button_id = "tower_" + tower_id;
-    const job_template_count = "job_template_count_" + tower_id;
+function getAnsibleControllerUpdateStatus(taskID, ansible_controller_id, url_job_template, interval_id) {
+    const sync_button_id = "ansible_controller_" + ansible_controller_id;
+    const job_template_count = "job_template_count_" + ansible_controller_id;
     $.ajax({
         url: `/api/tasks/${taskID}/`,
         method: 'GET',
@@ -199,7 +199,7 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
         const taskStatus = res.status;
         if (taskStatus === 'SUCCESS') {
             $(document).Toasts('create', {
-                title: 'Tower sync',
+                title: 'Ansible controller sync',
                 body: 'Complete',
                 autohide: true,
                 delay: 3000,
@@ -224,7 +224,7 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
         }
         if (taskStatus === 'FAILURE') {
             $(document).Toasts('create', {
-                title: 'Tower sync',
+                title: 'Ansible controller sync',
                 body: 'Failed',
                 autohide: true,
                 delay: 3000,
@@ -237,7 +237,7 @@ function getTowerUpdateStatus(taskID, tower_id, url_job_template, interval_id) {
         }
     }).fail((err) => {
         $(document).Toasts('create', {
-            title: 'Tower sync',
+            title: 'Ansible controller sync',
             body: 'Failed',
             autohide: true,
             delay: 3000,
@@ -303,7 +303,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
         const taskStatus = res.status;
         if (taskStatus === 'SUCCESS') {
             $(document).Toasts('create', {
-                title: 'Tower sync',
+                title: 'Ansible controller sync',
                 body: 'Complete',
                 autohide: true,
                 delay: 3000,
@@ -337,7 +337,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
         }
         if (taskStatus === 'FAILURE') {
             $(document).Toasts('create', {
-                title: 'Tower sync',
+                title: 'Ansible controller sync',
                 body: 'Failed',
                 autohide: true,
                 delay: 3000,
@@ -352,7 +352,7 @@ function getJobTemplateUpdateStatus(taskID, job_template_id, url_job_template_de
     }).fail((err) => {
         console.log(err);
         $(document).Toasts('create', {
-            title: 'Tower sync',
+            title: 'Ansible controller sync',
             body: 'Failed',
             autohide: true,
             delay: 3000,

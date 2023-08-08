@@ -49,7 +49,7 @@ class Request(SquestModel):
     date_submitted = DateTimeField(auto_now_add=True, blank=True, null=True)
     date_complete = DateTimeField(blank=True, null=True)
     date_archived = DateTimeField(blank=True, null=True)
-    tower_job_id = IntegerField(blank=True, null=True)
+    remote_job_id = IntegerField(blank=True, null=True)
     state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
     periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
     periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
@@ -80,10 +80,10 @@ class Request(SquestModel):
 
         if self.approval_workflow_state is not None and approval_step_state is not None:
             full_survey = dict()
-            for tower_survey_field in approval_step_state.approval_step.editable_fields.all():
-                if tower_survey_field.name in self.fill_in_survey:
+            for survey_field in approval_step_state.approval_step.editable_fields.all():
+                if survey_field.name in self.fill_in_survey:
 
-                    full_survey.update({tower_survey_field.name: approval_step_state.fill_in_survey[tower_survey_field.name]})
+                    full_survey.update({survey_field.name: approval_step_state.fill_in_survey[survey_field.name]})
         else:
             full_survey = {
                 k: v for k, v in self.full_survey.items() if k in self.fill_in_survey
@@ -106,9 +106,9 @@ class Request(SquestModel):
 
     def update_fill_in_surveys_accept_request(self, admin_provided_survey_fields):
         for key, value in admin_provided_survey_fields.items():
-            if self.operation.tower_survey_fields.filter(is_customer_field=True, name=key).exists():
+            if self.operation.survey_fields.filter(is_customer_field=True, name=key).exists():
                 self.fill_in_survey[key] = value
-            if self.operation.tower_survey_fields.filter(is_customer_field=False, name=key).exists():
+            if self.operation.survey_fields.filter(is_customer_field=False, name=key).exists():
                 self.admin_fill_in_survey[key] = value
         self.save()
 
@@ -119,10 +119,9 @@ class Request(SquestModel):
         logger.debug(f"Request][process] instance {self.id} is not available or pending")
         return False
 
-    # TODO: add the job id (url of tower and axw are different)
     @property
-    def tower_job_url(self):
-        return f"{self.operation.job_template.tower_server.url}/#/jobs/playbook/{self.tower_job_id}/output"
+    def remote_job_url(self):
+        return f"{self.operation.job_template.ansible_controller.url}/#/jobs/playbook/{self.remote_job_id}/output"
 
     @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
     def need_info(self):
@@ -178,23 +177,23 @@ class Request(SquestModel):
                            skip_tags_override=None, limit_override=None, verbosity_override=None,
                            job_type_override=None, diff_mode_override=None):
         # get the survey with variables set by the end user and admin
-        tower_extra_vars = copy.copy(self.full_survey)
-        # add tower server extra vars
-        tower_extra_vars.update(self.operation.job_template.tower_server.extra_vars)
+        extra_vars = copy.copy(self.full_survey)
+        # add ansible controller server extra vars
+        extra_vars.update(self.operation.job_template.ansible_controller.extra_vars)
         # add service extra vars
-        tower_extra_vars.update(self.operation.service.extra_vars)
+        extra_vars.update(self.operation.service.extra_vars)
         # add operation extra vars
-        tower_extra_vars.update(self.operation.extra_vars)
+        extra_vars.update(self.operation.extra_vars)
         # add the current instance to extra vars
         from service_catalog.api.serializers.request_serializers import AdminRequestSerializer
         from django.conf import settings
-        tower_extra_vars["squest"] = {
+        extra_vars["squest"] = {
             "squest_host": settings.SQUEST_HOST,
             "request": AdminRequestSerializer(self).data
         }
-        tower_job_id = None
+        remote_job_id = None
         try:
-            tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars,
+            remote_job_id = self.operation.job_template.execute(extra_vars=extra_vars,
                                                                inventory_override=inventory_override,
                                                                credentials_override=credentials_override,
                                                                tags_override=tags_override,
@@ -213,9 +212,9 @@ class Request(SquestModel):
             self.has_failed(reason=e)
         except Exception as e:
             self.has_failed(reason=e)
-        if isinstance(tower_job_id, int):
-            self.tower_job_id = tower_job_id
-            logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {tower_job_id}")
+        if isinstance(remote_job_id, int):
+            self.remote_job_id = remote_job_id
+            logger.info(f"[Request][process] process started on request '{self.id}'. Ansible controller job id: {remote_job_id}")
             # create a periodic task to check the status until job is complete
             schedule, created = IntervalSchedule.objects.get_or_create(every=10,
                                                                        period=IntervalSchedule.SECONDS)
@@ -223,7 +222,7 @@ class Request(SquestModel):
             self.periodic_task = PeriodicTask.objects.create(
                 interval=schedule,
                 name=f'job_status_check_request_{self.id}',
-                task='service_catalog.tasks.check_tower_job_status_task',
+                task='service_catalog.tasks.check_remote_job_status_task',
                 args=json.dumps([self.id]))
             logger.info(
                 f'[Request][process] request \'{self.id}\': periodic task created. '
@@ -260,25 +259,25 @@ class Request(SquestModel):
 
     def check_job_status(self):
         from ..mail_utils import send_mail_request_update
-        if self.tower_job_id is None:
+        if self.remote_job_id is None:
             logger.warning(
-                f"[Request][check_job_status] no tower job id for request id {self.id}. Check job status skipped")
+                f"[Request][check_job_status] no remote job id for request id {self.id}. Check job status skipped")
             return
 
         # if the task is expired we remove the periodic task
         date_worker_now = timezone.now()
         if self.periodic_task_date_expire < date_worker_now:
-            logger.info("[check_tower_job_status_task] request now expired. deleting the periodic task")
+            logger.info("[check_remote_job_status_task] request now expired. deleting the periodic task")
             self.has_failed(reason="Operation execution timeout")
             self.save()
             self.periodic_task.delete()
             return
 
-        tower = self.operation.job_template.tower_server.get_tower_instance()
-        job_object = tower.get_unified_job_by_id(self.tower_job_id)
+        remote_instance = self.operation.job_template.ansible_controller.get_remote_instance()
+        job_object = remote_instance.get_unified_job_by_id(self.remote_job_id)
 
         if job_object.status == "successful":
-            logger.info(f"[Request][check_job_status] tower job status successful for request id {self.id}")
+            logger.info(f"[Request][check_job_status] Ansible controller job status successful for request id {self.id}")
             self.complete()
             self.save()
             self.periodic_task.delete()
@@ -294,7 +293,7 @@ class Request(SquestModel):
             send_mail_request_update(target_request=self)
 
         if job_object.status in ["canceled", "failed"]:
-            error_message = f"Tower job {self.tower_job_id} status is '{job_object.status}'"
+            error_message = f"Ansible controller job {self.remote_job_id} status is '{job_object.status}'"
             self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()

@@ -2,7 +2,7 @@
 
 ```mermaid
 erDiagram
-    TOWER_SERVER {
+    ANSIBLE_CONTROLLER {
         string name
         string host
         string token
@@ -12,7 +12,7 @@ erDiagram
     
     JOB_TEMPLATE {
         string name
-        int tower_id
+        int remote_id
         json survey
     }
     
@@ -35,7 +35,7 @@ erDiagram
         json fill_in_survey
         date date_submitted
         date date_complete
-        int tower_job_id
+        int remote_job_id
         enum state
         datetime periodic_task_date_expire
         string failure_message
@@ -64,7 +64,7 @@ erDiagram
         string content
     }
     
-    JOB_TEMPLATE ||--o{ TOWER_SERVER: has
+    JOB_TEMPLATE ||--o{ ANSIBLE_CONTROLLER: has
     OPERATION ||--o{ JOB_TEMPLATE: has
     OPERATION ||--o{ SERVICE: has
     REQUEST ||--o{ OPERATION: has

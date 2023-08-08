@@ -2,7 +2,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
-from service_catalog.models import ApprovalStep, TowerSurveyField
+from service_catalog.models import ApprovalStep, SurveyField
 
 
 class ApprovalStepSerializer(ModelSerializer):
@@ -12,14 +12,14 @@ class ApprovalStepSerializer(ModelSerializer):
         fields = ['id', 'name', 'permission', 'readable_fields', 'editable_fields']
         read_only_fields = ['id']
 
-    readable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.none())
-    editable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.none())
+    readable_fields = PrimaryKeyRelatedField(many=True, queryset=SurveyField.objects.none())
+    editable_fields = PrimaryKeyRelatedField(many=True, queryset=SurveyField.objects.none())
 
     def __init__(self, *args, **kwargs):
         from service_catalog.models import ApprovalWorkflow
         self.approval_workflow = ApprovalWorkflow.objects.get(id=kwargs['context'].get('approval_workflow_id'))
         super(ApprovalStepSerializer, self).__init__(*args, **kwargs)
-        queryset = TowerSurveyField.objects.filter(operation=self.approval_workflow.operation)
+        queryset = SurveyField.objects.filter(operation=self.approval_workflow.operation)
         self.fields["editable_fields"].child_relation.queryset = queryset
         self.fields["readable_fields"].child_relation.queryset = queryset
 

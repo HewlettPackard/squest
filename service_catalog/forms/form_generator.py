@@ -112,7 +112,7 @@ class FormGenerator:
         new_survey["spec"] = list()
         # loop the original survey
         for survey_filled in self.survey_as_dict['spec']:
-            target_tower_field = self.operation.tower_survey_fields.get(name=survey_filled["variable"])
+            target_tower_field = self.operation.survey_fields.get(name=survey_filled["variable"])
             if target_tower_field.is_customer_field:
                 new_survey["spec"].append(survey_filled)
         self.survey_as_dict = new_survey
@@ -133,21 +133,21 @@ class FormGenerator:
             "instance": InstanceSerializer(instance).data
         }
         for survey_filled in self.survey_as_dict.get("spec", []):   # loop all survey config from tower
-            target_tower_field = self.operation.tower_survey_fields.get(name=survey_filled["variable"])
+            target_tower_field = self.operation.survey_fields.get(name=survey_filled["variable"])
             # jinja templating default values
             if target_tower_field.default is not None and target_tower_field.default != "":
                 survey_filled["default"] = self._template_field(target_tower_field.default, context)
 
     def _apply_user_validator_to_survey(self):
         for survey_filled in self.survey_as_dict.get("spec", []):  # loop all survey config from tower
-            target_tower_field = self.operation.tower_survey_fields.get(name=survey_filled["variable"])
+            target_tower_field = self.operation.survey_fields.get(name=survey_filled["variable"])
             survey_filled["validators"] = list()
             if target_tower_field.validators is not None:
                 survey_filled["validators"] = target_tower_field.validators.split(",")
 
     def _apply_quota_to_survey(self):
         for survey_filled in self.survey_as_dict.get("spec", []):  # loop all survey config from tower
-            target_tower_field = self.operation.tower_survey_fields.get(name=survey_filled["variable"])
+            target_tower_field = self.operation.survey_fields.get(name=survey_filled["variable"])
             survey_filled["quota"] = None
             if target_tower_field.attribute_definition:
                 quota_string = target_tower_field.attribute_definition.name

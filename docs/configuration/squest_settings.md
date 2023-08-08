@@ -87,7 +87,7 @@ This can be used for example to block new requests by end users from the service
 
 **Default:** `http://squest.domain.local`
 
-Address of the Squest portal instance. Used in email templates and in metadata sent to Tower job templates.
+Address of the Squest portal instance. Used in email templates and in metadata sent to Ansible controller job templates.
 
 ### SQUEST_EMAIL_HOST
 

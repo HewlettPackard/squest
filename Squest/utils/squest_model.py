@@ -15,7 +15,7 @@ class SquestDeleteCascadeMixIn(Model):
                                   "Support",
                                   "Operation",
                                   "JobTemplate",
-                                  "TowerServer",
+                                  "AnsibleController",
                                   "Resource",
                                   "ResourceGroup",
                                   "Organization",

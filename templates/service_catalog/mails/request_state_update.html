@@ -94,15 +94,15 @@
                                 {{ request.operation.name }}
                             </td>
                         </tr>
-                        {% if request.tower_job_id and request.tower_job_id is not None %}
+                        {% if request.remote_job_id and request.remote_job_id is not None %}
                             <tr>
                                 <td width="25%" align="left"
                                     style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
-                                    Tower job
+                                    Ansible controller job
                                 </td>
                                 <td width="75%" align="left"
                                     style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
-                                    <a href="{{ request.tower_job_url }}"><b> {{ request.tower_job_id }}</b></a>
+                                    <a href="{{ request.remote_job_url }}"><b> {{ request.remote_job_id }}</b></a>
                                 </td>
                             </tr>
                         {% endif %}

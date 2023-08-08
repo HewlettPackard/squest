@@ -12,8 +12,8 @@ class TestApprovalStepForm(BaseTest):
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
                                                                       operation=self.create_operation_test)
         self.create_operation_test.update_survey()
-        self.field1 = self.create_operation_test.tower_survey_fields.all()[0]
-        self.field2 = self.create_operation_test.tower_survey_fields.all()[1]
+        self.field1 = self.create_operation_test.survey_fields.all()[0]
+        self.field2 = self.create_operation_test.survey_fields.all()[1]
 
     def test_create_approval_step(self):
         parameters = {

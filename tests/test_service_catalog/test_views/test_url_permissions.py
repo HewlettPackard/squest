@@ -44,7 +44,7 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                     "user": self.standard_user.id,
                     "date_complete": "",
                     "date_archived": "",
-                    "tower_job_id": "",
+                    "remote_job_id": "",
                     "state": "FAILED",
                     "periodic_task": "",
                     "periodic_task_date_expire": "",
@@ -433,9 +433,9 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                 perm_str='service_catalog.change_operation',
                 url_kwargs={'service_id': self.service_test.id, 'pk': self.update_operation_test.id},
                 data={
-                    'form-0-id': self.update_operation_test.tower_survey_fields.get(name='text_variable').id,
+                    'form-0-id': self.update_operation_test.survey_fields.get(name='text_variable').id,
                     'form-0-default': 'default_var',
-                    'form-1-id': self.update_operation_test.tower_survey_fields.get(name='multiplechoice_variable').id,
+                    'form-1-id': self.update_operation_test.survey_fields.get(name='multiplechoice_variable').id,
                     'form-1-is_customer_field': 'on',
                     'form-1-default': 'default_var',
                     'form-TOTAL_FORMS': 2,
@@ -738,19 +738,19 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
         ]
         self.run_permissions_tests(testing_view_list)
 
-    def test_towerserver_views(self):
+    def test_ansiblecontroller_views(self):
         testing_view_list = [
             TestingGetUIViews(
-                url='service_catalog:towerserver_list',
-                perm_str='service_catalog.list_towerserver',
+                url='service_catalog:ansiblecontroller_list',
+                perm_str='service_catalog.list_ansiblecontroller',
             ),
             TestingGetUIViews(
-                url='service_catalog:towerserver_create',
-                perm_str='service_catalog.add_towerserver',
+                url='service_catalog:ansiblecontroller_create',
+                perm_str='service_catalog.add_ansiblecontroller',
             ),
             TestingPostUIViews(
-                url='service_catalog:towerserver_create',
-                perm_str='service_catalog.add_towerserver',
+                url='service_catalog:ansiblecontroller_create',
+                perm_str='service_catalog.add_ansiblecontroller',
                 data={
                     "name": "New tower",
                     "host": "tower.domain.local",
@@ -759,19 +759,19 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                 }
             ),
             TestingGetUIViews(
-                url='service_catalog:towerserver_details',
-                perm_str='service_catalog.view_towerserver',
-                url_kwargs={'pk': self.tower_server_test.id}
+                url='service_catalog:ansiblecontroller_details',
+                perm_str='service_catalog.view_ansiblecontroller',
+                url_kwargs={'pk': self.ansible_controller_test.id}
             ),
             TestingGetUIViews(
-                url='service_catalog:towerserver_edit',
-                perm_str='service_catalog.change_towerserver',
-                url_kwargs={'pk': self.tower_server_test.id}
+                url='service_catalog:ansiblecontroller_edit',
+                perm_str='service_catalog.change_ansiblecontroller',
+                url_kwargs={'pk': self.ansible_controller_test.id}
             ),
             TestingPostUIViews(
-                url='service_catalog:towerserver_edit',
-                perm_str='service_catalog.change_towerserver',
-                url_kwargs={'pk': self.tower_server_test.id},
+                url='service_catalog:ansiblecontroller_edit',
+                perm_str='service_catalog.change_ansiblecontroller',
+                url_kwargs={'pk': self.ansible_controller_test.id},
                 data={
                     "name": "Tower server updated",
                     "host": "https://tower-updated.domain.local",
@@ -779,44 +779,44 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
                 }
             ),
             TestingGetUIViews(
-                url='service_catalog:towerserver_sync',
-                perm_str='service_catalog.sync_towerserver',
-                url_kwargs={'tower_id': self.tower_server_test.id},
+                url='service_catalog:ansiblecontroller_sync',
+                perm_str='service_catalog.sync_ansiblecontroller',
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostUIViews(
-                url='service_catalog:towerserver_sync',
-                perm_str='service_catalog.sync_towerserver',
-                url_kwargs={'tower_id': self.tower_server_test.id},
+                url='service_catalog:ansiblecontroller_sync',
+                perm_str='service_catalog.sync_ansiblecontroller',
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id},
                 expected_status_code=202,
             ),
             TestingGetUIViews(
                 url='service_catalog:jobtemplate_sync',
-                perm_str='service_catalog.sync_towerserver',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id},
+                perm_str='service_catalog.sync_ansiblecontroller',
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostUIViews(
                 url='service_catalog:jobtemplate_sync',
-                perm_str='service_catalog.sync_towerserver',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id},
+                perm_str='service_catalog.sync_ansiblecontroller',
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id},
                 expected_status_code=202,
             ),
             TestingGetUIViews(
-                url='service_catalog:towerserver_delete',
-                perm_str='service_catalog.delete_towerserver',
-                url_kwargs={'pk': self.tower_server_test.id}
+                url='service_catalog:ansiblecontroller_delete',
+                perm_str='service_catalog.delete_ansiblecontroller',
+                url_kwargs={'pk': self.ansible_controller_test.id}
             ),
             TestingPostUIViews(
-                url='service_catalog:towerserver_delete',
-                perm_str='service_catalog.delete_towerserver',
-                url_kwargs={'pk': self.tower_server_test.id}
+                url='service_catalog:ansiblecontroller_delete',
+                perm_str='service_catalog.delete_ansiblecontroller',
+                url_kwargs={'pk': self.ansible_controller_test.id}
             )
         ]
         with mock.patch("towerlib.towerlib.Tower.__init__") as mock_tower_lib:
-            with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_tower_sync:
+            with mock.patch("service_catalog.models.ansiblecontroller.AnsibleController.sync") as mock_tower_sync:
                 mock_tower_lib.return_value = None
                 self.run_permissions_tests(testing_view_list)
 
@@ -825,27 +825,27 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionUIViews)
             TestingGetUIViews(
                 url='service_catalog:jobtemplate_list',
                 perm_str='service_catalog.list_jobtemplate',
-                url_kwargs={'tower_id': self.tower_server_test.id},
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id},
             ),
             TestingGetUIViews(
                 url='service_catalog:jobtemplate_details',
                 perm_str='service_catalog.view_jobtemplate',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id}
             ),
             TestingGetUIViews(
                 url='service_catalog:job_template_compliancy',
                 perm_str='service_catalog.view_jobtemplate',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id}
             ),
             TestingGetUIViews(
                 url='service_catalog:jobtemplate_delete',
                 perm_str='service_catalog.delete_jobtemplate',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id}
             ),
             TestingPostUIViews(
                 url='service_catalog:jobtemplate_delete',
                 perm_str='service_catalog.delete_jobtemplate',
-                url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
+                url_kwargs={'ansible_controller_id': self.ansible_controller_test.id, 'pk': self.job_template_test.id}
             )
         ]
         self.run_permissions_tests(testing_view_list)

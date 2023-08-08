@@ -7,4 +7,4 @@ from .request_message_serializer import *
 from .request_serializers import *
 from .service_serializers import *
 from .task_result_serializer import *
-from .tower_server_serializer import *
+from .ansible_controller_serializer import *

@@ -2,7 +2,7 @@ from django.test import override_settings
 
 from service_catalog.forms import ServiceRequestForm
 from service_catalog.forms.form_utils import FormUtils
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -19,7 +19,7 @@ class TestFormUtils(BaseTest):
             'float_var': False,
             'integer_var': False
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
 
     def test_template_field_no_default_no_spec(self):
         default_template_config = ""
@@ -140,7 +140,7 @@ class TestFormUtils(BaseTest):
 
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
     def test_service_request_form_with_validators(self):
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         parameters = {

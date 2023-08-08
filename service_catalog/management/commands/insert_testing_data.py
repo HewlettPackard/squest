@@ -7,7 +7,7 @@ from django.core.management import BaseCommand
 
 from profiles.models import Organization, Role
 from resource_tracker_v2.models import AttributeDefinition, Resource, ResourceGroup, Transformer
-from service_catalog.models import TowerServer, JobTemplate, Service, Operation, Instance, Request
+from service_catalog.models import AnsibleController, JobTemplate, Service, Operation, Instance, Request
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
 
@@ -35,8 +35,8 @@ class Command(BaseCommand):
             logger.info(f"Get or create '{users[username]}'")
         awx_token = os.environ['AWX_TOKEN']
         awx_host = os.environ['AWX_HOST']
-        tower, _ = TowerServer.objects.get_or_create(name=r'AWX HPE', host=awx_host,
-                                                     token=awx_token)
+        tower, _ = AnsibleController.objects.get_or_create(name=r'AWX HPE', host=awx_host,
+                                                           token=awx_token)
         logger.info('AWX added')
         print('Launch celery to sync: celery - A service_catalog worker - l info')
         tower.sync()
@@ -46,9 +46,10 @@ class Command(BaseCommand):
         for billing_group in organization_name:
             organization.append(Organization.objects.get_or_create(name=billing_group)[0])
 
-
-        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Organization member"))
-        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),Role.objects.get(name="Instance viewer"))
+        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),
+                                                                        Role.objects.get(name="Organization member"))
+        Organization.objects.get(name="Orchestration").add_user_in_role(User.objects.get(username="Anthony"),
+                                                                        Role.objects.get(name="Instance viewer"))
 
         job_templates = JobTemplate.objects.all()
         services = dict()

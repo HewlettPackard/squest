@@ -101,26 +101,26 @@ urlpatterns = [
     path('doc/<int:pk>/', views.doc_details, name='doc_details'),
 
     # Controller CRUD
-    path('controller/', views.TowerServerListView.as_view(), name='towerserver_list'),
-    path('controller/create/', views.TowerServerCreateView.as_view(), name='towerserver_create'),
-    path('controller/<int:pk>/', views.TowerServerDetailView.as_view(), name='towerserver_details'),
-    path('controller/<int:pk>/edit/', views.TowerServerEditView.as_view(), name='towerserver_edit'),
-    path('controller/<int:pk>/delete/', views.TowerServerDeleteView.as_view(), name='towerserver_delete'),
+    path('ansible-controller/', views.AnsibleControllerListView.as_view(), name='ansiblecontroller_list'),
+    path('ansible-controller/create/', views.AnsibleControllerCreateView.as_view(), name='ansiblecontroller_create'),
+    path('ansible-controller/<int:pk>/', views.AnsibleControllerDetailView.as_view(), name='ansiblecontroller_details'),
+    path('ansible-controller/<int:pk>/edit/', views.AnsibleControllerEditView.as_view(), name='ansiblecontroller_edit'),
+    path('ansible-controller/<int:pk>/delete/', views.AnsibleControllerDeleteView.as_view(), name='ansiblecontroller_delete'),
 
     # Synchronize controller endpoints
-    path('controller/<int:tower_id>/sync/', views.towerserver_sync, name='towerserver_sync'),
-    path('controller/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='jobtemplate_sync'),
+    path('ansible-controller/<int:ansible_controller_id>/sync/', views.ansiblecontroller_sync, name='ansiblecontroller_sync'),
+    path('ansible-controller/<int:ansible_controller_id>/sync/<int:pk>', views.ansiblecontroller_sync, name='jobtemplate_sync'),
 
     # Job Template CRUD
-    path('controller/<int:tower_id>/job_template/', views.JobTemplateListView.as_view(),
+    path('ansible-controller/<int:ansible_controller_id>/job_template/', views.JobTemplateListView.as_view(),
          name='jobtemplate_list'),
-    path('tower/<int:tower_id>/job_template/<int:pk>/', views.JobTemplateDetailView.as_view(),
+    path('tower/<int:ansible_controller_id>/job_template/<int:pk>/', views.JobTemplateDetailView.as_view(),
          name='jobtemplate_details'),
-    path('controller/<int:tower_id>/job_template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
+    path('ansible-controller/<int:ansible_controller_id>/job_template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
          name='jobtemplate_delete'),
 
     # Job Template compliance details
-    path('tower/<int:tower_id>/job_template/<int:pk>/compliancy/', views.job_template_compliancy,
+    path('ansible-controller/<int:ansible_controller_id>/job_template/<int:pk>/compliancy/', views.job_template_compliancy,
          name='job_template_compliancy'),
 
     # Global Hook CRUD

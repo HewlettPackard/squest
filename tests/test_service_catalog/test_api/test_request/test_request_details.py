@@ -48,7 +48,7 @@ class TestApiRequestDetails(BaseTestRequest):
         self.expected_data = {
             'id': self.test_request_standard_user_1.id,
             'fill_in_survey': self.test_request_standard_user_1.fill_in_survey,
-            'tower_job_id': self.test_request_standard_user_1.tower_job_id,
+            'remote_job_id': self.test_request_standard_user_1.remote_job_id,
             'state': self.test_request_standard_user_1.state,
             'operation': self.test_request_standard_user_1.operation.id,
             'user': UserSerializer(instance=self.test_request_standard_user_1.user).data

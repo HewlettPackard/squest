@@ -8,7 +8,7 @@ class TestProcessRequestForm(BaseTestRequest):
     def setUp(self):
         super(TestProcessRequestForm, self).setUp()
 
-        self.test_request.operation.job_template.tower_job_template_data = {
+        self.test_request.operation.job_template.remote_job_template_data = {
             "id": 7,
             "type": "job_template",
             "url": "/api/v2/job_templates/7/",
@@ -182,35 +182,35 @@ class TestProcessRequestForm(BaseTestRequest):
             "webhook_credential": None
         }
 
-    def test_tower_job_template_data_key_enabled(self):
+    def test_remote_job_template_data_key_enabled(self):
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
-        self.assertTrue(process_request_form.tower_job_template_data_key_enabled("ask_diff_mode_on_launch"))
-        self.assertFalse(process_request_form.tower_job_template_data_key_enabled("ask_scm_branch_on_launch"))
-        self.assertFalse(process_request_form.tower_job_template_data_key_enabled("does_not_exist"))
+        self.assertTrue(process_request_form.remote_job_template_data_key_enabled("ask_diff_mode_on_launch"))
+        self.assertFalse(process_request_form.remote_job_template_data_key_enabled("ask_scm_branch_on_launch"))
+        self.assertFalse(process_request_form.remote_job_template_data_key_enabled("does_not_exist"))
 
     def test_get_inventories_as_choices(self):
         inventory_test_1 = Inventory.objects.create(name="inventory_test_1",
-                                                    tower_id=1, tower_server=self.tower_server_test)
+                                                    remote_id=1, ansible_controller=self.ansible_controller_test)
         inventory_test_2 = Inventory.objects.create(name="inventory_test_2",
-                                                    tower_id=2, tower_server=self.tower_server_test)
+                                                    remote_id=2, ansible_controller=self.ansible_controller_test)
         inventory_test_3 = Inventory.objects.create(name="inventory_test_3",
-                                                    tower_id=2, tower_server=self.tower_server_test_2)
+                                                    remote_id=2, ansible_controller=self.ansible_controller_test_2)
 
-        expected_choices = [(inventory_test_1.tower_id, inventory_test_1.name),
-                            (inventory_test_2.tower_id, inventory_test_2.name)]
+        expected_choices = [(inventory_test_1.ansible_controller_id, inventory_test_1.name),
+                            (inventory_test_2.ansible_controller_id, inventory_test_2.name)]
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         self.assertEqual(process_request_form.get_inventories_as_choices(), expected_choices)
 
     def test_get_credentials_as_choices(self):
         credential_test_1 = Credential.objects.create(name="credential_test_1",
-                                                      tower_id=1, tower_server=self.tower_server_test)
+                                                      remote_id=1, ansible_controller=self.ansible_controller_test)
         credential_test_2 = Credential.objects.create(name="credential_test_2",
-                                                      tower_id=2, tower_server=self.tower_server_test)
+                                                      remote_id=2, ansible_controller=self.ansible_controller_test)
         credential_test_3 = Credential.objects.create(name="credential_test_3",
-                                                      tower_id=2, tower_server=self.tower_server_test_2)
+                                                      remote_id=2, ansible_controller=self.ansible_controller_test_2)
 
-        expected_choices = [(credential_test_1.tower_id, credential_test_1.name),
-                            (credential_test_2.tower_id, credential_test_2.name)]
+        expected_choices = [(credential_test_1.ansible_controller_id, credential_test_1.name),
+                            (credential_test_2.ansible_controller_id, credential_test_2.name)]
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         self.assertEqual(process_request_form.get_credentials_as_choices(), expected_choices)
 
@@ -254,7 +254,7 @@ class TestProcessRequestForm(BaseTestRequest):
             'float_var': True,
             'integer_var': True
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         self.assertTrue(process_request_form.is_all_field_visible_to_admin_or_user_only())
 
@@ -268,7 +268,7 @@ class TestProcessRequestForm(BaseTestRequest):
             'float_var': False,
             'integer_var': False
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         self.assertTrue(process_request_form.is_all_field_visible_to_admin_or_user_only())
 
@@ -282,34 +282,34 @@ class TestProcessRequestForm(BaseTestRequest):
             'float_var': False,
             'integer_var': False
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         self.assertFalse(process_request_form.is_all_field_visible_to_admin_or_user_only())
 
     # -------------------
     # limit field
     # -------------------
-    def test_get_limit_field_no_default_in_tower_no_override_in_squest(self):
+    def test_get_limit_field_no_default_in_ansible_controller_no_override_in_squest(self):
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         expected_initial = ""
         self.assertEqual(expected_initial, process_request_form.fields["ask_limit_on_launch"].initial)
 
-    def test_get_limit_field_default_limit_set_in_tower_no_override_squest(self):
-        self.test_request.operation.job_template.tower_job_template_data["limit"] = "test_limit"
+    def test_get_limit_field_default_limit_set_in_ansible_controller_no_override_squest(self):
+        self.test_request.operation.job_template.remote_job_template_data["limit"] = "test_limit"
         self.test_request.operation.job_template.save()
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         expected_initial = "test_limit"
         self.assertEqual(expected_initial, process_request_form.fields["ask_limit_on_launch"].initial)
 
-    def test_no_default_limit_set_in_tower_override_in_squest(self):
+    def test_no_default_limit_set_in_ansible_controller_override_in_squest(self):
         self.test_request.operation.default_limits = "override_limit"
         self.test_request.operation.save()
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         expected_initial = "override_limit"
         self.assertEqual(expected_initial, process_request_form.fields["ask_limit_on_launch"].initial)
 
-    def test_default_limit_set_in_tower_override_in_squest(self):
-        self.test_request.operation.job_template.tower_job_template_data["limit"] = "test_limit"
+    def test_default_limit_set_in_ansible_controller_override_in_squest(self):
+        self.test_request.operation.job_template.remote_job_template_data["limit"] = "test_limit"
         self.test_request.operation.job_template.save()
         self.test_request.operation.default_limits = "override_limit"
         self.test_request.operation.save()
@@ -320,12 +320,12 @@ class TestProcessRequestForm(BaseTestRequest):
     # -------------------
     # inventory field
     # -------------------
-    def test_get_inventory_field_default_in_tower_no_override_in_squest(self):
+    def test_get_inventory_field_default_in_ansible_controller_no_override_in_squest(self):
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         expected_initial = 1
         self.assertEqual(expected_initial, process_request_form.fields["ask_inventory_on_launch"].initial)
 
-    def test_get_inventory_field_default_in_tower_override_in_squest(self):
+    def test_get_inventory_field_default_in_ansible_controller_override_in_squest(self):
         self.test_request.operation.default_inventory_id = "3"
         self.test_request.operation.save()
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
@@ -335,12 +335,12 @@ class TestProcessRequestForm(BaseTestRequest):
     # -------------------
     # credentials field
     # -------------------
-    def test_get_credentials_field_default_in_tower_no_override_in_squest(self):
+    def test_get_credentials_field_default_in_ansible_controller_no_override_in_squest(self):
         process_request_form = ProcessRequestForm(request=self.test_request, user=self.superuser)
         expected_initial = ['1']
         self.assertEqual(expected_initial, process_request_form.fields["ask_credential_on_launch"].initial)
 
-    def test_get_credentials_field_default_in_tower_override_in_squest(self):
+    def test_get_credentials_field_default_in_ansible_controller_override_in_squest(self):
         # single value
         self.test_request.operation.default_credentials_ids = "2"
         self.test_request.operation.save()

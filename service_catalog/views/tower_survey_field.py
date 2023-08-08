@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from Squest.utils.squest_views import SquestPermissionDenied
 from service_catalog.forms.tower_survey_field_form import TowerSurveyFieldForm
-from service_catalog.models import Service, Operation, TowerSurveyField
+from service_catalog.models import Service, Operation, SurveyField
 
 
 def operation_edit_survey(request, service_id, pk):
@@ -12,10 +12,10 @@ def operation_edit_survey(request, service_id, pk):
     target_operation = get_object_or_404(Operation, id=pk)
     if not request.user.has_perm('service_catalog.change_operation', target_operation):
         raise SquestPermissionDenied('service_catalog.change_operation')
-    survey_selector_form_set = modelformset_factory(TowerSurveyField,
+    survey_selector_form_set = modelformset_factory(SurveyField,
                                                     form=TowerSurveyFieldForm,
                                                     extra=0)
-    formset = survey_selector_form_set(queryset=target_operation.tower_survey_fields.all())
+    formset = survey_selector_form_set(queryset=target_operation.survey_fields.all())
 
     if request.method == 'POST':
         formset = survey_selector_form_set(request.POST)

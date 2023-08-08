@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
 
@@ -15,8 +15,8 @@ class TestOperationSurveyPut(BaseTestRequest):
 
     def _validate_field_in_db(self, json_data):
         for field in json_data:
-            target_object = TowerSurveyField.objects.get(operation_id=self.test_request.operation.id,
-                                                         name=field["name"])
+            target_object = SurveyField.objects.get(operation_id=self.test_request.operation.id,
+                                                    name=field["name"])
             self.assertEqual(field["is_customer_field"], target_object.is_customer_field)
             self.assertEqual(field["default"], target_object.default)
 

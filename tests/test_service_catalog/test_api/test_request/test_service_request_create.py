@@ -6,7 +6,7 @@ from rest_framework.reverse import reverse
 
 from profiles.models import Quota
 from service_catalog.models import Request, Instance
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
@@ -26,7 +26,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
             }
         }
         self.expected = ['id', 'instance', 'user', 'fill_in_survey', 'date_submitted', 'date_complete', 'date_archived',
-                         'tower_job_id', 'state', 'operation', 'processed_by', 'accepted_by', 'approval_workflow_state',
+                         'remote_job_id', 'state', 'operation', 'processed_by', 'accepted_by', 'approval_workflow_state',
                          'last_updated', 'created']
         self.expected.sort()
 
@@ -96,7 +96,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
 
     def test_can_create_with_multi_select_field(self):
         self.data['fill_in_survey']['multiselect_var'] = ["multiselect_3", "multiselect_1"]
-        self.create_operation_test.switch_tower_fields_enable_from_dict({'multiselect_var': True})
+        self.create_operation_test.switch_survey_fields_enable_from_dict({'multiselect_var': True})
         self._check_create()
 
     def test_can_create_without_survey(self):
@@ -108,7 +108,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
     def test_cannot_create_with_validator(self):
         url = reverse('api_service_request_create', kwargs=self.kwargs)
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         self.client.force_login(user=self.standard_user)
@@ -151,7 +151,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
         url = reverse('api_service_request_create', kwargs=self.kwargs)
         # set a quota on cpu_attribute and link it to integer_var field
         Quota.objects.create(scope=self.test_quota_scope, limit=10, attribute_definition=self.cpu_attribute)
-        integer_var_field = self.create_operation_test.tower_survey_fields.get(name="integer_var")
+        integer_var_field = self.create_operation_test.survey_fields.get(name="integer_var")
         integer_var_field.attribute_definition = self.cpu_attribute
         integer_var_field.save()
 
@@ -165,7 +165,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
             'float_var': False,
             'integer_var': True
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
 
         self.client.force_login(user=self.standard_user)
 

@@ -1,11 +1,11 @@
 from rest_framework.serializers import ModelSerializer
 
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 
 
 class TowerSurveyFieldSerializer(ModelSerializer):
 
     class Meta:
-        model = TowerSurveyField
+        model = SurveyField
         fields = ('name', 'is_customer_field', 'default', 'validators')
         read_only_fields = ('name',)

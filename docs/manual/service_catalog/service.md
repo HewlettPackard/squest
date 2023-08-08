@@ -41,7 +41,7 @@ The billing group will not be asked neither shown in the end user form when requ
 
 ## Extra vars
 
-Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
+Some extra variables can be declared on some Squest level like `ansible_controller`, `service` or `operation`.
 
 These extra variables are added automatically when processing a request and so executing a job template.
 
@@ -50,7 +50,7 @@ Squest will apply the following variable precedence:
 
 ```mermaid
 flowchart LR
-    survey(Request survey) --> Tower(Tower) --> Service(Service)  --> Operation(Operation)
+    survey(Request survey) --> Ansible controller(AnsibleController) --> Service(Service)  --> Operation(Operation)
 ```
 
 ## External support URL

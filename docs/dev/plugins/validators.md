@@ -78,4 +78,4 @@ Update the `docker-compose.yml` file to add a volume that map your script folder
 
 In squest, go into `Service Catalog --> Manage Services --> Operations --> Survey`
 
-For each field of the Tower survey of the selected operation you can now add one or more validator.
+For each field of the Ansible controller survey of the selected operation you can now add one or more validator.

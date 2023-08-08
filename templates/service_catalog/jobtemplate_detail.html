@@ -13,14 +13,14 @@
                                 <b>Name</b> <span class="float-right">{{ object.name }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Job template ID (Tower/AWX)</b> <a
-                                    href="{{ object.tower_url }}"
-                                    class="float-right">{{ object.tower_id }}</a>
+                                <b>Job template ID (Ansible controller/AWX)</b> <a
+                                    href="{{ object.remote_url }}"
+                                    class="float-right">{{ object.ansible_controller_id }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Tower server name</b> <a
-                                    href="{% url 'service_catalog:jobtemplate_list' object.tower_server.id  %}"
-                                    class="float-right">{{ object.tower_server.name }}</a>
+                                <b>Ansible controller server name</b> <a
+                                    href="{% url 'service_catalog:jobtemplate_list' object.ansible_controller.id  %}"
+                                    class="float-right">{{ object.ansible_controller.name }}</a>
                             </li>
                             <li class="list-group-item border-bottom-0">
                                 <b>Is compliant</b> <div class="float-right">{% include 'service_catalog/custom_columns/job_template_compliant.html' with record=object %}</div>
@@ -43,7 +43,7 @@
                                 <pre><code class="language-json">{{ object.survey.spec | pretty_json}}</code></pre>
                             </div>
                             <div class="tab-pane" id="data">
-                                <pre><code class="language-json">{{ object.tower_job_template_data | pretty_json}}</code></pre>
+                                <pre><code class="language-json">{{ object.remote_job_template_data | pretty_json}}</code></pre>
                             </div>
                         </div>
                     </div>

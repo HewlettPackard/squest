@@ -40,14 +40,14 @@ class ApprovalStep(SquestModel):
     )
 
     readable_fields = ManyToManyField(
-        'service_catalog.TowerSurveyField',
+        'service_catalog.SurveyField',
         blank=True,
         help_text="Read only field",
         related_name="approval_steps_as_read_field"
     )
 
     editable_fields = ManyToManyField(
-        'service_catalog.TowerSurveyField',
+        'service_catalog.SurveyField',
         blank=True,
         help_text="Fields allowed to be filled",
         related_name="approval_steps_as_write_field"

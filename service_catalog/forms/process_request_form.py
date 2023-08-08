@@ -21,33 +21,33 @@ class ProcessRequestForm(forms.Form):
 
     def get_job_template_fields(self):
         fields = dict()
-        if self.tower_job_template_data_key_enabled("ask_job_type_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_job_type_on_launch"):
             fields["ask_job_type_on_launch"] = self._get_job_type_field()
-        if self.tower_job_template_data_key_enabled("ask_limit_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_limit_on_launch"):
             fields["ask_limit_on_launch"] = self._get_limit_field()
-        if self.tower_job_template_data_key_enabled("ask_tags_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_tags_on_launch"):
             fields["ask_tags_on_launch"] = self._get_tags_field()
-        if self.tower_job_template_data_key_enabled("ask_skip_tags_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_skip_tags_on_launch"):
             fields["ask_skip_tags_on_launch"] = self._get_skip_tags_field()
-        if self.tower_job_template_data_key_enabled("ask_inventory_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_inventory_on_launch"):
             fields["ask_inventory_on_launch"] = self._get_inventory_field()
-        if self.tower_job_template_data_key_enabled("ask_credential_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_credential_on_launch"):
             fields["ask_credential_on_launch"] = self._get_credentials_field()
-        if self.tower_job_template_data_key_enabled("ask_verbosity_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_verbosity_on_launch"):
             fields["ask_verbosity_on_launch"] = self._get_verbosity_field()
-        if self.tower_job_template_data_key_enabled("ask_diff_mode_on_launch"):
+        if self.remote_job_template_data_key_enabled("ask_diff_mode_on_launch"):
             fields["ask_diff_mode_on_launch"] = self._get_diff_mode_field()
         return fields
 
-    def tower_job_template_data_key_enabled(self, key_to_find):
-        if key_to_find in self.target_request.operation.job_template.tower_job_template_data:
-            return str_to_bool(self.target_request.operation.job_template.tower_job_template_data[key_to_find])
+    def remote_job_template_data_key_enabled(self, key_to_find):
+        if key_to_find in self.target_request.operation.job_template.remote_job_template_data:
+            return str_to_bool(self.target_request.operation.job_template.remote_job_template_data[key_to_find])
         return False
 
     def _get_job_type_field(self):
         initial = "run"
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["job_type"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["job_type"]
         except KeyError:
             pass
         if self.target_request.operation.default_job_type is not None \
@@ -66,7 +66,7 @@ class ProcessRequestForm(forms.Form):
     def _get_diff_mode_field(self):
         initial = False
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["diff_mode"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["diff_mode"]
             initial = str_to_bool(initial)
         except KeyError:
             pass
@@ -86,7 +86,7 @@ class ProcessRequestForm(forms.Form):
     def _get_limit_field(self):
         initial = ""
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["limit"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["limit"]
         except KeyError:
             pass
         if self.target_request.operation.default_limits is not None and self.target_request.operation.default_limits != "":
@@ -104,7 +104,7 @@ class ProcessRequestForm(forms.Form):
     def _get_tags_field(self):
         initial = ""
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["job_tags"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["job_tags"]
         except KeyError:
             pass
         if self.target_request.operation.default_tags is not None and self.target_request.operation.default_tags != "":
@@ -122,7 +122,7 @@ class ProcessRequestForm(forms.Form):
     def _get_skip_tags_field(self):
         initial = ""
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["skip_tags"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["skip_tags"]
         except KeyError:
             pass
         if self.target_request.operation.default_skip_tags is not None and self.target_request.operation.default_skip_tags != "":
@@ -140,7 +140,7 @@ class ProcessRequestForm(forms.Form):
     def _get_inventory_field(self):
         initial = ""
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["summary_fields"]["inventory"]["id"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["summary_fields"]["inventory"]["id"]
         except KeyError:
             pass
         if self.target_request.operation.default_inventory_id is not None and self.target_request.operation.default_inventory_id != "":
@@ -157,7 +157,7 @@ class ProcessRequestForm(forms.Form):
     def _get_verbosity_field(self):
         initial = 0
         try:
-            initial = self.target_request.operation.job_template.tower_job_template_data["verbosity"]
+            initial = self.target_request.operation.job_template.remote_job_template_data["verbosity"]
         except KeyError:
             pass
         if self.target_request.operation.default_verbosity is not None \
@@ -177,7 +177,7 @@ class ProcessRequestForm(forms.Form):
     def _get_credentials_field(self):
         initial = []
         try:
-            credentials = self.target_request.operation.job_template.tower_job_template_data["summary_fields"]["credentials"]
+            credentials = self.target_request.operation.job_template.remote_job_template_data["summary_fields"]["credentials"]
             for credential in credentials:
                 initial.append(str(credential["id"]))
         except KeyError:
@@ -199,10 +199,10 @@ class ProcessRequestForm(forms.Form):
         """
         Return True if all field of the tower survey are visible only to the end user or only to admin
         """
-        all_fields_for_admin = self.target_request.operation.tower_survey_fields.filter(
-            is_customer_field=False).count() == self.target_request.operation.tower_survey_fields.all().count()
-        all_fields_for_user = self.target_request.operation.tower_survey_fields.filter(
-            is_customer_field=True).count() == self.target_request.operation.tower_survey_fields.all().count()
+        all_fields_for_admin = self.target_request.operation.survey_fields.filter(
+            is_customer_field=False).count() == self.target_request.operation.survey_fields.all().count()
+        all_fields_for_user = self.target_request.operation.survey_fields.filter(
+            is_customer_field=True).count() == self.target_request.operation.survey_fields.all().count()
         return all_fields_for_admin or all_fields_for_user
 
     def _get_templated_initial(self, jinja_string):
@@ -218,12 +218,12 @@ class ProcessRequestForm(forms.Form):
 
     def get_inventories_as_choices(self):
         choices = list()
-        for inventory in self.target_request.operation.job_template.tower_server.inventories.all():
-            choices.append((inventory.tower_id, inventory.name))
+        for inventory in self.target_request.operation.job_template.ansible_controller.inventories.all():
+            choices.append((inventory.ansible_controller_id, inventory.name))
         return choices
 
     def get_credentials_as_choices(self):
         choices = list()
-        for credential in self.target_request.operation.job_template.tower_server.credentials.all():
-            choices.append((credential.tower_id, credential.name))
+        for credential in self.target_request.operation.job_template.ansible_controller.credentials.all():
+            choices.append((credential.ansible_controller_id, credential.name))
         return choices

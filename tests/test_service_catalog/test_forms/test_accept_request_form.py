@@ -13,7 +13,7 @@ class TestAcceptRequestForm(BaseTest):
             "spec": [
                 {
                     "choices": "",
-                    "default": "this_is_default_from_tower",
+                    "default": "this_is_default_from_ansible_controller",
                     "max": 1024,
                     "min": 0,
                     "new_question": True,

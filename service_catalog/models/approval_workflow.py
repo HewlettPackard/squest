@@ -1,7 +1,7 @@
 from django.db.models import CharField, ForeignKey, ManyToManyField, CASCADE
 
 from Squest.utils.squest_model import SquestModel
-from service_catalog.models import ApprovalStep, TowerSurveyField
+from service_catalog.models import ApprovalStep, SurveyField
 
 
 class ApprovalWorkflow(SquestModel):
@@ -25,10 +25,10 @@ class ApprovalWorkflow(SquestModel):
 
     @property
     def get_unused_fields(self):
-        all_fields = set(TowerSurveyField.objects.filter(operation=self.operation).values_list('name', flat=True))
+        all_fields = set(SurveyField.objects.filter(operation=self.operation).values_list('name', flat=True))
         used_fields = set(
-            TowerSurveyField.objects.filter(approval_steps_as_write_field__approval_workflow=self).values_list('name',
-                                                                                                               flat=True))
+            SurveyField.objects.filter(approval_steps_as_write_field__approval_workflow=self).values_list('name',
+                                                                                                          flat=True))
         return all_fields - used_fields
 
     @property

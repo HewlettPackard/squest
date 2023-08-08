@@ -4,17 +4,17 @@ from django.forms import ModelMultipleChoiceField, HiddenInput
 from django.urls import reverse
 
 from Squest.utils.squest_model_form import SquestModelForm
-from service_catalog.models import ApprovalStep, TowerSurveyField
+from service_catalog.models import ApprovalStep, SurveyField
 
 
 class ApprovalStepForm(SquestModelForm):
     readable_fields = ModelMultipleChoiceField(label="Readable fields",
                                                required=False,
-                                               queryset=TowerSurveyField.objects.none())
+                                               queryset=SurveyField.objects.none())
 
     editable_fields = ModelMultipleChoiceField(label="Editable fields",
                                                required=False,
-                                               queryset=TowerSurveyField.objects.none())
+                                               queryset=SurveyField.objects.none())
 
     class Meta:
         model = ApprovalStep
@@ -23,8 +23,8 @@ class ApprovalStepForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         self.approval_workflow = kwargs.pop('approval_workflow', None)
         super().__init__(*args, **kwargs)
-        self.fields["readable_fields"].queryset = self.approval_workflow.operation.tower_survey_fields.all()
-        self.fields["editable_fields"].queryset = self.approval_workflow.operation.tower_survey_fields.all()
+        self.fields["readable_fields"].queryset = self.approval_workflow.operation.survey_fields.all()
+        self.fields["editable_fields"].queryset = self.approval_workflow.operation.survey_fields.all()
 
         self.fields['approval_workflow'].widget = HiddenInput()
         self.fields['approval_workflow'].initial = self.approval_workflow.id

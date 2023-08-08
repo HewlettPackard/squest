@@ -25,7 +25,7 @@ class TestApiRequestPut(BaseTestRequest):
         )
         self.put_data = {
             'fill_in_survey': dict(),
-            'tower_job_id': 6,
+            'remote_job_id': 6,
             'state': RequestState.NEED_INFO,
             'operation': self.update_operation_test.id,
             'user': {'id': self.standard_user.id}

@@ -349,7 +349,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'float_var': True,
             'integer_var': True
         }
-        self.test_request.operation.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.test_request.operation.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         full_survey = {
             'text_variable': 'my_var',
             'multiplechoice_variable': "choice1",
@@ -378,7 +378,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'float_var': False,
             'integer_var': False
         }
-        self.test_request.operation.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.test_request.operation.switch_survey_fields_enable_from_dict(enabled_survey_fields)
         full_survey = {
             'text_variable': 'my_var',
             'multiplechoice_variable': "choice1",
@@ -448,8 +448,8 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.save()
         self._process_with_expected_instance_state(InstanceState.PROVISION_FAILED, RequestState.FAILED,
                                                    ExceptionServiceCatalog.JobTemplateNotFound(
-                                                       tower_name=self.tower_server_test.name,
-                                                       job_template_id=self.job_template_test.tower_id))
+                                                       ansible_controller_name=self.ansible_controller_test.name,
+                                                       job_template_id=self.job_template_test.ansible_controller_id))
         self.test_request.refresh_from_db()
         self.assertIsNotNone(self.test_request.failure_message)
 
@@ -589,7 +589,7 @@ class AdminRequestViewTest(BaseTestRequest):
             "user": self.standard_user.id,
             "date_complete": "",
             "date_archived": "",
-            "tower_job_id": "",
+            "remote_job_id": "",
             "state": "FAILED",
             "periodic_task": "",
             "periodic_task_date_expire": "",

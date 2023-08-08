@@ -1,17 +1,17 @@
 from rest_framework.serializers import ModelSerializer, ValidationError
 
-from service_catalog.models import TowerServer
+from service_catalog.models import AnsibleController
 
 
-class TowerServerSerializer(ModelSerializer):
+class AnsibleControllerSerializer(ModelSerializer):
     class Meta:
-        model = TowerServer
+        model = AnsibleController
         exclude = ('token',)
 
 
-class TowerServerCreateSerializer(ModelSerializer):
+class AnsibleControllerCreateSerializer(ModelSerializer):
     class Meta:
-        model = TowerServer
+        model = AnsibleController
         fields = '__all__'
 
     def validate_extra_vars(self, value):

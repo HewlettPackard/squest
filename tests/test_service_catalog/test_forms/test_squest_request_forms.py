@@ -79,7 +79,7 @@ class TestServiceRequestForm(BaseTestRequest):
     def test_cannot_request_when_quota_limit_reached(self):
         # set a quota on cpu_attribute and link it to integer_var field
         Quota.objects.create(scope=self.test_quota_scope, limit=10, attribute_definition=self.cpu_attribute)
-        integer_var_field = self.create_operation_test.tower_survey_fields.get(name="integer_var")
+        integer_var_field = self.create_operation_test.survey_fields.get(name="integer_var")
         integer_var_field.attribute_definition = self.cpu_attribute
         integer_var_field.save()
 
@@ -93,7 +93,7 @@ class TestServiceRequestForm(BaseTestRequest):
             'float_var': False,
             'integer_var': True
         }
-        self.create_operation_test.switch_tower_fields_enable_from_dict(enabled_survey_fields)
+        self.create_operation_test.switch_survey_fields_enable_from_dict(enabled_survey_fields)
 
         # ask more than the limit
         parameters = {

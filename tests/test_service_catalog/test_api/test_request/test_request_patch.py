@@ -34,7 +34,7 @@ class TestApiRequestPatch(BaseTestRequest):
         self.expected_data = {
             'id': self.test_request_standard_user_1.id,
             'fill_in_survey': self.test_request_standard_user_1.fill_in_survey,
-            'tower_job_id': self.test_request_standard_user_1.tower_job_id,
+            'remote_job_id': self.test_request_standard_user_1.remote_job_id,
             'state': RequestState.NEED_INFO,
             'operation': self.update_operation_test.id,
             'user': UserSerializer(self.test_request_standard_user_1.user).data

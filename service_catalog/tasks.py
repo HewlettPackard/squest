@@ -11,20 +11,20 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task()
-def towerserver_sync(tower_id, job_template_id=None):
-    from service_catalog.models.tower_server import TowerServer
+def ansiblecontroller_sync(ansible_controller_id, job_template_id=None):
+    from service_catalog.models.ansiblecontroller import AnsibleController
     if job_template_id is None:
-        logger.info(f"[towerserver_sync] sync tower server with id: {tower_id}")
+        logger.info(f"[ansiblecontroller_sync] sync ansible controller server with id: {ansible_controller_id}")
     else:
-        logger.info(f"[towerserver_sync] sync one job template({job_template_id}) in tower server with id: {tower_id}")
-    tower_server = TowerServer.objects.get(id=tower_id)
-    tower_server.sync(job_template_id)
+        logger.info(f"[ansiblecontroller_sync] sync one job template({job_template_id}) in ansible controller server with id: {ansible_controller_id}")
+    ansible_controller = AnsibleController.objects.get(id=ansible_controller_id)
+    ansible_controller.sync(job_template_id)
 
 
 @shared_task()
-def check_tower_job_status_task(request_id):
+def check_remote_job_status_task(request_id):
     from service_catalog.models.request import Request
-    logger.info(f"[check_tower_job_status_task] check Tower job status for request id: {request_id}")
+    logger.info(f"[check_remote_job_status_task] check ansible controller job status for request id: {request_id}")
     target_request = Request.objects.get(id=request_id)
     target_request.check_job_status()
 

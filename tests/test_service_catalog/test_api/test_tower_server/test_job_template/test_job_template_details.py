@@ -9,14 +9,14 @@ class TestApiJobTemplateDetails(BaseTestRequest):
     def setUp(self):
         super(TestApiJobTemplateDetails, self).setUp()
         self.kwargs = {
-            'tower_server_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
             'pk': self.job_template_test.id,
         }
         self.url = reverse('api_job_template_details', kwargs=self.kwargs)
 
     def _assert_can_get_details(self, response):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected_keys = ['id', 'name', 'tower_id', 'survey', 'tower_job_template_data', 'is_compliant', 'tower_server']
+        expected_keys = ['id', 'name', 'remote_id', 'survey', 'remote_job_template_data', 'is_compliant', 'ansible_controller']
         for key in expected_keys:
             self.assertTrue(key in response.json())
 
@@ -24,9 +24,9 @@ class TestApiJobTemplateDetails(BaseTestRequest):
         response = self.client.get(self.url, format='json')
         self._assert_can_get_details(response)
 
-    def test_get_details_wrong_tower_server_id(self):
+    def test_get_details_wrong_ansible_controller_id(self):
         self.kwargs = {
-            'tower_server_id': self.tower_server_test_2.id,
+            'ansible_controller_id': self.ansible_controller_test_2.id,
             'pk': self.job_template_test.id,
         }
         self.url = reverse('api_job_template_details', kwargs=self.kwargs)
@@ -35,7 +35,7 @@ class TestApiJobTemplateDetails(BaseTestRequest):
 
     def test_get_details_wrong_job_template_id(self):
         self.kwargs = {
-            'tower_server_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
             'pk': 9999,
         }
         self.url = reverse('api_job_template_details', kwargs=self.kwargs)

@@ -35,7 +35,7 @@ nav:
     - Upgrade: installation/upgrade.md
   - Configuration:
     - Squest: configuration/squest_settings.md
-    - Tower: configuration/tower_settings.md
+    - Ansible controller: configuration/ansible_controller_settings.md
   - Manual:
     - Service catalog:
       - Concept: manual/service_catalog/concept.md

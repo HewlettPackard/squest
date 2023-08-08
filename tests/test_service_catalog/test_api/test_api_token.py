@@ -9,7 +9,7 @@ class TestAPIToken(BaseTestRequest):
 
     def setUp(self):
         super(TestAPIToken, self).setUp()
-        self.url = reverse('api_tower_server_list_create')
+        self.url = reverse('api_ansible_controller_list_create')
         self.api_token = Token.objects.create(user=self.superuser)
         self.api_token.save()
         self.api_token_user = Token.objects.create(user=self.standard_user)

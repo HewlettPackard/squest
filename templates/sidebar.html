@@ -8,7 +8,8 @@
 {% has_perm request.user "profiles.list_organization" as can_list_organization %}
 {% has_perm request.user "profiles.list_team" as can_list_team %}
 {% has_perm request.user "auth.list_user" as can_list_user %}
-{% has_perm request.user "service_catalog.list_towerserver" as can_list_towerserver %}
+{% has_perm request.user "service_catalog.list_ansiblecontroller" as can_list_ansiblecontroller %}
+{% has_perm request.user "profiles.list_globalpermission" as can_list_globalpermission %}
 {% has_perm request.user "profiles.list_role" as can_list_role %}
 {% has_perm request.user "auth.list_permission" as can_list_permission %}
 {% has_perm request.user "service_catalog.list_globalhook" as can_list_globalhook %}
@@ -156,17 +157,17 @@
                         </a>
                     </li>
                 {% endif %}
-                {% if can_list_towerserver or can_list_role or can_list_permission or can_list_globalpermission or can_list_globalhook or can_list_announcement or can_list_customlink or can_view_globalpermission %}
+                {% if can_list_ansiblecontroller or can_list_role or can_list_permission or can_list_globalpermission or can_list_globalhook or can_list_announcement or can_list_customlink %}
 
                     <li class="nav-header">Administration</li>
                 {% endif %}
-                {% if can_list_towerserver %}
+                {% if can_list_ansiblecontroller %}
 
                     <li class="nav-item">
-                        <a href="{% url 'service_catalog:towerserver_list' %}"
-                           class="nav-link {% if '/tower/' in request.path %}active{% endif %}">
+                        <a href="{% url 'service_catalog:ansiblecontroller_list' %}"
+                           class="nav-link {% if '/ansible-controller/' in request.path %}active{% endif %}">
                             <i class="nav-icon fas fa-chess-rook"></i>
-                            <p>Controllers</p>
+                            <p>Ansible Controllers</p>
                         </a>
                     </li>
                 {% endif %}

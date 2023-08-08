@@ -6,10 +6,10 @@ from django.core.exceptions import ValidationError
 from towerlib import Tower
 
 from Squest.utils.squest_model_form import SquestModelForm
-from service_catalog.models import TowerServer
+from service_catalog.models import AnsibleController
 
 
-class TowerServerForm(SquestModelForm):
+class AnsibleControllerForm(SquestModelForm):
     name = forms.CharField(label="Name",
                            widget=forms.TextInput())
 
@@ -46,7 +46,7 @@ class TowerServerForm(SquestModelForm):
                 raise ValidationError({"host": f"Unable to connect to {host}"})
 
     def save(self, commit=True):
-        instance = super(TowerServerForm, self).save(commit=False)
+        instance = super(AnsibleControllerForm, self).save(commit=False)
         regex = r"^(http[s]?://)?(?P<hostname>[A-Za-z0-9\-\.]+)(?P<port>:[0-9]+)?(?P<path>.*)$"
         matches = re.search(regex, instance.host)
         if matches.group("hostname") is not None:
@@ -62,5 +62,5 @@ class TowerServerForm(SquestModelForm):
         return instance
 
     class Meta:
-        model = TowerServer
+        model = AnsibleController
         fields = ["name", "host", "token", "secure", "ssl_verify", "extra_vars"]

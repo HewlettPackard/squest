@@ -13,7 +13,7 @@ from .mail_test import *
 from .operation import *
 from .support import *
 from .doc import *
-from .tower_server import *
+from .ansible_controller import *
 from .job_template import *
 from .global_hook import *
 from .tower_survey_field import *

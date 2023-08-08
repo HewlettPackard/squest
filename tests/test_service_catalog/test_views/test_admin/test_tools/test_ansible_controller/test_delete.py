@@ -1,40 +1,40 @@
 from django.urls import reverse
 
-from service_catalog.models import TowerServer, JobTemplate, Service, OperationType
-from tests.test_service_catalog.test_views.test_admin.test_tools.test_tower.base_test_tower import BaseTestTower
+from service_catalog.models import AnsibleController, JobTemplate, Service, OperationType
+from tests.test_service_catalog.test_views.test_admin.test_tools.test_ansible_controller.base_test_ansible_controller import BaseTestAnsibleController
 
 
-class AdminTowerDeleteViewsTest(BaseTestTower):
+class AdminAnsibleControllerDeleteViewsTest(BaseTestAnsibleController):
 
     def setUp(self):
-        super(AdminTowerDeleteViewsTest, self).setUp()
+        super(AdminAnsibleControllerDeleteViewsTest, self).setUp()
         self.args = {
-            'pk': self.tower_server_test.id,
+            'pk': self.ansible_controller_test.id,
         }
-        self.url = reverse('service_catalog:towerserver_delete', kwargs=self.args)
+        self.url = reverse('service_catalog:ansiblecontroller_delete', kwargs=self.args)
 
     def test_get_page(self):
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
 
-    def test_admin_can_delete_tower_server(self):
-        id_to_delete = self.tower_server_test.id
+    def test_admin_can_delete_ansible_controller(self):
+        id_to_delete = self.ansible_controller_test.id
         response = self.client.post(self.url)
         self.assertEqual(302, response.status_code)
-        self.assertFalse(TowerServer.objects.filter(id=id_to_delete).exists())
+        self.assertFalse(AnsibleController.objects.filter(id=id_to_delete).exists())
 
-    def test_user_cannot_delete_tower_server(self):
+    def test_user_cannot_delete_ansible_controller(self):
         self.client.login(username=self.standard_user, password=self.common_password)
-        id_to_delete = self.tower_server_test.id
+        id_to_delete = self.ansible_controller_test.id
         response = self.client.post(self.url)
         self.assertEqual(403, response.status_code)
-        self.assertTrue(TowerServer.objects.filter(id=id_to_delete).exists())
+        self.assertTrue(AnsibleController.objects.filter(id=id_to_delete).exists())
 
     def test_admin_can_delete_job_template(self):
         services = [service for service in Service.objects.filter(operation__job_template=self.job_template_test,
                                                                   operation__type__exact=OperationType.CREATE)]
         args = {
-            'tower_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
             'pk': self.job_template_test.id
         }
         url = reverse('service_catalog:jobtemplate_delete', kwargs=args)
@@ -51,7 +51,7 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
     def test_user_cannot_delete_job_template(self):
         self.client.login(username=self.standard_user, password=self.common_password)
         args = {
-            'tower_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
             'pk': self.job_template_test.id
         }
         url = reverse('service_catalog:jobtemplate_delete', kwargs=args)
@@ -62,17 +62,17 @@ class AdminTowerDeleteViewsTest(BaseTestTower):
 
     def test_can_reach_delete_job_template_page(self):
         args = {
-            'pk': self.tower_server_test.id,
+            'pk': self.ansible_controller_test.id,
         }
-        url = reverse('service_catalog:towerserver_delete', kwargs=args)
+        url = reverse('service_catalog:ansiblecontroller_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
 
     def test_cannot_delete_job_template_page_when_logout(self):
         self.client.logout()
         args = {
-            'pk': self.tower_server_test.id,
+            'pk': self.ansible_controller_test.id,
         }
-        url = reverse('service_catalog:towerserver_delete', kwargs=args)
+        url = reverse('service_catalog:ansiblecontroller_delete', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)

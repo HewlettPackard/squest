@@ -4,7 +4,7 @@ from service_catalog.models.operation_type import OperationType
 from service_catalog.models.request_state import RequestState
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.bootstrap_type import BootstrapType
-from service_catalog.models.tower_server import TowerServer
+from service_catalog.models.ansiblecontroller import AnsibleController
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.services import Service
 from service_catalog.models.operations import Operation
@@ -19,7 +19,7 @@ from service_catalog.models.squest_settings import SquestSettings
 from service_catalog.models.custom_link import CustomLink
 from service_catalog.models.inventory import Inventory
 from service_catalog.models.credential import Credential
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 from service_catalog.models.approval_state import ApprovalState
 from service_catalog.models.approval_step import ApprovalStep
 from service_catalog.models.approval_step_state import ApprovalStepState

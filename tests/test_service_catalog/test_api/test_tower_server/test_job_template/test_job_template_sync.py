@@ -13,19 +13,19 @@ class TestApiJobTemplateSyncAll(BaseTest):
 
     def setup_sync_all_test(self):
         self.kwargs = {
-            'tower_server_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
         }
         self.url = reverse('api_job_template_sync_all', kwargs=self.kwargs)
 
     def setup_sync_single_job_template_test(self):
         self.kwargs = {
-            'tower_server_id': self.tower_server_test.id,
+            'ansible_controller_id': self.ansible_controller_test.id,
             'job_template_id': self.job_template_test.id
         }
         self.url = reverse('api_job_template_sync', kwargs=self.kwargs)
 
     def _check_can_sync_job_template(self, expected_argument):
-        with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
+        with mock.patch("service_catalog.models.ansiblecontroller.AnsibleController.sync") as mock_sync:
             response = self.client.post(self.url, format='json')
             self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
             self.assertTrue("id" in response.json())

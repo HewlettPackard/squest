@@ -207,7 +207,7 @@ class TestRequest(BaseTestRequest):
 
     def _process_timeout_with_expected_state(self, expected_instance_state):
         self.test_request.state = RequestState.PROCESSING
-        self.test_request.tower_job_id = 10
+        self.test_request.remote_job_id = 10
         date_in_the_past = timezone.now() - timedelta(seconds=45)
         self.test_request.periodic_task_date_expire = date_in_the_past
         schedule, created = IntervalSchedule.objects.get_or_create(every=10,
@@ -215,7 +215,7 @@ class TestRequest(BaseTestRequest):
         self.test_request.periodic_task = PeriodicTask.objects.create(
             interval=schedule,
             name='job_status_check_request_{}'.format(self.test_request.id),
-            task='service_catalog.tasks.check_tower_job_status_task',
+            task='service_catalog.tasks.check_remote_job_status_task',
             args=json.dumps([self.test_request.id]))
         self.test_request.save()
 
@@ -249,9 +249,9 @@ class TestRequest(BaseTestRequest):
         expected_instance_state = InstanceState.DELETE_FAILED
         self._process_timeout_with_expected_state(expected_instance_state)
 
-    def test_tower_job_url(self):
-        self.test_request.tower_job_id = 1234
-        self.assertEqual("https://localhost/#/jobs/playbook/1234/output", self.test_request.tower_job_url)
+    def test_remote_job_url(self):
+        self.test_request.remote_job_id = 1234
+        self.assertEqual("https://localhost/#/jobs/playbook/1234/output", self.test_request.remote_job_url)
 
     def test_delete_request_also_delete_periodic_task(self):
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
@@ -262,11 +262,11 @@ class TestRequest(BaseTestRequest):
         self.test_request.delete()
         self.assertFalse(PeriodicTask.objects.filter(id=periodic_task_test.id).exists())
 
-    def test_check_job_status_when_no_tower_job_id_set(self):
+    def test_check_job_status_when_no_remote_job_id_set(self):
         self.assertIsNone(self.test_request.check_job_status())
 
     def _prepare_base_request_for_test(self):
-        self.test_request.tower_job_id = 123
+        self.test_request.remote_job_id = 123
         self.test_instance.save()
         self.test_request.periodic_task_date_expire = timezone.now() + timezone.timedelta(days=1)
         crontab = CrontabSchedule.objects.create(minute=0, hour=5)
@@ -278,8 +278,8 @@ class TestRequest(BaseTestRequest):
     def _check_request_complete(self, expected_instance_state):
         self.test_request.state = RequestState.PROCESSING
         self.test_request.save()
-        with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
-            tower_mock.return_value.get_unified_job_by_id.return_value.status = "successful"
+        with mock.patch("service_catalog.models.ansiblecontroller.AnsibleController.get_remote_instance") as ansible_controller_mock:
+            ansible_controller_mock.return_value.get_unified_job_by_id.return_value.status = "successful"
             with mock.patch("service_catalog.mail_utils.send_mail_request_update") as mock_email:
                 self.test_request.check_job_status()
                 self.test_request.refresh_from_db()
@@ -316,8 +316,8 @@ class TestRequest(BaseTestRequest):
         self.test_request.save()
         self.test_instance.state = InstanceState.PROVISIONING
         self.test_instance.save()
-        with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
-            tower_mock.return_value.get_unified_job_by_id.return_value.status = job_status
+        with mock.patch("service_catalog.models.ansiblecontroller.AnsibleController.get_remote_instance") as ansible_controller_mock:
+            ansible_controller_mock.return_value.get_unified_job_by_id.return_value.status = job_status
             with mock.patch("service_catalog.mail_utils.send_mail_request_update") as mock_email:
                 self.test_request.check_job_status()
                 self.test_request.refresh_from_db()
@@ -383,7 +383,7 @@ class TestRequest(BaseTestRequest):
             'float_var': False,
             'integer_var': False
         }
-        self.test_request.operation.switch_tower_fields_enable_from_dict(new_survey_config)
+        self.test_request.operation.switch_survey_fields_enable_from_dict(new_survey_config)
         self.test_request.fill_in_survey = {
             'text_variable': "value",
             'textarea_var': "textarea_value",
@@ -429,10 +429,10 @@ class TestRequest(BaseTestRequest):
         self.test_request.process()
         self.test_request.save()
 
-        # add extra vars on tower server
-        self.tower_server_test.extra_vars = {
-            "tower_server_extra_var_key1": "tower_server_extra_var_value1",
-            "tower_server_extra_var_key2": "tower_server_extra_var_value2"
+        # add extra vars on ansible controller server
+        self.ansible_controller_test.extra_vars = {
+            "ansible_controller_extra_var_key1": "ansible_controller_extra_var_value1",
+            "ansible_controller_extra_var_key2": "ansible_controller_extra_var_value2"
         }
         self.service_test.extra_vars = {
             "service_extra_var_key1": "service_extra_var_value1",
@@ -444,10 +444,10 @@ class TestRequest(BaseTestRequest):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
-                             "tower_server_extra_var_value1")
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
-                             "tower_server_extra_var_value2")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key1"],
+                             "ansible_controller_extra_var_value1")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key2"],
+                             "ansible_controller_extra_var_value2")
             self.assertEqual(executed_extra_vars["extra_vars"]["service_extra_var_key1"], "service_extra_var_value1")
             self.assertEqual(executed_extra_vars["extra_vars"]["service_extra_var_key2"], "service_extra_var_value2")
             self.assertEqual(executed_extra_vars["extra_vars"]["operation_extra_var_key"], "operation_extra_var_value")
@@ -457,30 +457,30 @@ class TestRequest(BaseTestRequest):
         # check service override server config
         # ----------------------------
         self.service_test.extra_vars = {
-            "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_service1",
-            "tower_server_extra_var_key2": "tower_server_extra_var_overridden_by_service2"
+            "ansible_controller_extra_var_key1": "ansible_controller_extra_var_overridden_by_service1",
+            "ansible_controller_extra_var_key2": "ansible_controller_extra_var_overridden_by_service2"
         }
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
-                             "tower_server_extra_var_overridden_by_service1")
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
-                             "tower_server_extra_var_overridden_by_service2")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key1"],
+                             "ansible_controller_extra_var_overridden_by_service1")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key2"],
+                             "ansible_controller_extra_var_overridden_by_service2")
 
         # ----------------------------
         # check operation override server config
         # ----------------------------
         self.create_operation_test.extra_vars = {
-            "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_operation"
+            "ansible_controller_extra_var_key1": "ansible_controller_extra_var_overridden_by_operation"
         }
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
-                             "tower_server_extra_var_overridden_by_operation")
-            self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
-                             "tower_server_extra_var_overridden_by_service2")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key1"],
+                             "ansible_controller_extra_var_overridden_by_operation")
+            self.assertEqual(executed_extra_vars["extra_vars"]["ansible_controller_extra_var_key2"],
+                             "ansible_controller_extra_var_overridden_by_service2")
 
     def test_date_submitted_not_update_on_save(self):
         new_request = Request.objects.create(fill_in_survey={}, instance=self.test_instance,

@@ -3,7 +3,7 @@ from django.forms import SelectMultiple
 
 from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model_form import SquestModelForm
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 
 
 class TowerSurveyFieldForm(SquestModelForm):
@@ -31,5 +31,5 @@ class TowerSurveyFieldForm(SquestModelForm):
         return ",".join(self.cleaned_data['validators'])
 
     class Meta:
-        model = TowerSurveyField
+        model = SurveyField
         fields = ["is_customer_field", "default", "validators", "attribute_definition"]

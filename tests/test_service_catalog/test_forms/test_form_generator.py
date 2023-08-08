@@ -1,5 +1,5 @@
 from service_catalog.forms import FormGenerator
-from service_catalog.models import TowerSurveyField
+from service_catalog.models import SurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -31,7 +31,7 @@ class TestFormGenerator(BaseTestRequest):
         self.test_request.operation.job_template.save()
 
         # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.default = ""
         target_field.save()
         expected_result = {
@@ -78,7 +78,7 @@ class TestFormGenerator(BaseTestRequest):
         }
         self.test_request.operation.job_template.save()
         # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.default = "this_is_the_new_default"
         target_field.save()
         expected_result = {
@@ -125,7 +125,7 @@ class TestFormGenerator(BaseTestRequest):
         }
         self.job_template_test.save()
         # test with jinja string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.default = "{{ instance.spec.os }}"
         target_field.save()
         self.test_instance.spec = {
@@ -176,7 +176,7 @@ class TestFormGenerator(BaseTestRequest):
         }
         self.job_template_test.save()
         # test with en empty string
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = SurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         expected_result = {

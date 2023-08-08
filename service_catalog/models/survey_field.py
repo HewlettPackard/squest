@@ -11,7 +11,7 @@ from service_catalog.models import Operation
 logger = logging.getLogger(__name__)
 
 
-class TowerSurveyField(SquestModel):
+class SurveyField(SquestModel):
     class Meta:
         unique_together = ('operation', 'name',)
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
@@ -21,25 +21,25 @@ class TowerSurveyField(SquestModel):
     default = CharField(null=True, blank=True, max_length=200, verbose_name="Default value")
     operation = ForeignKey(Operation,
                            on_delete=CASCADE,
-                           related_name="tower_survey_fields",
-                           related_query_name="tower_survey_field")
+                           related_name="survey_fields",
+                           related_query_name="survey_field")
     validators = CharField(null=True, blank=True, max_length=200, verbose_name="Field validators")
     attribute_definition = ForeignKey(AttributeDefinition,
                                       null=True, blank=True,
                                       on_delete=SET_NULL,
-                                      related_name="tower_survey_fields",
-                                      related_query_name="tower_survey_field")
+                                      related_name="survey_fields",
+                                      related_query_name="survey_field")
 
     def __str__(self):
         return self.name
 
 
-@receiver(pre_save, sender=TowerSurveyField)
-def on_change(sender, instance: TowerSurveyField, **kwargs):
+@receiver(pre_save, sender=SurveyField)
+def on_change(sender, instance: SurveyField, **kwargs):
     if instance.id is not None:
-        previous = TowerSurveyField.objects.get(id=instance.id)
+        previous = SurveyField.objects.get(id=instance.id)
         if previous.is_customer_field != instance.is_customer_field:
-            # update all request that use this tower field survey. Move filled fields between user and admin survey
+            # update all request that use this survey field. Move filled fields between user and admin survey
             for request in instance.operation.request_set.all():
                 if instance.name in request.admin_fill_in_survey.keys() and instance.is_customer_field:
                     old = request.admin_fill_in_survey.pop(instance.name)

@@ -6,7 +6,7 @@ import django.db.models.deletion
 
 def migrate_json_to_tower_survey_field(apps, schema_editor):
     Operation = apps.get_model('service_catalog', 'Operation')
-    from service_catalog.models.tower_survey_field import TowerSurveyField
+    TowerSurveyField = apps.get_model('service_catalog', 'TowerSurveyField')
     for operation in Operation.objects.all():
         for field_name, enabled in operation.enabled_survey_fields.items():
             TowerSurveyField.objects.create(name=field_name, enabled=enabled, operation_id=operation.id)

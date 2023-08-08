@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField, PROTECT
+from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -65,25 +65,25 @@ class Operation(SquestModel):
         if self.job_template is not None:
             spec_list = self.job_template.survey.get("spec", [])
             list_of_field_to_have = [survey_spec["variable"] for survey_spec in spec_list]
-            list_current_field = [tower_field.name for tower_field in self.tower_survey_fields.all()]
+            list_current_field = [field.name for field in self.survey_fields.all()]
             to_add = list(set(list_of_field_to_have) - set(list_current_field))
             to_remove = list(set(list_current_field) - set(list_of_field_to_have))
 
-            from service_catalog.models.tower_survey_field import TowerSurveyField
+            from service_catalog.models.survey_field import SurveyField
             for field_name in to_add:
-                TowerSurveyField.objects.create(name=field_name, is_customer_field=True, operation=self)
+                SurveyField.objects.create(name=field_name, is_customer_field=True, operation=self)
             for field_name in to_remove:
-                TowerSurveyField.objects.get(name=field_name, operation=self).delete()
+                SurveyField.objects.get(name=field_name, operation=self).delete()
 
-    def switch_tower_fields_enable_from_dict(self, dict_of_field):
+    def switch_survey_fields_enable_from_dict(self, dict_of_field):
         for key, enabled in dict_of_field.items():
-            field = self.tower_survey_fields.get(name=key)
+            field = self.survey_fields.get(name=key)
             field.is_customer_field = enabled
             field.save()
 
     @classmethod
     def add_job_template_survey_as_default_survey(cls, sender, instance, created, *args, **kwargs):
-        from service_catalog.models.tower_survey_field import TowerSurveyField
+        from service_catalog.models.survey_field import SurveyField
         if created:
             if instance.type == OperationType.CREATE and instance.service:
                 instance.service.enabled = True
@@ -92,9 +92,9 @@ class Operation(SquestModel):
             default_survey = instance.job_template.survey
             if "spec" in default_survey:
                 for survey_field in default_survey["spec"]:
-                    TowerSurveyField.objects.create(name=survey_field["variable"],
-                                                    is_customer_field=True,
-                                                    operation=instance)
+                    SurveyField.objects.create(name=survey_field["variable"],
+                                               is_customer_field=True,
+                                               operation=instance)
 
     @classmethod
     def update_survey_after_job_template_update(cls, job_template):

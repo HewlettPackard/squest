@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from profiles.models import Organization, GlobalPermission, Role, Team
 from profiles.models.squest_permission import Permission
 
-from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, TowerServer, Support
+from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, AnsibleController, Support
 from tests.utils import TransactionTestUtils
 
 
@@ -30,11 +30,11 @@ class TestModelHasPerm(TransactionTestUtils):
         }
 
         service = Service.objects.create(name="Service #1")
-        tower = TowerServer.objects.create(name="Tower #1", host="localhost", token="xxx")
+        ansible_controller = AnsibleController.objects.create(name="Ansible controller #1", host="localhost", token="xxx")
 
         job_template = JobTemplate.objects.create(name="Job Template #1", survey=survey,
-                                                  tower_id=1,
-                                                  tower_server=tower,
+                                                  remote_id=1,
+                                                  ansible_controller=ansible_controller,
                                                   )
 
         self.operation = Operation.objects.create(name="Operation #1", service=service, job_template=job_template)

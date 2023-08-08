@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.job_template_filter import JobTemplateFilter
-from service_catalog.models import TowerServer, JobTemplate, OperationType
+from service_catalog.models import AnsibleController, JobTemplate, OperationType
 from service_catalog.tables.job_template_tables import JobTemplateTable
 
 
@@ -14,14 +14,14 @@ class JobTemplateListView(SquestListView):
     filterset_class = JobTemplateFilter
 
     def get_queryset(self, **kwargs):
-        return super(JobTemplateListView, self).get_queryset().filter(tower_server__id=self.kwargs.get('tower_id'))
+        return super(JobTemplateListView, self).get_queryset().filter(ansible_controller__id=self.kwargs.get('ansible_controller_id'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ""
         context['breadcrumbs'] = [
-            {'text': 'Controller', 'url': reverse('service_catalog:towerserver_list')},
-            {'text': TowerServer.objects.get(id=self.kwargs.get('tower_id')).name, 'url': ""},
+            {'text': 'Controller', 'url': reverse('service_catalog:ansiblecontroller_list')},
+            {'text': AnsibleController.objects.get(id=self.kwargs.get('ansible_controller_id')).name, 'url': ""},
             {'text': 'Job templates', 'url': ""},
         ]
         return context
@@ -33,9 +33,9 @@ class JobTemplateDetailView(SquestDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
-            {'text': self.get_object().tower_server.name, 'url': ""},
-            {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().tower_server.id])},
+            {'text': 'Ansible Controller', 'url': reverse('service_catalog:ansiblecontroller_list')},
+            {'text': self.get_object().ansible_controller.name, 'url': ""},
+            {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().ansible_controller.id])},
             {'text': self.get_object(), 'url': ""},
         ]
         return context
@@ -45,15 +45,15 @@ class JobTemplateDeleteView(SquestDeleteView):
     model = JobTemplate
 
     def get_generic_url_kwargs(self):
-        return {'tower_id': self.get_object().tower_server.id}
+        return {'ansible_controller_id': self.get_object().ansible_controller.id}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
-            {'text': self.get_object().tower_server.name, 'url': ""},
+            {'text': 'Ansible Controller', 'url': reverse('service_catalog:ansiblecontroller_list')},
+            {'text': self.get_object().ansible_controller.name, 'url': ""},
             {'text': 'Job templates',
-             'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().tower_server.id])},
+             'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().ansible_controller.id])},
             {'text': self.get_object(), 'url': ""},
             {'text': 'Delete', 'url': ""}
         ]
@@ -61,15 +61,15 @@ class JobTemplateDeleteView(SquestDeleteView):
 
 
 @login_required
-def job_template_compliancy(request, tower_id, pk):
-    tower_server = get_object_or_404(TowerServer, id=tower_id)
+def job_template_compliancy(request, ansible_controller_id, pk):
+    ansible_controller = get_object_or_404(AnsibleController, id=ansible_controller_id)
     job_template = get_object_or_404(JobTemplate, id=pk)
     if not request.user.has_perm('service_catalog.view_jobtemplate', job_template):
         raise PermissionDenied
     breadcrumbs = [
-        {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
-        {'text': tower_server.name, 'url': ""},
-        {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[tower_id])},
+        {'text': 'Ansible Controller', 'url': reverse('service_catalog:ansiblecontroller_list')},
+        {'text': ansible_controller.name, 'url': ""},
+        {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[ansible_controller_id])},
         {'text': job_template.name, 'url': ""},
         {'text': 'Compliancy', 'url': ""}
     ]

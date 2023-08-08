@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models import OperationType
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.utils import check_data_in_dict
 
@@ -25,14 +25,14 @@ class TestApiOperationCreate(BaseTestRequest):
         self.get_operation_details_url = reverse('api_operation_list_create', kwargs=self.kwargs)
 
     def test_admin_post_operation(self):
-        number_tower_survey_field_before = TowerSurveyField.objects.all().count()
+        number_survey_field_before = SurveyField.objects.all().count()
         response = self.client.post(self.get_operation_details_url, data=self.post_data,
                                     content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         check_data_in_dict(self, [self.post_data], [response.data])
         number_field_in_survey = len(self.job_template_test.survey["spec"])
-        self.assertEqual(number_tower_survey_field_before + number_field_in_survey,
-                         TowerSurveyField.objects.all().count())
+        self.assertEqual(number_survey_field_before + number_field_in_survey,
+                         SurveyField.objects.all().count())
 
     def test_admin_cannot_post_on_operation_not_full(self):
         self.post_data.pop('name')

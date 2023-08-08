@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from service_catalog.api.serializers.operation_survey_serializer import TowerSurveyFieldSerializer
 from service_catalog.models import Operation
-from service_catalog.models.tower_survey_field import TowerSurveyField
+from service_catalog.models.survey_field import SurveyField
 
 
 class OperationSurveyAPI(APIView):
@@ -17,8 +17,8 @@ class OperationSurveyAPI(APIView):
     @staticmethod
     def get_object(operation_id, obj_name):
         try:
-            return TowerSurveyField.objects.get(name=obj_name, operation_id=operation_id)
-        except TowerSurveyField.DoesNotExist:
+            return SurveyField.objects.get(name=obj_name, operation_id=operation_id)
+        except SurveyField.DoesNotExist:
             raise NotFound(detail=f"Field name '{obj_name}' not found in operation id '{operation_id}'")
 
     def validate_name_as_an_id(self, operation_id, name_list):
@@ -34,7 +34,7 @@ class OperationSurveyAPI(APIView):
         operation = get_object_or_404(Operation, pk=pk, service__id=service_id)
         if not request.user.has_perm('service_catalog.change_operation', operation):
             raise PermissionDenied
-        serializer = TowerSurveyFieldSerializer(TowerSurveyField.objects.filter(operation=operation), many=True)
+        serializer = TowerSurveyFieldSerializer(SurveyField.objects.filter(operation=operation), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: TowerSurveyFieldSerializer(many=True)})

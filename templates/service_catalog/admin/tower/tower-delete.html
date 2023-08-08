@@ -22,9 +22,9 @@
                     </div>
                     <div class="card-body">
                         <form action='' method='POST'>{% csrf_token %}
-                            <p>Do you want to delete the server "{{ tower_server.name }}"?</p>
+                            <p>Do you want to delete the server "{{ ansible_controller.name }}"?</p>
                             <button type="submit" class="btn btn-danger">Delete</button>
-                            <a class="btn btn-default" href="{% url 'service_catalog:towerserver_list' %}">Cancel</a>
+                            <a class="btn btn-default" href="{% url 'service_catalog:ansiblecontroller_list' %}">Cancel</a>
                         </form>
                     </div>
                 </div><!-- end container fluid -->

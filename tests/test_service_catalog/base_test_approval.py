@@ -21,8 +21,8 @@ class BaseTestApprovalCommon(BaseTestRequestCommon):
         self.test_approval_workflow_state = self.test_approval_workflow.instantiate()
         self.test_request.approval_workflow_state = self.test_approval_workflow_state
         self.test_request.save()
-        self.test_approval_step_1.readable_fields.set([self.create_operation_test.tower_survey_fields.all()[0]])
-        self.test_approval_step_1.editable_fields.set([self.create_operation_test.tower_survey_fields.all()[1]])
+        self.test_approval_step_1.readable_fields.set([self.create_operation_test.survey_fields.all()[0]])
+        self.test_approval_step_1.editable_fields.set([self.create_operation_test.survey_fields.all()[1]])
 
 
 class BaseTestApproval(TestCase, BaseTestApprovalCommon):

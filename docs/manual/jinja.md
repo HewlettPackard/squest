@@ -197,7 +197,7 @@ This example, used in the "default limit" of the operation job template config, 
                 "date_submitted": "2022-09-29T16:01:45.409615+02:00",
                 "date_complete": null,
                 "date_archived": null,
-                "tower_job_id": null,
+                "remote_job_id": null,
                 "state": "ACCEPTED",
                 "operation": 7,
                 "approval_step": null

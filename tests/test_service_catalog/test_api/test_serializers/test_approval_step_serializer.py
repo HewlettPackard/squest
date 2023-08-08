@@ -8,8 +8,8 @@ class TestApprovalStepSerializer(BaseTestApprovalAPI):
 
     def setUp(self):
         super(TestApprovalStepSerializer, self).setUp()
-        self.field1 = self.create_operation_test.tower_survey_fields.all()[0]
-        self.field2 = self.create_operation_test.tower_survey_fields.all()[1]
+        self.field1 = self.create_operation_test.survey_fields.all()[0]
+        self.field2 = self.create_operation_test.survey_fields.all()[1]
         self.context = {
             'approval_workflow_id': self.test_approval_workflow.id
         }

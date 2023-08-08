@@ -14,7 +14,7 @@ class TestOperationSurveyList(BaseTestRequestAPI):
     def test_list_survey(self):
         response = self.client.get(self.get_operation_survey_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), self.test_request.operation.tower_survey_fields.count())
+        self.assertEqual(len(response.data), self.test_request.operation.survey_fields.count())
 
     def test_customer_cannot_list_survey(self):
         self.client.force_login(user=self.standard_user)

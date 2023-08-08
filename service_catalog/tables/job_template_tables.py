@@ -9,7 +9,7 @@ class JobTemplateTable(SquestTable):
     is_compliant = TemplateColumn(template_name='service_catalog/custom_columns/job_template_compliant.html',
                                   verbose_name="Squest compliant")
     actions = TemplateColumn(template_name='service_catalog/custom_columns/job_template_actions.html', orderable=False)
-    name = LinkColumn("service_catalog:jobtemplate_details", args=[A("tower_server__id"), A("id")],
+    name = LinkColumn("service_catalog:jobtemplate_details", args=[A("ansible_controller__id"), A("id")],
                       attrs={"td": {"class": "job_template_name"}})
 
     class Meta:

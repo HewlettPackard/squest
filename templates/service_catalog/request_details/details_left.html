@@ -1,4 +1,4 @@
-{% has_perm request.user "service_catalog.view_towerserver" object.operation.job_template.tower_server as can_view_towerserver %}
+{% has_perm request.user "service_catalog.view_ansiblecontroller" object.operation.job_template.ansible_controller as can_view_ansiblecontroller %}
 <div class="card card-{{ object.state |map_request_state }}">
     <div class="card-header">
         <h3 class="card-title">Request #{{ object.id }}</h3>
@@ -63,11 +63,11 @@
                         class="float-right">{{ object.date_archived |squest_date_format }}</span>
                 </li>
             {% endif %}
-            {% if can_view_towerserver %}
+            {% if can_view_ansiblecontroller %}
                 <li class="list-group-item">
-                    <b>Tower job</b>
-                    <a href="{{ object.tower_job_url }}"
-                       class="float-right">{{ object.tower_job_id }}</a>
+                    <b>Ansible controller job</b>
+                    <a href="{{ object.remote_job_url }}"
+                       class="float-right">{{ object.remote_job_id }}</a>
                 </li>
             {% endif %}
             {% if object.state == "FAILED" %}
