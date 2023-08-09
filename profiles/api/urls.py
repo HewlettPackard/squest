@@ -24,6 +24,7 @@ urlpatterns = [
     path('organization/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_organization_rbac_delete"),
     path('team/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_team_rbac_create"),
     path('team/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_team_rbac_delete"),
+    path('scope/<int:pk>/', RedirectScopeDetails.as_view(), name="api_scope_details"),
 
     # Global Permission
     path('global-permission/', GlobalPermissionDetails.as_view(), name='api_organization_details'),
@@ -50,7 +51,7 @@ urlpatterns = [
 
     # Quota
     path('quota/<int:pk>/', QuotaDetails.as_view(), name="api_quota_details"),
-    path('quota/', QuotaListCreate.as_view(), name="api_quota_lsit"),
+    path('quota/', QuotaListCreate.as_view(), name="api_quota_list"),
 
 
 ]
