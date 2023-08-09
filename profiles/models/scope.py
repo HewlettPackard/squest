@@ -10,6 +10,34 @@ class AbstractScope(SquestModel):
     name = CharField(max_length=500)
     description = CharField(max_length=500, blank=True)
 
+    @property
+    def is_scope(self):
+        if hasattr(self, "scope"):
+            return True
+        elif hasattr(self, "globalpermission"):
+            return False
+        raise Exception("This abstract scope is not implemented")
+
+    @property
+    def is_globalpermission(self):
+        if hasattr(self, "scope"):
+            return False
+        elif hasattr(self, "globalpermission"):
+            return True
+        raise Exception("This abstract scope is not implemented")
+
+    @property
+    def is_org(self):
+        if self.is_scope:
+            return self.scope.is_org
+        return False
+
+    @property
+    def is_team(self):
+        if self.is_scope:
+            return self.scope.is_team
+        return False
+
     def get_object(self):
         if hasattr(self, "scope"):
             return self.scope.get_object()
@@ -95,6 +123,22 @@ class Scope(AbstractScope):
             return self.organization
         elif hasattr(self, "team"):
             return self.team
+        raise Exception("This scope is not implemented")
+
+    @property
+    def is_org(self):
+        if hasattr(self, "organization"):
+            return True
+        elif hasattr(self, "team"):
+            return False
+        raise Exception("This scope is not implemented")
+
+    @property
+    def is_team(self):
+        if hasattr(self, "organization"):
+            return False
+        elif hasattr(self, "team"):
+            return True
         raise Exception("This scope is not implemented")
 
     @classmethod

@@ -20,7 +20,7 @@ class TestQuotaViews(BaseTestProfile):
         self.assertEqual(len(response.context["quotas"].data.data), Quota.objects.filter(scope=self.test_org).count())
 
     def test_quota_details(self):
-        response = self.client.get(reverse('profiles:quota_details', kwargs={'quota_id': self.test_quota_org.id}))
+        response = self.client.get(reverse('profiles:quota_details', kwargs={'pk': self.test_quota_org.id}))
         self.assertEqual(200, response.status_code)
         self.assertTrue("quotas_teams_consumption" in response.context)
         self.assertTrue("team_limit_table" in response.context)

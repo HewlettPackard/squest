@@ -61,4 +61,16 @@ class QuotaFormTests(BaseTestProfile):
         }
         form = QuotaForm(**parameters)
         self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].initial, 150)
-        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].max_value, 50)
+        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].max_value, 200)
+        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].min_value, 0)
+
+    def test_quota_form_initial_and_max_values_when_org_scope(self):
+        Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)
+        Quota.objects.create(limit=150, scope=self.team1, attribute_definition=self.cpu_attribute)
+        parameters = {
+            "scope": self.test_org
+        }
+        form = QuotaForm(**parameters)
+        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].initial, 200)
+        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].min_value, 150)
+        self.assertEqual(form.fields[f"attribute_definition_{self.cpu_attribute.id}"].max_value, None)

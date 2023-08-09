@@ -11,6 +11,8 @@ class QuotaTable(SquestTable):
     actions = TemplateColumn(template_name='generics/custom_columns/generic_delete.html',
                              orderable=False,
                              exclude_from_export=True)
+    available = LinkColumn()
+    limit = LinkColumn()
 
     class Meta:
         model = Quota
