@@ -53,3 +53,14 @@ class TestQuota(BaseTestProfile):
         self.test_instance_3.save()
         self.assertEqual(self.test_quota_org.consumed, 110)
         self.assertEqual(self.test_quota_team.consumed, 22)
+
+
+    def test_post_delete_team_quota(self):
+
+        self.assertTrue(Quota.objects.filter(id=self.test_quota_team.id).exists())
+        self.assertTrue(Quota.objects.filter(id=self.test_quota_org.id).exists())
+
+        self.test_quota_org.delete()
+
+        self.assertFalse(Quota.objects.filter(id=self.test_quota_team.id).exists())
+        self.assertFalse(Quota.objects.filter(id=self.test_quota_org.id).exists())
