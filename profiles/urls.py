@@ -92,11 +92,8 @@ urlpatterns = [
     # Quota
     path('quota/', views.QuotaListView.as_view(), name="quota_list"),
     path('quota/<int:pk>/delete/', views.QuotaDeleteView.as_view(), name="quota_delete"),
-    path('organization/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
-         name="organization_quota_edit"),
-    path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
-         name="team_quota_edit"),
-    path('quota/<int:quota_id>/', views.QuotaDetailsView.as_view(),
-         name="quota_details")
+    path('organization/<int:scope_id>/quota/', views.QuotaEditView.as_view(), name="organization_quota_edit"),
+    path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(), name="team_quota_edit"),
+    path('quota/<int:pk>/', views.QuotaDetailsView.as_view(), name="quota_details")
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

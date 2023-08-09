@@ -381,7 +381,7 @@ class TestProfilesPermissionsViews(BaseTestProfile, TestPermissionUIViews):
             TestingGetUIViews(
                 url='profiles:quota_details',
                 perm_str='profiles.view_quota',
-                url_kwargs={'quota_id': self.test_quota_org.id}
+                url_kwargs={'pk': self.test_quota_org.id}
             ),
             TestingGetUIViews(
                 url='profiles:organization_quota_edit',
