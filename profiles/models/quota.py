@@ -33,7 +33,7 @@ class Quota(SquestModel):
         return self.attribute_definition.name
 
     def get_absolute_url(self):
-        return reverse("profiles:quota_details", kwargs={'scope_id': self.scope.id, 'quota_id': self.id})
+        return reverse("profiles:quota_details", kwargs={'quota_id': self.id})
 
     def get_scopes(self):
         return self.scope.get_scopes()

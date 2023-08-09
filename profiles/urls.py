@@ -96,7 +96,7 @@ urlpatterns = [
          name="organization_quota_edit"),
     path('team/<int:scope_id>/quota/', views.QuotaEditView.as_view(),
          name="team_quota_edit"),
-    path('team/<int:scope_id>/quota/<int:quota_id>/', views.QuotaDetailsView.as_view(),
+    path('quota/<int:quota_id>/', views.QuotaDetailsView.as_view(),
          name="quota_details")
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
