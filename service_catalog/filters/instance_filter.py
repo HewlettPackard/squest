@@ -26,7 +26,7 @@ class CharInFilter(BaseInFilter, CharFilter):
 class InstanceFilter(SquestFilter):
     class Meta:
         model = Instance
-        fields = ['name', 'id', 'requester', 'service', 'state']
+        fields = ['name', 'id', 'requester', 'service', 'state','quota_scope']
 
     requester = MultipleChoiceFilter()
     state = MultipleChoiceFilter(choices=InstanceState.choices)
