@@ -1,4 +1,5 @@
 from django.test import TestCase
+from rest_framework.test import APIClient
 
 from django.contrib.auth.models import User
 from profiles.models.squest_permission import Permission
@@ -7,9 +8,9 @@ from django.urls import reverse, NoReverseMatch
 from profiles.models import GlobalPermission, Role
 
 
-class TestingUIViews:
+class TestingContextView:
     expected_status_code = None
-    expected_not_allowed_status_code = 403
+    expected_not_allowed_status_code = None
 
     def __init__(self, url, perm_str, url_kwargs=None, data=None, expected_status_code=None,
                  expected_not_allowed_status_code=None):
@@ -38,22 +39,58 @@ class TestingUIViews:
     def call_url(self, client):
         raise NotImplemented
 
+    def get_expected_status_code(self, client):
+        if self.expected_status_code is not None:
+            return self.expected_status_code
+        raise NotImplemented
 
-class TestingGetUIViews(TestingUIViews):
+    def get_expected_not_allowed_status_code(self, client):
+        if self.expected_not_allowed_status_code is not None:
+            return self.expected_not_allowed_status_code
+        return 403
+
+
+class TestingGetContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
         return client.get(self.url, self.data)
 
 
-class TestingPostUIViews(TestingUIViews):
-    expected_status_code = 302
-
+class TestingPostContextView(TestingContextView):
     def call_url(self, client):
         return client.post(self.url, self.data)
 
+    def get_expected_status_code(self, client):
+        if self.expected_status_code is not None:
+            return self.expected_status_code
+        elif isinstance(client, APIClient):
+            return 201
+        return 302
 
-class TestPermissionUIViews(TestCase):
+
+class TestingPutContextView(TestingContextView):
+    expected_status_code = 200
+
+    def call_url(self, client):
+        return client.put(self.url, self.data)
+
+
+class TestingPatchContextView(TestingContextView):
+    expected_status_code = 200
+
+    def call_url(self, client):
+        return client.patch(self.url, self.data)
+
+
+class TestingDeleteContextView(TestingContextView):
+    expected_status_code = 204
+
+    def call_url(self, client):
+        return client.delete(self.url, self.data)
+
+
+class TestPermissionEndpoint(TestCase):
     def setUp(self):
         super().setUp()
         self.global_permission = GlobalPermission.load()
@@ -65,12 +102,14 @@ class TestPermissionUIViews(TestCase):
 
     def run_permissions_tests(self, testing_list):
         for test_context in testing_list:
-            test_context: TestingUIViews = test_context
+            test_context: TestingContextView = test_context
             response = test_context.call_url(self.client)
-            self.assertEqual(test_context.expected_not_allowed_status_code, response.status_code,
-                             f"{test_context}: expected: {test_context.expected_not_allowed_status_code}, got: {response.status_code}")
+            self.assertEqual(test_context.get_expected_not_allowed_status_code(self.client), response.status_code,
+                             f"{test_context}: expected: {test_context.get_expected_not_allowed_status_code(self.client)}, got: {response.status_code}")
             self.empty_role.permissions.add(test_context.permission)
             response = test_context.call_url(self.client)
-            self.assertEqual(test_context.expected_status_code, response.status_code,
-                             f"{test_context}: expected: {test_context.expected_status_code}, got: {response.status_code}")
+            if response.status_code == 400:
+                print(response.content)
+            self.assertEqual(test_context.get_expected_status_code(self.client), response.status_code,
+                             f"{test_context}: expected: {test_context.get_expected_status_code(self.client)}, got: {response.status_code}")
             self.empty_role.permissions.remove(test_context.permission)
