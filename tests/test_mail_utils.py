@@ -1,8 +1,14 @@
-from profiles.models import RequestNotification, InstanceNotification
-from service_catalog.mail_utils import _get_admin_emails, _get_subject, _get_headers, \
-    _get_receivers_for_request_message, _get_receivers_for_support_message
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 
-from service_catalog.models import RequestMessage, Instance, Request, SupportMessage, Support
+from profiles.api.serializers import scope_serializer
+from profiles.models import RequestNotification, InstanceNotification, Role, Permission
+from service_catalog.mail_utils import _get_subject, _get_headers, \
+    _get_receivers_for_request_message, _get_receivers_for_support_message, _get_receivers_for_request, \
+    _get_receivers_for_support
+
+from service_catalog.models import RequestMessage, Instance, Request, SupportMessage, Support, ApprovalWorkflow, \
+    ApprovalStep
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -38,20 +44,41 @@ class TestMailUtils(BaseTest):
                                                      operation=self.create_operation_test_2,
                                                      user=self.standard_user)
 
+        self.test_support = Support.objects.create(instance=self.test_instance)
+
+        view_requestmessage_role = Role.objects.create(name="view_requestmessage_role")
+        view_requestmessage_role.permissions.add(
+            Permission.objects.get(
+                codename="view_requestmessage",
+                content_type=ContentType.objects.get_for_model(RequestMessage)
+            )
+        )
+        self.test_quota_scope.add_user_in_role(self.standard_user, view_requestmessage_role)
+
+        view_supportmessage_role = Role.objects.create(name="view_supportmessage_role")
+        view_supportmessage_role.permissions.add(
+            Permission.objects.get(
+                codename="view_supportmessage",
+                content_type=ContentType.objects.get_for_model(SupportMessage)
+            )
+        )
+        self.test_quota_scope.add_user_in_role(self.standard_user, view_supportmessage_role)
+
     def test_get_admin_emails_with_request(self):
         # Test 1 - admin disabled notification
         self.superuser.profile.request_notification_enabled = False
         self.superuser.save()
         self.superuser_2.profile.request_notification_enabled = False
         self.superuser_2.save()
-        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_request)))
+        self.assertEquals(0, len(_get_receivers_for_request(self.test_request)))
 
         # Test 2 - admin enabled notification
         self.superuser.profile.request_notification_enabled = True
         self.superuser.save()
         self.superuser_2.profile.request_notification_enabled = True
         self.superuser_2.save()
-        self.assertEquals(2, len(_get_admin_emails(object_to_filter=self.test_request)))
+        self.assertCountEqual([self.superuser.email, self.superuser_2.email],
+                              _get_receivers_for_request(self.test_request))
 
     def test_get_admin_emails_with_support(self):
         # Test 1 - admin disabled notification
@@ -59,40 +86,41 @@ class TestMailUtils(BaseTest):
         self.superuser.save()
         self.superuser_2.profile.instance_notification_enabled = False
         self.superuser_2.save()
-        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_instance)))
+        self.assertEquals(0, len(_get_receivers_for_support(self.test_support)))
 
         # Test 2 - admin enabled notification
         self.superuser.profile.instance_notification_enabled = True
         self.superuser.save()
         self.superuser_2.profile.instance_notification_enabled = True
         self.superuser_2.save()
-        self.assertEquals(2, len(_get_admin_emails(object_to_filter=self.test_instance)))
+        self.assertCountEqual([self.superuser.email, self.superuser_2.email],
+                              _get_receivers_for_request(self.test_request))
 
     def test_get_admin_emails_with_request_filter(self):
         self.superuser.profile.request_notification_enabled = True
+        self.superuser.save()
         self.superuser_2.profile.request_notification_enabled = False
         self.superuser_2.save()
         request_filter = RequestNotification.objects.create(name="test_filter",
                                                             profile=self.superuser.profile,
                                                             when="request.fill_in_survey['text_variable'] == 'my_var'")
-        self.superuser.save()
-        self.assertEquals(1, len(_get_admin_emails(object_to_filter=self.test_request)))
+        self.assertCountEqual([self.superuser.email], _get_receivers_for_request(self.test_request))
         request_filter.when = "request.fill_in_survey['text_variable'] == 'other_my_var'"
         request_filter.save()
-        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_request)))
+        self.assertEquals(0, len(_get_receivers_for_request(self.test_request)))
 
     def test_get_admin_emails_with_instance_filter(self):
         self.superuser.profile.instance_notification_enabled = True
+        self.superuser.save()
         self.superuser_2.profile.instance_notification_enabled = False
         self.superuser_2.save()
         instance_filter = InstanceNotification.objects.create(name="test_filter",
                                                               profile=self.superuser.profile,
                                                               when="instance.spec['value1'] == 'key1'")
-        self.superuser.save()
-        self.assertEquals(1, len(_get_admin_emails(object_to_filter=self.test_instance)))
+        self.assertCountEqual([self.superuser.email], _get_receivers_for_support(self.test_support))
         instance_filter.when = "instance.spec['value1'] == 'other_key'"
         instance_filter.save()
-        self.assertEquals(0, len(_get_admin_emails(object_to_filter=self.test_instance)))
+        self.assertEquals(0, len(_get_receivers_for_support(self.test_support)))
 
     def test_get_headers(self):
         expected_list = ["Message-ID", "In-Reply-To", "References"]
@@ -114,29 +142,74 @@ class TestMailUtils(BaseTest):
 
     def test_get_receivers_for_support_message(self):
         self.superuser.profile.request_notification_enabled = True
+        self.superuser.save()
         new_support = Support.objects.create(title="title",
                                              instance=self.test_instance,
                                              opened_by=self.standard_user)
         support_message = SupportMessage.objects.create(content="message content", sender=self.standard_user,
                                                         support=new_support)
+
         receivers = _get_receivers_for_support_message(support_message)
-        self.assertIn(self.superuser.email, receivers)
-        self.assertNotIn(self.standard_user.email, receivers)
+        self.assertCountEqual([self.superuser.email, self.superuser_2.email], receivers)
+
         support_message = SupportMessage.objects.create(content="message content admin", sender=self.superuser,
                                                         support=new_support)
         receivers = _get_receivers_for_support_message(support_message)
-        self.assertIn(self.standard_user.email, receivers)
-        self.assertNotIn(self.superuser.email, receivers)
+        self.assertCountEqual([self.standard_user.email, self.superuser_2.email], receivers)
 
     def test_get_receivers_for_request_message(self):
         self.superuser.profile.request_notification_enabled = True
         request_message = RequestMessage.objects.create(sender=self.standard_user, content="message content",
                                                         request=self.test_request)
         receivers = _get_receivers_for_request_message(request_message)
-        self.assertIn(self.superuser.email, receivers)
-        self.assertNotIn(self.standard_user.email, receivers)
+        self.assertCountEqual([self.superuser.email, self.superuser_2.email], receivers)
         request_message = RequestMessage.objects.create(sender=self.superuser, content="message content admin",
                                                         request=self.test_request)
         receivers = _get_receivers_for_request_message(request_message)
-        self.assertIn(self.standard_user.email, receivers)
-        self.assertNotIn(self.superuser.email, receivers)
+        self.assertCountEqual([self.standard_user.email, self.superuser_2.email], receivers)
+
+
+class TestMailUtilsWorkflow(BaseTest):
+
+    def setUp(self):
+        super(TestMailUtilsWorkflow, self).setUp()
+
+        # Create approval workflow
+        self.approval_worklflow = ApprovalWorkflow.objects.create(operation=self.create_operation_test)
+        self.approval_worklflow.scopes.set([self.test_quota_scope])
+        self.approval_worklflow.save()
+
+        self.approval_step1 = ApprovalStep(name="Step 1", approval_workflow=self.approval_worklflow)
+        self.approval_step1.permission = Permission.objects.get_by_natural_key(codename="can_approve_approvalstep",
+                                                                               app_label="service_catalog",
+                                                                               model="approvalstep")
+        self.approval_step1.save()
+
+        self.test_instance = Instance.objects.create(name="test_instance_1",
+                                                     service=self.service_test,
+                                                     spec={
+                                                         "value1": "key1"
+                                                     },
+                                                     requester=self.standard_user,
+                                                     quota_scope=self.test_quota_scope)
+        data = {
+            'text_variable': 'my_var',
+            'multiplechoice_variable': 'choice1', 'multiselect_var': 'multiselect_1',
+            'textarea_var': '2',
+            'password_var': 'pass',
+            'integer_var': '1',
+            'float_var': '0.6'
+        }
+        self.test_request = Request.objects.create(fill_in_survey=data,
+                                                   instance=self.test_instance,
+                                                   operation=self.create_operation_test,
+                                                   user=self.standard_user)
+
+    def test_get_admin_emails_with_request(self):
+        approver = User.objects.create(username='approver', email="approver@local.com")
+        role_approver = Role.objects.create(name="Approver")
+        role_approver.permissions.add(self.approval_step1.permission)
+
+        self.test_quota_scope.add_user_in_role(approver,role_approver)
+        self.assertCountEqual([self.superuser.email, self.superuser_2.email,approver.email],
+                              _get_receivers_for_request(self.test_request))

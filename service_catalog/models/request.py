@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import requests
 import towerlib
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
     OneToOneField, Q, PROTECT
@@ -75,6 +75,12 @@ class Request(SquestModel):
 
     def __str__(self):
         return f"#{self.id}"
+
+    def who_can_accept(self):
+        if self.approval_workflow_state is not None:
+            return self.approval_workflow_state.who_can_approve()
+        else:
+            return self.instance.quota_scope.who_has_perm("service_catalog.accept_request")
 
     def full_survey_user(self, approval_step_state=None):
 

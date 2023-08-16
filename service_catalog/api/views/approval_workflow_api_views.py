@@ -14,6 +14,7 @@ from service_catalog.api.serializers.approval_workflow_serializer import Approva
 from service_catalog.api.serializers.approval_workflow_state_serializer import ApprovalWorkflowStateSerializer
 from service_catalog.api.serializers.approve_workflow_step_serializer import ApproveWorkflowStepSerializer
 from service_catalog.filters.approval_workflow_filter import ApprovalWorkflowFilter
+from service_catalog.mail_utils import send_mail_request_update
 from service_catalog.models import ApprovalWorkflow, ApprovalWorkflowState, Request, ApprovalStep
 
 
@@ -68,7 +69,7 @@ class ApproveCurrentStep(ViewSet):
         serializer = ApproveWorkflowStepSerializer(data=request.data, target_request=target_request, user=request.user)
         if serializer.is_valid():
             serializer.save()
-            # send_mail_request_update(target_request, user_applied_state=request.user)
+            send_mail_request_update(target_request, user_applied_state=request.user)
             return Response({"success": "Step approved"}, status=HTTP_200_OK)
         return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
 
@@ -87,7 +88,7 @@ class ApproveCurrentStep(ViewSet):
         # reject the request
         target_request.reject(request.user)
         target_request.save()
-        # send_mail_request_update(target_request, user_applied_state=request.user, message=message)
+        send_mail_request_update(target_request, user_applied_state=request.user)
         return Response({"success": "Step rejected"}, status=HTTP_200_OK)
 
 
