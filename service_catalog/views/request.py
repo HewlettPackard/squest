@@ -286,7 +286,7 @@ def request_accept(request, pk):
                 error_message = try_process_request(request.user, target_request)
                 if not error_message:
                     return redirect('service_catalog:request_list')
-            return redirect('service_catalog:request_process', target_request.id)
+            return redirect(target_request.get_absolute_url())
     else:
         form = AcceptRequestForm(request.user, **parameters)
     breadcrumbs = [
