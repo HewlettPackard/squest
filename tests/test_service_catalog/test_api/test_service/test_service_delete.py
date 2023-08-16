@@ -2,10 +2,10 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models import Service
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestApiServiceDelete(BaseTestRequest):
+class TestApiServiceDelete(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiServiceDelete, self).setUp()

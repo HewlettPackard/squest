@@ -2,10 +2,10 @@ from rest_framework.status import HTTP_403_FORBIDDEN, HTTP_204_NO_CONTENT
 from rest_framework.reverse import reverse
 
 from service_catalog.models import Instance
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestInstanceDelete(BaseTestRequest):
+class TestInstanceDelete(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestInstanceDelete, self).setUp()

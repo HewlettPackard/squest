@@ -3,11 +3,11 @@ from rest_framework.reverse import reverse
 
 from service_catalog.models.custom_link import LinkButtonClassChoices
 from tests.test_service_catalog.test_views.test_admin.test_tools.test_custom_links.base_test_custom_link import \
-    BaseTestCustomLink
+    BaseTestCustomLinkAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiCustomLinkPut(BaseTestCustomLink):
+class TestApiCustomLinkPut(BaseTestCustomLinkAPI):
 
     def setUp(self):
         super(TestApiCustomLinkPut,self).setUp()
@@ -38,18 +38,18 @@ class TestApiCustomLinkPut(BaseTestCustomLink):
 
     def test_admin_patch_operation(self):
         response = self.client.patch(self.get_custom_link_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, [self.expected_data], [response.data])
 
     def test_customer_cannot_patch_operation(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.patch(self.get_custom_link_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_patch_operation_when_logout(self):
         self.client.logout()
         response = self.client.patch(self.get_custom_link_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

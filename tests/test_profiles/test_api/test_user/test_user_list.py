@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestApiUserList(BaseTestRequest):
+class TestApiUserList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiUserList, self).setUp()

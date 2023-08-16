@@ -1,12 +1,12 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from service_catalog.models import Operation, CustomLink
+from service_catalog.models import  CustomLink
 from tests.test_service_catalog.test_views.test_admin.test_tools.test_custom_links.base_test_custom_link import \
-    BaseTestCustomLink
+    BaseTestCustomLinkAPI
 
 
-class TestApiCustomLinkDelete(BaseTestCustomLink):
+class TestApiCustomLinkDelete(BaseTestCustomLinkAPI):
 
     def setUp(self):
         super(TestApiCustomLinkDelete, self).setUp()
