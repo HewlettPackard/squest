@@ -17,7 +17,7 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'username', 'password', 'email', 'profile', 'first_name', 'last_name', 'is_staff',
                   'is_superuser', 'is_active', 'groups']
-        read_only_fields = ('id', 'groups')
+        read_only_fields = ['groups', ]
 
     profile = ProfileSerializer(required=False)
     password = CharField(

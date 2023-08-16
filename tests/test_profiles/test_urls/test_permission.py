@@ -5,8 +5,11 @@ from tests.permission_endpoint import TestingGetContextView, TestingPostContextV
 
 
 class TestProfilesPermissionPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
+    def setUp(self):
+        super().setUp()
+        self.permission_test = Permission.objects.filter(content_type__app_label='service_catalog').first()
+
     def test_permission_views(self):
-        permission = Permission.objects.filter(content_type__app_label='service_catalog').first()
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:permission_list',
@@ -22,33 +25,33 @@ class TestProfilesPermissionPermissionsViews(BaseTestProfile, TestPermissionEndp
                 data={
                     'name': 'New permission',
                     'codename': 'the_code_name',
-                    'content_type': permission.content_type.id
+                    'content_type': self.permission_test.content_type.id
                 }
             ),
             TestingGetContextView(
                 url='profiles:permission_edit',
                 perm_str='profiles.change_permission',
-                url_kwargs={'pk': permission.id}
+                url_kwargs={'pk': self.permission_test.id}
             ),
             TestingPostContextView(
                 url='profiles:permission_edit',
                 perm_str='profiles.change_permission',
-                url_kwargs={'pk': permission.id},
+                url_kwargs={'pk': self.permission_test.id},
                 data={
                     'name': 'Permission updated',
                     'codename': 'the_code_name_updated',
-                    'content_type': permission.content_type.id
+                    'content_type': self.permission_test.content_type.id
                 }
             ),
             TestingGetContextView(
                 url='profiles:permission_delete',
                 perm_str='profiles.delete_permission',
-                url_kwargs={'pk': permission.id}
+                url_kwargs={'pk': self.permission_test.id}
             ),
             TestingPostContextView(
                 url='profiles:permission_delete',
                 perm_str='profiles.delete_permission',
-                url_kwargs={'pk': permission.id},
+                url_kwargs={'pk': self.permission_test.id},
 
             )
         ]

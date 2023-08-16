@@ -10,7 +10,7 @@ class TestQuotaAPIView(BaseTestProfileAPI):
     def setUp(self):
         super(TestQuotaAPIView, self).setUp()
 
-        self._list_create_url = reverse('api_quota_list')
+        self._list_create_url = reverse('api_quota_list_create')
         self._details_url = reverse('api_quota_details', kwargs={"pk": self.test_quota_org.id})
 
     def test_list_quota(self):
