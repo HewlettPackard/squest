@@ -59,6 +59,8 @@ class TestingGetContextView(TestingContextView):
 
 class TestingPostContextView(TestingContextView):
     def call_url(self, client):
+        if isinstance(client, APIClient):
+            return client.post(self.url, self.data, format="json")
         return client.post(self.url, self.data)
 
     def get_expected_status_code(self, client):
@@ -73,21 +75,21 @@ class TestingPutContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
-        return client.put(self.url, self.data)
+        return client.put(self.url, self.data, format="json")
 
 
 class TestingPatchContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
-        return client.patch(self.url, self.data)
+        return client.patch(self.url, self.data, format="json")
 
 
 class TestingDeleteContextView(TestingContextView):
     expected_status_code = 204
 
     def call_url(self, client):
-        return client.delete(self.url, self.data)
+        return client.delete(self.url, self.data, format="json")
 
 
 class TestPermissionEndpoint(TestCase):
