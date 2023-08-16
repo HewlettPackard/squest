@@ -17,9 +17,7 @@ class TransformerListCreate(SquestListCreateAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Transformer.objects.none()
-        resource_group_id = self.kwargs['resource_group_id']
-        queryset = Transformer.objects.filter(resource_group_id=resource_group_id)
-        return queryset
+        return Transformer.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
 
     def create(self, request, **kwargs):
         resource_group_id = self.kwargs['resource_group_id']
@@ -39,19 +37,12 @@ class TransformerDetails(SquestRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Transformer.objects.none()
-        resource_group_id = self.kwargs['resource_group_id']
-        queryset = Transformer.objects.filter(resource_group_id=resource_group_id)
-        return queryset
+        return Transformer.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
 
     def get_serializer(self, *args, **kwargs):
+        updated_kwargs = copy.deepcopy(kwargs)
         if 'data' in kwargs:
-            kwargs['data']['resource_group'] = self.kwargs.get('resource_group_id', None)
-        serializer = super(TransformerDetails, self).get_serializer(*args, **kwargs)
+            updated_kwargs['data']['resource_group'] = self.kwargs.get('resource_group_id', None)
+        serializer = super(TransformerDetails, self).get_serializer(*args, **updated_kwargs)
         serializer.context["resource_group"] = self.kwargs.get('resource_group_id', None)
         return serializer
-
-    def get_object(self):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        transformer_id = self.kwargs.get('pk')
-        resource = get_object_or_404(Transformer, id=transformer_id, resource_group_id=resource_group_id)
-        return resource

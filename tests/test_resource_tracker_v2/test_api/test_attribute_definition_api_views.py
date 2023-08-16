@@ -10,8 +10,8 @@ class TestAttributeDefinitionAPIViews(BaseTestResourceTrackerV2API):
 
     def setUp(self):
         super(TestAttributeDefinitionAPIViews, self).setUp()
-        self._list_create_url = reverse('api_attribute_definition_list_create')
-        self._details_url = reverse('api_attribute_definition_details', kwargs={'pk': self.core_attribute.id})
+        self._list_create_url = reverse('api_attributedefinition_list_create')
+        self._details_url = reverse('api_attributedefinition_details', kwargs={'pk': self.core_attribute.id})
 
     def test_create_valid_attribute(self):
         data = {

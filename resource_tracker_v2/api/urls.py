@@ -8,12 +8,12 @@ from resource_tracker_v2.api.views.transformer_api_views import TransformerListC
 
 urlpatterns = [
     # attribute definition
-    path('attributes/', AttributeDefinitionList.as_view(), name='api_attribute_definition_list_create'),
-    path('attributes/<int:pk>/', AttributeDefinitionDetails.as_view(), name='api_attribute_definition_details'),
+    path('attributes/', AttributeDefinitionList.as_view(), name='api_attributedefinition_list_create'),
+    path('attributes/<int:pk>/', AttributeDefinitionDetails.as_view(), name='api_attributedefinition_details'),
 
     # resource group
-    path('resource_group/', ResourceGroupList.as_view(), name='api_resource_group_list_create'),
-    path('resource_group/<int:pk>/', ResourceGroupDetails.as_view(), name='api_resource_group_details'),
+    path('resource_group/', ResourceGroupList.as_view(), name='api_resourcegroup_list_create'),
+    path('resource_group/<int:pk>/', ResourceGroupDetails.as_view(), name='api_resourcegroup_details'),
 
     # resource
     path('resource_group/<int:resource_group_id>/resources/', ResourceListCreate.as_view(),
