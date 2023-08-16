@@ -112,6 +112,30 @@ class SquestRBAC(Model):
         return squest_scope.get_scopes()
 
 
+    def who_has_perm(self, permission_str):
+        app_label, codename = permission_str.split(".")
+
+        # Global Perm permission for all users
+        from django.contrib.auth.models import User
+        from profiles.models import GlobalPermission, Scope, RBAC
+        if GlobalPermission.load().default_permissions.filter(codename=codename,content_type__app_label=app_label).exists():
+            return User.objects.all()
+
+        scopes = self.get_scopes()
+        ## Default role scopes
+        ### Team and Org in get_scopes that have the permissions in default roles
+        default_role_scopes = Scope.objects.filter(roles__permissions__content_type__app_label=app_label,roles__permissions__codename=codename, id__in=scopes)
+        ### All users in RBAC related to these scopes
+        rbac0 = RBAC.objects.filter(scope__in=default_role_scopes)
+
+        ## Permission given via RBAC
+        rbac1 = RBAC.objects.filter(
+            Q(role__permissions__content_type__app_label=app_label,role__permissions__codename=codename, scope__in=scopes)
+        )
+
+        rbacs = rbac0 | rbac1
+        return User.objects.filter(Q(groups__in=rbacs) | Q(is_superuser=True)).distinct()
+
 class SquestChangelog(Model):
     class Meta:
         abstract = True
