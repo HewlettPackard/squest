@@ -1,12 +1,12 @@
 from django.urls import reverse
 
 from service_catalog.models import RequestState, InstanceState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 AUTHORIZED_STATES = [RequestState.SUBMITTED, RequestState.NEED_INFO, RequestState.REJECTED, RequestState.ACCEPTED]
 
 
-class TestApiRequestCancel(BaseTestRequest):
+class TestApiRequestCancel(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestCancel, self).setUp()

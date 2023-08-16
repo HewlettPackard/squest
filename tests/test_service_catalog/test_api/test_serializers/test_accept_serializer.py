@@ -1,11 +1,11 @@
 from service_catalog.api.serializers import AcceptRequestSerializer
 from service_catalog.models import RequestState
 from service_catalog.models.tower_survey_field import TowerSurveyField
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from django.test import override_settings
 
 
-class TestAcceptRequestSerializer(BaseTestRequest):
+class TestAcceptRequestSerializer(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestAcceptRequestSerializer, self).setUp()

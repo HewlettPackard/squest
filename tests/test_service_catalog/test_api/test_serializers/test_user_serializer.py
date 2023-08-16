@@ -1,8 +1,8 @@
-from tests.test_service_catalog.base import BaseTest
+from tests.test_service_catalog.base import BaseTestAPI
 from profiles.api.serializers.user_serializers import UserSerializer
 
 
-class TestUserSerializer(BaseTest):
+class TestUserSerializer(BaseTestAPI):
 
     def setUp(self):
         super(TestUserSerializer, self).setUp()

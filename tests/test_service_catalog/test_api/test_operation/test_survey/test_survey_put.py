@@ -2,11 +2,11 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models.tower_survey_field import TowerSurveyField
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
-class TestOperationSurveyPut(BaseTestRequest):
+class TestOperationSurveyPut(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestOperationSurveyPut, self).setUp()
@@ -30,7 +30,7 @@ class TestOperationSurveyPut(BaseTestRequest):
             {'name': 'integer_var', 'is_customer_field': True, 'default': '1'},
             {'name': 'float_var', 'is_customer_field': True, 'default': '2'}
         ]
-        response = self.client.put(self.get_operation_survey_put_url, data=data, content_type="application/json")
+        response = self.client.put(self.get_operation_survey_put_url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, data, response.data)
         self._validate_field_in_db(data)
@@ -41,7 +41,7 @@ class TestOperationSurveyPut(BaseTestRequest):
             {'name': 'multiplechoice_variable', 'is_customer_field': True, 'default': "multiplechoice_variable_default",
              "validators": "even_number"}
         ]
-        response = self.client.put(self.get_operation_survey_put_url, data=data, content_type="application/json")
+        response = self.client.put(self.get_operation_survey_put_url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, data, response.data)
         self._validate_field_in_db(data)
@@ -50,12 +50,12 @@ class TestOperationSurveyPut(BaseTestRequest):
         data = [
             {'name': 'non_exist', 'is_customer_field': False, 'default': "test"},
         ]
-        response = self.client.put(self.get_operation_survey_put_url, data=data, content_type="application/json")
+        response = self.client.put(self.get_operation_survey_put_url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_wrong_survey_enable_field(self):
         data = [
             {'name': 'text_variable', 'is_customer_field': "string", 'default': "test"},
         ]
-        response = self.client.put(self.get_operation_survey_put_url, data=data, content_type="application/json")
+        response = self.client.put(self.get_operation_survey_put_url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

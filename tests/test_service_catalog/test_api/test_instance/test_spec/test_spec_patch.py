@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiSpecPatch(BaseTestRequest):
+class TestApiSpecPatch(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiSpecPatch, self).setUp()
@@ -41,12 +41,12 @@ class TestApiSpecPatch(BaseTestRequest):
             self.assertEqual(self.test_instance.spec, self.current_spec)
             response = self.client.patch(self.get_spec_details_url,
                                          data=self.expected_spec,
-                                         content_type="application/json")
+                                         format="json")
         else:
             self.assertEqual(self.test_instance.user_spec, self.current_user_spec)
             response = self.client.patch(self.get_spec_details_url,
                                          data=self.expected_user_spec,
-                                         content_type="application/json")
+                                         format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data_list = [response.data]
@@ -62,12 +62,12 @@ class TestApiSpecPatch(BaseTestRequest):
             self.assertEqual(self.test_instance.spec, self.current_spec)
             response = self.client.patch(self.get_spec_details_url,
                                          data=self.expected_spec,
-                                         content_type="application/json")
+                                         format="json")
         else:
             self.assertEqual(self.test_instance.user_spec, self.current_user_spec)
             response = self.client.patch(self.get_spec_details_url,
                                          data=self.expected_user_spec,
-                                         content_type="application/json")
+                                         format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         if self.target_spec == "spec":
             self.assertEqual(self.test_instance.spec, self.current_spec)
