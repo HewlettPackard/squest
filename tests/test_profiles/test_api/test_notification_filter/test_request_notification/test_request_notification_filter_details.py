@@ -13,7 +13,7 @@ class TestApiRequestNotificationFilterDetails(BaseTestRequestNotificationAPI):
         self.kwargs = {
             'pk': self.request_notification_filter_test.id
         }
-        self.get_notification_filter_details_url = reverse_lazy('api_request_notification_filter_details', kwargs=self.kwargs)
+        self.get_notification_filter_details_url = reverse_lazy('api_requestnotification_details', kwargs=self.kwargs)
         self.expected_data = {
             'id': self.request_notification_filter_test.id,
             'name': self.request_notification_filter_test.name,

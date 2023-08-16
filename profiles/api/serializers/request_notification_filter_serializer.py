@@ -14,7 +14,7 @@ class RequestNotificationFilterSerializer(ModelSerializer):
     class Meta:
         model = RequestNotification
         fields = '__all__'
-        read_only_fields = ('id', 'profile')
+        read_only_fields = ['profile', ]
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.get('context').get('request').user

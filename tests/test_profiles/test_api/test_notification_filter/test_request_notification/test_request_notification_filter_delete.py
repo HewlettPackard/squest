@@ -12,7 +12,7 @@ class TestApiRequestNotificationDelete(BaseTestRequestNotificationAPI):
         self.kwargs = {
             'pk': self.request_notification_filter_test.id
         }
-        self.delete_notification_filter_url = reverse_lazy('api_request_notification_filter_details',
+        self.delete_notification_filter_url = reverse_lazy('api_requestnotification_details',
                                                            kwargs=self.kwargs)
 
     def test_admin_delete_notification_filter(self):
