@@ -1,12 +1,8 @@
-from rest_framework.serializers import ModelSerializer
-
-from profiles.api.serializers import RBACSerializer
+from profiles.api.serializers import AbstractScopeSerializer
 from profiles.models import GlobalPermission
 
 
-class GlobalPermissionSerializer(ModelSerializer):
-    rbac = RBACSerializer(many=True, read_only=True)
-
+class GlobalPermissionSerializer(AbstractScopeSerializer):
     class Meta:
         model = GlobalPermission
         fields = ('default_permissions', 'rbac')

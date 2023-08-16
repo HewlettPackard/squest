@@ -7,6 +7,6 @@ class OrganizationSerializer(ScopeSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
-        read_only_fields = ('id', 'teams')
+        read_only_fields = ['teams', ]
 
     quotas = QuotaSerializer(many=True, read_only=True)

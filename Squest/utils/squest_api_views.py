@@ -11,6 +11,9 @@ class SquestObjectPermissions(DjangoObjectPermissions):
         # Skip Class based permissions, otherwise we need to assign user permissions to all ours users.
         return True
 
+    def get_required_object_permissions(self, method, model_cls, obj=None):
+        return super().get_required_object_permissions(method, model_cls)
+
     def has_object_permission(self, request, view, obj):
         # Override to raise 403 instead of 404
         # authentication checks have already executed via has_permission
@@ -18,7 +21,7 @@ class SquestObjectPermissions(DjangoObjectPermissions):
         model_cls = queryset.model
         user = request.user
 
-        perms = self.get_required_object_permissions(request.method, model_cls)
+        perms = self.get_required_object_permissions(request.method, model_cls, obj)
 
         if not user.has_perms(perms, obj):
             # If the user does not have permissions we need to determine if
@@ -30,7 +33,7 @@ class SquestObjectPermissions(DjangoObjectPermissions):
                 # to make another lookup.
                 raise PermissionDenied
 
-            read_perms = self.get_required_object_permissions('GET', model_cls)
+            read_perms = self.get_required_object_permissions('GET', model_cls, obj)
             if not user.has_perms(read_perms, obj):
                 raise PermissionDenied
 
