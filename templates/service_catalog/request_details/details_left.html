@@ -25,6 +25,10 @@
                     class="float-right text-{{ object.operation.type |map_operation_type }}">{{ object.operation.type }}</strong>
             </li>
             <li class="list-group-item">
+                <b>Quota scope</b><strong
+                    class="float-right"><a href="{{ object.instance.quota_scope.get_absolute_url }}">{{ object.instance.quota_scope }}</a></strong>
+            </li>
+            <li class="list-group-item">
                 <b>Request state</b><strong
                     class="float-right text-{{ object.state |map_request_state }}">{{ object.state }}</strong>
             </li>
