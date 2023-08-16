@@ -49,7 +49,7 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission,
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str,
                                      target_request):
             raise PermissionDenied
 
@@ -62,14 +62,14 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission,
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str(),
                                      target_request):
             raise PermissionDenied
         serializer = ApproveWorkflowStepSerializer(data=request.data, target_request=target_request, user=request.user)
         if serializer.is_valid():
             serializer.save()
             # send_mail_request_update(target_request, user_applied_state=request.user)
-            return Response(serializer.data, status=HTTP_200_OK)
+            return Response({"success": "Step approved"}, status=HTTP_200_OK)
         return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(responses={200: 'Approve step'})
@@ -78,10 +78,12 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission,
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str(),
                                      target_request):
             raise PermissionDenied
-        target_request.approval_workflow_state.reject_current_step(request.user)
+        # reject the current step if exist
+        if target_request.approval_workflow_state is not None:
+            target_request.approval_workflow_state.reject_current_step(request.user)
         # reject the request
         target_request.reject(request.user)
         target_request.save()
