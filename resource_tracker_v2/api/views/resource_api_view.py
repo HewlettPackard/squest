@@ -17,9 +17,7 @@ class ResourceListCreate(SquestListCreateAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Resource.objects.none()
-        resource_group_id = self.kwargs['resource_group_id']
-        queryset = Resource.objects.filter(resource_group_id=resource_group_id)
-        return queryset
+        return Resource.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
 
     def create(self, request, **kwargs):
         resource_group_id = self.kwargs['resource_group_id']
@@ -40,12 +38,17 @@ class ResourceDetails(SquestRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Resource.objects.none()
-        resource_group_id = self.kwargs['resource_group_id']
-        queryset = Resource.objects.filter(resource_group_id=resource_group_id)
-        return queryset
+        return Resource.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
 
-    def get_object(self):
-        resource_group_id = self.kwargs.get('resource_group_id')
-        resource_id = self.kwargs.get('pk')
-        resource = get_object_or_404(Resource, id=resource_id, resource_group_id=resource_group_id)
-        return resource
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            if kwargs['data'].get('resource_group') is None:
+                if hasattr(kwargs['data'], '_mutable'):
+                    is_mutable = kwargs['data']._mutable
+                    kwargs['data']._mutable = True
+                kwargs['data']['resource_group'] = self.kwargs.get('resource_group_id', None)
+                if hasattr(kwargs['data'], '_mutable'):
+                    kwargs['data']._mutable = is_mutable
+        serializer = super(ResourceDetails, self).get_serializer(*args, **kwargs)
+        serializer.context["resource_group"] = self.kwargs.get('resource_group_id', None)
+        return serializer
