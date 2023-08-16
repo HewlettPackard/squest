@@ -12,7 +12,7 @@ class RequestNotificationFilterTable(tables.Table):
         fields = ("name", "actions")
 
 
-class SupportNotificationFilterTable(tables.Table):
+class InstanceNotificationFilterTable(tables.Table):
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:

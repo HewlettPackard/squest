@@ -8,11 +8,11 @@ class QuotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quota
         fields = ['id', 'scope', 'attribute_definition', 'limit']
-        read_only_fields = ['id']
 
     def validate(self, attrs):
-
-        scope = attrs.get("scope")
+        attrs = super().validate(attrs)
+        scope = self.instance.scope if self.instance else None
+        scope = attrs['scope'] if 'scope' in attrs.keys() else scope
         attribute_definition = attrs.get("attribute_definition")
         limit = attrs.get("limit")
 

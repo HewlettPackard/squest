@@ -2,25 +2,24 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import InstanceNotification
-from tests.test_profiles.base.base_test_support_notification_filter import BaseTestInstanceNotificationAPI
+from tests.test_profiles.base.base_test_instance_notification_filter import BaseTestInstanceNotificationAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiSupportNotificationFilterDetails(BaseTestInstanceNotificationAPI):
-
+class TestApiInstanceNotificationFilterDetails(BaseTestInstanceNotificationAPI):
     def setUp(self):
-        super(TestApiSupportNotificationFilterDetails, self).setUp()
+        super(TestApiInstanceNotificationFilterDetails, self).setUp()
         self.kwargs = {
-            'pk': self.support_notification_filter_test.id
+            'pk': self.instance_notification_filter_test.id
         }
-        self.get_notification_filter_details_url = reverse_lazy('api_support_notification_filter_details', kwargs=self.kwargs)
+        self.get_notification_filter_details_url = reverse_lazy('api_instancenotification_details', kwargs=self.kwargs)
         self.expected_data = {
-            'id': self.support_notification_filter_test.id,
-            'name': self.support_notification_filter_test.name,
-            'profile': self.support_notification_filter_test.profile.id,
-            'services': list(self.support_notification_filter_test.services.all()),
-            'instance_states': self.support_notification_filter_test.instance_states,
-            'when': self.support_notification_filter_test.when,
+            'id': self.instance_notification_filter_test.id,
+            'name': self.instance_notification_filter_test.name,
+            'profile': self.instance_notification_filter_test.profile.id,
+            'services': list(self.instance_notification_filter_test.services.all()),
+            'instance_states': self.instance_notification_filter_test.instance_states,
+            'when': self.instance_notification_filter_test.when,
         }
         self.expected_data_list = [self.expected_data]
 

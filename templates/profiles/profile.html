@@ -19,7 +19,7 @@
                         <a href="#request-notifications" data-toggle="tab" class="nav-link">Request notifications</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#support-notifications" data-toggle="tab" class="nav-link">Support notifications</a>
+                        <a href="#instance-notifications" data-toggle="tab" class="nav-link">Instance notifications</a>
                     </li>
                 </ul>
             </div>
@@ -139,19 +139,19 @@
                                         You haven't created any request filters. You will receive all notifications.
                                     </div>
                                 {% else %}
-                                    {% with object_name='request_notification' %}
+                                    {% with object_name='requestnotification' %}
                                         {% render_table request_filter_table %}
                                     {% endwith %}
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div id="support-notifications" class="tab-pane">
+                    <div id="instance-notifications" class="tab-pane">
                         <dl class="row">
                             <div class="col-md-3 col-6">
                                 <div class="small-box bg{% if user.profile.instance_notification_enabled %}-success{% else %}-gray{% endif %}">
                                     <div class="inner">
-                                        <p><strong>Support</strong> notifications are <strong>
+                                        <p><strong>Instance</strong> notifications are <strong>
                                             {% if user.profile.instance_notification_enabled %}enabled{% else %}
                                                 disabled{% endif %}</strong></p>
                                     </div>
@@ -170,16 +170,16 @@
                             <div class="col-12">
                                 <a title="Add a notification filter" class="btn btn-default mb-2"
                                    href="{% url "profiles:instancenotification_create" %}">
-                                    <i class="fas fa-plus"></i> Add a support notification filter
+                                    <i class="fas fa-plus"></i> Add a instance notification filter
                                 </a>
                                 {% if request.user.profile.instance_notification_filters.count == 0 %}
                                     <div class="callout callout-warning mt-3">
                                         <h5><i class="fas fa-info"></i> Note:</h5>
-                                        You haven't created any support filters. You will receive all notifications.
+                                        You haven't created any instance filters. You will receive all notifications.
                                     </div>
                                 {% else %}
-                                    {% with object_name='support_notification' %}
-                                        {% render_table support_filter_table %}
+                                    {% with object_name='instancenotification' %}
+                                        {% render_table instance_filter_table %}
                                     {% endwith %}
                                 {% endif %}
                             </div>
