@@ -2,17 +2,16 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import InstanceNotification
-from tests.test_profiles.base.base_test_support_notification_filter import BaseTestInstanceNotificationAPI
+from tests.test_profiles.base.base_test_instance_notification_filter import BaseTestInstanceNotificationAPI
 
 
-class TestApiSupportNotificationFilterCreate(BaseTestInstanceNotificationAPI):
-
+class TestApiInstanceNotificationFilterCreate(BaseTestInstanceNotificationAPI):
     def setUp(self):
-        super(TestApiSupportNotificationFilterCreate, self).setUp()
+        super(TestApiInstanceNotificationFilterCreate, self).setUp()
         self.post_data = {
             'name': "myFilterName",
         }
-        self.create_notification_filter_url = reverse_lazy('api_support_notification_filter_list_create')
+        self.create_notification_filter_url = reverse_lazy('api_instancenotification_list_create')
 
     def _create_notification_filter(self):
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
@@ -34,7 +33,7 @@ class TestApiSupportNotificationFilterCreate(BaseTestInstanceNotificationAPI):
         self.post_data['profile'] = self.superuser_2.profile.id
         old_count = InstanceNotification.objects.filter(profile=self.superuser.profile).count()
         self._create_notification_filter()
-        self.assertFalse(InstanceNotification.objects.exclude(id=self.support_notification_filter_test_3.id).filter(
+        self.assertFalse(InstanceNotification.objects.exclude(id=self.instance_notification_filter_test_3.id).filter(
             profile=self.superuser_2.profile).exists())
         self.assertEqual(old_count + 1, InstanceNotification.objects.filter(profile=self.superuser.profile).count())
 

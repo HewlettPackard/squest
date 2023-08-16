@@ -1,12 +1,12 @@
 from .permission_api_views import *
 from .organization_api_views import *
-from .request_notification_filter import *
-from .support_notification_filter import *
+from .requestnotification import *
+from .instancenotification import *
 from .team_api_views import *
 from .user_api_views import *
 
-from .request_notification_filter import *
-from .support_notification_filter import *
+from .requestnotification import *
+from .instancenotification import *
 from .user_api_views import *
 from .role_api_views import *
 from .globalpermission_api_views import *

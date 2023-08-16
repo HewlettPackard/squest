@@ -2,18 +2,17 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import InstanceNotification
-from tests.test_profiles.base.base_test_support_notification_filter import BaseTestInstanceNotificationAPI
+from tests.test_profiles.base.base_test_instance_notification_filter import BaseTestInstanceNotificationAPI
 
 
-class TestApiSupportNotificationDelete(BaseTestInstanceNotificationAPI):
-
+class TestApiInstanceNotificationDelete(BaseTestInstanceNotificationAPI):
     def setUp(self):
-        super(TestApiSupportNotificationDelete, self).setUp()
-        self.notification_filter_to_delete_id = self.support_notification_filter_test.id
+        super(TestApiInstanceNotificationDelete, self).setUp()
+        self.notification_filter_to_delete_id = self.instance_notification_filter_test.id
         self.kwargs = {
             'pk': self.notification_filter_to_delete_id
         }
-        self.delete_notification_filter_url = reverse_lazy('api_support_notification_filter_details',
+        self.delete_notification_filter_url = reverse_lazy('api_instancenotification_details',
                                                            kwargs=self.kwargs)
 
     def test_admin_delete_notification_filter(self):
