@@ -201,12 +201,13 @@ class FormGenerator:
         self.survey_as_dict = new_survey
 
     def _prefill_form_with_customer_values(self, django_form: dict):
-        for field, value in self.squest_request.fill_in_survey.items():
-            django_form.get(field).initial = value
-            django_form.get(field).default = value
-        for field, value in self.squest_request.admin_fill_in_survey.items():
-            django_form.get(field).initial = value
-            django_form.get(field).default = value
+        for field in django_form.keys():
+            if field in self.squest_request.fill_in_survey:
+                django_form.get(field).initial = self.squest_request.fill_in_survey[field]
+                django_form.get(field).default = self.squest_request.fill_in_survey[field]
+            if field in self.squest_request.admin_fill_in_survey:
+                django_form.get(field).initial = self.squest_request.admin_fill_in_survey[field]
+                django_form.get(field).default = self.squest_request.admin_fill_in_survey[field]
         return django_form
 
     @staticmethod
