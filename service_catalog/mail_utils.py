@@ -4,24 +4,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import get_template
 
+from profiles.models import Permission
 from service_catalog import tasks
-from service_catalog.models.instance import Instance
-from service_catalog.models.request import RequestState, Request
+from service_catalog.models.request import RequestState
 
 DEFAULT_FROM_EMAIL = f"{settings.SQUEST_EMAIL_HOST}"
 EMAIL_TITLE_PREFIX = "[Squest]"
-
-
-def _add_user_in_user_list(user, user_list):
-    if user.email and user.profile.request_notification_enabled and user.email not in user_list:
-        user_list.append(user.email)
-    return user_list
-
-
-def _remove_user_in_user_list(user, user_list):
-    if user.profile.request_notification_enabled and user.email and user.email in user_list:
-        user_list.remove(user.email)
-    return user_list
 
 
 def _get_subject(target_object):
@@ -37,36 +25,61 @@ def _get_headers(subject):
     return headers
 
 
-def _get_admin_emails(object_to_filter):
-    """
-    Return a list of admin (is_staff) email if notification is enabled and target service subscribed
-    :return:
-    """
-    admins = User.objects.filter(is_staff=True)
-    # create a list of email
-    email_admins = list()
-    for admin in admins:
-        if admin.email:
-            if isinstance(object_to_filter, Instance) and admin.profile.instance_notification_enabled:
-                if admin.profile.is_notification_authorized_for_instance(object_to_filter):
-                    email_admins.append(admin.email)
-            elif isinstance(object_to_filter, Request) and admin.profile.request_notification_enabled:
-                if admin.profile.is_notification_authorized_for_request(object_to_filter):
-                    email_admins.append(admin.email)
-    return email_admins
+def _apply_when_filter_instance(user_list, squest_object):
+    users = list()
+    for user in user_list:
+        if user.email:
+            if user.profile.instance_notification_enabled:
+                if user.profile.is_notification_authorized_for_instance(squest_object):
+                    users.append(user)
+    return users
 
 
-def _get_receivers_for_request_message(request_message):
-    receiver_email_list = _get_admin_emails(object_to_filter=request_message.request)
-    receiver_email_list = _add_user_in_user_list(request_message.request.user, receiver_email_list)
-    receiver_email_list = _remove_user_in_user_list(request_message.sender, receiver_email_list)
-    return receiver_email_list
+def _apply_when_filter_request(user_list, squest_object):
+    users = list()
+    for user in user_list:
+        if user.email:
+            if user.profile.request_notification_enabled:
+                if user.profile.is_notification_authorized_for_request(squest_object):
+                    users.append(user)
+    return users
 
 
 def _get_receivers_for_support_message(support_message):
-    receiver_email_list = _get_admin_emails(object_to_filter=support_message.support.instance)
-    receiver_email_list = _add_user_in_user_list(support_message.support.instance.requester, receiver_email_list)
-    receiver_email_list = _remove_user_in_user_list(support_message.sender, receiver_email_list)
+    ## Apply when filter on all users
+    receivers_raw = support_message.who_has_perm("service_catalog.view_supportmessage").exclude(id=support_message.sender.id)
+    receivers = _apply_when_filter_instance(receivers_raw, support_message.support.instance)
+    ## Keep mail only
+    receiver_email_list = [user.email for user in receivers]
+    return receiver_email_list
+
+
+def _get_receivers_for_request_message(request_message):
+    ## Apply when filter on all users
+    receivers_raw = request_message.who_has_perm("service_catalog.view_requestmessage").exclude(id=request_message.sender.id)
+    receivers = _apply_when_filter_request(receivers_raw, request_message.request)
+    ## Keep mail only
+    receiver_email_list = [user.email for user in receivers]
+    return receiver_email_list
+
+
+def _get_receivers_for_support(support):
+    ## Apply when filter on all users
+
+    receivers_raw = support.who_has_perm("service_catalog.view_support")
+    receivers = _apply_when_filter_instance(receivers_raw, support.instance)
+    ## Keep mail only
+    receiver_email_list = [user.email for user in receivers]
+    return receiver_email_list
+
+
+def _get_receivers_for_request(squest_request):
+    ## Apply when filter on all users
+    customer_raw = squest_request.who_has_perm("service_catalog.view_request")
+    admin_raw = squest_request.who_can_accept()
+    receivers = _apply_when_filter_request(customer_raw | admin_raw, squest_request)
+    ## Keep mail only
+    receiver_email_list = [user.email for user in receivers]
     return receiver_email_list
 
 
@@ -102,9 +115,7 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     if receiver_email_list is None:
-        receiver_email_list = _get_admin_emails(object_to_filter=target_request)  # email sent to all admins
-    if target_request.user.profile.request_notification_enabled and target_request.user.email:
-        receiver_email_list.append(target_request.user.email)  # email sent to the requester
+        receiver_email_list = _get_receivers_for_request(target_request)
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
                            headers=_get_headers(subject))
@@ -113,6 +124,7 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
 def send_mail_new_support_message(message):
     if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
         return
+
     subject = _get_subject(message.support)
     template_name = "service_catalog/mails/support.html"
     plain_text = f"New support message received on Instance #{message.support.instance.id} (#{message.support.id})"
@@ -134,7 +146,7 @@ def send_mail_support_is_closed(support):
     context = {'support': support, 'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = [intervenant.email for intervenant in support.get_all_intervenants()]
+    receiver_email_list = _get_receivers_for_support(support)
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
                            headers=_get_headers(subject))
@@ -175,9 +187,7 @@ def send_email_request_canceled(target_request, user_applied_state=None, request
                'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
-    receiver_email_list = _get_admin_emails(object_to_filter=target_request)  # email sent to all admins
-    if request_owner_user.profile.request_notification_enabled and request_owner_user.email:
-        receiver_email_list.append(request_owner_user.email)  # email sent to the requester
+    receiver_email_list = _get_receivers_for_request(target_request)
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
                            headers=_get_headers(subject))

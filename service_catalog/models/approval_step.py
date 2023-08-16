@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from profiles.models.squest_permission import Permission
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT
+from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, Q
 from django.db.models.signals import post_save
 
 from Squest.utils.squest_model import SquestModel
@@ -74,5 +74,12 @@ class ApprovalStep(SquestModel):
 
     def get_absolute_url(self):
         return reverse("service_catalog:approvalworkflow_details", args=[self.pk])
+
+    def get_scopes(self):
+        return self.approval_workflow.get_scopes()
+
+    def who_can_approve(self, scope):
+        return scope.who_has_perm(self.permission.get_permission_str())
+
 
 post_save.connect(ApprovalStep.on_create_set_position, sender=ApprovalStep)

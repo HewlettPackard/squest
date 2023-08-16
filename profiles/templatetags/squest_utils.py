@@ -28,3 +28,7 @@ def has_perm(user, permission, object=None):
 @register.simple_tag()
 def get_full_survey_user(squest_request, approval_step_state=None):
     return squest_request.full_survey_user(approval_step_state)
+
+@register.simple_tag()
+def who_can_approve_workflow(approval_step, scope):
+    return approval_step.who_can_approve(scope)
