@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.db.models import ForeignKey, CASCADE
 
 from Squest.utils.squest_model import SquestModel
@@ -66,3 +67,8 @@ class ApprovalWorkflowState(SquestModel):
             step.reset_to_pending()
         self.current_step = self.first_step
         self.save()
+
+    def who_can_approve(self):
+        if self.current_step is not None:
+            return self.current_step.who_can_approve()
+        return User.objects.none()

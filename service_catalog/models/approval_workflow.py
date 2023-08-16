@@ -1,7 +1,8 @@
 from django.db.models import CharField, ForeignKey, ManyToManyField, CASCADE
 
 from Squest.utils.squest_model import SquestModel
-from service_catalog.models import ApprovalStep, TowerSurveyField
+from profiles.models import AbstractScope, GlobalPermission
+from service_catalog.models import TowerSurveyField, ApprovalStep
 
 
 class ApprovalWorkflow(SquestModel):
@@ -57,3 +58,13 @@ class ApprovalWorkflow(SquestModel):
     def reset_all_approval_workflow_state(self):
         for approval_workflow_state in self.approval_workflow_states.all():
             approval_workflow_state.reset()
+
+    def get_scopes(self):
+        scopes = AbstractScope.objects.none()
+        for scope in self.scopes.all():
+            scopes = scopes | scope.get_scopes()
+        scopes = scopes.distinct()
+        if scopes.exists():
+            return scopes
+        else:
+            return GlobalPermission.load().get_scopes()

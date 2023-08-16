@@ -28,7 +28,7 @@ class Command(BaseCommand):
             try:
                 users[username] = User.objects.get(username=username, password="admin")
             except User.DoesNotExist:
-                users[username] = User.objects.create_user(username=username, password="admin", is_staff=False,
+                users[username] = User.objects.create_user(username=username, password="admin", is_staff=False, email=f"{username}@local.com",
                                                            is_superuser=False)
             # team = Team.objects.create(name=username)
             # team.add_user_in_role(users[username], "Admin")
