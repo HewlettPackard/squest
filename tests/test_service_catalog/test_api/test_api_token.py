@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 from profiles.models import Token
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from django.utils import timezone
 
 
-class TestAPIToken(BaseTestRequest):
+class TestAPIToken(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestAPIToken, self).setUp()

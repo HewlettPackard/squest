@@ -3,10 +3,10 @@ from unittest import mock
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base import BaseTest
+from tests.test_service_catalog.base import BaseTestAPI
 
 
-class TestApiJobTemplateSyncAll(BaseTest):
+class TestApiJobTemplateSyncAll(BaseTestAPI):
 
     def setUp(self):
         super(TestApiJobTemplateSyncAll, self).setUp()

@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestApiUserCreate(BaseTestRequest):
+class TestApiUserCreate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiUserCreate, self).setUp()
@@ -16,7 +16,7 @@ class TestApiUserCreate(BaseTestRequest):
 
     def _create_user(self):
         response = self.client.post(self.create_user_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()),
                          {'id', 'last_name', 'first_name', 'is_staff', 'email',
@@ -25,7 +25,7 @@ class TestApiUserCreate(BaseTestRequest):
 
     def _create_user_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_user_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status_error)
 
     def test_admin_post_user(self):
@@ -38,11 +38,11 @@ class TestApiUserCreate(BaseTestRequest):
     def test_customer_cannot_post_user(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.post(self.create_user_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_post_user_when_logout(self):
         self.client.logout()
         response = self.client.post(self.create_user_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

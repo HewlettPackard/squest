@@ -2,11 +2,11 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from tests.test_service_catalog.test_views.test_admin.test_tools.test_custom_links.base_test_custom_link import \
-    BaseTestCustomLink
+    BaseTestCustomLinkAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiCustomLinkDetails(BaseTestCustomLink):
+class TestApiCustomLinkDetails(BaseTestCustomLinkAPI):
 
     def setUp(self):
         super(TestApiCustomLinkDetails, self).setUp()

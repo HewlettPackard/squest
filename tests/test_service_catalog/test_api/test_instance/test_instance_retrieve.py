@@ -1,11 +1,10 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers.user_serializers import UserSerializer
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestInstanceRetrieve(BaseTestRequest):
+class TestInstanceRetrieve(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestInstanceRetrieve, self).setUp()

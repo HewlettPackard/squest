@@ -5,13 +5,13 @@ from django.urls import reverse
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import RequestState, InstanceState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
 AUTHORIZED_STATES = [RequestState.ACCEPTED, RequestState.FAILED]
 
 
-class TestApiRequestProcess(BaseTestRequest):
+class TestApiRequestProcess(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestProcess, self).setUp()

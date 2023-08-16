@@ -3,10 +3,10 @@ from rest_framework.reverse import reverse
 
 from service_catalog.models import CustomLink
 from tests.test_service_catalog.test_views.test_admin.test_tools.test_custom_links.base_test_custom_link import \
-    BaseTestCustomLink
+    BaseTestCustomLinkAPI
 
 
-class TestApiCustomLinkList(BaseTestCustomLink):
+class TestApiCustomLinkList(BaseTestCustomLinkAPI):
 
     def setUp(self):
         super(TestApiCustomLinkList, self).setUp()
