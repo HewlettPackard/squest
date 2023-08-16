@@ -10,8 +10,8 @@ class TestResourceGroupAPIViews(BaseTestResourceTrackerV2API):
 
     def setUp(self):
         super(TestResourceGroupAPIViews, self).setUp()
-        self._list_create_url = reverse('api_resource_group_list_create')
-        self._details_url = reverse('api_resource_group_details', kwargs={'pk': self.cluster.id})
+        self._list_create_url = reverse('api_resourcegroup_list_create')
+        self._details_url = reverse('api_resourcegroup_details', kwargs={'pk': self.cluster.id})
 
     def test_create_valid_resource_group(self):
         data = {

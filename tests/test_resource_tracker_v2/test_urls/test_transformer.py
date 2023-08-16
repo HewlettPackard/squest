@@ -3,8 +3,11 @@ from tests.permission_endpoint import TestingGetContextView, TestingPostContextV
 
 
 class TestResourceTrackerV2TransformerPermissionsViews(BaseTestResourceTrackerV2, TestPermissionEndpoint):
-    def test_transformer_views(self):
+    def setUp(self):
+        super().setUp()
         self.vcpu_from_core_transformer.delete()
+
+    def test_transformer_views(self):
         testing_view_list = [
             TestingGetContextView(
                 url='resource_tracker_v2:ajax_load_attribute',
