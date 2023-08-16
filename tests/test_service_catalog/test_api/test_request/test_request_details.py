@@ -5,11 +5,11 @@ from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
 from profiles.models import Permission
 from service_catalog.models import Request
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiRequestDetails(BaseTestRequest):
+class TestApiRequestDetails(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestDetails, self).setUp()

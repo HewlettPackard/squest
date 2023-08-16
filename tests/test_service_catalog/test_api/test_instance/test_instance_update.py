@@ -4,10 +4,10 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from service_catalog.models import InstanceState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestInstanceUpdate(BaseTestRequest):
+class TestInstanceUpdate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestInstanceUpdate, self).setUp()
@@ -25,7 +25,8 @@ class TestInstanceUpdate(BaseTestRequest):
         }
 
     def test_update_instance(self):
-        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        response = self.client.put(self.url, data=self.update_data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.test_instance.refresh_from_db()
         expected_spec = {
@@ -40,7 +41,7 @@ class TestInstanceUpdate(BaseTestRequest):
         old_name = copy(self.test_instance.name)
         old_spec = copy(self.test_instance.spec)
         self.update_data['spec'] = None
-        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        response = self.client.put(self.url, data=self.update_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.test_instance.refresh_from_db()
         self.assertDictEqual(self.test_instance.spec, old_spec)
@@ -48,7 +49,7 @@ class TestInstanceUpdate(BaseTestRequest):
 
     def test_update_instance_with_empty_dict_spec(self):
         self.update_data['spec'] = dict()
-        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        response = self.client.put(self.url, data=self.update_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.test_instance.refresh_from_db()
         self.assertDictEqual(self.test_instance.spec, {})
@@ -56,5 +57,5 @@ class TestInstanceUpdate(BaseTestRequest):
 
     def test_cannot_update_when_logout(self):
         self.client.logout()
-        response = self.client.put(self.url, data=self.update_data, content_type="application/json")
+        response = self.client.put(self.url, data=self.update_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

@@ -2,11 +2,11 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import RequestNotification
-from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotification
+from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotificationAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiRequestNotificationFilterDetails(BaseTestRequestNotification):
+class TestApiRequestNotificationFilterDetails(BaseTestRequestNotificationAPI):
 
     def setUp(self):
         super(TestApiRequestNotificationFilterDetails, self).setUp()

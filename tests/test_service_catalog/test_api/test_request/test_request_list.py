@@ -3,10 +3,10 @@ from rest_framework.reverse import reverse
 
 from profiles.models import Permission, GlobalPermission, Role
 from service_catalog.models import Request, Instance
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestApiRequestList(BaseTestRequest):
+class TestApiRequestList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestList, self).setUp()

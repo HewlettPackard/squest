@@ -1,9 +1,9 @@
 from service_catalog.models import Instance, Request
 from service_catalog.api.serializers import RequestSerializer, AdminRequestSerializer
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-class TestRequestSerializer(BaseTestRequest):
+class TestRequestSerializer(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestRequestSerializer, self).setUp()

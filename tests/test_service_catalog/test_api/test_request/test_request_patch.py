@@ -3,11 +3,11 @@ from rest_framework.reverse import reverse
 
 from profiles.api.serializers.user_serializers import UserSerializer
 from service_catalog.models import Request, RequestState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiRequestPatch(BaseTestRequest):
+class TestApiRequestPatch(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestPatch, self).setUp()
@@ -42,25 +42,25 @@ class TestApiRequestPatch(BaseTestRequest):
 
     def test_admin_patch_request(self):
         response = self.client.patch(self.get_request_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, [self.expected_data], [response.data])
 
     def test_customer_cannot_patch_his_request(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.patch(self.get_request_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_customer_cannot_patch_non_own_request(self):
         self.client.force_login(user=self.standard_user)
         self.kwargs['pk'] = self.test_request_standard_user_2.id
         url = reverse('api_request_details', kwargs=self.kwargs)
-        response = self.client.patch(url, data=self.patch_data, content_type="application/json")
+        response = self.client.patch(url, data=self.patch_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_patch_request_when_logout(self):
         self.client.logout()
         response = self.client.patch(self.get_request_details_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

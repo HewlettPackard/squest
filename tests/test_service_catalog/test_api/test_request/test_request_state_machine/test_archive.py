@@ -1,12 +1,12 @@
 from django.urls import reverse
 
 from service_catalog.models import RequestState
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 AUTHORIZED_STATES = [RequestState.COMPLETE]
 
 
-class TestApiRequestArchive(BaseTestRequest):
+class TestApiRequestArchive(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiRequestArchive, self).setUp()
