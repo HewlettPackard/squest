@@ -21,5 +21,5 @@ class TestApiUserSpecDetails(TestApiSpecDetails):
 
     def test_cannot_get_spec_details_when_logout(self):
         self.client.logout()
-        response = self.client.get(self.get_spec_details_url, content_type="application/json")
+        response = self.client.get(self.get_spec_details_url, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

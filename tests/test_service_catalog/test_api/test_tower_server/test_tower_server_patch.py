@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
 
 
-class TestApiTowerServerPatch(BaseTestRequest):
+class TestApiTowerServerPatch(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiTowerServerPatch, self).setUp()
@@ -27,18 +27,18 @@ class TestApiTowerServerPatch(BaseTestRequest):
 
     def test_admin_patch_tower_server(self):
         response = self.client.patch(self.tower_server_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, [self.expected_data], [response.data])
 
     def test_customer_cannot_patch_tower_server(self):
         self.client.force_login(user=self.standard_user)
         response = self.client.patch(self.tower_server_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_patch_tower_server_when_logout(self):
         self.client.logout()
         response = self.client.patch(self.tower_server_url, data=self.patch_data,
-                                     content_type="application/json")
+                                     format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

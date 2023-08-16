@@ -2,10 +2,10 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import RequestNotification
-from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotification
+from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotificationAPI
 
 
-class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
+class TestApiRequestNotificationFilterCreate(BaseTestRequestNotificationAPI):
 
     def setUp(self):
         super(TestApiRequestNotificationFilterCreate, self).setUp()
@@ -16,7 +16,7 @@ class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
 
     def _create_notification_filter(self):
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()),
                          {'id', 'name', 'profile', 'services', 'operations', 'request_states', 'when', 'last_updated',
@@ -24,7 +24,7 @@ class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
 
     def _create_notification_filter_failed(self, status_error=status.HTTP_400_BAD_REQUEST):
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status_error)
 
     def test_admin_post_notification_filter(self):
@@ -42,11 +42,11 @@ class TestApiRequestNotificationFilterCreate(BaseTestRequestNotification):
         self.client.force_login(user=self.standard_user)
         self.post_data['profile'] = self.standard_user.profile.id
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_cannot_post_notification_filter_when_logout(self):
         self.client.logout()
         response = self.client.post(self.create_notification_filter_url, data=self.post_data,
-                                    content_type="application/json")
+                                    format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

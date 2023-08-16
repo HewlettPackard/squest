@@ -2,12 +2,12 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
 from profiles.models import RequestNotification
-from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotification
+from tests.test_profiles.base.base_test_request_notification_filter import BaseTestRequestNotificationAPI
 
 from tests.utils import check_data_in_dict
 
 
-class TestApiRequestNotificationFilterPatch(BaseTestRequestNotification):
+class TestApiRequestNotificationFilterPatch(BaseTestRequestNotificationAPI):
 
     def setUp(self):
         super(TestApiRequestNotificationFilterPatch, self).setUp()
@@ -31,7 +31,7 @@ class TestApiRequestNotificationFilterPatch(BaseTestRequestNotification):
 
     def test_admin_put_notification_filter(self):
         response = self.client.put(self.get_notification_filter_details_url, data=self.put_data,
-                                   content_type="application/json")
+                                   format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         check_data_in_dict(self, [self.expected_data], [response.data])
 
@@ -42,11 +42,11 @@ class TestApiRequestNotificationFilterPatch(BaseTestRequestNotification):
         self.kwargs["pk"] = request_notification_filter_test.id
 
         response = self.client.put(self.get_notification_filter_details_url, data=self.put_data,
-                                   content_type="application/json")
+                                   format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_cannot_put_notification_filter_when_logout(self):
         self.client.logout()
         response = self.client.put(self.get_notification_filter_details_url, data=self.put_data,
-                                   content_type="application/json")
+                                   format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
