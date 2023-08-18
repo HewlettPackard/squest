@@ -13,7 +13,7 @@ class TestApiCustomLinkDelete(BaseTestCustomLinkAPI):
         self.kwargs = {
             'pk': self.test_custom_link.id
         }
-        self.get_custom_link_details_url = reverse('api_custom_link_details', kwargs=self.kwargs)
+        self.get_custom_link_details_url = reverse('api_customlink_details', kwargs=self.kwargs)
         self.custom_link_to_delete_id = self.update_operation_test.id
 
     def test_admin_delete_custom_link(self):

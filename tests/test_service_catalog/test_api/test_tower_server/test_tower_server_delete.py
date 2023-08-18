@@ -14,7 +14,7 @@ class TestApiTowerServerDelete(BaseTestRequestAPI):
         self.kwargs = {
             'pk': self.tower_server_to_delete_id
         }
-        self.tower_server_url = reverse('api_tower_server_details', kwargs=self.kwargs)
+        self.tower_server_url = reverse('api_towerserver_details', kwargs=self.kwargs)
 
     def test_admin_delete_request(self):
         tower_server_count = TowerServer.objects.count()

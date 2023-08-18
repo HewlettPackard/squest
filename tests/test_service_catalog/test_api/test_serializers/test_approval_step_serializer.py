@@ -15,7 +15,7 @@ class TestApprovalStepSerializer(BaseTestApprovalAPI):
         }
         self.data = {
             'name': 'test_step',
-            'permission': Permission.objects.get(codename="can_approve_approvalstep").id,
+            'permission': Permission.objects.get(codename="approve_approvalstep").id,
             'readable_fields': [self.field1.id],
             'editable_fields': [self.field2.id]
         }

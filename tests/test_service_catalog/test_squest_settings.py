@@ -15,7 +15,7 @@ class TestSquestSettings(BaseTest):
         self.assertEqual(200, response.status_code)
 
         # from the api
-        self.url = reverse('api_instance_list')
+        self.url = reverse('api_instance_list_create')
         api_client = APIClient()
         api_client.force_authenticate(user=self.superuser)
         response = api_client.get(self.url, format='json')

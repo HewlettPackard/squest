@@ -12,8 +12,10 @@ class ApprovalWorkflowSerializer(ModelSerializer):
 
     def validate(self, data):
         super(ApprovalWorkflowSerializer, self).validate(data)
-        operation = data.get("operation")
-        scopes = data.get("scopes")
+        operation = self.instance.operation if self.instance is not None else None
+        operation = data.get("operation") if 'operation' in data.keys() else operation
+        scopes = self.instance.scopes.all() if self.instance is not None else list()
+        scopes = data.get("scopes") if 'scopes' in data.keys() else scopes
         # check that selected scopes are not already in use by another approval workflow for the selected operation
         exclude_id = self.instance.id if self.instance else None
         for scope in scopes:

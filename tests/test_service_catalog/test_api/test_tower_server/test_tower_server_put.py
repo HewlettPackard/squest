@@ -20,7 +20,7 @@ class TestApiTowerServerPut(BaseTestRequestAPI):
         self.kwargs = {
             'pk': self.tower_server_test.id
         }
-        self.tower_server_url = reverse('api_tower_server_details', kwargs=self.kwargs)
+        self.tower_server_url = reverse('api_towerserver_details', kwargs=self.kwargs)
 
     def test_admin_put_tower_server(self):
         response = self.client.put(self.tower_server_url, data=self.put_data, format="json")

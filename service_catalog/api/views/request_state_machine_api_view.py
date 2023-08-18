@@ -1,5 +1,4 @@
 from copy import deepcopy
-
 from django_fsm import can_proceed
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -152,9 +151,11 @@ class RequestStateMachine(ViewSet):
         send_email_request_canceled(target_request,
                                     user_applied_state=request.user,
                                     request_owner_user=target_request.user)
-        if self.request.user.has_perm("service_catalog.view_admin_survey", target_request):
-            return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
-        return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        if Request.objects.filter(id=pk).exists():
+            if self.request.user.has_perm("service_catalog.view_admin_survey", target_request):
+                return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
+            return Response(RequestSerializer(target_request).data, status=status.HTTP_200_OK)
+        return Response({"success": "Request canceled and deleted"}, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: AdminRequestSerializer()})
     @action(detail=True)

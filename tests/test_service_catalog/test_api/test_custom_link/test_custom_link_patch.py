@@ -13,7 +13,7 @@ class TestApiCustomLinkPatch(BaseTestCustomLinkAPI):
         self.kwargs = {
             'pk': self.test_custom_link.id
         }
-        self.get_custom_link_details_url = reverse('api_custom_link_details', kwargs=self.kwargs)
+        self.get_custom_link_details_url = reverse('api_customlink_details', kwargs=self.kwargs)
         self.patch_data = {
             'name': "new_name",
             'url': "new_url",
