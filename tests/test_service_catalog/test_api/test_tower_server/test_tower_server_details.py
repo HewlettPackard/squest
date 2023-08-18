@@ -12,7 +12,7 @@ class TestApiTowerServerDetails(BaseTestRequestAPI):
         self.kwargs = {
             'pk': self.tower_server_test.id
         }
-        self.tower_server_url = reverse('api_tower_server_details', kwargs=self.kwargs)
+        self.tower_server_url = reverse('api_towerserver_details', kwargs=self.kwargs)
         self.expected_data = {
             'id': self.tower_server_test.id,
             'name': self.tower_server_test.name,

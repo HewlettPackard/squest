@@ -10,7 +10,7 @@ class TestInstanceList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestInstanceList, self).setUp()
-        self.url = reverse('api_instance_list')
+        self.url = reverse('api_instance_list_create')
 
     def test_list_instance(self):
         response = self.client.get(self.url, format='json')

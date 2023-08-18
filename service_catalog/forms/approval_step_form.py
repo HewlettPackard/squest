@@ -30,7 +30,7 @@ class ApprovalStepForm(SquestModelForm):
         self.fields['approval_workflow'].initial = self.approval_workflow.id
 
         self.fields['permission'].help_text = f"Create a <a href='{reverse('profiles:approvalstep_permission_create')}'>permission</a>"
-        default_perm = Permission.objects.get(codename="can_approve_approvalstep")
+        default_perm = Permission.objects.get(codename="approve_approvalstep")
         self.fields['permission'].initial = (default_perm.id, default_perm.name)
 
     def clean(self):

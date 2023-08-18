@@ -6,7 +6,8 @@ from tests.permission_endpoint import TestingGetContextView, TestingPostContextV
 
 
 class TestServiceCatalogInstancePermissionsCRUDViews(BaseTestRequest, TestPermissionEndpoint):
-    def test_crud_views(self):
+    def setUp(self):
+        super().setUp()
         self.test_instance.state = InstanceState.AVAILABLE
         self.test_instance_2.state = InstanceState.AVAILABLE
         self.test_instance_2.service = self.update_operation_test_2.service
@@ -15,6 +16,8 @@ class TestServiceCatalogInstancePermissionsCRUDViews(BaseTestRequest, TestPermis
 
         self.update_operation_test_2.is_admin_operation = True
         self.update_operation_test_2.save()
+
+    def test_crud_views(self):
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:instance_list',

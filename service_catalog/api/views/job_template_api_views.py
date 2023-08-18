@@ -1,12 +1,12 @@
 from rest_framework.generics import get_object_or_404
 
-from Squest.utils.squest_api_views import SquestRetrieveUpdateAPIView, SquestListAPIView
+from Squest.utils.squest_api_views import SquestListAPIView, SquestRetrieveAPIView
 from service_catalog.api.serializers import JobTemplateSerializer
 from service_catalog.filters.job_template_filter import JobTemplateFilter
 from service_catalog.models import JobTemplate, TowerServer
 
 
-class JobTemplateDetails(SquestRetrieveUpdateAPIView):
+class JobTemplateDetails(SquestRetrieveAPIView):
     serializer_class = JobTemplateSerializer
 
     def get_queryset(self):

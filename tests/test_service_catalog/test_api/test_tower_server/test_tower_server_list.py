@@ -9,7 +9,7 @@ class TestApiTowerServerList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiTowerServerList, self).setUp()
-        self.tower_server_url = reverse('api_tower_server_list_create')
+        self.tower_server_url = reverse('api_towerserver_list_create')
 
     def test_admin_get_tower_server(self):
         response = self.client.get(self.tower_server_url)
