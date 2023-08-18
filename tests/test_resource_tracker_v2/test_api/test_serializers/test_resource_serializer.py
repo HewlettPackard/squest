@@ -1,4 +1,4 @@
-from resource_tracker_v2.api.serializers.resource_serializer import ResourceCreateSerializer
+from resource_tracker_v2.api.serializers.resource_serializer import ResourceSerializer
 from resource_tracker_v2.models import Resource
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2API
 
@@ -26,9 +26,8 @@ class ResourceSerializerTests(BaseTestResourceTrackerV2API):
                  "value": 10
                  }
             ],
-            "resource_group": self.cluster.id
         }
-        serializer = ResourceCreateSerializer(data=data)
+        serializer = ResourceSerializer(data=data, context=self.context)
         self.assertTrue(serializer.is_valid())
         serializer.save()
         self._validate_created()
