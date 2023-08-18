@@ -1,8 +1,6 @@
 import copy
 
 from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 from Squest.utils.squest_api_views import SquestRetrieveUpdateDestroyAPIView, SquestListCreateAPIView
 from resource_tracker_v2.api.serializers.transformer_serializer import TransformerSerializer
@@ -19,16 +17,11 @@ class TransformerListCreate(SquestListCreateAPIView):
             return Transformer.objects.none()
         return Transformer.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
 
-    def create(self, request, **kwargs):
-        resource_group_id = self.kwargs['resource_group_id']
-        resource_group = get_object_or_404(ResourceGroup, pk=resource_group_id)
-        data = copy.copy(request.data)
-        data["resource_group"] = resource_group.id
-        serializer = TransformerSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+    def get_serializer_context(self):
+        context = super(TransformerListCreate, self).get_serializer_context()
+        resource_group = get_object_or_404(ResourceGroup, pk=self.kwargs['resource_group_id'])
+        context["resource_group"] = resource_group
+        return context
 
 
 class TransformerDetails(SquestRetrieveUpdateDestroyAPIView):
@@ -38,6 +31,12 @@ class TransformerDetails(SquestRetrieveUpdateDestroyAPIView):
         if getattr(self, "swagger_fake_view", False):
             return Transformer.objects.none()
         return Transformer.objects.filter(resource_group_id=self.kwargs['resource_group_id'])
+
+    def get_serializer_context(self):
+        context = super(TransformerDetails, self).get_serializer_context()
+        resource_group = get_object_or_404(ResourceGroup, pk=self.kwargs['resource_group_id'])
+        context["resource_group"] = resource_group
+        return context
 
     def get_serializer(self, *args, **kwargs):
         updated_kwargs = copy.deepcopy(kwargs)
