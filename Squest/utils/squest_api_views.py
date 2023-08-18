@@ -43,7 +43,7 @@ class SquestObjectPermissions(DjangoObjectPermissions):
         return True
 
 
-class SquestObjectPermissionsDetails(SquestObjectPermissions):
+class SquestObjectPermissionsRetrieveUpdateDestroy(SquestObjectPermissions):
     """
     Custom permission to only allow owners of an object to edit it.
     """
@@ -54,6 +54,52 @@ class SquestObjectPermissionsDetails(SquestObjectPermissions):
         'PUT': ['%(app_label)s.change_%(model_name)s'],
         'PATCH': ['%(app_label)s.change_%(model_name)s'],
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+
+class SquestObjectPermissionsRetrieveUpdate(SquestObjectPermissions):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': [],
+        'HEAD': [],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+    }
+
+
+class SquestObjectPermissionsRetrieve(SquestObjectPermissions):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': [],
+        'HEAD': [],
+    }
+
+
+class SquestObjectPermissionsDestroy(SquestObjectPermissions):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    perms_map = {
+        'OPTIONS': [],
+        'HEAD': [],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+
+class SquestObjectPermissionsList(SquestObjectPermissions):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    perms_map = {
+        'GET': ['%(app_label)s.list_%(model_name)s'],
+        'OPTIONS': [],
+        'HEAD': [],
     }
 
 
@@ -115,30 +161,29 @@ class SquestGenericAPIView(GenericAPIView, SquestBrowsableAPIRenderer):
         self.check_throttles(request)
 
 
-class SquestListCreateAPIView(ListCreateAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
+class SquestListCreateAPIView(ListCreateAPIView, SquestGenericAPIView):
     permission_classes = [IsAuthenticated, SquestObjectPermissionsListCreate]
 
 
-class SquestListAPIView(ListAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
+class SquestListAPIView(ListAPIView, SquestGenericAPIView):
+    permission_classes = [IsAuthenticated, SquestObjectPermissionsList]
+
+
+class SquestCreateAPIView(CreateAPIView, SquestGenericAPIView):
     permission_classes = [IsAuthenticated, SquestObjectPermissionsListCreate]
 
 
-class SquestCreateAPIView(CreateAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
-    permission_classes = [IsAuthenticated, SquestObjectPermissionsListCreate]
+class SquestRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView, SquestGenericAPIView):
+    permission_classes = [IsAuthenticated, SquestObjectPermissionsRetrieveUpdateDestroy]
 
 
-class SquestRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView, SquestGenericAPIView,
-                                         SquestBrowsableAPIRenderer):
-    permission_classes = [IsAuthenticated, SquestObjectPermissionsDetails]
+class SquestRetrieveUpdateAPIView(RetrieveUpdateAPIView, SquestGenericAPIView):
+    permission_classes = [IsAuthenticated, SquestObjectPermissionsRetrieveUpdate]
 
 
-class SquestRetrieveUpdateAPIView(RetrieveUpdateAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
-    permission_classes = [IsAuthenticated, SquestObjectPermissionsDetails]
+class SquestRetrieveAPIView(RetrieveAPIView, SquestGenericAPIView):
+    permission_classes = [IsAuthenticated, SquestObjectPermissionsRetrieve]
 
 
-class SquestRetrieveAPIView(RetrieveAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
-    permission_classes = [IsAuthenticated, SquestObjectPermissionsDetails]
-
-
-class SquestDestroyAPIView(DestroyAPIView, SquestGenericAPIView, SquestBrowsableAPIRenderer):
-    permission_classes = [IsAuthenticated, SquestObjectPermissionsDetails]
+class SquestDestroyAPIView(DestroyAPIView, SquestGenericAPIView):
+    permission_classes = [IsAuthenticated, SquestObjectPermissionsDestroy]

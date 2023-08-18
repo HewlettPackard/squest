@@ -20,8 +20,7 @@ class TestApproveWorkflowStepSerializer(BaseTestApprovalAPI):
         }
         serializer = ApproveWorkflowStepSerializer(data=data, **parameters)
         self.assertTrue(serializer.is_valid())
-        with mock.patch \
-                ("service_catalog.models.approval_workflow_state.ApprovalWorkflowState.approve_current_step") as mock_approve_current_step:
+        with mock.patch("service_catalog.models.approval_workflow_state.ApprovalWorkflowState.approve_current_step") as mock_approve_current_step:
             serializer.save()
             # only the editable field is sent to approve
             mock_approve_current_step.assert_called_with(user=self.superuser,

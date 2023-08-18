@@ -14,17 +14,16 @@ class OperationListCreate(SquestListCreateAPIView):
     serializer_class = OperationSerializer
     filterset_class = OperationFilter
 
-    def get_serializer(self, *args, **kwargs):
-        if 'data' in kwargs:
-            kwargs['data']['service'] = self.kwargs.get('service_id', None)
-        return super(OperationListCreate, self).get_serializer(*args, **kwargs)
-
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Operation.objects.none()
-        service_id = self.kwargs.get('service_id', None)
-        queryset = Service.objects.get(id=service_id).operations.all()
-        return queryset
+        return Service.objects.get(id=self.kwargs.get('service_id', None)).operations.all()
+
+    def get_serializer_context(self):
+        context = super(OperationListCreate, self).get_serializer_context()
+        service = get_object_or_404(Service, pk=self.kwargs['service_id'])
+        context["service"] = service
+        return context
 
 
 class OperationDetails(SquestRetrieveUpdateDestroyAPIView):
@@ -39,14 +38,21 @@ class OperationDetails(SquestRetrieveUpdateDestroyAPIView):
         queryset = Service.objects.get(id=service_id).operations.all()
         return queryset
 
+    def get_serializer_context(self):
+        context = super(OperationDetails, self).get_serializer_context()
+        service = get_object_or_404(Service, pk=self.kwargs['service_id'])
+        context["service"] = service
+        return context
+
 
 class InstanceOperationList(SquestListAPIView):
     serializer_class = OperationSerializer
 
     def get_object(self):
-        return get_object_or_404(Instance.get_queryset_for_user(self.request.user,"service_catalog.view_instance"), id=self.kwargs.get('instance_id', None))
+        return get_object_or_404(Instance.get_queryset_for_user(self.request.user, "service_catalog.view_instance"),
+                                 id=self.kwargs.get('instance_id', None))
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
-            return Instance.objects.none()
+            return Operation.objects.none()
         return self.get_object().service.operations.exclude(type=OperationType.CREATE)

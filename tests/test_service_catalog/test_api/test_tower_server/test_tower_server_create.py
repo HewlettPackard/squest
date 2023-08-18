@@ -18,7 +18,7 @@ class TowerServerCreate(BaseTestRequestAPI):
             'ssl_verify': False,
             'extra_vars': {"test": "test"}
         }
-        self.tower_server_url = reverse('api_tower_server_list_create')
+        self.tower_server_url = reverse('api_towerserver_list_create')
 
     def test_admin_post_tower_server(self):
         response = self.client.post(self.tower_server_url, data=self.post_data, format='json')

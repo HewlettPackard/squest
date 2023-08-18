@@ -8,7 +8,7 @@ class TestApprovalWorkflowUpdateStepPositions(BaseTestApprovalAPI):
 
     def setUp(self):
         super(TestApprovalWorkflowUpdateStepPositions, self).setUp()
-        self.url = reverse('approvalworkflow_update_steps_position', args=[self.test_approval_workflow.id])
+        self.url = reverse('api_approvalworkflow_update_steps_position', args=[self.test_approval_workflow.id])
 
         # approval
         self.test_approval_workflow_2 = ApprovalWorkflow.objects.create(name="test_approval_workflow_2",

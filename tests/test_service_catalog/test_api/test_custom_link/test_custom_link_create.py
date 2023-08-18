@@ -18,7 +18,7 @@ class TestApiCustomLinkCreate(BaseTestCustomLinkAPI):
             'url': "https://server.domain",
 
         }
-        self.get_custom_link_create_url = reverse('api_custom_link_list_create')
+        self.get_custom_link_create_url = reverse('api_customlink_list_create')
 
     def test_admin_post_custom_link(self):
         number_custom_link_before = CustomLink.objects.all().count()

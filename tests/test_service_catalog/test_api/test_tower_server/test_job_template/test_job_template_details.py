@@ -12,7 +12,7 @@ class TestApiJobTemplateDetails(BaseTestRequestAPI):
             'tower_server_id': self.tower_server_test.id,
             'pk': self.job_template_test.id,
         }
-        self.url = reverse('api_job_template_details', kwargs=self.kwargs)
+        self.url = reverse('api_jobtemplate_details', kwargs=self.kwargs)
 
     def _assert_can_get_details(self, response):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -29,7 +29,7 @@ class TestApiJobTemplateDetails(BaseTestRequestAPI):
             'tower_server_id': self.tower_server_test_2.id,
             'pk': self.job_template_test.id,
         }
-        self.url = reverse('api_job_template_details', kwargs=self.kwargs)
+        self.url = reverse('api_jobtemplate_details', kwargs=self.kwargs)
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -38,7 +38,7 @@ class TestApiJobTemplateDetails(BaseTestRequestAPI):
             'tower_server_id': self.tower_server_test.id,
             'pk': 9999,
         }
-        self.url = reverse('api_job_template_details', kwargs=self.kwargs)
+        self.url = reverse('api_jobtemplate_details', kwargs=self.kwargs)
         response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

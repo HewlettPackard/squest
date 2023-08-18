@@ -19,12 +19,10 @@ class JobTemplateSync(APIView):
     def post(self, request, tower_server_id, job_template_id=None):
         # get object to check that they exist before sending them to Celery
         tower_server = get_object_or_404(TowerServer, id=tower_server_id)
+        if job_template_id is not None:
+            job_template = get_object_or_404(JobTemplate, id=job_template_id, tower_server=tower_server.id)
         if not request.user.has_perm('service_catalog.sync_towerserver', tower_server):
             raise PermissionDenied
-        if job_template_id is not None:
-            queryset = JobTemplate.objects.filter(id=job_template_id, tower_server=tower_server.id)
-            get_object_or_404(queryset)
-
         task = tasks.towerserver_sync.delay(tower_server.id, job_template_id)
         task_result = TaskResult(task_id=task.task_id)
         task_result.save()
