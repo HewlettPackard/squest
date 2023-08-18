@@ -9,7 +9,7 @@ class TestInstanceCreate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestInstanceCreate, self).setUp()
-        self.url = reverse('api_instance_list')
+        self.url = reverse('api_instance_list_create')
 
     def _assert_created(self, data, expected):
         instance_count = Instance.objects.count()

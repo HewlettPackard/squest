@@ -10,7 +10,7 @@ class TestApiCustomLinkList(BaseTestCustomLinkAPI):
 
     def setUp(self):
         super(TestApiCustomLinkList, self).setUp()
-        self.get_custom_link_list_url = reverse('api_custom_link_list_create')
+        self.get_custom_link_list_url = reverse('api_customlink_list_create')
 
     def test_get_all_custom_link(self):
         response = self.client.get(self.get_custom_link_list_url)

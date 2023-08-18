@@ -2,7 +2,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
 
 from Squest.utils.squest_api_views import SquestListAPIView, SquestRetrieveUpdateDestroyAPIView, SquestCreateAPIView, \
@@ -11,7 +11,6 @@ from service_catalog.api.serializers import RequestSerializer, AdminRequestSeria
     ServiceRequestSerializer
 from service_catalog.filters.request_filter import RequestFilter
 from service_catalog.models import Request, OperationType, Operation, Instance
-from service_catalog.models.request_state import RequestState
 
 
 class RequestList(SquestListAPIView):
@@ -26,30 +25,21 @@ class RequestList(SquestListAPIView):
         else:
             return RequestSerializer
 
+
 class RequestDetails(SquestRetrieveUpdateDestroyAPIView):
     queryset = Request.objects.all()
 
     def get_serializer_class(self):
-        if self.request.user.has_perm("service_catalog.view_admin_survey",self.get_object()):
+        if self.request.user.has_perm("service_catalog.view_admin_survey", self.get_object()):
             return AdminRequestSerializer
         else:
             return RequestSerializer
 
 
-class SquestRequestOperationCreate(SquestObjectPermissions):
-    """
-    Custom permission to only allow owners of an object to edit it.
-    """
-    perms_map = {
-        'OPTIONS': [],
-        'HEAD': [],
-        'POST': ['%(app_label)s.request_on_instance']
-    }
-
-
 class OperationRequestCreate(SquestCreateAPIView):
     serializer_class = OperationRequestSerializer
     queryset = Request.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return get_object_or_404(Instance, id=self.kwargs.get('instance_id'))
@@ -76,34 +66,56 @@ class OperationRequestCreate(SquestCreateAPIView):
         return Response(RequestSerializer(request_created).data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class SquestRequestServiceCreate(SquestObjectPermissions):
+class SquestRequestServiceCreatePermissions(SquestObjectPermissions):
     """
     Custom permission to only allow owners of an object to edit it.
     """
     perms_map = {
         'OPTIONS': [],
         'HEAD': [],
-        'POST': ['%(app_label)s.request_on_service']
+        'POST': ['service_catalog.request_on_service']
     }
+
+    def has_object_permission(self, request, view, obj):
+        # Override to raise 403 instead of 404
+        # authentication checks have already executed via has_permission
+        queryset = self._queryset(view)
+        model_cls = queryset.model
+        user = request.user
+
+        perms = self.get_required_object_permissions(request.method, model_cls)
+
+        if not user.has_perms(perms, obj):
+            # If the user does not have permissions we need to determine if
+            # they have read permissions to see 403, or not, and simply see
+            # a 404 response.
+
+            if request.method in SAFE_METHODS:
+                # Read permissions already checked and failed, no need
+                # to make another lookup.
+                raise PermissionDenied
+
+            # Has read permissions.
+            return False
+
+        return True
 
 
 class ServiceRequestCreate(SquestCreateAPIView):
     serializer_class = ServiceRequestSerializer
     queryset = Request.objects.all()
-    permission_classes = [IsAuthenticated, SquestRequestServiceCreate]
+    permission_classes = [IsAuthenticated, SquestRequestServiceCreatePermissions]
 
     def get_object(self):
-        return get_object_or_404(Operation, id=self.kwargs.get('pk'))
+        return get_object_or_404(Operation, id=self.kwargs.get('pk'), type=OperationType.CREATE, enabled=True,
+                                 service_id=self.kwargs.get('service_id'))
 
     @swagger_auto_schema(responses={201: RequestSerializer()})
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        operation = get_object_or_404(
-            Operation.get_queryset_for_user(request.user, 'service_catalog.request_on_service'),
-            id=kwargs.get('pk'), type=OperationType.CREATE, enabled=True,
-            service__id=kwargs.get('service_id'))
+        operation = self.get_object()
         serializer = self.get_serializer(operation=operation, user=request.user, data=request.data)
         serializer.is_valid(raise_exception=True)
         request_created = serializer.save()

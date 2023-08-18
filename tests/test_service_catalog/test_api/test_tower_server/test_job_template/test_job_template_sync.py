@@ -15,14 +15,14 @@ class TestApiJobTemplateSyncAll(BaseTestAPI):
         self.kwargs = {
             'tower_server_id': self.tower_server_test.id,
         }
-        self.url = reverse('api_job_template_sync_all', kwargs=self.kwargs)
+        self.url = reverse('api_jobtemplate_sync_all', kwargs=self.kwargs)
 
     def setup_sync_single_job_template_test(self):
         self.kwargs = {
             'tower_server_id': self.tower_server_test.id,
             'job_template_id': self.job_template_test.id
         }
-        self.url = reverse('api_job_template_sync', kwargs=self.kwargs)
+        self.url = reverse('api_jobtemplate_sync', kwargs=self.kwargs)
 
     def _check_can_sync_job_template(self, expected_argument):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:

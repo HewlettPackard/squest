@@ -29,8 +29,7 @@ class ApprovalStepDetails(SquestRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return ApprovalStep.objects.none()
-        queryset = ApprovalStep.objects.filter(approval_workflow_id=self.kwargs['approval_workflow_id'])
-        return queryset
+        return ApprovalStep.objects.filter(approval_workflow_id=self.kwargs['approval_workflow_id'])
 
     def get_serializer_context(self):
         context = super(ApprovalStepDetails, self).get_serializer_context()
