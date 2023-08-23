@@ -470,7 +470,7 @@ class RequestApproveView(SquestFormView):
         return super(RequestApproveView, self).dispatch(request, *args, **kwargs)
 
     def get_permission_required(self):
-        return self.get_object().approval_workflow_state.current_step.approval_step.permission.get_permission_str()
+        return self.get_object().approval_workflow_state.current_step.approval_step.permission.permission_str
 
     def form_valid(self, form):
         return super().form_valid(form)
