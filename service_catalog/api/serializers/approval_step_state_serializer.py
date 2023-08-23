@@ -15,7 +15,7 @@ class ApprovalStepStateSerializer(ModelSerializer):
 
     def to_representation(self, current_step):
         representation = super().to_representation(current_step)
-        if not self.user.has_perm(current_step.approval_step.permission.get_permission_str(),
+        if not self.user.has_perm(current_step.approval_step.permission.permission_str,
                                   current_step.approval_workflow_state.request):
             representation.pop("fill_in_survey")
         return representation

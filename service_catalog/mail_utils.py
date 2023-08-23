@@ -1,15 +1,19 @@
 import base64
+import logging
+
+from os import linesep
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import get_template
 
-from profiles.models import Permission
 from service_catalog import tasks
 from service_catalog.models.request import RequestState
 
 DEFAULT_FROM_EMAIL = f"{settings.SQUEST_EMAIL_HOST}"
 EMAIL_TITLE_PREFIX = "[Squest]"
+
+logger = logging.getLogger(__name__)
 
 
 def _get_subject(target_object):
@@ -25,62 +29,63 @@ def _get_headers(subject):
     return headers
 
 
-def _apply_when_filter_instance(user_list, squest_object):
-    users = list()
-    for user in user_list:
-        if user.email:
-            if user.profile.instance_notification_enabled:
-                if user.profile.is_notification_authorized_for_instance(squest_object):
-                    users.append(user)
-    return users
+def _exclude_user_without_email(user_qs):
+    if user_qs.filter(email='').exists():
+        logger.warning(f'The following users have no email:\n'
+                       f'{linesep.join(f" - {user.username}" for user in user_qs.filter(email=""))}')
+    return user_qs.exclude(email='')
 
 
-def _apply_when_filter_request(user_list, squest_object):
-    users = list()
-    for user in user_list:
-        if user.email:
-            if user.profile.request_notification_enabled:
-                if user.profile.is_notification_authorized_for_request(squest_object):
-                    users.append(user)
-    return users
+def _apply_when_filter_instance(user_qs, squest_object):
+    user_emails = list()
+    user_qs = _exclude_user_without_email(user_qs)
+    if user_qs.filter(profile__instance_notification_enabled=False).exists():
+        logger.warning(f'The following users have no instance notification enabled:\n'
+                       f'{linesep.join(f" - {user.username}" for user in user_qs.filter(profile__instance_notification_enabled=False))}')
+    for user in user_qs.exclude(profile__instance_notification_enabled=False):
+        if user.profile.is_notification_authorized_for_instance(squest_object):
+            user_emails.append(user.email)
+    return user_emails
+
+
+def _apply_when_filter_request(user_qs, squest_object):
+    user_emails = list()
+    user_qs = _exclude_user_without_email(user_qs)
+    if user_qs.filter(profile__request_notification_enabled=False).exists():
+        logger.warning(f'The following users have no request notification enabled:'
+                       f'{linesep.join(user.username for user in user_qs.filter(profile__request_notification_enabled=False))}')
+    for user in user_qs.exclude(profile__request_notification_enabled=False):
+        if user.profile.is_notification_authorized_for_request(squest_object):
+            user_emails.append(user.email)
+    return user_emails
 
 
 def _get_receivers_for_support_message(support_message):
     ## Apply when filter on all users
-    receivers_raw = support_message.who_has_perm("service_catalog.view_supportmessage").exclude(id=support_message.sender.id)
-    receivers = _apply_when_filter_instance(receivers_raw, support_message.support.instance)
-    ## Keep mail only
-    receiver_email_list = [user.email for user in receivers]
-    return receiver_email_list
+    receivers_raw = support_message.who_has_perm("service_catalog.view_supportmessage").exclude(
+        id=support_message.sender.id)
+    return _apply_when_filter_instance(receivers_raw, support_message.support.instance)
 
 
 def _get_receivers_for_request_message(request_message):
     ## Apply when filter on all users
-    receivers_raw = request_message.who_has_perm("service_catalog.view_requestmessage").exclude(id=request_message.sender.id)
-    receivers = _apply_when_filter_request(receivers_raw, request_message.request)
-    ## Keep mail only
-    receiver_email_list = [user.email for user in receivers]
-    return receiver_email_list
+    receivers_raw = request_message.who_has_perm("service_catalog.view_requestmessage").exclude(
+        id=request_message.sender.id)
+    return _apply_when_filter_request(receivers_raw, request_message.request)
 
 
 def _get_receivers_for_support(support):
     ## Apply when filter on all users
 
     receivers_raw = support.who_has_perm("service_catalog.view_support")
-    receivers = _apply_when_filter_instance(receivers_raw, support.instance)
-    ## Keep mail only
-    receiver_email_list = [user.email for user in receivers]
-    return receiver_email_list
+    return _apply_when_filter_instance(receivers_raw, support.instance)
 
 
 def _get_receivers_for_request(squest_request):
     ## Apply when filter on all users
     customer_raw = squest_request.who_has_perm("service_catalog.view_request")
     admin_raw = squest_request.who_can_accept()
-    receivers = _apply_when_filter_request(customer_raw | admin_raw, squest_request)
-    ## Keep mail only
-    receiver_email_list = [user.email for user in receivers]
-    return receiver_email_list
+    return _apply_when_filter_request(customer_raw | admin_raw, squest_request)
 
 
 def send_mail_request_update(target_request, user_applied_state=None, message=None, receiver_email_list=None,
