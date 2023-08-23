@@ -1,4 +1,4 @@
-import copy
+from copy import deepcopy
 
 from django_fsm import can_proceed
 from drf_yasg.utils import swagger_auto_schema
@@ -65,7 +65,7 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         if not can_proceed(target_request.reject):
             raise PermissionDenied
-        data = copy.deepcopy(request.data)
+        data = deepcopy(request.data)
         data['sender'] = request.user.id
         data['request'] = target_request.id
         message = RequestMessageSerializer(data=data)
@@ -87,7 +87,7 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         if not can_proceed(target_request.re_submit):
             raise PermissionDenied
-        data = copy.deepcopy(request.data)
+        data = deepcopy(request.data)
         data['sender'] = request.user.id
         data['request'] = target_request.id
         message = RequestMessageSerializer(data=data)
@@ -109,7 +109,7 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         if not can_proceed(target_request.need_info):
             raise PermissionDenied
-        data = copy.deepcopy(request.data)
+        data = deepcopy(request.data)
         data['sender'] = request.user.id
         data['request'] = target_request.id
         message = RequestMessageSerializer(data=data)

@@ -79,7 +79,7 @@ class ApprovalStep(SquestModel):
         return self.approval_workflow.get_scopes()
 
     def who_can_approve(self, scope):
-        return scope.who_has_perm(self.permission.get_permission_str())
+        return scope.who_has_perm(self.permission.permission_str)
 
 
 post_save.connect(ApprovalStep.on_create_set_position, sender=ApprovalStep)

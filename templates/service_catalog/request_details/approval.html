@@ -40,7 +40,7 @@
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
                         {% if step.state == "APPROVED" %}
-                            {% has_perm request.user step.approval_step.permission.get_permission_str step as can_view_step %}
+                            {% has_perm request.user step.approval_step.permission.permission_str step as can_view_step %}
                             <details open>
                                 <summary>Survey</summary>
                                 <table class="row">

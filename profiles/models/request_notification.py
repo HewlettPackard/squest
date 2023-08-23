@@ -40,10 +40,8 @@ class RequestNotification(NotificationFilter):
 
     def when_render(self, request):
         from service_catalog.api.serializers import RequestSerializer
-        from service_catalog.api.serializers import InstanceSerializer
         context = {
             "request": RequestSerializer(request).data,
-            "instance": InstanceSerializer(request.instance).data
         }
         return AnsibleWhen.when_render(context=context, when_string=self.when)
 

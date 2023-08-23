@@ -50,7 +50,7 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str,
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.permission_str,
                                      target_request):
             raise PermissionDenied
 
@@ -63,7 +63,7 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str(),
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.permission_str,
                                      target_request):
             raise PermissionDenied
         serializer = ApproveWorkflowStepSerializer(data=request.data, target_request=target_request, user=request.user)
@@ -79,7 +79,7 @@ class ApproveCurrentStep(ViewSet):
         target_request = get_object_or_404(Request, id=pk)
         if target_request.approval_workflow_state.current_step is None:
             return Response({"error": "No pending step to approve"}, status=HTTP_404_NOT_FOUND)
-        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.get_permission_str(),
+        if not request.user.has_perm(target_request.approval_workflow_state.current_step.approval_step.permission.permission_str,
                                      target_request):
             raise PermissionDenied
         # reject the current step if exist
@@ -93,7 +93,6 @@ class ApproveCurrentStep(ViewSet):
 
 
 class ApprovalWorkflowUpdateStepsPosition(APIView):
-
     def post(self, request, pk):
         approval_workflow = get_object_or_404(ApprovalWorkflow, pk=pk)
         instances = approval_workflow.approval_steps
