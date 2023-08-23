@@ -61,4 +61,4 @@ class ApprovalStepState(SquestModel):
         return self.approval_workflow_state.get_scopes()
 
     def who_can_approve(self):
-        return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(self.approval_step.permission.get_permission_str())
+        return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(self.approval_step.permission.permission_str)

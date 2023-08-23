@@ -9,7 +9,8 @@ class Permission(SquestRBAC, Permission, SquestDeleteCascadeMixIn):
         proxy = True
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
-    def get_permission_str(self):
+    @property
+    def permission_str(self):
         return f"{self.content_type.app_label}.{self.codename}"
 
     def get_absolute_url(self):
