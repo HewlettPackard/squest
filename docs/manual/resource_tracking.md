@@ -113,7 +113,7 @@ group** will be required, generating consumption on upper layers and so on...
 Resources can be created from the API. It allows to create automatically a new resource in a resource group when 
 something is provisioned from the service catalog.
 
-In the example below, the playbook executed in Tower/AWX would have created a VM. 
+In the example below, the playbook executed in AAP/AWX would have created a VM. 
 At the end of the process we call the squest API to instantiate a resource in the right resource group to reflect the 
 consumption.
 We link as well the pending instance(given by `squest.instance.id`) to this resource via the flag `service_catalog_instance`.
