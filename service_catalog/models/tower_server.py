@@ -10,7 +10,7 @@ from Squest.utils.squest_model import SquestModel
 class TowerServer(SquestModel):
     class Meta:
         permissions = [
-            ("sync_towerserver", "Can sync Controller"),
+            ("sync_towerserver", "Can sync AAP/AWX"),
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
