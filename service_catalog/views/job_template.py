@@ -20,7 +20,7 @@ class JobTemplateListView(SquestListView):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ""
         context['breadcrumbs'] = [
-            {'text': 'Controller', 'url': reverse('service_catalog:towerserver_list')},
+            {'text': 'Tower server', 'url': reverse('service_catalog:towerserver_list')},
             {'text': TowerServer.objects.get(id=self.kwargs.get('tower_id')).name, 'url': ""},
             {'text': 'Job templates', 'url': ""},
         ]
@@ -33,7 +33,7 @@ class JobTemplateDetailView(SquestDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
+            {'text': 'Tower server', 'url': reverse('service_catalog:towerserver_list')},
             {'text': self.get_object().tower_server.name, 'url': ""},
             {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().tower_server.id])},
             {'text': self.get_object(), 'url': ""},
@@ -50,7 +50,7 @@ class JobTemplateDeleteView(SquestDeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
+            {'text': 'Tower server', 'url': reverse('service_catalog:towerserver_list')},
             {'text': self.get_object().tower_server.name, 'url': ""},
             {'text': 'Job templates',
              'url': reverse('service_catalog:jobtemplate_list', args=[self.get_object().tower_server.id])},
@@ -67,7 +67,7 @@ def job_template_compliancy(request, tower_id, pk):
     if not request.user.has_perm('service_catalog.view_jobtemplate', job_template):
         raise PermissionDenied
     breadcrumbs = [
-        {'text': 'Ansible Controller', 'url': reverse('service_catalog:towerserver_list')},
+        {'text': 'Tower server', 'url': reverse('service_catalog:towerserver_list')},
         {'text': tower_server.name, 'url': ""},
         {'text': 'Job templates', 'url': reverse('service_catalog:jobtemplate_list', args=[tower_id])},
         {'text': job_template.name, 'url': ""},
