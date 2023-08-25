@@ -6,7 +6,7 @@
 |------------------------|-----------------------------------------------------------------------------------------------------------|
 | Name                   | Short name of the operation                                                                               |
 | Description            | Small description of the operation                                                                        |
-| Job template           | Executed job template in the backend Tower/AWX server                                                     |
+| Job template           | Executed job template in the backend AAP/AWX server                                                     |
 | Operation type         | Type of operation (Create, update, delete). Change the state of he instance after executing the operation |
 | Approval workflow      | Define an optional [approval workflow](#approval)                                                         |
 | Process timeout        | Number of second to wait for a successful return from the executed job template                           |
@@ -15,7 +15,7 @@
 | Enabled                | If set to `True` the operation can be requested from the UI and API                                       |
 | Is admin operation     | If set to `True` the operation is only visible and can be only requested by administrators                |
 | Extra vars             | Set of extra vars as JSON                                                                                 |
-| Default inventory ID   | ID of the Tower/AWX inventory to use by default.  Leave blank to use the default Job Template inventory   |
+| Default inventory ID   | ID of the AAP/AWX inventory to use by default.  Leave blank to use the default Job Template inventory   |
 | Default limit          | Comma separated list of inventory host limits                                                             |
 | Default tags           | Comma separated list of tags to use                                                                       |
 | Default skip tags      | Comma separated list of tags to skip                                                                      |
@@ -26,9 +26,9 @@
 
 ## Job template config
 
-By default, Squest will execute the selected Job Template with the config as set in Tower/AWX. 
+By default, Squest will execute the selected Job Template with the config as set in AAP/AWX. 
 
-If a field is configured to "Prompt on launch" in Tower/AWX, the administrator can override it from the "Process" page of an accepted request:
+If a field is configured to "Prompt on launch" in AAP/AWX, the administrator can override it from the "Process" page of an accepted request:
 
 Overridable fields:
 
@@ -50,14 +50,14 @@ Default value precedence:
 
 ```mermaid
 flowchart LR
-    Tower(Default from Tower/AWX) --> Squest(Default from Squest) --> Process(Process request page)
+    AAP/AWX(Default from AAP/AWX) --> Squest(Default from Squest) --> Process(Process request page)
 ```
 
 !!! note
 
-    **Default inventory ID** field is expecting an integer that correspond the the inventory ID in Tower/AWX.
+    **Default inventory ID** field is expecting an integer that correspond the the inventory ID in AAP/AWX.
 
-    **Default credential IDs** field is expecting a comma separated list of integer that correspond existings credentials ID in Tower/AWX.
+    **Default credential IDs** field is expecting a comma separated list of integer that correspond existings credentials ID in AAP/AWX.
 
 
 ## Approval
@@ -104,9 +104,9 @@ The survey of an operation can be edited to change the behavior of the generated
 
 !!! note
 
-    Surveys in Squest are actually surveys attached to each job templates in your Tower/AWX.
+    Surveys in Squest are actually surveys attached to each job templates in your AAP/AWX.
     Squest can only disable the ones that you don't want to be filled by your end users.
-    Those fields, if declared as mandatory on Tower/AWX, will need to be filled anyway by the admin when approving a request.
+    Those fields, if declared as mandatory on AAP/AWX, will need to be filled anyway by the admin when approving a request.
 
 ### End user field
 
@@ -115,24 +115,24 @@ By default, all fields are enabled when creating a new operation.
 
 !!! note
 
-    If the field is set as **required** into the Tower/AWX job template survey config then the administrator
+    If the field is set as **required** into the AAP/AWX job template survey config then the administrator
     will have to fill it in any case during the review of the request.
 
 ### Default value
 
 
-When set, the default value is pre-filled into the final form. It takes precedence over the default value set in Tower/AWX job template survey config.
+When set, the default value is pre-filled into the final form. It takes precedence over the default value set in AAP/AWX job template survey config.
 
 Default value precedence:
 
 ```mermaid
 flowchart LR
-    tower(Default from Tower/AWX) --> squest(Default from Squest value) --> User(User's input)  --> Admin(Admin's input)
+    AAP/AWX(Default from AAP/AWX) --> squest(Default from Squest value) --> User(User's input)  --> Admin(Admin's input)
 ```
 
 !!! note
 
-    When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the Tower/AWX survey field options.
+    When used with a 'multiple select' or 'multiple select multiple' type of field, the value need to be a valid one from the AAP/AWX survey field options.
 
 **Jinja templating**
 
