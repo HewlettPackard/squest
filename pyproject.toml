@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "squest"
 version = "2.0.0b"
-description = "Service catalog on top of Ansible Tower"
+description = "Service catalog on top of Ansible Automation Platform(AAP)/AWX (formerly known as Ansible Tower)"
 authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>", "Elias Boulharts <elias.boulharts@hpe.com", "Anthony Belhadj <anthony.belhadj@hpe.com>"]
 license = "MIT"
 

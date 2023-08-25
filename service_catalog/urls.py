@@ -100,23 +100,23 @@ urlpatterns = [
     path('doc/', views.DocListView.as_view(), name='doc_list'),
     path('doc/<int:pk>/', views.doc_details, name='doc_details'),
 
-    # Controller CRUD
-    path('controller/', views.TowerServerListView.as_view(), name='towerserver_list'),
-    path('controller/create/', views.TowerServerCreateView.as_view(), name='towerserver_create'),
-    path('controller/<int:pk>/', views.TowerServerDetailView.as_view(), name='towerserver_details'),
-    path('controller/<int:pk>/edit/', views.TowerServerEditView.as_view(), name='towerserver_edit'),
-    path('controller/<int:pk>/delete/', views.TowerServerDeleteView.as_view(), name='towerserver_delete'),
+    # Tower server CRUD
+    path('tower/', views.TowerServerListView.as_view(), name='towerserver_list'),
+    path('tower/create/', views.TowerServerCreateView.as_view(), name='towerserver_create'),
+    path('tower/<int:pk>/', views.TowerServerDetailView.as_view(), name='towerserver_details'),
+    path('tower/<int:pk>/edit/', views.TowerServerEditView.as_view(), name='towerserver_edit'),
+    path('tower/<int:pk>/delete/', views.TowerServerDeleteView.as_view(), name='towerserver_delete'),
 
-    # Synchronize controller endpoints
-    path('controller/<int:tower_id>/sync/', views.towerserver_sync, name='towerserver_sync'),
-    path('controller/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='jobtemplate_sync'),
+    # Synchronize tower server endpoints
+    path('tower/<int:tower_id>/sync/', views.towerserver_sync, name='towerserver_sync'),
+    path('tower/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='jobtemplate_sync'),
 
     # Job Template CRUD
-    path('controller/<int:tower_id>/job_template/', views.JobTemplateListView.as_view(),
+    path('tower/<int:tower_id>/job_template/', views.JobTemplateListView.as_view(),
          name='jobtemplate_list'),
     path('tower/<int:tower_id>/job_template/<int:pk>/', views.JobTemplateDetailView.as_view(),
          name='jobtemplate_details'),
-    path('controller/<int:tower_id>/job_template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
+    path('tower/<int:tower_id>/job_template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
          name='jobtemplate_delete'),
 
     # Job Template compliance details
