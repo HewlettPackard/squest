@@ -48,10 +48,12 @@
                     </div>
                     <div class="card-body pt-0 pb-0">
                         <ul class="list-group list-group-unbordered">
-                            <li class="list-group-item">
-                                <u>Description</u>
-                                <p class="float-right">{{ object.description }}</p>
-                            </li>
+                            {% if object.description %}
+                                <li class="list-group-item">
+                                    Description
+                                    <p class="float-right">{{ object.description }}</p>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
 
