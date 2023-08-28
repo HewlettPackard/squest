@@ -1,3 +1,9 @@
+# 1.10.5 2023-08-28
+
+## Feature
+
+- Command to generate resource tracker v1 migration YAML.
+
 # 1.10.4 2023-08-08
 
 ## Fix
