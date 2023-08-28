@@ -77,7 +77,6 @@
                 </div>
             {% endif %}
             {% if can_list_user %}
-{#                col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3#}
                 <div class="mt-2 col-12 col-sm-6 col-md-4 col-lg">
                     <!-- small card -->
                     <div class="h-100 small-box d-flex flex-column bg-default">
@@ -140,7 +139,8 @@
                                         <td class="align-middle text-center">
                                             <img src="{% if service.service.image %}{{ service.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                                  alt="Illustration for {{ service.service.name }}"
-                                                 class="img-size-32 mr-2">
+                                                 style="width: 8vw"
+                                            >
                                         </td>
                                         <td class="align-middle text-center">
                                             <a href="{{ service.service.get_absolute_url }}">
