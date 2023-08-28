@@ -11,6 +11,9 @@
                     <form class="form-horizontal" method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <div class="card-body">
+                            {% if login_helper_text %}
+                                <p class="login-box-msg">{{ login_helper_text | safe }}</p>
+                            {% endif %}
                             {% if form.errors %}
                                 <p class="text-danger">Your username and password didn't match. Please try again.</p>
                             {% endif %}
@@ -28,9 +31,6 @@
                                            style="">
                                 </div>
                             </div>
-                            {% if login_helper_text %}
-                            <div class="text-info"><i class="fas fa-info"></i> {{ login_helper_text | safe }}</div>
-                            {% endif %}
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">

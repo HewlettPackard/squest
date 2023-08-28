@@ -37,13 +37,16 @@
 
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item border-top-0">
-                                <u>Organization</u> <a class="float-right"
-                                                       href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
+                                Organization
+                                <a class="float-right"
+                                   href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
                             </li>
-                            <li class="list-group-item border-bottom-0">
-                                <u>Description</u>
-                                <p class="float-right">{{ object.description }}</p>
-                            </li>
+                            {% if object.description %}
+                                <li class="list-group-item border-bottom-0">
+                                    Description
+                                    <p class="float-right">{{ object.description }}</p>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
