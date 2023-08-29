@@ -37,9 +37,9 @@
                 {% for group_name, group_data in sidebar_dict.items %}
                     <li class="nav-header">{{ group_name }}</li>
                     {% for view in group_data %}
-                        <li class="nav-item {% if view.treeview_items %}has-treeview {% if request.resolver_match.url_name in view.view_name_short %}menu-open{% endif %}{% endif %}">
+                        <li class="nav-item {% if view.treeview_items %}has-treeview {% if request.resolver_match.url_name in view.active %}menu-open{% endif %}{% endif %}">
                             <a href="{% if view.view_name %}{% url view.view_name %}{% else %}#{% endif %}"
-                               class="nav-link {% if request.resolver_match.url_name in view.view_name_short %}active{% endif %}">
+                               class="nav-link {% if request.resolver_match.url_name in view.active %}active{% endif %}">
                                 <i class="nav-icon {{ view.icon }}"></i>
                                 <p>{{ view.name }}
                                     {% if view.treeview_items %}
@@ -52,7 +52,7 @@
                                     {% for treeview_item in view.treeview_items %}
                                         <li class="nav-item">
                                             <a href="{% url treeview_item.view_name %}"
-                                               class="nav-link {% if request.resolver_match.url_name in treeview_item.view_name_short %}active{% endif %}">
+                                               class="nav-link {% if request.resolver_match.url_name in treeview_item.active %}active{% endif %}">
                                                 <i class="nav-icon {{ treeview_item.icon }}"></i>
                                                 <p>{{ treeview_item.name }}</p>
                                             </a>
