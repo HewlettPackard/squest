@@ -264,7 +264,7 @@ function sync_job_template() {
         },
     }).done((res) => {
         $(document).Toasts('create', {
-            title: 'Job template sync from AAP/AWX',
+            title: 'Job template sync from RHAAP/AWX',
             body: 'Started',
             autohide: true,
             delay: 3000,
@@ -279,7 +279,7 @@ function sync_job_template() {
     }).fail((err) => {
         alert_error("Error during API call");
         $(document).Toasts('create', {
-            title: 'Job template sync from AAP/AWX',
+            title: 'Job template sync from RHAAP/AWX',
             body: 'Error',
             autohide: true,
             delay: 3000,

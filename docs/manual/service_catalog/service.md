@@ -50,7 +50,7 @@ Squest will apply the following variable precedence:
 
 ```mermaid
 flowchart LR
-    survey(Request survey) --> AAP/AWX(AAP/AWX) --> Service(Service)  --> Operation(Operation)
+    survey(Request survey) --> RHAAP/AWX(RHAAP/AWX) --> Service(Service)  --> Operation(Operation)
 ```
 
 ## External support URL
