@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='towerserver',
-            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('sync_towerserver', 'Can sync AAP/AWX')]},
+            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('sync_towerserver', 'Can sync RHAAP/AWX')]},
         ),
         migrations.AlterModelOptions(
             name='towersurveyfield',

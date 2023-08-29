@@ -2,7 +2,7 @@
     <img src="docs/images/squest_full_logo.png">
 </p>
 
-<h3 align="center">Self service portal on top of Ansible Automation Platform(AAP)/AWX (formerly known as Ansible Tower)</h3>
+<h3 align="center">Self service portal on top of Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower)</h3>
 
 <p align="center">
 <a href="https://hewlettpackard.github.io/squest/latest"><img alt="Doc" src="https://img.shields.io/badge/read-documentation-1abc9c?style=flat-square"></a>
@@ -15,7 +15,7 @@
 
 Squest is a framework that allow you to expose an **Everything-as-a-Service** web portal. 
 
-Exposed services in Squest are not hard coded. A service is actually a pointer to your automation in the backend engine Ansible Automation Platform(AAP)/AWX (formerly known as Ansible Tower). 
+Exposed services in Squest are not hard coded. A service is actually a pointer to your automation in the backend engine Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower). 
 It means everything, as long as it exists as an automation script, can be exposed as a service. **The only limit is your own capability of automation**.
 
 More than a fire and forget tool, Squest can store in its database each deployed instance of services it has provisioned so you can attach to them more automation that allow 
@@ -30,7 +30,7 @@ If you want an idea of what you can do with Squest, click on the image below.
 ## Features
 
 - Service catalog:
-  - Add services to your catalog based on job templates you have in your Ansible Automation Platform/AWX instance
+  - Add services to your catalog based on job templates you have in your Red Hat Ansible Automation Platform/AWX instance
   - Manage requests for services (review, update, approve and process)
   - Manage lifecycle of each instance of a service
   - Integrated or external support page
