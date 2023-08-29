@@ -1,8 +1,8 @@
 # Concept
 
-Once Squest is linked to an AAP/AWX server, "services" can be added into the catalog.
+Once Squest is linked to an RHAAP/AWX server, "services" can be added into the catalog.
 
-A service is composed of `operations` that are pointers to "job templates" present in AAP/AWX.
+A service is composed of `operations` that are pointers to "job templates" present in RHAAP/AWX.
 
 A service has at least one operation of type `CREATE` that allows to provision the resource.
 
@@ -11,7 +11,7 @@ A service can have then multiple operation of type `UPDATE` and `DELETE` that al
 ## Provisioning a service
 
 When a user request for the first time a service, an instance is created automatically and set to "pending" state on Squest.
-Once approved by the administrator, the request is sent to AAP/AWX to execute the linked job template.
+Once approved by the administrator, the request is sent to RHAAP/AWX to execute the linked job template.
 
 The executed job, aka the Ansible playbook, need to call back the Squest API in order to attach information (spec) to the pending instance.
 
@@ -21,16 +21,16 @@ sequenceDiagram
     participant User
     participant Admin
     participant Squest
-    participant AAP/AWX
+    participant RHAAP/AWX
     User->>Squest: Request service
     Admin->>Squest: Approve
     Admin->>Squest: Process
-    Squest->>AAP/AWX: Process
-    Squest-->>AAP/AWX: Check
-    Note right of AAP/AWX: Running
-    AAP/AWX->>Squest: Instance spec <br> {'uuid': 34, 'name': 'instance_name'}
-    Squest-->>AAP/AWX: Check
-    Note right of AAP/AWX: Successful    
+    Squest->>RHAAP/AWX: Process
+    Squest-->>RHAAP/AWX: Check
+    Note right of RHAAP/AWX: Running
+    RHAAP/AWX->>Squest: Instance spec <br> {'uuid': 34, 'name': 'instance_name'}
+    Squest-->>RHAAP/AWX: Check
+    Note right of RHAAP/AWX: Successful    
     Squest->>User: Notify service ready
 ```
 
@@ -114,7 +114,7 @@ Day 2 operations are operations that **update** or **delete** existing resources
 
 !!! note
 
-    By default, recent version of AAP/AWX drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the AAP/AWX API.
+    By default, recent version of RHAAP/AWX drop extra variables that are not declared in the survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in the "Variables" section of you job template. This correspond to the flag "ask_variables_on_launch" of the job_template model on the RHAAP/AWX API.
 
 When a user creates a request for a day 2 operation of a provisioned instance, Squest automatically attach an `extra_vars` named `squest`
 that contains the instance spec sent by the playbook used to provision at first the resource.
@@ -127,16 +127,16 @@ sequenceDiagram
     participant User
     participant Admin
     participant Squest
-    participant AAP/AWX
+    participant RHAAP/AWX
     User->>Squest: Request update
     Admin->>Squest: Approve
     Admin->>Squest: Process
-    Squest->>AAP/AWX: Process - Extra vars:<br> {'squest': {'uuid': 34, 'name': 'instance_name'}}
-    Squest-->>AAP/AWX: Check
-    Note right of AAP/AWX: Running
-    AAP/AWX->>Squest: Instance spec update <br> {'uuid': 34, 'name': 'instance_new_name}
-    Squest-->>AAP/AWX: Check
-    Note right of AAP/AWX: Successful    
+    Squest->>RHAAP/AWX: Process - Extra vars:<br> {'squest': {'uuid': 34, 'name': 'instance_name'}}
+    Squest-->>RHAAP/AWX: Check
+    Note right of RHAAP/AWX: Running
+    RHAAP/AWX->>Squest: Instance spec update <br> {'uuid': 34, 'name': 'instance_new_name}
+    Squest-->>RHAAP/AWX: Check
+    Note right of RHAAP/AWX: Successful    
     Squest->>User: Notify service updated
 ```
 

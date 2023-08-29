@@ -145,7 +145,7 @@ def generate_sidebar(user):
             {
                 'name': 'RBAC',
                 'icon': 'fas fa-user-check',
-                'children': [
+                'treeview_items': [
                     {
                         'name': 'Role',
                         'view_name': 'profiles:role_list',
@@ -169,7 +169,7 @@ def generate_sidebar(user):
             {
                 "name": "Extras",
                 'icon': 'fas fa-stream',
-                'children': [
+                'treeview_items': [
                     {
                         'name': 'Global hook',
                         'view_name': 'service_catalog:globalhook_list',
@@ -201,7 +201,7 @@ def generate_sidebar(user):
 
         for view in views:
             view_data_copy = copy.deepcopy(view)
-            if "children" not in view:
+            if "treeview_items" not in view:
                 view_data_copy["view_name_short"] = [view["view_name"].split(':')[1]]
                 view_permission = view.get('permission_required', None)
                 if (view_permission is None) or (view_permission is not None and user.has_perm(view_permission)):
@@ -209,7 +209,7 @@ def generate_sidebar(user):
             else:
                 view_data_copy["view_name_short"] = list()
                 child_group = list()
-                for child_view in view["children"]:
+                for child_view in view["treeview_items"]:
                     child_view_data_copy = copy.deepcopy(child_view)
                     child_view_data_copy["view_name_short"] = child_view_data_copy["view_name"].split(':')[1]
                     view_data_copy["view_name_short"].append(child_view_data_copy["view_name_short"])
@@ -217,7 +217,7 @@ def generate_sidebar(user):
                     if (view_permission is None) or (view_permission is not None and user.has_perm(view_permission)):
                         is_group_visible = True
                     child_group.append(child_view_data_copy)
-                    view_data_copy["children"] = child_group
+                    view_data_copy["treeview_items"] = child_group
 
             group_items.append(view_data_copy)
 

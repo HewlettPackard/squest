@@ -31,7 +31,7 @@ The development environment is composed of 4 parts:
 
 - **Docker compose:** The Docker compose file is used to deploy all required components such as the database and the message broker
 - **Celery worker:** The Celery worker is a separated process that receive tasks from the main Django process to be executed asynchronously
-- **Celery beat:** Celery beat is a periodic task scheduler that send task into the celery worker based on a frequency. This part is used by Squest to check the status of executed AAP/AWX job
+- **Celery beat:** Celery beat is a periodic task scheduler that send task into the celery worker based on a frequency. This part is used by Squest to check the status of executed RHAAP/AWX job
 - **Django built in web server:** Integrated web server used only for development purpose. main process of the application that serve the Web Ui and the API
 
 ### Docker compose

@@ -37,24 +37,24 @@
                 {% for group_name, group_data in sidebar_dict.items %}
                     <li class="nav-header">{{ group_name }}</li>
                     {% for view in group_data %}
-                        <li class="nav-item {% if view.children %}has-treeview {% if request.resolver_match.url_name in view.view_name_short %}menu-open{% endif %}{% endif %}">
+                        <li class="nav-item {% if view.treeview_items %}has-treeview {% if request.resolver_match.url_name in view.view_name_short %}menu-open{% endif %}{% endif %}">
                             <a href="{% if view.view_name %}{% url view.view_name %}{% else %}#{% endif %}"
                                class="nav-link {% if request.resolver_match.url_name in view.view_name_short %}active{% endif %}">
                                 <i class="nav-icon {{ view.icon }}"></i>
                                 <p>{{ view.name }}
-                                    {% if view.children %}
+                                    {% if view.treeview_items %}
                                         <i class="right fas fa-angle-down"></i>
                                     {% endif %}
                                 </p>
                             </a>
-                            {% if view.children %}
+                            {% if view.treeview_items %}
                                 <ul class="nav nav-treeview">
-                                    {% for children in view.children %}
+                                    {% for treeview_item in view.treeview_items %}
                                         <li class="nav-item">
-                                            <a href="{% url children.view_name %}"
-                                               class="nav-link {% if request.resolver_match.url_name in children.view_name_short %}active{% endif %}">
-                                                <i class="nav-icon {{ children.icon }}"></i>
-                                                <p>{{ children.name }}</p>
+                                            <a href="{% url treeview_item.view_name %}"
+                                               class="nav-link {% if request.resolver_match.url_name in treeview_item.view_name_short %}active{% endif %}">
+                                                <i class="nav-icon {{ treeview_item.icon }}"></i>
+                                                <p>{{ treeview_item.name }}</p>
                                             </a>
                                         </li>
                                     {% endfor %}
