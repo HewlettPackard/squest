@@ -9,13 +9,12 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
             TestingGetContextView(
                 url='api_resource_list_create',
                 perm_str='resource_tracker_v2.list_resource',
-                url_kwargs={'resource_group_id': self.single_vms.id},
             ),
             TestingPostContextView(
                 url='api_resource_list_create',
                 perm_str='resource_tracker_v2.add_resource',
-                url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
+                    'resource_group': self.single_vms.id,
                     'name': 'New Resource',
                     'resource_attributes': [
                         {
@@ -32,12 +31,13 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
             TestingGetContextView(
                 url='api_resource_details',
                 perm_str='resource_tracker_v2.view_resource',
-                url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
+                url_kwargs={'pk': self.vm1.id}
             ),
             TestingPutContextView(
                 url='api_resource_details',
                 perm_str='resource_tracker_v2.change_resource',
                 data={
+                    'resource_group': self.single_vms.id,
                     'name': 'Resource PUT',
                     'resource_attributes': [
                         {
@@ -50,7 +50,7 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
                         },
                     ]
                 },
-                url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
+                url_kwargs={'pk': self.vm1.id}
             ),
             TestingPatchContextView(
                 url='api_resource_details',
@@ -58,12 +58,12 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
                 data={
                     'name': 'Resource PATCH',
                 },
-                url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
+                url_kwargs={'pk': self.vm1.id}
             ),
             TestingDeleteContextView(
                 url='api_resource_details',
                 perm_str='resource_tracker_v2.delete_resource',
-                url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
+                url_kwargs={'pk': self.vm1.id}
             )
         ]
         self.run_permissions_tests(testing_view_list)
