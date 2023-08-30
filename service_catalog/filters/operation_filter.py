@@ -9,7 +9,7 @@ from service_catalog.models.operations import OperationType
 class OperationFilter(SquestFilter):
     class Meta:
         model = Operation
-        fields = ['name', 'type', 'job_template__name', 'auto_accept', 'auto_process', 'process_timeout_second']
+        fields = ['service', 'name', 'type', 'job_template__name', 'auto_accept', 'auto_process', 'process_timeout_second']
 
     type = MultipleChoiceFilter(
         choices=OperationType.choices,

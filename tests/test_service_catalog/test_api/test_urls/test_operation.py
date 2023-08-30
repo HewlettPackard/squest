@@ -14,7 +14,6 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             TestingGetContextView(
                 url='api_operation_list_create',
                 perm_str='service_catalog.list_operation',
-                url_kwargs={'service_id': self.service_test.id}
             ),
             TestingGetContextView(
                 url='api_instance_operation_list',
@@ -24,8 +23,8 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             TestingPostContextView(
                 url='api_operation_list_create',
                 perm_str='service_catalog.add_operation',
-                url_kwargs={'service_id': self.service_test.id},
                 data={
+                    'service': self.service_test.id,
                     'name': 'New operation',
                     'description': 'a new operation',
                     'job_template': self.job_template_test.id,
@@ -36,7 +35,7 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             TestingGetContextView(
                 url='api_operation_survey_list_update',
                 perm_str='service_catalog.change_operation',
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPutContextView(
                 url='api_operation_survey_list_update',
@@ -50,30 +49,31 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
                     {'name': 'integer_var', 'is_customer_field': True, 'default': '1'},
                     {'name': 'float_var', 'is_customer_field': True, 'default': '2'}
                 ],
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPatchContextView(
                 url='api_operation_survey_list_update',
                 perm_str='service_catalog.change_operation',
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id},
+                url_kwargs={'pk': self.create_operation_test.id},
                 expected_not_allowed_status_code=405,
                 expected_status_code=405
             ),
             TestingGetContextView(
                 url='api_operation_details',
                 perm_str='service_catalog.view_operation',
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPutContextView(
                 url='api_operation_details',
                 perm_str='service_catalog.change_operation',
                 data={
+                    'service': self.service_test.id,
                     'name': 'Operation PUT',
                     'description': 'an operation description',
                     'job_template': self.job_template_test.id,
                     'type': 'CREATE',
                 },
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPatchContextView(
                 url='api_operation_details',
@@ -81,12 +81,12 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
                 data={
                     'name': 'Operation PATCH',
                 },
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingDeleteContextView(
                 url='api_operation_details',
                 perm_str='service_catalog.delete_operation',
-                url_kwargs={'service_id': self.service_test.id, 'pk': self.create_operation_test.id}
+                url_kwargs={'pk': self.create_operation_test.id}
             ),
         ]
         self.run_permissions_tests(testing_view_list)

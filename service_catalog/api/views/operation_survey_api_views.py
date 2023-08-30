@@ -24,11 +24,7 @@ class SquestOperationSurveyPermissions(SquestObjectPermissions):
 
 class OperationSurveyAPI(SquestRetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, SquestOperationSurveyPermissions]
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Operation.objects.none()
-        return Operation.objects.filter(service_id=self.kwargs['service_id'])
+    queryset = Operation.objects.all()
 
     def get_survey_field(self, name):
         operation = self.get_object()

@@ -10,7 +10,6 @@ class TestApiOperationDetails(BaseTestRequestAPI):
     def setUp(self):
         super(TestApiOperationDetails, self).setUp()
         self.kwargs = {
-            'service_id': self.service_test.id,
             'pk': self.create_operation_test.id
         }
         self.get_operation_details_url = reverse('api_operation_details', kwargs=self.kwargs)
