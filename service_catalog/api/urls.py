@@ -78,19 +78,17 @@ urlpatterns = [
     path('portfolio/<int:pk>/', PortfolioDetails.as_view(), name='api_portfolio_details'),
 
     # CustomLink CRUD
-    path('administration/custom-link/', CustomLinkListCreate.as_view(), name='api_customlink_list_create'),
-    path('administration/custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_customlink_details'),
+    path('custom-link/', CustomLinkListCreate.as_view(), name='api_customlink_list_create'),
+    path('custom-link/<int:pk>/', CustomLinkDetails.as_view(), name='api_customlink_details'),
 
     # ApprovalWorkflow CRUD
-    path('administration/approval/', ApprovalWorkflowListCreate.as_view(), name='api_approvalworkflow_list_create'),
-    path('administration/approval/<int:pk>/', ApprovalWorkflowDetails.as_view(), name='api_approvalworkflow_details'),
+    path('approval-workflow/', ApprovalWorkflowListCreate.as_view(), name='api_approvalworkflow_list_create'),
+    path('approval-workflow/<int:pk>/', ApprovalWorkflowDetails.as_view(), name='api_approvalworkflow_details'),
     # ApprovalWorkflow update postion of steps
-    path('administration/approval/<int:pk>/update_steps_position', ApprovalWorkflowUpdateStepsPosition.as_view(),
+    path('approval-workflow/<int:pk>/update_steps_position/', ApprovalWorkflowUpdateStepsPosition.as_view(),
          name='api_approvalworkflow_update_steps_position'),
 
     # ApprovalStep CRUD
-    path('administration/approval/<int:approval_workflow_id>/approval-step/', ApprovalStepListCreate.as_view(),
-         name='api_approvalstep_list_create'),
-    path('administration/approval/<int:approval_workflow_id>/approval-step/<int:pk>/', ApprovalStepDetails.as_view(),
-         name='api_approvalstep_details'),
+    path('approval-step/', ApprovalStepListCreate.as_view(), name='api_approvalstep_list_create'),
+    path('approval-step/<int:pk>/', ApprovalStepDetails.as_view(), name='api_approvalstep_details'),
 ]
