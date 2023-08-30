@@ -13,13 +13,12 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
             TestingGetContextView(
                 url='api_transformer_list_create',
                 perm_str='resource_tracker_v2.list_transformer',
-                url_kwargs={'resource_group_id': self.single_vms.id},
             ),
             TestingPostContextView(
                 url='api_transformer_list_create',
                 perm_str='resource_tracker_v2.add_transformer',
-                url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
+                    'resource_group': self.single_vms.id,
                     'attribute_definition': self.vcpu_attribute.id,
                     'consume_from_resource_group': self.cluster.id,
                     'consume_from_attribute_definition': self.core_attribute.id
@@ -30,13 +29,13 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
                 perm_str='resource_tracker_v2.view_transformer',
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
-                    'resource_group_id': self.single_vms.id
                 }
             ),
             TestingPutContextView(
                 url='api_transformer_details',
                 perm_str='resource_tracker_v2.change_transformer',
                 data={
+                    'resource_group': self.single_vms.id,
                     'attribute_definition': self.v_memory_attribute.id,
                     'consume_from_resource_group': self.cluster.id,
                     'consume_from_attribute_definition': self.memory_attribute.id,
@@ -44,7 +43,6 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
                 },
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
-                    'resource_group_id': self.single_vms.id
                 }
             ),
             TestingPatchContextView(
@@ -55,7 +53,6 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
                 },
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
-                    'resource_group_id': self.single_vms.id
                 }
             ),
             TestingDeleteContextView(
@@ -63,7 +60,6 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
                 perm_str='resource_tracker_v2.delete_transformer',
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
-                    'resource_group_id': self.single_vms.id
                 }
             )
         ]

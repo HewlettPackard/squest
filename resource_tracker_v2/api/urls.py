@@ -24,9 +24,7 @@ urlpatterns = [
     #      name='api_resource_move'),
 
     # transformer
-    path('resource_group/<int:resource_group_id>/attribute/', TransformerListCreate.as_view(),
-         name='api_transformer_list_create'),
-    path('resource_group/<int:resource_group_id>/attribute/<int:pk>/', TransformerDetails.as_view(),
-         name='api_transformer_details'),
+    path('transformer/', TransformerListCreate.as_view(), name='api_transformer_list_create'),
+    path('transformer/<int:pk>/', TransformerDetails.as_view(), name='api_transformer_details'),
 
 ]
