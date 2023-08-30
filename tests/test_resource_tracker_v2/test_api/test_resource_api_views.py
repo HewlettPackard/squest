@@ -10,9 +10,8 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def setUp(self):
         super(TestResourceAPIView, self).setUp()
-        self._list_create_url = reverse('api_resource_list_create',  kwargs={"resource_group_id": self.cluster.id})
-        self._details_url = reverse('api_resource_details', kwargs={"resource_group_id": self.cluster.id,
-                                                                    "pk": self.server1.id})
+        self._list_create_url = f"{reverse('api_resource_list_create')}?resource_group={self.cluster.id}"
+        self._details_url = reverse('api_resource_details', kwargs={"pk": self.server1.id})
 
     def test_resource_group_resources_list(self):
         response = self.client.get(self._list_create_url, format='json')
@@ -26,7 +25,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_resource_list_filter_by_name(self):
         # test existing name
-        url = self._list_create_url + f"?name={self.server1.name}"
+        url = self._list_create_url + f"&name={self.server1.name}"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, response.json()["count"])
@@ -34,13 +33,14 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         self.assertEqual(response.data['results'],  [serializer.data])
 
         # test non existing name
-        url = self._list_create_url + f"?name=do_not_exist"
+        url = self._list_create_url + f"&name=do_not_exist"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(0, response.data['count'])
 
     def test_create_resource_with_valid_attributes(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -55,6 +55,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_cannot_create_resource_with_existing_name(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "server1",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -66,10 +67,11 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         }
         response = self.client.post(self._list_create_url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("server1 already present in cluster", response.data["name"][0])
+        self.assertIn("The fields name, resource_group must make a unique set.", response.data["non_field_errors"][0])
 
     def test_create_resource_with_non_valid_attributes(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -85,6 +87,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_create_resource_with_non_linked_attributes(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -100,6 +103,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_create_resource_with_twice_same_attribute(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -119,6 +123,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_update_resource(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "server-1-new-name",
             "service_catalog_instance": None,
             "resource_attributes": [
@@ -131,7 +136,6 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
                     "value": 2
                 }
             ],
-            "resource_group": self.cluster.id
         }
         response = self.client.put(self._details_url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -150,9 +154,9 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
                                    attribute_definition=self.vcpu_attribute)
 
         data = {
+            "resource_group": self.cluster.id,
             "name": "server-1-new-name",
             "service_catalog_instance": None,
-            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "core",
@@ -175,9 +179,9 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_update_resource_with_non_valid_attributes(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_resource",
             "service_catalog_instance": None,
-            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "CPU",
@@ -196,7 +200,6 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         data = {
             "name": "server-1-new-name",
             "service_catalog_instance": None,
-            "resource_group": self.cluster.id,
             "resource_attributes": [
                 {
                     "name": "memory",
@@ -212,7 +215,7 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
 
     def test_delete_resource(self):
         resource_to_delete = self.server1.id
-        response = self.client.delete(self._details_url,format='json')
+        response = self.client.delete(self._details_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Resource.objects.filter(id=resource_to_delete).exists())
 
