@@ -70,10 +70,8 @@ urlpatterns = [
          name='api_jobtemplate_sync'),
 
     # JobTemplate CRUD
-    path('tower/<int:tower_server_id>/job_template/', JobTemplateList.as_view(),
-         name='api_jobtemplate_list'),
-    path('tower/<int:tower_server_id>/job_template/<int:pk>/', JobTemplateDetails.as_view(),
-         name='api_jobtemplate_details'),
+    path('job_template/', JobTemplateList.as_view(), name='api_jobtemplate_list'),
+    path('job_template/<int:pk>/', JobTemplateDetails.as_view(), name='api_jobtemplate_details'),
 
     # Portfolio CRUD
     path('portfolio/', PortfolioListCreate.as_view(), name='api_portfolio_list_create'),
