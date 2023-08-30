@@ -9,9 +9,8 @@ class TestTransformerAPIView(BaseTestResourceTrackerV2API):
 
     def setUp(self):
         super(TestTransformerAPIView, self).setUp()
-        self._list_create_url = reverse('api_transformer_list_create',  kwargs={"resource_group_id": self.cluster.id})
-        self._details_url = reverse('api_transformer_details', kwargs={"resource_group_id": self.cluster.id,
-                                                                       "pk": self.core_transformer.id})
+        self._list_create_url = f"{reverse('api_transformer_list_create')}?resource_group={self.cluster.id}"
+        self._details_url = reverse('api_transformer_details', kwargs={"pk": self.core_transformer.id})
 
         self.new_rg = ResourceGroup.objects.create(name="new_rg")
         self.new_attribute = AttributeDefinition.objects.create(name="new_attribute")
@@ -34,7 +33,7 @@ class TestTransformerAPIView(BaseTestResourceTrackerV2API):
             self.assertTrue("red_threshold_percent_consumed" in transformer)
 
     def test_transformer_list_filter_by_name(self):
-        url = self._list_create_url + f"?attribute_definition={self.core_attribute.id}"
+        url = self._list_create_url + f"&attribute_definition={self.core_attribute.id}"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, response.json()["count"])
@@ -42,6 +41,7 @@ class TestTransformerAPIView(BaseTestResourceTrackerV2API):
     def test_transformer_create_no_consumer(self):
         other_attribute = AttributeDefinition.objects.create(name="other_attribute")
         data = {
+            "resource_group": self.cluster.id,
             "attribute_definition": other_attribute.id,
             "consume_from_resource_group": None,
             "consume_from_attribute_definition": None,
@@ -59,6 +59,7 @@ class TestTransformerAPIView(BaseTestResourceTrackerV2API):
 
     def test_transformer_create_with_consumer(self):
         data = {
+            "resource_group": self.cluster.id,
             "attribute_definition": self.new_attribute.id,
             "consume_from_resource_group": self.new_rg.id,
             "consume_from_attribute_definition": self.new_attribute.id,
@@ -95,6 +96,7 @@ class TestTransformerAPIView(BaseTestResourceTrackerV2API):
         Transformer.objects.create(resource_group=other_rg,
                                    attribute_definition=other_attribute)
         data = {
+            "resource_group": self.cluster.id,
             "attribute_definition": self.core_attribute.id,
             "consume_from_resource_group": other_rg.id,
             "consume_from_attribute_definition": other_attribute.id,
