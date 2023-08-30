@@ -7,10 +7,6 @@ class ResourceSerializerTests(BaseTestResourceTrackerV2API):
 
     def setUp(self):
         super(ResourceSerializerTests, self).setUp()
-        self.context = {
-            "resource_group": self.cluster,
-        }
-
         self.number_resource_before = Resource.objects.all().count()
 
     def _validate_created(self):
@@ -18,6 +14,7 @@ class ResourceSerializerTests(BaseTestResourceTrackerV2API):
 
     def test_create_resource(self):
         data = {
+            "resource_group": self.cluster.id,
             "name": "new_server",
             "service_catalog_instance": None,
             "is_deleted_on_instance_deletion": False,
@@ -27,7 +24,7 @@ class ResourceSerializerTests(BaseTestResourceTrackerV2API):
                  }
             ],
         }
-        serializer = ResourceSerializer(data=data, context=self.context)
+        serializer = ResourceSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         serializer.save()
         self._validate_created()

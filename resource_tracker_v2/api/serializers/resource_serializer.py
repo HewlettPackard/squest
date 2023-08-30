@@ -29,48 +29,34 @@ class ResourceSerializer(serializers.ModelSerializer):
         fields = ["id", "resource_group", "name", "service_catalog_instance",
                   "resource_attributes", "is_deleted_on_instance_deletion"]
         read_only_fields = ["id"]
-        extra_kwargs = {"resource_group": {"required": False, "default": None}}
 
     resource_attributes = ResourceAttributeSerializer(many=True)
 
-    def __init__(self, *args, **kwargs):
-        if 'context' in kwargs.keys():
-            self.resource_group = kwargs['context'].get('resource_group')
-        super(ResourceSerializer, self).__init__(*args, **kwargs)
-
-    def validate_name(self, value):
-        """
-        Check name is unique in resource group
-        """
-        current_id = None if self.instance is None else self.instance.id
-        if value in self.resource_group.resources.exclude(pk=current_id).values_list("name", flat=True):
-            raise serializers.ValidationError(f'{value} already present in {self.resource_group}')
-        return value
-
-    def validate_resource_attributes(self, attributes):
+    def validate(self, data):
         # check attribute exist
         seen = set()
-        for attribute in attributes:
+        resource_group = self.instance.resource_group if self.instance else None
+        resource_group = data.get('resource_group') if 'resource_group' in data.keys() else resource_group
+        resource_attributes = data.get('resource_attributes', [])
+        for attribute in resource_attributes:
             attribute_name = attribute["attribute_definition"].get('name')
             # get the attribute
             if not AttributeDefinition.objects.filter(name=attribute_name).exists():
-                raise serializers.ValidationError(f"Attribute does not exist '{attribute_name}'")
+                raise serializers.ValidationError({"resource_attributes": f"Attribute does not exist '{attribute_name}'"})
             attribute_def = AttributeDefinition.objects.get(name=attribute_name)
             # check attribute is linked to the target resource group
             if not Transformer.objects.filter(attribute_definition=attribute_def,
-                                              resource_group=self.resource_group).exists():
-                raise serializers.ValidationError(
-                    f"Attribute '{attribute_name}' not linked to resource group '{self.resource_group}'")
+                                              resource_group=resource_group).exists():
+                raise serializers.ValidationError({"resource_attributes": f"Attribute '{attribute_name}' not linked to resource group '{resource_group}'"})
             # check for duplicate
             if attribute_name not in seen:
                 seen.add(attribute_name)
             else:
-                raise serializers.ValidationError(f"Duplicate attribute '{attribute_name}'")
-        return attributes
+                raise serializers.ValidationError({"resource_attributes": f"Duplicate attribute '{attribute_name}'"})
+        return data
 
     def create(self, validated_data):
         resource_attributes = validated_data.pop('resource_attributes', list())
-        validated_data['resource_group'] = self.resource_group
         new_resource = super().create(validated_data)
         for attribute in resource_attributes:
             attribute_definition = AttributeDefinition.objects.get(name=attribute["attribute_definition"].get('name'))
@@ -99,6 +85,4 @@ class ResourceSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     attribute_item_name: f"'{attribute_item_name}' is not a valid attribute of the resource group {instance.resource_group.name}"
                 })
-        if validated_data.get('resource_group') is None:
-            validated_data['resource_group'] = self.resource_group
         return super(ResourceSerializer, self).update(instance, validated_data)
