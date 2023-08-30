@@ -21,7 +21,6 @@ class TestApiOperationPut(BaseTestRequestAPI):
             'extra_vars': {"test": "test"}
         }
         self.kwargs = {
-            'service_id': self.service_test.id,
             'pk': self.create_operation_test.id
         }
         self.get_operation_details_url = reverse('api_operation_details', kwargs=self.kwargs)

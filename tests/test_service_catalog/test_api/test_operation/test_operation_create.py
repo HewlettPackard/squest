@@ -11,8 +11,8 @@ class TestApiOperationCreate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiOperationCreate, self).setUp()
-        self.kwargs = {'service_id': self.service_test.id}
         self.post_data = {
+            'service': self.service_test.id,
             'name': "My new name",
             'description': "My new description",
             'type': OperationType.UPDATE,
@@ -22,7 +22,7 @@ class TestApiOperationCreate(BaseTestRequestAPI):
             'job_template': self.job_template_test.id,
             'extra_vars': {"test": "test"}
         }
-        self.get_operation_details_url = reverse('api_operation_list_create', kwargs=self.kwargs)
+        self.get_operation_details_url = reverse('api_operation_list_create')
 
     def test_admin_post_operation(self):
         number_tower_survey_field_before = TowerSurveyField.objects.all().count()
