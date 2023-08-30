@@ -9,30 +9,9 @@ from service_catalog.models import ApprovalStep, ApprovalWorkflow
 class ApprovalStepListCreate(SquestListCreateAPIView):
     serializer_class = ApprovalStepSerializer
     filterset_class = ApprovalStepFilter
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return ApprovalStep.objects.none()
-        queryset = ApprovalStep.objects.filter(approval_workflow_id=self.kwargs['approval_workflow_id'])
-        return queryset
-
-    def get_serializer_context(self):
-        context = super(ApprovalStepListCreate, self).get_serializer_context()
-        approval_workflow = get_object_or_404(ApprovalWorkflow, pk=self.kwargs['approval_workflow_id'])
-        context["approval_workflow_id"] = approval_workflow.id
-        return context
+    queryset = ApprovalStep.objects.all()
 
 
 class ApprovalStepDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = ApprovalStepSerializer
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return ApprovalStep.objects.none()
-        return ApprovalStep.objects.filter(approval_workflow_id=self.kwargs['approval_workflow_id'])
-
-    def get_serializer_context(self):
-        context = super(ApprovalStepDetails, self).get_serializer_context()
-        approval_workflow = get_object_or_404(ApprovalWorkflow, pk=self.kwargs['approval_workflow_id'])
-        context["approval_workflow_id"] = approval_workflow.id
-        return context
+    queryset = ApprovalStep.objects.all()
