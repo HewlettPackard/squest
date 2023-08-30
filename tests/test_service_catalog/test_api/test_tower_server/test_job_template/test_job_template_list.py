@@ -9,10 +9,7 @@ class TestApiTowerServerList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiTowerServerList, self).setUp()
-        self.kwargs = {
-            'tower_server_id': self.tower_server_test.id
-        }
-        self.tower_server_url = reverse('api_jobtemplate_list', kwargs=self.kwargs)
+        self.tower_server_url = f"{reverse('api_jobtemplate_list')}?tower_server={self.tower_server_test.id}"
 
     def test_admin_get_job_template_of_tower_server(self):
         response = self.client.get(self.tower_server_url)
