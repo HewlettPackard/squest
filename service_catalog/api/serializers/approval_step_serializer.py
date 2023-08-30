@@ -10,29 +10,31 @@ from service_catalog.models import ApprovalStep, TowerSurveyField
 class ApprovalStepSerializer(ModelSerializer):
     class Meta:
         model = ApprovalStep
-        fields = ['id', 'name', 'permission', 'readable_fields', 'editable_fields']
+        fields = ['id', 'approval_workflow', 'name', 'permission', 'readable_fields', 'editable_fields']
         read_only_fields = ['id']
 
-    readable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.none())
-    editable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.none())
-
-    def __init__(self, *args, **kwargs):
-        from service_catalog.models import ApprovalWorkflow
-        self.approval_workflow = ApprovalWorkflow.objects.get(id=kwargs['context'].get('approval_workflow_id'))
-        super(ApprovalStepSerializer, self).__init__(*args, **kwargs)
-        queryset = TowerSurveyField.objects.filter(operation=self.approval_workflow.operation)
-        self.fields["editable_fields"].child_relation.queryset = queryset
-        self.fields["readable_fields"].child_relation.queryset = queryset
-
-    def create(self, validated_data):
-        validated_data['approval_workflow'] = self.approval_workflow
-        return super().create(validated_data)
+    readable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.all())
+    editable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.all())
 
     def validate(self, data):
+        approval_workflow = self.instance.approval_workflow if self.instance else None
+        approval_workflow = data.get("approval_workflow") if "approval_workflow" in data.keys() else approval_workflow
+
         readable_fields = self.instance.readable_fields.all() if self.instance else None
         readable_fields = data.get("readable_fields") if "readable_fields" in data.keys() else readable_fields
         editable_fields = self.instance.editable_fields.all() if self.instance else None
         editable_fields = data.get("editable_fields") if "editable_fields" in data.keys() else editable_fields
+
+        not_allowed_editable_fields = [field for field in editable_fields if
+                                       field not in TowerSurveyField.objects.filter(
+                                           operation=approval_workflow.operation)]
+        not_allowed_readable_fields = [field for field in readable_fields if
+                                       field not in TowerSurveyField.objects.filter(
+                                           operation=approval_workflow.operation)]
+        if not_allowed_editable_fields:
+            raise ValidationError({"editable_fields": f"The field{'s' if len(not_allowed_editable_fields) > 1 else ''} {','.join(not_allowed_editable_fields)} {'are' if len(not_allowed_editable_fields) > 1 else 'is'} not a {approval_workflow.operation} fields"})
+        if not_allowed_readable_fields:
+            raise ValidationError({"readable_fields": f"The field{'s' if len(not_allowed_readable_fields) > 1 else ''} {','.join(not_allowed_readable_fields)} {'are' if len(not_allowed_readable_fields) > 1 else 'is'} not a {approval_workflow.operation} fields"})
         field_in_both_list = [field for field in readable_fields if field in editable_fields]
         if field_in_both_list:
             raise ValidationError({"readable_fields": f"A field cannot be declared as read and write"})
