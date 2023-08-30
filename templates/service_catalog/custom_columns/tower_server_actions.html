@@ -2,7 +2,7 @@
 <a id="tower_{{ record.id }}" title="Synchronize job templates"
    data-tower-id ="{{ record.id }}"
    data-url-sync="{% url 'service_catalog:towerserver_sync' record.id %}"
-   data-url-job-template="{% url 'api_jobtemplate_list' record.id %}"
+   data-url-job-template="{% url 'api_jobtemplate_list' %}?tower_server={{ record.id }}"
    role="button" class="btn btn-default bg-sm ajax_sync_all_job_template">
     <i class="fas fa-sync"></i>
 </a>

@@ -5,4 +5,4 @@ from service_catalog.models import JobTemplate
 class JobTemplateFilter(SquestFilter):
     class Meta:
         model = JobTemplate
-        fields = ['name', 'is_compliant']
+        fields = ['tower_server', 'name', 'is_compliant']
