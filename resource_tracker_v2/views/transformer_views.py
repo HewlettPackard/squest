@@ -13,12 +13,6 @@ class TransformerListView(SquestListView):
     filterset_class = TransformerFilter
     table_class = TransformerTable
 
-    def get_filterset_kwargs(self, filterset_class):
-        kwargs = super(TransformerListView, self).get_filterset_kwargs(filterset_class)
-        resource_group = get_object_or_404(ResourceGroup, pk=self.kwargs['resource_group_id'])
-        kwargs.update({"resource_group": resource_group})
-        return kwargs
-
     def get_queryset(self):
         return super().get_queryset().filter(resource_group__id=self.kwargs.get('resource_group_id'))
 
