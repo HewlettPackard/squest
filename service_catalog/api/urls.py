@@ -52,13 +52,12 @@ urlpatterns = [
          name='api_service_request_create'),
 
     # Operation CRUD
-    path('service/<int:service_id>/operation/', OperationListCreate.as_view(), name='api_operation_list_create'),
-    path('service/<int:service_id>/operation/<int:pk>/', OperationDetails.as_view(), name='api_operation_details'),
+    path('operation/', OperationListCreate.as_view(), name='api_operation_list_create'),
+    path('operation/<int:pk>/', OperationDetails.as_view(), name='api_operation_details'),
     # Instance operations list
     path('instance/<int:instance_id>/operation/', InstanceOperationList.as_view(), name='api_instance_operation_list'),
     # Operation survey
-    path('service/<int:service_id>/operation/<int:pk>/survey/', OperationSurveyAPI.as_view(),
-         name='api_operation_survey_list_update'),
+    path('peration/<int:pk>/survey/', OperationSurveyAPI.as_view(), name='api_operation_survey_list_update'),
 
     # TowerServer CRUD
     path('tower/', TowerServerList.as_view(), name='api_towerserver_list_create'),

@@ -8,7 +8,7 @@ class TestOperationSurveyList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestOperationSurveyList, self).setUp()
-        self.kwargs = {'service_id': self.service_test.id, 'pk': self.test_request.operation.id}
+        self.kwargs = {'pk': self.test_request.operation.id}
         self.get_operation_survey_list_url = reverse('api_operation_survey_list_update', kwargs=self.kwargs)
 
     def test_list_survey(self):

@@ -8,11 +8,10 @@ class TestApiOperationList(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiOperationList, self).setUp()
-        self.kwargs = {'service_id': self.service_test.id}
-        self.get_operation_list_url = reverse('api_operation_list_create', kwargs=self.kwargs)
+        self.get_operation_list_url = reverse('api_operation_list_create')
 
     def test_get_all_operations_of_the_service(self):
-        response = self.client.get(self.get_operation_list_url)
+        response = self.client.get(f"{self.get_operation_list_url}?service={self.service_test.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], self.service_test.operations.count())
         self.client.force_login(user=self.standard_user)

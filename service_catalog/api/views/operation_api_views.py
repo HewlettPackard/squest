@@ -13,36 +13,12 @@ from service_catalog.models.services import Service
 class OperationListCreate(SquestListCreateAPIView):
     serializer_class = OperationSerializer
     filterset_class = OperationFilter
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Operation.objects.none()
-        return Service.objects.get(id=self.kwargs.get('service_id', None)).operations.all()
-
-    def get_serializer_context(self):
-        context = super(OperationListCreate, self).get_serializer_context()
-        service = get_object_or_404(Service, pk=self.kwargs['service_id'])
-        context["service"] = service
-        return context
+    queryset = Operation.objects.all()
 
 
 class OperationDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = OperationSerializer
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Operation.objects.none()
-        service_id = self.kwargs.get('service_id', None)
-        if service_id is None:
-            return Operation.objects.none()
-        queryset = Service.objects.get(id=service_id).operations.all()
-        return queryset
-
-    def get_serializer_context(self):
-        context = super(OperationDetails, self).get_serializer_context()
-        service = get_object_or_404(Service, pk=self.kwargs['service_id'])
-        context["service"] = service
-        return context
+    queryset = Operation.objects.all()
 
 
 class InstanceOperationList(SquestListAPIView):

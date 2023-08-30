@@ -10,7 +10,7 @@ class TestOperationSurveyPut(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestOperationSurveyPut, self).setUp()
-        self.kwargs = {'service_id': self.service_test.id, 'pk': self.test_request.operation.id}
+        self.kwargs = {'pk': self.test_request.operation.id}
         self.get_operation_survey_put_url = reverse('api_operation_survey_list_update', kwargs=self.kwargs)
 
     def _validate_field_in_db(self, json_data):
