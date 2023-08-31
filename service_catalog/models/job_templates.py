@@ -68,7 +68,7 @@ class JobTemplate(SquestModel):
         return [
             dict(
                 name='Variables/Prompt on launch',
-                description='By default, recent version of AWX/Tower drop extra variables that are not declared in the '
+                description='By default, recent version of AWX/RHAAP drop extra variables that are not declared in the '
                             'survey. To be able to receive Squest extra vars you need to enable "Prompt on Launch" in '
                             'the "Variables" section of you job template. This correspond to the flag '
                             '"ask_variables_on_launch" of the job_template model on the Tower/AWX API.',

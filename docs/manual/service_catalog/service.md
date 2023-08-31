@@ -1,57 +1,19 @@
 # Service
 
+A service in Squest is an item of the catalog. It contains at least one operation to create (or instantiate) the service and multiple day 2 operations to update or delete an already created instance of this service.
+
 ## Configuration
 
-| Name                 | Description                                             |
-|----------------------|---------------------------------------------------------|
-| Name                 | Short name of the service                               |
-| Description          | Small description of the operation                      |
-| Image                | Image used into the catalog                             |
-| Billing              | Define the billing behavior when requesting the service |
-| Enabled              | If set to `True` the service is visible in the catalog  |
-| External support URL | Define an external support  tool URL                    |
-| Extra vars           | Set of extra vars as JSON                               |
+| Name                      | Description                                            |
+|---------------------------|--------------------------------------------------------|
+| Name                      | Short name of the service                              |
+| Description               | Small description of the operation                     |
+| Image                     | Image used into the catalog                            |
+| Enabled                   | If set to `True` the service is visible in the catalog |
+| External support URL      | Define an external support  tool URL                   |
+| Extra vars                | Set of extra vars as JSON                              |
+| Description documentation | Markdown documentation linked to the service           |
 
-
-## Billing group
-
-By default, Squest services are not linked to any billing group.
-
-Administrators can configure how the billing of the service will be predefined.
-
-Through the service form, choices are:
-
-  - Administrator defined billing group
-  - User defined billing group:
-    - From his billing group
-    - From all billing group
-
-**Administrator defined billing group**
-
-Administrators select a fixed billing group (can be none).
-Each created instance will be linked to this billing group.
-
-Administrators can also hide the billing from the end users.
-The billing group will not be asked neither shown in the end user form when requesting the service.
-
-**User defined billing group**
-
-- **From his billing group:** Administrators let the end user choose from his billing group when he sends an instance request.
-- **From all billing group:** Administrators let the end user choose from all available billing group when he requests a service.
-
-## Extra vars
-
-Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
-
-These extra variables are added automatically when processing a request and so executing a job template.
-
-If an extra variable is set with the same name in different places, the variable will be overridden following a certain order.
-Squest will apply the following variable precedence:
-
-```mermaid
-flowchart LR
-    survey(Request survey) --> RHAAP/AWX(RHAAP/AWX) --> Service(Service)  --> Operation(Operation)
-```
 
 ## External support URL
 
@@ -73,3 +35,17 @@ https://github.com/HewlettPackard/squest/issues/new?title=Templated+Github+issue
 !!! note
 
     Special characters need to be converted into a format that can be transmitted over the Internet. URLs can only be sent over the Internet using the ASCII character-set.
+
+## Extra vars
+
+Some extra variables can be declared on some Squest level like `tower_server`, `service` or `operation`.
+
+These extra variables are added automatically when processing a request and so executing a job template.
+
+If an extra variable is set with the same name in different places, the variable will be overridden following a certain order.
+Squest will apply the following variable precedence:
+
+```mermaid
+flowchart LR
+    survey(Request survey) --> RHAAP/AWX(RHAAP/AWX) --> Service(Service)  --> Operation(Operation)
+```

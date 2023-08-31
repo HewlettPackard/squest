@@ -1,11 +1,11 @@
 # Jinja templating
 
-[Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) can be use in some part of the Squest configuration.
+[Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) can be used in some part of the Squest configuration.
 
 Jinja templating usage with `{{ instance }}` as context:
 
 - [Custom links](tools.md#custom-links)
-- [Operation survey default field config](service_catalog/operation.md#default-value)
+- [Operation survey default field config](../service_catalog/operation.md#default-value)
 
 Jinja templating usage with `{{ request }}` as context:
 
