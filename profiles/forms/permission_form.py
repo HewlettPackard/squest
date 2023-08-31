@@ -11,5 +11,5 @@ class PermissionForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].help_text = f'A short description of the permission.'
-        self.fields['codename'].help_text = f'Should be split by "_" and finished by the object type (depends on ' \
-                                            f'content type chosen).'
+        self.fields['codename'].help_text = f'Unique identifier of the permission in camel case format. ' \
+                                            f'E.g: approve_custom_step'

@@ -28,36 +28,43 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Installation:
-    - LDAP: installation/ldap.md
-    - TLS: installation/tls.md
-    - Backup: installation/backup.md
-    - Upgrade: installation/upgrade.md
+  - Getting Started: getting_started.md
   - Configuration:
     - Squest: configuration/squest_settings.md
-    - RHAAP/AWX: configuration/aap_awx_settings.md
+    - LDAP: configuration/ldap.md
+    - TLS: configuration/tls.md
   - Manual:
     - Service catalog:
       - Concept: manual/service_catalog/concept.md
       - Service: manual/service_catalog/service.md
       - Operation: manual/service_catalog/operation.md
-    - Resource tracking: manual/resource_tracking.md
-    - Tools: manual/tools.md
-    - Quota: manual/quota.md
-    - Teams: manual/teams.md
-    - REST API: manual/api.md
-    - Prometheus metrics: manual/metrics.md
+    - Resource tracking:
+      - Concept: manual/resource_tracking/concept.md
+      - Attribute: manual/resource_tracking/attributes.md
+      - Resource group: manual/resource_tracking/resource_group.md
+      - Resource: manual/resource_tracking/resource.md
+    - Access: manual/access.md
+    - Administration:
+        - RHAAP/AWX: manual/administration/rhaap.md
+        - Approval workflow: manual/administration/approval_workflow.md
+        - RBAC: manual/administration/rbac.md
+        - Extras: manual/administration/extras.md
+    - Advanced:
+        - manual/advanced/filters.md
+        - manual/advanced/jinja.md
+        - manual/advanced/validators.md
     - Notifications: manual/notifications.md
-    - Filters: manual/filters.md
-    - Jinja: manual/jinja.md
+  - Administration:
+      - Backup: administration/backup.md
+      - Upgrade: administration/upgrade.md
+      - REST API: administration/api.md
+      - Prometheus metrics: administration/metrics.md
   - Development:
     - Setup a dev env: dev/dev-env.md
     - Request state machine: dev/request-state-machine.md
     - Instance state machine: dev/instance-state-machine.md
-    - Database ERD: dev/db-erd.md
-    - Plugins:
-      - Field validator:  dev/plugins/validators.md
     - Release: dev/release.md
   - Contribute:
       - Code: contribute/code.md
       - Documentation: contribute/documentation.md
+  - Release notes: release_notes.md

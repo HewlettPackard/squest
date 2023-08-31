@@ -13,11 +13,6 @@ class PermissionListView(SquestListView):
     table_class = PermissionTable
     ordering = 'name'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['html_button_path'] = "profiles/buttons/permission_add_button.html"
-        return context
-
 
 class PermissionCreateView(SquestCreateView):
     model = Permission

@@ -17,7 +17,7 @@ A user can belong to multiple billing group.
 Quota can be used to:
 
 - Track consumption of resources per billing group
-- Create an auto approval request process by using them through [global hooks](../settings/#global-hooks) and the [squest API](api.md)
+- Create an auto approval request process by using them through [global hooks](../settings/#global-hooks) and the [squest API](../administration/api.md)
 
 ### Quota and attributes
 

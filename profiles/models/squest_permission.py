@@ -15,3 +15,6 @@ class Permission(SquestRBAC, Permission, SquestDeleteCascadeMixIn):
 
     def get_absolute_url(self):
         return reverse(f"profiles:permission_list")
+
+    def __str__(self):
+        return self.codename

@@ -8,13 +8,9 @@
 
 By default, notifications are enabled. You can disable all notifications from your profile page by accessing the profile page in the top right corner of the Squest application.
 
-!!! note
+## Notification filters
 
-    Administrators receive all notifications for all events. Filters can be added to limit notifications to some criteria. See below.
-
-## Notification filters (admin)
-
-Notification filters can be set on several criteria:
+Notifications are sent by default for all events. Filters can be added to limit notifications to some criteria: 
 
 - Services
 - Operations
@@ -40,7 +36,7 @@ Example behavior when setting multiple service and multiple operation:
 
 The `when` condition allows to filter notification based on current "request".
 The syntax is the same as the one used in Ansible. The `request` object is directly usable as context in the condition without JINJA double-curly braces.
-See the [Jinja documentation](jinja.md) for more example.
+See the [Jinja documentation](advanced/jinja.md) for more example.
 
 E.g with a 'when' based on the survey filled by the user
 ```python

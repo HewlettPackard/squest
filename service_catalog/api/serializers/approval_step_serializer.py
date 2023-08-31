@@ -4,15 +4,20 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
+from profiles.models import Permission
 from service_catalog.models import ApprovalStep, TowerSurveyField
+
+EXCLUDED_PERMISSION = ["add_approvalstep", "change_approvalstep", "delete_approvalstep", "list_approvalstep",
+                       "view_approvalstep"]
 
 
 class ApprovalStepSerializer(ModelSerializer):
     class Meta:
         model = ApprovalStep
         fields = ['id', 'approval_workflow', 'name', 'permission', 'readable_fields', 'editable_fields']
-        read_only_fields = ['id']
 
+    permission = PrimaryKeyRelatedField(queryset=Permission.objects.filter(content_type__app_label='service_catalog',
+                                                                           content_type__model='approvalstep').exclude(codename__in=EXCLUDED_PERMISSION))
     readable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.all())
     editable_fields = PrimaryKeyRelatedField(many=True, queryset=TowerSurveyField.objects.all())
 
