@@ -3,56 +3,7 @@
 ## Default configuration
 
 The configuration is loaded from environment variables file placed in the folder `docker/environment_variables`.
-
-### LDAP_ENABLED
-
-**Default:** `False`
-
-Set to `True` to enable LDAP based authentication.  
-
-
-### AUTH_LDAP_SERVER_URI
-
-**Default:** `ldap:port`
-
-Set the LDAP serveur URI and port
-
-### AUTH_LDAP_BIND_DN
-
-**Default:** `cn=service_account_name,ou=Applications,o=domain.com`
-
-Set the LDAP DN to authenticate to the LDAP serveur
-
-### AUTH_LDAP_BIND_PASSWORD
-
-**Default:** `NONE`
-
-Associated to AUTH_LDAP_BIND_DN, password used to authenticate DN
-
-### AUTH_LDAP_USER_SEARCH
-
-**Default:** `ou=People,o=domain.com`
-
-User search patern
-
-### AUTH_LDAP_ATTR_FIRSTNAME
-
-**Default:** `givenName`
-
-set the LDAP "first_name" attribute
-
-### AUTH_LDAP_ATTR_LASTNAME
-
-**Default:** `sn`
-
-set the LDAP "last_name" attribute
-
-### AUTH_LDAP_ATTR_MAIL
-
-**Default:** `mail`
-
-set the LDAP "email" attribute
-
+Retrieve environment variables from the [Squest configuration settings documentation](../configuration/squest_settings.md#ldap)
 
 ## Advanced configuration
 

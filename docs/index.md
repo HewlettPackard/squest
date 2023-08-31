@@ -4,28 +4,11 @@
     <img src="images/squest_full_logo.png">
 </p>
 
-The current deployment is based on Docker compose.
+# Welcome to the Squest documentation!
 
-Pre-requisites:
+Squest is a self-service portal that works on top of Red Hat Ansible Automation Platform/AWX.
 
-- docker
-- docker-compose
-
-To run the application, execute the docker compose file
-```bash
-docker-compose up
-```
-
-Then connect with your web browser to [http://127.0.0.1:8080](http://127.0.0.1:8080)
-The default admin account is `admin // admin`
-
-The default export the port 8080. If you want to use the standard HTTP port 80, update the 
-file `docker-compose.override.yml`.
-```yaml
-services:
-  nginx:
-    ports:
-      - "80:8080"
-```
-
-More details are available in the "Installation" section of this documentation.
+- Follow the [installation guide](getting_started.md) to get your own deployment up and running
+- A [Gitter Chat](https://app.gitter.im/#/room/#HewlettPackard_squest:gitter.im) is available if you want to discuss with the developers or the community
+- Check out our [GitHub repository](https://github.com/HewlettPackard/squest) if you are interested into contributing to Squest
+- Don't hesitate to [raise an issue](https://github.com/HewlettPackard/squest/issues) to propose new features or raise a bug

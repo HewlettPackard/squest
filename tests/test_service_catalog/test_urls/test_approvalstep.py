@@ -3,7 +3,8 @@ import json
 from profiles.models import Permission
 from service_catalog.models import ApprovalWorkflow, ApprovalStep
 from tests.test_service_catalog.base_test_request import BaseTestRequest
-from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
+from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint, \
+    TestingPutContextView
 
 
 class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint):
@@ -35,7 +36,7 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id},
                 data={
                     'name': 'New approval step',
-                    'permission': Permission.objects.filter(content_type__model='approvalstep').first().id,
+                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                     'approval_workflow': self.approval_workflow.id
@@ -46,13 +47,13 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
                 perm_str='service_catalog.change_approvalstep',
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id}
             ),
-            TestingPostContextView(
+            TestingPutContextView(
                 url='service_catalog:approvalstep_edit',
                 perm_str='service_catalog.change_approvalstep',
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id},
                 data={
                     'name': 'Approval step update',
-                    'permission': Permission.objects.filter(content_type__model='approvalstep').first().id,
+                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                     'approval_workflow': self.approval_workflow.id
