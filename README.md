@@ -34,25 +34,24 @@ If you want an idea of what you can do with Squest, click on the image below.
   - Manage requests for services (review, update, approve and process)
   - Manage lifecycle of each instance of a service
   - Integrated or external support page
-  - Link billing group and track resource consumption
-  - Quota
-  - Auto approval
-  - Multiple layer approval configuration
+  - Organization, team and user management
+  - Approval workflows
   - Custom on-boarding documentation
-  - Teams to share resources
-- Reserved resource tracking
+  - RBAC (Roles, Permissions, Role bindings)
+
+- Resource tracking:
   - Create generic objects
   - Link objects to compose layers of your infrastructure (Physical servers, Virtualization, Containers, Projects, Tenants,...)
   - Visualize pool of resource of what you have provided (CPU, vCPU, memory, disk...)
   - Check consumptions before approving new requests
   - Graph representation of resource layers
+  - Set quotas on each attribute
   
 ## Links
 
 :blue_book: [Documentation](https://hewlettpackard.github.io/squest/latest)<br/>
 :speech_balloon: [Chat on Gitter](https://gitter.im/HewlettPackard/squest)<br/>
-:movie_camera: Demo video
-- [Service catalog](https://youtu.be/mQnNkSMMXwg)
-- [Resource tracking](https://www.youtube.com/watch?v=KxJbYxnR5Ug)
+:movie_camera: [Demo video](https://youtu.be/mQnNkSMMXwg)<br/>
+:monkey_face: [Our Ansible playbook testing framework](https://github.com/HewlettPackard/monkeyble)
 
 > If you like the project, star it ⭐, it motivates us a lot 🙂

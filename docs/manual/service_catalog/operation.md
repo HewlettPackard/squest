@@ -1,5 +1,10 @@
 # Operation
 
+An Operation is an action attached to a service that can be requested by the end user.
+A service in Squest has at least one operation of type "create" which allows to create an instance of the service.
+Operations of type "update" or "delete" can be then added to manage the lifecycle of created instances of the service.
+
+
 ## Configuration
 
 | Name                   | Description                                                                                               |
@@ -8,12 +13,11 @@
 | Description            | Small description of the operation                                                                        |
 | Job template           | Executed job template in the backend RHAAP/AWX server                                                     |
 | Operation type         | Type of operation (Create, update, delete). Change the state of he instance after executing the operation |
-| Approval workflow      | Define an optional [approval workflow](#approval)                                                         |
 | Process timeout        | Number of second to wait for a successful return from the executed job template                           |
 | Auto accept            | If set to `True` a submitted request for this operation will be automatically accepted                    |
 | Auto process           | If set to `True` an accepted request for this operation will be automatically processed                   |
 | Enabled                | If set to `True` the operation can be requested from the UI and API                                       |
-| Is admin operation     | If set to `True` the operation is only visible and can be only requested by administrators                |
+| Admin operation        | If set to `True` the `admin_request_on_instance` permission is required to request this operation         |
 | Extra vars             | Set of extra vars as JSON                                                                                 |
 | Default inventory ID   | ID of the RHAAP/AWX inventory to use by default.  Leave blank to use the default Job Template inventory   |
 | Default limit          | Comma separated list of inventory host limits                                                             |
@@ -44,7 +48,7 @@ Overridable fields:
 The "default" configuration set at operation level allow to automatically pre-fill the "Process" page with values.
 
 Jinja templating can be used in the default value based on the current `{{ request }}` object as context.
-Examples can be retrieved in the [dedicated documentation section](../jinja.md). Full `request` object definition can be retrieved through the [API documentation](../api.md).
+Examples can be retrieved in the [dedicated documentation section](../advanced/jinja.md). Full `request` object definition can be retrieved through the [API documentation](../../administration/api.md).
 
 Default value precedence:
 
@@ -60,44 +64,6 @@ flowchart LR
     **Default credential IDs** field is expecting a comma separated list of integer that correspond existings credentials ID in RHAAP/AWX.
 
 
-## Approval
-
-By default, _Requests_ can be approved by any administrator when
-_Approval Workflow_ is not defined in the _Operation_. After being approved, the _Request_ is in 'ACCEPTED' state and can be
-processed.
-
-### Approval Workflow
-
-An _Approval Workflow_ is composed by one or multiple [_Approval Step_](#approval-step).
-_Approval Steps_ of the Workflow must be approved one by one following the order. After accepting the last one, the
-request witch to 'ACCEPTED' state and can be processed.
-
-!!! note
-
-      The auto-accept option can not be set in the _Operation_ with an Approval Workflow.
-
-### Approval Step
-
-An _Approval Step_ can only be approved by its _Teams_ members. It is approved when all _Teams_ approved the _Request_ or at
-least one depending on the [Type](#type).
-
-!!! note
-
-      Approval Steps are linked to Teams and not users. It means that any member can approved for his Team.
-
-| Name  | Description                                                            |
-|-------|------------------------------------------------------------------------|
-| Name  | Unique identifier of the _Approval Step_ in the _Approval Workflow_.   |
-| Type  | Defined how the _Approval Step_ is Approved. See supported types below |
-| Teams | List of Teams that can approve the Approval Step.                      |
-
-
-**Type**
-
-- **At least one:** At least one team must approve the _Approval Step_ to move to the next one.
-- **All of them:** All teams of the _Approval Step_ must approve to move to the next one.
-
-
 ## Survey
 
 The survey of an operation can be edited to change the behavior of the generated form of a request.
@@ -108,9 +74,9 @@ The survey of an operation can be edited to change the behavior of the generated
     Squest can only disable the ones that you don't want to be filled by your end users.
     Those fields, if declared as mandatory on RHAAP/AWX, will need to be filled anyway by the admin when approving a request.
 
-### End user field
+### Is customer field
 
-An **end user field**  is a field that will be displayed into the end user survey.
+A **customer field**  is a field that will be displayed into the end user survey.
 By default, all fields are enabled when creating a new operation.
 
 !!! note
@@ -137,6 +103,19 @@ flowchart LR
 **Jinja templating**
 
 Jinja templating can be used in the default value based on the current `{{ instance }}` object as context.
-Examples can be retrieved in the [dedicated documentation section](../jinja.md).
+Examples can be retrieved in the [dedicated documentation section](../advanced/jinja.md).
 
-Full `instance` object definition can be retrieved through the [API documentation](../api.md).
+Full `instance` object definition can be retrieved through the [API documentation](../../administration/api.md).
+
+### Validators
+
+Field validators are python modules that can be added as plugin to perform a custom check on a form field.
+See related [documentation here](../advanced/validators.md).
+
+
+### Attribute definition
+
+Each field can be linked to an _Attribute definition_ from the resource tracking. This allows to automatically limit the field value to a quota.
+The available quota is shown in the form of the request so the end user know what he can still consume.
+
+![survey_quota](../../images/survey_quota.png)

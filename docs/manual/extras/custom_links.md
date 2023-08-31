@@ -1,37 +1,6 @@
-# Tools
+# Custom links
 
-## Global Hooks
-
-Global hooks are a way to call a RHAAP/AWX job template following the new state of a `Request` or an `Instance`.
-
-For example, if you want to call a job template that performs an action everytime a `Request` switch to `FAILED` state.
-
-Form field:
-
-- **name:** Name of your hook
-- **Model:** Target model object that will be linked to the hook (`Request` or an `Instance`)
-- **State:** State of the selected `model`. The hook will be triggered when an instance of the select model type will switch to this selected state
-- **Job template:** The RHAAP/AWX job template to execute when an instance of the selected model reach the selected state
-- **Extra vars:** extra variable as JSON to add to the selected job template
-
-States documentation:
-
-- Available states for a [`Request`](../dev/request-state-machine.md).
-- Available states for a [`Instance`](../dev/instance-state-machine.md).
-
-## Announcements
-
-!!! note
-
-    Configure your [time zone](/squest_settings/#time-zone).
-
-Announcements allow Squest administrator to notify users. Announcements are displayed to end users in Dashboard page.
-
-Administrator defines beginning, end, title, message and type of announcement.
-
-## Custom links
-
-Custom links allow to display arbitrary hyperlinks to external content by using Squest `instance` attributes.
+Custom links allow to display hyperlinks to external content by using Squest `instance` attributes.
 Custom links appear as buttons in the top right corner of an **instance detail page**.
 Jinja template can be used to insert data from the current squest `instance` details like `instance.spec`.
 
@@ -55,7 +24,7 @@ For example a link can be created to expose the Hypervisor URL that has been pla
 [Jinja templating](jinja.md) can be used in the `text` or `URL` definition. The `instance` object of the current instance detail 
 page is used as context.
 
-Full `instance` object definition can be retrieved through the [API documentation](api.md).
+Full `instance` object definition can be retrieved through the [API documentation](../administration/api.md).
 
 Instance spec example:
 ```json

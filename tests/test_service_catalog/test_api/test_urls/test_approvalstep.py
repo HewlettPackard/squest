@@ -33,7 +33,7 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
                 data={
                     'approval_workflow': self.approval_workflow.id,
                     'name': 'New approval step',
-                    'permission': Permission.objects.filter(content_type__model='approvalstep').first().id,
+                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                 }
@@ -49,7 +49,7 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
                 data={
                     'approval_workflow': self.approval_workflow.id,
                     'name': 'Approval step PUT',
-                    'permission': Permission.objects.filter(content_type__model='approvalstep').first().id,
+                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                 },

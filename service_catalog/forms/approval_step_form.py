@@ -6,6 +6,8 @@ from django.urls import reverse
 from Squest.utils.squest_model_form import SquestModelForm
 from service_catalog.models import ApprovalStep, TowerSurveyField
 
+EXCLUDED_PERMISSION = ["add_approvalstep", "change_approvalstep", "delete_approvalstep", "list_approvalstep",
+                       "view_approvalstep"]
 
 class ApprovalStepForm(SquestModelForm):
     readable_fields = ModelMultipleChoiceField(label="Readable fields",
@@ -32,6 +34,8 @@ class ApprovalStepForm(SquestModelForm):
         self.fields['permission'].help_text = f"Create a <a href='{reverse('profiles:approvalstep_permission_create')}'>permission</a>"
         default_perm = Permission.objects.get(codename="approve_approvalstep")
         self.fields['permission'].initial = (default_perm.id, default_perm.name)
+        self.fields['permission'].choices.field.queryset = self.fields['permission'].choices.queryset.\
+            exclude(codename__in=EXCLUDED_PERMISSION)
 
     def clean(self):
         cleaned_data = super().clean()
