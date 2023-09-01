@@ -324,17 +324,21 @@ class Request(SquestModel):
         :param instance: the current Request
         :type instance: Request
         """
+        save_instance_on_update = False
         if instance.operation.auto_accept:
             if instance.state == RequestState.SUBMITTED:
                 if can_proceed(instance.accept):
                     instance.accept(None, save=False)
+                    save_instance_on_update = True
         if instance.operation.auto_process:
             if instance.state == RequestState.ACCEPTED:
                 if can_proceed(instance.process):
                     instance.process(None, save=False)
                 if can_proceed(instance.perform_processing):
                     instance.perform_processing()
-                instance.save()
+                    save_instance_on_update = True
+        if save_instance_on_update:
+            instance.save()
 
     @classmethod
     def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
