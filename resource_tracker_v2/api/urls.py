@@ -12,8 +12,8 @@ urlpatterns = [
     path('attribute/<int:pk>/', AttributeDefinitionDetails.as_view(), name='api_attributedefinition_details'),
 
     # resource group
-    path('resource_group/', ResourceGroupList.as_view(), name='api_resourcegroup_list_create'),
-    path('resource_group/<int:pk>/', ResourceGroupDetails.as_view(), name='api_resourcegroup_details'),
+    path('resource-group/', ResourceGroupList.as_view(), name='api_resourcegroup_list_create'),
+    path('resource-group/<int:pk>/', ResourceGroupDetails.as_view(), name='api_resourcegroup_details'),
 
     # resource
     path('resource/', ResourceListCreate.as_view(), name='api_resource_list_create'),
