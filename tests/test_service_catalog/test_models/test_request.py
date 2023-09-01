@@ -139,6 +139,7 @@ class TestRequest(BaseTestRequest):
                                                  instance=self.test_instance,
                                                  operation=self.create_operation_test,
                                                  user=self.standard_user)
+            new_request.refresh_from_db()
             self.assertEqual(new_request.state, expected_state)
             if check_execution_called:
                 mock_job_execute.assert_called()
@@ -184,8 +185,6 @@ class TestRequest(BaseTestRequest):
                     for key_var, val_var in expected_data.items():
                         self.assertIn(key_var, data.keys())
                         self.assertEqual(val_var, data[key_var])
-
-
 
     def test_request_accepted_automatically(self):
         self.create_operation_test.auto_accept = True
