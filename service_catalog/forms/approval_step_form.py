@@ -20,7 +20,7 @@ class ApprovalStepForm(SquestModelForm):
 
     class Meta:
         model = ApprovalStep
-        fields = ['name', 'permission', 'readable_fields', 'editable_fields', 'approval_workflow']
+        fields = ['name', 'permission', 'readable_fields', 'editable_fields', 'approval_workflow', 'auto_accept_condition']
 
     def __init__(self, *args, **kwargs):
         self.approval_workflow = kwargs.pop('approval_workflow', None)

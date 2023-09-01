@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import requests
 import towerlib
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
     OneToOneField, Q, PROTECT
@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_fsm import FSMField, transition, post_transition, can_proceed
 
+from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.instance import Instance, InstanceState
@@ -67,7 +68,7 @@ class Request(SquestModel):
     @classmethod
     def get_q_filter(cls, user, perm):
         return Q(
-           instance__in=Instance.get_queryset_for_user(user, perm)
+            instance__in=Instance.get_queryset_for_user(user, perm)
         )
 
     def get_scopes(self):
@@ -308,13 +309,36 @@ class Request(SquestModel):
 
     def setup_approval_workflow(self):
         from service_catalog.models import ApprovalWorkflow
-        worfkflow = ApprovalWorkflow.objects.filter(operation=self.operation,
-                                                    scopes__in=[self.instance.quota_scope]).first()
-        if worfkflow:
-            logger.debug(f"Workflow found: {worfkflow.name}")
+        # search for a workflow on this operation
+        workflow = ApprovalWorkflow.objects.filter(operation=self.operation).first()
+        if workflow:
+            # check that there is no restricted scope or the current scope is ok
+            if workflow.scopes.exists() and self.instance.quota_scope not in workflow.scopes.all():
+                return
+            logger.debug(f"Workflow found: {workflow.name}")
             # create pending steps
-            self.approval_workflow_state = worfkflow.instantiate()
+            self.approval_workflow_state = workflow.instantiate()
             self.save()
+            return self.approval_workflow_state
+        return None
+
+    def try_accept_current_step(self):
+        if self.approval_workflow_state is not None \
+                and self.approval_workflow_state.current_step is not None \
+                and self.approval_workflow_state.current_step.approval_step.auto_accept_condition is not None:
+            # test the condition
+            from service_catalog.api.serializers import RequestSerializer
+            context = {
+                "request": RequestSerializer(self).data
+            }
+            if AnsibleWhen.when_render(context=context,
+                                       when_string=self.approval_workflow_state.current_step.approval_step.auto_accept_condition):
+                self.approval_workflow_state.approve_current_step()
+                if self.approval_workflow_state.current_step is not None:
+                    self.try_accept_current_step()  # try again the new current step
+                else:
+                    return True
+        return False
 
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
@@ -325,11 +349,14 @@ class Request(SquestModel):
         :type instance: Request
         """
         save_instance_on_update = False
-        if instance.operation.auto_accept:
-            if instance.state == RequestState.SUBMITTED:
-                if can_proceed(instance.accept):
-                    instance.accept(None, save=False)
-                    save_instance_on_update = True
+        if instance.try_accept_current_step():
+            save_instance_on_update = True
+        else:
+            if instance.operation.auto_accept:
+                if instance.state == RequestState.SUBMITTED:
+                    if can_proceed(instance.accept):
+                        instance.accept(None, save=False)
+                        save_instance_on_update = True
         if instance.operation.auto_process:
             if instance.state == RequestState.ACCEPTED:
                 if can_proceed(instance.process):
@@ -357,6 +384,7 @@ class Request(SquestModel):
 
             # create approval step if approval workflow is set
             instance.setup_approval_workflow()
+            instance.try_accept_current_step()
 
     @classmethod
     def on_change(cls, sender, instance, *args, **kwargs):
@@ -369,6 +397,6 @@ class Request(SquestModel):
 
 
 pre_save.connect(Request.on_change, sender=Request)
+post_save.connect(Request.on_create, sender=Request)
 post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
 post_transition.connect(Request.trigger_hook_handler, sender=Request)
-post_save.connect(Request.on_create, sender=Request)
