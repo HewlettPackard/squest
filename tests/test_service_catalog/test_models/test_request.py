@@ -11,6 +11,7 @@ from django_fsm import can_proceed
 
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
+from service_catalog.models import ApprovalWorkflow, ApprovalStep
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
@@ -196,6 +197,28 @@ class TestRequest(BaseTestRequest):
         self.create_operation_test.auto_process = True
         self.create_operation_test.save()
         self._check_request_after_create(RequestState.PROCESSING, check_execution_called=True)
+
+    def test_auto_accept_with_approval_step(self):
+        self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
+                                                                      operation=self.create_operation_test)
+        auto_accept_condition = "request.instance.name == 'test_instance_1'"
+        ApprovalStep.objects.create(name="test_approval_step_1",
+                                    approval_workflow=self.test_approval_workflow,
+                                    auto_accept_condition=auto_accept_condition)
+        self._check_request_after_create(RequestState.ACCEPTED, check_execution_called=False)
+
+    def test_auto_accept_with_2_approval_step(self):
+        self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
+                                                                      operation=self.create_operation_test)
+        auto_accept_condition_1 = "request.instance.name == 'test_instance_1'"
+        ApprovalStep.objects.create(name="test_approval_step_1",
+                                    approval_workflow=self.test_approval_workflow,
+                                    auto_accept_condition=auto_accept_condition_1)
+        auto_accept_condition_2 = "request.fill_in_survey['text_variable'] == 'my_var'"
+        ApprovalStep.objects.create(name="test_approval_step_2",
+                                    approval_workflow=self.test_approval_workflow,
+                                    auto_accept_condition=auto_accept_condition_2)
+        self._check_request_after_create(RequestState.ACCEPTED, check_execution_called=False)
 
     def test_request_not_processing_automatically_if_auto_accept_false(self):
         self.create_operation_test.auto_accept = False
