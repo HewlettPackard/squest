@@ -35,7 +35,7 @@ class ApprovalWorkflowState(SquestModel):
             return next_step.first()
         return None
 
-    def approve_current_step(self, user, fill_in_survey):
+    def approve_current_step(self, user=None, fill_in_survey={}):
         self.current_step.fill_in_survey = fill_in_survey
         self.current_step.state = ApprovalState.APPROVED
         self.current_step.date_updated = datetime.now()
