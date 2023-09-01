@@ -35,12 +35,12 @@ urlpatterns = [
     path('request/<int:pk>/unarchive/', RequestStateMachine.as_view({'post': 'unarchive'}),
          name='api_request_unarchive'),
     # Approval Workflow state machine
-    path('request/<int:pk>/approval_workflow_state/', ApprovalWorkflowStateDetails.as_view(),
+    path('request/<int:pk>/approval-workflow-state/', ApprovalWorkflowStateDetails.as_view(),
          name='api_request_approval_workflow_state'),
-    path('request/<int:pk>/approval_workflow_state/approve/',
+    path('request/<int:pk>/approval-workflow-state/approve/',
          ApproveCurrentStep.as_view({'get': 'get_survey', 'post': 'approve'}),
          name='api_request_approval_workflow_state_approve'),
-    path('request/<int:pk>/approval_workflow_state/reject/',
+    path('request/<int:pk>/approval-workflow-state/reject/',
          ApproveCurrentStep.as_view({'get': 'get_survey', 'post': 'reject'}),
          name='api_request_approval_workflow_state_reject'),
 
@@ -63,15 +63,15 @@ urlpatterns = [
     path('tower/', TowerServerList.as_view(), name='api_towerserver_list_create'),
     path('tower/<int:pk>/', TowerServerDetails.as_view(), name='api_towerserver_details'),
     # JobTemplate sync all
-    path('tower/<int:tower_server_id>/job_template/sync/', JobTemplateSync.as_view(),
+    path('tower/<int:tower_server_id>/job-template/sync/', JobTemplateSync.as_view(),
          name='api_jobtemplate_sync_all'),
     # JobTemplate sync
-    path('tower/<int:tower_server_id>/job_template/<int:job_template_id>/sync/', JobTemplateSync.as_view(),
+    path('tower/<int:tower_server_id>/job-template/<int:job_template_id>/sync/', JobTemplateSync.as_view(),
          name='api_jobtemplate_sync'),
 
     # JobTemplate CRUD
-    path('job_template/', JobTemplateList.as_view(), name='api_jobtemplate_list'),
-    path('job_template/<int:pk>/', JobTemplateDetails.as_view(), name='api_jobtemplate_details'),
+    path('job-template/', JobTemplateList.as_view(), name='api_jobtemplate_list'),
+    path('job-template/<int:pk>/', JobTemplateDetails.as_view(), name='api_jobtemplate_details'),
 
     # Portfolio CRUD
     path('portfolio/', PortfolioListCreate.as_view(), name='api_portfolio_list_create'),
@@ -85,7 +85,7 @@ urlpatterns = [
     path('approval-workflow/', ApprovalWorkflowListCreate.as_view(), name='api_approvalworkflow_list_create'),
     path('approval-workflow/<int:pk>/', ApprovalWorkflowDetails.as_view(), name='api_approvalworkflow_details'),
     # ApprovalWorkflow update postion of steps
-    path('approval-workflow/<int:pk>/update_steps_position/', ApprovalWorkflowUpdateStepsPosition.as_view(),
+    path('approval-workflow/<int:pk>/update-steps-position/', ApprovalWorkflowUpdateStepsPosition.as_view(),
          name='api_approvalworkflow_update_steps_position'),
 
     # ApprovalStep CRUD

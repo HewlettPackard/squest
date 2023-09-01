@@ -112,27 +112,27 @@ urlpatterns = [
     path('tower/<int:tower_id>/sync/<int:pk>', views.towerserver_sync, name='jobtemplate_sync'),
 
     # Job Template CRUD
-    path('tower/<int:tower_id>/job_template/', views.JobTemplateListView.as_view(),
+    path('tower/<int:tower_id>/job-template/', views.JobTemplateListView.as_view(),
          name='jobtemplate_list'),
-    path('tower/<int:tower_id>/job_template/<int:pk>/', views.JobTemplateDetailView.as_view(),
+    path('tower/<int:tower_id>/job-template/<int:pk>/', views.JobTemplateDetailView.as_view(),
          name='jobtemplate_details'),
-    path('tower/<int:tower_id>/job_template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
+    path('tower/<int:tower_id>/job-template/<int:pk>/delete/', views.JobTemplateDeleteView.as_view(),
          name='jobtemplate_delete'),
 
     # Job Template compliance details
-    path('tower/<int:tower_id>/job_template/<int:pk>/compliancy/', views.job_template_compliancy,
+    path('tower/<int:tower_id>/job-template/<int:pk>/compliancy/', views.job_template_compliancy,
          name='job_template_compliancy'),
 
     # Global Hook CRUD
-    path('tool/global_hook/', views.GlobalHookListView.as_view(), name='globalhook_list'),
-    path('tool/global_hook/create/', views.GlobalHookCreateView.as_view(), name='globalhook_create'),
-    path('tool/global_hook/<int:pk>/edit/', views.GlobalHookEditView.as_view(), name='globalhook_edit'),
-    path('tool/global_hook/<int:pk>/delete/', views.GlobalHookDeleteView.as_view(), name='globalhook_delete'),
+    path('tool/global-hook/', views.GlobalHookListView.as_view(), name='globalhook_list'),
+    path('tool/global-hook/create/', views.GlobalHookCreateView.as_view(), name='globalhook_create'),
+    path('tool/global-hook/<int:pk>/edit/', views.GlobalHookEditView.as_view(), name='globalhook_edit'),
+    path('tool/global-hook/<int:pk>/delete/', views.GlobalHookDeleteView.as_view(), name='globalhook_delete'),
 
     # Global Hook AJAX
-    path('tool/global_hook/create/ajax/load-model-state/', views.ajax_load_model_state,
+    path('tool/global-hook/create/ajax/load-model-state/', views.ajax_load_model_state,
          name='ajax_load_model_state'),
-    path('administration/global_hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
+    path('administration/global-hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
          name='ajax_load_service_operations'),
 
     # Announcement CRUD
