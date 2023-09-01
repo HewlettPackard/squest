@@ -19,24 +19,24 @@ urlpatterns = [
 
     # request notifications
     path('notification/request/switch/', views.requestnotification_switch, name='requestnotification_switch'),
-    path('notification/notification_filter/request/create/', views.RequestNotificationCreateView.as_view(),
+    path('notification/notification-filter/request/create/', views.RequestNotificationCreateView.as_view(),
          name='requestnotification_create'),
-    path('notification/notification_filter/request/<int:pk>/delete/',
+    path('notification/notification-filter/request/<int:pk>/delete/',
          views.RequestNotificationDeleteView.as_view(),
          name='requestnotification_delete'),
-    path('notification/notification_filter/request/<int:pk>/edit/',
+    path('notification/notification-filter/request/<int:pk>/edit/',
          views.RequestNotificationEditView.as_view(),
          name='requestnotification_edit'),
 
     # instance notifications
     path('notification/instance/switch/', views.instancenotification_switch,
          name='instancenotification_switch'),
-    path('notification/notification_filter/instance/create/', views.InstanceNotificationCreateView.as_view(),
+    path('notification/notification-filter/instance/create/', views.InstanceNotificationCreateView.as_view(),
          name='instancenotification_create'),
-    path('notification/notification_filter/instance/<int:pk>/delete/',
+    path('notification/notification-filter/instance/<int:pk>/delete/',
          views.InstanceNotificationDeleteView.as_view(),
          name='instancenotification_delete'),
-    path('notification/notification_filter/instance/<int:pk>/edit/',
+    path('notification/notification-filter/instance/<int:pk>/edit/',
          views.InstanceNotificationEditView.as_view(),
          name='instancenotification_edit'),
 
