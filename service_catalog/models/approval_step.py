@@ -1,7 +1,8 @@
 from django.urls import reverse
 
 from profiles.models.squest_permission import Permission
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, Q
+from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, Q, \
+    TextField
 from django.db.models.signals import post_save
 
 from Squest.utils.squest_model import SquestModel
@@ -53,6 +54,10 @@ class ApprovalStep(SquestModel):
         help_text="Fields allowed to be filled",
         related_name="approval_steps_as_write_field"
     )
+
+    auto_accept_condition = TextField(blank=True, null=True,
+                                      help_text="Ansible like 'when' with `request` as context. "
+                                                "No Jinja brackets needed")
 
     def __str__(self):
         return self.name

@@ -56,3 +56,28 @@ flowchart LR
     step --> permission
     user/team/organization --> role
 ```
+
+### Auto accept
+
+A step can be auto accepted on a condition placed in the "Auto accept condition" of the step configuration.
+
+The condition is a Jinja string which is evaluated like an Ansible when condition. The available context is the _request_.
+
+For example, to validate the step following the name of the instance:
+```
+request.instance.name == 'this_is_a_very_good_name'
+```
+
+Or testing a survey field
+```
+request.fill_in_survey['vCPU'] < 8
+```
+
+Full `request` object definition can be retrieved through the [API documentation](../../administration/api.md).
+
+More example of jinja templating are available in the [dedicated documentation section](../advanced/jinja.md).
+
+!!! warning
+
+    The auto accept process will not complete or update the survey. 
+    If a mandatory field is missing at the end of the approval, the executed job template may fail due to missing variable.

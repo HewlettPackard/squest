@@ -4,12 +4,13 @@
 
 Jinja templating usage with `{{ instance }}` as context:
 
-- [Custom links](tools.md#custom-links)
+- [Custom links](../administration/extras.md#custom-links)
 - [Operation survey default field config](../service_catalog/operation.md#default-value)
 
 Jinja templating usage with `{{ request }}` as context:
 
-- Operation job template config (inventory, credentials, tags, limit)
+- [Operation](../service_catalog/operation.md) job template config (inventory, credentials, tags, limit)
+- [Approval workflow step](../administration/approval_workflow.md)
 
 ## Examples
 

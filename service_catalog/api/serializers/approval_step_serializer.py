@@ -14,7 +14,7 @@ EXCLUDED_PERMISSION = ["add_approvalstep", "change_approvalstep", "delete_approv
 class ApprovalStepSerializer(ModelSerializer):
     class Meta:
         model = ApprovalStep
-        fields = ['id', 'approval_workflow', 'name', 'permission', 'readable_fields', 'editable_fields']
+        fields = ['id', 'approval_workflow', 'name', 'permission', 'readable_fields', 'editable_fields', 'auto_accept_condition']
 
     permission = PrimaryKeyRelatedField(queryset=Permission.objects.filter(content_type__app_label='service_catalog',
                                                                            content_type__model='approvalstep').exclude(codename__in=EXCLUDED_PERMISSION))
