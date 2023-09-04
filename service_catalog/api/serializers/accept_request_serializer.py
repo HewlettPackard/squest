@@ -9,7 +9,8 @@ class AcceptRequestSerializer(Serializer):
         self.user = kwargs.pop('user', None)
         self.squest_request = kwargs.pop('squest_request', None)
         super(AcceptRequestSerializer, self).__init__(*args, **kwargs)
-        form_generator = FormGenerator(is_api_form=True,
+        form_generator = FormGenerator(user=self.user,
+                                       is_api_form=True,
                                        squest_request=self.squest_request)
         self.fields.update(form_generator.generate_form())
 

@@ -10,7 +10,7 @@ class ApproveWorkflowStepSerializer(Serializer):
         self.user = kwargs.pop('user')
         super(ApproveWorkflowStepSerializer, self).__init__(*args, **kwargs)
 
-        form_generator = FormGenerator(squest_request=self.target_request, is_api_form=True)
+        form_generator = FormGenerator(user=self.user, squest_request=self.target_request, is_api_form=True)
         self.fields.update(form_generator.generate_form())
 
     def save(self):

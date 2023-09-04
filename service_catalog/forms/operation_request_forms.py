@@ -19,7 +19,7 @@ class OperationRequestForm(forms.Form):
         self.operation = kwargs.pop('operation', None)
         self.instance = kwargs.pop('instance', None)
         super(OperationRequestForm, self).__init__(*args, **kwargs)
-        form_generator = FormGenerator(operation=self.operation, squest_instance=self.instance)
+        form_generator = FormGenerator(user=self.user, operation=self.operation, squest_instance=self.instance)
         self.fields.update(form_generator.generate_form())
 
     def save(self):

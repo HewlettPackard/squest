@@ -10,11 +10,13 @@ logger = logging.getLogger(__name__)
 class DynamicSurveySerializer(Serializer):
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         self.operation = kwargs.pop('operation', None)
         self.squest_instance = kwargs.pop('squest_instance', None)
         self.squest_request = kwargs.pop('squest_request', None)
         super(DynamicSurveySerializer, self).__init__(*args, **kwargs)
-        form_generator = FormGenerator(operation=self.operation,
+        form_generator = FormGenerator(user=self.user,
+                                       operation=self.operation,
                                        is_api_form=True,
                                        squest_instance=self.squest_instance,
                                        squest_request=self.squest_request)

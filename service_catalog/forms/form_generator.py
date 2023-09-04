@@ -55,7 +55,8 @@ class SquestFloatField(SquestField, FloatField):
 
 class FormGenerator:
 
-    def __init__(self, operation=None, squest_request=None, squest_instance=None, is_api_form=False, quota_scope=None):
+    def __init__(self, user, operation=None, squest_request=None, squest_instance=None, is_api_form=False, quota_scope=None):
+        self.user = user
         self.operation = operation
         self.squest_request = squest_request
         self.squest_instance = squest_instance
@@ -129,7 +130,9 @@ class FormGenerator:
         else:
             instance = self.squest_instance
         from service_catalog.api.serializers import InstanceSerializer
+        from profiles.api.serializers import UserSerializer
         context = {
+            "user": UserSerializer(self.user).data,
             "instance": InstanceSerializer(instance).data
         }
         for survey_filled in self.survey_as_dict.get("spec", []):   # loop all survey config from tower

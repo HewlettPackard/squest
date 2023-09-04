@@ -54,8 +54,8 @@ class ServiceRequestSerializer(ModelSerializer):
                         quota_set_on_attribute = quota_set_on_attribute.first()
                         if value > quota_set_on_attribute.available:
                             raise ValidationError({"fill_in_survey":
-                                                   f"Quota limit reached on '{field_name}'. "
-                                                   f"Available: {quota_set_on_attribute.available}"})
+                                                       f"Quota limit reached on '{field_name}'. "
+                                                       f"Available: {quota_set_on_attribute.available}"})
         return data
 
     def save(self):
@@ -98,7 +98,9 @@ class OperationRequestSerializer(ModelSerializer):
         self.squest_instance = kwargs.pop('instance', None)
         self.user = kwargs.pop('user', None)
         super(OperationRequestSerializer, self).__init__(*args, **kwargs)
-        self.fields['fill_in_survey'] = DynamicSurveySerializer(operation=self.operation, instance=self.squest_instance)
+        self.fields['fill_in_survey'] = DynamicSurveySerializer(user=self.user,
+                                                                operation=self.operation,
+                                                                instance=self.squest_instance)
 
     def save(self, **kwargs):
         fill_in_survey = loads(dumps(self.validated_data.get("fill_in_survey", {}), cls=SquestEncoder))
