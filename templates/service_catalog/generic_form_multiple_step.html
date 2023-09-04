@@ -9,69 +9,76 @@
 
     <div class="content">
         <div class="container-fluid">
-            {% if form_header %}{% include form_header %}{% endif %}
-            <div class="card">
-                <div class="card-body">
-                    <form class="form-horizontal" action="" method="post">{% csrf_token %}
-                        {{ wizard.management_form }}
-                        {% if wizard.form.forms %}
-                            {{ wizard.form.management_form }}
-                            {% for form in wizard.form.forms %}
-                                {{ form.as_table }}
-                            {% endfor %}
-                        {% else %}
-                            {% for field in wizard.form %}
-                                {% if field.field.separator %}
-                                    <div class="mb-8">
-                                        <hr class="solid">
-                                    </div>
-                                {% endif %}
-                                {% if field.field.form_title %}
-                                    <h5 class="text-primary">{{ field.field.form_title }}</h5>
-                                {% endif %}
-                                {% if field.field.widget.input_type == "checkbox" %}
-                                    <div class="mb-1 {% if field.errors %}has-error{% endif %}">
-                                        {{ field }}
-                                        <label for="{{ field.id_for_label }}" class="form-check-label">
-                                            {{ field.label }}
-                                        </label>
-                                        {% if field.help_text %}
-                                            <small class="pl-3 pb-2 form-text text-muted">{{ field.help_text|safe }}</small>
-                                        {% endif %}
-                                    </div>
+            <div class="row">
+                <div class="col-6">
+                    {% if form_header %}{% include form_header %}{% endif %}
+                    <div class="card">
+                        <div class="card-body">
+                            <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                                {{ wizard.management_form }}
+                                {% if wizard.form.forms %}
+                                    {{ wizard.form.management_form }}
+                                    {% for form in wizard.form.forms %}
+                                        {{ form.as_table }}
+                                    {% endfor %}
                                 {% else %}
-                                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                        {% if not field.is_hidden %}
-                                            <label for="{{ field.id_for_label }}" class="control-label">
-                                                {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                                            </label>
+                                    {% for field in wizard.form %}
+                                        {% if field.field.separator %}
+                                            <div class="mb-8">
+                                                <hr class="solid">
+                                            </div>
                                         {% endif %}
-                                        <div class="col-sm-12">
-                                            {{ field }}
-                                            {% if field.help_text %}
-                                                <small class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                            {% endif %}
-                                            {% if field.field.quota %}
-                                                <small class="form-text text-primary">Quota: {{ field.field.quota }}</small>
-                                            {%  endif %}
-                                        </div>
-                                    </div>
+                                        {% if field.field.form_title %}
+                                            <h5 class="text-primary">{{ field.field.form_title }}</h5>
+                                        {% endif %}
+                                        {% if field.field.widget.input_type == "checkbox" %}
+                                            <div class="mb-1 {% if field.errors %}has-error{% endif %}">
+                                                {{ field }}
+                                                <label for="{{ field.id_for_label }}" class="form-check-label">
+                                                    {{ field.label }}
+                                                </label>
+                                                {% if field.help_text %}
+                                                    <small class="pl-3 pb-2 form-text text-muted">{{ field.help_text|safe }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                                {% if not field.is_hidden %}
+                                                    <label for="{{ field.id_for_label }}" class="control-label">
+                                                        {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                                    </label>
+                                                {% endif %}
+                                                <div class="col-sm-12">
+                                                    {{ field }}
+                                                    {% if field.help_text %}
+                                                        <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                                    {% endif %}
+                                                    {% if field.field.quota %}
+                                                        <small class="form-text text-primary">Quota: {{ field.field.quota }}</small>
+                                                    {%  endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
                                 {% endif %}
-                            {% endfor %}
-                        {% endif %}
 
-                        <div class="mt-2 form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                {% if wizard.steps.prev %}
-                                    {# <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "first step" %}</button>#}
-                                    <button formnovalidate="formnovalidate" class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Previous step</button>
-                                {% endif %}
-                                <input type="submit" class="btn btn-primary" value="{% if wizard.steps.step1 == wizard.steps.count %}Submit{% else %}Next{% endif %}"/>
-                            </div>
+                                <div class="mt-2 form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        {% if wizard.steps.prev %}
+                                            {# <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "first step" %}</button>#}
+                                            <button formnovalidate="formnovalidate" class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Previous step</button>
+                                        {% endif %}
+                                        <input type="submit" class="btn btn-primary" value="{% if wizard.steps.step1 == wizard.steps.count %}Submit{% else %}Next{% endif %}"/>
+                                    </div>
+                                </div>
+                            </form>
+                            <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+                            <small class="form-text text-muted"><span class="text-danger">*</span> Required field</small>
                         </div>
-                    </form>
-                    <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-                    <small class="form-text text-muted"><span class="text-danger">*</span> Required field</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    {% include "generics/doc_aside.html" %}
                 </div>
             </div>
         </div>
