@@ -9,7 +9,7 @@ class ApproveWorkflowStepForm(SquestForm):
         self.user = kwargs.pop('user')
         super(ApproveWorkflowStepForm, self).__init__(*args, **kwargs)
 
-        form_generator = FormGenerator(squest_request=self.target_request)
+        form_generator = FormGenerator(user=self.user, squest_request=self.target_request)
         self.fields.update(form_generator.generate_form())
 
     def save(self):

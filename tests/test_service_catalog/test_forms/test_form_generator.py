@@ -52,7 +52,7 @@ class TestFormGenerator(BaseTestRequest):
                 }
             ]
         }
-        form_generator = FormGenerator(squest_request=self.test_request)
+        form_generator = FormGenerator(user=self.standard_user, squest_request=self.test_request)
         form_generator._apply_jinja_template_to_survey()
         self.assertDictEqual(expected_result,
                              form_generator.survey_as_dict)
@@ -99,7 +99,7 @@ class TestFormGenerator(BaseTestRequest):
                 }
             ]
         }
-        form_generator = FormGenerator(squest_request=self.test_request)
+        form_generator = FormGenerator(user=self.standard_user, squest_request=self.test_request)
         form_generator._apply_jinja_template_to_survey()
         self.assertDictEqual(expected_result,
                              form_generator.survey_as_dict)
@@ -126,7 +126,7 @@ class TestFormGenerator(BaseTestRequest):
         self.job_template_test.save()
         # test with jinja string
         target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
-        target_field.default = "{{ instance.spec.os }}"
+        target_field.default = "{{ instance.spec.os }} {{ user.email }}"
         target_field.save()
         self.test_instance.spec = {
             "os": "linux"
@@ -138,7 +138,7 @@ class TestFormGenerator(BaseTestRequest):
             "spec": [
                 {
                     "choices": "",
-                    "default": "linux",
+                    "default": "linux stan.1234@hpe.com",
                     "max": 1024,
                     "min": 0,
                     "new_question": True,
@@ -150,7 +150,8 @@ class TestFormGenerator(BaseTestRequest):
                 }
             ]
         }
-        form_generator = FormGenerator(squest_request=self.test_request, squest_instance=self.test_instance)
+        form_generator = FormGenerator(user=self.standard_user,
+                                       squest_request=self.test_request, squest_instance=self.test_instance)
         form_generator._apply_jinja_template_to_survey()
         self.assertDictEqual(expected_result,
                              form_generator.survey_as_dict)
@@ -199,7 +200,8 @@ class TestFormGenerator(BaseTestRequest):
             ],
         }
         self.maxDiff = None
-        form_generator = FormGenerator(squest_request=self.test_request, squest_instance=self.test_instance)
+        form_generator = FormGenerator(user=self.standard_user,
+                                       squest_request=self.test_request, squest_instance=self.test_instance)
         form_generator._apply_user_validator_to_survey()
         self.assertDictEqual(expected_result,
                              form_generator.survey_as_dict)
@@ -223,7 +225,7 @@ class TestFormGenerator(BaseTestRequest):
                 }
             ]
         }
-        form_generator = FormGenerator(operation=self.create_operation_test)
+        form_generator = FormGenerator(user=self.standard_user, operation=self.create_operation_test)
         form_generator._get_customer_field_only()
         self.assertDictEqual(expected_result,
                              form_generator.survey_as_dict)

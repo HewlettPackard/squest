@@ -41,7 +41,7 @@ class ServiceRequestForm(SquestForm):
         self.quota_scope = kwargs.pop('quota_scope', None)
         super(ServiceRequestForm, self).__init__(*args, **kwargs)
 
-        form_generator = FormGenerator(operation=self.operation, quota_scope=self.quota_scope)
+        form_generator = FormGenerator(user=self.user, operation=self.operation, quota_scope=self.quota_scope)
         self.fields.update(form_generator.generate_form())
 
     def save(self, squest_instance):
