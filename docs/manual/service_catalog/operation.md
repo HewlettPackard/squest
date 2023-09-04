@@ -102,10 +102,10 @@ flowchart LR
 
 **Jinja templating**
 
-Jinja templating can be used in the default value based on the current `{{ instance }}` object as context.
+Jinja templating can be used in the default value based on the current `{{ instance }}` and `{{ user }}` objects as context.
 Examples can be retrieved in the [dedicated documentation section](../advanced/jinja.md).
 
-Full `instance` object definition can be retrieved through the [API documentation](../../administration/api.md).
+Full `instance` and `user `object definition can be retrieved through the [API documentation](../../administration/api.md).
 
 ### Validators
 
