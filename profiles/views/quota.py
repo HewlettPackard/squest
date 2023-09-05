@@ -1,5 +1,6 @@
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
+from django_tables2 import RequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.filters.quota import QuotaFilter
@@ -70,16 +71,22 @@ class QuotaDetailsView(SquestDetailView):
             {'text': f"Quota", 'url': ''},
             {'text': f"{self.object.name}", 'url': ''},
         ]
+        config = RequestConfig(self.request)
         if class_name == "Organization":
             quotas_teams = Quota.objects.filter(scope__in=scope.teams.all(),
                                                 attribute_definition=self.object.attribute_definition)
             quotas_teams_consumption = quotas_teams.aggregate(consumed=Sum('limit')).get("consumed", 0)
             context['quotas_teams_consumption'] = quotas_teams_consumption
-            context['team_limit_table'] = TeamQuotaLimitTable(quotas_teams.all())
+            table_team = TeamQuotaLimitTable(quotas_teams.all(), prefix="team-")
+            context['team_limit_table'] = table_team
+
+            config.configure(table_team)
 
         resources = ResourceAttribute.objects.filter(attribute_definition=self.object.attribute_definition,
                                                      resource__service_catalog_instance__quota_scope=self.object.scope)
-        context['instance_consumption_table'] = InstanceConsumptionTable(resources.all())
+        table_instance = InstanceConsumptionTable(resources.all(), prefix="instance-")
+        context['instance_consumption_table'] = table_instance
+        config.configure(table_instance)
         instances_consumption = resources.all().aggregate(consumed=Sum("value")).get("consumed", 0)
         context['instances_consumption'] = instances_consumption
         return context

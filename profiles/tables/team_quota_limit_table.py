@@ -1,5 +1,3 @@
-from django.urls import reverse
-from django.utils.html import format_html
 from django_tables2 import LinkColumn, Table
 
 from profiles.models import Quota
