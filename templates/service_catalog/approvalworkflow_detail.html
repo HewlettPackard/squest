@@ -29,26 +29,28 @@
                                 <b>Operation</b>
                                 <span class="float-right">{{ object.operation.name }}</span>
                             </li>
-                            <li class="list-group-item">
-                                <b>Scopes</b>
-                                <span class="float-right">
+                            {% if object.scopes.all %}
+                                <li class="list-group-item">
+                                    <b>Restricted scopes</b>
+                                    <span class="float-right">
                                     {% for scope in object.scopes.distinct %}
                                         <span class="badge bg-primary">{{ scope.name }}</span>
                                     {% endfor %}
                                 </span>
-                            </li>
-                        {% if object.get_unused_fields %}
-                            <li class="list-group-item">
-                                <span title="Fields that are not used in any steps.">
-                                    <b>Unused fields</b>
+                                </li>
+                            {% endif %}
+                            {% if object.get_unused_fields %}
+                                <li class="list-group-item">
+                                <span title="Fields that are not used yet in any steps but marked as required by the job template">
+                                    <b>Unused required fields</b>
                                 </span>
-                                <span class="float-right">
+                                    <span class="float-right">
                                     {% for field in object.get_unused_fields %}
                                         <span class="badge bg-warning">{{ field }}</span>
                                     {% endfor %}
                                 </span>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -107,6 +109,10 @@
                                                             <span class="badge bg-primary">{{ field.name }}</span>
                                                         {% endfor %}
                                                     </dd>
+                                                    {% if approval_step.auto_accept_condition %}
+                                                        <dt class="col-sm-4">Auto accept condition</dt>
+                                                        <dd class="col-sm-8">{{ approval_step.auto_accept_condition }}</dd>
+                                                    {% endif %}
                                                 </dl>
                                             </div>
                                         </div>

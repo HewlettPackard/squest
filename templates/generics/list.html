@@ -9,7 +9,7 @@
     {% load export_url from django_tables2 %}
     {% if export_csv %}
         <a class="btn btn-default" href="{% export_url "csv" %}">
-            <i class="fas fa-file-csv"></i>
+            <i class="fas fa-file-csv"></i> Export to CSV
         </a>
     {% endif %}
     {% if html_button_path %}
