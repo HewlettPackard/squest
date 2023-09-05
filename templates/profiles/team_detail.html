@@ -6,7 +6,7 @@
 {% load static %}
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_team" object as can_add_user %}
-    {% has_perm request.user "profiles.change_quota" object as can_change_quota %}
+    {% has_perm request.user "profiles.change_team_quota" object as can_change_quota %}
     <span {% if not can_change_quota %} title="Permission profiles.change_quota needed" {% endif %}>
             <a href="{% url 'profiles:team_quota_edit' object.id %}"
                class="btn btn-primary{% if not can_change_quota %} disabled{% endif %}"> <i
@@ -15,7 +15,7 @@
     </span>
     <span {% if not can_add_user %} title="Permission profiles.add_users_team needed" {% endif %}>
             <a href="{% url 'profiles:team_rbac_create' object.id %}"
-               class="btn btn-success{% if not can_add_user %} disabled{% endif %}"> <i class="fas fa-user-plus"></i> Add RBAC
+               class="btn btn-success{% if not can_add_user %} disabled{% endif %}"><i class="fas fa-user-plus"></i> Add Team RBAC
             </a>
     </span>
 {% endblock %}
@@ -65,8 +65,7 @@
                             </li>
                             {% if users %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#rbac" title="Role Based Access Control"
-                                       data-toggle="tab">RBAC</a>
+                                    <a class="nav-link" href="#users" data-toggle="tab">Users</a>
                                 </li>
                             {% endif %}
 
@@ -76,9 +75,12 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane" id="roles">
+                                <div class="callout callout-info">
+                                    List of roles granted to all team users
+                                </div>
                                 {% render_table roles %}
                             </div>
-                            <div class="tab-pane" id="rbac">
+                            <div class="tab-pane" id="users">
                                 {% if users %}
                                     {% render_table users %}
                                 {% endif %}

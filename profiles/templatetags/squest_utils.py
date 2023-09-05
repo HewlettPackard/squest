@@ -138,7 +138,7 @@ def generate_sidebar(user):
                 'name': 'Quota',
                 'view_name': 'profiles:quota_list',
                 'icon': 'fas fa-chart-pie',
-                'permission_required': 'service_catalog.list_quota',
+                'permission_required': 'profiles.list_quota',
                 'active': []
             },
         ],
@@ -147,7 +147,7 @@ def generate_sidebar(user):
                 'name': 'Global permission',
                 'view_name': 'profiles:globalpermission_rbac',
                 'icon': 'fas fa-globe',
-                'permission_required': 'profiles.can_view_globalpermission',
+                'permission_required': 'profiles.view_users_globalpermission',
                 'active': [
                     "globalpermission_rbac", "globalpermission_rbac_create", "globalpermission_rbac_delete"
                 ]
@@ -166,7 +166,7 @@ def generate_sidebar(user):
                 'name': 'Team',
                 'view_name': 'profiles:team_list',
                 'icon': 'fas fa-user',
-                'permission_required': 'auth.list_user',
+                'permission_required': 'profiles.list_team',
                 'active': [
                     "team_list", "team_create", "team_edit", "team_delete",
                     "team_details", "team_rbac_create", "team_rbac_delete"
@@ -176,7 +176,7 @@ def generate_sidebar(user):
                 'name': 'Users',
                 'view_name': 'profiles:user_list',
                 'icon': 'fas fa-user-friends',
-                'permission_required': 'profiles.list_team',
+                'permission_required': 'profiles.list_user',
                 'active': [
                     "user_list", "user_details"
                 ]
@@ -280,10 +280,12 @@ def generate_sidebar(user):
         group_items = list()
 
         for view in views:
+            user_has_perm = False
             view_data_copy = copy.deepcopy(view)
             if "treeview_items" not in view:
                 view_permission = view.get('permission_required', None)
                 if (view_permission is None) or (view_permission is not None and user.has_perm(view_permission)):
+                    user_has_perm = True
                     is_group_visible = True
             else:
                 view_data_copy["active"] = list()
@@ -293,11 +295,12 @@ def generate_sidebar(user):
                     view_data_copy["active"] += child_view_data_copy["active"]
                     view_permission = child_view.get('permission_required', None)
                     if (view_permission is None) or (view_permission is not None and user.has_perm(view_permission)):
+                        user_has_perm = True
                         is_group_visible = True
                     child_group.append(child_view_data_copy)
                 view_data_copy["treeview_items"] = child_group
-
-            group_items.append(view_data_copy)
+            if user_has_perm:
+                group_items.append(view_data_copy)
 
         if is_group_visible:
             sidebar_menu[group_name] = group_items

@@ -4,7 +4,6 @@ from profiles.models import Quota
 
 
 class TeamQuotaLimitTable(Table):
-
     scope = LinkColumn()
     limit = LinkColumn()
     consumed = LinkColumn()

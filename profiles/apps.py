@@ -13,10 +13,10 @@ def create_roles(sender, **kwargs):
     from profiles.default_rbac.default_roles import default_roles
     from profiles.models.squest_permission import Permission
 
-    role_migration_filter = Role.objects.filter(name="Organization member migration/0014_auto_20230622_1722")
+    role_migration_filter = Role.objects.filter(name="Squest user migration/0014_auto_20230622_1722")
     if role_migration_filter.exists():
         role_migration = role_migration_filter.first()
-        role_migration.name = "Organization member"
+        role_migration.name = "Squest user"
         role_migration.save()
         codenames = list(
             map(lambda default_permissions: default_permissions.split('.')[1],

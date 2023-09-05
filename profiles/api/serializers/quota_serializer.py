@@ -13,8 +13,12 @@ class QuotaSerializer(serializers.ModelSerializer):
         attrs = super().validate(attrs)
         scope = self.instance.scope if self.instance else None
         scope = attrs['scope'] if 'scope' in attrs.keys() else scope
-        attribute_definition = attrs.get("attribute_definition")
-        limit = attrs.get("limit")
+
+        attribute_definition = self.instance.attribute_definition if self.instance else None
+        attribute_definition = attrs['attribute_definition'] if 'attribute_definition' in attrs.keys() else attribute_definition
+
+        limit = self.instance.limit if self.instance else None
+        limit = attrs['limit'] if 'limit' in attrs.keys() else limit
 
         current_quota = Quota.objects.filter(scope=scope, attribute_definition=attribute_definition).first()
         current_limit = 0

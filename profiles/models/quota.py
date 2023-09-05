@@ -10,7 +10,12 @@ from Squest.utils.squest_model import SquestModel
 class Quota(SquestModel):
     class Meta:
         unique_together = ('scope', 'attribute_definition')
-        default_permissions = ('add', 'change', 'delete', 'view', 'list')
+        default_permissions = ('add', 'delete', 'view', 'list')
+
+        permissions = [
+            ("change_team_quota", "Can change quota at team level"),
+            ("change_organization_quota", "Can change quota at organization level"),
+        ]
 
     scope = ForeignKey("Scope",
                        blank=False,

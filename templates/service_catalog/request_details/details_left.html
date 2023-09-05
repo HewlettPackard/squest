@@ -1,4 +1,5 @@
 {% has_perm request.user "service_catalog.view_towerserver" object.operation.job_template.tower_server as can_view_towerserver %}
+{% has_perm request.user "service_catalog.view_instance" object.instance as can_view_instance %}
 <div class="card card-{{ object.state |map_request_state }}">
     <div class="card-header">
         <h3 class="card-title">Request #{{ object.id }}</h3>
@@ -9,9 +10,13 @@
                 <b>ID</b><span class="float-right">{{ object.id }}</span>
             </li>
             <li class="list-group-item">
-                <b>Instance</b><a
-                    href="{% url 'service_catalog:instance_details' object.instance.id %}"
-                    class="float-right">{{ object.instance.name }}</a>
+                <b>Instance</b>
+                {% if can_view_instance %}
+                    <a href="{% url 'service_catalog:instance_details' object.instance.id %}"
+                       class="float-right">{{ object.instance.name }}</a>
+                {% else %}
+                    <span class="float-right">{{ object.instance.name }}</span>
+                {% endif %}
             </li>
             <li class="list-group-item">
                 <b>Service</b><span
@@ -25,8 +30,24 @@
                     class="float-right text-{{ object.operation.type |map_operation_type }}">{{ object.operation.type }}</strong>
             </li>
             <li class="list-group-item">
-                <b>Quota scope</b><strong
-                    class="float-right"><a href="{{ object.instance.quota_scope.get_absolute_url }}">{{ object.instance.quota_scope }}</a></strong>
+                <b>Quota scope</b>
+                {% if object.instance.quota_scope.is_team %}
+                    {% has_perm request.user "profiles.view_team" object.instance.quota_scope as can_view_quota_scope %}
+                {% elif object.instance.quota_scope.is_org %}
+                    {% has_perm request.user "profiles.view_org" object.instance.quota_scope as can_view_quota_scope %}
+                {% endif %}
+                {% if can_view_quota_scope %}
+                    <strong class="float-right">
+                        <a
+                                href="{{ object.instance.quota_scope.get_absolute_url }}">{{ object.instance.quota_scope }}
+                        </a>
+                    </strong>
+                {% else %}
+                    <strong class="float-right">
+                        <span>{{ object.instance.quota_scope }}</span>
+                    </strong>
+                {% endif %}
+
             </li>
             <li class="list-group-item">
                 <b>Request state</b><strong
