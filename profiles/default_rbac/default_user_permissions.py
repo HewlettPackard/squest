@@ -5,6 +5,8 @@ default_user_permissions = [
     'service_catalog.list_support',
     'profiles.list_organization',
     'profiles.list_team',
+    # Role
+    'profiles.view_role',
     # Custom link
     'service_catalog.view_customlink',
     # Doc

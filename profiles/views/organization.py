@@ -22,6 +22,9 @@ class OrganizationDetailView(SquestDetailView):
         context = super().get_context_data(**kwargs)
         if self.request.user.has_perm("profiles.view_users_organization", self.get_object()):
             context['users'] = UserRoleTable(self.object.users.all())
+        else:
+            context['users'] = UserRoleTable(self.object.users.filter(id=self.request.user.id))
+
 
         if self.request.user.has_perm("profiles.view_quota", self.get_object()):
             context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]

@@ -4,6 +4,11 @@
 {% has_perm request.user "service_catalog.reject_request" object as can_reject_request %}
 {% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
 {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
+{% if object.state == "SUBMITTED" %}
+    <div class="callout callout-info">
+        Request is in the approval process
+    </div>
+{% endif %}
 <div class="timeline">
     <div class="time-label">
         <span class="bg-info">Submitted</span>
@@ -157,7 +162,7 @@
                                 {% endwith %}
                                 {% if object.state != "NEED_INFO" %}
                                     {% with args_filter="need_info,"|addstr:object.id %}
-                                        {% if args_filter|can_proceed_request_action and can_process_request %}
+                                        {% if args_filter|can_proceed_request_action and can_need_info_request %}
                                             <a class="btn btl-lg btn-warning"
                                                title="Ask more info"
                                                href="{% url 'service_catalog:request_need_info' object.id %}">
@@ -210,30 +215,32 @@
             <span class="bg-{% if object.state == "ACCEPTED" %}success{% else %}secondary{% endif %}">Accepted</span>
         </div>
     {% endif %}
-    <div>
-        <i class="fas fa-play fa-lg bg-{% if object.state == "ACCEPTED" %}success{% else %}secondary{% endif %}"></i>
-        <div class="timeline-item">
+    {% if can_process_request %}
+        <div>
+            <i class="fas fa-play fa-lg bg-{% if object.state == "ACCEPTED" %}success{% else %}secondary{% endif %}"></i>
+            <div class="timeline-item">
             <span class="time">
                 <span class="badge bg-secondary">
                     PENDING
                 </span>
             </span>
-            <h3 class="timeline-header">Process the request</h3>
-            <div class="timeline-body">
-                <div class="row justify-content-md-center">
-                    <div class="timeline-footer">
-                        {% with args_filter="process,"|addstr:object.id %}
-                            <a class="btn btn-lg btn-success{% if not args_filter|can_proceed_request_action and can_process_request %} disabled{% endif %}"
-                               title="Process"
-                               href="{% url 'service_catalog:request_process' object.id %}">
-                                <i class="fas fa-play"></i> Process
-                            </a>
-                        {% endwith %}
+                <h3 class="timeline-header">Process the request</h3>
+                <div class="timeline-body">
+                    <div class="row justify-content-md-center">
+                        <div class="timeline-footer">
+                            {% with args_filter="process,"|addstr:object.id %}
+                                <a class="btn btn-lg btn-success{% if not args_filter|can_proceed_request_action or not can_process_request %} disabled{% endif %}"
+                                   title="Process"
+                                   href="{% url 'service_catalog:request_process' object.id %}">
+                                    <i class="fas fa-play"></i> Process
+                                </a>
+                            {% endwith %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
     <div class="time-label">
         <span class="bg-{% if object.state == "COMPLETE" %}success{% else %}secondary{% endif %}">Complete</span>
     </div>

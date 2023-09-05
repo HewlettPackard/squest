@@ -37,7 +37,7 @@ class BaseTestCommon(TransactionTestCase):
         self.standard_user = User.objects.create_user('stan1234', 'stan.1234@hpe.com', self.common_password)
         self.standard_user_2 = User.objects.create_user('other1234', 'other.guy@hpe.com', self.common_password)
 
-        self.organization_admin_role = Role.objects.get(name="Organization manager")
+        self.organization_admin_role = Role.objects.create(name="Organization manager")
         self.team_member_role = Role.objects.create(name="Team member for tests")
         self.team_member_role.permissions.add(
             Permission.objects.get_by_natural_key(codename="view_instance", app_label="service_catalog", model="instance"),
