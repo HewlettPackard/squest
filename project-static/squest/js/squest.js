@@ -126,7 +126,7 @@ function add_tab_management() {
     if (hash) {
         $('ul#tabs.squest-default-active li.nav-item a[href="' + hash + '"]').trigger('click');
     } else {
-        $("ul#tabs.squest-default-active li.nav-item a:first").trigger("click");
+        $("ul#tabs.squest-default-active li.nav-item a:first").tab("show");
     }
 }
 

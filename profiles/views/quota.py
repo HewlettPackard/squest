@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_tables2 import RequestConfig
@@ -32,7 +33,16 @@ class QuotaEditView(SquestFormView):
     pk_url_kwarg = "scope_id"
 
     def get_permission_required(self):
-        return f"profiles.change_quota"
+        object = self.get_object()
+        if object.is_team:
+            return "profiles.change_team_quota"
+        elif object.is_org:
+            return f"profiles.change_organization_quota"
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing the permission_required attribute. Define {0}.permission_required, or override '
+                '{0}.get_permission_required().'.format(self.__class__.__name__)
+            )
 
     def get_success_url(self):
         return self.scope.get_absolute_url() + "#quotas"

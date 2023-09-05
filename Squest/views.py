@@ -69,29 +69,46 @@ def home(request):
 
         service_details = dict()
         for service in all_services:
-            service_details[service.name] = {
+            empty_row = True
+            service_dict = {
                 "service": service,
                 "instances": 0
             }
-            if instances.filter(service=service.id).exists():
-                service_details[service.name]["instances"] = instances.get(service=service.id)["instance_count"]
-            if accepted_requests.filter(instance__service=service.id).exists():
-                service_details[service.name]["accepted_requests"] = accepted_requests.get(instance__service=service.id)[
-                    "request_count"]
-            if submitted_requests.filter(instance__service=service.id).exists():
-                service_details[service.name]["submitted_requests"] = \
-                submitted_requests.get(instance__service=service.id)["request_count"]
-            if failed_requests.filter(instance__service=service.id).exists():
-                service_details[service.name]["failed_requests"] = failed_requests.get(instance__service=service.id)[
-                    "request_count"]
-            if need_info_requests.filter(instance__service=service.id).exists():
-                service_details[service.name]["need_info_requests"] = \
-                need_info_requests.get(instance__service=service.id)["request_count"]
-            if opened_supports.filter(instance__service=service.id).exists():
-                service_details[service.name]["opened_supports"] = opened_supports.get(instance__service=service.id)[
-                    "request_count"]
 
-        context["service_details"] = service_details
+            if instances.filter(service=service.id).exists():
+                service_dict["instances"] = instances.get(service=service.id)["instance_count"]
+                empty_row = False
+
+            if accepted_requests.filter(instance__service=service.id).exists():
+                service_dict["accepted_requests"] = accepted_requests.get(instance__service=service.id)[
+                    "request_count"]
+                empty_row = False
+
+            if submitted_requests.filter(instance__service=service.id).exists():
+                service_dict["submitted_requests"] = \
+                submitted_requests.get(instance__service=service.id)["request_count"]
+                empty_row = False
+
+            if failed_requests.filter(instance__service=service.id).exists():
+                service_dict["failed_requests"] = failed_requests.get(instance__service=service.id)[
+                    "request_count"]
+                empty_row = False
+
+            if need_info_requests.filter(instance__service=service.id).exists():
+                service_dict["need_info_requests"] = \
+                need_info_requests.get(instance__service=service.id)["request_count"]
+                empty_row = False
+
+            if opened_supports.filter(instance__service=service.id).exists():
+                service_dict["opened_supports"] = opened_supports.get(instance__service=service.id)[
+                    "request_count"]
+                empty_row = False
+
+            if not empty_row:
+                service_details[service.name] = service_dict
+
+        if service_details:
+            context["service_details"] = service_details
         context['user_without_organization'] = User.objects.filter(groups__isnull=True).count()
 
     return render(request, 'home/home.html', context=context)

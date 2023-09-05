@@ -18,9 +18,8 @@ class OrganizationTable(SquestTable):
 
     def render_users(self, value, record):
         link = reverse("profiles:organization_details", kwargs={'pk': record.id})
-        return format_html(f'<a href="{link}#rbac" class="btn btn-default bg-sm">{record.users.count()}</a>')
+        return format_html(f'<a href="{link}#users" class="btn btn-default bg-sm">{record.users.count()}</a>')
 
     def render_teams(self, value, record):
         link = reverse("profiles:organization_details", kwargs={'pk': record.id})
         return format_html(f'<a href="{link}#teams" class="btn btn-default bg-sm">{record.teams.count()}</a>')
-

@@ -8,7 +8,7 @@ import django.db.models.deletion
 def billing_group_to_org(apps, schema_editor):
     Role = apps.get_model('profiles', 'Role')
     role_org_member, _ = Role.objects.get_or_create(
-        name="Organization member migration/0014_auto_20230622_1722",
+        name="Squest user migration/0014_auto_20230622_1722",
         defaults={'description': 'Can view organization'},
     )
     BillingGroup = apps.get_model('profiles', 'BillingGroup')

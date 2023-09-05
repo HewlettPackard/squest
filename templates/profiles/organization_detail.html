@@ -8,7 +8,7 @@
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_organization" object as can_add_user_in_organization %}
     {% has_perm request.user "profiles.add_team" object as can_add_team %}
-    {% has_perm request.user "profiles.change_quota" object as can_change_quota %}
+    {% has_perm request.user "profiles.change_organization_quota" object as can_change_quota %}
     <span {% if not can_change_quota %}title="Permission profiles.change_quota needed"{% endif %}>
         <a href="{% url 'profiles:organization_quota_edit' object.id %}"
            class="btn btn-primary{% if not can_change_quota %} disabled{% endif %}">
@@ -19,12 +19,12 @@
     <span {% if not can_add_user_in_organization %}title="Permission profiles.add_users_organization needed"{% endif %}>
         <a href="{% url 'profiles:organization_rbac_create' object.id %}"
            class="btn btn-success{% if not can_add_user_in_organization %} disabled{% endif %}">
-            <i class="fas fa-user-plus"></i> Add RBAC
+            <i class="fas fa-user-plus"></i> Add Organization RBAC
         </a>
     </span>
 
     <span {% if not can_add_team %}title="Permission profiles.add_team needed"{% endif %}>
-        <a href="{% url 'profiles:team_create' %}"
+        <a href="{% url 'profiles:team_create' %}?org={{ object.id }}"
            class="btn btn-success{% if not can_add_team %} disabled{% endif %}">
             <i class="fas fa-users"></i> Add team
         </a>
@@ -73,7 +73,7 @@
                             </li>
                             {% if users %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#rbac" title="Role Based Access Control" data-toggle="tab">RBAC</a>
+                                    <a class="nav-link" href="#users" data-toggle="tab">Users</a>
                                 </li>
                             {% endif %}
                             {% if teams %}
@@ -86,9 +86,12 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane" id="roles">
+                                <div class="callout callout-info">
+                                    List of roles granted to all organization users
+                                </div>
                                 {% render_table roles %}
                             </div>
-                            <div class="tab-pane" id="rbac">
+                            <div class="tab-pane" id="users">
                                 {% if users %}
                                     {% render_table users %}
                                 {% endif %}

@@ -9,8 +9,8 @@ from django.test.testcases import TransactionTestCase
 class TestModelScope(TransactionTestCase):
 
     def setUp(self):
-        self.role1 = Role.objects.first()
-        self.role2 = Role.objects.exclude(id=self.role1.id).first()
+        self.role1 = Role.objects.create(name="role1")
+        self.role2 = Role.objects.create(name="role2")
         self.user1 = User.objects.create_user('user1', 'user1@hpe.com', "password")
         self.user2 = User.objects.create_user('user2', 'user2@hpe.com', "password")
         super(TestModelScope, self).setUp()

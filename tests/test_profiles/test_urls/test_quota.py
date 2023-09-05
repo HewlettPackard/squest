@@ -16,12 +16,12 @@ class TestProfilesQuotaPermissionsViews(BaseTestProfile, TestPermissionEndpoint)
             ),
             TestingGetContextView(
                 url='profiles:organization_quota_edit',
-                perm_str='profiles.change_quota',
+                perm_str='profiles.change_organization_quota',
                 url_kwargs={'scope_id': self.test_org.id}
             ),
             TestingPostContextView(
                 url='profiles:organization_quota_edit',
-                perm_str='profiles.change_quota',
+                perm_str='profiles.change_organization_quota',
                 url_kwargs={'scope_id': self.test_org.id},
                 data={
                     f"attribute_definition_{self.cpu_attribute.id}": 100,
@@ -30,12 +30,12 @@ class TestProfilesQuotaPermissionsViews(BaseTestProfile, TestPermissionEndpoint)
             ),
             TestingGetContextView(
                 url='profiles:team_quota_edit',
-                perm_str='profiles.change_quota',
+                perm_str='profiles.change_team_quota',
                 url_kwargs={'scope_id': self.test_quota_scope_team.id}
             ),
             TestingPostContextView(
                 url='profiles:team_quota_edit',
-                perm_str='profiles.change_quota',
+                perm_str='profiles.change_team_quota',
                 url_kwargs={'scope_id': self.test_quota_scope_team.id},
                 data={
                     f"attribute_definition_{self.cpu_attribute.id}": 100,

@@ -26,6 +26,8 @@ class TeamDetailView(SquestDetailView):
                                  ] + context['breadcrumbs']
         if self.request.user.has_perm("profiles.view_users_team", self.get_object()):
             context['users'] = UserRoleTable(self.object.users.all())
+        else:
+            context['users'] = UserRoleTable(self.object.users.filter(id=self.request.user.id))
 
         if self.request.user.has_perm("profiles.view_quota", self.get_object()):
             context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]
@@ -37,6 +39,11 @@ class TeamDetailView(SquestDetailView):
 class TeamCreateView(SquestCreateView):
     model = Team
     form_class = TeamForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["org"] = f"{self.request.GET.get('org')}"
+        return initial.copy()
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
