@@ -46,4 +46,4 @@ Once the request is accepted, the created resource is linked to the service cata
 - Each organization can dispatch the given quota to their teams
 - Quotas can be reorganized at anytime across the teams as long as no instance are using them
 
-![quota](../../images/quota.png)
+![quota](../images/quota.png)

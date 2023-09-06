@@ -21,10 +21,10 @@ For example a link can be created to expose the Hypervisor URL that has been pla
 
 ### Jinja templating
 
-[Jinja templating](jinja.md) can be used in the `text` or `URL` definition. The `instance` object of the current instance detail 
+[Jinja templating](../advanced/jinja.md) can be used in the `text` or `URL` definition. The `instance` object of the current instance detail 
 page is used as context.
 
-Full `instance` object definition can be retrieved through the [API documentation](../administration/api.md).
+Full `instance` object definition can be retrieved through the [API documentation](../../administration/api.md).
 
 Instance spec example:
 ```json

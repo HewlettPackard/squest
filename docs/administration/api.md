@@ -12,7 +12,7 @@ A token can have an expiration date to grant temporary access to an external cli
 Usage example with curl
 ```bash
 export SQUEST_TOKEN=d97ebdbeccf5fc3fba740e8e89048e3d453bd729
-curl -X GET http://127.0.0.1:8000/api/resource_tracker/resource_group/ \
+curl -X GET http://127.0.0.1:8000/api/resource-tracker/resource-group/ \
 -H "Authorization: Bearer $SQUEST_TOKEN"
 ```
 
@@ -31,7 +31,7 @@ Usage example in Ansible URI module:
   tasks:
     - name: Get all resource group
       uri:
-        url: "{{ squest_api }}resource_tracker/resource_group/"
+        url: "{{ squest_api }}resource-tracker/resource-group/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: GET
