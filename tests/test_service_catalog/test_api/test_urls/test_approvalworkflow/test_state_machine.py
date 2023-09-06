@@ -13,7 +13,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestAPI, TestPer
         self.approval_worklflow.save()
 
         self.approval_step1 = ApprovalStep(name="Step 1", approval_workflow=self.approval_worklflow)
-        self.approval_step1.permission = Permission.objects.get_by_natural_key(codename="approve_approvalstep",
+        self.approval_step1.permission = Permission.objects.get_by_natural_key(codename="approve_reject_approvalstep",
                                                                                app_label="service_catalog",
                                                                                model="approvalstep")
         self.approval_step1.save()
@@ -43,12 +43,12 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestAPI, TestPer
             TestingGetContextView(
                 url='api_request_approval_workflow_state_approve',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_approvalstep',
+                perm_str='service_catalog.approve_reject_approvalstep',
             ),
             TestingPostContextView(
                 url='api_request_approval_workflow_state_approve',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_approvalstep',
+                perm_str='service_catalog.approve_reject_approvalstep',
                 expected_status_code=200
             )
         ]
@@ -59,12 +59,12 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestAPI, TestPer
             TestingGetContextView(
                 url='api_request_approval_workflow_state_reject',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_approvalstep',
+                perm_str='service_catalog.approve_reject_approvalstep',
             ),
             TestingPostContextView(
                 url='api_request_approval_workflow_state_reject',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_approvalstep',
+                perm_str='service_catalog.approve_reject_approvalstep',
                 expected_status_code=200
             )
         ]

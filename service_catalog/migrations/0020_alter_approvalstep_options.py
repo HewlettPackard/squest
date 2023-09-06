@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='approvalstep',
-            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('approve_approvalstep', 'Can approve an approval step')]},
+            options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'permissions': [('approve_reject_approvalstep', 'Can approve/reject  an approval step')]},
         ),
     ]
