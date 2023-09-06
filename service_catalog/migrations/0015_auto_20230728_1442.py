@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('position', models.IntegerField(blank=True, default=0, null=True)),
             ],
             options={
-                'permissions': [('approve_approvalstep', 'Can approve an approval step')],
+                'permissions': [('approve_reject_approvalstep', 'Can approve/reject an approval step')],
             },
         ),
         migrations.CreateModel(

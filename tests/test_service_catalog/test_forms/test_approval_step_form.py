@@ -22,7 +22,7 @@ class TestApprovalStepForm(BaseTest):
         data = {
             'approval_workflow': self.test_approval_workflow.id,
             'name': 'test_step',
-            'permission': Permission.objects.get(codename="approve_approvalstep"),
+            'permission': Permission.objects.get(codename="approve_reject_approvalstep"),
             'readable_fields': [self.field1],
             'editable_fields': [self.field2]
         }
@@ -35,7 +35,7 @@ class TestApprovalStepForm(BaseTest):
         }
         data = {
             'name': 'test_step',
-            'permission': Permission.objects.get(codename="approve_approvalstep"),
+            'permission': Permission.objects.get(codename="approve_reject_approvalstep"),
             'readable_fields': [self.field1],
             'editable_fields': [self.field1]
         }

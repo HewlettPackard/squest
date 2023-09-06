@@ -34,39 +34,39 @@ All objects have **generic** CRUD (Create, Retrieve/List, Update, Delete) permis
 
 **Specific** Squest permissions:
 
-| Short description                               | Codename                      | Object                |
-|-------------------------------------------------|-------------------------------|-----------------------|
-| Can add users in global permission              | add_users_globalpermission    | globalpermission      |
-| Can delete users in global permission           | delete_users_globalpermission | globalpermission      |
-| Can view users in global permission             | view_users_globalpermission   | globalpermission      |
-| Can add users in organization                   | add_users_organization        | organization          |
-| Can delete users in organization                | delete_users_organization     | organization          |
-| Can view users in organization                  | view_users_organization       | organization          |
-| Can consume quota of the scope                  | consume_quota_scope           | scope                 |
-| Can add users in team                           | add_users_team                | team                  |
-| Can delete users in team                        | delete_users_team             | team                  |
-| Can view users in team                          | view_users_team               | team                  |
-| Can approve an approval step                    | approve_approvalstep          | approvalstep          |
-| Can view admin custom link                      | view_admin_customlink         | customlink            |
-| Can request an admin day2 operation on instance | admin_request_on_instance     | instance              |
-| Can archive instance                            | archive_instance              | instance              |
-| Can change admin spec on instance               | change_admin_spec_instance    | instance              |
-| Can request a day2 operation on instance        | request_on_instance           | instance              |
-| Can unarchive instance                          | unarchive_instance            | instance              |
-| Can view admin spec on instance                 | view_admin_spec_instance      | instance              |
-| Can accept request                              | accept_request                | request               |
-| Can archive request                             | archive_request               | request               |
-| Can cancel request                              | cancel_request                | request               |
-| Can ask info request                            | need_info_request             | request               |
-| Can process request                             | process_request               | request               |
-| Can reject request                              | reject_request                | request               |
-| Can re-submit request                           | re_submit_request             | request               |
-| Can unarchive request                           | unarchive_request             | request               |
-| Can request an admin operation on service       | admin_request_on_service      | service               |
-| Can request operation on service                | request_on_service            | service               |
-| Can close support                               | close_support                 | support               |
-| Can reopen support                              | reopen_support                | support               |
-| Can sync RHAAP/AWX                              | sync_towerserver              | towerserver           |
+| Short description                               | Codename                      | Object           |
+|-------------------------------------------------|-------------------------------|------------------|
+| Can add users in global permission              | add_users_globalpermission    | globalpermission |
+| Can delete users in global permission           | delete_users_globalpermission | globalpermission |
+| Can view users in global permission             | view_users_globalpermission   | globalpermission |
+| Can add users in organization                   | add_users_organization        | organization     |
+| Can delete users in organization                | delete_users_organization     | organization     |
+| Can view users in organization                  | view_users_organization       | organization     |
+| Can consume quota of the scope                  | consume_quota_scope           | scope            |
+| Can add users in team                           | add_users_team                | team             |
+| Can delete users in team                        | delete_users_team             | team             |
+| Can view users in team                          | view_users_team               | team             |
+| Can approve/reject an approval step             | approve_reject_approvalstep   | approvalstep     |
+| Can view admin custom link                      | view_admin_customlink         | customlink       |
+| Can request an admin day2 operation on instance | admin_request_on_instance     | instance         |
+| Can archive instance                            | archive_instance              | instance         |
+| Can change admin spec on instance               | change_admin_spec_instance    | instance         |
+| Can request a day2 operation on instance        | request_on_instance           | instance         |
+| Can unarchive instance                          | unarchive_instance            | instance         |
+| Can view admin spec on instance                 | view_admin_spec_instance      | instance         |
+| Can accept request                              | accept_request                | request          |
+| Can archive request                             | archive_request               | request          |
+| Can cancel request                              | cancel_request                | request          |
+| Can ask info request                            | need_info_request             | request          |
+| Can process request                             | process_request               | request          |
+| Can reject request                              | reject_request                | request          |
+| Can re-submit request                           | re_submit_request             | request          |
+| Can unarchive request                           | unarchive_request             | request          |
+| Can request an admin operation on service       | admin_request_on_service      | service          |
+| Can request operation on service                | request_on_service            | service          |
+| Can close support                               | close_support                 | support          |
+| Can reopen support                              | reopen_support                | support          |
+| Can sync RHAAP/AWX                              | sync_towerserver              | towerserver      |
 
 !!!note
 
