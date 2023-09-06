@@ -44,7 +44,7 @@
     - name: Update squest with info
       uri:
         validate_certs: no
-        url: "{{ squest_api_url }}/service_catalog/instance/{{ squest['request']['instance']['id'] }}/"
+        url: "{{ squest_api_url }}/service-catalog/instance/{{ squest['request']['instance']['id'] }}/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: PATCH
@@ -63,7 +63,7 @@
       name: Create a resource in resouce tracking
       uri:
         validate_certs: no
-        url: "{{ squest_api_url }}/resource_tracker/resource_group/{{ resource_group_file_id }}/resources/"
+        url: "{{ squest_api_url }}/resource-tracker/resource-group/{{ resource_group_file_id }}/resources/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: POST
