@@ -357,7 +357,7 @@ class TestRequest(BaseTestRequest):
     def test_cancel(self):
         self.assertTrue(Instance.objects.filter(id=self.test_instance.id).exists())
         self.test_request.cancel()
-        self.assertFalse(Instance.objects.filter(id=self.test_instance.id).exists())
+        self.assertEqual(self.test_request.instance.state, InstanceState.ABORTED)
 
     def test_reprocess_after_failed(self):
         for state in [InstanceState.PENDING, InstanceState.PROVISION_FAILED, InstanceState.AVAILABLE,
