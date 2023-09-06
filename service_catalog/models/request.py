@@ -269,7 +269,7 @@ class Request(SquestModel):
         from ..mail_utils import send_mail_request_update
         if self.tower_job_id is None:
             logger.warning(
-                f"[Request][check_job_status] no tower job id for request id {self.id}. Check job status skipped")
+                f"[Request][check_job_status] no RHAAP/AWX job id for request id {self.id}. Check job status skipped")
             return
 
         # if the task is expired we remove the periodic task
@@ -283,9 +283,9 @@ class Request(SquestModel):
 
         tower = self.operation.job_template.tower_server.get_tower_instance()
         job_object = tower.get_unified_job_by_id(self.tower_job_id)
-
+        logger.info(f"[Request][check_job_status] status of Job #{self.tower_job_id}: {job_object.status}")
         if job_object.status == "successful":
-            logger.info(f"[Request][check_job_status] tower job status successful for request id {self.id}")
+            logger.info(f"[Request][check_job_status] RHAAP/AWX job status successful for request id {self.id}")
             self.complete()
             self.save()
             self.periodic_task.delete()
@@ -301,7 +301,7 @@ class Request(SquestModel):
             send_mail_request_update(target_request=self)
 
         if job_object.status in ["canceled", "failed"]:
-            error_message = f"Tower job {self.tower_job_id} status is '{job_object.status}'"
+            error_message = f"RHAAP/AWX job {self.tower_job_id} status is '{job_object.status}'"
             self.has_failed(error_message)
             self.save()
             self.periodic_task.delete()

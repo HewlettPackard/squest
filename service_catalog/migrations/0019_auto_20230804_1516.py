@@ -5,6 +5,15 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+deprecated_permission = ["request_operation_on_instance", "request_support_on_instance", "cancel_request",
+                         "comment_request", "approve_request_approvalstep"]
+
+
+def remove_deprecated_permissions(apps, schema_editor):
+    Permission = apps.get_model('profiles', 'Permission')
+    Permission.objects.filter(codename__in=deprecated_permission).delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -13,6 +22,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL("DROP TABLE IF EXISTS guardian_userobjectpermission"),
+        migrations.RunPython(remove_deprecated_permissions),
         migrations.AlterModelOptions(
             name='instance',
             options={'default_permissions': ('add', 'change', 'delete', 'view', 'list'), 'ordering': ['-last_updated'], 'permissions': [('archive_instance', 'Can archive instance'), ('unarchive_instance', 'Can unarchive instance'), ('request_on_instance', 'Can request a day2 operation on instance'), ('admin_request_on_instance', 'Can request an admin day2 operation on instance'), ('view_admin_spec_instance', 'Can view admin spec on instance'), ('change_admin_spec_instance', 'Can change admin spec on instance')]},
