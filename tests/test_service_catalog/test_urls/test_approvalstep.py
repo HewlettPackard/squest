@@ -36,7 +36,7 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id},
                 data={
                     'name': 'New approval step',
-                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
+                    'permission': Permission.objects.get(codename='approve_reject_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                     'approval_workflow': self.approval_workflow.id
@@ -53,7 +53,7 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id},
                 data={
                     'name': 'Approval step update',
-                    'permission': Permission.objects.get(codename='approve_approvalstep').id,
+                    'permission': Permission.objects.get(codename='approve_reject_approvalstep').id,
                     'readable_fields': [],
                     'editable_fields': [],
                     'approval_workflow': self.approval_workflow.id
