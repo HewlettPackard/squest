@@ -177,7 +177,7 @@ Port to use for the SMTP server defined in `EMAIL_HOST`.
 
 **Default:** `False`
 
-Switch to `True` to enable backup. Refer to the [dedicated documentation](../installation/backup.md).
+Switch to `True` to enable backup. Refer to the [dedicated documentation](../administration/backup.md).
 
 ### BACKUP_CRONTAB
 

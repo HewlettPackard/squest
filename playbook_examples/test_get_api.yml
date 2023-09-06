@@ -9,7 +9,7 @@
   tasks:
     - name: Get all resource group
       uri:
-        url: "{{ squest_api }}/resource_tracker/resource_group/"
+        url: "{{ squest_api }}/resource-tracker/resource-group/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: GET

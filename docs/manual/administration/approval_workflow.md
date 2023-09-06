@@ -19,7 +19,8 @@ request switch to _ACCEPTED_ state and can be processed.
 
 !!! note
 
-      The auto-accept option can not be set in the _Operation_ with an Approval Workflow.
+    The auto-accept option can not be set in the _Operation_ with an Approval Workflow. 
+    This need to be configured into the step [auto accept condition](#auto-accept)
 
 Configuration:
 
