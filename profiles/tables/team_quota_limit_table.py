@@ -7,8 +7,9 @@ class TeamQuotaLimitTable(Table):
 
     scope = LinkColumn()
     limit = LinkColumn()
+    consumed = LinkColumn()
 
     class Meta:
         model = Quota
         attrs = {"id": "quota_team_table", "class": "table squest-pagination-tables"}
-        fields = ("scope", "limit")
+        fields = ("scope", "limit", "consumed")

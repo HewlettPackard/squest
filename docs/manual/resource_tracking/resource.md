@@ -45,7 +45,7 @@ We link as well the pending instance(given by `squest.instance.id`) to this reso
     # -----------------------
     - name: Create a resource in squest
       uri:
-        url: "{{ squest_api }}resource_tracker/resource/"
+        url: "{{ squest_api }}resource-tracker/resource/"
         headers:
           Authorization: "{{ squest_bearer_token }}"
         method: POST
