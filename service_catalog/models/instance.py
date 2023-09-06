@@ -188,6 +188,10 @@ class Instance(SquestModel):
     def unarchive(self):
         pass
 
+    @transition(field=state, source=InstanceState.PENDING, target=InstanceState.ABORTED)
+    def abort(self):
+        pass
+
     def reset_to_last_stable_state(self):
         if self.state == InstanceState.PROVISION_FAILED:
             self.state = InstanceState.PENDING

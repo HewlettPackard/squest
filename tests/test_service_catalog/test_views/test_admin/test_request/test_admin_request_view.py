@@ -29,9 +29,11 @@ class AdminRequestViewTest(BaseTestRequest):
             'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_cancel', kwargs=args)
+        self.assertEqual(self.test_request.instance.state, InstanceState.PENDING)
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
-        self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_request.instance.state, InstanceState.ABORTED)
 
     def test_request_need_info(self):
         args = {
