@@ -6,12 +6,14 @@ import django.db.models.deletion
 
 
 deprecated_permission = ["request_operation_on_instance", "request_support_on_instance", "cancel_request",
-                         "comment_request", "approve_request_approvalstep"]
+                         "comment_request"]
+deprecated_permission_model = ["billing_group", "teamrolebinding", "userrolebinding"]
 
 
 def remove_deprecated_permissions(apps, schema_editor):
     Permission = apps.get_model('profiles', 'Permission')
     Permission.objects.filter(codename__in=deprecated_permission).delete()
+    Permission.objects.filter(content_type__model__in=deprecated_permission_model).delete()
 
 
 class Migration(migrations.Migration):
@@ -23,6 +25,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL("DROP TABLE IF EXISTS guardian_userobjectpermission"),
+        migrations.RunSQL("DROP TABLE IF EXISTS guardian_groupobjectpermission"),
         migrations.RunPython(remove_deprecated_permissions),
         migrations.AlterModelOptions(
             name='instance',
