@@ -25,4 +25,4 @@ class TestApprovalStep(BaseTest):
         test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
                                                            approval_workflow=self.test_approval_workflow)
         self.assertIsNotNone(test_approval_step_1.permission)
-        self.assertEqual(test_approval_step_1.permission, Permission.objects.get(codename="approve_approvalstep"))
+        self.assertEqual(test_approval_step_1.permission, Permission.objects.get(codename="approve_reject_approvalstep"))

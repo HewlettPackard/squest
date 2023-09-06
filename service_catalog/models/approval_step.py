@@ -11,7 +11,7 @@ from Squest.utils.squest_model import SquestModel
 class ApprovalStep(SquestModel):
     class Meta(SquestModel.Meta):
         unique_together = (('id', 'approval_workflow'), ('name', 'approval_workflow'))
-        permissions = [('approve_approvalstep', 'Can approve an approval step')]
+        permissions = [('approve_reject_approvalstep', 'Can approve/reject  an approval step')]
 
     approval_workflow = ForeignKey(
         "service_catalog.ApprovalWorkflow",
@@ -75,7 +75,7 @@ class ApprovalStep(SquestModel):
     def save(self, *args, **kwargs):
         # set the default permission
         if not hasattr(self, "permission"):
-            self.permission = Permission.objects.get(codename="approve_approvalstep")
+            self.permission = Permission.objects.get(codename="approve_reject_approvalstep")
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

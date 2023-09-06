@@ -36,18 +36,18 @@ Steps are the breakpoint of a Squest request. Each step need to be accepted in o
 
 Configuration:
 
-| Name            | Description                                                                                                 |
-|-----------------|-------------------------------------------------------------------------------------------------------------|
-| Name            | Unique identifier of the _Step_                                                                             |
-| Permission      | Permission required to be allowed to accept or reject the request. By default set to `approve_approvalstep` |
-| Readable field  | Field from the survey that will be shown in the form but cannot be updated in the step                      |
-| Editable  field | Field from the survey that can be filled or updated from a previous step                                    |
+| Name            | Description                                                                                                        |
+|-----------------|--------------------------------------------------------------------------------------------------------------------|
+| Name            | Unique identifier of the _Step_                                                                                    |
+| Permission      | Permission required to be allowed to accept or reject the request. By default set to `approve_reject_approvalstep` |
+| Readable field  | Field from the survey that will be shown in the form but cannot be updated in the step                             |
+| Editable  field | Field from the survey that can be filled or updated from a previous step                                           |
 
 !!! warning
 
     If the _job template_ behind the _operation_ has some **mandatory** fields in its survey then those fields need to be configured in at least in one step.
 
-By default, Squest comes with a single [permission](rbac.md) named `approve_approvalstep` that can be used in steps. 
+By default, Squest comes with a single [permission](rbac.md) named `approve_reject_approvalstep` that can be used in steps. 
 
 Custom permissions can be created and added to a role to avoid using the default one. 
 
