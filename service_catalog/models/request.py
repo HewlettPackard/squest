@@ -145,16 +145,20 @@ class Request(SquestModel):
                                      RequestState.REJECTED,
                                      RequestState.ACCEPTED], target=RequestState.CANCELED)
     def cancel(self):
-        # delete the related instance if the state was pending (we should have only one)
         if self.instance.state == InstanceState.PENDING:
-            self.instance.delete()
+            self.instance.abort()
+            self.instance.save()
             return False
         return True
 
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
     def reject(self, user):
-        pass
+        if self.instance.state == InstanceState.PENDING:
+            self.instance.abort()
+            self.instance.save()
+            return False
+        return True
 
     @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
                 target=RequestState.ACCEPTED)

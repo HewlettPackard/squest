@@ -25,6 +25,7 @@ map_dict_instance_state = {
     InstanceState.UPDATE_FAILED: "warning",
     InstanceState.DELETED: "danger",
     InstanceState.ARCHIVED: "dark",
+    InstanceState.ABORTED: "gray_dark",
 }
 
 map_dict_step_state = {

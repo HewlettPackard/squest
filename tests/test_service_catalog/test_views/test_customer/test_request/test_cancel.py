@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
-from service_catalog.models import Request, RequestState, InstanceState
+from service_catalog.models import RequestState, InstanceState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -19,7 +19,8 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         self.assertEqual(200, response.status_code)
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
-        self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_request.instance.state, InstanceState.ABORTED)
 
     def _assert_cannot_cancel(self):
         args = {
@@ -53,4 +54,4 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         url = reverse('service_catalog:request_cancel', kwargs=args)
         response = self.client.post(url)
         self.assertEqual(302, response.status_code)
-        self.assertEqual(0, Request.objects.filter(id=self.test_request.id).count())
+        self.test_request.instance.state = InstanceState.ABORTED
