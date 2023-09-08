@@ -427,8 +427,11 @@ GUARDIAN_RAISE_403 = True
 # -----------------------------------------
 # SQUEST VERSION
 # -----------------------------------------
-repo = git.Repo(search_parent_directories=True)
-SQUEST_COMMIT_SHA6 = str(repo.head.object.hexsha)[0:6]
+try:
+    repo = git.Repo(search_parent_directories=True)
+    SQUEST_COMMIT_SHA6 = str(repo.head.object.hexsha)[0:6]
+except git.exc.InvalidGitRepositoryError:
+    SQUEST_COMMIT_SHA6 = "local dev"
 print(f"SQUEST_VERSION: {__version__} - {SQUEST_COMMIT_SHA6}")
 
 # -----------------------------------------
