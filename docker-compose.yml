@@ -12,17 +12,12 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.10.23-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
     env_file: docker/environment_variables/rabbitmq.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
   redis-cache:
     image: redis:6.2.13-alpine
-    ports:
-      - "6379:6379"
     command:
     - sh
     - -c
