@@ -77,7 +77,6 @@ def home(request):
 
             if instances.filter(service=service.id).exists():
                 service_dict["instances"] = instances.get(service=service.id)["instance_count"]
-                empty_row = False
 
             if accepted_requests.filter(instance__service=service.id).exists():
                 service_dict["accepted_requests"] = accepted_requests.get(instance__service=service.id)[
