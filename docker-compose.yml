@@ -85,7 +85,7 @@ services:
     ports: []
     command: >
       bash -c "/wait &&
-      celery -A service_catalog worker --beat -l info"
+      celery -A service_catalog beat -l info"
 
 volumes:
   db_data: {}
