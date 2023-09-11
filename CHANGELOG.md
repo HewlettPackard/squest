@@ -1,3 +1,10 @@
+# 1.10.6 2023-09-11
+
+## Fix
+
+- Fix Celery beat execution command in Docker Compose
+
+
 # 1.10.5 2023-08-28
 
 ## Feature
