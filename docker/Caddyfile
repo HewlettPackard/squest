@@ -1,5 +1,10 @@
 squest.domain.local {   # This line should match the ALLOWED_HOSTS in your Squest settings
-    reverse_proxy nginx:8080
+    reverse_proxy nginx:8080 maintenance:80 {
+        # try to use django in first place. If not available we switch to maintenance
+        lb_policy first
+        lb_try_duration 5s
+        fail_duration 30s
+    }
     encode gzip zstd
     tls /etc/ssl/private/squest.crt /etc/ssl/private/squest.key
     # or:
