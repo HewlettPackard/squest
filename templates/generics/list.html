@@ -62,14 +62,14 @@
 
 {% block right_aside %}
     {% if filter %}
-        <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }}"
+        <aside class="control-sidebar control-sidebar-{{ request.user.profile.theme }} overflow-auto"
                style="display: block; width: 50%">
             <div class="row">
                 <a class="nav-link float-left" data-widget="control-sidebar">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
-            <div class="p-3 control-sidebar-content">
+            <div class="p-3 control-sidebar-content" style="margin-bottom: 4rem">
                 <div class="row pb-3">
                     <h3 class="card-title"><i class="fas fa-search"></i> Filter</h3>
                 </div>
