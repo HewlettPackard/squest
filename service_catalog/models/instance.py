@@ -7,7 +7,7 @@ from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTim
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition, post_transition
+from django_fsm import transition, post_transition, FSMIntegerField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
@@ -51,7 +51,7 @@ class Instance(SquestModel):
         related_query_name="quota_instance",
         on_delete=PROTECT
     )
-    state = FSMField(default=InstanceState.PENDING)
+    state = FSMIntegerField(default=InstanceState.PENDING, choices=InstanceState.choices)
     date_available = DateTimeField(null=True, blank=True)
 
     @classmethod

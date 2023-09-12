@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import GlobalHook
+from service_catalog.models import GlobalHook, InstanceState
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -25,7 +25,7 @@ class GlobalHooksEditViewsTest(BaseTest):
         data = {
             "name": "hook2",
             "model": "Instance",
-            "state": "PENDING",
+            "state": InstanceState.PENDING,
             "job_template": self.job_template_test.id,
             "extra_vars": {}
         }
@@ -33,4 +33,4 @@ class GlobalHooksEditViewsTest(BaseTest):
         self.assertEqual(302, response.status_code)
         self.global_hook_test.refresh_from_db()
         self.assertEqual(self.global_hook_test.name, "hook2")
-        self.assertEqual(self.global_hook_test.state, "PENDING")
+        self.assertEqual(self.global_hook_test.state, InstanceState.PENDING)

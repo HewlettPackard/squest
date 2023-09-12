@@ -10,4 +10,5 @@ class SquestTable(tables.Table):
         super(SquestTable, self).__init__(*args, **kwargs)
 
         for field in hide_field:
-            self.columns.hide(field)
+            if field in self.columns.columns:
+                self.columns.hide(field)

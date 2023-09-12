@@ -32,4 +32,4 @@ class RequestTable(SquestTable):
 
     def render_state(self, record, value):
         from service_catalog.views import map_request_state
-        return format_html(f'<a href="{record.get_absolute_url()}"><strong class="text-{ map_request_state(value) }">{ value }</strong></a>')
+        return format_html(f'<a href="{record.get_absolute_url()}"><strong class="text-{ map_request_state(record.state) }">{ value.upper() }</strong></a>')

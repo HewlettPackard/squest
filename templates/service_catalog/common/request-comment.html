@@ -26,7 +26,7 @@
                                     Comments
                                 </h3>
                                 <div class="card-tools">
-                                    <span title="state" class="badge bg-{{ target_request.state |map_request_state }} p-1 mr-2">{{ target_request.state }}</span>
+                                    <span title="state" class="badge bg-{{ target_request.state |map_request_state }} p-1 mr-2">{{ target_request.get_state_display }}</span>
                                 </div>
                             </div>
                             <div class="card-body">

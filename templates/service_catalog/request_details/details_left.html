@@ -51,11 +51,11 @@
             </li>
             <li class="list-group-item">
                 <b>Request state</b><strong
-                    class="float-right text-{{ object.state |map_request_state }}">{{ object.state }}</strong>
+                    class="float-right text-{{ object.state |map_request_state }}">{{ object.get_state_display }}</strong>
             </li>
             <li class="list-group-item">
                 <b>Instance state</b><strong
-                    class="float-right text-{{ object.instance.state |map_instance_state }}">{{ object.instance.state }}</strong>
+                    class="float-right text-{{ object.instance.state |map_instance_state }}">{{ object.instance.get_state_display }}</strong>
             </li>
             <li class="list-group-item">
                 <b>Requester</b><span class="float-right">{{ object.user.username }}</span>

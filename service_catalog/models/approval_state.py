@@ -1,8 +1,7 @@
-from django.db.models import TextChoices
-from django.utils.translation import gettext_lazy as _
+from django.db.models import IntegerChoices
 
 
-class ApprovalState(TextChoices):
-    PENDING = 'PENDING', _('Pending')
-    APPROVED = 'APPROVED', _('Approved')
-    REJECTED = 'REJECTED', _('Rejected')
+class ApprovalState(IntegerChoices):
+    PENDING = 1, 'PENDING'
+    APPROVED = 2, 'APPROVED'
+    REJECTED = 3, 'REJECTED'

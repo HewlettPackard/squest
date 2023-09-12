@@ -1,14 +1,13 @@
-from django.db.models import TextChoices
-from django.utils.translation import gettext_lazy as _
+from django.db.models import IntegerChoices
 
 
-class RequestState(TextChoices):
-    SUBMITTED = 'SUBMITTED', _('SUBMITTED')
-    NEED_INFO = 'NEED_INFO', _('NEED_INFO')
-    REJECTED = 'REJECTED', _('REJECTED')
-    ACCEPTED = 'ACCEPTED', _('ACCEPTED')
-    CANCELED = 'CANCELED', _('CANCELED')
-    PROCESSING = 'PROCESSING', _('PROCESSING')
-    COMPLETE = 'COMPLETE', _('COMPLETE')
-    FAILED = 'FAILED', _('FAILED')
-    ARCHIVED = 'ARCHIVED', _('ARCHIVED')
+class RequestState(IntegerChoices):
+    SUBMITTED = 1, "SUBMITTED"
+    NEED_INFO = 2, "NEED_INFO"
+    REJECTED = 3, "REJECTED"
+    ACCEPTED = 4, "ACCEPTED"
+    CANCELED = 5, "CANCELED"
+    PROCESSING = 6, "PROCESSING"
+    COMPLETE = 7, "COMPLETE"
+    FAILED = 8, "FAILED"
+    ARCHIVED = 9, "ARCHIVED"

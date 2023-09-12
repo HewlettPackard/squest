@@ -1,3 +1,4 @@
+from service_catalog.models import RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
 
@@ -35,7 +36,7 @@ class TestServiceCatalogRequestPermissionsCRUDViews(BaseTestRequest, TestPermiss
                     "date_complete": "",
                     "date_archived": "",
                     "tower_job_id": "",
-                    "state": "FAILED",
+                    "state": RequestState.FAILED,
                     "periodic_task": "",
                     "periodic_task_date_expire": "",
                     "failure_message": ""
