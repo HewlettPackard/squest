@@ -1,4 +1,7 @@
 {% load static %}
+
+{% load cache %}
+{% cache 60 sidebar_permission request.user.username %}
 {% has_perm request.user "service_catalog.list_instance" as can_list_instance %}
 {% has_perm request.user "service_catalog.list_request" as can_list_request %}
 {% has_perm request.user "service_catalog.list_support" as can_list_support %}
@@ -17,6 +20,7 @@
 {% has_perm request.user "service_catalog.list_customlink" as can_list_customlink %}
 {% has_perm request.user "service_catalog.list_approvalworkflow" as can_list_approval %}
 {% has_perm request.user "service_catalog.list_quota" as can_list_quota %}
+{% endcache %}
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar {% if request.user.profile.theme == "dark" %}sidebar-dark-primary{% else %}sidebar-light-white{% endif %} elevation-4">
