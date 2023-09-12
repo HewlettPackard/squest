@@ -42,7 +42,7 @@ MAINTENANCE_MODE_ENABLED = str_to_bool(os.environ.get('MAINTENANCE_MODE_ENABLED'
 DATE_FORMAT = os.environ.get('DATE_FORMAT', "%d %b, %Y  %H:%M")
 LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
 IS_DEV_SERVER = str_to_bool(os.environ.get('IS_DEV_SERVER', False))
-
+SQL_DEBUG = str_to_bool(os.environ.get('SQL_DEBUG', False))
 # -------------------------------
 # SQUEST CONFIG
 # -------------------------------
@@ -61,6 +61,8 @@ print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 print(f"IS_GUNICORN_EXECUTION: {IS_GUNICORN_EXECUTION}")
 print(f"LDAP_ENABLED: {LDAP_ENABLED}")
 print(f"BACKUP_ENABLED: {BACKUP_ENABLED}")
+print(f"SQL_DEBUG: {SQL_DEBUG}")
+
 if BACKUP_ENABLED:
     print(f"BACKUP_CRONTAB: {BACKUP_CRONTAB}")
 
@@ -499,5 +501,17 @@ SWAGGER_SETTINGS = {
 # Plugins
 # -----------------------------------------
 FIELD_VALIDATOR_PATH = "plugins/field_validators"
+
+# -----------------------------------------
+# SQL Debug
+# -----------------------------------------
+
+if SQL_DEBUG:
+    LOGGING["handlers"]["console"] = {
+        "level": "DEBUG", "class": "logging.StreamHandler"
+    }
+    LOGGING["loggers"]["django.db.backends"] = {
+        "level": "DEBUG", "handlers": ["console"]
+    }
 
 print('[Settings] loaded')
