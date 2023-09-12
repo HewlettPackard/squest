@@ -30,7 +30,8 @@ class InstanceListView(SquestListView):
     filterset_class = InstanceFilter
 
     def get_queryset(self):
-        return Instance.get_queryset_for_user(self.request.user, "service_catalog.view_instance")
+        return Instance.get_queryset_for_user(self.request.user, "service_catalog.view_instance").prefetch_related(
+            'requester', 'service', 'quota_scope')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

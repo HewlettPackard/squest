@@ -13,7 +13,7 @@ from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
-from django_fsm import FSMField, transition, post_transition, can_proceed
+from django_fsm import transition, post_transition, can_proceed, FSMIntegerField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
@@ -51,7 +51,7 @@ class Request(SquestModel):
     date_complete = DateTimeField(blank=True, null=True)
     date_archived = DateTimeField(blank=True, null=True)
     tower_job_id = IntegerField(blank=True, null=True)
-    state = FSMField(default=RequestState.SUBMITTED, choices=RequestState.choices)
+    state = FSMIntegerField(default=RequestState.SUBMITTED, choices=RequestState.choices)
     periodic_task = ForeignKey(PeriodicTask, on_delete=SET_NULL, null=True, blank=True)
     periodic_task_date_expire = DateTimeField(auto_now=False, blank=True, null=True)
     failure_message = TextField(blank=True, null=True)

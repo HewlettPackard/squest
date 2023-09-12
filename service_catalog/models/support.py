@@ -1,19 +1,19 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from django.db.models import TextChoices, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL, Q
+from django.db.models import TextChoices, CharField, ForeignKey, DateTimeField, CASCADE, SET_NULL, Q, IntegerChoices
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, transition, FSMIntegerField
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.mail_utils import send_mail_support_is_closed
 from service_catalog.models import Instance
 
 
-class SupportState(TextChoices):
-    OPENED = 'OPENED', _('OPENED')
-    CLOSED = 'CLOSED', _('CLOSED')
+class SupportState(IntegerChoices):
+    OPENED = 1, 'OPENED'
+    CLOSED = 2, 'CLOSED'
 
 
 class Support(SquestModel):
@@ -26,7 +26,7 @@ class Support(SquestModel):
     instance = ForeignKey(Instance, on_delete=CASCADE, null=True, blank=True, related_name="supports",
                           related_query_name="support")
     opened_by = ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
-    state = FSMField(default=SupportState.OPENED, choices=SupportState.choices)
+    state = FSMIntegerField(default=SupportState.OPENED, choices=SupportState.choices)
     date_opened = DateTimeField(auto_now=True, blank=True, null=True)
     date_closed = DateTimeField(auto_now=False, blank=True, null=True)
 

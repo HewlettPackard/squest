@@ -301,7 +301,7 @@ class AdminRequestViewTest(BaseTestRequest):
                 'id': self.test_instance.id,
                 'name': 'test_instance_1',
                 'spec': {},
-                'state': str(expected_instance_state),
+                'state': expected_instance_state,
                 'service': self.test_request.operation.service.id,
                 'quota_scope': ScopeSerializer(self.test_request.instance.quota_scope).data,
                 'requester': UserSerializer(self.test_request.instance.requester).data
@@ -592,7 +592,7 @@ class AdminRequestViewTest(BaseTestRequest):
             "date_complete": "",
             "date_archived": "",
             "tower_job_id": "",
-            "state": "FAILED",
+            "state": RequestState.FAILED,
             "periodic_task": "",
             "periodic_task_date_expire": "",
             "failure_message": ""

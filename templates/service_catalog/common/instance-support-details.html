@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-sm-6">
                         <span title="state"
-                              class="float-sm-right badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.state }}</span>
+                              class="float-sm-right badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.get_state_display }}</span>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->

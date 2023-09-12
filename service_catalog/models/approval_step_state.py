@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import ForeignKey, CASCADE, CharField, SET_NULL, JSONField, DateTimeField
+from django.db.models import ForeignKey, CASCADE, CharField, SET_NULL, JSONField, DateTimeField, IntegerField
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.approval_state import ApprovalState
@@ -27,8 +27,7 @@ class ApprovalStepState(SquestModel):
         related_name='approval_step_states',
         related_query_name='approval_step_state'
     )
-    state = CharField(
-        max_length=10,
+    state = IntegerField(
         choices=ApprovalState.choices,
         default=ApprovalState.PENDING,
         blank=False,
