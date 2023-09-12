@@ -3,7 +3,6 @@ import logging
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ViewDoesNotExist
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django_fsm import can_proceed
@@ -17,7 +16,7 @@ from service_catalog.forms.process_request_form import ProcessRequestForm
 from service_catalog.forms.request_forms import RequestForm
 from service_catalog.mail_utils import send_email_request_canceled
 from service_catalog.mail_utils import send_mail_request_update
-from service_catalog.models import Request, RequestMessage
+from service_catalog.models import Request, RequestMessage, Service, Instance, RequestState
 from service_catalog.models.instance import InstanceState
 from service_catalog.tables.request_tables import RequestTable
 
@@ -32,13 +31,26 @@ class RequestListView(SquestListView):
     filterset_class = RequestFilter
 
     def get_queryset(self):
-        return Request.get_queryset_for_user(self.request.user, 'service_catalog.view_request')
+        return Request.get_queryset_for_user(
+            self.request.user, 'service_catalog.view_request'
+        ).prefetch_related(
+            "user"
+        ).prefetch_related(
+            "operation"
+        ).prefetch_related(
+            "instance"
+        ).prefetch_related(
+            "instance__quota_scope"
+        ).prefetch_related(
+            "instance__service"
+        ).exclude(state=RequestState.ARCHIVED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ""
         context['extra_html_button_path'] = "service_catalog/buttons/request-archived-list.html"
-        context['action_url'] = reverse('service_catalog:request_bulk_delete')
+        if self.request.user.has_perm("service_catalog.delete_request"):
+            context['action_url'] = reverse('service_catalog:request_bulk_delete')
         return context
 
 
@@ -49,7 +61,15 @@ class RequestArchivedListView(SquestListView):
     filterset_class = RequestArchivedFilter
 
     def get_queryset(self):
-        return Request.get_queryset_for_user(self.request.user, 'service_catalog.view_request')
+        return Request.get_queryset_for_user(
+            self.request.user, 'service_catalog.view_request'
+        ).prefetch_related(
+            "user",
+            "operation",
+            "instance",
+            "instance__quota_scope",
+            "instance__service",
+        ).filter(state=RequestState.ARCHIVED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

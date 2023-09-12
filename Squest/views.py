@@ -25,10 +25,10 @@ def home(request):
         context['total_request_need_info'] = all_requests.filter(state=RequestState.NEED_INFO).count()
 
     if request.user.has_perm('service_catalog.list_instance'):
-        context['total_instance'] = all_instances.filter(state='AVAILABLE').count()
+        context['total_instance'] = all_instances.filter(state=InstanceState.AVAILABLE).count()
 
     if request.user.has_perm('service_catalog.list_support'):
-        context['total_support_opened'] = all_supports.filter(state='OPENED').count()
+        context['total_support_opened'] = all_supports.filter(state=SupportState.OPENED).count()
 
     if request.user.has_perm('auth.list_user'):
         context['total_user'] = User.objects.all().count()

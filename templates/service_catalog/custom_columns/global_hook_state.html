@@ -1,7 +1,7 @@
 {% if record.model == "Instance" %}
-    <strong class="text-{{ record.state |map_instance_state }}">{{ record.state }}</strong>
+    <strong class="text-{{ record.state |map_instance_state }}">{{ record.get_state_display }}</strong>
 {% elif record.model == "Request" %}
-    <strong class="text-{{ record.state |map_request_state }}">{{ record.state }}</strong>
+    <strong class="text-{{ record.state |map_request_state }}">{{ record.get_state_display }}</strong>
 {% else %}
-    <strong>{{ record.state }}</strong>
+    <strong>{{ record.get_state_display }}</strong>
 {% endif %}

@@ -1,3 +1,4 @@
+
 from django.utils.html import format_html
 from django_tables2 import TemplateColumn, LinkColumn, CheckBoxColumn
 from django_tables2.utils import A
@@ -9,12 +10,9 @@ from service_catalog.models import Instance
 class InstanceTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     service = LinkColumn()
-    opened_support_count = TemplateColumn(template_name='service_catalog/custom_columns/instance_opened_support.html',
-                                          verbose_name="Opened support")
-    name = LinkColumn("service_catalog:instance_details", args=[A("id")], verbose_name="Name")
+    name = LinkColumn()
     quota_scope = LinkColumn()
 
-    last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
     def before_render(self, request):
         if not request.user.has_perm("service_catalog.delete_instance"):
             self.columns.hide('selection')
@@ -22,8 +20,8 @@ class InstanceTable(SquestTable):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "name", "service", "quota_scope", "state", "opened_support_count", "requester", "date_available")
+        fields = ("selection", "name", "service", "quota_scope", "state", "requester", "date_available", "last_updated")
 
     def render_state(self, record, value):
         from service_catalog.views import map_instance_state
-        return format_html(f'<strong class ="text-{ map_instance_state(value) }" > { value } </strong>')
+        return format_html(f'<strong class ="text-{ map_instance_state(record.state) }" > { value.upper() } </strong>')

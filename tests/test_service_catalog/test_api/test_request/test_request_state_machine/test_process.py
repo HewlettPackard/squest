@@ -38,7 +38,7 @@ class TestApiRequestProcess(BaseTestRequestAPI):
                 'id': self.test_instance.id,
                 'name': 'test_instance_1',
                 'spec': {},
-                'state': str(expected_instance_state),
+                'state': expected_instance_state,
                 'service': self.test_request.operation.service.id,
                 'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
                 'requester': UserSerializer(self.test_request.instance.requester).data

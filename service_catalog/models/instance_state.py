@@ -1,16 +1,15 @@
-from django.db.models import TextChoices
-from django.utils.translation import gettext_lazy as _
+from django.db.models import IntegerChoices
 
 
-class InstanceState(TextChoices):
-    PENDING = 'PENDING', _('PENDING')
-    PROVISION_FAILED = 'PROVISION_FAILED', _('PROVISION_FAILED')
-    PROVISIONING = 'PROVISIONING', _('PROVISIONING')
-    UPDATING = 'UPDATING', _('UPDATING')
-    UPDATE_FAILED = 'UPDATE_FAILED', _('UPDATE_FAILED')
-    DELETING = 'DELETING', _('DELETING')
-    DELETED = 'DELETED', _('DELETED')
-    DELETE_FAILED = 'DELETE_FAILED', _('DELETE_FAILED')
-    ARCHIVED = 'ARCHIVED', _('ARCHIVED')
-    AVAILABLE = 'AVAILABLE', _('AVAILABLE')
-    ABORTED = 'ABORTED', _('ABORTED')
+class InstanceState(IntegerChoices):
+    PENDING = 1,"PENDING"
+    PROVISION_FAILED = 2,"PROVISION_FAILED"
+    PROVISIONING = 3,"PROVISIONING"
+    UPDATING = 4,"UPDATING"
+    UPDATE_FAILED = 5,"UPDATE_FAILED"
+    DELETING = 6,"DELETING"
+    DELETED = 7,"DELETED"
+    DELETE_FAILED = 8,"DELETE_FAILED"
+    ARCHIVED = 9,"ARCHIVED"
+    AVAILABLE = 10,"AVAILABLE"
+    ABORTED = 11,"ABORTED"
