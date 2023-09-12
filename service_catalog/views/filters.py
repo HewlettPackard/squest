@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from django_fsm import can_proceed
 from markdown.extensions.toc import TocExtension
 
-from service_catalog.models import BootstrapType
+from service_catalog.models import BootstrapType, RequestState
 from service_catalog.models import Request
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.operations import OperationType
@@ -188,3 +188,28 @@ def get_field_type(tower_survey_field):
         if survey["variable"] == tower_survey_field.name:
             return survey["type"]
     return ""
+
+
+@register.filter(name="map_color_next_state")
+def map_color_next_state(current_state, next_state):
+    print(current_state, next_state)
+    if current_state == "NEED_INFO":
+        return "warning"
+    if current_state == next_state:
+        return "primary"
+    request_state_position = [c[0] for c in RequestState.choices]
+    index_of_expected = request_state_position.index(next_state)
+    success_list = request_state_position[index_of_expected:]
+    if current_state in success_list:
+        return "success"
+    return "secondary"
+
+
+@register.filter(name="map_current_state")
+def map_current_state(current_state, expected_state):
+    request_state_position = [c[0] for c in RequestState.choices]
+    index_of_expected = request_state_position.index(expected_state)
+    success_list = request_state_position[index_of_expected:]
+    if current_state in success_list:
+        return "success"
+    return "secondary"

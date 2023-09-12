@@ -31,7 +31,7 @@ map_dict_instance_state = {
 map_dict_step_state = {
     ApprovalState.APPROVED: "success",
     ApprovalState.REJECTED: "danger",
-    ApprovalState.PENDING: "info",
+    ApprovalState.PENDING: "primary",
 }
 
 map_class_to_color = {
