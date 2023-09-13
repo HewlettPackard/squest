@@ -148,7 +148,8 @@ def request_comment(request, request_id):
         'messages': messages,
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-            {'text': target_request, 'url': ""},
+            {'text': target_request, 'url': target_request.get_absolute_url()},
+            {'text': "Comments", 'url': ''},
         ]
     }
     return render(request, "service_catalog/common/request-comment.html", context)
@@ -175,6 +176,7 @@ def requestmessage_edit(request, request_id, pk):
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
             {'text': squest_request, 'url': squest_request.get_absolute_url()},
+            {'text': "Comments", 'url': ''},
         ],
         'action': 'edit'
     }
