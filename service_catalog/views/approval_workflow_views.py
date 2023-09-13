@@ -28,4 +28,3 @@ class ApprovalWorkflowEditView(SquestUpdateView):
 
 class AttributeDefinitionDeleteView(SquestDeleteView):
     model = ApprovalWorkflow
-    template_name = 'generics/delete.html'
