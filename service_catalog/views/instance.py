@@ -71,7 +71,7 @@ class InstanceDetailView(SquestDetailView):
         if self.request.user.has_perm("service_catalog.view_request", self.object):
             context['requests_table'] = RequestTable(
                 self.object.request_set.distinct(),
-                hide_fields=["instance", "instance__service"]
+                hide_fields=["instance", "instance__service", "selection"]
             )
         # support
         if self.request.user.has_perm("service_catalog.view_support", self.object):
@@ -147,19 +147,19 @@ def instance_archive(request, pk):
     context['object'] = instance
     context['action'] = 'archive'
     context['breadcrumbs'] = [
-            {
-                'text': 'Instance',
-                'url': reverse('service_catalog:instance_list')
-            },
-            {
-                'text': instance,
-                'url': instance.get_absolute_url()
-            },
-            {
-                'text': context['action'].capitalize(),
-                'url': ""
-            },
-        ]
+        {
+            'text': 'Instance',
+            'url': reverse('service_catalog:instance_list')
+        },
+        {
+            'text': instance,
+            'url': instance.get_absolute_url()
+        },
+        {
+            'text': context['action'].capitalize(),
+            'url': ""
+        },
+    ]
     if not request.user.has_perm('service_catalog.archive_instance', instance):
         raise PermissionDenied
     if not can_proceed(instance.archive):
@@ -170,6 +170,7 @@ def instance_archive(request, pk):
         return redirect(instance.get_absolute_url())
     return render(request, "service_catalog/instance-archive.html", context)
 
+
 @login_required
 def instance_unarchive(request, pk):
     instance = get_object_or_404(Instance, id=pk)
@@ -177,19 +178,19 @@ def instance_unarchive(request, pk):
     context['object'] = instance
     context['action'] = 'unarchive'
     context['breadcrumbs'] = [
-            {
-                'text': 'Instance',
-                'url': reverse('service_catalog:instance_list')
-            },
-            {
-                'text': instance,
-                'url': instance.get_absolute_url()
-            },
-            {
-                'text': context['action'].capitalize(),
-                'url': ""
-            },
-        ]
+        {
+            'text': 'Instance',
+            'url': reverse('service_catalog:instance_list')
+        },
+        {
+            'text': instance,
+            'url': instance.get_absolute_url()
+        },
+        {
+            'text': context['action'].capitalize(),
+            'url': ""
+        },
+    ]
     if not request.user.has_perm('service_catalog.unarchive_instance', instance):
         raise PermissionDenied
     if not can_proceed(instance.unarchive):
