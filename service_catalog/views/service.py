@@ -34,6 +34,9 @@ class ServiceCreateView(SquestCreateView):
         context['multipart'] = True
         return context
 
+    def get_success_url(self):
+        return reverse("service_catalog:operation_create", kwargs={"service_id": self.object.id})
+
 
 class ServiceEditView(SquestUpdateView):
     model = Service
