@@ -77,6 +77,7 @@ class OperationDetailView(SquestDetailView):
                 'url': ''
             }
         ]
+        context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
         return context
 
 
