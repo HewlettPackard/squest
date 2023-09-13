@@ -106,7 +106,7 @@ def request_cancel(request, pk):
 
         if target_request.cancel():
             target_request.save()
-        return redirect('service_catalog:request_list')
+        return redirect(target_request.get_absolute_url())
     context = {
         'breadcrumbs': [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
@@ -198,7 +198,7 @@ def request_need_info(request, pk):
             target_request.need_info()
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect('service_catalog:request_list')
+            return redirect(target_request.get_absolute_url())
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
@@ -228,7 +228,7 @@ def request_re_submit(request, pk):
             target_request.re_submit()
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect('service_catalog:request_list')
+            return redirect(target_request.get_absolute_url())
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
@@ -262,7 +262,7 @@ def request_reject(request, pk):
             target_request.reject(request.user)
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect('service_catalog:request_list')
+            return redirect(target_request.get_absolute_url())
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
     breadcrumbs = [
@@ -299,7 +299,7 @@ def request_accept(request, pk):
                             f"by {request.user}")
                 error_message = try_process_request(request.user, target_request)
                 if not error_message:
-                    return redirect('service_catalog:request_list')
+                    return redirect(target_request.get_absolute_url())
             return redirect(target_request.get_absolute_url())
     else:
         form = AcceptRequestForm(request.user, **parameters)
@@ -353,7 +353,7 @@ def request_process(request, pk):
                                                 diff_mode_override=diff_mode_override
                                                 )
             if not error_message:
-                return redirect('service_catalog:request_list')
+                return redirect(target_request.get_absolute_url())
     else:
         form = ProcessRequestForm(request.user, **parameters)
 
