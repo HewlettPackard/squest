@@ -4,6 +4,7 @@
 {% has_perm request.user "service_catalog.reject_request" object as can_reject_request %}
 {% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
 {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
+
 <div class="timeline">
     <div>
         <i class="fas fa-shopping-cart bg-success"></i>
@@ -34,12 +35,12 @@
                 <div class="timeline-item">
                     <span class="time">
                         <span class="badge bg-{{ step |map_approvalstep_state }}">
-                            {{ step.state }}
+                            {{ step.get_state_display }}
                         </span>
                     </span>
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
-                        {% if step.state == "APPROVED" %}
+                        {% if step.get_state_display == "APPROVED" %}
                             {% has_perm request.user step.approval_step.permission.permission_str step as can_view_step %}
                             <details>
                                 <summary>Survey</summary>
@@ -66,7 +67,7 @@
                                 <i class="fas fa-check text-success"></i> Approved by
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
                             </blockquote>
-                        {% elif step.state == "REJECTED" %}
+                        {% elif step.get_state_display == "REJECTED" %}
                             <blockquote class="quote-danger">
                                 <i class="fas fa-ban text-danger"></i> Rejected by
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated }}
@@ -108,21 +109,23 @@
         {% endfor %}
     {% else %}
         <div>
-            <i class="fas fa-clipboard-check bg-{{ object.state | map_color_next_state:'SUBMITTED' }}"></i>
+            <i class="fas fa-clipboard-check bg-{{ object.get_state_display | map_color_next_state:'SUBMITTED' }}"></i>
             <div class="timeline-item">
                 <h3 class="timeline-header">Admin review</h3>
                 <div class="timeline-body">
-                    {% if object.state == "SUBMITTED" %}
+                    {% if object.get_state_display == "SUBMITTED" %}
                         <div class="callout callout-info">
                             <i class="fas fa-pause text-info"></i> This request is waiting for an approval
                         </div>
                     {% endif %}
-                    {% if object.state == "NEED_INFO" %}
+                    {% if object.get_state_display == "NEED_INFO" %}
                         <div class="callout callout-warning">
-                            <i class="fas fa-pause text-warning"></i> This request is waiting for information as comment.
+                            <i class="fas fa-pause text-warning"></i> This request is waiting for information as
+                            comment.
                         </div>
                     {% endif %}
-                    {% if object.state == "ACCEPTED" or object.state == "COMPLETE" or object.state == "FAILED" %}
+
+                    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" %}
                         <details>
                             <summary>Survey</summary>
                             <table class="row">
@@ -160,7 +163,7 @@
                                         </a>
                                     {% endif %}
                                 {% endwith %}
-                                {% if object.state != "NEED_INFO" %}
+                                {% if object.get_state_display != "NEED_INFO" %}
                                     {% with args_filter="need_info,"|addstr:object.id %}
                                         {% if args_filter|can_proceed_request_action and can_need_info_request %}
                                             <a class="btn btl-lg btn-warning"
@@ -206,37 +209,38 @@
             </div>
         </div>
     {% endif %}
-    {% if object.state == "REJECTED" %}
+    {% if object.get_state_display == "REJECTED" %}
         <div class="time-label">
             <span class="bg-danger">Rejected</span>
         </div>
-    {% elif object.state == "CANCELED" %}
+    {% elif object.get_state_display == "CANCELED" %}
         <div class="time-label">
             <span class="bg-info">Canceled</span>
         </div>
     {% else %}
         <div class="time-label">
-            <span class="bg-{{ object.state | map_current_state:'ACCEPTED' }}">Accepted</span>
+            <span class="bg-{{ object.get_state_display | map_current_state:'ACCEPTED' }}">Accepted </span>
         </div>
     {% endif %}
-    {% if object.state == "ACCEPTED" or object.state == "COMPLETE" or object.state == "FAILED" or object.state == "PROCESSING" %}
+    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" %}
         <div>
-            <i class="fas fa-play fa-lg bg-{{ object.state | map_color_next_state:'ACCEPTED' }}"></i>
+            <i class="fas fa-play fa-lg bg-{{ object.get_state_display | map_color_next_state:'ACCEPTED' }}"></i>
             <div class="timeline-item">
-                {% if object.date_complete %}<span class="time"><i class="fas fa-clock"></i> {{ object.date_complete }}</span>{% endif %}
+                {% if object.date_complete %}
+                    <span class="time"><i class="fas fa-clock"></i> {{ object.date_complete }}</span>{% endif %}
                 <h3 class="timeline-header">Process the request</h3>
                 <div class="timeline-body">
-                    {% if object.state == "ACCEPTED" %}
+                    {% if object.get_state_display == "ACCEPTED" %}
                         <div class="callout callout-info">
                             <i class="fas fa-pause text-info"></i> This request is ready to be processed.
                         </div>
-                    {% elif object.state == "COMPLETE" or object.state == "FAILED" or object.state == "PROCESSING" %}
+                    {% elif object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" %}
                         <blockquote class="quote-success">
                             <i class="fas fa-check text-success"></i> Sent for processing by
                             <strong>{{ object.processed_by }}</strong>
                         </blockquote>
                     {% endif %}
-                    {% if can_process_request and object.state == "ACCEPTED" %}
+                    {% if can_process_request and object.get_state_display == "ACCEPTED" %}
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
@@ -254,16 +258,17 @@
         </div>
     {% endif %}
     <div class="time-label">
-        <span class="bg-{{ object.state | map_current_state:'PROCESSING' }}">Processing</span>
+        <span class="bg-{{ object.get_state_display | map_current_state:'PROCESSING' }}">Processing</span>
     </div>
-    {% if object.state == "PROCESSING" or object.state == "COMPLETE" %}
+    {% if object.get_state_display == "PROCESSING" or object.get_state_display == "COMPLETE" %}
         <div>
             <i class="fas fa-cog bg-success"></i>
             <div class="timeline-item">
                 <h3 class="timeline-header text-success">Processing <a href="{{ object.tower_job_url }}"
-                                                                       class="float-right">Job: {{ object.tower_job_id }}</a></h3>
+                                                                       class="float-right">Job: {{ object.tower_job_id }}</a>
+                </h3>
                 <div class="timeline-body">
-                    {% if  object.state == "PROCESSING"%}
+                    {% if  object.get_state_display == "PROCESSING" %}
                         The request is currently processed by the backend.
                     {% else %}
                         <blockquote class="quote-success">
@@ -274,12 +279,13 @@
             </div>
         </div>
     {% endif %}
-    {% if object.state == "FAILED" %}
+    {% if object.get_state_display == "FAILED" %}
         <div>
             <i class="fas fa-exclamation-triangle bg-danger"></i>
             <div class="timeline-item">
                 <h3 class="timeline-header text-danger">Processing failed <a href="{{ object.tower_job_url }}"
-                                                                             class="float-right">Job: {{ object.tower_job_id }}</a></h3>
+                                                                             class="float-right">Job: {{ object.tower_job_id }}</a>
+                </h3>
                 <div class="timeline-body">
                     The processing has failed and may require administrator attention.<br> Controller error:<br>
                     <div class="callout callout-danger">
@@ -305,9 +311,9 @@
             <span class="bg-danger">Failed</span>
         </div>
     {% endif %}
-    {% if object.state != "FAILED" %}
+    {% if object.get_state_display != "FAILED" %}
         <div class="time-label">
-            <span class="bg-{{ object.state | map_current_state:'COMPLETE' }}">Complete</span>
+            <span class="bg-{{ object.get_state_display | map_current_state:'COMPLETE' }}">Complete</span>
         </div>
     {% endif %}
 </div>
