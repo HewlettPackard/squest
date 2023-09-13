@@ -24,9 +24,9 @@
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
-                <div class="card card-{{ object.state |map_instance_state }}">
+                <div class="card card-default">
                     <div class="card-header">
-                        <h3 class="card-title">Details</h3>
+                        <h3 class="card-title">{{ object.name }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="text-center">
@@ -34,9 +34,6 @@
                                  alt="Service image">
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item">
-                                <b>Name</b> <a class="float-right">{{ object.name }}</a>
-                            </li>
                             <li class="list-group-item">
                                 <b>Service</b>
                                 {% has_perm request.user "service_catalog.change_service" object.service as can_edit_service %}
