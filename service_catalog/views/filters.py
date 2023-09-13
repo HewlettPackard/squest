@@ -197,7 +197,7 @@ def map_color_next_state(current_state, next_state):
         return "warning"
     if current_state == next_state:
         return "primary"
-    request_state_position = [c[0] for c in RequestState.choices]
+    request_state_position = [c[1] for c in RequestState.choices]
     index_of_expected = request_state_position.index(next_state)
     success_list = request_state_position[index_of_expected:]
     if current_state in success_list:
@@ -207,7 +207,7 @@ def map_color_next_state(current_state, next_state):
 
 @register.filter(name="map_current_state")
 def map_current_state(current_state, expected_state):
-    request_state_position = [c[0] for c in RequestState.choices]
+    request_state_position = [c[1] for c in RequestState.choices]
     index_of_expected = request_state_position.index(expected_state)
     success_list = request_state_position[index_of_expected:]
     if current_state in success_list:

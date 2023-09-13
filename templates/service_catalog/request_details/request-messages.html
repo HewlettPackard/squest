@@ -5,7 +5,7 @@
             <i class="fas fa-comments"></i> Comments
         </h3>
         <div class="card-tools">
-            <span title="state" class="badge bg-{{ object.state |map_request_state }} p-1 mr-2">{{ object.state }}</span>
+            <span title="state" class="badge bg-{{ object.state |map_request_state }} p-1 mr-2">{{ object.get_state_display }}</span>
         </div>
     </div>
     <div class="card-body">
