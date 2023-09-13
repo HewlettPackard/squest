@@ -34,15 +34,7 @@ class RequestListView(SquestListView):
         return Request.get_queryset_for_user(
             self.request.user, 'service_catalog.view_request'
         ).prefetch_related(
-            "user"
-        ).prefetch_related(
-            "operation"
-        ).prefetch_related(
-            "instance"
-        ).prefetch_related(
-            "instance__quota_scope"
-        ).prefetch_related(
-            "instance__service"
+            "user", "operation", "instance", "instance__quota_scope", "instance__service"
         ).exclude(state=RequestState.ARCHIVED)
 
     def get_context_data(self, **kwargs):
@@ -394,6 +386,7 @@ def request_archive(request, pk):
     target_request.save()
     return redirect(target_request.get_absolute_url())
 
+
 @login_required
 def request_unarchive(request, pk):
     if request.method != 'GET':
@@ -406,7 +399,6 @@ def request_unarchive(request, pk):
     target_request.unarchive()
     target_request.save()
     return redirect(target_request.get_absolute_url())
-
 
 
 def try_process_request(user, target_request, inventory_override=None, credentials_override=None, tags_override=None,

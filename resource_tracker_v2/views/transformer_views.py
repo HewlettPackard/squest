@@ -143,5 +143,5 @@ def ajax_load_attribute(request):
 
     options = [(transformer.attribute_definition.id, transformer.attribute_definition.name) for transformer in
                all_available_attribute_to_target_rg.all()]
-    return render(request, 'service_catalog/settings/global_hooks/state-dropdown-list-option.html',
+    return render(request, 'generics/ajax-option.html',
                   {'options': options})

@@ -505,11 +505,7 @@ FIELD_VALIDATOR_PATH = "plugins/field_validators"
 # -----------------------------------------
 # SQL Debug
 # -----------------------------------------
-
 if SQL_DEBUG:
-    LOGGING["handlers"]["console"] = {
-        "level": "DEBUG", "class": "logging.StreamHandler"
-    }
     LOGGING["loggers"]["django.db.backends"] = {
         "level": "DEBUG", "handlers": ["console"]
     }

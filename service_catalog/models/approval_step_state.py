@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import ForeignKey, CASCADE, CharField, SET_NULL, JSONField, DateTimeField, IntegerField
+from django.db.models import ForeignKey, CASCADE, SET_NULL, JSONField, DateTimeField, IntegerField
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.approval_state import ApprovalState
