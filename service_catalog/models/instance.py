@@ -2,19 +2,19 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, SET_NULL, DateTimeField, ManyToManyField, PROTECT, Q, \
+from django.db.models import CharField, JSONField, ForeignKey, DateTimeField, ManyToManyField, PROTECT, Q, \
     CASCADE
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from django_fsm import transition, post_transition, FSMIntegerField
+from django_fsm import transition, FSMIntegerField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from profiles.models.scope import Scope
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.services import Service
-from service_catalog.models.state_hooks import HookManager
+from service_catalog.models.hooks import HookManager
 
 logger = logging.getLogger(__name__)
 
@@ -202,20 +202,24 @@ class Instance(SquestModel):
         self.resources.filter(is_deleted_on_instance_deletion=True).delete()
 
     @classmethod
-    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
-        """
-        Proxy method. Cannot be mocked for testing
-        """
-        HookManager.trigger_hook(sender, instance, name, source, target, *args, **kwargs)
-
-    @classmethod
     def on_create_call_hook_manager(cls, sender, instance, created, *args, **kwargs):
         if created:
-            HookManager.trigger_hook(sender=sender, instance=instance, name="create", source="create",
+            HookManager.trigger_hook(sender=sender, instance=instance, name="create_instance", source="create",
                                      target=InstanceState.PENDING, *args, **kwargs)
 
+    @classmethod
+    def on_change(cls, sender, instance, *args, **kwargs):
+        if instance.id is not None:
+            previous = Instance.objects.get(id=instance.id)
+            if previous.state != instance.state:
+                HookManager.trigger_hook(sender=sender, instance=instance, name="on_change_instance", source=previous.state, target=instance.state,
+                                         *args, **kwargs)
 
-post_transition.connect(Instance.trigger_hook_handler, sender=Instance)
+
+
+pre_save.connect(Instance.on_change, sender=Instance)
+
+
 post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
 
 

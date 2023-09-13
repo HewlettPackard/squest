@@ -1,16 +1,15 @@
 # Extras
 
-## Global Hooks
+## Instance/Request Hooks
 
-Global hooks are a way to call a RHAAP/AWX job template following the new state of a `Request` or an `Instance`.
+Instance/Requests hooks are a way to call a RHAAP/AWX job template following the new state of a `Request` or an `Instance`.
 
 For example, if you want to call a job template that performs an action everytime a `Request` switch to `FAILED` state.
 
-Form field:
+Create a RequestHook:
 
 - **name:** Name of your hook
-- **Model:** Target model object that will be linked to the hook (`Request` or an `Instance`)
-- **State:** State of the selected `model`. The hook will be triggered when an instance of the select model type will switch to this selected state
+- **State:** The hook will be triggered when an instance of the select model type will switch to this selected state
 - **Job template:** The RHAAP/AWX job template to execute when an instance of the selected model reach the selected state
 - **Extra vars:** extra variable as JSON to add to the selected job template
 

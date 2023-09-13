@@ -13,7 +13,7 @@ from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
-from django_fsm import transition, post_transition, can_proceed, FSMIntegerField
+from django_fsm import transition, can_proceed, FSMIntegerField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
@@ -21,7 +21,7 @@ from service_catalog.models.exceptions import ExceptionServiceCatalog
 from service_catalog.models.instance import Instance, InstanceState
 from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.request_state import RequestState
-from service_catalog.models.state_hooks import HookManager
+from service_catalog.models.hooks import HookManager
 
 logger = logging.getLogger(__name__)
 
@@ -372,18 +372,10 @@ class Request(SquestModel):
             instance.save()
 
     @classmethod
-    def trigger_hook_handler(cls, sender, instance, name, source, target, *args, **kwargs):
-        """
-        Proxy method. Cannot be mocked for testing
-        """
-        HookManager.trigger_hook(sender=sender, instance=instance, name=name, source=source, target=target,
-                                 *args, **kwargs)
-
-    @classmethod
     def on_create(cls, sender, instance, created, *args, **kwargs):
         if created:
             # notify hook manager
-            HookManager.trigger_hook(sender=sender, instance=instance, name="create", source="create",
+            HookManager.trigger_hook(sender=sender, instance=instance, name="create_request", source="create",
                                      target=RequestState.SUBMITTED, *args, **kwargs)
 
             # create approval step if approval workflow is set
@@ -392,9 +384,14 @@ class Request(SquestModel):
 
     @classmethod
     def on_change(cls, sender, instance, *args, **kwargs):
-        # reset all approval step to pending if an approval workflow was attached to the request
         if instance.id is not None:
             previous = Request.objects.get(id=instance.id)
+            if previous.state != instance.state:
+                HookManager.trigger_hook(sender=sender, instance=instance, name="on_change_request",
+                                         source=previous.state, target=instance.state,
+                                         *args, **kwargs)
+
+            # reset all approval step to pending if an approval workflow was attached to the request
             if previous.state != RequestState.SUBMITTED and instance.state == RequestState.SUBMITTED:
                 if instance.approval_workflow_state is not None:
                     instance.approval_workflow_state.reset()
@@ -403,4 +400,3 @@ class Request(SquestModel):
 pre_save.connect(Request.on_change, sender=Request)
 post_save.connect(Request.on_create, sender=Request)
 post_save.connect(Request.auto_accept_and_process_signal, sender=Request)
-post_transition.connect(Request.trigger_hook_handler, sender=Request)

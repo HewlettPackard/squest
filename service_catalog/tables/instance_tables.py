@@ -24,4 +24,4 @@ class InstanceTable(SquestTable):
 
     def render_state(self, record, value):
         from service_catalog.views import map_instance_state
-        return format_html(f'<strong class ="text-{ map_instance_state(record.state) }" > { value.upper() } </strong>')
+        return format_html(f'<strong class ="text-{ map_instance_state(record.state) }" > { value } </strong>')
