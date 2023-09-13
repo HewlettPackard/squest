@@ -1,13 +1,10 @@
 {% has_perm request.user "service_catalog.view_instance" object.instance as can_view_instance %}
 <div class="card card-default">
     <div class="card-header">
-        <h3 class="card-title">Request #{{ object.id }}</h3>
+        <h3 class="card-title">Request <strong>#{{ object.id }}</strong></h3>
     </div>
     <div class="card-body">
         <ul class="list-group list-group-unbordered mb-3">
-            <li class="list-group-item border-top-0">
-                <b>ID</b><span class="float-right">{{ object.id }}</span>
-            </li>
             <li class="list-group-item">
                 <b>Instance</b>
                 {% if can_view_instance %}
