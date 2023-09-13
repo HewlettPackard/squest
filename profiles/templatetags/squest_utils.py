@@ -248,11 +248,19 @@ def generate_sidebar(user):
                 'active': [],
                 'treeview_items': [
                     {
-                        'name': 'Global hook',
-                        'view_name': 'service_catalog:globalhook_list',
+                        'name': 'Request hook ',
+                        'view_name': 'service_catalog:requesthook_list',
+                        'icon': 'far fa-file-code',
+                        'permission_required': 'service_catalog.list_requesthook',
+                        'active': ["requesthook_list", "requesthook_create", "requesthook_edit",
+                                   "requesthook_delete"]
+                    },
+                    {
+                        'name': 'Instance hook ',
+                        'view_name': 'service_catalog:instancehook_list',
                         'icon': 'fas fa-file-code',
-                        'permission_required': 'service_catalog.list_globalhook',
-                        'active': ["globalhook_list", "globalhook_create", "globalhook_edit", "globalhook_delete"]
+                        'permission_required': 'service_catalog.list_instancehook',
+                        'active': ["instancehook_list", "instancehook_create", "instancehook_edit", "instancehook_delete"]
                     },
                     {
                         'name': 'Announcements',

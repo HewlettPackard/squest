@@ -1,18 +1,18 @@
-import django_filters
-from django_filters import FilterSet
+from django_filters import FilterSet, NumberFilter
 from django.forms import TextInput, Select, SelectMultiple, CheckboxInput
 
 
 class SquestFilter(FilterSet):
-    per_page = django_filters.NumberFilter(
-        field_name="per_page",
-        label="Number of elements displayed"
-    )
 
     def __init__(self, *args, **kwargs):
         super(SquestFilter, self).__init__(*args, **kwargs)
+
         # Per page at the end of form
-        per_page_filter = self.filters.pop("per_page")
+        per_page_filter = NumberFilter(
+            field_name="per_page",
+            label="Number of elements displayed"
+        )
+        self.filters['per_page'] = per_page_filter
         per_page_filter.field.widget = Select(
             choices=[
                 (25, '25'),
@@ -23,7 +23,6 @@ class SquestFilter(FilterSet):
                 (1000, '1000'),
             ]
         )
-        self.filters['per_page'] = per_page_filter
 
         for filter_name, current_filter in self.filters.items():
             if isinstance(current_filter.field.widget, TextInput):

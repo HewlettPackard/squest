@@ -3,11 +3,11 @@ from django.urls import reverse
 from tests.test_service_catalog.base import BaseTest
 
 
-class GlobalHooksListViewsTest(BaseTest):
+class RequestHooksListViewsTest(BaseTest):
 
     def setUp(self):
-        super(GlobalHooksListViewsTest, self).setUp()
-        self.url = reverse('service_catalog:globalhook_list')
+        super(RequestHooksListViewsTest, self).setUp()
+        self.url = reverse('service_catalog:requesthook_list')
 
     def test_get_list(self):
         response = self.client.get(self.url)

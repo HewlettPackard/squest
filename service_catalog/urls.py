@@ -123,17 +123,23 @@ urlpatterns = [
     path('tower/<int:tower_id>/job-template/<int:pk>/compliancy/', views.job_template_compliancy,
          name='job_template_compliancy'),
 
-    # Global Hook CRUD
-    path('tool/global-hook/', views.GlobalHookListView.as_view(), name='globalhook_list'),
-    path('tool/global-hook/create/', views.GlobalHookCreateView.as_view(), name='globalhook_create'),
-    path('tool/global-hook/<int:pk>/edit/', views.GlobalHookEditView.as_view(), name='globalhook_edit'),
-    path('tool/global-hook/<int:pk>/delete/', views.GlobalHookDeleteView.as_view(), name='globalhook_delete'),
+    # Global Hook Instance CRUD
+    path('tool/global-hook-instance/', views.InstanceHookListView.as_view(), name='instancehook_list'),
+    path('tool/global-hook-instance/create/', views.InstanceHookCreateView.as_view(),
+         name='instancehook_create'),
+    path('tool/global-hook-instance/<int:pk>/edit/', views.InstanceHookEditView.as_view(),
+         name='instancehook_edit'),
+    path('tool/global-hook-instance/<int:pk>/delete/', views.InstanceHookDeleteView.as_view(),
+         name='instancehook_delete'),
 
-    # Global Hook AJAX
-    path('tool/global-hook/create/ajax/load-model-state/', views.ajax_load_model_state,
-         name='ajax_load_model_state'),
-    path('administration/global-hook/create/ajax/load-service-operations/', views.ajax_load_service_operations,
-         name='ajax_load_service_operations'),
+    # Global Hook Request CRUD
+    path('tool/global-hook-request/', views.RequestHookListView.as_view(), name='requesthook_list'),
+    path('tool/global-hook-request/create/', views.RequestHookCreateView.as_view(),
+         name='requesthook_create'),
+    path('tool/global-hook-request/<int:pk>/edit/', views.RequestHookEditView.as_view(),
+         name='requesthook_edit'),
+    path('tool/global-hook-request/<int:pk>/delete/', views.RequestHookDeleteView.as_view(),
+         name='requesthook_delete'),
 
     # Announcement CRUD
     path('administration/announcement/', views.AnnouncementListView.as_view(), name='announcement_list'),

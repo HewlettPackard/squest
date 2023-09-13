@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
 
     operations = [
 
-        migrations.RunSQL('UPDATE service_catalog_instance SET state = 1 WHERE state = "SUBMITTED";'),
         migrations.RunSQL('UPDATE service_catalog_instance SET state = 1 WHERE state = "PENDING";'),
         migrations.RunSQL('UPDATE service_catalog_instance SET state = 2 WHERE state = "PROVISION_FAILED";'),
         migrations.RunSQL('UPDATE service_catalog_instance SET state = 3 WHERE state = "PROVISIONING";'),
@@ -35,8 +34,8 @@ class Migration(migrations.Migration):
         migrations.RunSQL('UPDATE service_catalog_request SET state = 1 WHERE state = "SUBMITTED";'),
         migrations.RunSQL('UPDATE service_catalog_request SET state = 2 WHERE state = "NEED_INFO";'),
         migrations.RunSQL('UPDATE service_catalog_request SET state = 3 WHERE state = "REJECTED";'),
-        migrations.RunSQL('UPDATE service_catalog_request SET state = 4 WHERE state = "ACCEPTED";'),
-        migrations.RunSQL('UPDATE service_catalog_request SET state = 5 WHERE state = "CANCELED";'),
+        migrations.RunSQL('UPDATE service_catalog_request SET state = 4 WHERE state = "CANCELED";'),
+        migrations.RunSQL('UPDATE service_catalog_request SET state = 5 WHERE state = "ACCEPTED";'),
         migrations.RunSQL('UPDATE service_catalog_request SET state = 6 WHERE state = "PROCESSING";'),
         migrations.RunSQL('UPDATE service_catalog_request SET state = 7 WHERE state = "COMPLETE";'),
         migrations.RunSQL('UPDATE service_catalog_request SET state = 8 WHERE state = "FAILED";'),
@@ -45,7 +44,7 @@ class Migration(migrations.Migration):
             model_name='request',
             name='state',
             field=django_fsm.FSMIntegerField(
-                choices=[(1, 'SUBMITTED'), (2, 'NEED_INFO'), (3, 'REJECTED'), (4, 'ACCEPTED'), (5, 'CANCELED'),
+                choices=[(1, 'SUBMITTED'), (2, 'NEED_INFO'), (3, 'REJECTED'), (4, 'CANCELED'), (5, 'ACCEPTED'),
                          (6, 'PROCESSING'), (7, 'COMPLETE'), (8, 'FAILED'), (9, 'ARCHIVED')], default=1),
         ),
 
