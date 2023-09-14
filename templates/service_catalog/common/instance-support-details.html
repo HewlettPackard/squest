@@ -69,13 +69,13 @@
                                         </div>
                                     </form>
                                 {% endif %}
-                                {% if support.state == "OPENED" %}
+                                {% if support.get_state_display == "OPENED" %}
                                     <a href="{% url 'service_catalog:support_close' instance_id=instance.id pk=support.id %}"
                                        class="btn btn-danger{% if not can_close_support %} disabled{% endif %}">
                                         <i class="fas fa-times-circle"></i> Close
                                     </a>
                                 {% endif %}
-                                {% if support.state == "CLOSED" %}
+                                {% if support.get_state_display == "CLOSED" %}
                                     <a href="{% url 'service_catalog:support_reopen' instance_id=instance.id pk=support.id %}"
                                        class="btn btn-success{% if not can_change_support %} disabled{% endif %}">
                                         <i class="fas fa-undo"></i> Re-open
