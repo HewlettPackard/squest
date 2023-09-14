@@ -11,10 +11,8 @@ from service_catalog.models.request import RequestState
 class RequestFilter(SquestFilter):
     class Meta:
         model = Request
-        fields = ['instance__name', 'instance__id', 'user__id', 'instance__service__id', 'operation', 'operation__type',
+        fields = ['instance__name', 'user__id', 'instance__service__id', 'operation', 'operation__type',
                   'state']
-
-
 
     instance__service__id = MultipleChoiceFilter(
         label="Service",
@@ -40,14 +38,13 @@ class RequestFilter(SquestFilter):
     def __init__(self, *args, **kwargs):
         super(RequestFilter, self).__init__(*args, **kwargs)
         self.filters['instance__name'].field.label = 'Instance'
-        self.filters['instance__id'].field.widget = HiddenInput()
         self.filters['user__id'].field.label = 'User'
-        self.filters['user__id'].field.choices = [(requester.id, requester.username) for requester in
-                                                  User.objects.all().order_by("username")]
+        self.filters['user__id'].field.choices = User.objects.values_list("id", "username").order_by("username")
         from service_catalog.models import Service
         from service_catalog.models.operations import Operation
-        self.filters['instance__service__id'].field.choices = [(service.id, service.name) for service in Service.objects.all().order_by("name")]
-        self.filters['operation'].field.choices = [(operation.id, f"{operation.service.name}-{operation.name}") for operation in Operation.objects.all().order_by("service__name", "name")]
+        self.filters['instance__service__id'].field.choices = Service.objects.values_list('id', 'name').order_by("name")
+        self.filters['operation'].field.choices = [(operation.id, f"{operation.service.name}-{operation.name}") for
+                                                   operation in Operation.objects.select_related("service").all().order_by("service__name", "name")]
 
     @property
     def qs(self):
@@ -57,7 +54,8 @@ class RequestFilter(SquestFilter):
 class RequestArchivedFilter(SquestFilter):
     class Meta:
         model = Request
-        fields = ['instance__name', 'instance__id', 'user__username', 'instance__service__name', 'operation__name', 'operation__type']
+        fields = ['instance__name', 'instance__id', 'user__username', 'instance__service__name', 'operation__name',
+                  'operation__type']
 
     operation__type = MultipleChoiceFilter(
         choices=OperationType.choices,
