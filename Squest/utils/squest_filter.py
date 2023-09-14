@@ -15,10 +15,11 @@ class SquestFilter(FilterSet):
         self.filters['per_page'] = per_page_filter
         per_page_filter.field.widget = Select(
             choices=[
+                (None, 'Default'),
                 (25, '25'),
                 (50, '50'),
                 (100, '100'),
-                (500, '250'),
+                (250, '250'),
                 (500, '500'),
                 (1000, '1000'),
             ]
