@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 
+from Squest.utils.ansible_when import AnsibleWhen
 from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
     get_celery_crontab_parameters_from_crontab_line, get_images_link_from_markdown
 
@@ -82,3 +83,28 @@ TextBefore ![Single picture on a line with text before and after](/notmedia/doc_
 
         list_of_media = get_images_link_from_markdown(test_str)
         self.assertListEqual(list_expected, list_of_media)
+
+    def test_when_render(self):
+        # None context
+        context = None
+        when_string = "test"
+        self.assertFalse(AnsibleWhen.when_render(context, when_string))
+
+        # None when_string
+        context = {}
+        when_string = None
+        self.assertFalse(AnsibleWhen.when_render(context, when_string))
+
+        # valid context
+        context = {"instance": {"name": "test"}}
+        when_string = "instance.name == 'test'"
+        self.assertTrue(AnsibleWhen.when_render(context, when_string))
+
+        # valid context but searched key not equal
+        when_string = "instance.name == 'other'"
+        self.assertFalse(AnsibleWhen.when_render(context, when_string))
+
+        # invalid context
+        context = {"random_key": {"name": "test"}}
+        when_string = "instance.name == 'test'"
+        self.assertFalse(AnsibleWhen.when_render(context, when_string))

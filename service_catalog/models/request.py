@@ -335,13 +335,14 @@ class Request(SquestModel):
             context = {
                 "request": RequestSerializer(self).data
             }
-            if AnsibleWhen.when_render(context=context,
-                                       when_string=self.approval_workflow_state.current_step.approval_step.auto_accept_condition):
-                self.approval_workflow_state.approve_current_step()
-                if self.approval_workflow_state.current_step is not None:
-                    self.try_accept_current_step()  # try again the new current step
-                else:
-                    return True
+            if self.approval_workflow_state.current_step.approval_step.auto_accept_condition is not None:
+                if AnsibleWhen.when_render(context=context,
+                                           when_string=self.approval_workflow_state.current_step.approval_step.auto_accept_condition):
+                    self.approval_workflow_state.approve_current_step()
+                    if self.approval_workflow_state.current_step is not None:
+                        self.try_accept_current_step()  # try again the new current step
+                    else:
+                        return True
         return False
 
     @classmethod
