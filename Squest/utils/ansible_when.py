@@ -5,8 +5,10 @@ class AnsibleWhen(object):
 
     @classmethod
     def when_render(cls, context, when_string):
+        if when_string is None or when_string == "" or context is None:
+            return False
+        template_string = "{% if " + when_string + " %}True{% else %}{% endif %}"
         try:
-            template_string = "{% if " + when_string + " %}True{% else %}{% endif %}"
             template = Template(template_string)
         except TemplateSyntaxError:
             return False
