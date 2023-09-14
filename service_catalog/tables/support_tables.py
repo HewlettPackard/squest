@@ -13,4 +13,4 @@ class SupportTable(SquestTable):
     class Meta:
         model = Support
         attrs = {"id": "support_table", "class": "table squest-pagination-tables"}
-        fields = ("title", "instance", "opened_by", "date_opened", "state")
+        fields = ("title", "instance", "instance__service", "opened_by", "date_opened", "state")
