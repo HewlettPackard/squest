@@ -192,7 +192,6 @@ def get_field_type(tower_survey_field):
 
 @register.filter(name="map_color_next_state")
 def map_color_next_state(current_state, next_state):
-    print(current_state, next_state)
     if current_state == "NEED_INFO":
         return "warning"
     if current_state == next_state:

@@ -60,35 +60,35 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.instances %}
-                                                <a href="{% url 'service_catalog:instance_list' %}?state=AVAILABLE&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:instance_list' %}?state=10&instance__service__id={{ service.service.id }}"
                                                    class="btn btn-success btn-lg">{{ service.instances }}
                                                 </a>
                                             {% endif %}
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.submitted_requests %}
-                                                <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:request_list' %}?state=1&instance__service__id={{ service.service.id }}"
                                                    class="btn btn-info btn-lg">{{ service.submitted_requests }}
                                                 </a>
                                             {% endif %}
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.accepted_requests %}
-                                                <a href="{% url 'service_catalog:request_list' %}?&state=ACCEPTED&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:request_list' %}?&state=5&instance__service__id={{ service.service.id }}"
                                                    class="btn btn-primary btn-lg">{{ service.accepted_requests }}
                                                 </a>
                                             {% endif %}
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.need_info_requests %}
-                                                <a href="{% url 'service_catalog:request_list' %}?state=NEED_INFO&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:request_list' %}?state=2&instance__service__id={{ service.service.id }}"
                                                    class="btn btn-default btn-lg">{{ service.need_info_requests }}
                                                 </a>
                                             {% endif %}
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.failed_requests %}
-                                                <a href="{% url 'service_catalog:request_list' %}?state=FAILED&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:request_list' %}?state=8&instance__service__id={{ service.service.id }}"
                                                    class="btn btn-danger btn-lg">{{ service.failed_requests }}
                                                 </a>
                                             {% endif %}
@@ -96,7 +96,7 @@
                                         {% if can_list_support %}
                                             <td class="align-middle text-center">
                                             {% if service.opened_supports %}
-                                                <a href="{% url 'service_catalog:support_list' %}?state=OPENED&instance__service={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:support_list' %}?state=1&instance__service={{ service.service.id }}"
                                                    class="btn btn-warning btn-lg">{{ service.opened_supports }}
                                                 </a>
                                             {% endif %}
@@ -105,9 +105,7 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
-                            {#                            </div>#}
                         </div>
-                        {#                        </div>#}
                     </div>
                 {% endif %}
             </div>
@@ -123,7 +121,7 @@
                             <div class="icon">
                                 <i class="fas fa-th"></i>
                             </div>
-                            <a href="{% url 'service_catalog:instance_list' %}?state=AVAILABLE"
+                            <a href="{% url 'service_catalog:instance_list' %}?state=10"
                                class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
@@ -141,7 +139,7 @@
                             <div class="icon">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <a href="{% url 'service_catalog:request_list' %}?state=SUBMITTED"
+                            <a href="{% url 'service_catalog:request_list' %}?state=1"
                                class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
@@ -160,7 +158,7 @@
                             <div class="icon">
                                 <i class="fas fa-medkit"></i>
                             </div>
-                            <a href="{% url 'service_catalog:support_list' %}?state=OPENED"
+                            <a href="{% url 'service_catalog:support_list' %}?state=1"
                                class="small-box-footer">
                                 More info <i class="fas fa-arrow-circle-right"></i>
                             </a>
