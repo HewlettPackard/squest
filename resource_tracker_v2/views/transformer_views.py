@@ -136,12 +136,14 @@ def ajax_load_attribute(request):
     current_resource_group_id = request.GET.get('current_resource_group_id')
     target_resource_group_id = request.GET.get('target_resource_group_id')
     current_resource_group = ResourceGroup.objects.get(id=current_resource_group_id)
-    target_resource_group = ResourceGroup.objects.get(id=target_resource_group_id)
-    all_available_attribute_to_target_rg = Transformer.objects \
-        .filter(resource_group=target_resource_group) \
-        .exclude(resource_group=current_resource_group, consume_from_resource_group=target_resource_group)
+    if target_resource_group_id != "":
+        target_resource_group = ResourceGroup.objects.get(id=target_resource_group_id)
+        options = Transformer.objects.filter(resource_group=target_resource_group)\
+            .exclude(resource_group=current_resource_group,
+                     consume_from_resource_group=target_resource_group).values_list('attribute_definition__id', 'attribute_definition__name')
+    else:
+        # remove consume from on attribute from the transformer
+        options = ["---------", "---------"]
 
-    options = [(transformer.attribute_definition.id, transformer.attribute_definition.name) for transformer in
-               all_available_attribute_to_target_rg.all()]
     return render(request, 'generics/ajax-option.html',
                   {'options': options})
