@@ -82,7 +82,7 @@
                                         <td class="align-middle text-center">
                                             {% if service.need_info_requests %}
                                                 <a href="{% url 'service_catalog:request_list' %}?state=2&instance__service__id={{ service.service.id }}"
-                                                   class="btn btn-default btn-lg">{{ service.need_info_requests }}
+                                                   class="btn btn-warning btn-lg">{{ service.need_info_requests }}
                                                 </a>
                                             {% endif %}
                                         </td>
