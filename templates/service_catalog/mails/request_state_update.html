@@ -29,7 +29,7 @@
                             </td>
                             <td width="75%" align="left"
                                 style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
-                                {{ request.state }}
+                                {{ request.get_state_display }}
                             </td>
                         </tr>
                         {% if user_applied_state and user_applied_state is not None %}
@@ -124,7 +124,7 @@
     {% endif %}
 
     <!-- REQUEST SUBMITTED SHOW SURVEY -->
-    {% if request.state == 'SUBMITTED' %}
+    {% if request.get_state_display == 'SUBMITTED' %}
         {% include 'service_catalog/mails/utils/delimiter.html' %}
         {% include 'service_catalog/mails/utils/header.html' with title="Survey" %}
         <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
@@ -168,7 +168,7 @@
 
 
     <!-- REQUEST COMPLETE SHOW DOCS AND USER SPECS -->
-    {% if request.state == 'COMPLETE' %}
+    {% if request.get_state_display == 'COMPLETE' %}
         {% include 'service_catalog/mails/utils/delimiter.html' %}
         {% include 'service_catalog/mails/utils/header.html' with title="Specs" %}
 

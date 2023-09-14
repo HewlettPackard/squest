@@ -115,7 +115,7 @@
                         <div class="tab-content">
                             <div class="tab-pane" id="operations">
                                 {% if operations_table %}
-                                    {% if object.state == "AVAILABLE" %}
+                                    {% if object.get_state_display == "AVAILABLE" %}
                                         {% render_table operations_table %}
                                     {% else %}
                                         <p> Instance not available</p>
