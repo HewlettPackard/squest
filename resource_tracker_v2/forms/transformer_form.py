@@ -10,7 +10,8 @@ class TransformerForm(SquestModelForm):
 
     class Meta:
         model = Transformer
-        fields = ["attribute_definition", "consume_from_resource_group", "consume_from_attribute_definition", "factor"]
+        fields = ["attribute_definition", "consume_from_resource_group", "consume_from_attribute_definition", "factor",
+                  "yellow_threshold_percent_consumed", "red_threshold_percent_consumed"]
 
     def __init__(self, *args, **kwargs):
         self.source_resource_group = kwargs.pop("source_resource_group")
