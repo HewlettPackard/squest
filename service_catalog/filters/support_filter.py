@@ -9,7 +9,7 @@ from service_catalog.models.support import SupportState
 class SupportFilter(SquestFilter):
     class Meta:
         model = Support
-        fields = ['title', 'instance__id', 'instance__name', 'instance__service', 'opened_by__username', 'state']
+        fields = ['title', 'instance__id', 'instance__name', 'instance__service', 'opened_by', 'state']
 
     state = MultipleChoiceFilter(
         choices=SupportState.choices,
@@ -20,4 +20,3 @@ class SupportFilter(SquestFilter):
         self.filters['instance__name'].field.label = "Instance"
         self.filters['instance__service'].field.label = "Service"
         self.filters['instance__id'].field.widget = HiddenInput()
-        self.filters['opened_by__username'].field.label = "User open"

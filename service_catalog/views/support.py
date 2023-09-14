@@ -13,7 +13,8 @@ class SupportListView(SquestListView):
     filterset_class = SupportFilter
 
     def get_queryset(self):
-        return Support.get_queryset_for_user(self.request.user, 'service_catalog.view_support')
+        return Support.get_queryset_for_user(self.request.user, 'service_catalog.view_support').prefetch_related(
+            "instance", "opened_by", "instance__service").order_by("state")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
