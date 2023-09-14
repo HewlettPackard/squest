@@ -57,7 +57,8 @@ class ApprovalStep(SquestModel):
 
     auto_accept_condition = TextField(blank=True, null=True,
                                       help_text="Ansible like 'when' with `request` as context. "
-                                                "No Jinja brackets needed")
+                                                "No Jinja brackets needed",
+                                      default=None)
 
     def __str__(self):
         return self.name
