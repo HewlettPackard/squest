@@ -13,6 +13,7 @@ This is a **major** update of Squest:
 
 - The resource tracker component has been entirely refactored and cannot be migrated automatically
 - The API has been reworked
+- The previous team feature has been discontinued and replaced by an Organization/Team feature. Please note that teams data from v1 will be lost
 
 To migrate from v1 to v2 if you were using the **resource tracking** feature:
 

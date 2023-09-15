@@ -1,5 +1,7 @@
 # JSON Accessor
 
+In the Squest UI, certain pages offer filtering options based on JSON accessors. For instance, the instance list page allows filtering based on instance specs.
+
 To access a field in json, simply describe the path by separating the levels by dots. The value of field to filter
 must be after an equal. It is possible to make a filter on several fields which are separated by commas.
 
@@ -9,24 +11,24 @@ must be after an equal. It is possible to make a filter on several fields which 
 
 ```json
 {
-  "my_first_field": "my_value"
+  "vm_name": "vm001"
 }
 ```
 
 Examples of lookup string that can be used in the filter.
 
 ```
-my_first_field=my_value
-my_first_field='my_value'
-my_first_field="my_value"
+vm_name=vm001
+vm_name='vm001'
+vm_name="vm001"
 ```
 
 ### Instance spec with dict
 
 ```json
 {
-  "my_first_field": {
-    "my_second_field": "my_value"
+  "openstack": {
+    "cluster_name": "cluster_perf"
   }
 }
 ```
@@ -34,16 +36,16 @@ my_first_field="my_value"
 Example of lookup string that can be used in the filter.
 
 ```
-my_first_field.my_second_field=my_value
+openstack.cluster_name=cluster_perf
 ```
 
 ### Instance spec with list
 
 ```json
 {
-  "my_first_field": [
-    "my_value1",
-    "my_value2"
+  "vm_disk": [
+    "disk01",
+    "disk02"
   ]
 }
 ```
@@ -51,7 +53,7 @@ my_first_field.my_second_field=my_value
 Example of lookup string that can be used in the filter.
 
 ```
-my_first_field.0=my_value1
+vm_disk.0=disk01
 ```
 
 ### Instance spec on two fields

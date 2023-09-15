@@ -1,6 +1,6 @@
 # Field validators
 
-Field validators are python modules that can be added as plugin to perform a custom check on a form field.
+Field validators are Python modules that can be added as plugin to perform custom checks on an [operation survey field](../service_catalog/operation.md#survey).
 
 ## Create a field validator
 

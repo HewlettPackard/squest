@@ -59,7 +59,7 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement via the [Gitter chat](https://gitter.im/HewlettPackard/squest).
+reported to the community leaders responsible for enforcement via the [Gitter chat](https://app.gitter.im/#/room/#HewlettPackard_squest:gitter.im).
 
 All complaints will be reviewed and investigated promptly and fairly.
 

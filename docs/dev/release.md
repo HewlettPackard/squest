@@ -29,4 +29,4 @@ From here the CI will:
   - Update poetry version in `pyproject.toml` with new beta version (E.g: `1.8.3b`)
   - Bump poetry libraries
   - Force push the new dev branch to upstream
-- Notify community in [Gitter](https://gitter.im/HewlettPackard/squest)
+- Notify community in [Gitter](https://app.gitter.im/#/room/#HewlettPackard_squest:gitter.im)

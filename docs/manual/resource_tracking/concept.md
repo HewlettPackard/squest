@@ -36,7 +36,7 @@ Starting from the previous state, we can then create a _Resource Group_ for virt
 
 If we want to add more VMs that **consume** resources from the "cluster" _Resource Group_, we need to be sure we have enough physical servers (resources) that **produce** into it.  
 
-### Namespace tracking example
+### Kubernetes tracking example
 
 In this example we want to track the consumption of an orchestrator of container like Kubernetes or Openshift. 
 Namespaces (or projects in Openshift world) are a way to divide cluster resources between multiple users by using 

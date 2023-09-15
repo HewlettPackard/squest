@@ -36,12 +36,13 @@ Steps are the breakpoint of a Squest request. Each step need to be accepted in o
 
 Configuration:
 
-| Name            | Description                                                                                                        |
-|-----------------|--------------------------------------------------------------------------------------------------------------------|
-| Name            | Unique identifier of the _Step_                                                                                    |
-| Permission      | Permission required to be allowed to accept or reject the request. By default set to `approve_reject_approvalstep` |
-| Readable field  | Field from the survey that will be shown in the form but cannot be updated in the step                             |
-| Editable  field | Field from the survey that can be filled or updated from a previous step                                           |
+| Name                  | Description                                                                                                        |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------|
+| Name                  | Unique identifier of the _Step_                                                                                    |
+| Permission            | Permission required to be allowed to accept or reject the request. By default set to `approve_reject_approvalstep` |
+| Readable field        | Field from the survey that will be shown in the form but cannot be updated in the step                             |
+| Editable  field       | Field from the survey that can be filled or updated from a previous step                                           |
+| Auto accept condition | An Ansible "when" like that enable auto accept on a Step (see below)                                               |
 
 !!! warning
 
