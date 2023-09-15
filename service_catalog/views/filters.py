@@ -179,7 +179,7 @@ def addstr(arg1, arg2):
 
 @register.filter(name="squest_date_format")
 def squest_date_format(date_to_format):
-    return date_to_format.strftime(settings.DATE_FORMAT)
+    return date_to_format.astimezone().strftime(settings.DATE_FORMAT)
 
 
 @register.filter(name="get_field_type")
