@@ -84,19 +84,19 @@ class Quota(SquestModel):
             scope__rbac__role__permissions__codename=codename,
             scope__rbac__role__permissions__content_type__app_label=app_label
         ) | Q(
-            ### Scopes - Org - Default roles
+            ### Scope - Org - Default roles
             scope__rbac__user=user,
             scope__roles__permissions__codename=codename,
             scope__roles__permissions__content_type__app_label=app_label
         ) | Q(
-            ## Scopes - Team - User
+            ## Scope - Team - User
             scope__in=Team.objects.filter(
                 org__rbac__user=user,
                 org__rbac__role__permissions__codename=codename,
                 org__rbac__role__permissions__content_type__app_label=app_label
             )
         ) | Q(
-            ## Scopes - Team - Default roles
+            ## Scope - Team - Default roles
             scope__in=Team.objects.filter(
                 org__rbac__user=user,
                 org__roles__permissions__codename=codename,

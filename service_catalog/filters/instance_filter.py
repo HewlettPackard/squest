@@ -31,7 +31,7 @@ class InstanceFilter(SquestFilter):
 
     state = MultipleChoiceFilter(choices=InstanceState.choices)
     quota_scope = MultipleChoiceFilter(
-        choices=AbstractScope.objects.exclude(id=GlobalPermission.load().id).values_list("id", "name"))
+        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id",flat=True)).values_list("id", "name"))
     service = MultipleChoiceFilter(choices=Service.objects.values_list("id", "name"))
     requester = MultipleChoiceFilter(choices=User.objects.values_list("id", "username"))
     no_requesters = BooleanFilter(method='no_requester', label="No requester", widget=CheckboxInput())
