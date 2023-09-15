@@ -9,9 +9,7 @@ from service_catalog.models import Instance
 
 class InstanceTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
-    service = LinkColumn()
     name = LinkColumn()
-    quota_scope = LinkColumn()
 
     def before_render(self, request):
         if not request.user.has_perm("service_catalog.delete_instance"):
@@ -20,7 +18,7 @@ class InstanceTable(SquestTable):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "name", "service", "quota_scope", "state", "requester", "date_available", "last_updated")
+        fields = ("selection", "name", "service__name", "quota_scope__name", "state", "requester", "date_available", "last_updated")
 
     def render_state(self, record, value):
         from service_catalog.views import map_instance_state
