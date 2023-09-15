@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count, F
+from django.db.models import Count
 from django.utils import timezone
 from django.shortcuts import render
 
@@ -17,98 +17,75 @@ def home(request):
     now = timezone.now()
     context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
 
-    all_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.view_instance')
-    all_requests = Request.get_queryset_for_user(request.user, 'service_catalog.view_request')
     all_supports = Support.get_queryset_for_user(request.user, 'service_catalog.view_support')
+    all_supports = all_supports \
+        .values('instance__service', 'state') \
+        .annotate(count=Count('id')) \
+        .order_by('instance__service')
+
+    all_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.view_instance')
+    all_instances = all_instances \
+        .values('service', 'state') \
+        .annotate(count=Count('id')) \
+        .order_by('service')
+
+    all_requests = Request.get_queryset_for_user(request.user, 'service_catalog.view_request')
+    all_requests = all_requests \
+        .values('instance__service', 'state') \
+        .annotate(count=Count('id')) \
+        .order_by('instance__service')
+
     if request.user.has_perm('service_catalog.list_request'):
-        context['total_request'] = all_requests.filter(state=RequestState.SUBMITTED).count()
-        context['total_request_need_info'] = all_requests.filter(state=RequestState.NEED_INFO).count()
+        context['total_request'] = sum([x["count"] for x in all_requests if x["state"] == RequestState.SUBMITTED])
+        context['total_request_need_info'] = sum(
+            [x["count"] for x in all_requests if x["state"] == RequestState.NEED_INFO])
 
     if request.user.has_perm('service_catalog.list_instance'):
-        context['total_instance'] = all_instances.filter(state=InstanceState.AVAILABLE).count()
+        context['total_instance'] = sum([x["count"] for x in all_instances if x["state"] == InstanceState.AVAILABLE])
 
     if request.user.has_perm('service_catalog.list_support'):
-        context['total_support_opened'] = all_supports.filter(state=SupportState.OPENED).count()
+        context['total_support_opened'] = sum([x["count"] for x in all_supports if x["state"] == SupportState.OPENED])
 
     if request.user.has_perm('auth.list_user'):
         context['total_user'] = User.objects.all().count()
+        context['user_without_organization'] = User.objects.filter(groups__isnull=True).count()
 
     if request.user.has_perm('service_catalog.list_service'):
-        # Create a dict that represent {service, number_of_instance, submitted_request}
         all_services = Service.get_queryset_for_user(request.user, 'service_catalog.view_service').filter(enabled=True)
-        instances = all_instances.filter(state=InstanceState.AVAILABLE).values('service') \
-            .annotate(service_name=F('service__name')) \
-            .annotate(instance_count=Count('service_name')) \
-            .order_by('service_name')
-        accepted_requests = all_requests.filter(state__in=[RequestState.ACCEPTED]) \
-            .values('instance__service__name') \
-            .annotate(service_name=F('instance__service__name')) \
-            .annotate(request_count=Count('service_name')) \
-            .order_by('service_name')
-        submitted_requests = all_requests.filter(state__in=[RequestState.SUBMITTED]) \
-            .values('instance__service__name') \
-            .annotate(service_name=F('instance__service__name')) \
-            .annotate(request_count=Count('service_name')) \
-            .order_by('service_name')
-        failed_requests = all_requests.filter(state=RequestState.FAILED).values('instance__service__name') \
-            .annotate(service_name=F('instance__service__name')) \
-            .annotate(request_count=Count('service_name')) \
-            .order_by('service_name')
-        need_info_requests = all_requests.filter(state=RequestState.NEED_INFO).values('instance__service__name') \
-            .annotate(service_name=F('instance__service__name')) \
-            .annotate(request_count=Count('service_name')) \
-            .order_by('service_name')
-        if request.user.has_perm('service_catalog.list_support'):
-            opened_supports = all_supports.filter(state=SupportState.OPENED).values('instance__service__name') \
-                .annotate(service_name=F('instance__service__name')) \
-                .annotate(request_count=Count('service_name')) \
-                .order_by('service_name')
-        else:
-            opened_supports = Support.objects.none()
-
 
         service_details = dict()
         for service in all_services:
-            empty_row = True
             service_dict = {
                 "service": service,
                 "instances": 0
             }
+            service_dict["instances"] = sum([x["count"] for x in all_instances if
+                                             x["state"] == InstanceState.AVAILABLE and x["service"] == service.id])
 
-            if instances.filter(service=service.id).exists():
-                service_dict["instances"] = instances.get(service=service.id)["instance_count"]
-                empty_row = False
+            service_dict["accepted_requests"] = sum([x["count"] for x in all_requests if
+                                                     x["state"] == RequestState.ACCEPTED and x[
+                                                         "instance__service"] == service.id])
 
-            if accepted_requests.filter(instance__service=service.id).exists():
-                service_dict["accepted_requests"] = accepted_requests.get(instance__service=service.id)[
-                    "request_count"]
-                empty_row = False
+            service_dict["submitted_requests"] = sum([x["count"] for x in all_requests if
+                                                      x["state"] == RequestState.SUBMITTED and x[
+                                                          "instance__service"] == service.id])
 
-            if submitted_requests.filter(instance__service=service.id).exists():
-                service_dict["submitted_requests"] = \
-                submitted_requests.get(instance__service=service.id)["request_count"]
-                empty_row = False
+            service_dict["failed_requests"] = sum([x["count"] for x in all_requests if
+                                                   x["state"] == RequestState.FAILED and x[
+                                                       "instance__service"] == service.id])
 
-            if failed_requests.filter(instance__service=service.id).exists():
-                service_dict["failed_requests"] = failed_requests.get(instance__service=service.id)[
-                    "request_count"]
-                empty_row = False
+            service_dict["need_info_requests"] = sum([x["count"] for x in all_requests if
+                                                      x["state"] == RequestState.NEED_INFO and x[
+                                                          "instance__service"] == service.id])
 
-            if need_info_requests.filter(instance__service=service.id).exists():
-                service_dict["need_info_requests"] = \
-                need_info_requests.get(instance__service=service.id)["request_count"]
-                empty_row = False
+            service_dict["opened_supports"] = sum([x["count"] for x in all_supports if
+                                                   x["state"] == SupportState.OPENED and x[
+                                                       "instance__service"] == service.id])
 
-            if opened_supports.filter(instance__service=service.id).exists():
-                service_dict["opened_supports"] = opened_supports.get(instance__service=service.id)[
-                    "request_count"]
-                empty_row = False
-
-            if not empty_row:
+            if service_dict.get("instances", 0) != 0:
                 service_details[service.name] = service_dict
 
         if service_details:
             context["service_details"] = service_details
-        context['user_without_organization'] = User.objects.filter(groups__isnull=True).count()
 
     return render(request, 'home/home.html', context=context)
