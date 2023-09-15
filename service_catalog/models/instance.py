@@ -38,12 +38,6 @@ class Instance(SquestModel):
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
     service = ForeignKey(Service, blank=True, null=True, on_delete=CASCADE)
     requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Requester", on_delete=PROTECT)
-    scopes = ManyToManyField(
-        Scope,
-        blank=True,
-        related_name='scope_instances',
-        related_query_name='scope_instance'
-    )
 
     quota_scope = ForeignKey(
         Scope,
@@ -86,10 +80,7 @@ class Instance(SquestModel):
         )
 
     def get_scopes(self):
-        qs = self.quota_scope.get_scopes()
-        for scope in self.scopes.all():
-            qs = qs | scope.get_scopes()
-        return qs.distinct()
+        return self.quota_scope.get_scopes()
 
     def __str__(self):
         return f"{self.name} (#{self.id})"

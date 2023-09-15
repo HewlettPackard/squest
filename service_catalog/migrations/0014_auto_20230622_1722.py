@@ -76,12 +76,6 @@ class Migration(migrations.Migration):
             old_name='spoc',
             new_name='requester',
         ),
-        migrations.AddField(
-            model_name='instance',
-            name='scopes',
-            field=models.ManyToManyField(blank=True, related_name='instances', related_query_name='instance',
-                                         to='profiles.Scope')
-        ),
         migrations.RunPython(create_default_org),
         migrations.AddField(
             model_name='instance',
@@ -91,12 +85,6 @@ class Migration(migrations.Migration):
                                     related_query_name='quota_instance', to='profiles.scope'),
         ),
         migrations.RunPython(assign_default_to_instances),
-        migrations.AlterField(
-            model_name='instance',
-            name='scopes',
-            field=models.ManyToManyField(blank=True, related_name='scope_instances',
-                                         related_query_name='scope_instance', to='profiles.Scope'),
-        ),
         migrations.RunPython(billing_group_to_org),
         migrations.AlterField(
             model_name='instance',
