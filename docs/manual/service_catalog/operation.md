@@ -115,7 +115,7 @@ See related [documentation here](../advanced/validators.md).
 
 ### Attribute definition
 
-Each field can be linked to an _Attribute definition_ from the resource tracking. This allows to automatically limit the field value to a quota.
+Each field can be linked to an _Attribute definition_ from the resource tracking. This allows to automatically limit the field value to a [quota](../access.md#quota).
 The available quota is shown in the form of the request so the end user know what he can still consume.
 
 ![survey_quota](../../images/survey_quota.png)
