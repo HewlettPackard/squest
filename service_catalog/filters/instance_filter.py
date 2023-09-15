@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
 
 from Squest.utils.squest_filter import SquestFilter
+from profiles.models import Scope, AbstractScope, GlobalPermission
 from service_catalog.models import Instance, Service
 from service_catalog.models.instance import InstanceState
 
@@ -26,12 +27,13 @@ class CharInFilter(BaseInFilter, CharFilter):
 class InstanceFilter(SquestFilter):
     class Meta:
         model = Instance
-        fields = ['name', 'id', 'requester', 'service', 'state','quota_scope']
+        fields = ['name', 'requester', 'service', 'state', 'quota_scope']
 
-    requester = MultipleChoiceFilter()
     state = MultipleChoiceFilter(choices=InstanceState.choices)
-    service = MultipleChoiceFilter()
-
+    quota_scope = MultipleChoiceFilter(
+        choices=AbstractScope.objects.exclude(id=GlobalPermission.load().id).values_list("id", "name"))
+    service = MultipleChoiceFilter(choices=Service.objects.values_list("id", "name"))
+    requester = MultipleChoiceFilter(choices=User.objects.values_list("id", "username"))
     no_requesters = BooleanFilter(method='no_requester', label="No requester", widget=CheckboxInput())
 
     spec = CharInFilter(label="Admin spec contains",
@@ -42,12 +44,6 @@ class InstanceFilter(SquestFilter):
                              method='user_spec_filter',
                              validators=[validate_json_field],
                              help_text="JSON accessor, see the documentation for usage.")
-
-    def __init__(self, *args, **kwargs):
-        super(InstanceFilter, self).__init__(*args, **kwargs)
-        self.filters['id'].field.widget = HiddenInput()
-        self.filters['service'].field.choices = [(service.id, service.name) for service in Service.objects.all().order_by("name")]
-        self.filters['requester'].field.choices = [(requester.id, requester.username) for requester in User.objects.all().order_by("username")]
 
     def no_requester(self, queryset, name, value):
         if not value:
