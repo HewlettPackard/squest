@@ -59,29 +59,6 @@ class Instance(SquestModel):
         from profiles.models import Team
         app_label, codename = perm.split(".")
         return Q(
-            scopes__rbac__user=user,
-            scopes__rbac__role__permissions__codename=codename,
-            scopes__rbac__role__permissions__content_type__app_label=app_label
-        ) | Q(
-            ### Scopes - Org - Default roles
-            scopes__rbac__user=user,
-            scopes__roles__permissions__codename=codename,
-            scopes__roles__permissions__content_type__app_label=app_label
-        ) | Q(
-            ## Scopes - Team - User
-            scopes__in=Team.objects.filter(
-                org__rbac__user=user,
-                org__rbac__role__permissions__codename=codename,
-                org__rbac__role__permissions__content_type__app_label=app_label
-            )
-        ) | Q(
-            ## Scopes - Team - Default roles
-            scopes__in=Team.objects.filter(
-                org__rbac__user=user,
-                org__roles__permissions__codename=codename,
-                org__roles__permissions__content_type__app_label=app_label
-            )
-        ) | Q(
             # Quota scope
             ## Quota scope - Org - User
             quota_scope__rbac__user=user,
