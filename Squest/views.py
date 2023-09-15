@@ -17,22 +17,19 @@ def home(request):
     now = timezone.now()
     context['announcements'] = Announcement.objects.filter(date_start__lte=now).filter(date_stop__gte=now)
 
-    all_supports = Support.get_queryset_for_user(request.user, 'service_catalog.view_support')
-    all_supports = all_supports \
+    all_supports = Support.get_queryset_for_user(request.user, 'service_catalog.view_support') \
         .values('instance__service', 'state') \
-        .annotate(count=Count('id')) \
+        .annotate(count=Count('id', distinct=True)) \
         .order_by('instance__service')
 
-    all_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.view_instance')
-    all_instances = all_instances \
+    all_instances = Instance.get_queryset_for_user(request.user, 'service_catalog.view_instance') \
         .values('service', 'state') \
-        .annotate(count=Count('id')) \
+        .annotate(count=Count('id', distinct=True)) \
         .order_by('service')
 
-    all_requests = Request.get_queryset_for_user(request.user, 'service_catalog.view_request')
-    all_requests = all_requests \
+    all_requests = Request.get_queryset_for_user(request.user, 'service_catalog.view_request') \
         .values('instance__service', 'state') \
-        .annotate(count=Count('id')) \
+        .annotate(count=Count('id', distinct=True)) \
         .order_by('instance__service')
 
     if request.user.has_perm('service_catalog.list_request'):
@@ -52,13 +49,9 @@ def home(request):
 
     if request.user.has_perm('service_catalog.list_service'):
         all_services = Service.get_queryset_for_user(request.user, 'service_catalog.view_service').filter(enabled=True)
-
         service_details = dict()
         for service in all_services:
-            service_dict = {
-                "service": service,
-                "instances": 0
-            }
+            service_dict = dict()
             service_dict["instances"] = sum([x["count"] for x in all_instances if
                                              x["state"] == InstanceState.AVAILABLE and x["service"] == service.id])
 
@@ -82,7 +75,8 @@ def home(request):
                                                    x["state"] == SupportState.OPENED and x[
                                                        "instance__service"] == service.id])
 
-            if service_dict.get("instances", 0) != 0:
+            if sum([v for v in service_dict.values()]) > 0:
+                service_dict["service"] = service
                 service_details[service.name] = service_dict
 
         if service_details:
