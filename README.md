@@ -6,7 +6,7 @@
 
 <p align="center">
 <a href="https://hewlettpackard.github.io/squest/latest"><img alt="Doc" src="https://img.shields.io/badge/read-documentation-1abc9c?style=flat-square"></a>
-<a href="https://gitter.im/HewlettPackard/squest"><img alt="Gitter" src="https://img.shields.io/gitter/room/HewlettPackard/squest?color=1abc9c&style=flat-square"></a>
+<a href="https://app.gitter.im/#/room/#HewlettPackard_squest:gitter.im"><img alt="Gitter" src="https://img.shields.io/gitter/room/HewlettPackard/squest?color=1abc9c&style=flat-square"></a>
 <a href= "https://coveralls.io/github/HewlettPackard/squest"><img alt="Coveralls" src="https://img.shields.io/coveralls/github/HewlettPackard/squest?style=flat-square"></a>
 <a href="https://github.com/HewlettPackard/squest/releases/latest"><img alt="GitHub release (latest)" src="https://img.shields.io/github/v/release/HewlettPackard/squest?style=flat-square"></a>
 <a href="https://github.com/HewlettPackard/squest/blob/master/LICENSE.md"><img alt="License" src="https://img.shields.io/github/license/HewlettPackard/squest?style=flat-square"></a>
@@ -50,7 +50,7 @@ If you want an idea of what you can do with Squest, click on the image below.
 ## Links
 
 :blue_book: [Documentation](https://hewlettpackard.github.io/squest/latest)<br/>
-:speech_balloon: [Chat on Gitter](https://gitter.im/HewlettPackard/squest)<br/>
+:speech_balloon: [Chat on Gitter](https://app.gitter.im/#/room/#HewlettPackard_squest:gitter.im)<br/>
 :movie_camera: [Demo video](https://youtu.be/mQnNkSMMXwg)<br/>
 :monkey_face: [Our Ansible playbook testing framework](https://github.com/HewlettPackard/monkeyble)
 

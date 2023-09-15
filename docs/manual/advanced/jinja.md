@@ -1,6 +1,7 @@
 # Jinja templating
 
-[Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) can be used in some part of the Squest configuration.
+[Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) is applicable within specific sections of the
+Squest configuration. For example, Jinja templating enables the prefilling of a survey field for a day 2 operation using the specs of the instance.
 
 Jinja templating usage with `{{ instance }}` as context:
 
