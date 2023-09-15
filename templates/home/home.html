@@ -60,7 +60,7 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             {% if service.instances %}
-                                                <a href="{% url 'service_catalog:instance_list' %}?state=10&instance__service__id={{ service.service.id }}"
+                                                <a href="{% url 'service_catalog:instance_list' %}?state=10&service={{ service.service.id }}"
                                                    class="btn btn-success btn-lg">{{ service.instances }}
                                                 </a>
                                             {% endif %}
