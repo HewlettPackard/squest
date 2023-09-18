@@ -10,6 +10,8 @@ from service_catalog.models import Instance
 class InstanceTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
     name = LinkColumn()
+    date_available = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
+    last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
 
     def before_render(self, request):
         if not request.user.has_perm("service_catalog.delete_instance"):
