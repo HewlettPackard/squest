@@ -3,6 +3,7 @@ from django.forms import SelectMultiple, HiddenInput
 from django_filters import MultipleChoiceFilter
 
 from Squest.utils.squest_filter import SquestFilter
+from profiles.models import Scope, AbstractScope
 from service_catalog.models import Request
 from service_catalog.models.operations import OperationType
 from service_catalog.models.request import RequestState
@@ -17,6 +18,12 @@ class RequestFilter(SquestFilter):
     instance__service__id = MultipleChoiceFilter(
         label="Service",
         choices=[],
+        widget=SelectMultiple(attrs={'data-live-search': "true"}))
+
+    instance__quota_scope = MultipleChoiceFilter(
+        label="Quota scope",
+        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id", flat=True)).values_list("id",
+                                                                                                            "name"),
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
 
     operation__type = MultipleChoiceFilter(
