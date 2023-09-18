@@ -11,8 +11,8 @@ from service_catalog.models.request import RequestState
 class RequestFilter(SquestFilter):
     class Meta:
         model = Request
-        fields = ['instance__name', 'user__id', 'instance__service__id', 'operation', 'operation__type',
-                  'state']
+        fields = ['instance__name', 'user__id', 'instance__service__id', 'operation', 'instance__quota_scope',
+                  'operation__type', 'state']
 
     instance__service__id = MultipleChoiceFilter(
         label="Service",
