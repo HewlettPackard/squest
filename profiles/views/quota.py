@@ -17,7 +17,7 @@ class QuotaListView(SquestListView):
     model = Quota
     filterset_class = QuotaFilter
     table_class = QuotaTable
-    ordering = 'name'
+    ordering = 'attribute_definition__name'
     no_data_message = 'To create quota, go to organization/team and click on "Set quotas"'
     export_csv = True
 
