@@ -2,23 +2,20 @@
     {% with class=record|to_class_name|lower %}
         {% with perm=app|add:".delete_"|add:class %}
             {% has_perm request.user perm as can_delete %}
-            {% if parent_id %}
-                <span {% if not can_delete %} title="Permission {{ perm }} needed" {% endif %}>
-
-                <a href="{% url app|add:":"|add:class|add:"_delete" parent_id record.id %}"
-                   class="btn btn-danger bg-sm{% if not can_delete %} disabled{% endif %}"
-                   title="Delete">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </span>
-            {% else %}
-                <span {% if not can_delete %} title="Permission {{ perm }} needed" {% endif %}>
-                <a href="{% url app|add:":"|add:class|add:"_delete" record.id %}"
-                   class="btn btn-danger bg-sm{% if not can_delete %} disabled{% endif %}"
-                   title="Delete">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </span>
+            {%  if can_delete %}
+                {% if parent_id %}
+                    <a href="{% url app|add:":"|add:class|add:"_delete" parent_id record.id %}"
+                       class="btn btn-danger bg-sm"
+                       title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url app|add:":"|add:class|add:"_delete" record.id %}"
+                       class="btn btn-danger bg-sm"
+                       title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                {% endif %}
             {% endif %}
         {% endwith %}
     {% endwith %}

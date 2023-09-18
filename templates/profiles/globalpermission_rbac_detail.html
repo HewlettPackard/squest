@@ -6,9 +6,11 @@
 {% load static %}
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_globalpermission" object as can_add_users %}
-    <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
-       class="btn btn-success{% if not can_add_users %} disabled{% endif %}"><i class="fas fa-user-plus"></i> Add Global RBAC
-    </a>
+    {% if can_add_users %}
+        <a href="{% url 'profiles:globalpermission_rbac_create' object.id %}"
+           class="btn btn-success"><i class="fas fa-user-plus"></i> Add Global RBAC
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block main %}

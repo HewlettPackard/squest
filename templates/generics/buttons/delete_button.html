@@ -2,12 +2,12 @@
     {% with class=object|to_class_name|lower %}
         {% with perm=app|add:".delete_"|add:class %}
             {% has_perm request.user perm object as can_delete %}
-            <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
-                <a href="{% url app|add:':'|add:class|add:'_delete' object.id %}"
-                   class="btn btn-danger{% if not can_delete %} disabled{% endif %}">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </span>
+            {% if can_delete %}
+                    <a href="{% url app|add:':'|add:class|add:'_delete' object.id %}"
+                       class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+            {% endif %}
         {% endwith %}
     {% endwith %}
 {% endwith %}
