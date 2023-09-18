@@ -30,6 +30,7 @@
     </div>
     {% if object.approval_workflow_state %}
         {% for step in object.approval_workflow_state.approval_step_states.all %}
+            {% has_perm request.user step.approval_step.permission.permission_str step as has_step_permission %}
             <div>
                 <i class="fas fa-clipboard-check bg-{{ step |map_approvalstep_state }}"></i>
                 <div class="timeline-item">
@@ -41,7 +42,6 @@
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
                         {% if step.get_state_display == "APPROVED" %}
-                            {% has_perm request.user step.approval_step.permission.permission_str step as can_view_step %}
                             <details>
                                 <summary>Survey</summary>
                                 <table class="row">
@@ -73,28 +73,34 @@
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated | squest_date_format }}
                             </blockquote>
                             <div class="row justify-content-md-center">
-                                <div class="timeline-footer">
-                                    <a class="btn btn-sm btn-default"
-                                       title="Review"
-                                       href="{% url 'service_catalog:request_re_submit' object.id %}">
-                                        <i class="fas fa-redo"></i> Undo
-                                    </a>
-                                </div>
+                                {% with args_filter="re_submit,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_re_submit_request %}
+                                        <div class="timeline-footer">
+                                            <a class="btn btn-default"
+                                               title="Re-submit"
+                                               href="{% url 'service_catalog:request_re_submit' object.id %}">
+                                                <i class="fas fa-redo"></i> Re-submit
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
                             </div>
                         {% else %}
                             {% if step.is_current_step_in_approval %}
                                 <div class="row justify-content-md-center">
                                     <div class="timeline-footer">
-                                        <a class="btn btn-lg btn-primary"
-                                           title="Review"
-                                           href="{% url 'service_catalog:request_approve' object.id %}">
-                                            <i class="fas fa-clipboard-check"></i> Review
-                                        </a>
-                                        <a class="btn btn-lg btn-danger"
-                                           title="Reject"
-                                           href="{% url 'service_catalog:request_reject' object.id %}">
-                                            <i class="fas fa-ban"></i> Reject
-                                        </a>
+                                        {% if has_step_permission %}
+                                            <a class="btn btn-danger"
+                                               title="Reject"
+                                               href="{% url 'service_catalog:request_reject' object.id %}">
+                                                <i class="fas fa-ban"></i> Reject
+                                            </a>
+                                            <a class="btn btn-primary"
+                                               title="Review"
+                                               href="{% url 'service_catalog:request_approve' object.id %}">
+                                                <i class="fas fa-clipboard-check"></i> Review
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% else %}
@@ -156,17 +162,26 @@
                             <div class="timeline-footer">
                                 {% with args_filter="cancel,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_cancel_request %}
-                                        <a class="btn btl-lg btn-secondary"
+                                        <a class="btn btn-secondary"
                                            title="Cancel"
                                            href="{% url 'service_catalog:request_cancel' object.id %}">
                                             <i class="fas fa-window-close"></i> Cancel
                                         </a>
                                     {% endif %}
                                 {% endwith %}
+                                {% with args_filter="reject,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_reject_request %}
+                                        <a class="btn btn-danger"
+                                           title="Reject"
+                                           href="{% url 'service_catalog:request_reject' object.id %}">
+                                            <i class="fas fa-ban"></i> Reject
+                                        </a>
+                                    {% endif %}
+                                {% endwith %}
                                 {% if object.get_state_display != "NEED_INFO" %}
                                     {% with args_filter="need_info,"|addstr:object.id %}
                                         {% if args_filter|can_proceed_request_action and can_need_info_request %}
-                                            <a class="btn btl-lg btn-warning"
+                                            <a class="btn btn-warning"
                                                title="Ask more info"
                                                href="{% url 'service_catalog:request_need_info' object.id %}">
                                                 <i class="fas fa-info-circle"></i> Ask info
@@ -176,26 +191,17 @@
                                 {% else %}
                                     {% with args_filter="re_submit,"|addstr:object.id %}
                                         {% if args_filter|can_proceed_request_action and can_re_submit_request %}
-                                            <a class="btn btl-lg btn-info"
-                                               title="Reset to submit"
+                                            <a class="btn btn-info"
+                                               title="Re-submit"
                                                href="{% url 'service_catalog:request_re_submit' object.id %}">
-                                                <i class="fas fa-undo"></i> Reset to submitted
+                                                <i class="fas fa-undo"></i> Re-submit
                                             </a>
                                         {% endif %}
                                     {% endwith %}
                                 {% endif %}
-                                {% with args_filter="reject,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_reject_request %}
-                                        <a class="btn btl-lg btn-danger"
-                                           title="Reject"
-                                           href="{% url 'service_catalog:request_reject' object.id %}">
-                                            <i class="fas fa-ban"></i> Reject
-                                        </a>
-                                    {% endif %}
-                                {% endwith %}
                                 {% with args_filter="accept,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_accept_request %}
-                                        <a class="btn btl-lg btn-primary"
+                                        <a class="btn btn-primary"
                                            title="Review"
                                            href="{% url 'service_catalog:request_accept' object.id %}">
                                             <i class="fas fa-clipboard-check"></i> Review
@@ -245,7 +251,7 @@
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_process_request %}
-                                        <a class="btn btn-lg btn-primary"
+                                        <a class="btn btn-primary"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Process
@@ -271,7 +277,7 @@
                 </h3>
                 <div class="timeline-body">
                     {% if  object.get_state_display == "PROCESSING" %}
-                        The request is currently processed by the backend.
+                        The request is currently being processed
                     {% else %}
                         <blockquote class="quote-success">
                             <i class="fas fa-check text-success"></i> Request processed successfully
@@ -297,8 +303,8 @@
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_process_request %}
-                                        <a class="btn btn-lg btn-primary"
+                                     {% if args_filter|can_proceed_request_action and can_process_request %}
+                                        <a class="btn btn-primary"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Retry process
