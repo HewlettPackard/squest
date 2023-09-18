@@ -29,24 +29,29 @@
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
-                <div class="card card-sucess">
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><b>{{ object.name }}</b></h3>
                     </div>
                     <div class="card-body pt-0 pb-0">
 
                         <ul class="list-group list-group-unbordered">
-                            <li class="list-group-item border-top-0">
-                                Organization
-                                <a class="float-right"
-                                   href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
+                            <li class="list-group-item border-top-0 border-bottom-0">
+                                <strong>Organization</strong><br>
+                                <a href="{{ object.org.get_absolute_url }}">{{ object.org }}</a>
                             </li>
                             {% if object.description %}
-                                <li class="list-group-item border-bottom-0">
-                                    Description
-                                    <p class="float-right">{{ object.description }}</p>
+                                <li class="list-group-item border-top-0 border-bottom-0">
+                                    <strong>Description</strong><br>
+                                    {{ object.description }}
                                 </li>
                             {% endif %}
+                            <li class="list-group-item border-top-0 border-bottom-0">
+                                <a href="{% url 'service_catalog:instance_list' %}?quota_scope={{ object.id }}">View instances</a>
+                            </li>
+                            <li class="list-group-item border-top-0 border-bottom-0">
+                                <a href="{% url 'service_catalog:request_list' %}?instance__quota_scope={{ object.id }}">View requests</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
