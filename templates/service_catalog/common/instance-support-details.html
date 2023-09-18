@@ -5,6 +5,7 @@
 {% load static %}
 {% block content %}
     {% has_perm request.user "service_catalog.add_supportmessage" instance as can_comment_support %}
+    {% has_perm request.user "service_catalog.reopen_support" instance as can_reopen_support %}
     {% has_perm request.user "service_catalog.close_support" instance as can_close_support %}
     {% has_perm request.user "service_catalog.change_support" instance as can_change_support %}
     <!-- Main content -->
@@ -69,15 +70,15 @@
                                         </div>
                                     </form>
                                 {% endif %}
-                                {% if support.get_state_display == "OPENED" %}
+                                {% if support.get_state_display == "OPENED" and can_close_support %}
                                     <a href="{% url 'service_catalog:support_close' instance_id=instance.id pk=support.id %}"
-                                       class="btn btn-danger{% if not can_close_support %} disabled{% endif %}">
+                                       class="btn btn-danger">
                                         <i class="fas fa-times-circle"></i> Close
                                     </a>
                                 {% endif %}
-                                {% if support.get_state_display == "CLOSED" %}
+                                {% if support.get_state_display == "CLOSED" and can_reopen_support %}
                                     <a href="{% url 'service_catalog:support_reopen' instance_id=instance.id pk=support.id %}"
-                                       class="btn btn-success{% if not can_change_support %} disabled{% endif %}">
+                                       class="btn btn-success">
                                         <i class="fas fa-undo"></i> Re-open
                                     </a>
                                 {% endif %}

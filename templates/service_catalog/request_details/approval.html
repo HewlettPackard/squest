@@ -244,11 +244,13 @@
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
-                                    <a class="btn btn-lg btn-primary {% if not args_filter|can_proceed_request_action or not can_process_request %}disabled{% endif %}"
-                                       title="Process"
-                                       href="{% url 'service_catalog:request_process' object.id %}">
-                                        <i class="fas fa-play"></i> Process
-                                    </a>
+                                    {% if args_filter|can_proceed_request_action and can_process_request %}
+                                        <a class="btn btn-lg btn-primary"
+                                           title="Process"
+                                           href="{% url 'service_catalog:request_process' object.id %}">
+                                            <i class="fas fa-play"></i> Process
+                                        </a>
+                                    {% endif %}
                                 {% endwith %}
                             </div>
                         </div>
@@ -295,11 +297,13 @@
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
-                                    <a class="btn btn-lg btn-primary {% if not args_filter|can_proceed_request_action or not can_process_request %}disabled{% endif %}"
-                                       title="Process"
-                                       href="{% url 'service_catalog:request_process' object.id %}">
-                                        <i class="fas fa-play"></i> Retry process
-                                    </a>
+                                    {% if args_filter|can_proceed_request_action and can_process_request %}
+                                        <a class="btn btn-lg btn-primary"
+                                           title="Process"
+                                           href="{% url 'service_catalog:request_process' object.id %}">
+                                            <i class="fas fa-play"></i> Retry process
+                                        </a>
+                                    {% endif %}
                                 {% endwith %}
                             </div>
                         </div>
