@@ -7,17 +7,17 @@
 {% block extra_header_button %}
     {% has_perm request.user "profiles.add_users_team" object as can_add_user %}
     {% has_perm request.user "profiles.change_team_quota" object as can_change_quota %}
-    <span {% if not can_change_quota %} title="Permission profiles.change_quota needed" {% endif %}>
-            <a href="{% url 'profiles:team_quota_edit' object.id %}"
-               class="btn btn-primary{% if not can_change_quota %} disabled{% endif %}"> <i
-                    class="fas fa-chart-pie"></i> Set quotas
-            </a>
-    </span>
-    <span {% if not can_add_user %} title="Permission profiles.add_users_team needed" {% endif %}>
-            <a href="{% url 'profiles:team_rbac_create' object.id %}"
-               class="btn btn-success{% if not can_add_user %} disabled{% endif %}"><i class="fas fa-user-plus"></i> Add Team RBAC
-            </a>
-    </span>
+    {% if can_change_quota %}
+        <a href="{% url 'profiles:team_quota_edit' object.id %}"
+           class="btn btn-primary"> <i
+                class="fas fa-chart-pie"></i> Set quotas
+        </a>
+    {% endif %}
+    {% if can_add_user %}
+        <a href="{% url 'profiles:team_rbac_create' object.id %}"
+           class="btn btn-success"><i class="fas fa-user-plus"></i> Add Team RBAC
+        </a>
+    {% endif %}
 {% endblock %}
 {% block header_button %}
     {% include 'generics/buttons/edit_button.html' %}

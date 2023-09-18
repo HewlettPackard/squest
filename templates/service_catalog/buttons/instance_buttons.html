@@ -19,14 +19,16 @@
         </a>
     {% endif %}
 {% endwith %}
-{% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
-    <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
-       href="{% url 'service_catalog:support_create' object.id %}">
-        <i class="fas fa-link"></i> Open new support
-    </a>
-{% else %}
-    <a class="btn btn-success {% if not can_add_support %}disabled{% endif %}"
-       href="{% url 'service_catalog:support_create' object.id %}">
-        <i class="fas fa-plus"></i> Open new support
-    </a>
+{% if can_add_support %}
+    {% if object.service.external_support_url is not None and object.service.external_support_url != '' %}
+        <a class="btn btn-success"
+           href="{% url 'service_catalog:support_create' object.id %}">
+            <i class="fas fa-link"></i> Open new support
+        </a>
+    {% else %}
+        <a class="btn btn-success"
+           href="{% url 'service_catalog:support_create' object.id %}">
+            <i class="fas fa-plus"></i> Open new support
+        </a>
+    {% endif %}
 {% endif %}

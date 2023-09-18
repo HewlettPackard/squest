@@ -1,10 +1,10 @@
 {% has_perm request.user "service_catalog.change_operation" as can_change %}
-<span {% if not can_change %} title="Permission service_catalog.change_operation needed" {% endif %}>
-    <a href="{% url 'service_catalog:operation_edit_survey' service_id=record.service.id pk=record.id %}"
-       class="btn btn-primary bg-sm {% if not can_change %} disabled {% endif %}">
-        <i class="fas fa-clipboard-list"></i>
-    </a>
-</span>
+{% if can_change %}
+        <a href="{% url 'service_catalog:operation_edit_survey' service_id=record.service.id pk=record.id %}"
+           class="btn btn-primary bg-sm">
+            <i class="fas fa-clipboard-list"></i>
+        </a>
+{% endif %}
 {% with parent_id=record.service.id %}
     {% include 'generics/custom_columns/generic_actions.html' %}
 {% endwith %}

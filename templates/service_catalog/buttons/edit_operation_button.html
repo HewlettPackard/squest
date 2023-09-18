@@ -1,9 +1,9 @@
 {% with perm="service_catalog.change_operation" %}
     {% has_perm request.user perm object as can_change %}
-    <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
-                <a href="{% url 'service_catalog:operation_edit' object.service.id object.id %}"
-                   class="btn btn-primary{% if not can_change %} disabled{% endif %}">
-                    <i class="fas fa-pencil-alt"></i>
-                </a>
-            </span>
+    {% if can_change %}
+            <a href="{% url 'service_catalog:operation_edit' object.service.id object.id %}"
+               class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+    {% endif %}
 {% endwith %}

@@ -2,12 +2,12 @@
     {% with class=object|to_class_name|lower %}
         {% with perm=app|add:".change_"|add:class %}
             {% has_perm request.user perm object as can_change %}
-            <span {% if not can_change %} title="Permission {{ perm }} needed" {% endif %}>
+            {% if can_change %}
                 <a href="{% url app|add:':'|add:class|add:'_edit' object.id %}"
-                   class="btn btn-primary{% if not can_change %} disabled{% endif %}">
+                   class="btn btn-primary">
                     <i class="fas fa-pencil-alt"></i>
                 </a>
-            </span>
+            {% endif %}
         {% endwith %}
     {% endwith %}
 {% endwith %}
