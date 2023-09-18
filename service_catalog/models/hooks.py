@@ -25,6 +25,9 @@ class AbstractGlobalHook(SquestModel):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
+    def __str__(self):
+        return self.name
+
 
 class InstanceHook(AbstractGlobalHook):
     state = IntegerField(choices=InstanceState.choices)
