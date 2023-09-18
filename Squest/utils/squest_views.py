@@ -57,6 +57,8 @@ class SquestListView(LoginRequiredMixin, SquestPermissionRequiredMixin, SquestEx
     table_pagination = {'per_page': 10}
     template_name = 'generics/list.html'
     no_data_message = "There is no data to show or you don't have required permission"
+    ordering = None
+
     def get_permission_required(self):
         return f"{self.django_content_type.app_label}.list_{self.django_content_type.model}"
 
@@ -80,6 +82,8 @@ class SquestListView(LoginRequiredMixin, SquestPermissionRequiredMixin, SquestEx
         except AttributeError as e:
             traceback.print_exc()
             qs = self.model.objects.all()
+        if self.ordering is not None:
+            qs = qs.order_by(self.ordering)
         return qs
 
 
