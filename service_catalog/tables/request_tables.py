@@ -21,10 +21,19 @@ class RequestTable(SquestTable):
         model = Request
         attrs = {"id": "request_table", "class": "table squest-pagination-tables"}
         fields = ("selection", "id", "user__username", "instance__quota_scope__name",
-                  "instance__service", "operation", "state", "instance", "date_submitted", "last_updated")
+                  "instance__service", "operation", "operation__type", "state", "instance", "date_submitted",
+                  "last_updated")
+
+    def render_operation__type(self, value, record):
+        from service_catalog.views import map_operation_type
+        return format_html(
+            f'<strong class="text-{map_operation_type(record.operation.type)}">{record.operation.type}</strong>')
 
     def render_id(self, value, record):
         return format_html(f'<a title={value} href="{record.get_absolute_url()}">{record}</a>')
+
+    def render_operation(self, value, record):
+        return value.name
 
     def render_state(self, record, value):
         from service_catalog.views import map_request_state
@@ -35,4 +44,4 @@ class RequestTable(SquestTable):
                 f'<a href="{record.get_absolute_url()}"><strong class="text-{map_request_state(record.state)}">{value} ({position}/{number_of_steps})</strong></a>')
 
         return format_html(
-            f'<a href="{record.get_absolute_url()}"><strong class="text-{map_request_state(record.state)}">{value}</strong></a>')
+            f'<strong class="text-{map_request_state(record.state)}">{value}</strong>')
