@@ -511,7 +511,7 @@ FIELD_VALIDATOR_PATH = "plugins/field_validators"
 # -----------------------------------------
 if SQL_DEBUG:
     LOGGING["loggers"]["django.db.backends"] = {
-        "level": "DEBUG", "handlers": ["console"]
+        "level": "DEBUG"
     }
 
 print('[Settings] loaded')
