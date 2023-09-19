@@ -34,7 +34,9 @@ class RequestListView(SquestListView):
         return Request.get_queryset_for_user(
             self.request.user, 'service_catalog.view_request'
         ).prefetch_related(
-            "user", "operation", "instance__requester", "instance__quota_scope", "instance__service", "operation__service"
+            "user", "operation", "instance__requester", "instance__quota_scope", "instance__service",
+            "operation__service", "approval_workflow_state", "approval_workflow_state__current_step",
+            "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
         ).exclude(state=RequestState.ARCHIVED)
 
     def get_context_data(self, **kwargs):
