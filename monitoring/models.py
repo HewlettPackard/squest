@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
-from django.db.models import Count, Sum
-from prometheus_client import Summary, Counter, Gauge
+from django.db.models import Count
+from prometheus_client import Summary
 from prometheus_client.metrics_core import GaugeMetricFamily
 
 from profiles.models import Team, Organization, Quota
 from resource_tracker_v2.models import ResourceAttribute
-from service_catalog.models import Instance, Support, Request
+from service_catalog.models import Instance, Support, Request, RequestState, InstanceState
+from service_catalog.models.support import SupportState
 
 # Create a metric to track time spent and requests made.
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
@@ -46,7 +47,7 @@ class ComponentCollector(object):
                                                         'Total number of instance per state in squest',
                                                         labels=['state'])
         for instance in instances:
-            gauge_squest_instance_total.add_metric([instance["state"]], instance["counter"])
+            gauge_squest_instance_total.add_metric([InstanceState(instance["state"]).label], instance["counter"])
         return gauge_squest_instance_total
 
     @staticmethod
@@ -57,7 +58,7 @@ class ComponentCollector(object):
                                   'Total number of request per state in squest',
                                   labels=['state'])
         for request in requests:
-            gauge.add_metric([request["state"]], request["counter"])
+            gauge.add_metric([RequestState(request["state"]).label], request["counter"])
         return gauge
 
     @staticmethod
@@ -73,10 +74,14 @@ class ComponentCollector(object):
                                                         labels=['service', 'state', 'quota_scope'])
         instances = Instance.objects.values('service__name',
                                             'quota_scope__name',
-                                            'state').annotate(total_count=Count('id'))
+                                            'state') \
+            .order_by('service__name',
+                      'quota_scope__name',
+                      'state') \
+            .annotate(total_count=Count('id'))
         for instance in instances:
             gauge_squest_instance_total.add_metric([instance["service__name"],
-                                                    instance["state"],
+                                                    InstanceState(instance["state"]).label,
                                                     instance["quota_scope__name"]],
                                                    instance["total_count"])
         return gauge_squest_instance_total
@@ -87,10 +92,11 @@ class ComponentCollector(object):
                                   'Total number of support in squest',
                                   labels=['service', 'state'])
         supports = Support.objects.values('instance__service__name',
-                                          'state').annotate(total_count=Count('id'))
+                                          'state').order_by('instance__service__name',
+                                                            'state').annotate(total_count=Count('id'))
         for support in supports:
             gauge.add_metric([support["instance__service__name"],
-                              support["state"]],
+                              SupportState(support["state"]).label],
                              support["total_count"])
         return gauge
 
@@ -119,16 +125,17 @@ class ComponentCollector(object):
                                   'Total number of request in squest',
                                   labels=['service', 'state'])
         requests = Request.objects.values('instance__service__name',
-                                          'state').annotate(total_count=Count('id'))
+                                          'state').order_by('instance__service__name',
+                                                            'state').annotate(total_count=Count('id'))
         for request in requests:
             gauge.add_metric([request["instance__service__name"],
-                              request["state"]],
+                              RequestState(request["state"]).label],
                              request["total_count"])
         return gauge
 
     @staticmethod
     def get_total_organizations():
-        gauge = GaugeMetricFamily("squest_billing_group_total",
+        gauge = GaugeMetricFamily("squest_organization_total",
                                   'Total number of Organization in squest')
         gauge.add_metric([], Organization.objects.count())
         return gauge
@@ -139,7 +146,7 @@ class ComponentCollector(object):
         squest_quota_consumed{scope="5G", quota_attribute='cpu'}  34
         """
         gauge = GaugeMetricFamily("squest_quota_consumed",
-                                  'Consumption of quota per billing group and attribute',
+                                  'Consumption of quota per scope and attribute',
                                   labels=['scope', 'quota_attribute'])
 
         for quota in Quota.objects.all():
