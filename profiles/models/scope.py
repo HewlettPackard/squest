@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import CharField, ManyToManyField, Prefetch, Q
+from django.urls import reverse_lazy
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Role
@@ -95,8 +96,11 @@ class AbstractScope(SquestModel):
     def get_potential_users(self):
         return self.get_object().get_potential_users()
 
-    def get_absolute_url(self):
+    def get_url(self):
         return self.get_object().get_absolute_url()
+
+    def get_absolute_url(self):
+        return reverse_lazy("profiles:scope_detail", kwargs={"pk": self.pk})
 
 
 class Scope(AbstractScope):
