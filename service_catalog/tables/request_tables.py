@@ -28,5 +28,11 @@ class RequestTable(SquestTable):
 
     def render_state(self, record, value):
         from service_catalog.views import map_request_state
+        if record.approval_workflow_state is not None and record.approval_workflow_state.current_step is not None:
+            position = record.approval_workflow_state.current_step.approval_step.position
+            number_of_steps = record.approval_workflow_state.approval_step_states.count()
+            return format_html(
+                f'<a href="{record.get_absolute_url()}"><strong class="text-{map_request_state(record.state)}">{value} ({position}/{number_of_steps})</strong></a>')
+
         return format_html(
             f'<a href="{record.get_absolute_url()}"><strong class="text-{map_request_state(record.state)}">{value}</strong></a>')
