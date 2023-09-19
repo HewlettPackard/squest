@@ -251,6 +251,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': "DEBUG",
         },
+        'graphviz': {
+            'handlers': ['console'],
+            'level': "INFO",
+        }
     },
 }
 
@@ -439,7 +443,8 @@ print(f"SQUEST_VERSION: {__version__} - {SQUEST_COMMIT_SHA6}")
 # -----------------------------------------
 # Metrics
 # -----------------------------------------
-METRICS_ENABLED = str_to_bool(os.environ.get('METRICS_ENABLED', False))
+# METRICS_ENABLED = str_to_bool(os.environ.get('METRICS_ENABLED', False))
+METRICS_ENABLED = True
 METRICS_PASSWORD_PROTECTED = str_to_bool(os.environ.get('METRICS_PASSWORD_PROTECTED', True))
 METRICS_AUTHORIZATION_USERNAME = os.environ.get('METRICS_AUTHORIZATION_USERNAME', 'admin')
 METRICS_AUTHORIZATION_PASSWORD = os.environ.get('METRICS_AUTHORIZATION_PASSWORD', 'admin')
