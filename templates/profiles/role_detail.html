@@ -10,6 +10,8 @@
 {% endblock %}
 
 {% block main %}
+    {% has_perm request.user "profiles.view_rbac" as can_view_rbac %}
+
     <div class="container-fluid">
         <div class="row">
             <section class="col-lg-3">
@@ -29,16 +31,49 @@
             </section>
             <section class="col-lg-9">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Permissions
-                        </h3>
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#permissions" data-toggle="tab">Permissions</a>
+                            </li>
+                            {% if can_view_rbac %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#rbac" data-toggle="tab">RBAC usage</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#default-roles" data-toggle="tab">Default role usage</a>
+                                </li>
+                            {% endif %}
+                        </ul>
                     </div>
                     <div class="card-body">
-                        {% render_table permissions_table %}
+                        <div class="tab-content">
+                            <div class="tab-pane" id="permissions">
+                                {% render_table permissions_table %}
+                            </div>
+                            {% if can_view_rbac %}
+                                <div class="tab-pane" id="rbac">
+                                    <div class="callout callout-info">
+                                        Assignment trough Org/Team RBAC
+                                    </div>
+                                    {% if rbac_assignement_user_table %}
+                                        {% render_table rbac_assignement_user_table %}
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="default-roles">
+                                    <div class="callout callout-info">
+                                        Used in default roles
+                                    </div>
+                                    {% if rbac_assignement_scope_table %}
+                                        {% render_table rbac_assignement_scope_table %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </section>
+
         </div>
     </div>
 {% endblock %}

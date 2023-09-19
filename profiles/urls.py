@@ -74,6 +74,9 @@ urlpatterns = [
     path('team/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="team_rbac_delete"),
     path('team/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="team_rbac_delete"),
 
+    # Redirect view for AbstractScope
+    path('scope/<int:pk>/', views.ScopeRedirectView.as_view(), name="scope_detail"),
+
     # Permission
     path('permission/', views.PermissionListView.as_view(), name="permission_list"),
     path('permission/create/', views.PermissionCreateView.as_view(), name="permission_create"),

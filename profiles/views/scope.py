@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.views.generic import RedirectView
 
 from Squest.utils.squest_views import SquestFormView, SquestDeleteView
 from profiles.forms.scope_form import ScopeCreateRBACForm
@@ -26,6 +27,15 @@ def get_breadcrumbs_for_scope(scope):
                               {'text': scope.org, 'url': scope.org.get_absolute_url()},
                           ] + breadcrumbs
     return breadcrumbs
+
+
+class ScopeRedirectView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        scope = get_object_or_404(AbstractScope, pk=kwargs["pk"])
+        return scope.get_url()
 
 
 class ScopeRBACCreateView(SquestFormView):
@@ -90,6 +100,7 @@ class ScopeRBACDeleteView(SquestDeleteView):
             context = self.get_context_data(object=self.object, error_message=error_message,
                                             protected_objects=e.protected_objects)
             return self.render_to_response(context)
+
 
 class ScopeRBACDeleteUserView(SquestDeleteView):
     model = AbstractScope
