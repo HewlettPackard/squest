@@ -1,12 +1,22 @@
 /*fix select button color*/
-.btn-light{
+.btn-light {
     background-color: #343a40 !important;
     color: #fff !important;
 }
-.dtfc-fixed-left{
+
+.dtfc-fixed-left {
     background-color: #343a40 !important;
     z-index: 1;
 }
 input.form-control[disabled] {
-  opacity: 0.4;
+    opacity: 0.4;
+}
+
+div.martor-preview.bg-dark > h1,
+div.martor-preview.bg-dark > h2,
+div.martor-preview.bg-dark > h3,
+div.martor-preview.bg-dark > h4,
+div.martor-preview.bg-dark > h5,
+div.martor-preview.bg-dark > h6 {
+    color: white !important;
 }
