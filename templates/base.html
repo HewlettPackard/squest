@@ -45,7 +45,8 @@
     </title>
 </head>
 <body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed
-        {% if request.user %}{% if request.user.profile.theme == "dark" %}dark-mode{% endif %}{% endif %}">
+        {% if request.user %}{% if request.user.profile.theme == "dark" %}dark-mode{% endif %}{% endif %}
+        {% if 'login' in request.path %} lockscreen{% endif %}">
 <div class="wrapper">
     {% if 'login' not in request.path %}
         {% include 'navbar.html' %}

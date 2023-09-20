@@ -61,28 +61,28 @@ def _apply_when_filter_request(user_qs, squest_object):
 
 
 def _get_receivers_for_support_message(support_message):
-    ## Apply when filter on all users
+    # Apply when filter on all users
     receivers_raw = support_message.who_has_perm("service_catalog.view_supportmessage").exclude(
         id=support_message.sender.id)
     return _apply_when_filter_instance(receivers_raw, support_message.support.instance)
 
 
 def _get_receivers_for_request_message(request_message):
-    ## Apply when filter on all users
+    # Apply when filter on all users
     receivers_raw = request_message.who_has_perm("service_catalog.view_requestmessage").exclude(
         id=request_message.sender.id)
     return _apply_when_filter_request(receivers_raw, request_message.request)
 
 
 def _get_receivers_for_support(support):
-    ## Apply when filter on all users
+    # Apply when filter on all users
 
     receivers_raw = support.who_has_perm("service_catalog.view_support")
     return _apply_when_filter_instance(receivers_raw, support.instance)
 
 
 def _get_receivers_for_request(squest_request):
-    ## Apply when filter on all users
+    # Apply when filter on all users
     customer_raw = squest_request.who_has_perm("service_catalog.view_request")
     admin_raw = squest_request.who_can_accept()
     return _apply_when_filter_request(customer_raw | admin_raw, squest_request)
@@ -172,7 +172,7 @@ def send_mail_new_comment_on_request(message):
                            headers=_get_headers(subject))
 
 
-def send_email_request_canceled(target_request, user_applied_state=None, request_owner_user=None):
+def send_email_request_canceled(target_request, user_applied_state=None):
     """
     :param target_request: Request model
     :type target_request: service_catalog.models.request.Request

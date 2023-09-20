@@ -149,8 +149,7 @@ class RequestStateMachine(ViewSet):
         if target_request.cancel():
             target_request.save()
         send_email_request_canceled(target_request,
-                                    user_applied_state=request.user,
-                                    request_owner_user=target_request.user)
+                                    user_applied_state=request.user)
         if Request.objects.filter(id=pk).exists():
             if self.request.user.has_perm("service_catalog.view_admin_survey", target_request):
                 return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)
