@@ -8,6 +8,7 @@
     {% has_perm request.user "service_catalog.reopen_support" instance as can_reopen_support %}
     {% has_perm request.user "service_catalog.close_support" instance as can_close_support %}
     {% has_perm request.user "service_catalog.change_support" instance as can_change_support %}
+    {% has_perm request.user "service_catalog.delete_support" instance as can_delete_support %}
     <!-- Main content -->
     <div class="content-wrapper">
         <section class="content-header">
@@ -17,6 +18,12 @@
                         {% include "generics/breadcrumbs.html" %}
                     </div>
                     <div class="col-sm-6">
+                        {% if can_delete_support %}
+                            <a href="{% url 'service_catalog:support_delete' instance_id=instance.id pk=support.id %}"
+                               class="float-sm-right btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
                         <span title="state"
                               class="float-sm-right badge bg-{{ support.state |map_support_state }} p-1 mr-2">{{ support.get_state_display }}</span>
                     </div>

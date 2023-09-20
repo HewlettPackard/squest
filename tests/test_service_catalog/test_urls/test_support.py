@@ -86,6 +86,16 @@ class TestServiceCatalogSupportPermissionsViews(BaseTestRequest, TestPermissionE
                 url_kwargs={'instance_id': self.support_test.instance.id, 'pk': self.support_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
-            )
+            ),
+            TestingGetContextView(
+                url='service_catalog:support_delete',
+                perm_str='service_catalog.delete_support',
+                url_kwargs={'instance_id': self.support_test.instance.id, 'pk': self.support_test.id},
+            ),
+            TestingPostContextView(
+                url='service_catalog:support_delete',
+                perm_str='service_catalog.delete_support',
+                url_kwargs={'instance_id': self.support_test.instance.id, 'pk': self.support_test.id}
+            ),
         ]
         self.run_permissions_tests(testing_view_list)

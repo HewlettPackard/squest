@@ -22,6 +22,20 @@ class SupportListView(SquestListView):
         return context
 
 
+class SupportDeleteView(SquestDeleteView):
+    model = Support
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': f"{self.object.instance.name} ({self.object.instance.id})",
+             'url': reverse('service_catalog:instance_details', args=[self.object.instance.id])},
+            {'text': f"Support - {self.object.title}", 'url': ''}
+        ]
+        return context
+
+
 class ReOpenSupportView(SquestDetailView):
     model = Support
     permission_required = "service_catalog.reopen_support"
