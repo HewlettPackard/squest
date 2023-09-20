@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="docs/images/squest_full_logo.png">
+    <img style="width: 350px; height: 350px" src="project-static/squest/img/squest_full_logo_transparent.png">
 </p>
 
 <h3 align="center">Self service portal on top of Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower)</h3>

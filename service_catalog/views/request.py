@@ -103,8 +103,7 @@ def request_cancel(request, pk):
         raise PermissionDenied
     if request.method == "POST":
         send_email_request_canceled(target_request,
-                                    user_applied_state=request.user,
-                                    request_owner_user=target_request.user)
+                                    user_applied_state=request.user)
 
         if target_request.cancel():
             target_request.save()
