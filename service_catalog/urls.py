@@ -87,6 +87,7 @@ urlpatterns = [
     # Support CRUD under instance
     path('instance/<int:instance_id>/support/create/', views.support_create, name='support_create'),
     path('instance/<int:instance_id>/support/<int:pk>/', views.support_details, name='support_details'),
+    path('instance/<int:instance_id>/support/<int:pk>/delete/', views.SupportDeleteView.as_view(), name='support_delete'),
 
     # Support State Machine
     path('instance/<int:instance_id>/support/<int:pk>/close/', views.CloseSupportView.as_view(), name='support_close'),
