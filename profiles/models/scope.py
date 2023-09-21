@@ -100,7 +100,7 @@ class AbstractScope(SquestModel):
         return self.get_object().get_absolute_url()
 
     def get_absolute_url(self):
-        return reverse_lazy("profiles:scope_detail", kwargs={"pk": self.pk})
+        return reverse_lazy("profiles:scope_details", kwargs={"pk": self.pk})
 
 
 class Scope(AbstractScope):
