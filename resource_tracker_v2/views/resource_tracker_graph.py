@@ -106,7 +106,8 @@ def create_resource_group_svg(resource_group: ResourceGroup):
             'percent': {
                 'display': f"{transformer.percent_consumed}",
                 'color': COLORS[transformer.progress_bar_color],
-                'tooltip': f"Percentage of consumption"
+                'tooltip': f"Percentage of consumption",
+                'text_color': transformer.progress_bar_text_color
             }
         }
         for transformer in resource_group.transformers.all()
