@@ -17,7 +17,7 @@
             <TD COLSPAN="2" BGCOLOR="{{ transformer.produced.color }}" HREF="{{ transformer.produced.href }}" TITLE="{{ transformer.produced.tooltip }}">{{ transformer.produced.display }}</TD>
             <TD COLSPAN="2" BGCOLOR="{{ transformer.consumed.color }}"  HREF="{{ transformer.consumed.href }}" TITLE="{{ transformer.consumed.tooltip }}">{{ transformer.consumed.display }}</TD>
             <TD COLSPAN="2" BGCOLOR="{{ transformer.available.color }}" TITLE="{{ transformer.available.display }}">{{ transformer.available.display }}</TD>
-            <TD COLSPAN="2" BGCOLOR="{{ transformer.percent.color }}"  HREF="{{transformer.percent.href}}" TITLE="{{transformer.percent.tooltip}}"><font color="white">{{ transformer.percent.display }}{% if transformer.percent.display != "N/A" %} %{% endif %}</font></TD>
+            <TD COLSPAN="2" BGCOLOR="{{ transformer.percent.color }}"  HREF="{{transformer.percent.href}}" TITLE="{{transformer.percent.tooltip}}"><font color="{{ transformer.percent.text_color }}">{{ transformer.percent.display }}{% if transformer.percent.display != "N/A" %} %{% endif %}</font></TD>
         </TR>
     {% endfor %}
 

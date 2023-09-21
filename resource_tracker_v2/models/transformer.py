@@ -110,6 +110,8 @@ class Transformer(SquestModel):
 
     @property
     def progress_bar_color(self):
+        if self.total_consumed == 0:
+            return "light"
         reversed_color = self.yellow_threshold_percent_consumed < self.red_threshold_percent_consumed
         if isinstance(self.percent_consumed, int):
             if int(self.percent_consumed) < self.yellow_threshold_percent_consumed and not int(
@@ -120,6 +122,12 @@ class Transformer(SquestModel):
                 return "red" if reversed_color else "green"
             return "yellow"
         return "gray"
+
+    @property
+    def progress_bar_text_color(self):
+        if self.total_consumed == 0:
+            return "black"
+        return "white"
 
     def calculate_total_produced(self):
         """
