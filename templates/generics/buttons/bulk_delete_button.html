@@ -1,6 +1,6 @@
 {% has_perm request.user django_content_type.app_label|add:".delete_"|add:django_content_type.model as can_delete %}
 {% if can_delete %}
-    <a class="btn btn-danger" type="submit">
+    <button class="btn btn-danger" type="submit">
         <i class="fas fa-trash"></i> Delete
-    </a>
+    </button>
 {% endif %}

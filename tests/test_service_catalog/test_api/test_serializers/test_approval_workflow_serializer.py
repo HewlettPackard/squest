@@ -1,6 +1,7 @@
 from profiles.models import GlobalPermission
 from service_catalog.api.serializers.approval_step_state_serializer import ApprovalStepStateSerializer
 from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer
+from service_catalog.models import ApprovalWorkflow
 from tests.test_service_catalog.base_test_approval import BaseTestApprovalAPI
 
 
@@ -21,12 +22,22 @@ class TestApprovalWorkflowSerializer(BaseTestApprovalAPI):
         self.assertFalse(serializer.is_valid())
         self.assertIn("has already an approval workflow based on this operation", serializer.errors["scopes"][0])
 
-
     def test_can_add_another_scope_to_scopes(self):
         data = {
             "name": "test_workflow",
             "operation": self.create_operation_test.id,
             "scopes": [self.test_quota_scope.id, self.test_quota_scope2.id]
         }
-        serializer = ApprovalWorkflowSerializer(instance=self.test_approval_workflow,data=data)
+        serializer = ApprovalWorkflowSerializer(instance=self.test_approval_workflow, data=data)
         self.assertTrue(serializer.is_valid())
+
+    def test_cannot_valid_with_empty_scopes_if_already_exists(self):
+        existing_approval = ApprovalWorkflow.objects.create(name="test",
+                                                            operation=self.create_operation_test)
+        data = {
+            "name": "test_workflow",
+            "operation": self.create_operation_test.id,
+        }
+        serializer = ApprovalWorkflowSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("An approval workflow for all scopes already exists", serializer.errors["scopes"][0])

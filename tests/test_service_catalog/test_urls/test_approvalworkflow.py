@@ -47,7 +47,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
                 data={
                     'name': 'Approvalworkflow updated',
                     'operation': self.create_operation_test.id,
-                    'scope': self.test_quota_scope.id,
+                    'scopes': [self.test_quota_scope.id],
                 }
             ),
             TestingGetContextView(

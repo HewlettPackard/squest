@@ -36,7 +36,7 @@ class ApprovalStep(SquestModel):
     permission = ForeignKey(
         Permission,
         on_delete=PROTECT,
-        related_name="previous",
+        related_name="approval_step",
         limit_choices_to={"content_type__app_label": "service_catalog",
                           "content_type__model": "approvalstep"}
     )
