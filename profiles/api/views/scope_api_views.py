@@ -78,8 +78,4 @@ class RedirectScopeDetails(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         pk = kwargs.pop("pk")
         scope = get_object_or_404(Scope, pk=pk)
-        if scope.is_org:
-            return reverse("api_organization_details", kwargs={'pk': pk})
-        elif scope.is_team:
-            return reverse("api_team_details", kwargs={'pk': pk})
-        raise NotFound
+        return scope.get_url()
