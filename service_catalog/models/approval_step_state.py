@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import ForeignKey, CASCADE, SET_NULL, JSONField, DateTimeField, IntegerField
+from django.db.models import ForeignKey, CASCADE, SET_NULL, JSONField, DateTimeField, IntegerField, Q
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.approval_state import ApprovalState
@@ -61,3 +61,10 @@ class ApprovalStepState(SquestModel):
 
     def who_can_approve(self):
         return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(self.approval_step.permission.permission_str)
+
+    @classmethod
+    def get_q_filter(cls, user, perm):
+        from service_catalog.models import Request
+        return Q(
+            approval_workflow_state__request__in=Request.get_queryset_for_user(user, perm)
+        )

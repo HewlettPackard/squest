@@ -248,7 +248,12 @@ def request_re_submit(request, pk):
 def request_reject(request, pk):
     target_request = get_object_or_404(Request, id=pk)
     if not request.user.has_perm('service_catalog.reject_request', target_request):
-        raise PermissionDenied
+        if target_request.approval_workflow_state is not None:
+            perm = target_request.approval_workflow_state.current_step.approval_step.permission.permission_str
+            if not request.user.has_perm(perm, target_request):
+                raise PermissionDenied
+        else:
+            raise PermissionDenied
     if not can_proceed(target_request.reject):
         raise PermissionDenied
     if request.method == "POST":
@@ -513,4 +518,5 @@ class RequestApproveView(SquestFormView):
         context['icon_button'] = "fas fa-thumbs-up"
         context['text_button'] = "Approve"
         context['color_button'] = "primary"
+        context['extra_html_form_bottom'] = "service_catalog/buttons/reject_button.html"
         return context

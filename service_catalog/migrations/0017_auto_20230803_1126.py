@@ -229,6 +229,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='approvalstep',
             name='permission',
-            field=models.ForeignKey(limit_choices_to={'content_type__app_label': 'service_catalog', 'content_type__model': 'approvalstep'}, on_delete=django.db.models.deletion.PROTECT, related_name='previous', to='profiles.permission'),
+            field=models.ForeignKey(limit_choices_to={'content_type__app_label': 'service_catalog', 'content_type__model': 'approvalstep'}, on_delete=django.db.models.deletion.PROTECT, related_name='approval_step', to='profiles.permission'),
         ),
     ]

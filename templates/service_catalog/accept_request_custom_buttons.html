@@ -1,3 +1,8 @@
+<a class="btn btn-danger"
+   title="Reject"
+   href="{% url 'service_catalog:request_reject' object.id %}">
+    <i class="fas fa-ban"></i> Reject
+</a>
 <button class="btn btn-primary" type="submit" name="accept_only">
     <i class="fas fa-thumbs-up"></i> Accept the request
 </button>

@@ -24,7 +24,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
                 data={
                     'name': 'New approval workflow',
                     'operation': self.update_operation_test.id,
-                    'scope': self.test_quota_scope.id,
+                    'scopes': [self.test_quota_scope.id],
                 }
             ),
             TestingGetContextView(
@@ -38,7 +38,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
                 data={
                     'name': 'Approval workflow PUT',
                     'operation': self.create_operation_test.id,
-                    'scope': self.test_quota_scope.id,
+                    'scopes':[self.test_quota_scope.id],
                 },
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
