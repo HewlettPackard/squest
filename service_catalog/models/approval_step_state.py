@@ -64,7 +64,7 @@ class ApprovalStepState(SquestModel):
 
     @classmethod
     def get_q_filter(cls, user, perm):
-        from service_catalog.models import Request
+        from service_catalog.models import Instance
         return Q(
-            approval_workflow_state__request__in=Request.get_queryset_for_user(user, perm)
+            approval_workflow_state__request__instance__in=Instance.get_queryset_for_user(user, perm)
         )

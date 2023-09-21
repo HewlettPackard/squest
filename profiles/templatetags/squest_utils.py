@@ -75,7 +75,6 @@ def generate_sidebar(user):
                 'active': [
                     "instance_list", "instance_create", "instance_edit", "instance_delete", "instance_details",
                     "instance_bulk_delete", "instance_archive", "instance_unarchive", "instance_request_new_operation",
-                    "support_create", "support_details", "support_close", "support_reopen", "supportmessage_edit"
                 ]
 
             },
@@ -85,7 +84,8 @@ def generate_sidebar(user):
                 'icon': 'fa fa-medkit',
                 'permission_required': 'service_catalog.list_support',
                 'active': [
-                    "support_list"
+                    "support_list", "support_create", "support_details", "support_close", "support_reopen",
+                    "supportmessage_edit", "support_delete"
                 ]
             },
             {
