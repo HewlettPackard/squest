@@ -2,7 +2,7 @@
     <img style="width: 350px; height: 350px" src="project-static/squest/img/squest_full_logo_transparent.png">
 </p>
 
-<h3 align="center">Self service portal on top of Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower)</h3>
+<h3 align="center">Self service portal on top of Red Hat Ansible Automation Platform</h3>
 
 <p align="center">
 <a href="https://hewlettpackard.github.io/squest/latest"><img alt="Doc" src="https://img.shields.io/badge/read-documentation-1abc9c?style=flat-square"></a>
@@ -13,15 +13,16 @@
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/HewlettPackard/squest?style=flat-square">
 </p>
 
-Squest is a framework that allow you to expose an **Everything-as-a-Service** web portal. 
+Squest is a sophisticated framework that empowers you to create a web portal offering a comprehensive **Everything-as-a-Service** experience.
 
-Exposed services in Squest are not hard coded. A service is actually a pointer to your automation in the backend engine Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower). 
-It means everything, as long as it exists as an automation script, can be exposed as a service. **The only limit is your own capability of automation**.
+In Squest, the services made available are not hardcoded. Instead, each service serves as a reference to your automation capabilities within the backend engine, 
+Red Hat Ansible Automation Platform (RHAAP)/AWX (formerly known as Ansible Tower). This essentially means that anything, as long as it exists as an automation script, 
+can be transformed into a service. Your only limitation lies in your own proficiency in automation.
 
-More than a fire and forget tool, Squest can store in its database each deployed instance of services it has provisioned so you can attach to them more automation that allow 
-your users to **manage the lifecycle** of their resources. 
-Each operation corresponds to another link to an automation process in the backend. This allows to make end users more autonomous and free you from time spent in support 
-and object update management.
+Going beyond mere deployment, Squest maintains a record of every instance of services it provisions in its database. 
+This allows you to augment these instances with additional automation, enabling your users to effectively manage the lifecycle of their resources. 
+Each operation performed corresponds to yet another link to an automation process in the backend. This empowering feature enhances user autonomy, 
+relieving you of the burden of providing extensive support and managing object updates.
 
 If you want an idea of what you can do with Squest, click on the image below.
 
