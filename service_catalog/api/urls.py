@@ -57,7 +57,7 @@ urlpatterns = [
     # Instance operations list
     path('instance/<int:instance_id>/operation/', InstanceOperationList.as_view(), name='api_instance_operation_list'),
     # Operation survey
-    path('peration/<int:pk>/survey/', OperationSurveyAPI.as_view(), name='api_operation_survey_list_update'),
+    path('operation/<int:pk>/survey/', OperationSurveyAPI.as_view(), name='api_operation_survey_list_update'),
 
     # TowerServer CRUD
     path('tower/', TowerServerList.as_view(), name='api_towerserver_list_create'),
