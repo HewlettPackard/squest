@@ -13,11 +13,13 @@ class TestingContextView:
     expected_not_allowed_status_code = None
 
     def __init__(self, url, perm_str, url_kwargs=None, data=None, expected_status_code=None,
-                 expected_not_allowed_status_code=None):
+                 expected_not_allowed_status_code=None, follow=None):
         if expected_not_allowed_status_code is not None:
             self.expected_not_allowed_status_code = expected_not_allowed_status_code
         if expected_status_code is not None:
             self.expected_status_code = expected_status_code
+
+        self.follow = follow or False
         try:
             self.url = reverse(url, kwargs=url_kwargs)
         except NoReverseMatch:
@@ -54,14 +56,14 @@ class TestingGetContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
-        return client.get(self.url, self.data)
+        return client.get(self.url, self.data, follow=self.follow)
 
 
 class TestingPostContextView(TestingContextView):
     def call_url(self, client):
         if isinstance(client, APIClient):
             return client.post(self.url, self.data, format="json")
-        return client.post(self.url, self.data)
+        return client.post(self.url, self.data, follow=self.follow)
 
     def get_expected_status_code(self, client):
         if self.expected_status_code is not None:
@@ -75,21 +77,21 @@ class TestingPutContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
-        return client.put(self.url, self.data, format="json")
+        return client.put(self.url, self.data, format="json", follow=self.follow)
 
 
 class TestingPatchContextView(TestingContextView):
     expected_status_code = 200
 
     def call_url(self, client):
-        return client.patch(self.url, self.data, format="json")
+        return client.patch(self.url, self.data, format="json", follow=self.follow)
 
 
 class TestingDeleteContextView(TestingContextView):
     expected_status_code = 204
 
     def call_url(self, client):
-        return client.delete(self.url, self.data, format="json")
+        return client.delete(self.url, self.data, format="json", follow=self.follow)
 
 
 class TestPermissionEndpoint(TestCase):
