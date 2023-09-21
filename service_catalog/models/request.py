@@ -369,7 +369,9 @@ class Request(SquestModel):
         for permission_id in all_permissions_id:
             permission = Permission.objects.get(id=permission_id)
             all_approval_step = all_approval_step | ApprovalStepState.get_queryset_for_user(user,
-                                                                                            permission.permission_str).distinct()
+                                                                                            permission.permission_str)\
+                .filter(current_approval_workflow_state__request__state=RequestState.SUBMITTED)\
+                .distinct()
 
         all_requests = all_requests | Request.objects.filter(
             approval_workflow_state__current_step__in=all_approval_step).distinct()
