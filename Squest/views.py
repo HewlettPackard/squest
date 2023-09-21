@@ -9,6 +9,7 @@ from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
 from service_catalog.models import Request, Instance, Support, Service
 from service_catalog.models.support import SupportState
+from service_catalog.tables.request_tables import RequestTableWaitingForActions
 
 
 @login_required
@@ -31,6 +32,11 @@ def home(request):
         .values('instance__service', 'state') \
         .annotate(count=Count('id', distinct=True)) \
         .order_by('instance__service')
+
+    requests_awaiting_approval = Request.get_requests_awaiting_approval(request.user)
+    if requests_awaiting_approval.exists():
+        context["request_waiting_for_action_table"] = RequestTableWaitingForActions(requests_awaiting_approval)
+
 
     if request.user.has_perm('service_catalog.list_request'):
         context['total_request'] = sum([x["count"] for x in all_requests if x["state"] == RequestState.SUBMITTED])

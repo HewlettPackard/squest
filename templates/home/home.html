@@ -2,6 +2,7 @@
 
 {% block main %}
     {% load static %}
+    {% load django_tables2 %}
     {% has_perm request.user "auth.list_user" as can_list_user %}
     {% has_perm request.user "service_catalog.list_instance" as can_list_instance %}
     {% has_perm request.user "service_catalog.list_request" as can_list_request %}
@@ -20,7 +21,7 @@
             </div>
         {% endfor %}
         <div class="row">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8">
+            <div style="flex-grow: 9" class="">
                 {% if can_list_service and service_details %}
                     <div class="card ml-2">
                         <div class="card-header">
@@ -108,8 +109,18 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if request_waiting_for_action_table %}
+                    <div class="card ml-2">
+                        <div class="card-header">
+                            <h3 class="card-title">Requests awaiting approval</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            {% render_table request_waiting_for_action_table %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
+            <div style="flex-grow: 3" class="">
                 {% if can_list_instance %}
                     <div class="col-12">
                         <!-- small card -->

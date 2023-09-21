@@ -18,6 +18,9 @@ class ApprovalWorkflowSerializer(ModelSerializer):
         scopes = data.get("scopes") if 'scopes' in data.keys() else scopes
         # check that selected scopes are not already in use by another approval workflow for the selected operation
         exclude_id = self.instance.id if self.instance else None
+        if len(scopes) == 0:
+            if ApprovalWorkflow.objects.filter(operation=operation, scopes__isnull=True).exists():
+                raise ValidationError({"scopes": f"An approval workflow for all scopes already exists"})
         for scope in scopes:
             if scope.approval_workflows.filter(operation=operation).exclude(id=exclude_id).exists():
                 raise ValidationError({"scopes": f"The scope {scope} has already an approval workflow "

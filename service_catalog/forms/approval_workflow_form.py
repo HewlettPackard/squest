@@ -5,7 +5,6 @@ from service_catalog.models import ApprovalWorkflow
 
 
 class ApprovalWorkflowForm(SquestModelForm):
-
     class Meta:
         model = ApprovalWorkflow
         fields = ['name', 'operation', 'scopes']
@@ -16,6 +15,9 @@ class ApprovalWorkflowForm(SquestModelForm):
         scopes = cleaned_data.get("scopes")
         # check that selected scopes are not already in use by another approval workflow for the selected operation
         exclude_id = self.instance.id if self.instance else None
+        if not scopes.exists():
+            if ApprovalWorkflow.objects.filter(operation=operation, scopes__isnull=True).exists():
+                raise ValidationError({"scopes": f"An approval workflow for all scopes already exists"})
         for scope in scopes:
             if scope.approval_workflows.filter(operation=operation).exclude(id=exclude_id).exists():
                 raise ValidationError({"scopes": f"The scope {scope} has already an approval workflow "

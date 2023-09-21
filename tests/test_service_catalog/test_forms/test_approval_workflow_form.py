@@ -44,3 +44,15 @@ class TestApprovalWorkflowForm(BaseTest):
         }
         form = ApprovalWorkflowForm(instance=existing_approval,data=data)
         self.assertTrue(form.is_valid())
+
+    def test_clean_with_empty_scopes(self):
+        existing_approval = ApprovalWorkflow.objects.create(name="test",
+                                                           operation=self.create_operation_test)
+
+        data = {
+            'name': 'test_approval_workflow',
+            'operation': self.create_operation_test
+        }
+        form = ApprovalWorkflowForm(data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("An approval workflow for all scopes already exists", form["scopes"].errors[0])

@@ -64,7 +64,6 @@ class Request(SquestModel):
         on_delete=CASCADE
     )
 
-
     @classmethod
     def get_q_filter(cls, user, perm):
         return Q(
@@ -89,8 +88,8 @@ class Request(SquestModel):
             full_survey = dict()
             for tower_survey_field in approval_step_state.approval_step.editable_fields.all():
                 if tower_survey_field.name in self.fill_in_survey:
-
-                    full_survey.update({tower_survey_field.name: approval_step_state.fill_in_survey[tower_survey_field.name]})
+                    full_survey.update(
+                        {tower_survey_field.name: approval_step_state.fill_in_survey[tower_survey_field.name]})
         else:
             full_survey = {
                 k: v for k, v in self.full_survey.items() if k in self.fill_in_survey
@@ -311,20 +310,28 @@ class Request(SquestModel):
             self.periodic_task.delete()
             send_mail_request_update(target_request=self)
 
+    def _get_approval_workflow(self):
+        from service_catalog.models import ApprovalWorkflow
+        workflow = ApprovalWorkflow.objects.filter(operation=self.operation,
+                                                   scopes__id__in=[self.instance.quota_scope.id])
+        if workflow.exists():
+            return workflow.first()
+
+        default_workflow = ApprovalWorkflow.objects.filter(operation=self.operation, scopes__isnull=True)
+        if default_workflow.exists():
+            return default_workflow.first()
+        return None
+
     def setup_approval_workflow(self):
         from service_catalog.models import ApprovalWorkflow
         # search for a workflow on this operation
-        workflow = ApprovalWorkflow.objects.filter(operation=self.operation).first()
-        if workflow:
-            # check that there is no restricted scope or the current scope is ok
-            if workflow.scopes.exists() and self.instance.quota_scope not in workflow.scopes.all():
-                return
-            logger.debug(f"Workflow found: {workflow.name}")
-            # create pending steps
-            self.approval_workflow_state = workflow.instantiate()
-            self.save()
-            return self.approval_workflow_state
-        return None
+        workflow = self._get_approval_workflow()
+        if not workflow:
+            return
+        logger.debug(f"Workflow found: {workflow.name}")
+        # create pending steps
+        self.approval_workflow_state = workflow.instantiate()
+        self.save()
 
     def try_accept_current_step(self):
         if self.approval_workflow_state is not None \
@@ -344,6 +351,30 @@ class Request(SquestModel):
                     else:
                         return True
         return False
+
+    @classmethod
+    def get_requests_awaiting_approval(cls, user):
+        from profiles.models import Permission
+        from service_catalog.models import ApprovalStepState
+        all_requests = Request.objects.none()
+        all_requests = all_requests | Request. \
+            get_queryset_for_user(user, "service_catalog.accept_request"). \
+            filter(state=RequestState.SUBMITTED).distinct()
+
+        all_permissions_id = set(Permission.objects.filter(
+            approval_step__approval_step_state__current_approval_workflow_state__request__state=RequestState.SUBMITTED
+        ).values_list("id", flat=True))
+
+        all_approval_step = ApprovalStepState.objects.none()
+        for permission_id in all_permissions_id:
+            permission = Permission.objects.get(id=permission_id)
+            all_approval_step = all_approval_step | ApprovalStepState.get_queryset_for_user(user,
+                                                                                            permission.permission_str).distinct()
+
+        all_requests = all_requests | Request.objects.filter(
+            approval_workflow_state__current_step__in=all_approval_step).distinct()
+
+        return all_requests
 
     @classmethod
     def auto_accept_and_process_signal(cls, sender, instance, created, *args, **kwargs):
