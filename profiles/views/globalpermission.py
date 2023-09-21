@@ -58,8 +58,8 @@ class GlobalPermissionEditView(SquestUpdateView):
     def get_object(self, queryset=None):
         return GlobalPermission.load()
 
-    def get_generic_url(self, action):
-        return reverse_lazy('profiles:globalpermission_rbac')
+    def get_success_url(self):
+        return reverse_lazy('profiles:globalpermission_default_permissions')
 
     def dispatch(self, request, *args, **kwargs):
         self.kwargs['pk'] = self.get_object().id
