@@ -28,7 +28,9 @@ class Role(AbstractRole):
     def get_role_assignment_user_dict(self):
         from django.contrib.auth.models import User
         from profiles.models import AbstractScope
-        rbac = self.rbac_set.prefetch_related("user_set", "scope").filter(user__id__isnull=False,scope__id__isnull=False).values_list("user__id", "scope__id")
+        rbac = self.rbac_set.prefetch_related("user_set", "scope").filter(user__id__isnull=False,
+                                                                          scope__id__isnull=False).values_list(
+            "user__id", "scope__id")
         user_dict_id = {x.id: x for x in User.objects.all()}
         scope_dict_id = {x.id: {"name": x.name, "url": x.get_absolute_url()} for x in AbstractScope.objects.all()}
         return [{"username": user_dict_id[user_id], "scope": scope_dict_id[scope_id]} for user_id, scope_id in rbac]
