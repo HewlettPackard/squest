@@ -48,7 +48,7 @@ class TestAcceptRequestSerializer(BaseTestRequestAPI):
 
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
     def test_field_validators(self):
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = TowerSurveyField.objects.get(variable="text_variable", operation=self.create_operation_test)
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
 

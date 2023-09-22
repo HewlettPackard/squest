@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import SelectMultiple
 
 from Squest.utils.plugin_controller import PluginController
@@ -7,7 +8,6 @@ from service_catalog.models.tower_survey_field import TowerSurveyField
 
 
 class TowerSurveyFieldForm(SquestModelForm):
-
     validators = forms.MultipleChoiceField(label="Validators",
                                            required=False,
                                            choices=[],
@@ -29,6 +29,13 @@ class TowerSurveyFieldForm(SquestModelForm):
         if not self.cleaned_data['validators']:
             return None
         return ",".join(self.cleaned_data['validators'])
+
+    def clean(self):
+        cleaned_data = super().clean()
+        field_type = self.instance.type if self.instance else None
+        attribute_definition = cleaned_data.get("attribute_definition")
+        if attribute_definition and field_type != "integer":
+            raise ValidationError("Attribute definition must be linked to an integer field")
 
     class Meta:
         model = TowerSurveyField

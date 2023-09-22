@@ -183,15 +183,6 @@ def squest_date_format(date_to_format):
         return date_to_format
     return date_to_format.astimezone().strftime(settings.DATE_FORMAT)
 
-
-@register.filter(name="get_field_type")
-def get_field_type(tower_survey_field):
-    for survey in tower_survey_field.operation.job_template.survey["spec"]:
-        if survey["variable"] == tower_survey_field.name:
-            return survey["type"]
-    return ""
-
-
 @register.filter(name="map_color_next_state")
 def map_color_next_state(current_state, next_state):
     if current_state == "NEED_INFO":

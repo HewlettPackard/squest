@@ -54,4 +54,4 @@ class CustomLink(SquestModel):
         return reverse("service_catalog:customlink_list")
 
     def __str__(self):
-        return f"{self.name} ({','.join(self.services.all().values_list('name', flat=True))})"
+        return f"{self.name} ({','.join(self.services.values_list('name', flat=True))})"

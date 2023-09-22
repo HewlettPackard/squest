@@ -41,13 +41,13 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
                 url='api_operation_survey_list_update',
                 perm_str='service_catalog.change_operation',
                 data=[
-                    {'name': 'text_variable', 'is_customer_field': True, 'default': "text_variable_default"},
-                    {'name': 'multiplechoice_variable', 'is_customer_field': False, 'default': "multiplechoice_variable_default"},
-                    {'name': 'multiselect_var', 'is_customer_field': False, 'default': "multiselect_var_default"},
-                    {'name': 'textarea_var', 'is_customer_field': False, 'default': 'textarea_var_default'},
-                    {'name': 'password_var', 'is_customer_field': True, 'default': "password_var_default"},
-                    {'name': 'integer_var', 'is_customer_field': True, 'default': '1'},
-                    {'name': 'float_var', 'is_customer_field': True, 'default': '2'}
+                    {'variable': 'text_variable', 'is_customer_field': True, 'default': "text_variable_default"},
+                    {'variable': 'multiplechoice_variable', 'is_customer_field': False, 'default': "multiplechoice_variable_default"},
+                    {'variable': 'multiselect_var', 'is_customer_field': False, 'default': "multiselect_var_default"},
+                    {'variable': 'textarea_var', 'is_customer_field': False, 'default': 'textarea_var_default'},
+                    {'variable': 'password_var', 'is_customer_field': True, 'default': "password_var_default"},
+                    {'variable': 'integer_var', 'is_customer_field': True, 'default': '1'},
+                    {'variable': 'float_var', 'is_customer_field': True, 'default': '2'}
                 ],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),

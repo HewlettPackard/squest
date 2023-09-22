@@ -112,9 +112,9 @@ class Request(SquestModel):
 
     def update_fill_in_surveys_accept_request(self, admin_provided_survey_fields):
         for key, value in admin_provided_survey_fields.items():
-            if self.operation.tower_survey_fields.filter(is_customer_field=True, name=key).exists():
+            if self.operation.tower_survey_fields.filter(is_customer_field=True, variable=key).exists():
                 self.fill_in_survey[key] = value
-            if self.operation.tower_survey_fields.filter(is_customer_field=False, name=key).exists():
+            if self.operation.tower_survey_fields.filter(is_customer_field=False, variable=key).exists():
                 self.admin_fill_in_survey[key] = value
         self.save()
 

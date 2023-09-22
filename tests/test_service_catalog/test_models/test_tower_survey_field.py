@@ -1,3 +1,5 @@
+import sys
+
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -45,3 +47,16 @@ class TestTowerSurveyField(BaseTestRequest):
         self.test_request.refresh_from_db()
         self.assertDictEqual(self.test_request.fill_in_survey, expected_fill_in_survey)
         self.assertDictEqual(self.test_request.admin_fill_in_survey, expected_admin_fill_in_survey)
+
+    def test_get_maximum_value(self):
+        test_case_list = [
+            {"quota": 50, "survey": 30, "expected": 30},
+            {"quota": '50', "survey": '30', "expected": 30},
+            {"quota": 30, "survey": 50, "expected": 30},
+            {"quota": None, "survey": 50, "expected": 50},
+            {"quota": 50, "survey": None, "expected": 50},
+            {"quota": None, "survey": None, "expected": sys.maxsize},
+        ]
+        survey_field = self.create_operation_test.tower_survey_fields.first()
+        for test_case in test_case_list:
+            self.assertEqual(survey_field.get_maximum_value(test_case.get("quota"), test_case.get("survey")), test_case.get("expected"))

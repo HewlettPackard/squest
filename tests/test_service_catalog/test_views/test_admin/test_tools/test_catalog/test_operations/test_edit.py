@@ -142,10 +142,10 @@ class OperationEditTestCase(BaseTest):
         }
         url = reverse('service_catalog:operation_edit_survey', kwargs=args)
         data = {
-            'form-0-id': self.update_operation_test.tower_survey_fields.get(name="text_variable").id,
+            'form-0-id': self.update_operation_test.tower_survey_fields.get(variable="text_variable").id,
             # 'form-0-enabled': "off",  not set means set to off
             'form-0-default': "default_var",
-            'form-1-id': self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").id,
+            'form-1-id': self.update_operation_test.tower_survey_fields.get(variable="multiplechoice_variable").id,
             'form-1-is_customer_field': "on",
             'form-1-default': "default_var",
             'form-TOTAL_FORMS': 2,
@@ -154,13 +154,13 @@ class OperationEditTestCase(BaseTest):
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="text_variable").is_customer_field)
-        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").is_customer_field)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(variable="text_variable").is_customer_field)
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(variable="multiplechoice_variable").is_customer_field)
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.update_operation_test.refresh_from_db()
-        self.assertFalse(self.update_operation_test.tower_survey_fields.get(name="text_variable").is_customer_field)
-        self.assertTrue(self.update_operation_test.tower_survey_fields.get(name="multiplechoice_variable").is_customer_field)
+        self.assertFalse(self.update_operation_test.tower_survey_fields.get(variable="text_variable").is_customer_field)
+        self.assertTrue(self.update_operation_test.tower_survey_fields.get(variable="multiplechoice_variable").is_customer_field)
 
     def test_update_survey_when_job_template_on_operation_changed(self):
         args = {
@@ -186,7 +186,7 @@ class OperationEditTestCase(BaseTest):
         self.assertEqual("updated description", self.create_operation_empty_survey_test.description)
         self.assertEqual(self.job_template_test, self.create_operation_empty_survey_test.job_template)
         for key in _get_keys_from_survey(self.job_template_test.survey):
-            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(name=key).exists())
+            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(variable=key).exists())
 
         data["job_template"] = self.job_template_small_survey_test.id
         response = self.client.post(url, data=data)
@@ -194,7 +194,7 @@ class OperationEditTestCase(BaseTest):
         self.create_operation_empty_survey_test.refresh_from_db()
         self.assertEqual(self.job_template_small_survey_test, self.create_operation_empty_survey_test.job_template)
         for key in _get_keys_from_survey(self.job_template_small_survey_test.survey):
-            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(name=key).exists())
+            self.assertTrue(self.create_operation_empty_survey_test.tower_survey_fields.filter(variable=key).exists())
 
 
 def _get_keys_from_survey(survey):
