@@ -6,10 +6,6 @@ from tests.test_service_catalog.base_test_approval import BaseTestApproval
 
 class TestApproveWorkflowStepForm(BaseTestApproval):
 
-    def setUp(self):
-        super(TestApproveWorkflowStepForm, self).setUp()
-        self.create_operation_test.update_survey()
-
     def test_approve_workflow_step(self):
         parameters = {
             'target_request': self.test_request,

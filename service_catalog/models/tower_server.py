@@ -84,9 +84,6 @@ class TowerServer(SquestModel):
         job_template.survey = job_template_from_tower.survey_spec
         job_template.is_compliant = job_template.check_is_compliant()
         job_template.save()
-        # update all operation that uses this template
-        from service_catalog.models import Operation
-        Operation.update_survey_after_job_template_update(job_template)
 
     def _update_inventory_from_tower(self, inventory_from_tower):
         from .inventory import Inventory as InventoryLocal
