@@ -17,7 +17,7 @@ class AcceptRequestSerializer(Serializer):
     def save(self, **kwargs):
         user_provided_survey_fields = dict()
         for field_key, value in self.validated_data.items():
-            # tower doesnt allow empty value for choices fields
+            # tower does not allow empty value for choices fields
             if isinstance(value, set):
                 user_provided_survey_fields[field_key] = list(value)
             elif value != '':

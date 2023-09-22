@@ -67,7 +67,7 @@ class TestMailUtils(BaseTest):
         self.superuser.save()
         self.superuser_2.profile.request_notification_enabled = False
         self.superuser_2.save()
-        self.assertEquals(0, len(_get_receivers_for_request(self.test_request)))
+        self.assertEqual(0, len(_get_receivers_for_request(self.test_request)))
 
         # Test 2 - admin enabled notification
         self.superuser.profile.request_notification_enabled = True
@@ -83,7 +83,7 @@ class TestMailUtils(BaseTest):
         self.superuser.save()
         self.superuser_2.profile.instance_notification_enabled = False
         self.superuser_2.save()
-        self.assertEquals(0, len(_get_receivers_for_support(self.test_support)))
+        self.assertEqual(0, len(_get_receivers_for_support(self.test_support)))
 
         # Test 2 - admin enabled notification
         self.superuser.profile.instance_notification_enabled = True
@@ -104,7 +104,7 @@ class TestMailUtils(BaseTest):
         self.assertCountEqual([self.superuser.email], _get_receivers_for_request(self.test_request))
         request_filter.when = "request.fill_in_survey['text_variable'] == 'other_my_var'"
         request_filter.save()
-        self.assertEquals(0, len(_get_receivers_for_request(self.test_request)))
+        self.assertEqual(0, len(_get_receivers_for_request(self.test_request)))
 
     def test_get_admin_emails_with_instance_filter(self):
         self.superuser.profile.instance_notification_enabled = True
@@ -117,7 +117,7 @@ class TestMailUtils(BaseTest):
         self.assertCountEqual([self.superuser.email], _get_receivers_for_support(self.test_support))
         instance_filter.when = "instance.spec['value1'] == 'other_key'"
         instance_filter.save()
-        self.assertEquals(0, len(_get_receivers_for_support(self.test_support)))
+        self.assertEqual(0, len(_get_receivers_for_support(self.test_support)))
 
     def test_get_headers(self):
         expected_list = ["Message-ID", "In-Reply-To", "References"]

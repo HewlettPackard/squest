@@ -46,7 +46,7 @@ class ServiceRequestSerializer(ModelSerializer):
         if fill_in_survey is not None:
             for field_name, value in fill_in_survey.items():
                 # get the tower field
-                tower_field = self.operation.tower_survey_fields.get(name=field_name)
+                tower_field = self.operation.tower_survey_fields.get(variable=field_name)
                 if tower_field.attribute_definition is not None:
                     # try to find the field in the quota linked to the scope
                     quota_set_on_attribute = quota_scope.quotas.filter(attribute_definition=tower_field.attribute_definition)
