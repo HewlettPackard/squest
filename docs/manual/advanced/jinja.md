@@ -1,7 +1,8 @@
 # Jinja templating
 
 [Jinja templating](https://jinja.palletsprojects.com/en/3.1.x/templates/) is applicable within specific sections of the
-Squest configuration. For example, Jinja templating enables the prefilling of a survey field for a day 2 operation using the specs of the instance.
+Squest configuration. For example, Jinja templating enables the prefilling of a survey field for a day 2 operation using
+the specs of the instance.
 
 Jinja templating usage with `{{ instance }}` as context:
 
@@ -12,6 +13,12 @@ Jinja templating usage with `{{ request }}` as context:
 
 - [Operation](../service_catalog/operation.md) job template config (inventory, credentials, tags, limit)
 - [Approval workflow step](../administration/approval_workflow.md)
+
+
+Jinja templating usage with `{{ user }}` as context:
+
+- [Operation survey default field config](../service_catalog/operation.md#default-value)
+
 
 ## Examples
 
@@ -38,32 +45,41 @@ Accessing instance name:
         <td>
             ```json
             {
-                "id": 31,
-                "state": "AVAILABLE",
+                "id": 1,
+                "state": 10,
                 "resources": [],
-                "billing_group": null,
-                "spoc": {
-                    "id": 2,
-                    "username": "admin",
-                    "email": "admin@squest.domain",
+                "requester": {
+                    "id": 3,
+                    "username": "admin@squest.com",
+                    "email": "admin@squest.com",
                     "profile": {
                         "request_notification_enabled": true,
                         "instance_notification_enabled": true,
                         "request_notification_filters": [],
                         "instance_notification_filters": []
                     },
-                    "first_name": "",
-                    "last_name": "",
+                    "first_name": "admin",
+                    "last_name": "squest",
                     "is_staff": true,
                     "is_superuser": true,
                     "is_active": true,
-                    "billing_groups": []
+                    "groups": []
                 },
-                "name": "my_instance",
+                "quota_scope": {
+                    "id": 1,
+                    "rbac": [],
+                    "name": "test_scope",
+                    "description": "",
+                    "roles": []
+                },
+                "name": "test",
                 "spec": {
-                    "test": 2
+                    "os": "linux"
                 },
-                "user_spec": {},
+                "user_spec": {
+                    "vCPU": 2,
+                    "memory": 4,
+                },
                 "date_available": null,
                 "service": 1
             }
@@ -87,35 +103,44 @@ Accessing instance spec:
         <td>
             ```json
             {
-                "id": 31,
-                "state": "AVAILABLE",
+                "id": 1,
+                "state": 10,
                 "resources": [],
-                "billing_group": null,
-                "spoc": {
-                    "id": 2,
-                    "username": "admin",
-                    "email": "admin@squest.domain",
+                "requester": {
+                    "id": 3,
+                    "username": "admin@squest.com",
+                    "email": "admin@squest.com",
                     "profile": {
                         "request_notification_enabled": true,
                         "instance_notification_enabled": true,
                         "request_notification_filters": [],
                         "instance_notification_filters": []
                     },
-                    "first_name": "",
-                    "last_name": "",
+                    "first_name": "admin",
+                    "last_name": "squest",
                     "is_staff": true,
                     "is_superuser": true,
                     "is_active": true,
-                    "billing_groups": []
+                    "groups": []
                 },
-                "name": "my_instance",
+                "quota_scope": {
+                    "id": 1,
+                    "rbac": [],
+                    "name": "test_scope",
+                    "description": "",
+                    "roles": []
+                },
+                "name": "test",
                 "spec": {
                     "os": "linux"
                 },
-                "user_spec": {},
+                "user_spec": {
+                    "vCPU": 2,
+                    "memory": 4,
+                },
                 "date_available": null,
                 "service": 1
-            }            
+            }        
             ```
         </td>
     </tr>
@@ -139,7 +164,8 @@ Accessing instance spec:
 
 ### Using the request as context
 
-This example, used in the "default limit" of the operation job template config, allows to automatically configure the inventory limit following the given "dns" field of the survey.
+This example, used in the "default limit" of the operation job template config, allows to automatically configure the
+inventory limit following the given "dns" field of the survey.
 
 <table>
     <tr>
@@ -147,62 +173,82 @@ This example, used in the "default limit" of the operation job template config, 
         <td>
             ```json
             {
-                "id": 32,
+                "id": 1,
                 "instance": {
-                    "id": 31,
-                    "state": "PENDING",
+                    "id": 1,
+                    "state": 10,
                     "resources": [],
-                    "billing_group": null,
-                    "spoc": {
-                        "id": 2,
-                        "username": "admin",
-                        "email": "admin@squest.domain",
+                    "requester": {
+                        "id": 3,
+                        "username": "admin@squest.com",
+                        "email": "admin@squest.com",
                         "profile": {
                             "request_notification_enabled": true,
                             "instance_notification_enabled": true,
                             "request_notification_filters": [],
                             "instance_notification_filters": []
                         },
-                        "first_name": "",
-                        "last_name": "",
+                        "first_name": "admin",
+                        "last_name": "squest",
                         "is_staff": true,
-                        "is_superuser": true,
+                        "is_superuser": false,
                         "is_active": true,
-                        "billing_groups": []
+                        "groups": []
                     },
-                    "name": "my-instance",
-                    "spec": {                        
+                    "quota_scope": {
+                        "id": 1,
+                        "rbac": [],
+                        "created": "2023-09-15T14:39:00.662779+02:00",
+                        "last_updated": "2023-09-15T14:39:00.675268+02:00",
+                        "name": "test",
+                        "description": "",
+                        "roles": []
                     },
-                    "user_spec": {},
+                    "created": "2023-09-15T14:39:03.321285+02:00",
+                    "last_updated": "2023-09-15T14:39:03.367724+02:00",
+                    "name": "test",
+                    "spec": {
+                    "os": "linux"
+                },
+                "user_spec": {
+                    "vCPU": 2,
+                    "memory": 4,
+                },
                     "date_available": null,
                     "service": 1
                 },
                 "user": {
-                    "id": 2,
-                    "username": "admin",
-                    "email": "admin@squest.domain",
+                    "id": 3,
+                    "username": "admin@squest.com",
+                    "email": "admin@squest.com",
                     "profile": {
                         "request_notification_enabled": true,
-                        "notification_filters": []
+                        "instance_notification_enabled": true,
+                        "request_notification_filters": [],
+                        "instance_notification_filters": []
                     },
-                    "first_name": "",
-                    "last_name": "",
+                    "first_name": "admin",
+                    "last_name": "squest",
                     "is_staff": true,
                     "is_superuser": true,
                     "is_active": true,
-                    "billing_groups": []
+                    "groups": []
                 },
+                "created": "2023-09-15T14:39:03.545051+02:00",
+                "last_updated": "2023-09-15T14:39:03.590197+02:00",
                 "fill_in_survey": {
-                    "dns": "vm-name.domain.com"
+                    "vm_os": "rhel8.5"
                 },
                 "admin_fill_in_survey": {},
-                "date_submitted": "2022-09-29T16:01:45.409615+02:00",
-                "date_complete": null,
+                "date_submitted": "2022-08-30T14:46:05.856352+02:00",
+                "date_complete": "2022-08-30T17:05:05.356421+02:00",
                 "date_archived": null,
-                "tower_job_id": null,
-                "state": "ACCEPTED",
-                "operation": 7,
-                "approval_step": null
+                "tower_job_id": 1,
+                "state": 7,
+                "operation": 9,
+                "accepted_by": null,
+                "processed_by": null,
+                "approval_workflow_state": null
             }         
             ```
         </td>

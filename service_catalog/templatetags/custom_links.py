@@ -22,8 +22,9 @@ def get_disabled_button(tittle, button_name):
 def custom_links(user, instance):
     rendered_buttons = ""
     # prepare a context for jinja templating
+    from service_catalog.api.serializers import InstanceSerializer
     context = {
-        "instance": instance,
+        "instance": InstanceSerializer(instance).data
     }
 
     if user.has_perm("service_catalog.view_admin_customlink"):

@@ -88,9 +88,10 @@ class Instance(SquestModel):
     @property
     def docs(self):
         filtered_doc = list()
+        from service_catalog.api.serializers import InstanceSerializer
         for doc in self.service.docs.all():
             context = {
-                "instance": self
+                "instance": InstanceSerializer(self).data
             }
             if not doc.when or (doc.when and AnsibleWhen.when_render(context=context, when_string=doc.when)):
                 filtered_doc.append(doc)
