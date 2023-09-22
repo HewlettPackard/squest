@@ -92,6 +92,11 @@ class JobTemplate(SquestModel):
     def get_absolute_url(self):
         return reverse('service_catalog:jobtemplate_details', args=[self.tower_server.id, self.pk])
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        super().save(force_insert, force_update, using, update_fields)
+        for operation in self.operation_set.all():
+            operation.update_survey()
+
 
 @receiver(pre_delete, sender=JobTemplate)
 def job_template_delete(sender, instance, using, **kwargs):

@@ -27,7 +27,6 @@ class TestAcceptRequestForm(BaseTest):
             ]
         }
         self.job_template_test.save()
-        self.create_operation_test.update_survey()
         data = {
             'text_variable': 'variable_set_by_user'
         }
