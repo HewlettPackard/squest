@@ -21,7 +21,8 @@ class ApprovalWorkflow(SquestModel):
         'profiles.Scope',
         related_name='approval_workflows',
         blank=True,
-        verbose_name="Restricted scopes"
+        verbose_name="Restricted scopes",
+        help_text="This workflow will be triggered for the following scopes. Leave empty to trigger for all scopes"
     )
 
     @property
