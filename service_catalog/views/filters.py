@@ -105,44 +105,6 @@ def can_proceed_instance_action(args):
     return False
 
 
-@register.filter(name='get_action_text_class')
-def get_action_text_class(request_id, target_action):
-    target_request = Request.objects.get(id=request_id)
-    if target_action == "cancel":
-        if can_proceed(target_request.cancel):
-            return "text-dark"
-    if target_action == "need_info":
-        if can_proceed(target_request.need_info):
-            return "text-warning"
-    if target_action == "reject":
-        if can_proceed(target_request.reject):
-            return "text-danger"
-    if target_action == "accept":
-        if can_proceed(target_request.accept):
-            return "text-primary"
-    if target_action == "process":
-        if can_proceed(target_request.process):
-            return "text-success"
-    if target_action == "re_submit":
-        if can_proceed(target_request.re_submit):
-            return "text-info"
-    if target_action == "archive":
-        if can_proceed(target_request.archive):
-            return "text-black"
-    if target_action == "unarchive":
-        if can_proceed(target_request.unarchive):
-            return "text-success"
-    return ""
-
-
-@register.filter(name='map_instance_available')
-def map_instance_available(instance_id):
-    instance = Instance.objects.get(id=instance_id)
-    if instance.state == InstanceState.AVAILABLE:
-        return ""
-    return "disabled"
-
-
 @register.filter()
 @stringfilter
 def markdown(content):
@@ -182,6 +144,7 @@ def squest_date_format(date_to_format):
     if date_to_format is None:
         return date_to_format
     return date_to_format.astimezone().strftime(settings.DATE_FORMAT)
+
 
 @register.filter(name="map_color_next_state")
 def map_color_next_state(current_state, next_state):
