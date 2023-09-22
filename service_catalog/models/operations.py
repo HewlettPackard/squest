@@ -131,13 +131,6 @@ class Operation(SquestModel):
                         }
                     )
 
-    @classmethod
-    def update_survey_after_job_template_update(cls, job_template):
-        # get all operation that use the target job template
-        operations = Operation.objects.filter(job_template=job_template)
-        for operation in operations:
-            operation.update_survey()
-
 
 post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Operation)
 
