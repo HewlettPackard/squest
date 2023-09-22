@@ -3,7 +3,8 @@ from django.shortcuts import redirect, get_object_or_404
 from Squest.utils.squest_views import *
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited
 from service_catalog.forms import ServiceOperationForm
-from service_catalog.models import Operation, Service, OperationType
+from service_catalog.models import Operation, Service, OperationType, ApprovalWorkflow
+from service_catalog.tables.approval_workflow_table import ApprovalWorkflowTable
 from service_catalog.tables.operation_tables import OperationTable, CreateOperationTable
 
 
@@ -82,6 +83,8 @@ class OperationDetailView(SquestDetailView):
             }
         ]
         context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
+        if self.request.user.has_perm('service_catalog.view_approvalworkflow'):
+            context['workflows_table'] = ApprovalWorkflowTable(ApprovalWorkflow.objects.filter(operation=self.get_object()),exclude=['operation'])
         return context
 
 
