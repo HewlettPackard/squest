@@ -108,7 +108,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
     @override_settings(FIELD_VALIDATOR_PATH="tests/test_plugins/field_validators_test")
     def test_cannot_create_with_validator(self):
         url = reverse('api_service_request_create', kwargs=self.kwargs)
-        target_field = TowerSurveyField.objects.get(name="text_variable", operation=self.create_operation_test)
+        target_field = TowerSurveyField.objects.get(variable="text_variable", operation=self.create_operation_test)
         target_field.validators = "even_number,superior_to_10"
         target_field.save()
         self.client.force_login(user=self.standard_user)
@@ -151,7 +151,7 @@ class TestApiServiceRequestListCreate(BaseTestRequestAPI):
         url = reverse('api_service_request_create', kwargs=self.kwargs)
         # set a quota on cpu_attribute and link it to integer_var field
         Quota.objects.create(scope=self.test_quota_scope, limit=10, attribute_definition=self.cpu_attribute)
-        integer_var_field = self.create_operation_test.tower_survey_fields.get(name="integer_var")
+        integer_var_field = self.create_operation_test.tower_survey_fields.get(variable="integer_var")
         integer_var_field.attribute_definition = self.cpu_attribute
         integer_var_field.save()
 

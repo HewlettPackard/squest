@@ -135,7 +135,7 @@ class Transformer(SquestModel):
         """
         total_produced = 0
         all_resource_att = ResourceAttribute.objects.filter(
-            resource_id__in=self.resource_group.resources.all().values("id"),
+            resource_id__in=self.resource_group.resources.values("id"),
             attribute_definition=self.attribute_definition)
         for attribute in all_resource_att:
             total_produced += attribute.value

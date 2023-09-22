@@ -35,7 +35,7 @@ class AbstractScopeCreateRBACSerializer(Serializer):
         self.scope = AbstractScope.objects.get(id=kwargs.pop('scope_id'))
         super(AbstractScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
         self.fields["users"].choices = self.scope.get_potential_users().values_list('id', 'username')
-        self.fields["roles"].choices = Role.objects.all().values_list('id', 'name')
+        self.fields["roles"].choices = Role.objects.values_list('id', 'name')
 
     def save(self):
         from profiles.models import Role

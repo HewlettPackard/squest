@@ -64,9 +64,9 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
                 perm_str='service_catalog.change_operation',
                 url_kwargs={'service_id': self.service_test.id, 'pk': self.update_operation_test.id},
                 data={
-                    'form-0-id': self.update_operation_test.tower_survey_fields.get(name='text_variable').id,
+                    'form-0-id': self.update_operation_test.tower_survey_fields.get(variable='text_variable').id,
                     'form-0-default': 'default_var',
-                    'form-1-id': self.update_operation_test.tower_survey_fields.get(name='multiplechoice_variable').id,
+                    'form-1-id': self.update_operation_test.tower_survey_fields.get(variable='multiplechoice_variable').id,
                     'form-1-is_customer_field': 'on',
                     'form-1-default': 'default_var',
                     'form-TOTAL_FORMS': 2,

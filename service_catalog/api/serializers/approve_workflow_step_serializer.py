@@ -15,7 +15,7 @@ class ApproveWorkflowStepSerializer(Serializer):
 
     def save(self):
         user_provided_survey_fields = dict()
-        editable_fields = self.target_request.approval_workflow_state.current_step.approval_step.editable_fields.values_list("name", flat=True)
+        editable_fields = self.target_request.approval_workflow_state.current_step.approval_step.editable_fields.values_list("variable", flat=True)
         for field_key, value in self.validated_data.items():
             # keep only editable field
             if field_key in editable_fields:

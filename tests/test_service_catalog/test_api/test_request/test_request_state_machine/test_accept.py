@@ -50,7 +50,7 @@ class TestApiRequestAccept(BaseTestRequestAPI):
             request.refresh_from_db()
             for key in data.keys():
                 if isinstance(data[key], list):
-                    self.assertEqual(set(data[key]), set(request.full_survey[key]))
+                    self.assertCountEqual(data[key], request.full_survey[key])
                 else:
                     self.assertEqual(data[key], request.full_survey[key])
             self.assertEqual(RequestState.ACCEPTED, request.state)

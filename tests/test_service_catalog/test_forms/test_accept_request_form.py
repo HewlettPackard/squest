@@ -2,6 +2,7 @@ from service_catalog.forms.accept_request_forms import AcceptRequestForm
 from service_catalog.models import Request, Instance
 from tests.test_service_catalog.base import BaseTest
 
+
 class TestAcceptRequestForm(BaseTest):
 
     def setUp(self):
@@ -26,6 +27,7 @@ class TestAcceptRequestForm(BaseTest):
             ]
         }
         self.job_template_test.save()
+        self.create_operation_test.update_survey()
         data = {
             'text_variable': 'variable_set_by_user'
         }
