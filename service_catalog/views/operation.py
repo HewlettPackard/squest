@@ -49,6 +49,10 @@ class OperationCreateView(SquestCreateView):
         ]
         return context
 
+    def get_success_url(self):
+        return reverse("service_catalog:operation_edit_survey", kwargs={"service_id": self.service.id,
+                                                                        "pk": self.object.id})
+
 
 class OperationDetailView(SquestDetailView):
     model = Operation
