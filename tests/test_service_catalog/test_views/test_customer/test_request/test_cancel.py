@@ -21,6 +21,7 @@ class TestCustomerRequestViewTest(BaseTestRequest):
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.instance.state, InstanceState.ABORTED)
+        self.assertEqual(self.test_request.state, RequestState.CANCELED)
 
     def _assert_cannot_cancel(self):
         args = {
