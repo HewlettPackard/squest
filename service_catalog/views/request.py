@@ -102,11 +102,9 @@ def request_cancel(request, pk):
     if not can_proceed(target_request.cancel):
         raise PermissionDenied
     if request.method == "POST":
-        send_email_request_canceled(target_request,
-                                    user_applied_state=request.user)
-
-        if target_request.cancel():
-            target_request.save()
+        send_email_request_canceled(target_request, user_applied_state=request.user)
+        target_request.cancel()
+        target_request.save()
         return redirect(target_request.get_absolute_url())
     context = {
         'breadcrumbs': [

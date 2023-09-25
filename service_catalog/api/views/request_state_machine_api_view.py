@@ -146,8 +146,8 @@ class RequestStateMachine(ViewSet):
             raise PermissionDenied
         if not can_proceed(target_request.cancel):
             raise PermissionDenied
-        if target_request.cancel():
-            target_request.save()
+        target_request.cancel()
+        target_request.save()
         send_email_request_canceled(target_request,
                                     user_applied_state=request.user)
         if Request.objects.filter(id=pk).exists():
