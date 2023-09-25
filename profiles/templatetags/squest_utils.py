@@ -165,7 +165,7 @@ def generate_sidebar(user):
             {
                 'name': 'Team',
                 'view_name': 'profiles:team_list',
-                'icon': 'fas fa-user',
+                'icon': 'fas fa-user-friends',
                 'permission_required': 'profiles.list_team',
                 'active': [
                     "team_list", "team_create", "team_edit", "team_delete",
@@ -175,7 +175,7 @@ def generate_sidebar(user):
             {
                 'name': 'Users',
                 'view_name': 'profiles:user_list',
-                'icon': 'fas fa-user-friends',
+                'icon': 'fas fa-user',
                 'permission_required': 'profiles.list_user',
                 'active': [
                     "user_list", "user_details"
