@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('profiles', '0019_alter_quota_options'),
         ('service_catalog', '0026_auto_20230919_1353'),
@@ -14,6 +13,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='approvalworkflow',
             name='scopes',
-            field=models.ManyToManyField(blank=True, help_text='This workflow will be triggered for the following scopes. Leave empty to trigger for all scopes', related_name='approval_workflows', to='profiles.Scope', verbose_name='Restricted scopes'),
+            field=models.ManyToManyField(blank=True,
+                                         help_text='This workflow will be triggered for the following scopes. Leave empty to trigger for all scopes',
+                                         related_name='approval_workflows', to='profiles.Scope',
+                                         verbose_name='Restricted scopes'),
         ),
     ]
