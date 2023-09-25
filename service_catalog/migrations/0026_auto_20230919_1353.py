@@ -7,8 +7,47 @@ def move_name_in_variable(apps, schema_editor):
     TowerSurveyField = apps.get_model('service_catalog', 'TowerSurveyField')
     for survey_field in TowerSurveyField.objects.all():
         survey_field.variable = survey_field.name
-        survey_field.name = ""
         survey_field.save()
+
+
+def update_all_operation_survey(apps, schema_editor):
+    Operation = apps.get_model('service_catalog', 'Operation')
+    TowerSurveyField = apps.get_model('service_catalog', 'TowerSurveyField')
+    for operation in Operation.objects.all():
+        if operation.job_template is not None:
+            spec_list = operation.job_template.survey.get("spec", [])
+            for field in spec_list:
+                squest_field, created = TowerSurveyField.objects.get_or_create(
+                    variable=field['variable'],
+                    operation__id=operation.id,
+                    defaults={
+                        'is_customer_field': True,
+                        'name': field['question_name'],
+                        'description': field['question_description'],
+                        'type': field['type'],
+                        'required': field['required'],
+                        'field_options': {
+                            'min': field['min'],
+                            'max': field['max'],
+                            'choices': field['choices'],
+                            'default': field['default']
+                        }
+                    }
+                )
+                if not created:
+                    squest_field.name = field['question_name']
+                    squest_field.description = field['question_description']
+                    squest_field.type = field['type']
+                    squest_field.required = field['required']
+                    squest_field.field_options = {
+                        "min": field['min'],
+                        "max": field['max'],
+                        "choices": field['choices'],
+                        "default": field['default']
+                    }
+                    squest_field.save()
+            operation.tower_survey_fields.exclude(
+                variable__in=[survey_spec["variable"] for survey_spec in spec_list]).delete()
 
 
 class Migration(migrations.Migration):
@@ -62,4 +101,5 @@ class Migration(migrations.Migration):
             name='is_customer_field',
             field=models.BooleanField(default=True, help_text='Display for non approver user'),
         ),
+        migrations.RunPython(update_all_operation_survey),
     ]
