@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}
     {{ operation.name }} | Operation
-{%  endblock %}
+{% endblock %}
 {% block content %}
     <div class="content-wrapper" style="min-height: 278px;">
         <!-- Content Header (Page header) -->
@@ -22,7 +22,8 @@
                     <div class="card card-info">
                         <div class="card-header">
                             <h4 class="card-title w-100">
-                                <a class="d-block w-100 collapsed" data-toggle="collapse" href="#documentation" aria-expanded="false">
+                                <a class="d-block w-100 collapsed" data-toggle="collapse" href="#documentation"
+                                   aria-expanded="false">
                                     <i class="fas fa-info"></i> Tips
                                 </a>
                             </h4>
@@ -31,9 +32,15 @@
                             <div class="card-body">
                                 <dl class="row">
                                     <dt class="col-sm-2">Is customer field</dt>
-                                    <dd class="col-sm-10">The field is displayed into the end user survey when requesting the operation</dd>
+                                    <dd class="col-sm-10">The field is displayed into the end user survey when
+                                        requesting the operation
+                                    </dd>
                                     <dt class="col-sm-2">Default</dt>
-                                    <dd class="col-sm-10">Can be left empty or filled with a <code>string</code> or a jinja template string based on the current <code>&#123;&#123; instance &#125;&#125;</code> or <code>&#123;&#123; user &#125;&#125;</code>. E.g: <code>&#123;&#123; instance.spec.key &#125;&#125;</code> or <code>&#123;&#123; instance.name &#125;&#125;</code></dd>
+                                    <dd class="col-sm-10">Can be left empty or filled with a <code>string</code> or a
+                                        jinja template string based on the current <code>&#123;&#123; instance &#125;&#125;</code>
+                                        or <code>&#123;&#123; user &#125;&#125;</code>. E.g: <code>&#123;&#123;
+                                            instance.spec.key &#125;&#125;</code> or <code>&#123;&#123; instance.name
+                                            &#125;&#125;</code></dd>
                                     <dt class="col-sm-2">Validators</dt>
                                     <dd class="col-sm-10">Admin provided field validator scripts</dd>
                                     <dt class="col-sm-2">Attribute definition</dt>
@@ -43,12 +50,27 @@
                         </div>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{% url 'service_catalog:operation_edit_survey' service_id=service.id pk=operation.id %}" method="post">{% csrf_token %}
+                {% if formset.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for dict in formset.errors %}
+                            {% for error in dict.values %}
+                                {{ error }}
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in formset.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form class="form-horizontal"
+                      action="{% url 'service_catalog:operation_edit_survey' service_id=service.id pk=operation.id %}"
+                      method="post">{% csrf_token %}
                     {{ formset.management_form }}
                     {% for form in formset %}
                         <div class="card card-default">
                             <div class="card-header">
-                                <h3 class="card-title text-primary"><strong>{{ form.instance.variable }}</strong> - <span class="text-muted">{{ form.instance.type }}</span></h3>
+                                <h3 class="card-title text-primary"><strong>{{ form.instance.variable }}</strong> -
+                                    <span class="text-muted">{{ form.instance.type }}</span></h3>
                             </div>
                             <div class="card-body">
                                 {% for field in form %}
@@ -56,7 +78,7 @@
                                         {{ field.as_hidden }}
                                     {% else %}
                                         <div class="form-group row {% if field.errors %}has-error{% endif %}">
-                                            <label for="{{field.name}}" class="col-sm-2 col-form-label">
+                                            <label for="{{ field.name }}" class="col-sm-2 col-form-label">
                                                 {{ field.label }}
                                             </label>
                                             <div class="col-sm-10 align-self-center">
