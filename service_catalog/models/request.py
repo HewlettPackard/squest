@@ -147,8 +147,6 @@ class Request(SquestModel):
         if self.instance.state == InstanceState.PENDING:
             self.instance.abort()
             self.instance.save()
-            return False
-        return True
 
     @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
                 target=RequestState.REJECTED)
