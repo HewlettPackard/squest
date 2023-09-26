@@ -58,8 +58,9 @@ class Service(SquestModel):
 
 @receiver(pre_save, sender=Service)
 def service_pre_save(sender, instance, **kwargs):
-    if not instance.enabled:
-        instance.operations.filter(type=OperationType.CREATE).update(**{"enabled": False})
-    if instance.enabled and not instance.can_be_enabled():
-        instance.enabled = False
-        instance.save()
+    if instance.id:
+        if not instance.enabled:
+            instance.operations.filter(type=OperationType.CREATE).update(**{"enabled": False})
+        if instance.enabled and not instance.can_be_enabled():
+            instance.enabled = False
+            instance.save()
