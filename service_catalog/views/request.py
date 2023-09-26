@@ -134,12 +134,6 @@ def request_comment(request, request_id):
             return redirect('service_catalog:requestmessage_create', target_request.id)
     else:
         form = RequestMessageForm(sender=request.user, target_request=target_request)
-    breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': target_request.id, 'url': reverse('service_catalog:request_details',
-                                                   kwargs={'pk': target_request.id})},
-        {'text': "Comments", 'url': ""}
-    ]
     context = {
         'form': form,
         'target_request': target_request,

@@ -7,9 +7,20 @@ from tempus_dominus.widgets import DateTimePicker
 class SquestForm(Form):
 
     help_text = None
+    error_css_class = 'is-invalid'
 
     def __init__(self, *args, **kwargs):
         super(SquestForm, self).__init__(*args, **kwargs)
+        self.beautify()
+
+    def is_valid(self):
+        returned_value = super(SquestForm, self).is_valid()
+        for field_name in self.errors.keys():
+            current_class = self.fields.get(field_name).widget.attrs.get('class', '')
+            self.fields.get(field_name).widget.attrs['class'] = f"{current_class} {self.error_css_class}"
+        return returned_value
+
+    def beautify(self):
         for field_name, current_field in self.fields.items():
             if isinstance(current_field.widget, Select):
                 current_field.widget.attrs['class'] = 'form-control selectpicker'

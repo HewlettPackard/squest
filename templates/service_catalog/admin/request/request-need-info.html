@@ -34,7 +34,7 @@
                         <form class="form-horizontal" action="{% url 'service_catalog:request_need_info' target_request.id %}" method="post">{% csrf_token %}
 
                             {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <div class="form-group">
                                     <label for="{{field.name}}" class="col-sm-2 control-label">
                                         {{ field.label }}
                                     </label>
