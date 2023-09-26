@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models import ForeignKey, Sum, Q
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
 

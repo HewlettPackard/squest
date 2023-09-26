@@ -1,10 +1,10 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from Squest.utils.squest_api_views import SquestObjectPermissions, SquestGenericAPIView, SquestRetrieveUpdateAPIView
+from Squest.utils.squest_api_views import SquestObjectPermissions, SquestRetrieveUpdateAPIView
 from service_catalog.api.serializers.tower_survey_field_serializer import TowerSurveyFieldSerializer
 from service_catalog.models import Operation
 from service_catalog.models.tower_survey_field import TowerSurveyField

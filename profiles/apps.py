@@ -3,7 +3,6 @@ import logging
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
-
 logger = logging.getLogger(__name__)
 
 

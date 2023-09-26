@@ -9,7 +9,7 @@ from django.views.generic import RedirectView
 
 from Squest.utils.squest_views import SquestFormView, SquestDeleteView
 from profiles.forms.scope_form import ScopeCreateRBACForm
-from profiles.models import RBAC, Organization, GlobalPermission, AbstractScope, Team
+from profiles.models import RBAC, GlobalPermission, AbstractScope, Team
 
 
 def get_breadcrumbs_for_scope(scope):

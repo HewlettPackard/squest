@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import FloatField, ModelChoiceField
+from django.forms import ModelChoiceField
 
 from Squest.utils.squest_model_form import SquestModelForm
 from resource_tracker_v2.models import AttributeDefinition, Transformer

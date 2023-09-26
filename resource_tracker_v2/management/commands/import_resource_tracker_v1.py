@@ -2,10 +2,10 @@ import logging
 import os.path
 
 import yaml
+from django.core.management import BaseCommand
 
 from Squest import settings
 from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer, Resource
-from django.core.management import BaseCommand
 
 logger = logging.getLogger(__name__)
 

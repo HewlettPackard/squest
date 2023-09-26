@@ -1,6 +1,5 @@
-from profiles.models.squest_permission import Permission
-
 from Squest.utils.squest_model_form import SquestModelForm
+from profiles.models.squest_permission import Permission
 
 
 class PermissionForm(SquestModelForm):
