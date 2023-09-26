@@ -31,17 +31,11 @@ class TagFilter(ModelMultipleChoiceFilter):
 class TagFilterset(SquestFilter):
     tag = TagFilter()
     tag_filter_type = ChoiceFilter(method='fake_filter_method', label="Tags filter method:",
-                                   choices=[("OR", "OR"), ("AND", "AND")], required=True)
-
-    def __init__(self, data=None, *args, **kwargs):
-        if data is not None:
-            data = data.copy()
-            data.setdefault("tag_filter_type", "OR")
-        super(TagFilterset, self).__init__(data, *args, **kwargs)
+                                   choices=[("AND", "AND")], required=False, empty_label="OR")
 
     def is_valid(self):
         if hasattr(self, 'data'):
-            conjoined = self.data.get('tag_filter_type', "OR")
+            conjoined = self.data.get('tag_filter_type', "OR") or "OR"
             self.filters['tag'].conjoined = map_filter_type[conjoined]
             self.base_filters['tag'].conjoined = conjoined
         return super(TagFilterset, self).is_valid()
