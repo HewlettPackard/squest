@@ -136,6 +136,7 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
+        'OPTIONS': {'charset': 'utf8mb4'}
     },
     'psql': {
         'ENGINE': "django.db.backends.postgresql",
