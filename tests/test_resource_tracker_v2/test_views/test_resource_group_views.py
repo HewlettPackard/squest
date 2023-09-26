@@ -32,7 +32,7 @@ class TestResourceGroupViews(BaseTestResourceTrackerV2):
         self.assertEqual(len(response.context["table"].data.data), 1)
 
     def test_resource_group_list_with_tag_or(self):
-        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list') + "?tag=tag1&tag=tag2&tag_filter_type=OR")
+        response = self.client.get(reverse('resource_tracker_v2:resourcegroup_list') + "?tag=tag1&tag=tag2&tag_filter_type=")
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(response.context["table"].data.data), 3)
 

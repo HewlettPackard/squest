@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.models import Role, Permission, GlobalPermission
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -163,7 +164,7 @@ class AdminRequestViewTest(BaseTestRequest):
         self._accept_request_with_expected_state(expected_request_state=RequestState.ACCEPTED,
                                                  expected_instance_state=InstanceState.PENDING)
 
-    def test_request_accept_and_request_pending_instance(self):
+    def test_request_accept_and_process_pending_instance(self):
         data = {
             'quota_scope_id': self.test_quota_scope.id,
             'text_variable': 'my_var',
@@ -180,6 +181,30 @@ class AdminRequestViewTest(BaseTestRequest):
                                                      expected_instance_state=InstanceState.PROVISIONING,
                                                      custom_data=data)
             mock_towerlib_call.assert_called()
+
+    def test_request_accept_and_process_pending_instance_when_no_perm(self):
+        data = {
+            'quota_scope_id': self.test_quota_scope.id,
+            'text_variable': 'my_var',
+            'multiplechoice_variable': 'choice1',
+            'multiselect_var': 'multiselect_1',
+            'textarea_var': '2',
+            'password_var': 'password1234',
+            'integer_var': '1',
+            'float_var': '0.6',
+            'accept_and_process': 'accept_and_process'
+        }
+        self.client.force_login(user=self.standard_user)
+        new_role = Role.objects.create(name="approver_no_processor")
+        perm_str = "service_catalog.accept_request"
+        new_role.permissions.add(Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
+                                                        codename=perm_str.split('.')[1]))
+        GlobalPermission.load().add_user_in_role(self.standard_user, new_role)
+
+        self._accept_request_with_expected_state(expected_request_state=RequestState.SUBMITTED,
+                                                 expected_instance_state=InstanceState.PENDING,
+                                                 custom_data=data,
+                                                 status=403)
 
     def test_request_accept_pending_instance_missing_not_required_field(self):
         data = {
