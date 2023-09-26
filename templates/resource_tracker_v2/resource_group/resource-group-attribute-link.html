@@ -30,7 +30,7 @@
                         <form id="ResourceGroupLinkForm" class="form-horizontal" action="{% url 'resource_tracker_v2:transformer_create' resource_group.id %}" method="post" current-resource-group-id="{{ resource_group.id }}" data-attribute-url="{% url 'resource_tracker_v2:ajax_load_attribute' %}">{% csrf_token %}
 
                             {% for field in form %}
-                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <div class="form-group">
                                     <label for="{{field.name}}" class="col-sm-2 control-label">
                                         {{ field.label }}
                                     </label>

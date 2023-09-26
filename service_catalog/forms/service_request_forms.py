@@ -19,9 +19,10 @@ class ServiceInstanceForm(SquestModelForm):
         quota_scopes = Scope.get_queryset_for_user(self.user, 'profiles.consume_quota_scope')
         self.fields['quota_scope'].queryset = quota_scopes
         if quota_scopes.count() == 0:
-            self.fields['quota_scope'].help_text =  'Permission "profiles.consume_quota_scope needed" to choose your scope.'
+            self.fields['quota_scope'].help_text = 'Permission "profiles.consume_quota_scope needed" to choose your scope.'
         if quota_scopes.count() == 1:
-            self.fields['quota_scope'].initial =  quota_scopes.first()
+            self.fields['quota_scope'].initial = quota_scopes.first()
+
     def save(self, commit=True):
         squest_instance = super().save(False)
         squest_instance.service = self.operation.service

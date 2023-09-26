@@ -77,7 +77,7 @@
                                     {% if field.name == "id" %}
                                         {{ field.as_hidden }}
                                     {% else %}
-                                        <div class="form-group row {% if field.errors %}has-error{% endif %}">
+                                        <div class="form-group row">
                                             <label for="{{ field.name }}" class="col-sm-2 col-form-label">
                                                 {{ field.label }}
                                             </label>
