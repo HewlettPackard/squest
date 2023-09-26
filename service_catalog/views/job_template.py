@@ -1,10 +1,9 @@
-from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.job_template_filter import JobTemplateFilter
-from service_catalog.models import TowerServer, JobTemplate, OperationType
+from service_catalog.models import TowerServer, JobTemplate
 from service_catalog.tables.job_template_tables import JobTemplateTable
 
 

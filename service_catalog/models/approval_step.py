@@ -1,11 +1,9 @@
+from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, TextField
+from django.db.models.signals import post_save
 from django.urls import reverse
 
-from profiles.models.squest_permission import Permission
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, Q, \
-    TextField
-from django.db.models.signals import post_save
-
 from Squest.utils.squest_model import SquestModel
+from profiles.models.squest_permission import Permission
 
 
 class ApprovalStep(SquestModel):

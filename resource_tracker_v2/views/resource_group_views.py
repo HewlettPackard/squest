@@ -2,7 +2,6 @@ from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker_v2.forms.resource_group_form import ResourceGroupForm
 from resource_tracker_v2.models import ResourceGroup, AttributeDefinition, Transformer
-from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefinitionTable
 from resource_tracker_v2.tables.resource_group_table import ResourceGroupTable
 from resource_tracker_v2.tables.resource_table import ResourceTable
 from resource_tracker_v2.tables.transformer_table import TransformerTable

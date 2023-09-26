@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, JSONField, ForeignKey, DateTimeField, ManyToManyField, PROTECT, Q, \
+from django.db.models import CharField, JSONField, ForeignKey, DateTimeField, PROTECT, Q, \
     CASCADE
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
@@ -12,9 +12,9 @@ from django_fsm import transition, FSMIntegerField
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from profiles.models.scope import Scope
+from service_catalog.models.hooks import HookManager
 from service_catalog.models.instance_state import InstanceState
 from service_catalog.models.services import Service
-from service_catalog.models.hooks import HookManager
 
 logger = logging.getLogger(__name__)
 

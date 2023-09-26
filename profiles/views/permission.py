@@ -2,8 +2,8 @@ from Squest.utils.squest_views import *
 from profiles.filters import PermissionFilter
 from profiles.forms.model_permission_form import ModelPermissionForm
 from profiles.forms.permission_form import PermissionForm
-from profiles.tables import PermissionTable
 from profiles.models import Permission
+from profiles.tables import PermissionTable
 from service_catalog.models import ApprovalStep
 
 

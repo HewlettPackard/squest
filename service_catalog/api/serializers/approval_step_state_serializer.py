@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, Field
+from rest_framework.serializers import ModelSerializer
 
 from service_catalog.models import ApprovalStepState
 

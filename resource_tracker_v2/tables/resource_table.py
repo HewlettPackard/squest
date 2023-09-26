@@ -1,6 +1,4 @@
-from django_tables2 import CheckBoxColumn, TemplateColumn, Column, LinkColumn
-from django_tables2.columns import BoundColumns
-from django_tables2.utils import A
+from django_tables2 import CheckBoxColumn, TemplateColumn, LinkColumn
 
 from Squest.utils.squest_table import SquestTable
 from resource_tracker_v2.models import Resource

@@ -1,9 +1,9 @@
-from profiles.models.squest_permission import Permission
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField, HiddenInput
 from django.urls import reverse
 
 from Squest.utils.squest_model_form import SquestModelForm
+from profiles.models.squest_permission import Permission
 from service_catalog.models import ApprovalStep, TowerSurveyField
 
 EXCLUDED_PERMISSION = ["add_approvalstep", "change_approvalstep", "delete_approvalstep", "list_approvalstep",

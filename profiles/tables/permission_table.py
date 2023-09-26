@@ -1,5 +1,6 @@
-from profiles.models.squest_permission import Permission
 from django_tables2 import tables, TemplateColumn
+
+from profiles.models.squest_permission import Permission
 
 
 class PermissionTable(tables.Table):

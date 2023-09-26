@@ -1,4 +1,3 @@
-import copy
 import logging
 
 from service_catalog.models import ApprovalState
