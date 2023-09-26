@@ -22,6 +22,18 @@
                                         {{ form.as_table }}
                                     {% endfor %}
                                 {% else %}
+                                    {% if form.errors %}
+                                        <div class="alert alert-danger" role="alert">
+                                            {% for field in form %}
+                                                {% if field.errors %}
+                                                    <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for error in form.non_field_errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                     {% for field in wizard.form %}
                                         {% if field.field.separator %}
                                             <div class="mb-8">
@@ -32,7 +44,7 @@
                                             <h5 class="text-primary">{{ field.field.form_title }}</h5>
                                         {% endif %}
                                         {% if field.field.widget.input_type == "checkbox" %}
-                                            <div class="mb-1 {% if field.errors %}has-error{% endif %}">
+                                            <div class="mb-1">
                                                 {{ field }}
                                                 <label for="{{ field.id_for_label }}" class="form-check-label">
                                                     {{ field.label }}
@@ -42,7 +54,7 @@
                                                 {% endif %}
                                             </div>
                                         {% else %}
-                                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                            <div class="form-group">
                                                 {% if not field.is_hidden %}
                                                     <label for="{{ field.id_for_label }}" class="control-label">
                                                         {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
