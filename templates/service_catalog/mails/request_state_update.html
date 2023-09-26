@@ -1,7 +1,6 @@
 {% extends 'service_catalog/mails/mail_base.html' %}
 {% block content %}
 
-    {% include 'service_catalog/mails/utils/header.html' with title="Request details" %}
 
     <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0"
            cellspacing="0" width="100%" border="0">
@@ -118,7 +117,10 @@
     {% if message and message is not None %}
         {% include 'service_catalog/mails/utils/delimiter.html' %}
         {% include 'service_catalog/mails/utils/header.html' with title="Message" %}
-        <p align="left" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;color: #00b389;font-weight: bold;" >
+        <p align="left" style="overflow-wrap:break-word;word-break:break-word;font-family:arial,helvetica,sans-serif;color: #00b389; font-weight: bold;" >
+            {{ message.sender }}:
+        </p>
+        <p style="overflow-wrap:break-word;word-break:break-word;font-family:arial,helvetica,sans-serif;color: #00b389">
             {{ message.content }}
         </p>
     {% endif %}

@@ -7,7 +7,7 @@
             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
                 align="left">
                 <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Montserrat',sans-serif; font-size: 18px; ">
-                    <strong>New support on instance <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.support.instance.id %}#support">{{ message.support.instance.name }}</a></strong>
+                    <strong>Support on instance <a href="{{ current_site }}{% url 'service_catalog:instance_details' message.support.instance.id %}#support">{{ message.support.instance.name }}</a></strong>
                 </h1>
             </td>
         </tr>
@@ -21,7 +21,9 @@
             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;"
                 align="left">
                 <div>
-                    <b>{{ message.support.title }}</b>
+                    <p><span style="overflow-wrap:break-word;word-break:break-word;font-family:arial,helvetica,sans-serif;color: #00b389; font-weight: bold;">Title:</span> {{ message.support.title }}</p>
+                    <p><span style="overflow-wrap:break-word;word-break:break-word;font-family:arial,helvetica,sans-serif;color: #00b389; font-weight: bold;">Sender:</span> {{ message.sender.username }}</p>
+
                     <p>{{ message.content }}</p>
                 </div>
             </td>
