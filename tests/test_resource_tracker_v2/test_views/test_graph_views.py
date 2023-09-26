@@ -26,7 +26,7 @@ class TestGraphViews(BaseTestResourceTrackerV2):
         self.assertEqual(response.context['resource_groups'].count(), 1)
 
     def test_get_resource_tracker_graph_filter_type_or(self):
-        url = reverse('resource_tracker_v2:resource_tracker_graph') + "?tag=tag1&tag=tag2&tag_filter_type=OR"
+        url = reverse('resource_tracker_v2:resource_tracker_graph') + "?tag=tag1&tag=tag2&tag_filter_type="
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.context['resource_groups'].count(), 3)
