@@ -1,6 +1,5 @@
 import logging
 
-import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotAllowed
@@ -16,7 +15,7 @@ from service_catalog.forms.process_request_form import ProcessRequestForm
 from service_catalog.forms.request_forms import RequestForm
 from service_catalog.mail_utils import send_email_request_canceled
 from service_catalog.mail_utils import send_mail_request_update
-from service_catalog.models import Request, RequestMessage, Service, Instance, RequestState
+from service_catalog.models import Request, RequestMessage, RequestState
 from service_catalog.models.instance import InstanceState
 from service_catalog.tables.request_tables import RequestTable
 
@@ -292,6 +291,9 @@ def request_accept(request, pk):
         'request': target_request
     }
     if request.method == 'POST':
+        if 'accept_and_process' in request.POST:
+            if not request.user.has_perm('service_catalog.process_request', target_request):
+                raise PermissionDenied
         form = AcceptRequestForm(request.user, request.POST, **parameters)
         if form.is_valid():
             form.save()
@@ -301,9 +303,7 @@ def request_accept(request, pk):
             if 'accept_and_process' in request.POST:
                 logger.info(f"[request_accept] request '{target_request.id}' accepted and processed "
                             f"by {request.user}")
-                error_message = try_process_request(request.user, target_request)
-                if not error_message:
-                    return redirect(target_request.get_absolute_url())
+                try_process_request(request.user, target_request)
             return redirect(target_request.get_absolute_url())
     else:
         form = AcceptRequestForm(request.user, **parameters)
@@ -410,36 +410,18 @@ def request_unarchive(request, pk):
 def try_process_request(user, target_request, inventory_override=None, credentials_override=None, tags_override=None,
                         skip_tags_override=None, limit_override=None, verbosity_override=None, job_type_override=None,
                         diff_mode_override=None):
-    from towerlib.towerlibexceptions import AuthFailed
-    try:
-        # switch the state to processing before trying to execute the process
-        target_request.process(user)
-        target_request.perform_processing(inventory_override=inventory_override,
-                                          credentials_override=credentials_override,
-                                          tags_override=tags_override,
-                                          skip_tags_override=skip_tags_override,
-                                          limit_override=limit_override,
-                                          verbosity_override=verbosity_override,
-                                          job_type_override=job_type_override,
-                                          diff_mode_override=diff_mode_override)
-        target_request.save()
-    except AuthFailed:
-        logger.error(
-            f"[request_process] Fail to authenticate with provided token when trying to process request "
-            f"id '{target_request.id}'")
-        return "Fail to authenticate with provided token"
-    except requests.exceptions.SSLError:
-        logger.error(
-            f"[request_process] Certificate verify failed when trying to process request "
-            f"id '{target_request.id}'")
-        return "Certificate verify failed"
-    except requests.exceptions.ConnectionError:
-        logger.error(
-            f"[request_process] Unable to connect to remote server when trying to process request "
-            f"id '{target_request.id}'")
-        return "Unable to connect to remote server"
+    # switch the state to processing before trying to execute the process
+    target_request.process(user)
+    target_request.perform_processing(inventory_override=inventory_override,
+                                      credentials_override=credentials_override,
+                                      tags_override=tags_override,
+                                      skip_tags_override=skip_tags_override,
+                                      limit_override=limit_override,
+                                      verbosity_override=verbosity_override,
+                                      job_type_override=job_type_override,
+                                      diff_mode_override=diff_mode_override)
+    target_request.save()
     send_mail_request_update(target_request, user_applied_state=user)
-    return ""
 
 
 @login_required
