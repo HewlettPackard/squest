@@ -1,28 +1,27 @@
 import logging
 import sys
 
-from django.forms import CharField as FormsCharField
-from django.forms import TextInput as FormsTextInput
-from django.forms import Textarea as FormsTextarea
-from django.forms import PasswordInput as FormsPasswordInput
-from django.forms import ChoiceField as FormsChoiceField
-from django.forms import Select as FormsSelect
-from django.forms import MultipleChoiceField as FormsMultipleChoiceField
-from django.forms import SelectMultiple as FormsSelectMultiple
-from django.forms import IntegerField as FormsIntegerField
-from django.forms import NumberInput as FormsNumberInput
-from django.forms import FloatField as FormsFloatField
-from rest_framework.serializers import ChoiceField as DjangoRestChoiceField
-from rest_framework.serializers import CharField as DjangoRestCharField
-from rest_framework.serializers import MultipleChoiceField as DjangoRestMultipleChoiceField
-from rest_framework.serializers import IntegerField as DjangoRestIntegerField
-from rest_framework.serializers import FloatField as DjangoRestFloatField
-from jinja2 import Template
-from jinja2.exceptions import UndefinedError
-
 from django.db.models import CharField, BooleanField, ForeignKey, CASCADE, SET_NULL, JSONField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.forms import CharField as FormsCharField
+from django.forms import ChoiceField as FormsChoiceField
+from django.forms import FloatField as FormsFloatField
+from django.forms import IntegerField as FormsIntegerField
+from django.forms import MultipleChoiceField as FormsMultipleChoiceField
+from django.forms import NumberInput as FormsNumberInput
+from django.forms import PasswordInput as FormsPasswordInput
+from django.forms import Select as FormsSelect
+from django.forms import SelectMultiple as FormsSelectMultiple
+from django.forms import TextInput as FormsTextInput
+from django.forms import Textarea as FormsTextarea
+from jinja2 import Template
+from jinja2.exceptions import UndefinedError
+from rest_framework.serializers import CharField as DjangoRestCharField
+from rest_framework.serializers import ChoiceField as DjangoRestChoiceField
+from rest_framework.serializers import FloatField as DjangoRestFloatField
+from rest_framework.serializers import IntegerField as DjangoRestIntegerField
+from rest_framework.serializers import MultipleChoiceField as DjangoRestMultipleChoiceField
 
 from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model import SquestModel

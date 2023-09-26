@@ -11,7 +11,7 @@ from markdown.extensions.toc import TocExtension
 
 from service_catalog.models import BootstrapType, RequestState
 from service_catalog.models import Request
-from service_catalog.models.instance import InstanceState, Instance
+from service_catalog.models.instance import Instance
 from service_catalog.models.operations import OperationType
 from service_catalog.models.support import SupportState
 from .color import map_dict_request_state, map_dict_instance_state, map_dict_step_state

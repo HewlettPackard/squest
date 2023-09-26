@@ -18,10 +18,10 @@ from django_fsm import transition, can_proceed, FSMIntegerField
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.exceptions import ExceptionServiceCatalog
+from service_catalog.models.hooks import HookManager
 from service_catalog.models.instance import Instance, InstanceState
 from service_catalog.models.operations import Operation, OperationType
 from service_catalog.models.request_state import RequestState
-from service_catalog.models.hooks import HookManager
 
 logger = logging.getLogger(__name__)
 
@@ -321,7 +321,6 @@ class Request(SquestModel):
         return None
 
     def setup_approval_workflow(self):
-        from service_catalog.models import ApprovalWorkflow
         # search for a workflow on this operation
         workflow = self._get_approval_workflow()
         if not workflow:

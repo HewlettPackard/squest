@@ -1,5 +1,4 @@
 from Squest.utils.squest_views import *
-from profiles.models import Quota
 from profiles.tables.quota_table import QuotaTable
 from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
 from resource_tracker_v2.forms.attribute_definition_form import AttributeDefinitionForm

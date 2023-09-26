@@ -1,6 +1,5 @@
 import base64
 import logging
-
 from os import linesep
 
 from django.conf import settings

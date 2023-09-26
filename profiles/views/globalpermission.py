@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from Squest.utils.squest_views import *
 from profiles.forms import GlobalPermissionForm
 from profiles.models import GlobalPermission

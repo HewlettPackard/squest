@@ -8,7 +8,6 @@ from profiles.filters.quota import QuotaFilter
 from profiles.models import Quota
 
 
-
 class SquestObjectPermissionsQuota(SquestObjectPermissions):
     """
     Custom permission to only allow owners of an object to edit it.

@@ -1,7 +1,7 @@
 import logging
 
 from django.core.exceptions import ValidationError
-from django.db.models import ForeignKey, CASCADE, CharField, JSONField, SET_NULL, IntegerField, ManyToManyField
+from django.db.models import ForeignKey, CASCADE, CharField, JSONField, IntegerField, ManyToManyField
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -60,7 +60,6 @@ class HookManager(object):
         :return:
         """
         from service_catalog.api.serializers import InstanceReadSerializer, AdminRequestSerializer
-        from service_catalog.models import Instance, Request
         logger.debug(f"[HookManager] trigger_hook executed with "
                      f"sender model '{sender.__name__}', "
                      f"instance ID'{instance.id}', "

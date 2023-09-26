@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import ForeignKey, PROTECT, Q
+
 from profiles.models import Organization
 from profiles.models.scope import Scope
 

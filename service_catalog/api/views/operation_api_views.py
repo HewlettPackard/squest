@@ -7,7 +7,6 @@ from service_catalog.filters.operation_filter import OperationFilter
 from service_catalog.models.instance import Instance
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.operations import Operation
-from service_catalog.models.services import Service
 
 
 class OperationListCreate(SquestListCreateAPIView):

@@ -1,5 +1,5 @@
 from django.utils.html import format_html
-from django_tables2 import LinkColumn, Table, TemplateColumn
+from django_tables2 import LinkColumn, TemplateColumn
 
 from Squest.utils.squest_table import SquestTable
 from profiles.models import Quota

@@ -1,7 +1,7 @@
-from profiles.models.squest_permission import Permission
 from django.db.models import CharField, ManyToManyField
 
 from Squest.utils.squest_model import SquestModel
+from profiles.models.squest_permission import Permission
 
 
 class AbstractRole(SquestModel):

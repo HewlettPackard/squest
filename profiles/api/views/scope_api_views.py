@@ -1,10 +1,8 @@
 from django.contrib.auth.models import User
 from django.views.generic import RedirectView
 from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.exceptions import NotFound
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.reverse import reverse
 
 from Squest.utils.squest_api_views import SquestCreateAPIView, SquestDestroyAPIView, SquestObjectPermissions
 from profiles.api.serializers import AbstractScopeCreateRBACSerializer
