@@ -12,6 +12,7 @@ class UserListView(SquestListView):
     filterset_class = UserFilter
     table_class = UserTable
     app_label = 'profiles'
+    ordering = 'username'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
