@@ -47,6 +47,11 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
                 },
                 url_kwargs={'pk': self.test_quota_scope_org.id}
             ),
+            TestingGetContextView(
+                url='api_team_rbac_create',
+                perm_str='profiles.view_users_organization',
+                url_kwargs={'scope_id': self.test_quota_scope_org.id}
+            ),
             TestingPostContextView(
                 url='api_organization_rbac_create',
                 perm_str='profiles.add_users_organization',

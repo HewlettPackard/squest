@@ -30,6 +30,11 @@ class TestProfilesGlobalPermissionPermissionsEndpoint(BaseTestProfileAPI, TestPe
                     'default_permissions': []
                 },
             ),
+            TestingGetContextView(
+                url='api_globalpermission_rbac_create',
+                perm_str='profiles.view_users_globalpermission',
+                url_kwargs={'scope_id': self.global_permission.id}
+            ),
             TestingPostContextView(
                 url='api_globalpermission_rbac_create',
                 perm_str='profiles.add_users_globalpermission',
