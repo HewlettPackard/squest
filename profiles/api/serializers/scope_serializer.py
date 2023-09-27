@@ -20,26 +20,37 @@ class ScopeSerializer(AbstractScopeSerializer):
         fields = '__all__'
 
 
-class AbstractScopeCreateRBACSerializer(Serializer):
+class AbstractScopeCreateRBACSerializer(ModelSerializer):
     roles = MultipleChoiceField(
         choices=[],
         required=True,
+        write_only=True
     )
     users = MultipleChoiceField(
         choices=[],
         required=True,
+        write_only=True
     )
+    rbac = RBACSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = AbstractScope
+        fields = ('id', 'rbac', 'name', 'roles', 'users')
+        read_only_fields = ('id', 'rbac', 'name')
 
     def __init__(self, *args, **kwargs):
         from profiles.models import Role
-        self.scope = AbstractScope.objects.get(id=kwargs.pop('scope_id'))
         super(AbstractScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
-        self.fields["users"].choices = self.scope.get_potential_users().values_list('id', 'username')
+        if self.instance is None:
+            self.fields["users"].choices = User.objects.values_list('id', 'username')
+        else:
+            self.fields["users"].choices = self.instance.get_potential_users().values_list('id', 'username')
         self.fields["roles"].choices = Role.objects.values_list('id', 'name')
 
     def save(self):
         from profiles.models import Role
-        for role_id in self.data.get('roles'):
+        for role_id in self.validated_data.get('roles'):
             role = Role.objects.get(id=role_id)
-            for user_id in self.data.get('users'):
-                self.scope.add_user_in_role(User.objects.get(id=user_id), role)
+            for user_id in self.validated_data.get('users'):
+                self.instance.add_user_in_role(User.objects.get(id=user_id), role)
+        return self.instance

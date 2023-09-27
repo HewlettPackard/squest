@@ -1,10 +1,14 @@
 from django.contrib.auth.models import User
 from django.views.generic import RedirectView
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
 
-from Squest.utils.squest_api_views import SquestCreateAPIView, SquestDestroyAPIView, SquestObjectPermissions
+from Squest.utils.squest_api_views import SquestCreateAPIView, SquestDestroyAPIView, SquestObjectPermissions, \
+    SquestRetrieveAPIView
 from profiles.api.serializers import AbstractScopeCreateRBACSerializer
 from profiles.models import AbstractScope, RBAC
 from profiles.models import Scope
@@ -38,17 +42,21 @@ class SquestObjectPermissionsScope(SquestObjectPermissions):
         return [perm % kwargs for perm in self.perms_map[method]]
 
 
-class ScopeRBACCreate(SquestCreateAPIView):
+class ScopeRBACCreate(SquestCreateAPIView, SquestRetrieveAPIView):
     permission_classes = [IsAuthenticated, SquestObjectPermissionsScope]
     serializer_class = AbstractScopeCreateRBACSerializer
     queryset = AbstractScope.objects.all()
     lookup_url_kwarg = 'scope_id'
 
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        kwargs.setdefault('context', self.get_serializer_context())
-        kwargs.setdefault('scope_id', self.kwargs['scope_id'])
-        return serializer_class(*args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        # add instance in serializer
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 
 class ScopeRBACDelete(SquestDestroyAPIView):
