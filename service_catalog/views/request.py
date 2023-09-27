@@ -294,7 +294,7 @@ def request_accept(request, pk):
             target_request.accept(request.user)
             target_request.refresh_from_db()
             send_mail_request_update(target_request, user_applied_state=request.user)
-            if 'accept_and_process' in request.POST:
+            if 'accept_and_process' in request.POST and not target_request.operation.auto_process:
                 logger.info(f"[request_accept] request '{target_request.id}' accepted and processed "
                             f"by {request.user}")
                 try_process_request(request.user, target_request)
