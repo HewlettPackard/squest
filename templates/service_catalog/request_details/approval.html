@@ -231,8 +231,6 @@
         <div>
             <i class="fas fa-play fa-lg bg-{{ object.get_state_display | map_color_next_state:'ACCEPTED' }}"></i>
             <div class="timeline-item">
-                {% if object.date_complete %}
-                    <span class="time"><i class="fas fa-clock"></i> {{ object.date_complete | squest_date_format }}</span>{% endif %}
                 <h3 class="timeline-header">Process the request</h3>
                 <div class="timeline-body">
                     {% if object.get_state_display == "ACCEPTED" %}
@@ -271,9 +269,10 @@
         <div>
             <i class="fas fa-cog bg-success"></i>
             <div class="timeline-item">
-                <h3 class="timeline-header text-success">Processing <a href="{{ object.tower_job_url }}"
-                                                                       class="float-right">Job: {{ object.tower_job_id }}</a>
-                </h3>
+                {% if object.date_complete %}
+                    <span class="time"><i class="fas fa-clock"></i> {{ object.date_complete | squest_date_format }}</span>
+                {% endif %}
+                <h3 class="timeline-header text-success">Processing</h3>
                 <div class="timeline-body">
                     {% if  object.get_state_display == "PROCESSING" %}
                         The request is currently being processed
@@ -290,9 +289,7 @@
         <div>
             <i class="fas fa-exclamation-triangle bg-danger"></i>
             <div class="timeline-item">
-                <h3 class="timeline-header text-danger">Processing failed <a href="{{ object.tower_job_url }}"
-                                                                             class="float-right">Job: {{ object.tower_job_id }}</a>
-                </h3>
+                <h3 class="timeline-header text-danger">Processing failed</h3>
                 <div class="timeline-body">
                     The processing has failed and may require administrator attention.<br> Controller error:<br>
                     <div class="callout callout-danger">
@@ -302,11 +299,16 @@
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
-                                     {% if args_filter|can_proceed_request_action and can_process_request %}
+                                    {% if args_filter|can_proceed_request_action and can_process_request %}
                                         <a class="btn btn-primary"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Retry process
+                                        </a>
+                                        <a class="btn btn-default"
+                                           title="Job"
+                                           href="{{ object.tower_job_url }}">
+                                            <i class="fas fa-bug"></i> Job #{{ object.tower_job_id }}
                                         </a>
                                     {% endif %}
                                 {% endwith %}
