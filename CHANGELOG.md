@@ -1,3 +1,37 @@
+# 2.0.0 2023-09-27
+
+## Breaking changes ⚠
+
+- Resource tracker v1 is removed. Data are lost after migration to v2. A migration script is available, read the documentation for more information
+- API complete refactoring. Use Swagger documentation to get new endpoints
+- Approval workflow v1 has been removed. Workflow need to be re-created manually
+- Teams v1 are removed and will need to be created back manually
+- Quota scope (formerly billing group is now mandatory)
+
+## Fix
+
+- Processing a request is auto-process no longer produce 500 error
+
+## Feature
+
+- RBAC
+- Organizations added as top layer (replacing billing groups)
+- Quota management. Quota attribute are same as resource tracker attribute and linkable to survey fields.
+- Move resource from a resource group to another resource group
+- Dark theme
+
+## Enhancement
+
+- Resource tracking refactoring. Resource pool are removed. Links are done directly between resource groups
+- Approval workflow refactoring (with configurable auto accept on each step) 
+- Dashboard refactored. Added list of request that can be approved by the current user based on permissions
+- Survey max value on integer can be limited by quota
+- Request details page reworked
+- Pagination now available up to 1000 on each list
+- Support of emojis in request and support message
+- Add "user" data to jinja context
+- New state on instance: ABORTED (when cancelling a request)
+
 # 1.10.6 2023-09-11
 
 ## Fix
