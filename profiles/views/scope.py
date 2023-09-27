@@ -91,7 +91,7 @@ class ScopeRBACDeleteView(SquestDeleteView):
             f"Confirm to remove <strong>{self.user}</strong> from <strong>{self.rbac.role}</strong>?")
         return context
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         try:
             self.get_object().get_object().remove_user_in_role(self.user, self.rbac.role)
             return HttpResponseRedirect(self.get_success_url())
@@ -130,7 +130,7 @@ class ScopeRBACDeleteUserView(SquestDeleteView):
             f"Confirm to remove <strong>{self.user}</strong> from <strong>{self.scope}</strong>?")
         return context
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         try:
             self.get_object().get_object().remove_user(self.user)
             return HttpResponseRedirect(self.get_success_url())
