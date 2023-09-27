@@ -25,6 +25,7 @@ class SquestOperationSurveyPermissions(SquestObjectPermissions):
 class OperationSurveyAPI(SquestRetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, SquestOperationSurveyPermissions]
     queryset = Operation.objects.all()
+    serializer_class = TowerSurveyFieldSerializer
 
     def get_survey_field(self, variable):
         operation = self.get_object()
