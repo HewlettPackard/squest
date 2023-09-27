@@ -29,6 +29,11 @@ class RequestList(SquestListAPIView):
 class RequestDetails(SquestRetrieveUpdateDestroyAPIView):
     queryset = Request.objects.all()
 
+    def get_object(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Request.objects.none()
+        return super().get_object()
+
     def get_serializer_class(self):
         if self.request.user.has_perm("service_catalog.view_admin_survey", self.get_object()):
             return AdminRequestSerializer

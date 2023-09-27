@@ -26,11 +26,12 @@ class FormGenerator:
                 self.operation and self.squest_instance):
             self.is_initial_form = True
         if self.operation is None:
-            self.operation = self.squest_request.operation
+            if self.squest_request:
+                self.operation = self.squest_request.operation
         self.django_form = {}
 
     def generate_form(self):
-        if not self.operation.tower_survey_fields.exists():
+        if self.operation is None or not self.operation.tower_survey_fields.exists():
             # empty survey, no fields to generate
             return self.django_form
         if self.is_initial_form:
