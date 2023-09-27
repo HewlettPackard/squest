@@ -20,7 +20,7 @@ from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 
 from service_catalog.views.login import LoginView
@@ -33,12 +33,12 @@ from service_catalog.views import markdown_uploader, mail_test
 schema_view = get_schema_view(
     openapi.Info(
         title="Squest API",
-        default_version='v1',
-        description="Test description",
+        default_version='v2',
+        description="API to access Squest",
         license=openapi.License(name="Apache-2.0 License")
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=(IsAuthenticated, ),
     url=settings.SQUEST_HOST
 )
 

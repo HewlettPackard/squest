@@ -22,8 +22,4 @@ class ServiceListCreate(SquestListCreateAPIView):
 
 class ServiceDetails(SquestRetrieveUpdateDestroyAPIView):
     serializer_class = ServiceSerializer
-
-    def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Service.objects.none()
-        return Service.objects.all()
+    queryset = Service.objects.all()

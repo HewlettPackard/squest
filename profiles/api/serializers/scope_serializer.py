@@ -42,7 +42,7 @@ class AbstractScopeCreateRBACSerializer(ModelSerializer):
         from profiles.models import Role
         super(AbstractScopeCreateRBACSerializer, self).__init__(*args, **kwargs)
         if self.instance is None:
-            self.fields["users"].choices = User.objects.values_list('id', 'username')
+            self.fields["users"].choices = User.objects.none().values_list('id', 'username')
         else:
             self.fields["users"].choices = self.instance.get_potential_users().values_list('id', 'username')
         self.fields["roles"].choices = Role.objects.values_list('id', 'name')
