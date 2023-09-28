@@ -34,6 +34,7 @@ BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
 BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
 DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
 DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
+REDIS_CACHE_USER = os.environ.get('REDIS_USER', 'default')
 REDIS_CACHE_PASSWORD = os.environ.get('REDIS_PASSWORD', 'redis_secret_password')
 REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
 REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
@@ -468,17 +469,10 @@ if TESTING:
         }
     }
 
-# -----------------------------------------
-# Cache https://github.com/jazzband/django-redis
-# -----------------------------------------
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_CACHE_HOST}:{REDIS_CACHE_PORT}/0",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": REDIS_CACHE_PASSWORD
-        }
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{REDIS_CACHE_USER}:{REDIS_CACHE_PASSWORD}@{REDIS_CACHE_HOST}:{REDIS_CACHE_PORT}/0",
     }
 }
 if TESTING or DEBUG:
