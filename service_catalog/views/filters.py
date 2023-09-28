@@ -142,7 +142,7 @@ def addstr(arg1, arg2):
 @register.filter(name="squest_date_format")
 def squest_date_format(date_to_format):
     if date_to_format is None:
-        return date_to_format
+        return ""
     return date_to_format.astimezone().strftime(settings.DATE_FORMAT)
 
 
