@@ -40,11 +40,11 @@ prometheus-client = "^0.17.1"
 redis = "^5.0.1"
 django-cachalot = "^2.6.1"
 django-mysql = "^4.11.0"
-psycopg2 = "^2.9.7"
 django-formtools = "^2.4.1"
 tablib = "^3.5.0"
 setuptools = "^68.2.2"
 hiredis = "^2.2.3"
+psycopg = "^3.1.12"
 
 [tool.poetry.dev-dependencies]
 
