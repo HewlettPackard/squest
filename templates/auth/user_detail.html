@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}
     {{ object.username }} | User
-{%  endblock %}
+{% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block main %}
@@ -19,19 +19,63 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane" id="details">
-                                <dl class="row ml-4">
-                                    <dt class="col-sm-4">First name</dt>
-                                    <dd class="col-sm-8">{{ object.first_name }}</dd>
-                                    <dt class="col-sm-4">Last name</dt>
-                                    <dd class="col-sm-8">{{ object.last_name }}</dd>
-                                    <dt class="col-sm-4">Email</dt>
-                                    <dd class="col-sm-8">{{ object.email }}</dd>
-                                    <dt class="col-sm-4">Is active</dt>
-                                    <dd class="col-sm-8">{% if object.is_active %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
-                                    <dt class="col-sm-4">Is staff</dt>
-                                    <dd class="col-sm-8">{% if object.is_staff %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
-                                    <dt class="col-sm-4">Is admin</dt>
-                                    <dd class="col-sm-8">{% if object.is_superuser %}<i class="fas fa-circle text-success"></i>{% else %}<i class="fas fa-circle text-secondary"></i>{% endif %}</dd>
+                                <dl class="row">
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Username</dt>
+                                        <dd class="col-sm-8">{{ user.get_username }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Email</dt>
+                                        <dd class="col-sm-8">{{ user.email }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">First name</dt>
+                                        <dd class="col-sm-8">{{ user.get_short_name }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Last Name</dt>
+                                        <dd class="col-sm-8">{{ user.last_name }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Last login</dt>
+                                        <dd class="col-sm-8">{{ user.last_login }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Created</dt>
+                                        <dd class="col-sm-8">{{ user.date_joined }}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <dt class="col-sm-4">Is active</dt>
+                                        <dd class="col-sm-8">
+                                            {% if object.is_active %}
+                                                <i class="fas fa-circle text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-circle text-secondary"></i>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dt class="col-sm-4">Is staff</dt>
+                                        <dd class="col-sm-8">
+                                            {% if object.is_staff %}
+                                                <i class="fas fa-circle text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-circle text-secondary"></i>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <dt class="col-sm-4">Is admin</dt>
+                                        <dd class="col-sm-8">
+                                            {% if object.is_superuser %}
+                                                <i class="fas fa-circle text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-circle text-secondary"></i>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
                                 </dl>
                             </div>
                             <div class="tab-pane" id="instances">
