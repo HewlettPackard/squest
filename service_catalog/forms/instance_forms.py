@@ -6,11 +6,6 @@ from service_catalog.models.instance import InstanceState
 
 
 class InstanceForm(SquestModelForm):
-    state = forms.ChoiceField(
-        choices=InstanceState.choices,
-        required=True,
-        widget=forms.Select())
-
     class Meta:
         model = Instance
         fields = "__all__"
