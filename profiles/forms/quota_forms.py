@@ -27,6 +27,10 @@ class QuotaForm(SquestForm):
                 if current_quota is not None:
                     default_value = current_quota.limit
                     consumed = current_quota.consumed
+                else:
+                    current_quota = Quota(scope=self.scope, attribute_definition=attribute_definition)
+                    consumed = current_quota.consumed
+
                 self.fields[f"attribute_definition_{attribute_definition.id}"] = \
                     IntegerField(label=attribute_definition.name,
                                  min_value=consumed,
@@ -49,6 +53,9 @@ class QuotaForm(SquestForm):
                 if current_quota:
                     consumed = current_quota.consumed
                     default_value = current_quota.limit
+                else:
+                    current_quota = Quota(scope=self.scope, attribute_definition=parent_quota.attribute_definition)
+                    consumed = current_quota.consumed
                 max_value = parent_quota.available + default_value
                 self.fields[f"attribute_definition_{parent_quota.attribute_definition.id}"] = \
                     IntegerField(label=parent_quota.attribute_definition.name,
