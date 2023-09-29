@@ -1,4 +1,4 @@
-from profiles.models import GlobalPermission
+from profiles.models import GlobalScope
 from service_catalog.api.serializers.approval_step_state_serializer import ApprovalStepStateSerializer
 from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer
 from service_catalog.models import ApprovalWorkflow

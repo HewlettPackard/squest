@@ -7,6 +7,6 @@ from profiles.views.organization import *
 from profiles.views.scope import *
 from profiles.views.user import *
 from profiles.views.role import *
-from profiles.views.globalpermission import *
+from profiles.views.globalscope import *
 from profiles.views.quota import *
 from profiles.views.permission import *

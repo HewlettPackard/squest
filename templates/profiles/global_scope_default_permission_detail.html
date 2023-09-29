@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}
+    Default permissions
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    {% has_perm request.user "profiles.change_globalscope" object as can_change_global_scope %}
+    {% if can_change_global_scope %}
+        <a href="{% url 'profiles:globalscope_edit' %}"
+           class="btn btn-primary">
+            <i class="fas fa-pencil-alt"></i>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#global-permissions" data-toggle="tab">Global permissions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#owner-permissions" data-toggle="tab">Owner permissions</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="global-permissions">
+                                <div class="callout callout-info">
+                                    List of permissions granted to all users
+                                </div>
+                                {% render_table global_permissions %}
+                            </div>
+                            <div class="tab-pane" id="owner-permissions">
+                                <div class="callout callout-info">
+                                    List of permissions granted to the owner of an Instance, Request and Support
+                                </div>
+                                {% render_table owner_permissions %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+{% endblock %}

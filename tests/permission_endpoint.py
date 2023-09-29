@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from profiles.models.squest_permission import Permission
 from django.urls import reverse, NoReverseMatch
 
-from profiles.models import GlobalPermission, Role
+from profiles.models import GlobalScope, Role
 
 
 class TestingContextView:
@@ -97,11 +97,11 @@ class TestingDeleteContextView(TestingContextView):
 class TestPermissionEndpoint(TestCase):
     def setUp(self):
         super().setUp()
-        self.global_permission = GlobalPermission.load()
-        self.global_permission.default_permissions.clear()
+        self.global_scope = GlobalScope.load()
+        self.global_scope.global_permissions.clear()
         self.testing_user = User.objects.create_user('testing_view_user', 'testing_view_user@hpe.com', "password")
         self.empty_role = Role.objects.create(name='empty', description='empty for testing')
-        self.global_permission.add_user_in_role(self.testing_user, self.empty_role)
+        self.global_scope.add_user_in_role(self.testing_user, self.empty_role)
         self.client.force_login(self.testing_user)
 
     def run_permissions_tests(self, testing_list):

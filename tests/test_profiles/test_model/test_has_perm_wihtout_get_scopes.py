@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from profiles.models.squest_permission import Permission
-from profiles.models import Organization, GlobalPermission, Role
+from profiles.models import Organization, GlobalScope, Role
 
 from tests.utils import TransactionTestUtils
 
@@ -18,8 +18,8 @@ class TestModelHasPerm(TransactionTestUtils):
 
         self.empty_role = Role.objects.create(name="Empty role")
 
-        self.global_perm = GlobalPermission.load()
-        self.global_perm.default_permissions.set([])
+        self.global_scope = GlobalScope.load()
+        self.global_scope.global_permissions.set([])
 
     def _get_action_perm(self, obj_class, action):
         return f"{obj_class._meta.app_label}.{action}_{obj_class._meta.model_name}"
@@ -37,7 +37,7 @@ class TestModelHasPerm(TransactionTestUtils):
         print(f"testing that {user} cannot {action} on {obj_class}")
         self.assertFalse(user.has_perm(self._get_action_perm(obj_class, action)))
 
-    def __test_has_perm_generic_with_global_perm_user_permission(self, obj_class, action):
+    def __test_has_perm_generic_with_global_scope_user_permission(self, obj_class, action):
 
         permission = self._get_perm(obj_class, action)
 
@@ -46,14 +46,14 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj_class)
 
         # Add {action}_{object} to everyone
-        self.global_perm.default_permissions.add(permission)
+        self.global_scope.global_permissions.add(permission)
 
         # user1 can see it
         self._assert_user_can(action, self.user1, obj_class)
         self._assert_user_can(action, self.superuser, obj_class)
 
         # Remove view_instance to everyone
-        self.global_perm.default_permissions.remove(permission)
+        self.global_scope.global_permissions.remove(permission)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj_class)
@@ -61,9 +61,9 @@ class TestModelHasPerm(TransactionTestUtils):
 
     def test_has_perm_instance_global_user_perm(self):
         for action in ["add", "view", "change", "delete"]:
-            self.__test_has_perm_generic_with_global_perm_user_permission(Permission, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(Permission, action)
 
-    def __test_has_perm_generic_with_global_perm_role(self, obj_class, action):
+    def __test_has_perm_generic_with_global_scope_role(self, obj_class, action):
 
         permission = self._get_perm(obj_class, action)
         role = Role.objects.create(name=f"{action} on {obj_class._meta.model_name}")
@@ -75,7 +75,7 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj_class)
 
         # Add {action}_{object} to everyone
-        self.global_perm.add_user_in_role(self.user1, role)
+        self.global_scope.add_user_in_role(self.user1, role)
 
         # user1 can see it
         self._assert_user_can(action, self.user1, obj_class)
@@ -83,13 +83,13 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj_class)
 
         # Remove view_instance to everyone
-        self.global_perm.remove_user_in_role(self.user1, role)
+        self.global_scope.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj_class)
         self._assert_user_cant(action, self.user1, obj_class)
         self._assert_user_can(action, self.superuser, obj_class)
 
-    def test_has_perm_instance_global_perm_role(self):
+    def test_has_perm_instance_global_scope_role(self):
         for action in ["add", "view", "change", "delete"]:
-            self.__test_has_perm_generic_with_global_perm_role(Permission, action)
+            self.__test_has_perm_generic_with_global_scope_role(Permission, action)

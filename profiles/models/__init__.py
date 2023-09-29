@@ -7,6 +7,6 @@ from profiles.models.profile import Profile
 from profiles.models.request_notification import RequestNotification
 from profiles.models.instance_notification import InstanceNotification
 from profiles.models.scope import AbstractScope, Scope
-from profiles.models.globalpermission import GlobalPermission
+from profiles.models.globalscope import GlobalScope
 from profiles.models.quota import Quota
 from profiles.models.squest_permission import Permission

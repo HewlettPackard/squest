@@ -15,12 +15,12 @@ urlpatterns = [
     path('notification-filter/instance/', InstanceNotificationFilterListCreate.as_view(), name='api_instancenotification_list_create'),
     path('notification-filter/instance/<int:pk>/', InstanceNotificationFilterDetails.as_view(), name='api_instancenotification_details'),
 
-    # Global Permission
-    path('global-permission/', GlobalPermissionDetails.as_view(), name='api_globalpermission_details'),
-    path('global-permission/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_globalpermission_rbac_create"),
-    path('global-permission/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_globalpermission_rbac_delete"),
-    path('global-permission/<int:scope_id>/user/<int:user_id>/delete/', ScopeUserDelete.as_view(), name="api_globalpermission_user_delete"),
-    
+    # Global scope
+    path('global-scope/', GlobalScopeDetails.as_view(), name='api_globalscope_details'),
+    path('global-scope/<int:scope_id>/role/create/', ScopeRBACCreate.as_view(), name="api_globalscope_rbac_create"),
+    path('global-scope/<int:scope_id>/role/<int:role_id>/user/<int:user_id>/delete/', ScopeRBACDelete.as_view(), name="api_globalscope_rbac_delete"),
+    path('global-scope/<int:scope_id>/user/<int:user_id>/delete/', ScopeUserDelete.as_view(), name="api_globalscope_user_delete"),
+
     # Scope
     path('scope/<int:pk>/', RedirectScopeDetails.as_view(), name="api_scope_details"),
 

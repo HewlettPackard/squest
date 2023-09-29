@@ -144,12 +144,12 @@ def generate_sidebar(user):
         ],
         'Access': [
             {
-                'name': 'Global permission',
-                'view_name': 'profiles:globalpermission_rbac',
+                'name': 'Global scope',
+                'view_name': 'profiles:globalscope_rbac',
                 'icon': 'fas fa-globe',
-                'permission_required': 'profiles.view_users_globalpermission',
+                'permission_required': 'profiles.view_users_globalscope',
                 'active': [
-                    "globalpermission_rbac", "globalpermission_rbac_create", "globalpermission_rbac_delete"
+                    "globalscope_rbac", "globalscope_rbac_create", "globalscope_rbac_delete"
                 ]
             },
             {
@@ -233,11 +233,11 @@ def generate_sidebar(user):
                     },
                     {
                         'name': 'Default permissions',
-                        'view_name': 'profiles:globalpermission_default_permissions',
+                        'view_name': 'profiles:globalscope_default_permissions',
                         'icon': 'fas fa-check',
-                        'permission_required': 'profiles.list_globalpermission',
+                        'permission_required': 'profiles.list_globalscope',
                         'active': [
-                            "globalpermission_default_permissions", "globalpermission_edit"
+                            "globalscope_default_permissions", "globalscope_edit"
                         ]
                     }
                 ],

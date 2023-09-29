@@ -66,9 +66,22 @@ class Request(SquestModel):
 
     @classmethod
     def get_q_filter(cls, user, perm):
+        app_label, codename = perm.split(".")
+        from profiles.models import GlobalScope
+        ownerpermission = GlobalScope.load()
+        additional_q = Q()
+        if ownerpermission.owner_permissions.filter(
+                codename=codename,
+                content_type__app_label=app_label
+        ).exists():
+            additional_q = Q(user=user)
+
         return Q(
             instance__in=Instance.get_queryset_for_user(user, perm)
-        )
+        ) | additional_q
+
+    def is_owner(self, user):
+        return self.instance.is_owner(user) or self.user == user
 
     def get_scopes(self):
         return self.instance.get_scopes()
