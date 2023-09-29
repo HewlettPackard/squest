@@ -6,11 +6,27 @@ from django_tables2 import RequestConfig
 from Squest.utils.squest_views import *
 from profiles.filters.quota import QuotaFilter
 from profiles.forms.quota_forms import QuotaForm
-from profiles.models import Scope, Quota
+from profiles.models import Scope, Quota, Team
 from profiles.tables.instance_consumption_table import InstanceConsumptionTable
 from profiles.tables.quota_table import QuotaTable
 from profiles.tables.team_quota_limit_table import TeamQuotaLimitTable
 from resource_tracker_v2.models import ResourceAttribute
+
+
+def get_breadcrumbs_for_scope(scope):
+    class_name = scope.__class__.__name__
+    breadcrumbs = [
+        {'text': class_name, 'url': reverse(f'profiles:{class_name.lower()}_list')},
+        {'text': scope.name, 'url': scope.get_absolute_url() + '#quotas'},
+        {'text': 'Quotas', 'url': ''},
+
+    ]
+    if isinstance(scope, Team):
+        breadcrumbs = [
+                          {'text': "Organization", 'url': reverse(f'profiles:organization_list')},
+                          {'text': scope.org, 'url': scope.org.get_absolute_url() + '#quotas'},
+                      ] + breadcrumbs
+    return breadcrumbs
 
 
 class QuotaListView(SquestListView):
@@ -56,13 +72,7 @@ class QuotaEditView(SquestFormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        class_name = self.scope.get_object().__class__.__name__
-        breadcrumbs = [
-            {'text': class_name, 'url': reverse_lazy(f"profiles:{class_name.lower()}_list")},
-            {'text': f"{self.scope.name}",
-             'url': self.scope.get_absolute_url() + "#quotas"},
-            {'text': f'Quotas', 'url': ""},
-        ]
+        breadcrumbs = get_breadcrumbs_for_scope(self.scope.get_object())
         context['breadcrumbs'] = breadcrumbs
         context['action'] = "edit"
         return context

@@ -7,6 +7,13 @@ from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
 from profiles.tables.quota_table import QuotaTable
 
 
+def get_organization_breadcrumbs(team):
+    breadcrumbs = [
+        {'text': "Organization", 'url': reverse(f'profiles:organization_list')},
+        {'text': team.org, 'url': team.org.get_absolute_url()},
+    ]
+    return breadcrumbs
+
 class TeamListView(SquestListView):
     model = Team
     filterset_class = TeamFilter
@@ -19,11 +26,7 @@ class TeamDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-                                     {'text': 'Organization', 'url': reverse('profiles:organization_list')},
-                                     {'text': f'{self.object.org}', 'url': reverse('profiles:organization_details',
-                                                                                   kwargs={'pk': self.object.org.id})},
-                                 ] + context['breadcrumbs']
+        context['breadcrumbs'] = get_organization_breadcrumbs(self.object) + context['breadcrumbs']
         if self.request.user.has_perm("profiles.view_users_team", self.get_object()):
             context['users'] = UserRoleTable(self.object.users.all())
         else:
@@ -60,6 +63,11 @@ class TeamEditView(SquestUpdateView):
     model = Team
     form_class = TeamForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = get_organization_breadcrumbs(self.object) + context['breadcrumbs']
+        return context
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         # Only organizations for which a team can be created are listed.
@@ -69,3 +77,8 @@ class TeamEditView(SquestUpdateView):
 
 class TeamDeleteView(SquestDeleteView):
     model = Team
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = get_organization_breadcrumbs(self.object) + context['breadcrumbs']
+        return context
