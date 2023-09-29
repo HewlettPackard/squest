@@ -7,7 +7,6 @@
     {% has_perm request.user "service_catalog.list_instance" as can_list_instance %}
     {% has_perm request.user "service_catalog.list_request" as can_list_request %}
     {% has_perm request.user "service_catalog.list_support" as can_list_support %}
-    {% has_perm request.user "service_catalog.list_service" as can_list_service %}
     <div class="container-fluid">
         {% for announcement in announcements %}
             <div class="row">
@@ -22,7 +21,7 @@
         {% endfor %}
         <div class="row">
             <div style="flex-grow: 8">
-                {% if can_list_service and service_details %}
+                {% if service_details %}
                     <div class="card ml-2">
                         <div class="card-header">
                             <h3 class="card-title">Service overview</h3>
