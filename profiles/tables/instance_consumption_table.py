@@ -10,4 +10,4 @@ class InstanceConsumptionTable(Table):
     class Meta:
         model = ResourceAttribute
         attrs = {"id": "instance_consumption_table", "class": "table squest-pagination-tables"}
-        fields = ("resource__service_catalog_instance", "value")
+        fields = ("resource__service_catalog_instance", "resource__service_catalog_instance__requester", "value")
