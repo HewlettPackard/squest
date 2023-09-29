@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Organization, GlobalPermission, Role, Team
+from profiles.models import Organization, GlobalScope, Role, Team
 from profiles.models.squest_permission import Permission
 
 from service_catalog.models import Instance, Request, Operation, Service, JobTemplate, TowerServer, Support
@@ -20,8 +20,8 @@ class TestModelHasPerm(TransactionTestUtils):
 
         self.empty_role = Role.objects.create(name="Empty role")
 
-        self.global_perm = GlobalPermission.load()
-        self.global_perm.default_permissions.set([])
+        self.global_scope = GlobalScope.load()
+        self.global_scope.global_permissions.set([])
 
         survey = {
             "name": "test-survey",
@@ -56,7 +56,7 @@ class TestModelHasPerm(TransactionTestUtils):
         print(f"testing that {user} cannot {action} on {obj}")
         self.assertFalse(user.has_perm(self._get_action_perm(obj, action), obj))
 
-    def __test_has_perm_generic_with_global_perm_user_permission(self, obj, action):
+    def __test_has_perm_generic_with_global_scope_user_permission(self, obj, action):
 
         permission = self._get_perm(obj, action)
 
@@ -65,14 +65,14 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj)
 
         # Add {action}_{object} to everyone
-        self.global_perm.default_permissions.add(permission)
+        self.global_scope.global_permissions.add(permission)
 
         # user1 can see it
         self._assert_user_can(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
 
         # Remove view_instance to everyone
-        self.global_perm.default_permissions.remove(permission)
+        self.global_scope.global_permissions.remove(permission)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj)
@@ -81,36 +81,36 @@ class TestModelHasPerm(TransactionTestUtils):
     def test_has_perm_instance_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
-            self.__test_has_perm_generic_with_global_perm_user_permission(instance1, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(instance1, action)
 
     def test_has_perm_request_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
             request1 = Request.objects.create(instance=instance1, operation=self.operation)
-            self.__test_has_perm_generic_with_global_perm_user_permission(request1, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(request1, action)
 
     def test_has_perm_support_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
             support1 = Support.objects.create(instance=instance1)
-            self.__test_has_perm_generic_with_global_perm_user_permission(support1, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(support1, action)
 
     def test_has_perm_org_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
             org1 = Organization.objects.create(name="Organization #1")
-            self.__test_has_perm_generic_with_global_perm_user_permission(org1, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(org1, action)
 
     def test_has_perm_team_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
             org1 = Organization.objects.create(name="Organization #1")
             team1 = Team.objects.create(name="Team #1", org=org1)
-            self.__test_has_perm_generic_with_global_perm_user_permission(team1, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(team1, action)
 
-    def test_has_perm_globalperm_global_user_perm(self):
+    def test_has_perm_global_scope_global_user_perm(self):
         for action in ["add", "view", "change", "delete", "list"]:
-            self.__test_has_perm_generic_with_global_perm_user_permission(self.global_perm, action)
+            self.__test_has_perm_generic_with_global_scope_user_permission(self.global_scope, action)
 
-    def __test_has_perm_generic_with_global_perm_role(self, obj, action):
+    def __test_has_perm_generic_with_global_scope_role(self, obj, action):
 
         permission = self._get_perm(obj, action)
         role = Role.objects.create(name=f"{action} on {obj.__class__._meta.model_name}")
@@ -122,7 +122,7 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj)
 
         # Add {action}_{object} to everyone
-        self.global_perm.add_user_in_role(self.user1, role)
+        self.global_scope.add_user_in_role(self.user1, role)
 
         # user1 can see it
         self._assert_user_can(action, self.user1, obj)
@@ -130,44 +130,44 @@ class TestModelHasPerm(TransactionTestUtils):
         self._assert_user_can(action, self.superuser, obj)
 
         # Remove view_instance to everyone
-        self.global_perm.remove_user_in_role(self.user1, role)
+        self.global_scope.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_cant(action, self.user1, obj)
         self._assert_user_can(action, self.superuser, obj)
 
-    def test_has_perm_instance_global_perm_role(self):
+    def test_has_perm_instance_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
-            self.__test_has_perm_generic_with_global_perm_role(instance1, action)
+            self.__test_has_perm_generic_with_global_scope_role(instance1, action)
 
-    def test_has_perm_request_global_perm_role(self):
+    def test_has_perm_request_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
             request1 = Request.objects.create(instance=instance1, operation=self.operation)
-            self.__test_has_perm_generic_with_global_perm_role(request1, action)
+            self.__test_has_perm_generic_with_global_scope_role(request1, action)
 
-    def test_has_perm_support_global_perm_role(self):
+    def test_has_perm_support_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
             instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
             support1 = Support.objects.create(instance=instance1)
-            self.__test_has_perm_generic_with_global_perm_role(support1, action)
+            self.__test_has_perm_generic_with_global_scope_role(support1, action)
 
-    def test_has_perm_org_global_perm_role(self):
+    def test_has_perm_org_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
             org1 = Organization.objects.create(name="Organization #1")
-            self.__test_has_perm_generic_with_global_perm_role(org1, action)
+            self.__test_has_perm_generic_with_global_scope_role(org1, action)
 
-    def test_has_perm_team_global_perm_role(self):
+    def test_has_perm_team_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
             org1 = Organization.objects.create(name="Organization #1")
             team1 = Team.objects.create(name="Team #1", org=org1)
-            self.__test_has_perm_generic_with_global_perm_role(team1, action)
+            self.__test_has_perm_generic_with_global_scope_role(team1, action)
 
-    def test_has_perm_globalperm_global_perm_role(self):
+    def test_has_perm_global_scope_global_scope_role(self):
         for action in ["add", "view", "change", "delete", "list"]:
-            self.__test_has_perm_generic_with_global_perm_role(self.global_perm, action)
+            self.__test_has_perm_generic_with_global_scope_role(self.global_scope, action)
 
     def __test_has_perm_generic_with_scope_role(self, obj, action, scope):
 

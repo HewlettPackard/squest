@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}
-    Default permissions
+    Global scope
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
-{% block header_button %}
-    {% has_perm request.user "profiles.change_globalpermission" object as can_change_global_perm %}
-    {% if can_change_global_perm %}
-        <a href="{% url 'profiles:globalpermission_edit' %}"
-           class="btn btn-primary">
-            <i class="fas fa-pencil-alt"></i>
+{% block extra_header_button %}
+    {% has_perm request.user "profiles.add_users_globalscope" object as can_add_users %}
+    {% if can_add_users %}
+        <a href="{% url 'profiles:globalscope_rbac_create' object.id %}"
+           class="btn btn-success"><i class="fas fa-user-plus"></i> Add Global RBAC
         </a>
     {% endif %}
 {% endblock %}
 
 {% block main %}
+    {% has_perm request.user "profiles.delete_users_globalscope" object as can_delete_user %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="callout callout-info">
-                            List of permissions granted to all users
+                            Permissions granted at Squest level
                         </div>
-                        {% render_table default_permissions %}
+                        {% render_table users %}
                     </div>
                 </div>
             </div>

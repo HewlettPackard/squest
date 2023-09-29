@@ -6,6 +6,7 @@ from . import views
 
 app_name = 'profiles'
 
+
 urlpatterns = [
     # Personal URLs ####################################################################################################
 
@@ -46,13 +47,13 @@ urlpatterns = [
     path('user/', views.UserListView.as_view(), name='user_list'),
     path('user/<int:pk>/', views.UserDetailsView.as_view(), name='user_details'),
 
-    # Global Permission
-    path('global-permission/', views.GlobalPermissionRBACView.as_view(), name="globalpermission_rbac"),
-    path('global-permission/default-permission/', views.GlobalPermissionDefaultPermissionView.as_view(), name="globalpermission_default_permissions"),
-    path('global-permission/edit/', views.GlobalPermissionEditView.as_view(), name="globalpermission_edit"),
-    path('global-permission/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalpermission_rbac_create"),
-    path('global-permission/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalpermission_rbac_delete"),
-    path('global-permission/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="globalpermission_rbac_delete"),
+    # Global scope
+    path('default-permission/', views.GlobalScopeDefaultPermissionView.as_view(), name="globalscope_default_permissions"),
+    path('global-scope/', views.GlobalScopeRBACView.as_view(), name="globalscope_rbac"),
+    path('global-scope/edit/', views.GlobalScopeEditView.as_view(), name="globalscope_edit"),
+    path('global-scope/<int:scope_id>/role/create/', views.ScopeRBACCreateView.as_view(), name="globalscope_rbac_create"),
+    path('global-scope/<int:pk>/role/<int:role_id>/user/<int:user_id>/delete/', views.ScopeRBACDeleteView.as_view(), name="globalscope_rbac_delete"),
+    path('global-scope/<int:pk>/user/<int:user_id>/delete/', views.ScopeRBACDeleteUserView.as_view(), name="globalscope_rbac_delete"),
 
     # Organization
     path('organization/', views.OrganizationListView.as_view(), name="organization_list"),

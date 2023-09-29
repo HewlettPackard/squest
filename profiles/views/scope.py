@@ -9,13 +9,13 @@ from django.views.generic import RedirectView
 
 from Squest.utils.squest_views import SquestFormView, SquestDeleteView
 from profiles.forms.scope_form import ScopeCreateRBACForm
-from profiles.models import RBAC, GlobalPermission, AbstractScope, Team
+from profiles.models import RBAC, GlobalScope, AbstractScope, Team
 
 
 def get_breadcrumbs_for_scope(scope):
     class_name = scope.__class__.__name__
-    if isinstance(scope, GlobalPermission):
-        breadcrumbs = [{'text': 'Global permission', 'url': reverse('profiles:globalpermission_rbac')}]
+    if isinstance(scope, GlobalScope):
+        breadcrumbs = [{'text': 'Global scope', 'url': reverse('profiles:globalscope_rbac')}]
     else:
         breadcrumbs = [
             {'text': class_name, 'url': reverse(f'profiles:{class_name.lower()}_list')},

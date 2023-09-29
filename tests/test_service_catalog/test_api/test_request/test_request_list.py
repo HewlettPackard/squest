@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.models import Permission, GlobalPermission, Role
+from profiles.models import Permission, GlobalScope, Role
 from service_catalog.models import Request, Instance
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
@@ -80,12 +80,12 @@ class TestApiRequestList(BaseTestRequestAPI):
             Permission.objects.get_by_natural_key(codename="view_request", app_label="service_catalog",
                                                   model="request")
         )
-        globalperm = GlobalPermission.load()
+        global_scope = GlobalScope.load()
         role_with_perm_admin_survey = Role.objects.create(name="Role with admin survey")
         role_with_perm_admin_survey.permissions.add(
             Permission.objects.get_by_natural_key(codename="view_admin_survey", app_label="service_catalog",
                                                   model="request"))
-        globalperm.add_user_in_role(self.standard_user, role_with_perm_admin_survey)
+        global_scope.add_user_in_role(self.standard_user, role_with_perm_admin_survey)
 
 
         self.client.force_login(user=self.standard_user)

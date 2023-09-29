@@ -8,9 +8,9 @@ flowchart TD
     Organizations --> Users
 ```
 
-## Global permissions
+## Global scopes
 
-Global permissions are permissions that are set to a particular user on the "Global" level.
+Global scopes are permissions that are set to a particular user on the "Global" level.
 A permission set as this level is granted across all organizations and teams.
 
 ## Organizations and Teams

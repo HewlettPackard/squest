@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Organization, GlobalPermission, Role, Team
+from profiles.models import Organization, GlobalScope, Role, Team
 from profiles.models.squest_permission import Permission
 from service_catalog.models import TowerServer
 
@@ -12,7 +12,7 @@ class TestModelWhoHasPermOnOtherModel(TransactionTestUtils):
     def setUp(self):
         super(TestModelWhoHasPermOnOtherModel, self).setUp()
 
-        self.global_perm = GlobalPermission.load()
+        self.global_scope = GlobalScope.load()
         self.empty_role = Role.objects.create(name="Empty role")
 
         self.test_org = Organization.objects.create(name="Org")
@@ -39,29 +39,29 @@ class TestModelWhoHasPermOnOtherModel(TransactionTestUtils):
         self.assertQuerysetEqualID(user_with_permissions, User.objects.filter(is_superuser=True))
         self.assertNotIn(self.user_with_no_perm, user_with_permissions)
 
-    def test_who_has_perm_on_tower_server_globalperm_default_permissions(self):
+    def test_who_has_perm_on_tower_server_global_scope_global_permissions(self):
         # user_with_permissions is empty
         user_with_permissions = self.tower_server.who_has_perm("service_catalog.view_towerserver")
         self.assertQuerysetEqualID(user_with_permissions, User.objects.filter(is_superuser=True))
         self.assertNotIn(self.user_with_no_perm, user_with_permissions)
 
-        # Permission given in GlobalPerm as default_permissions
-        self.global_perm.default_permissions.add(self.view_tower_server)
+        # Permission given in GlobalScope as global_permissions
+        self.global_scope.global_permissions.add(self.view_tower_server)
 
         # Permissions given to all Squest user
         user_with_permissions = self.tower_server.who_has_perm("service_catalog.view_towerserver")
         self.assertQuerysetEqualID(user_with_permissions, User.objects.all())
         self.assertIn(self.user_with_no_perm, user_with_permissions)
 
-    def test_who_has_perm_on_tower_server_globalperm_rbac(self):
+    def test_who_has_perm_on_tower_server_global_scope_rbac(self):
         # Test Team RBAC
         ## user is not in Team
         user_with_permissions = self.tower_server.who_has_perm("service_catalog.view_towerserver")
         self.assertNotIn(self.user, user_with_permissions)
         self.assertNotIn(self.user_with_no_perm, user_with_permissions)
 
-        ## Add view_tower_server_role in globalperm for self.user
-        self.global_perm.add_user_in_role(self.user, self.view_tower_server_role)
+        ## Add view_tower_server_role in global_scope for self.user
+        self.global_scope.add_user_in_role(self.user, self.view_tower_server_role)
 
         ## user is now in the list
         user_with_permissions = self.tower_server.who_has_perm("service_catalog.view_towerserver")

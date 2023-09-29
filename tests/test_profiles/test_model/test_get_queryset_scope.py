@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Team, Organization, GlobalPermission, Role
+from profiles.models import Team, Organization, GlobalScope, Role
 from profiles.models.squest_permission import Permission
 
 from tests.utils import TransactionTestUtils
@@ -15,7 +15,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self.user3 = User.objects.create_user('user3', 'user3@hpe.com', "password")
         self.superuser = User.objects.create_superuser("superuser")
 
-        self.global_perm = GlobalPermission.load()
+        self.global_scope = GlobalScope.load()
         self.empty_role = Role.objects.create(name="Empty role")
 
     def _assert_can_see_everything(self, cls, user):
@@ -28,73 +28,73 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
             cls.get_queryset_for_user(user, f"{cls._meta.app_label}.view_{cls._meta.model_name}"),
             cls.objects.none())
 
-    def test_get_queryset_global_permission_with_global_permission_role(self):
+    def test_get_queryset_global_scope_with_global_scope_role(self):
         """
-        Test that we can see GlobalPermission if permission is given in a GlobalPermission's role
+        Test that we can see GlobalScope if permission is given in a GlobalScope's role
         """
 
         # Only superuser can see
-        self._assert_can_see_nothing(GlobalPermission, self.user1)
-        self._assert_can_see_nothing(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
+        self._assert_can_see_nothing(GlobalScope, self.user1)
+        self._assert_can_see_nothing(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
 
-        # Create role to view GlobalPermission
-        role = Role.objects.create(name="View global permission")
+        # Create role to view GlobalScope
+        role = Role.objects.create(name="View global scope")
         permission_object = Permission.objects.get(content_type__app_label="profiles",
-                                                   content_type__model="globalpermission",
-                                                   codename="view_globalpermission")
+                                                   content_type__model="globalscope",
+                                                   codename="view_globalscope")
         role.permissions.add(permission_object)
 
-        # Assigne role to view GlobalPermission to user1
-        self.global_perm.add_user_in_role(self.user1, role)
+        # Assigne role to view GlobalScope to user1
+        self.global_scope.add_user_in_role(self.user1, role)
 
         # Only superuser and user1 can see it
-        self._assert_can_see_everything(GlobalPermission, self.user1)
-        self._assert_can_see_nothing(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
+        self._assert_can_see_everything(GlobalScope, self.user1)
+        self._assert_can_see_nothing(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
 
-        # remove role to view GlobalPermission to user1
-        self.global_perm.remove_user_in_role(self.user1, role)
-
-        # Only superuser can see
-        self._assert_can_see_nothing(GlobalPermission, self.user1)
-        self._assert_can_see_nothing(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
-
-    def test_get_queryset_global_permission_with_global_default_permissions(self):
-        """
-        Test that we can see GlobalPermission if permission is given in a GlobalPermission's permission
-        """
+        # remove role to view GlobalScope to user1
+        self.global_scope.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
-        self._assert_can_see_nothing(GlobalPermission, self.user1)
-        self._assert_can_see_nothing(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
+        self._assert_can_see_nothing(GlobalScope, self.user1)
+        self._assert_can_see_nothing(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
 
-        # Create permission to view GlobalPermission
+    def test_get_queryset_global_scope_with_global_global_permissions(self):
+        """
+        Test that we can see GlobalScope if permission is given in a GlobalScope's permission
+        """
+
+        # Only superuser can see
+        self._assert_can_see_nothing(GlobalScope, self.user1)
+        self._assert_can_see_nothing(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
+
+        # Create permission to view GlobalScope
         permission_object = Permission.objects.get(content_type__app_label="profiles",
-                                                   content_type__model="globalpermission",
-                                                   codename="view_globalpermission")
+                                                   content_type__model="globalscope",
+                                                   codename="view_globalscope")
 
         # Assign permission to all squest user without exception
-        self.global_perm.default_permissions.add(permission_object)
+        self.global_scope.global_permissions.add(permission_object)
 
         # Everyone can see it
-        self._assert_can_see_everything(GlobalPermission, self.user1)
-        self._assert_can_see_everything(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
+        self._assert_can_see_everything(GlobalScope, self.user1)
+        self._assert_can_see_everything(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
 
         # Remove permission to all squest user without exception
-        self.global_perm.default_permissions.remove(permission_object)
+        self.global_scope.global_permissions.remove(permission_object)
 
         # Only superuser can see
-        self._assert_can_see_nothing(GlobalPermission, self.user1)
-        self._assert_can_see_nothing(GlobalPermission, self.user2)
-        self._assert_can_see_everything(GlobalPermission, self.superuser)
+        self._assert_can_see_nothing(GlobalScope, self.user1)
+        self._assert_can_see_nothing(GlobalScope, self.user2)
+        self._assert_can_see_everything(GlobalScope, self.superuser)
 
-    def test_get_queryset_organization_with_global_permission_role(self):
+    def test_get_queryset_organization_with_global_scope_role(self):
         """
-        Test that we can see Organization if permission is given in a GlobalPermission's role
+        Test that we can see Organization if permission is given in a GlobalScope's role
         """
 
         # Only superuser can see
@@ -110,7 +110,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         role.permissions.add(permission_object)
 
         # Assign role to view Organization to user1
-        self.global_perm.add_user_in_role(self.user1, role)
+        self.global_scope.add_user_in_role(self.user1, role)
 
         # Create a new organization
         org1 = Organization.objects.create(name="Organization #1")
@@ -123,16 +123,16 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Organization, self.superuser)
 
         # Remove permission to user1
-        self.global_perm.remove_user_in_role(self.user1, role)
+        self.global_scope.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
         self._assert_can_see_nothing(Organization, self.user1)
         self._assert_can_see_nothing(Organization, self.user2)
         self._assert_can_see_everything(Organization, self.superuser)
 
-    def test_get_queryset_organization_with_global_permission__default_permissions(self):
+    def test_get_queryset_organization_with_global_scope__global_permissions(self):
         """
-        Test that we can see Organization if permission is given in a GlobalPermission's perm
+        Test that we can see Organization if permission is given in a GlobalScope's perm
         """
 
         # Only superuser can see
@@ -146,7 +146,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
                                                    codename="view_organization")
 
         # Assign permission to all users
-        self.global_perm.default_permissions.add(permission_object)
+        self.global_scope.global_permissions.add(permission_object)
 
         # Create a new organization
         org1 = Organization.objects.create(name="Organization #1")
@@ -159,16 +159,16 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Organization, self.superuser)
 
         # Remove permission to all users
-        self.global_perm.default_permissions.remove(permission_object)
+        self.global_scope.global_permissions.remove(permission_object)
 
         # Only superuser can see
         self._assert_can_see_nothing(Organization, self.user1)
         self._assert_can_see_nothing(Organization, self.user2)
         self._assert_can_see_everything(Organization, self.superuser)
 
-    def test_get_queryset_team_with_global_permission_role(self):
+    def test_get_queryset_team_with_global_scope_role(self):
         """
-        Test that we can see Team if permission is given in a GlobalPermission's role
+        Test that we can see Team if permission is given in a GlobalScope's role
         """
         # Only superuser can see
         self._assert_can_see_nothing(Team, self.user1)
@@ -183,7 +183,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         role.permissions.add(permission_object)
 
         # Assign role to user1
-        self.global_perm.add_user_in_role(self.user1, role)
+        self.global_scope.add_user_in_role(self.user1, role)
 
         # Create a new organization/team
         org1 = Organization.objects.create(name="Organization #1")
@@ -197,16 +197,16 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Team, self.superuser)
 
         # Remove role to user1
-        self.global_perm.remove_user_in_role(self.user1, role)
+        self.global_scope.remove_user_in_role(self.user1, role)
 
         # Only superuser can see
         self._assert_can_see_nothing(Team, self.user1)
         self._assert_can_see_nothing(Team, self.user2)
         self._assert_can_see_everything(Team, self.superuser)
 
-    def test_get_queryset_team_with_global_permission__default_permissions(self):
+    def test_get_queryset_team_with_global_scope__global_permissions(self):
         """
-        Test that we can see Team if permission is given in a GlobalPermission's perm
+        Test that we can see Team if permission is given in a GlobalScope's perm
         """
         # Only superuser can see
         self._assert_can_see_nothing(Team, self.user1)
@@ -217,7 +217,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         permission_object = Permission.objects.get(content_type__app_label="profiles",
                                                    content_type__model="team",
                                                    codename="view_team")
-        self.global_perm.default_permissions.add(permission_object)
+        self.global_scope.global_permissions.add(permission_object)
 
         # Create a new organization/team
         org1 = Organization.objects.create(name="Organization #1")
@@ -231,7 +231,7 @@ class TestModelScopeGetQueryset(TransactionTestUtils):
         self._assert_can_see_everything(Team, self.superuser)
 
         # Remove role to everyone
-        self.global_perm.default_permissions.remove(permission_object)
+        self.global_scope.global_permissions.remove(permission_object)
 
         # Only superuser can see
         self._assert_can_see_nothing(Team, self.user1)

@@ -12,7 +12,7 @@
 {% has_perm request.user "profiles.list_team" as can_list_team %}
 {% has_perm request.user "auth.list_user" as can_list_user %}
 {% has_perm request.user "service_catalog.list_towerserver" as can_list_towerserver %}
-{% has_perm request.user "profiles.list_globalpermission" as can_list_globalpermission %}
+{% has_perm request.user "profiles.list_globalscope" as can_list_globalscope %}
 {% has_perm request.user "profiles.list_role" as can_list_role %}
 {% has_perm request.user "auth.list_permission" as can_list_permission %}
 {% has_perm request.user "service_catalog.list_globalhook" as can_list_globalhook %}

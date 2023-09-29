@@ -5,7 +5,7 @@ from profiles.models.squest_permission import Permission
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
-from profiles.models import GlobalPermission
+from profiles.models import GlobalScope
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class SquestRBACBackend(BaseBackend):
         logger.debug(
             f"has perm called for user_obj={user_obj},perm={perm},obj={obj},type={obj._meta.label if obj else None}")
         if obj is None:
-            scope = GlobalPermission.load()
+            scope = GlobalScope.load()
             permission_granted = Permission.objects.filter(Q(globalpermission=scope,
 
                                                              codename=codename,
@@ -79,5 +79,17 @@ class SquestRBACBackend(BaseBackend):
                                                              codename=codename,
                                                              content_type__app_label=app_label)
                                                            ).exists()
+        if permission_granted:
+            cache.set(key, permission_granted, 60)
+            return permission_granted
+        if obj:
+            try:
+                if obj.is_owner(user_obj):
+                    owner_permission = GlobalScope.load()
+                    permission_granted = Permission.objects.filter(ownerpermission=owner_permission,
+                                                                   codename=codename,
+                                                                   content_type__app_label=app_label).exists()
+            except AttributeError:
+                logger.debug("is_owner method not found")
         cache.set(key, permission_granted, 60)
         return permission_granted
