@@ -1,9 +1,17 @@
-# dev
+# 2.1.0 2023-09-29
 
 ## Feature
 
 - Introducing "owner permissions" in Global scopes. Admin can add permissions to users for objects that belong to them (Instance, Request and Support).
   This enables a v1-like functionality in terms of permissions.
+
+## Enhancement
+
+- Login page redirect to the next page.
+
+## Fix
+
+- Breadcrumbs in Teams did not show Organization in some views.
 
 # 2.0.0 2023-09-27
 
