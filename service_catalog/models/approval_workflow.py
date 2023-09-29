@@ -1,7 +1,7 @@
 from django.db.models import CharField, ForeignKey, ManyToManyField, CASCADE
 
 from Squest.utils.squest_model import SquestModel
-from profiles.models import AbstractScope, GlobalPermission
+from profiles.models import AbstractScope, GlobalScope
 from service_catalog.models import TowerSurveyField, ApprovalStep
 
 
@@ -68,4 +68,4 @@ class ApprovalWorkflow(SquestModel):
         if scopes.exists():
             return scopes
         else:
-            return GlobalPermission.load().get_scopes()
+            return GlobalScope.load().get_scopes()

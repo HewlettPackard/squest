@@ -18,8 +18,8 @@ class Organization(Scope):
         return self.name
 
     def get_scopes(self):
-        from profiles.models import GlobalPermission, AbstractScope
-        squest_scope = GlobalPermission.load()
+        from profiles.models import GlobalScope, AbstractScope
+        squest_scope = GlobalScope.load()
         return squest_scope.get_scopes() | AbstractScope.objects.filter(id=self.id)
 
     def get_potential_users(self):

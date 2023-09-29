@@ -18,10 +18,10 @@ def create_roles(sender, **kwargs):
         role_migration.name = "Squest user"
         role_migration.save()
         codenames = list(
-            map(lambda default_permissions: default_permissions.split('.')[1],
+            map(lambda x: x.split('.')[1],
                 default_roles[role_migration.name]['permissions']))
         app_labels = list(
-            map(lambda default_permissions: default_permissions.split('.')[0],
+            map(lambda x: x.split('.')[0],
                 default_roles[role_migration.name]['permissions']))
         role_migration.permissions.add(
             *Permission.objects.filter(
@@ -37,10 +37,10 @@ def create_roles(sender, **kwargs):
         )
         if created:
             codenames = list(
-                map(lambda default_permissions: default_permissions.split('.')[1], role_params['permissions'])
+                map(lambda x: x.split('.')[1], role_params['permissions'])
             )
             app_labels = list(
-                map(lambda default_permissions: default_permissions.split('.')[0], role_params['permissions'])
+                map(lambda x: x.split('.')[0], role_params['permissions'])
             )
             role.permissions.add(
                 *Permission.objects.filter(
@@ -50,27 +50,8 @@ def create_roles(sender, **kwargs):
             )
 
 
-def insert_default_user_permissions(sender, **kwargs):
-    from profiles.default_rbac.default_user_permissions import default_user_permissions
-    from profiles.models import GlobalPermission
-    from profiles.models.squest_permission import Permission
-    global_permission, created = GlobalPermission.objects.get_or_create(name="GlobalPermission")
-    if created:
-        codenames = list(
-            map(lambda default_permissions: default_permissions.split('.')[1], default_user_permissions))
-        app_labels = list(
-            map(lambda default_permissions: default_permissions.split('.')[0], default_user_permissions))
-        global_permission.default_permissions.add(
-            *Permission.objects.filter(
-                codename__in=codenames,
-                content_type__app_label__in=app_labels
-            )
-        )
-
-
 class ProfilesConfig(AppConfig):
     name = 'profiles'
 
     def ready(self):
         post_migrate.connect(create_roles, sender=self)
-        post_migrate.connect(insert_default_user_permissions, sender=self)

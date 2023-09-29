@@ -1,3 +1,10 @@
+# dev
+
+## Feature
+
+- Introducing "owner permissions" in Global scopes. Admin can add permissions to users for objects that belong to them (Instance, Request and Support).
+  This enables a v1-like functionality in terms of permissions.
+
 # 2.0.0 2023-09-27
 
 ## Breaking changes ⚠

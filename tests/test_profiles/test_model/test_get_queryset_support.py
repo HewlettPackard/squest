@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Team, Organization, GlobalPermission, Role
+from profiles.models import Team, Organization, GlobalScope, Role
 from profiles.models.squest_permission import Permission
 
 from service_catalog.models import Instance, Support
@@ -27,7 +27,7 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
                                                         content_type__model="request",
                                                         codename=codename)
         self.role_view_instance.permissions.add(self.permission_object)
-        self.global_perm = GlobalPermission.load()
+        self.global_scope = GlobalScope.load()
 
     def _assert_can_see_everything(self, user):
         self.assertQuerysetEqualID(Support.get_queryset_for_user(user, self.permission),
@@ -37,9 +37,68 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self.assertQuerysetEqualID(Support.get_queryset_for_user(user, self.permission),
                                    Support.objects.none())
 
-    def test_get_queryset_globalpermission_default_permissions(self):
+    def test_get_queryset_when_owner_instance(self):
         """
-        Test the default_permissions in global permission
+        Test the global_permissions in request permission
+        """
+
+        # No instances
+        self._assert_can_see_nothing(self.superuser)
+        self._assert_can_see_nothing(self.user1)
+
+        # create a new request
+        instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope,
+                                            requester=self.user1)
+        request1 = Support.objects.create(instance=instance1)
+        self.assertTrue(request1 in Support.objects.all())
+        self.assertEqual(Support.objects.count(), 1)
+
+        # add global perm
+        self.global_scope.owner_permissions.add(self.permission_object)
+
+        # everyone can see
+        self._assert_can_see_everything(self.superuser)
+        self._assert_can_see_everything(self.user1)
+
+        # remove global perm
+        self.global_scope.owner_permissions.remove(self.permission_object)
+
+        # only super can see
+        self._assert_can_see_everything(self.superuser)
+        self._assert_can_see_nothing(self.user1)
+
+    def test_get_queryset_when_owner_support(self):
+        """
+        Test the global_permissions in request permission
+        """
+
+        # No instances
+        self._assert_can_see_nothing(self.superuser)
+        self._assert_can_see_nothing(self.user1)
+
+        # create a new request
+        instance1 = Instance.objects.create(name="Instance #1", quota_scope=self.default_quota_scope)
+        request1 = Support.objects.create(instance=instance1, opened_by=self.user1)
+        self.assertTrue(request1 in Support.objects.all())
+        self.assertEqual(Support.objects.count(), 1)
+
+        # add global perm
+        self.global_scope.owner_permissions.add(self.permission_object)
+
+        # everyone can see
+        self._assert_can_see_everything(self.superuser)
+        self._assert_can_see_everything(self.user1)
+
+        # remove global perm
+        self.global_scope.owner_permissions.remove(self.permission_object)
+
+        # only super can see
+        self._assert_can_see_everything(self.superuser)
+        self._assert_can_see_nothing(self.user1)
+
+    def test_get_queryset_globalscope_global_permissions(self):
+        """
+        Test the global_permissions in global scope
         """
 
         # No instances
@@ -53,22 +112,22 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self.assertEqual(Support.objects.count(), 1)
 
         # add global perm
-        self.global_perm.default_permissions.add(self.permission_object)
+        self.global_scope.global_permissions.add(self.permission_object)
 
         # everyone can see
         self._assert_can_see_everything(self.superuser)
         self._assert_can_see_everything(self.user1)
 
         # remove global perm
-        self.global_perm.default_permissions.remove(self.permission_object)
+        self.global_scope.global_permissions.remove(self.permission_object)
 
         # only super can see
         self._assert_can_see_everything(self.superuser)
         self._assert_can_see_nothing(self.user1)
 
-    def test_get_queryset_globalpermission_perm_specific_user(self):
+    def test_get_queryset_globalscope_perm_specific_user(self):
         """
-        Test the rbac role in global permission
+        Test the rbac role in global scope
         """
         # No instances
         self._assert_can_see_nothing(self.superuser)
@@ -82,7 +141,7 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self.assertEqual(Support.objects.count(), 1)
 
         # assign a view instance to user1
-        self.global_perm.add_user_in_role(self.user1, self.role_view_instance)
+        self.global_scope.add_user_in_role(self.user1, self.role_view_instance)
 
         # everyone can see except user2
         self._assert_can_see_everything(self.superuser)
@@ -90,7 +149,7 @@ class TestModelScopeGetQuerysetSupport(TransactionTestUtils):
         self._assert_can_see_nothing(self.user2)
 
         # unassign view instance role to user1
-        self.global_perm.remove_user_in_role(self.user1, self.role_view_instance)
+        self.global_scope.remove_user_in_role(self.user1, self.role_view_instance)
 
         # only super can see
         self._assert_can_see_everything(self.superuser)

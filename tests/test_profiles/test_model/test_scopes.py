@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from profiles.models.squest_permission import Permission
 from django.core.exceptions import ValidationError
 
-from profiles.models import Team, Organization, AbstractScope, Scope, GlobalPermission, Role
+from profiles.models import Team, Organization, AbstractScope, Scope, GlobalScope, Role
 from django.test.testcases import TransactionTestCase
 
 
@@ -87,7 +87,7 @@ class TestModelScope(TransactionTestCase):
     def test_get_object(self):
         org1 = Organization.objects.create(name="Organization #1")
         team1 = Team.objects.create(name="Team #1", org=org1)
-        squest_scope = GlobalPermission.load()
+        squest_scope = GlobalScope.load()
 
         # AbstractScope
         self.assertEqual(AbstractScope.objects.get(id=org1.id).get_object(), org1)
@@ -106,7 +106,7 @@ class TestModelScope(TransactionTestCase):
     def test_get_scopes(self):
         org1 = Organization.objects.create(name="Organization #1")
         team1 = Team.objects.create(name="Team #1", org=org1)
-        squest_scope = GlobalPermission.load()
+        squest_scope = GlobalScope.load()
 
         self.assertListEqual(
             list(
@@ -123,9 +123,9 @@ class TestModelScope(TransactionTestCase):
             list(squest_scope.get_scopes().values_list("id", flat=True))
         )
 
-    def test_manage_user_in_global_permission(self):
-        global_permission = GlobalPermission.load()
-        self.manage_user_in_scope_check(global_permission)
+    def test_manage_user_in_global_scope(self):
+        global_scope = GlobalScope.load()
+        self.manage_user_in_scope_check(global_scope)
 
     def test_manage_user_in_org(self):
         org1 = Organization.objects.create(name="Organization #1")

@@ -1,4 +1,4 @@
-{# can_delete_user come from {organization,team,globalpermission}_detail.html#}
+{# can_delete_user come from {organization,team,globalscope}_detail.html#}
 {% with class_name=object|to_class_name|lower %}
     {% if can_delete_user %}
         <a href="{% url "profiles:"|add:class_name|add:"_rbac_delete" object.id record.id %}"

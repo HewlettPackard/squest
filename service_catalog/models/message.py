@@ -35,6 +35,8 @@ class RequestMessage(Message):
     def get_scopes(self):
         return self.request.get_scopes()
 
+    def is_owner(self, user):
+        return self.request.is_owner(user)
 
 class SupportMessage(Message):
     support = ForeignKey(Support,
@@ -47,3 +49,6 @@ class SupportMessage(Message):
 
     def get_scopes(self):
         return self.support.get_scopes()
+
+    def is_owner(self, user):
+        return self.support.is_owner(user)

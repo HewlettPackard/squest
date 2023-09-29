@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from profiles.api.serializers import ScopeSerializer
 from profiles.api.serializers.user_serializers import UserSerializer
-from profiles.models import Role, Permission, GlobalPermission
+from profiles.models import Role, Permission, GlobalScope
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
 from service_catalog.models.request import RequestState
@@ -199,7 +199,7 @@ class AdminRequestViewTest(BaseTestRequest):
         perm_str = "service_catalog.accept_request"
         new_role.permissions.add(Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
                                                         codename=perm_str.split('.')[1]))
-        GlobalPermission.load().add_user_in_role(self.standard_user, new_role)
+        GlobalScope.load().add_user_in_role(self.standard_user, new_role)
 
         self._accept_request_with_expected_state(expected_request_state=RequestState.SUBMITTED,
                                                  expected_instance_state=InstanceState.PENDING,

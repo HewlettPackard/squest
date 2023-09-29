@@ -8,6 +8,6 @@ from .role_serializer import *
 from .user_serializers import *
 from .rbac_serializers import *
 from .scope_serializer import *
-from .globalpermission_serializer import *
+from .globalscope_serializer import *
 from .team_serializer import *
 from .organization_serializer import *

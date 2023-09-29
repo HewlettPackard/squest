@@ -52,6 +52,16 @@ class Instance(SquestModel):
     def get_q_filter(cls, user, perm):
         from profiles.models import Team
         app_label, codename = perm.split(".")
+
+        from profiles.models import GlobalScope
+        globalscope = GlobalScope.load()
+        additional_q = Q()
+        if globalscope.owner_permissions.filter(
+                codename=codename,
+                content_type__app_label=app_label
+        ).exists():
+            additional_q = Q(requester=user)
+
         return Q(
             # Quota scope
             ## Quota scope - Org - User
@@ -77,10 +87,13 @@ class Instance(SquestModel):
                 org__roles__permissions__codename=codename,
                 org__roles__permissions__content_type__app_label=app_label
             )
-        )
+        ) | additional_q
 
     def get_scopes(self):
         return self.quota_scope.get_scopes()
+
+    def is_owner(self, user):
+        return self.requester == user
 
     def __str__(self):
         return f"{self.name} (#{self.id})"

@@ -81,9 +81,9 @@ class SquestRBAC(Model):
         if user.is_superuser:
             return cls.objects.distinct() if unique else cls.objects.all()
         app_label, codename = perm.split(".")
-        from profiles.models import GlobalPermission
-        squest_scope = GlobalPermission.load()
-        # Global permission (Class based)
+        from profiles.models import GlobalScope
+        squest_scope = GlobalScope.load()
+        # Global scope (Class based)
         if Permission.objects.filter(
                 # Permissions for all user
                 Q(
@@ -107,8 +107,8 @@ class SquestRBAC(Model):
         return qs
 
     def get_scopes(self):
-        from profiles.models import GlobalPermission
-        squest_scope = GlobalPermission.load()
+        from profiles.models import GlobalScope
+        squest_scope = GlobalScope.load()
         return squest_scope.get_scopes()
 
 
@@ -117,8 +117,8 @@ class SquestRBAC(Model):
 
         # Global Perm permission for all users
         from django.contrib.auth.models import User
-        from profiles.models import GlobalPermission, Scope, RBAC
-        if GlobalPermission.load().default_permissions.filter(codename=codename,content_type__app_label=app_label).exists():
+        from profiles.models import GlobalScope, Scope, RBAC
+        if GlobalScope.load().global_permissions.filter(codename=codename,content_type__app_label=app_label).exists():
             return User.objects.all()
 
         scopes = self.get_scopes()
@@ -163,3 +163,6 @@ class SquestModel(SquestRBAC, SquestChangelog, SquestDeleteCascadeMixIn):
     def get_absolute_url(self):
         content_type = self.get_content_type()
         return reverse(f"{content_type.app_label}:{content_type.model}_details", args=[self.pk])
+
+    def is_owner(self, user):
+        return False

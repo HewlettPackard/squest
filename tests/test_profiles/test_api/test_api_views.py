@@ -26,7 +26,7 @@ class TestQuotaAPIView(BaseTestProfileAPI):
         data = {
             "attribute_definition": self.other_attribute.id,
             "limit": 20,
-            "scope": self.test_quota_org.id
+            "scope": self.test_org.id
         }
         response = self.client.post(self._list_create_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -34,13 +34,13 @@ class TestQuotaAPIView(BaseTestProfileAPI):
     def test_update_quota(self):
         data = {
             "attribute_definition": self.cpu_attribute.id,
-            "limit": 20,
-            "scope": self.test_quota_org.id
+            "limit": 100,
+            "scope": self.test_org.id
         }
         response = self.client.patch(self._details_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.test_quota_org.refresh_from_db()
-        self.assertEqual(self.test_quota_org.limit, 20)
+        self.assertEqual(self.test_quota_org.limit, 100)
 
     def test_delete_quota(self):
         id_to_delete = self.test_quota_org.id
