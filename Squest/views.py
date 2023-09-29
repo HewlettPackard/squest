@@ -53,37 +53,36 @@ def home(request):
         context['total_user'] = User.objects.all().count()
         context['user_without_organization'] = User.objects.filter(groups__isnull=True).count()
 
-    if request.user.has_perm('service_catalog.list_service'):
-        all_services = Service.get_queryset_for_user(request.user, 'service_catalog.view_service').filter(enabled=True)
-        service_details = dict()
-        for service in all_services:
-            service_dict = dict()
-            service_dict["instances"] = sum([x["count"] for x in all_instances if
-                                             x["state"] == InstanceState.AVAILABLE and x["service"] == service.id])
+    all_services = Service.objects.filter(enabled=True)
+    service_details = dict()
+    for service in all_services:
+        service_dict = dict()
+        service_dict["instances"] = sum([x["count"] for x in all_instances if
+                                         x["state"] == InstanceState.AVAILABLE and x["service"] == service.id])
 
-            service_dict["accepted_requests"] = sum([x["count"] for x in all_requests if
-                                                     x["state"] == RequestState.ACCEPTED and x[
-                                                         "instance__service"] == service.id])
+        service_dict["accepted_requests"] = sum([x["count"] for x in all_requests if
+                                                 x["state"] == RequestState.ACCEPTED and x[
+                                                     "instance__service"] == service.id])
 
-            service_dict["submitted_requests"] = sum([x["count"] for x in all_requests if
-                                                      x["state"] == RequestState.SUBMITTED and x[
-                                                          "instance__service"] == service.id])
+        service_dict["submitted_requests"] = sum([x["count"] for x in all_requests if
+                                                  x["state"] == RequestState.SUBMITTED and x[
+                                                      "instance__service"] == service.id])
 
-            service_dict["failed_requests"] = sum([x["count"] for x in all_requests if
-                                                   x["state"] == RequestState.FAILED and x[
-                                                       "instance__service"] == service.id])
+        service_dict["failed_requests"] = sum([x["count"] for x in all_requests if
+                                               x["state"] == RequestState.FAILED and x[
+                                                   "instance__service"] == service.id])
 
-            service_dict["need_info_requests"] = sum([x["count"] for x in all_requests if
-                                                      x["state"] == RequestState.NEED_INFO and x[
-                                                          "instance__service"] == service.id])
+        service_dict["need_info_requests"] = sum([x["count"] for x in all_requests if
+                                                  x["state"] == RequestState.NEED_INFO and x[
+                                                      "instance__service"] == service.id])
 
-            service_dict["opened_supports"] = sum([x["count"] for x in all_supports if
-                                                   x["state"] == SupportState.OPENED and x[
-                                                       "instance__service"] == service.id])
+        service_dict["opened_supports"] = sum([x["count"] for x in all_supports if
+                                               x["state"] == SupportState.OPENED and x[
+                                                   "instance__service"] == service.id])
 
-            if sum([v for v in service_dict.values()]) > 0:
-                service_dict["service"] = service
-                service_details[service.name] = service_dict
+        if sum([v for v in service_dict.values()]) > 0:
+            service_dict["service"] = service
+            service_details[service.name] = service_dict
 
         if service_details:
             context["service_details"] = service_details
