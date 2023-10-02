@@ -22,30 +22,29 @@
                                 <dl class="row">
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Username</dt>
-                                        <dd class="col-sm-8">{{ user.get_username }}</dd>
+                                        <dd class="col-sm-8">{{ object.get_username }}</dd>
                                     </div>
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Email</dt>
-                                        <dd class="col-sm-8">{{ user.email }}</dd>
+                                        <dd class="col-sm-8">{{ object.email }}</dd>
                                     </div>
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">First name</dt>
-                                        <dd class="col-sm-8">{{ user.get_short_name }}</dd>
+                                        <dd class="col-sm-8">{{ object.get_short_name }}</dd>
                                     </div>
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Last Name</dt>
-                                        <dd class="col-sm-8">{{ user.last_name }}</dd>
+                                        <dd class="col-sm-8">{{ object.last_name }}</dd>
                                     </div>
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Last login</dt>
-                                        <dd class="col-sm-8">{{ user.last_login }}</dd>
+                                        <dd class="col-sm-8">{{ object.last_login }}</dd>
                                     </div>
                                     <div class="col-md-6">
                                         <dt class="col-sm-4">Created</dt>
-                                        <dd class="col-sm-8">{{ user.date_joined }}</dd>
+                                        <dd class="col-sm-8">{{ object.date_joined }}</dd>
                                     </div>
                                     <div class="col-md-6">
-
                                         <dt class="col-sm-4">Is active</dt>
                                         <dd class="col-sm-8">
                                             {% if object.is_active %}
@@ -66,7 +65,6 @@
                                         </dd>
                                     </div>
                                     <div class="col-md-6">
-
                                         <dt class="col-sm-4">Is admin</dt>
                                         <dd class="col-sm-8">
                                             {% if object.is_superuser %}
