@@ -1,3 +1,13 @@
+# 2.1.1 2023-10-03
+
+## Fix
+
+- Email were not sent to some requester 
+- Fix Squest logo size in email
+- Add back current instance spec and admin spec in request details page
+- Fix displayed info in user details page
+- Fix global sync when no default value set on survey field
+
 # 2.1.0 2023-09-29
 
 ## Feature
