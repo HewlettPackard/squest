@@ -86,3 +86,7 @@ aside {
 input.form-control[disabled] {
   cursor: not-allowed;
 }
+
+.popover {
+    max-width: 100%;
+}
