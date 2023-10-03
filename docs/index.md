@@ -1,7 +1,7 @@
 # Squest
 
 <p align="center">
-    <img style="width: 350px; height: 350px" src="images/squest_logo_v2.png">
+    <img src="images/squest_logo_v2.png">
 </p>
 
 # Welcome to the Squest documentation!
