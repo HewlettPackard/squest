@@ -4,6 +4,7 @@
 {% has_perm request.user "service_catalog.reject_request" object as can_reject_request %}
 {% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
 {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
+{% has_perm request.user "service_catalog.view_admin_spec_instance" object.instance as can_view_admin_spec_instance %}
 
 <div class="timeline">
     <div>
@@ -13,14 +14,28 @@
             <h3 class="timeline-header">Requested by <a
                     href="{% url 'profiles:user_details' object.user.id %}">{{ object.user }}</a></h3>
             <div class="timeline-body">
-                <table class="row">
-                    {% for variable_name, value in object.fill_in_survey.items %}
-                        <tr>
-                            <td class="col-sm-2"><b>{{ variable_name }}</b></td>
-                            <td class="col-sm-10">{{ value }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
+                <div class="row">
+                    <table class="col-md-6">
+                        {% for variable_name, value in object.fill_in_survey.items %}
+                            <tr>
+                                <td class="col-sm-2"><b>{{ variable_name }}</b></td>
+                                <td class="col-sm-10">{{ value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <div class="col-md-6">
+                        <div class="row justify-content-end">
+                            <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body" data-toggle="popover" data-placement="right" data-content="<pre>{{ object.instance.user_spec | pretty_json }}</pre>">
+                                Instance spec
+                            </button>
+                            {% if can_view_admin_spec_instance %}
+                                <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body" data-toggle="popover" data-placement="right" data-content="<pre>{{ object.instance.spec | pretty_json }}</pre>">
+                                    Instance admin spec
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -275,7 +290,10 @@
                 <h3 class="timeline-header text-success">Processing</h3>
                 <div class="timeline-body">
                     {% if  object.get_state_display == "PROCESSING" %}
-                        The request is currently being processed
+                        The request is currently being processed.
+                        {% if can_process_request and object.tower_job_id is not None%}
+                            <a href="{{ object.tower_job_url }}">Job #{{ object.tower_job_id }}</a>
+                        {% endif %}
                     {% else %}
                         <blockquote class="quote-success">
                             <i class="fas fa-check text-success"></i> Request processed successfully
