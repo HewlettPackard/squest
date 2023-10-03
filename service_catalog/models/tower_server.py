@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, BooleanField, JSONField
 from django.urls import reverse_lazy
@@ -5,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from towerlib import Tower
 
 from Squest.utils.squest_model import SquestModel
+
+logger = logging.getLogger(__name__)
 
 
 class TowerServer(SquestModel):
@@ -75,6 +79,7 @@ class TowerServer(SquestModel):
 
     def _update_job_template_from_tower(self, job_template_from_tower):
         from .job_templates import JobTemplate as JobTemplateLocal
+        logger.info(f"Sync job template id '{job_template_from_tower.id}'")
         job_template, _ = JobTemplateLocal.objects.get_or_create(tower_id=job_template_from_tower.id,
                                                                  tower_server=self,
                                                                  defaults={'name': job_template_from_tower.name})
