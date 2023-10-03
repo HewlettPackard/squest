@@ -1,5 +1,5 @@
 <p align="center">
-    <img style="width: 350px; height: 350px" src="project-static/squest/img/squest_full_logo_transparent.png">
+    <img src="project-static/squest/img/squest_logo_v2_300_300.png">
 </p>
 
 <h3 align="center">Self service portal on top of Red Hat Ansible Automation Platform</h3>
