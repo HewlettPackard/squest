@@ -79,7 +79,7 @@ class Operation(SquestModel):
                             'min': field['min'],
                             'max': field['max'],
                             'choices': field['choices'],
-                            'default': field['default']
+                            'default': field.get('default', '')
                         }
                     }
                 )
@@ -92,7 +92,7 @@ class Operation(SquestModel):
                         "min": field['min'],
                         "max": field['max'],
                         "choices": field['choices'],
-                        "default": field['default']
+                        "default": field.get('default', '')
                     }
                     squest_field.save()
             self.tower_survey_fields.exclude(
