@@ -54,7 +54,7 @@ services:
     volumes:
       - ./docker/maintenance.html:/usr/share/nginx/html/index.html
       - ./docker/maintenance.nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./project-static/squest/img/squest_full_logo_transparent.png:/usr/share/nginx/html/squest_full_logo_transparent.png
+      - ./project-static/squest/img/squest_logo_v2_300_300.png:/usr/share/nginx/html/squest_logo_v2_300_300.png
 
   celery-worker:
     <<: *django
