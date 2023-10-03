@@ -63,11 +63,25 @@ class Support(SquestModel):
             additional_q = Q(opened_by=user)
 
         return Q(
-           instance__in=Instance.get_queryset_for_user(user, perm)
+            instance__in=Instance.get_queryset_for_user(user, perm)
         ) | additional_q
 
     def is_owner(self, user):
-        return self.instance.is_owner(user) or self.opened_by == user
+        if self.opened_by:
+            return self.instance.is_owner(user) or self.opened_by == user
+        return self.instance.is_owner(user)
 
     def get_scopes(self):
         return self.instance.get_scopes()
+
+    def who_has_perm(self, permission_str):
+        users = super().who_has_perm(permission_str)
+        ## Permission give via GlobalScope.owner_permission
+        from profiles.models import GlobalScope
+        app_label, codename = permission_str.split(".")
+        if GlobalScope.load().owner_permissions.filter(codename=codename, content_type__app_label=app_label).exists():
+            if self.opened_by:
+                users = users | User.objects.filter(pk=self.opened_by.pk).distinct()
+            if self.instance.requester:
+                users = users | User.objects.filter(pk=self.instance.requester.pk).distinct()
+        return users

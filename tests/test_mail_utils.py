@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 
-from profiles.models import RequestNotification, InstanceNotification, Role, Permission
+from profiles.models import RequestNotification, InstanceNotification, Role, Permission, GlobalScope
 from service_catalog.mail_utils import _get_subject, _get_headers, \
     _get_receivers_for_request_message, _get_receivers_for_support_message, _get_receivers_for_request, \
     _get_receivers_for_support
@@ -60,6 +60,8 @@ class TestMailUtils(BaseTest):
             )
         )
         self.test_quota_scope.add_user_in_role(self.standard_user, view_supportmessage_role)
+
+        GlobalScope.load().owner_permissions.set([])
 
     def test_get_admin_emails_with_request(self):
         # Test 1 - admin disabled notification
