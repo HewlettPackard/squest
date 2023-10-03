@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from profiles.models import Role, Permission
+from profiles.models import Role, Permission, GlobalScope
 from service_catalog.mail_utils import _get_receivers_for_request
 
 from service_catalog.models import Instance, Request, ApprovalWorkflow, ApprovalStep
@@ -43,6 +43,8 @@ class TestMailUtilsWorkflow(BaseTest):
             operation=self.create_operation_test,
             user=self.standard_user
         )
+        GlobalScope.load().owner_permissions.set([])
+
 
     def test_get_admin_emails_with_request(self):
         approver = User.objects.create(username='approver', email="approver@local.com")

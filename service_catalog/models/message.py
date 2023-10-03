@@ -36,7 +36,24 @@ class RequestMessage(Message):
         return self.request.get_scopes()
 
     def is_owner(self, user):
+        if self.sender:
+            return self.request.is_owner(user) or self.sender == user
         return self.request.is_owner(user)
+
+    def who_has_perm(self, permission_str):
+        users = super().who_has_perm(permission_str)
+        ## Permission give via GlobalScope.owner_permission
+        from profiles.models import GlobalScope
+        app_label, codename = permission_str.split(".")
+        if GlobalScope.load().owner_permissions.filter(codename=codename, content_type__app_label=app_label).exists():
+            if self.request.user:
+                users = users | User.objects.filter(pk=self.request.user.pk).distinct()
+            if self.sender:
+                users = users | User.objects.filter(pk=self.sender.pk).distinct()
+            if self.request.instance.requester:
+                users = users | User.objects.filter(pk=self.request.instance.requester.pk).distinct()
+        return users
+
 
 class SupportMessage(Message):
     support = ForeignKey(Support,
@@ -51,4 +68,20 @@ class SupportMessage(Message):
         return self.support.get_scopes()
 
     def is_owner(self, user):
+        if self.sender:
+            return self.support.is_owner(user) or self.sender == user
         return self.support.is_owner(user)
+
+    def who_has_perm(self, permission_str):
+        users = super().who_has_perm(permission_str)
+        ## Permission give via GlobalScope.owner_permission
+        from profiles.models import GlobalScope
+        app_label, codename = permission_str.split(".")
+        if GlobalScope.load().owner_permissions.filter(codename=codename, content_type__app_label=app_label).exists():
+            if self.support.opened_by:
+                users = users | User.objects.filter(pk=self.support.opened_by.pk).distinct()
+            if self.sender:
+                users = users | User.objects.filter(pk=self.sender.pk).distinct()
+            if self.support.instance.requester:
+                users = users | User.objects.filter(pk=self.support.instance.requester.pk).distinct()
+        return users

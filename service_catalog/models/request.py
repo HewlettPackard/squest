@@ -81,7 +81,21 @@ class Request(SquestModel):
         ) | additional_q
 
     def is_owner(self, user):
-        return self.instance.is_owner(user) or self.user == user
+        if self.user:
+            return self.instance.is_owner(user) or self.user == user
+        return self.instance.is_owner(user)
+
+    def who_has_perm(self, permission_str):
+        users = super().who_has_perm(permission_str)
+        ## Permission give via GlobalScope.owner_permission
+        from profiles.models import GlobalScope
+        app_label, codename = permission_str.split(".")
+        if GlobalScope.load().owner_permissions.filter(codename=codename, content_type__app_label=app_label).exists():
+            if self.user:
+                users = users | User.objects.filter(pk=self.user.pk).distinct()
+            if self.instance.requester:
+                users = users | User.objects.filter(pk=self.instance.requester.pk).distinct()
+        return users
 
     def get_scopes(self):
         return self.instance.get_scopes()
