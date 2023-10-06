@@ -5,4 +5,4 @@ from resource_tracker_v2.models import Resource
 class ResourceFilter(TagFilterset):
     class Meta:
         model = Resource
-        fields = ['resource_group', 'name', 'tag']
+        fields = ['resource_group','service_catalog_instance', 'name', 'tag']
