@@ -21,7 +21,7 @@ class TestApiRequestProcess(BaseTestRequestAPI):
     def _process(self, status=200, expected_instance_state=InstanceState.PROVISIONING,
                  expected_request_state=RequestState.PROCESSING):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
-            mock_job_execute.return_value = 10
+            mock_job_execute.return_value = 10, ""
             response = self.client.post(reverse('api_request_process', kwargs={'pk': self.test_request.id}))
             self.assertEqual(status, response.status_code)
             self.test_request.refresh_from_db()

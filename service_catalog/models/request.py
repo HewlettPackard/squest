@@ -229,15 +229,18 @@ class Request(SquestModel):
         }
         tower_job_id = None
         try:
-            tower_job_id = self.operation.job_template.execute(extra_vars=tower_extra_vars,
-                                                               inventory_override=inventory_override,
-                                                               credentials_override=credentials_override,
-                                                               tags_override=tags_override,
-                                                               skip_tags_override=skip_tags_override,
-                                                               limit_override=limit_override,
-                                                               verbosity_override=verbosity_override,
-                                                               job_type_override=job_type_override,
-                                                               diff_mode_override=diff_mode_override)
+            tower_job_id, error_message = self.operation.job_template.execute(extra_vars=tower_extra_vars,
+                                                                              inventory_override=inventory_override,
+                                                                              credentials_override=credentials_override,
+                                                                              tags_override=tags_override,
+                                                                              skip_tags_override=skip_tags_override,
+                                                                              limit_override=limit_override,
+                                                                              verbosity_override=verbosity_override,
+                                                                              job_type_override=job_type_override,
+                                                                              diff_mode_override=diff_mode_override)
+            # the execution could have failed directly because of missing variables
+            if tower_job_id is None:
+                self.has_failed(reason=error_message)
         except towerlib.towerlibexceptions.AuthFailed:
             self.has_failed(reason="towerlib.towerlibexceptions.AuthFailed")
         except requests.exceptions.SSLError:
@@ -248,6 +251,7 @@ class Request(SquestModel):
             self.has_failed(reason=e)
         except Exception as e:
             self.has_failed(reason=e)
+        self.save()
         if isinstance(tower_job_id, int):
             self.tower_job_id = tower_job_id
             logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {tower_job_id}")
@@ -393,8 +397,8 @@ class Request(SquestModel):
         for permission_id in all_permissions_id:
             permission = Permission.objects.get(id=permission_id)
             all_approval_step = all_approval_step | ApprovalStepState.get_queryset_for_user(user,
-                                                                                            permission.permission_str)\
-                .filter(current_approval_workflow_state__request__state=RequestState.SUBMITTED)\
+                                                                                            permission.permission_str) \
+                .filter(current_approval_workflow_state__request__state=RequestState.SUBMITTED) \
                 .distinct()
 
         all_requests = all_requests | Request.objects.filter(
