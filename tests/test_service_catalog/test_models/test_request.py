@@ -27,7 +27,7 @@ class TestRequest(BaseTestRequest):
 
     def _check_instance_state_after_process(self, expected_state):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
-            mock_job_execute.return_value = 10
+            mock_job_execute.return_value = 10, ""
             self.test_request.process()
             self.test_request.save()
             self.test_request.refresh_from_db()
@@ -99,6 +99,7 @@ class TestRequest(BaseTestRequest):
             self.test_instance.refresh_from_db()
             self.assertEqual(self.test_instance.state, expected_instance_state)
             self.assertEqual(self.test_request.state, RequestState.FAILED)
+            self.assertIsNotNone(self.test_request.failure_message)
             mock_job_execute.assert_called()
 
     def test_failure_when_provisioning(self):
@@ -135,7 +136,7 @@ class TestRequest(BaseTestRequest):
         form_data = {'name': 'test instance', 'text_variable': 'my_var'}
 
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
-            mock_job_execute.return_value = 10
+            mock_job_execute.return_value = 10, ""
             new_request = Request.objects.create(fill_in_survey=form_data,
                                                  instance=self.test_instance,
                                                  operation=self.create_operation_test,
@@ -147,7 +148,7 @@ class TestRequest(BaseTestRequest):
 
     def _check_state_after_accept(self, expected_instance_state, expected_request_state):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
-            mock_job_execute.return_value = 10
+            mock_job_execute.return_value = 10, ""
             self.test_request.accept(self.superuser)
             self.test_request.refresh_from_db()
             self.assertEqual(self.test_instance.state, expected_instance_state)
@@ -248,6 +249,17 @@ class TestRequest(BaseTestRequest):
             self.assertEqual(self.test_instance.state, expected_instance_state)
             self.assertEqual(self.test_request.state, RequestState.FAILED)
             mock_periodic_task_delete.assert_called()
+
+    def test_job_id_none_when_executing(self):
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = None, "error"
+            self.test_request.process()
+            self.test_request.perform_processing()
+            self.test_request.refresh_from_db()
+            self.test_instance.refresh_from_db()
+            self.assertEqual(self.test_request.state, RequestState.FAILED)
+            self.assertEqual(self.test_request.failure_message, "error")
+            self.assertEqual(self.test_instance.state, InstanceState.PROVISION_FAILED)
 
     def test_process_timeout_when_provisioning(self):
         self.test_instance.state = InstanceState.PROVISIONING
@@ -464,6 +476,7 @@ class TestRequest(BaseTestRequest):
             "operation_extra_var_key": "operation_extra_var_value"
         }
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10, ""
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
             self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
@@ -475,14 +488,15 @@ class TestRequest(BaseTestRequest):
             self.assertEqual(executed_extra_vars["extra_vars"]["operation_extra_var_key"], "operation_extra_var_value")
             mock_job_execute.assert_called()
 
-        # ----------------------------
-        # check service override server config
-        # ----------------------------
+    def test_service_extra_vars(self):
+        self.test_request.process()
+        self.test_request.save()
         self.service_test.extra_vars = {
             "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_service1",
             "tower_server_extra_var_key2": "tower_server_extra_var_overridden_by_service2"
         }
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10, ""
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
             self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],
@@ -490,13 +504,18 @@ class TestRequest(BaseTestRequest):
             self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key2"],
                              "tower_server_extra_var_overridden_by_service2")
 
-        # ----------------------------
-        # check operation override server config
-        # ----------------------------
+    def test_operation_extra_vars(self):
+        self.test_request.process()
+        self.test_request.save()
+        self.service_test.extra_vars = {
+            "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_service1",
+            "tower_server_extra_var_key2": "tower_server_extra_var_overridden_by_service2"
+        }
         self.create_operation_test.extra_vars = {
             "tower_server_extra_var_key1": "tower_server_extra_var_overridden_by_operation"
         }
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10, ""
             self.test_request.perform_processing()
             args, executed_extra_vars = mock_job_execute.call_args
             self.assertEqual(executed_extra_vars["extra_vars"]["tower_server_extra_var_key1"],

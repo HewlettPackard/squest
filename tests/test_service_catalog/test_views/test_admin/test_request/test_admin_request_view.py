@@ -291,7 +291,7 @@ class AdminRequestViewTest(BaseTestRequest):
     def _process_with_expected_instance_state(self, expected_instance_state,
                                               expected_request_state=RequestState.PROCESSING, mock_value=None):
         if mock_value is None:
-            mock_value = 10
+            mock_value = 10, ""
         args = {
             'pk': self.test_request.id
         }
