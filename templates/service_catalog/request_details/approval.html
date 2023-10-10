@@ -145,8 +145,7 @@
                             comment.
                         </div>
                     {% endif %}
-
-                    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" %}
+                    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" or object.get_state_display == "REJECTED" %}
                         <details>
                             <summary>Survey</summary>
                             <table class="row">
@@ -168,10 +167,16 @@
                                 {% endif %}
                             </table>
                         </details>
-                        <blockquote class="quote-success">
-                            <i class="fas fa-check text-success"></i> Accepted by
-                            <strong>{{ object.accepted_by }}</strong>
-                        </blockquote>
+                        {% if object.get_state_display == "REJECTED" %}
+                            <blockquote class="quote-danger">
+                                <i class="fas fa-times text-danger"></i> Request rejected
+                            </blockquote>
+                        {% else %}
+                            <blockquote class="quote-success">
+                                <i class="fas fa-check text-success"></i> Accepted by
+                                <strong>{{ object.accepted_by }}</strong>
+                            </blockquote>
+                        {% endif %}
                     {% else %}
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
