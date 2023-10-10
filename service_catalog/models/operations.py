@@ -76,9 +76,9 @@ class Operation(SquestModel):
                         'type': field['type'],
                         'required': field['required'],
                         'field_options': {
-                            'min': field['min'],
-                            'max': field['max'],
-                            'choices': field['choices'],
+                            'min': field.get('min', ''),
+                            'max': field.get('max', ''),
+                            'choices': field.get('choices', ''),
                             'default': field.get('default', '')
                         }
                     }
@@ -89,9 +89,9 @@ class Operation(SquestModel):
                     squest_field.type = field['type']
                     squest_field.required = field['required']
                     squest_field.field_options = {
-                        "min": field['min'],
-                        "max": field['max'],
-                        "choices": field['choices'],
+                        "min": field.get('min', ''),
+                        "max": field.get('max', ''),
+                        "choices": field.get('choices', ''),
                         "default": field.get('default', '')
                     }
                     squest_field.save()
@@ -124,10 +124,10 @@ class Operation(SquestModel):
                         type=field['type'],
                         required=field['required'],
                         field_options={
-                            "min": field['min'],
-                            "max": field['max'],
-                            "choices": field['choices'],
-                            "default": field['default']
+                            "min": field.get('min', ''),
+                            "max": field.get('max', ''),
+                            "choices": field.get('choices', ''),
+                            "default": field.get('default', '')
                         }
                     )
 
