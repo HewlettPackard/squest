@@ -295,14 +295,18 @@
                 <h3 class="timeline-header text-success">Processing</h3>
                 <div class="timeline-body">
                     {% if  object.get_state_display == "PROCESSING" %}
-                        The request is currently being processed.
-                        {% if can_process_request and object.tower_job_id is not None%}
-                            <a href="{{ object.tower_job_url }}">Job #{{ object.tower_job_id }}</a>
-                        {% endif %}
+                        The request is currently being processed.<br>
                     {% else %}
                         <blockquote class="quote-success">
-                            <i class="fas fa-check text-success"></i> Request processed successfully
+                            <i class="fas fa-check text-success"></i> Request processed successfully.
                         </blockquote>
+                    {% endif %}
+                    {% if can_process_request and object.tower_job_id is not None%}
+                        <a class="btn btn-default"
+                           title="Job"
+                           href="{{ object.tower_job_url }}">
+                            Job #{{ object.tower_job_id }}
+                        </a>
                     {% endif %}
                 </div>
             </div>

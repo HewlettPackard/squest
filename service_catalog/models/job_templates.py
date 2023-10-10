@@ -60,10 +60,13 @@ class JobTemplate(SquestModel):
         logger.info(f"[job-template-execute] Execute job template with parameter: {parameters}")
         tower_job_run = tower_job_template.launch(**parameters)
         if tower_job_run:
-            return tower_job_run.id
+            # return the job ID and a failure message if job id is none
+            return tower_job_run.id, ""
         else:
-            logger.critical(f"[job-template-execute] Fail to execute job template with parameter: {parameters}")
-            return None
+            logger.critical(f"[job-template-execute] Fail to execute job template '{self.tower_id}' "
+                            f"with parameter: {parameters}")
+            return None, f"Fail to execute job template '{self.tower_id}'"
+
     def check_is_compliant(self):
         return self.is_ask_variables_on_launch_compliant()
 
