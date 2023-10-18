@@ -15,7 +15,7 @@
     {% endif %}
     {% if can_add_user %}
         <a href="{% url 'profiles:team_rbac_create' object.id %}"
-           class="btn btn-success"><i class="fas fa-user-plus"></i> Add Team RBAC
+           class="btn btn-success"><i class="fas fa-user-plus"></i> Add roles/users
         </a>
     {% endif %}
 {% endblock %}
