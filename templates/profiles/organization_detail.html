@@ -19,7 +19,7 @@
     {% if can_add_user_in_organization %}
         <a href="{% url 'profiles:organization_rbac_create' object.id %}"
            class="btn btn-success">
-            <i class="fas fa-user-plus"></i> Add Organization RBAC
+            <i class="fas fa-user-plus"></i> Add roles/users
         </a>
     {% endif %}
 
