@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -182,64 +183,30 @@ def instance_request_new_operation(request, instance_id, operation_id):
 
 @login_required
 def instance_archive(request, pk):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     instance = get_object_or_404(Instance, id=pk)
-    context = dict()
-    context['object'] = instance
-    context['action'] = 'archive'
-    context['breadcrumbs'] = [
-        {
-            'text': 'Instance',
-            'url': reverse('service_catalog:instance_list')
-        },
-        {
-            'text': instance,
-            'url': instance.get_absolute_url()
-        },
-        {
-            'text': context['action'].capitalize(),
-            'url': ""
-        },
-    ]
     if not request.user.has_perm('service_catalog.archive_instance', instance):
         raise PermissionDenied
     if not can_proceed(instance.archive):
         raise PermissionDenied
-    if request.method == "POST":
-        instance.archive()
-        instance.save()
-        return redirect(instance.get_absolute_url())
-    return render(request, "service_catalog/instance-archive.html", context)
+    instance.archive()
+    instance.save()
+    return redirect(instance.get_absolute_url())
 
 
 @login_required
 def instance_unarchive(request, pk):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
     instance = get_object_or_404(Instance, id=pk)
-    context = dict()
-    context['object'] = instance
-    context['action'] = 'unarchive'
-    context['breadcrumbs'] = [
-        {
-            'text': 'Instance',
-            'url': reverse('service_catalog:instance_list')
-        },
-        {
-            'text': instance,
-            'url': instance.get_absolute_url()
-        },
-        {
-            'text': context['action'].capitalize(),
-            'url': ""
-        },
-    ]
     if not request.user.has_perm('service_catalog.unarchive_instance', instance):
         raise PermissionDenied
     if not can_proceed(instance.unarchive):
         raise PermissionDenied
-    if request.method == "POST":
-        instance.unarchive()
-        instance.save()
-        return redirect(instance.get_absolute_url())
-    return render(request, "service_catalog/instance-archive.html", context)
+    instance.unarchive()
+    instance.save()
+    return redirect(instance.get_absolute_url())
 
 
 @login_required
