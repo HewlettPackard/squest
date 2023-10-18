@@ -96,7 +96,7 @@ class TestFormGenerator(BaseTestRequest):
             "os": "linux"
         }
         self.test_instance.save()
-        expected_result = "linux stan.1234@hpe.com"
+        expected_result = "linux standard_user@hpe.com"
         form_generator = FormGenerator(user=self.standard_user,
                                        squest_request=self.test_request, squest_instance=self.test_instance)
         form_generator._add_all_fields()
