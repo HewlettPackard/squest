@@ -22,12 +22,10 @@ from service_catalog.tables.request_tables import RequestTable
 logger = logging.getLogger(__name__)
 
 
-class RequestListView(SquestListView):
+class RequestListViewGeneric(SquestListView):
     table_class = RequestTable
     model = Request
     ordering = '-date_submitted'
-
-    filterset_class = RequestFilter
 
     def get_queryset(self):
         return Request.get_queryset_for_user(
@@ -36,38 +34,36 @@ class RequestListView(SquestListView):
             "user", "operation", "instance__requester", "instance__quota_scope", "instance__service",
             "operation__service", "approval_workflow_state", "approval_workflow_state__current_step",
             "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
-        ).exclude(state=RequestState.ARCHIVED)
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['html_button_path'] = ""
-        context['extra_html_button_path'] = "service_catalog/buttons/request-archived-list.html"
         if self.request.user.has_perm("service_catalog.delete_request"):
+            context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
             context['action_url'] = reverse('service_catalog:request_bulk_delete')
         return context
 
 
-class RequestArchivedListView(SquestListView):
-    table_class = RequestTable
-    model = Request
-    ordering = '-date_submitted'
-    filterset_class = RequestArchivedFilter
+class RequestListView(RequestListViewGeneric):
+    filterset_class = RequestFilter
 
     def get_queryset(self):
-        return Request.get_queryset_for_user(
-            self.request.user, 'service_catalog.view_request'
-        ).prefetch_related(
-            "user",
-            "operation",
-            "instance",
-            "instance__quota_scope",
-            "instance__service",
-        ).filter(state=RequestState.ARCHIVED)
+        return super().get_queryset().exclude(state=RequestState.ARCHIVED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
-        context['action_url'] = reverse('service_catalog:request_bulk_delete')
+        context['extra_html_button_path'] = "service_catalog/buttons/request-archived-list.html"
+        return context
+
+
+class RequestArchivedListView(RequestListViewGeneric):
+    filterset_class = RequestArchivedFilter
+
+    def get_queryset(self):
+        return super().get_queryset().filter(state=RequestState.ARCHIVED)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
             {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
             {'text': 'Archived requests', 'url': ""}
