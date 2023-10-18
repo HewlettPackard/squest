@@ -1,10 +1,11 @@
 from django.utils.html import format_html
-from django_tables2 import tables, TemplateColumn, Column
+from django_tables2 import TemplateColumn, Column
 
+from Squest.utils.squest_table import SquestTable
 from profiles.models import Role
 
 
-class ScopeRoleTable(tables.Table):
+class ScopeRoleTable(SquestTable):
     name = Column(linkify=True)
 
     class Meta:
@@ -13,7 +14,7 @@ class ScopeRoleTable(tables.Table):
         fields = ("name",)
 
 
-class RoleTable(tables.Table):
+class RoleTable(SquestTable):
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
     name = Column(linkify=True)
 
@@ -23,7 +24,7 @@ class RoleTable(tables.Table):
         fields = ("name",)
 
 
-class RoleAssignementUserTable(tables.Table):
+class RoleAssignementUserTable(SquestTable):
     scope = Column(orderable=False)
     username = Column(orderable=False)
 
@@ -32,7 +33,7 @@ class RoleAssignementUserTable(tables.Table):
             f'<a title={record["scope"]["name"]} href="{record["scope"]["url"]}">{record["scope"]["name"]}</a>')
 
 
-class RoleAssignementScopeTable(tables.Table):
+class RoleAssignementScopeTable(SquestTable):
     scope = Column(orderable=False)
 
     def render_scope(self, value, record):

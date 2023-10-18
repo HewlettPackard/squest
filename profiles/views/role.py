@@ -1,3 +1,5 @@
+from django_tables2 import RequestConfig
+
 from Squest.utils.squest_views import *
 from profiles.filters import RoleFilter
 from profiles.forms import RoleForm
@@ -17,11 +19,19 @@ class RoleDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        permission_table = PermissionTable(self.object.permissions.prefetch_related("content_type"))
-        permission_table.exclude = ("actions",)
-        context['permissions_table'] = permission_table
-        context['rbac_assignement_user_table'] = RoleAssignementUserTable(self.object.get_role_assignment_user_dict())
-        context['rbac_assignement_scope_table'] = RoleAssignementScopeTable(self.object.get_role_assignment_scope_dict())
+        config = RequestConfig(self.request)
+
+        context['permissions_table'] = PermissionTable(self.object.permissions.prefetch_related("content_type"),
+                                                       exclude='actions', prefix="permission-")
+        config.configure(context['permissions_table'])
+
+        context['rbac_assignement_user_table'] = RoleAssignementUserTable(self.object.get_role_assignment_user_dict(),
+                                                                          prefix="user-")
+        config.configure(context['rbac_assignement_user_table'])
+
+        context['rbac_assignement_scope_table'] = RoleAssignementScopeTable(
+            self.object.get_role_assignment_scope_dict(), prefix="scope-")
+        config.configure(context['rbac_assignement_scope_table'])
         return context
 
 

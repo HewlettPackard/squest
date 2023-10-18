@@ -1,3 +1,5 @@
+from django_tables2 import RequestConfig
+
 from Squest.utils.squest_views import *
 from resource_tracker_v2.filters.resource_group_filter import ResourceGroupFilter
 from resource_tracker_v2.forms.resource_group_form import ResourceGroupForm
@@ -23,8 +25,12 @@ class ResourceGroupDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["attributes_table"] = TransformerTable(self.object.transformers.all())
-        context["resources_table"] = ResourceTable(self.object.resources.all(), hide_fields=('selection',))
+        config = RequestConfig(self.request)
+        context["attributes_table"] = TransformerTable(self.object.transformers.all(), prefix="attribute-")
+        config.configure(context['attributes_table'])
+        context["resources_table"] = ResourceTable(self.object.resources.all(), hide_fields=('selection',),
+                                                   prefix="resource-")
+        config.configure(context['resources_table'])
         return context
 
 
