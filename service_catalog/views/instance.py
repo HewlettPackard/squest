@@ -10,7 +10,7 @@ from jinja2 import UndefinedError
 
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
     SquestPermissionDenied
-from service_catalog.filters.instance_filter import InstanceFilter
+from service_catalog.filters.instance_filter import InstanceFilter, InstanceArchivedFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
 from service_catalog.models.documentation import Doc
 from service_catalog.models.instance import Instance
@@ -25,23 +25,53 @@ from service_catalog.tables.request_tables import RequestTable
 from service_catalog.tables.support_tables import SupportTable
 
 
-class InstanceListView(SquestListView):
+class InstanceListViewGeneric(SquestListView):
     table_class = InstanceTable
     model = Instance
-    filterset_class = InstanceFilter
 
     def get_queryset(self):
-        return Instance.get_queryset_for_user(self.request.user, "service_catalog.view_instance").prefetch_related(
-            'requester', 'service', 'quota_scope')
+        return Instance.get_queryset_for_user(
+            self.request.user,
+            "service_catalog.view_instance"
+        ).prefetch_related(
+            'requester', 'service', 'quota_scope'
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ''
         context['action_url'] = ''
-
         if self.request.user.has_perm("service_catalog.delete_instance"):
             context['html_button_path'] = 'generics/buttons/bulk_delete_button.html'
             context['action_url'] = reverse('service_catalog:instance_bulk_delete')
+        return context
+
+
+class InstanceListView(InstanceListViewGeneric):
+    filterset_class = InstanceFilter
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(state=InstanceState.ARCHIVED)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['extra_html_button_path'] = "service_catalog/buttons/instance-archived-list.html"
+        return context
+
+
+class InstanceArchivedListView(InstanceListViewGeneric):
+    filterset_class = InstanceArchivedFilter
+
+    def get_queryset(self):
+        return super().get_queryset().filter(state=InstanceState.ARCHIVED)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['breadcrumbs'] = [
+            {'text': 'Instances', 'url': reverse('service_catalog:instance_list')},
+            {'text': 'Archived instance', 'url': ""}
+        ]
         return context
 
 
