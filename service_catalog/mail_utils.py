@@ -39,7 +39,7 @@ def _apply_when_filter_instance(user_qs, squest_object):
     user_emails = list()
     user_qs = _exclude_user_without_email(user_qs)
     if user_qs.filter(profile__instance_notification_enabled=False).exists():
-        logger.warning(f'The following users have no instance notification enabled:\n'
+        logger.info(f"The following users have disabled their instance notification. They won't be notified:"
                        f'{linesep.join(f" - {user.username}" for user in user_qs.filter(profile__instance_notification_enabled=False))}')
     for user in user_qs.exclude(profile__instance_notification_enabled=False):
         if user.profile.is_notification_authorized_for_instance(squest_object):
@@ -51,7 +51,7 @@ def _apply_when_filter_request(user_qs, squest_object):
     user_emails = list()
     user_qs = _exclude_user_without_email(user_qs)
     if user_qs.filter(profile__request_notification_enabled=False).exists():
-        logger.warning(f'The following users have no request notification enabled:'
+        logger.info(f"The following users have disabled their request notification. They won't be notified:"
                        f'{linesep.join(user.username for user in user_qs.filter(profile__request_notification_enabled=False))}')
     for user in user_qs.exclude(profile__request_notification_enabled=False):
         if user.profile.is_notification_authorized_for_request(squest_object):

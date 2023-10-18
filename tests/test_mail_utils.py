@@ -166,3 +166,21 @@ class TestMailUtils(BaseTest):
                                                         request=self.test_request)
         receivers = _get_receivers_for_request_message(request_message)
         self.assertCountEqual([self.standard_user.email, self.superuser_2.email], receivers)
+
+
+    def test_get_receivers_for_request_message_when_perm_in_global_and_owner_permissions(self):
+        perm = Permission.objects.get(codename="view_requestmessage")
+        GlobalScope.load().global_permissions.add(perm)
+        GlobalScope.load().owner_permissions.add(perm)
+        self.superuser.profile.request_notification_enabled = True
+        request_message = RequestMessage.objects.create(
+            sender=self.standard_user_2,
+            content="message content",
+            request=self.test_request_2
+        )
+        receivers = _get_receivers_for_request_message(request_message)
+        self.assertListEqual([self.superuser.email, self.superuser_2.email, self.standard_user.email], receivers)
+        request_message = RequestMessage.objects.create(sender=self.superuser, content="message content admin",
+                                                        request=self.test_request)
+        receivers = _get_receivers_for_request_message(request_message)
+        self.assertListEqual([self.superuser_2.email, self.standard_user.email, self.standard_user_2.email], receivers)
