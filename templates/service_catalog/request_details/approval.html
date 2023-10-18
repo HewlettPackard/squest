@@ -145,7 +145,7 @@
                             comment.
                         </div>
                     {% endif %}
-                    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" or object.get_state_display == "REJECTED" %}
+                    {% if object.get_state_display in "ACCEPTED,ARCHIVED,COMPLETE,FAILED,PROCESSING,REJECTED" %}
                         <details>
                             <summary>Survey</summary>
                             <table class="row">
@@ -247,7 +247,7 @@
             <span class="bg-{{ object.get_state_display | map_current_state:'ACCEPTED' }}">Accepted </span>
         </div>
     {% endif %}
-    {% if object.get_state_display == "ACCEPTED" or object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" %}
+    {% if object.get_state_display in "ACCEPTED,ARCHIVED,COMPLETE,FAILED,PROCESSING" %}
         <div>
             <i class="fas fa-play fa-lg bg-{{ object.get_state_display | map_color_next_state:'ACCEPTED' }}"></i>
             <div class="timeline-item">
@@ -257,7 +257,7 @@
                         <div class="callout callout-info">
                             <i class="fas fa-pause text-info"></i> This request is ready to be processed.
                         </div>
-                    {% elif object.get_state_display == "COMPLETE" or object.get_state_display == "FAILED" or object.get_state_display == "PROCESSING" %}
+                    {% elif object.get_state_display in "COMPLETE,ARCHIVED,FAILED,PROCESSING" %}
                         <blockquote class="quote-success">
                             <i class="fas fa-check text-success"></i> Sent for processing by
                             <strong>{{ object.processed_by }}</strong>
@@ -285,7 +285,7 @@
     <div class="time-label">
         <span class="bg-{{ object.get_state_display | map_current_state:'PROCESSING' }}">Processing</span>
     </div>
-    {% if object.get_state_display == "PROCESSING" or object.get_state_display == "COMPLETE" %}
+    {% if object.get_state_display in "PROCESSING,ARCHIVED,COMPLETE" %}
         <div>
             <i class="fas fa-cog bg-success"></i>
             <div class="timeline-item">
