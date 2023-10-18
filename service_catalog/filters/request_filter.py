@@ -44,7 +44,7 @@ class RequestFilter(SquestFilter):
 
     def __init__(self, *args, **kwargs):
         super(RequestFilter, self).__init__(*args, **kwargs)
-        self.filters['instance__name'].field.label = 'Instance'
+        self.filters['instance__name'].field.label = 'Instance name'
         self.filters['user__id'].field.label = 'User'
         self.filters['user__id'].field.choices = User.objects.values_list("id", "username").order_by("username")
         from service_catalog.models import Service

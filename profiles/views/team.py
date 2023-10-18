@@ -1,3 +1,5 @@
+from django_tables2 import RequestConfig
+
 from Squest.utils.squest_views import *
 from profiles.filters.team_filter import TeamFilter
 from profiles.forms.team_forms import TeamForm
@@ -14,6 +16,7 @@ def get_organization_breadcrumbs(team):
     ]
     return breadcrumbs
 
+
 class TeamListView(SquestListView):
     model = Team
     filterset_class = TeamFilter
@@ -26,16 +29,21 @@ class TeamDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
         context['breadcrumbs'] = get_organization_breadcrumbs(self.object) + context['breadcrumbs']
         if self.request.user.has_perm("profiles.view_users_team", self.get_object()):
-            context['users'] = UserRoleTable(self.object.users.all())
+            context['users'] = UserRoleTable(self.object.users.all(), prefix="user-")
         else:
-            context['users'] = UserRoleTable(self.object.users.filter(id=self.request.user.id))
+            context['users'] = UserRoleTable(self.object.users.filter(id=self.request.user.id), prefix="user-")
+        config.configure(context['users'])
 
         if self.request.user.has_perm("profiles.view_quota", self.get_object()):
-            context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"]
-                                           )
-        context['roles'] = ScopeRoleTable(self.object.roles.distinct())
+            context['quotas'] = QuotaTable(self.object.quotas.distinct(), hide_fields=["scope"], prefix="quota-")
+            config.configure(context['quotas'])
+
+        context['roles'] = ScopeRoleTable(self.object.roles.distinct(), prefix="role-")
+        config.configure(context['roles'])
+
         return context
 
 

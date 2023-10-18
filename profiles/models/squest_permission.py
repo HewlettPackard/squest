@@ -8,6 +8,7 @@ class Permission(SquestRBAC, Permission, SquestDeleteCascadeMixIn):
     class Meta:
         proxy = True
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
+        ordering = ["content_type__model", "codename"]
 
     @property
     def permission_str(self):

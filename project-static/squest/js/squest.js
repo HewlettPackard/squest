@@ -1,6 +1,17 @@
 $(document).ready(function () {
 
 
+    // iterate on all tab panes
+    // add #id to all href in all links under tab-pane
+    $(".tab-pane").each(
+        function () {
+            var tab_id = "#" + $(this).attr('id')
+            $(this).find('table thead tr th a').each(
+                function (link) {
+                    $(this).attr('href', $(this).attr('href') + tab_id)
+                })
+        })
+
     $('[data-toggle="popover"]').popover({
         placement: 'top',
         trigger: 'hover'

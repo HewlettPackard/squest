@@ -1,12 +1,13 @@
-from django_tables2 import LinkColumn, Table
+from django_tables2 import LinkColumn
 
+from Squest.utils.squest_table import SquestTable
 from profiles.models import Quota
 
 
-class TeamQuotaLimitTable(Table):
+class TeamQuotaLimitTable(SquestTable):
     scope = LinkColumn()
     limit = LinkColumn()
-    consumed = LinkColumn()
+    consumed = LinkColumn(orderable=False)
 
     class Meta:
         model = Quota

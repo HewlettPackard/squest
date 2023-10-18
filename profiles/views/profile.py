@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django_tables2 import RequestConfig
 
 from profiles.models import Token
 from profiles.tables import RequestNotificationFilterTable, InstanceNotificationFilterTable
@@ -9,14 +10,18 @@ from profiles.tables import RequestNotificationFilterTable, InstanceNotification
 @login_required
 def profile(request):
     tokens = Token.objects.filter(user=request.user)
-    context = {
-        'tokens': tokens,
-        'title': 'Profile',
-        'request_filter_table': RequestNotificationFilterTable(request.user.profile.request_notification_filters.all()),
-        'instance_filter_table': InstanceNotificationFilterTable(
-            request.user.profile.instance_notification_filters.all()),
-        'app_name': 'profiles',
-    }
+    config = RequestConfig(request)
+    context = dict()
+    context['tokens'] = tokens
+    context['title'] = 'Profile'
+    context['request_filter_table'] = RequestNotificationFilterTable(
+        request.user.profile.request_notification_filters.all(), prefix="instance-")
+    config.configure(context['request_filter_table'])
+    context['instance_filter_table'] = InstanceNotificationFilterTable(
+        request.user.profile.instance_notification_filters.all(), prefix="request-")
+    config.configure(context['instance_filter_table'])
+    context['app_name'] = 'profiles'
+
     return render(request, 'profiles/profile.html', context)
 
 
