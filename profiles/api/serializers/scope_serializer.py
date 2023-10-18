@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from rest_framework.fields import MultipleChoiceField
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.fields import MultipleChoiceField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer
 
 from profiles.api.serializers import RBACSerializer
 from profiles.models import AbstractScope, Scope
@@ -15,9 +15,29 @@ class AbstractScopeSerializer(ModelSerializer):
 
 
 class ScopeSerializer(AbstractScopeSerializer):
+    organization = SerializerMethodField()
+    team = SerializerMethodField()
+
     class Meta:
         model = Scope
         fields = '__all__'
+
+    def get_organization(self, obj):
+        if obj.is_org:
+            return {"id": obj.id, "name": obj.name}
+        elif obj.is_team:
+            team = obj.get_object()
+            return {"id": team.org.id, "name": team.org.name}
+        else:
+            return {}
+
+    def get_team(self, obj):
+        if obj.is_org:
+            return {}
+        elif obj.is_team:
+            return {"id": obj.id, "name": obj.name}
+        else:
+            return {}
 
 
 class AbstractScopeCreateRBACSerializer(ModelSerializer):
