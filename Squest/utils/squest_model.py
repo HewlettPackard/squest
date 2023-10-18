@@ -119,7 +119,7 @@ class SquestRBAC(Model):
         from django.contrib.auth.models import User
         from profiles.models import GlobalScope, Scope, RBAC
         if GlobalScope.load().global_permissions.filter(codename=codename,content_type__app_label=app_label).exists():
-            return User.objects.all()
+            return User.objects.distinct()
 
         scopes = self.get_scopes()
         ## Default role scopes
