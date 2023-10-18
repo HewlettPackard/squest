@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.forms import CheckboxInput
+from django.forms import CheckboxInput, SelectMultiple
 from django.utils.translation import gettext_lazy as _
 from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
 
@@ -24,14 +24,15 @@ class CharInFilter(BaseInFilter, CharFilter):
     pass
 
 
-class InstanceFilter(SquestFilter):
+class InstanceFilterGeneric(SquestFilter):
     class Meta:
         model = Instance
         fields = ['id', 'name', 'requester', 'service', 'state', 'quota_scope']
 
     state = MultipleChoiceFilter(choices=InstanceState.choices)
     quota_scope = MultipleChoiceFilter(
-        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id",flat=True)).values_list("id", "name"))
+        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id", flat=True)).values_list("id",
+                                                                                                            "name"))
     service = MultipleChoiceFilter(choices=Service.objects.values_list("id", "name"))
     requester = MultipleChoiceFilter(choices=User.objects.values_list("id", "username"))
     no_requesters = BooleanFilter(method='no_requester', label="No requester", widget=CheckboxInput())
@@ -55,6 +56,16 @@ class InstanceFilter(SquestFilter):
 
     def user_spec_filter(self, queryset, name, value):
         return json_filter(queryset, name, value, 'user_spec')
+
+
+class InstanceFilter(InstanceFilterGeneric):
+    state = MultipleChoiceFilter(
+        choices=[state for state in InstanceState.choices if state[0] != InstanceState.ARCHIVED],
+        widget=SelectMultiple(attrs={'data-live-search': "true"}))
+
+
+class InstanceArchivedFilter(InstanceFilterGeneric):
+    pass
 
 
 def json_filter(queryset, name, value, field):

@@ -74,6 +74,9 @@ urlpatterns = [
     # Instance bulk delete
     path('instance/delete/', views.instance_bulk_delete, name='instance_bulk_delete'),
 
+    # Archived instance list
+    path('instance/archived/', views.InstanceArchivedListView.as_view(), name='instance_archived_list'),
+
     # Instance State Machine
     path('instance/<int:pk>/archive/', views.instance_archive, name='instance_archive'),
     path('instance/<int:pk>/unarchive/', views.instance_unarchive, name='instance_unarchive'),
