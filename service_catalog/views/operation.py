@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, get_object_or_404
+from django_tables2 import RequestConfig
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited
@@ -63,6 +64,8 @@ class OperationDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
+
         context['breadcrumbs'] = [
             {
                 'text': 'Service catalog',
@@ -84,7 +87,11 @@ class OperationDetailView(SquestDetailView):
         ]
         context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
         if self.request.user.has_perm('service_catalog.view_approvalworkflow'):
-            context['workflows_table'] = ApprovalWorkflowTable(ApprovalWorkflow.objects.filter(operation=self.get_object()),exclude=['operation'])
+            context['workflows_table'] = ApprovalWorkflowTable(
+                ApprovalWorkflow.objects.filter(operation=self.get_object()), exclude=['operation'],
+                prefix="operation-")
+            config.configure(context['workflows_table'])
+
         return context
 
 

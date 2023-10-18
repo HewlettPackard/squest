@@ -83,6 +83,8 @@ class QuotaDetailsView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
+
         scope = self.object.scope.get_object()
         class_name = scope.__class__.__name__
         context["breadcrumbs"] = [
@@ -91,22 +93,18 @@ class QuotaDetailsView(SquestDetailView):
             {'text': f"Quota", 'url': ''},
             {'text': f"{self.object.name}", 'url': ''},
         ]
-        config = RequestConfig(self.request)
         if class_name == "Organization":
             quotas_teams = Quota.objects.filter(scope__in=scope.teams.all(),
                                                 attribute_definition=self.object.attribute_definition)
             quotas_teams_consumption = quotas_teams.aggregate(consumed=Sum('limit')).get("consumed", 0)
             context['quotas_teams_consumption'] = quotas_teams_consumption
-            table_team = TeamQuotaLimitTable(quotas_teams.all(), prefix="team-")
-            context['team_limit_table'] = table_team
-
-            config.configure(table_team)
+            context['team_limit_table'] = TeamQuotaLimitTable(quotas_teams.all(), prefix="team-")
+            config.configure(context['team_limit_table'])
 
         resources = ResourceAttribute.objects.filter(attribute_definition=self.object.attribute_definition,
                                                      resource__service_catalog_instance__quota_scope=self.object.scope)
-        table_instance = InstanceConsumptionTable(resources.all(), prefix="instance-")
-        context['instance_consumption_table'] = table_instance
-        config.configure(table_instance)
+        context['instance_consumption_table'] = InstanceConsumptionTable(resources.all(), prefix="instance-")
+        config.configure(context['instance_consumption_table'])
         instances_consumption = resources.all().aggregate(consumed=Sum("value")).get("consumed", 0)
         context['instances_consumption'] = instances_consumption
         return context

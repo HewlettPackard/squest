@@ -11,7 +11,6 @@ class PermissionListView(SquestListView):
     model = Permission
     filterset_class = PermissionFilter
     table_class = PermissionTable
-    ordering = 'name'
 
 
 class PermissionCreateView(SquestCreateView):

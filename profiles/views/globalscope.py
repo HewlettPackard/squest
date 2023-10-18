@@ -1,3 +1,5 @@
+from django_tables2 import RequestConfig
+
 from Squest.utils.squest_views import *
 from profiles.forms import GlobalScopeForm
 from profiles.models import GlobalScope
@@ -21,9 +23,12 @@ class GlobalScopeRBACView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
         context['breadcrumbs'] = None
         context['title'] = "Global scope"
-        context['users'] = UserRoleTable(self.object.users)
+        context['users'] = UserRoleTable(self.object.users, prefix="user-")
+        config.configure(context['users'])
+
         return context
 
 
@@ -41,14 +46,15 @@ class GlobalScopeDefaultPermissionView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
         context['breadcrumbs'] = None
         context['title'] = "Default permissions"
-        permission_table = PermissionTable(self.object.global_permissions.all())
-        permission_table.exclude = ("actions",)
-        context['global_permissions'] = permission_table
-        owner_permission_table = PermissionTable(self.object.owner_permissions.all())
-        owner_permission_table.exclude = ("actions",)
-        context['owner_permissions'] = owner_permission_table
+        context['global_permissions'] = PermissionTable(self.object.global_permissions.all(), exclude='actions',
+                                                        prefix="global_permissions-")
+        config.configure(context['global_permissions'])
+        context['owner_permissions'] = PermissionTable(self.object.owner_permissions.all(), exclude='actions',
+                                                       prefix="owner_permissions-")
+        config.configure(context['owner_permissions'])
         return context
 
 

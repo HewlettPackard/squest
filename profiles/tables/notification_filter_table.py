@@ -1,9 +1,10 @@
-from django_tables2 import tables, TemplateColumn
+from django_tables2 import TemplateColumn
 
+from Squest.utils.squest_table import SquestTable
 from profiles.models import InstanceNotification, RequestNotification
 
 
-class RequestNotificationFilterTable(tables.Table):
+class RequestNotificationFilterTable(SquestTable):
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:
@@ -12,7 +13,7 @@ class RequestNotificationFilterTable(tables.Table):
         fields = ("name", "actions")
 
 
-class InstanceNotificationFilterTable(tables.Table):
+class InstanceNotificationFilterTable(SquestTable):
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
     class Meta:

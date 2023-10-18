@@ -1,9 +1,10 @@
-from django_tables2 import LinkColumn, Table
+from django_tables2 import LinkColumn
 
+from Squest.utils.squest_table import SquestTable
 from resource_tracker_v2.models import ResourceAttribute
 
 
-class InstanceConsumptionTable(Table):
+class InstanceConsumptionTable(SquestTable):
 
     resource__service_catalog_instance = LinkColumn(verbose_name="Instance")
 

@@ -1,3 +1,5 @@
+from django_tables2 import RequestConfig
+
 from Squest.utils.squest_views import *
 from profiles.tables.quota_table import QuotaTable
 from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
@@ -12,11 +14,15 @@ class AttributeDefinitionDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
         if self.request.user.has_perm("profiles.view_quota", self.get_object()):
             context['quotas'] = QuotaTable\
                 (self.object.quotas.distinct(),
-                hide_fields=["attribute_definition"]
+                hide_fields=["attribute_definition"],
+                 prefix="quota-"
             )
+            config.configure(context['quotas'])
+
         context['breadcrumbs'] = [
             {
                 'text': self.django_content_type.name.capitalize(),

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django_tables2 import RequestConfig
 
 from Squest.utils.squest_views import SquestListView, SquestDetailView
 from profiles.filters.user_filter import UserFilter
@@ -26,6 +27,8 @@ class UserDetailsView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
+
         context['breadcrumbs'] = [
             {
                 'text': self.django_content_type.name.capitalize(),
@@ -39,7 +42,11 @@ class UserDetailsView(SquestDetailView):
 
         # Requests
         context['requests'] = RequestTable(self.object.request_set.all(),
-                                           hide_fields=["user__username", "instance__service"])
+                                           hide_fields=["user__username", "instance__service"],
+                                           prefix="request-")
+        config.configure(context['requests'])
         # Instances
-        context['instances'] = InstanceTable(self.object.instance_set.all())
+        context['instances'] = InstanceTable(self.object.instance_set.all(),prefix="instance-")
+        config.configure(context['instances'])
+
         return context

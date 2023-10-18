@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
+from django_tables2 import RequestConfig
 from jinja2 import UndefinedError
 
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
@@ -50,6 +51,7 @@ class InstanceDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        config = RequestConfig(self.request)
 
         # operations
         operations = Operation.objects.none()
@@ -64,21 +66,29 @@ class InstanceDetailView(SquestDetailView):
                                                                             type__in=[OperationType.UPDATE,
                                                                                       OperationType.DELETE])
         if operations.exists():
-            context['operations_table'] = OperationTableFromInstanceDetails(operations)
+            context['operations_table'] = OperationTableFromInstanceDetails(operations, prefix="operation-")
             if not self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
                 context['operations_table'].exclude = ("is_admin_operation",)
+            config.configure(context['operations_table'])
+
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):
             context['requests_table'] = RequestTable(
                 self.object.request_set.distinct(),
-                hide_fields=["instance", "instance__service", "selection"]
+                hide_fields=["instance", "instance__service", "selection"],
+                prefix="request-"
             )
+            config.configure(context['requests_table'])
+
         # support
         if self.request.user.has_perm("service_catalog.view_support", self.object):
             context['supports_table'] = SupportTable(
                 self.object.supports.distinct(),
-                hide_fields=["instance"]
+                hide_fields=["instance"],
+                prefix="support-"
             )
+            config.configure(context['supports_table'])
+
         return context
 
 
