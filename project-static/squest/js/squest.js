@@ -51,7 +51,7 @@ $(document).ready(function () {
         }
     });
 
-    if (poolTable.context.length !== 0){
+    if (poolTable.context.length !== 0) {
 
         // Apply the filter to remove refactors by default
         var titles = $('#resource_group_table_csv thead th');
@@ -128,14 +128,14 @@ function reformatJSON(element) {
 
 function add_tab_management() {
 
-    $('ul.nav.nav-pills a').click(function (e) {
+    $('ul#tabs.nav.nav-pills li.nav-item a.nav-link').click(function (e) {
         $(this).tab('show');
         window.location.hash = this.hash;
         $(document).scrollTop(0);
     });
     var hash = window.location.hash;
     if (hash) {
-        $('ul#tabs.squest-default-active li.nav-item a[href="' + hash + '"]').trigger('click');
+        $('ul#tabs.nav.nav-pills li.nav-item a.nav-link[href="' + hash + '"]').trigger('click');
     } else {
         $("ul#tabs.squest-default-active li.nav-item a:first").tab("show");
     }
