@@ -1,4 +1,4 @@
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.tables.quota_table import QuotaTable
@@ -14,7 +14,7 @@ class AttributeDefinitionDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         if self.request.user.has_perm("profiles.view_quota", self.get_object()):
             context['quotas'] = QuotaTable\
                 (self.object.quotas.distinct(),

@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 from jinja2 import UndefinedError
 
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
@@ -82,7 +82,7 @@ class InstanceDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
 
         # operations
         operations = Operation.objects.none()

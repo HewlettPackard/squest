@@ -1,4 +1,4 @@
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.filters.team_filter import TeamFilter
@@ -29,7 +29,7 @@ class TeamDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         context['breadcrumbs'] = get_organization_breadcrumbs(self.object) + context['breadcrumbs']
         if self.request.user.has_perm("profiles.view_users_team", self.get_object()):
             context['users'] = UserRoleTable(self.object.users.all(), prefix="user-")

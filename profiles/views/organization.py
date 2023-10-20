@@ -1,4 +1,4 @@
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.filters import OrganizationFilter
@@ -22,7 +22,7 @@ class OrganizationDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         if self.request.user.has_perm("profiles.view_users_organization", self.get_object()):
             context['users'] = UserRoleTable(self.object.users.all(), prefix="user-")
         else:

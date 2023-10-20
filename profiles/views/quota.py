@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.filters.quota import QuotaFilter
@@ -83,7 +83,7 @@ class QuotaDetailsView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
 
         scope = self.object.scope.get_object()
         class_name = scope.__class__.__name__
