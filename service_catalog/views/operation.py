@@ -64,7 +64,6 @@ class OperationDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
 
         context['breadcrumbs'] = [
             {
@@ -88,10 +87,7 @@ class OperationDetailView(SquestDetailView):
         context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
         if self.request.user.has_perm('service_catalog.view_approvalworkflow'):
             context['workflows_table'] = ApprovalWorkflowTable(
-                ApprovalWorkflow.objects.filter(operation=self.get_object()), exclude=['operation'],
-                prefix="operation-")
-            config.configure(context['workflows_table'])
-
+                ApprovalWorkflow.objects.filter(operation=self.get_object()), exclude=['operation'])
         return context
 
 

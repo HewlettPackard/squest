@@ -23,12 +23,9 @@ class GlobalScopeRBACView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
         context['breadcrumbs'] = None
         context['title'] = "Global scope"
-        context['users'] = UserRoleTable(self.object.users, prefix="user-")
-        config.configure(context['users'])
-
+        context['users'] = UserRoleTable(self.object.users)
         return context
 
 
