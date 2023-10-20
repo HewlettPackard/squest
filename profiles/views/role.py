@@ -1,4 +1,4 @@
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.filters import RoleFilter
@@ -19,7 +19,7 @@ class RoleDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
 
         context['permissions_table'] = PermissionTable(self.object.permissions.prefetch_related("content_type"),
                                                        exclude='actions', prefix="permission-")

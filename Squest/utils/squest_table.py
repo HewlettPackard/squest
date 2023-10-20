@@ -1,4 +1,4 @@
-from django_tables2 import tables
+from django_tables2 import tables, RequestConfig
 
 
 class SquestTable(tables.Table):
@@ -12,3 +12,9 @@ class SquestTable(tables.Table):
         for field in hide_field:
             if field in self.columns.columns:
                 self.columns.hide(field)
+
+class SquestRequestConfig(RequestConfig):
+
+    def __init__(self, request, paginate=False):
+        self.request = request
+        self.paginate = paginate

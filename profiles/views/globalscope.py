@@ -1,4 +1,4 @@
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from profiles.forms import GlobalScopeForm
@@ -23,7 +23,7 @@ class GlobalScopeRBACView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         context['breadcrumbs'] = None
         context['title'] = "Global scope"
         context['users'] = UserRoleTable(self.object.users, prefix="user-")
@@ -46,7 +46,7 @@ class GlobalScopeDefaultPermissionView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         context['breadcrumbs'] = None
         context['title'] = "Default permissions"
         context['global_permissions'] = PermissionTable(self.object.global_permissions.all(), exclude='actions',

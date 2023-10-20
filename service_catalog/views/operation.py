@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, get_object_or_404
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited
@@ -64,7 +64,7 @@ class OperationDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
 
         context['breadcrumbs'] = [
             {
