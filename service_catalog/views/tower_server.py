@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django_celery_results.models import TaskResult
-from django_tables2 import RequestConfig
+from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import SquestListView, SquestCreateView, SquestDeleteView, SquestUpdateView, \
     SquestDetailView
@@ -27,7 +27,7 @@ class TowerServerDetailView(SquestDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        config = RequestConfig(self.request)
+        config = SquestRequestConfig(self.request)
         context["jobtemplate_table"] = JobTemplateTable(self.object.jobtemplate_set.all(), prefix="jobtemplate-")
         config.configure(context['jobtemplate_table'])
 
