@@ -268,7 +268,16 @@
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_process_request %}
-                                        <a class="btn btn-primary"
+                                        {% with args_filter="accept,"|addstr:object.id %}
+                                            {% if args_filter|can_proceed_request_action and can_accept_request %}
+                                                <a class="btn btn-primary"
+                                                   title="Review"
+                                                   href="{% url 'service_catalog:request_accept' object.id %}">
+                                                    <i class="fas fa-clipboard-check"></i> Review
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <a class="btn btn-success"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Process
@@ -327,7 +336,16 @@
                             <div class="timeline-footer">
                                 {% with args_filter="process,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_process_request %}
-                                        <a class="btn btn-primary"
+                                        {% with args_filter="accept,"|addstr:object.id %}
+                                            {% if args_filter|can_proceed_request_action and can_accept_request %}
+                                                <a class="btn btn-primary"
+                                                   title="Review"
+                                                   href="{% url 'service_catalog:request_accept' object.id %}">
+                                                    <i class="fas fa-clipboard-check"></i> Review
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <a class="btn btn-success"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Retry process
