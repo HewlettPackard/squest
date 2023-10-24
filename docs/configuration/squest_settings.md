@@ -104,8 +104,6 @@ set the LDAP "last_name" attribute
 set the LDAP "email" attribute
 
 
-
-
 ### DEFAULT_ADMIN_TOKEN
 
 **Default:** `None`
@@ -292,6 +290,33 @@ Change the format of all date in Squest UI. Based on Python [strftime](https://s
 
 ### FIELD_VALIDATOR_PATH
 
+**Default:** `plugins/field_validators`
+
 Path to form field validation modules.
 
-**Default:** `plugins/field_validators`
+## Redis
+
+### REDIS_CACHE_USER
+
+**Default:** `default`
+
+Username of Redis account.
+
+### REDIS_CACHE_PASSWORD
+
+**Default:** `redis_secret_password`
+
+Password of Redis account.
+
+### REDIS_CACHE_HOST
+
+**Default:** `127.0.0.1`
+
+Redis hostname.
+
+### REDIS_CACHE_PORT
+
+**Default:** `6379`
+
+Redis port.
+
