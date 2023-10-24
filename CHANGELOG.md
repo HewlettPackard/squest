@@ -1,3 +1,25 @@
+# 2.1.2 2023-10-24
+
+## Fix
+
+- Fix operation field when min and max are not set
+- Display the admin survey when request is processing or rejected
+- Set the request to fail state when AWX api return no job id
+- Fix sort in tables + fix HTML anchor in tables
+- Fix bug in permission when user is both owner_permissions and in global_permissions
+- Fix approval.html for ARCHIVED state
+- Fix per_page on table in tabs
+- FiX CSS on tables
+- Fix maintenance page was not showing up after nginx restart
+
+## Enhancement
+
+- Add service_catalog_instance filter in ResourceApi
+- Add ID to instance and request filters
+- Add "organization" and "team" to ScopeSerializer
+- Archive and unarchive request without confirmation
+- Add review again button after request fail or accepted
+
 # 2.1.1 2023-10-03
 
 ## Fix
