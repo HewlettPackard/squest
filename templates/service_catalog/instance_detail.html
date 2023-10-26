@@ -30,7 +30,8 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <img class="card-img-top" src="{% if object.service.image %}{{ object.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                            <img class="card-img-top" src="
+                                    {% if object.service.image %}{{ object.service.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Service image">
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
@@ -61,10 +62,12 @@
                                     </a> <br>
                                 {% endfor %}
                             </li>
-                            <li class="list-group-item">
-                                <b>Requester</b> <a href="mailto:{{ object.requester.email }}"
+                            {% if object.requester %}
+                                <li class="list-group-item">
+                                    <b>Owner</b> <a href="{% url 'profiles:user_details' object.requester.id %}"
                                                     class="float-right">{{ object.requester.username }}</a>
-                            </li>
+                                </li>
+                            {% endif %}
                             {% has_perm request.user "resource_tracker_v2.change_resource" object as can_change_resource %}
                             {% if can_change_resource %}
                                 <li class="list-group-item">

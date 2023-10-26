@@ -54,7 +54,8 @@
                     class="float-right text-{{ object.instance.state |map_instance_state }}">{{ object.instance.get_state_display }}</strong>
             </li>
             <li class="list-group-item">
-                <b>Requester</b><span class="float-right">{{ object.user.username }}</span>
+                <b>User</b> <a href="{% url 'profiles:user_details' object.user.id %}"
+                                    class="float-right">{{ object.user.username }}</a>
             </li>
             <li class="list-group-item">
                 <b>Date submitted</b><span
