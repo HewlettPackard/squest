@@ -1,3 +1,21 @@
+# 2.2.0 2023-10-26
+
+## Fix
+
+- Fix profile page raise a 500 error
+
+## Enhancement
+
+- Change the verbose name of "Requester" to "Owner" in Instance model
+
+## Feature
+
+- OpenID Connect supported
+
+## Internal
+
+- Bump libraries and upgrade to Django 4
+
 # 2.1.2 2023-10-24
 
 ## Fix
