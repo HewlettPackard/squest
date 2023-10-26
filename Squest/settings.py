@@ -30,6 +30,12 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD', 'squest_password')
 DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
 DB_PORT = os.environ.get('DB_PORT', '3306')
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
+SOCIAL_AUTH_OIDC_ENABLED = str_to_bool(os.environ.get('SOCIAL_AUTH_OIDC_ENABLED', False))
+SOCIAL_AUTH_OIDC_BTN_TEXT = os.environ.get('SOCIAL_AUTH_OIDC_BTN_TEXT', 'OpenID Login')
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = os.environ.get('SOCIAL_AUTH_OIDC_OIDC_ENDPOINT', '')
+SOCIAL_AUTH_OIDC_KEY = os.environ.get('SOCIAL_AUTH_OIDC_KEY', '')
+SOCIAL_AUTH_OIDC_SECRET = os.environ.get('SOCIAL_AUTH_OIDC_SECRET', '')
+PASSWORD_ENABLED = str_to_bool(os.environ.get('PASSWORD_ENABLED', True))
 BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
 BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
 DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
@@ -61,6 +67,7 @@ print(f"COLLECTING_STATIC: {COLLECTING_STATIC}")
 print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 print(f"IS_GUNICORN_EXECUTION: {IS_GUNICORN_EXECUTION}")
 print(f"LDAP_ENABLED: {LDAP_ENABLED}")
+print(f"SOCIAL_AUTH_OIDC_ENABLED: {SOCIAL_AUTH_OIDC_ENABLED}")
 print(f"BACKUP_ENABLED: {BACKUP_ENABLED}")
 print(f"SQL_DEBUG: {SQL_DEBUG}")
 
@@ -94,6 +101,11 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',  # should stay last to override delete method of our model
 ]
 
+if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
+    INSTALLED_APPS += [
+        'social_django'
+    ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,6 +135,10 @@ TEMPLATES = [
         },
     },
 ]
+
+if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
+    TEMPLATES['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
+    TEMPLATES['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
 
 WSGI_APPLICATION = 'Squest.wsgi.application'
 
@@ -187,6 +203,12 @@ if LDAP_ENABLED and not TESTING:
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
         'django_auth_ldap.backend.LDAPBackend',
+        'Squest.utils.squest_rbac.SquestRBACBackend',
+    )
+if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
+    AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        'social_core.backends.open_id_connect.OpenIdConnectAuth',
         'Squest.utils.squest_rbac.SquestRBACBackend',
     )
 

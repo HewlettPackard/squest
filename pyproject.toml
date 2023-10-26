@@ -45,6 +45,8 @@ tablib = "^3.5.0"
 setuptools = "^68.2.2"
 hiredis = "^2.2.3"
 psycopg = "^3.1.12"
+social-auth-app-django = {extras = ["openidconnect"], version = "^5.4.0"}
+python-jose = "^3.3.0"
 
 [tool.poetry.dev-dependencies]
 
