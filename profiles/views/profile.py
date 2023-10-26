@@ -10,7 +10,7 @@ from profiles.tables import RequestNotificationFilterTable, InstanceNotification
 @login_required
 def profile(request):
     tokens = Token.objects.filter(user=request.user)
-    config = RequestConfig(request)
+    config = SquestRequestConfig(request)
     context = dict()
     context['tokens'] = tokens
     context['title'] = 'Profile'
