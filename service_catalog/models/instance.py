@@ -37,7 +37,7 @@ class Instance(SquestModel):
     spec = JSONField(default=dict, blank=True, verbose_name="Admin spec")
     user_spec = JSONField(default=dict, blank=True, verbose_name="User spec")
     service = ForeignKey(Service, blank=True, null=True, on_delete=CASCADE)
-    requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Requester", on_delete=PROTECT)
+    requester = ForeignKey(User, null=True, help_text='Initial requester', verbose_name="Owner", on_delete=PROTECT)
 
     quota_scope = ForeignKey(
         Scope,
