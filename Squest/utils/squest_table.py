@@ -13,6 +13,7 @@ class SquestTable(tables.Table):
             if field in self.columns.columns:
                 self.columns.hide(field)
 
+
 class SquestRequestConfig(RequestConfig):
 
     def __init__(self, request, paginate=False):
