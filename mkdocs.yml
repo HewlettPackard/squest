@@ -33,6 +33,7 @@ nav:
     - Squest: configuration/squest_settings.md
     - LDAP: configuration/ldap.md
     - TLS: configuration/tls.md
+    - OpenID Connect: configuration/openid.md
   - Manual:
     - Service catalog:
       - Concept: manual/service_catalog/concept.md

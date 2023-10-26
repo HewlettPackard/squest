@@ -104,6 +104,46 @@ set the LDAP "last_name" attribute
 set the LDAP "email" attribute
 
 
+### OpenID Connect
+
+#### SOCIAL_AUTH_OIDC_ENABLED
+
+**Default:** `False`
+
+set to `True` to enable OpenID Connect based authentication
+
+#### SOCIAL_AUTH_OIDC_BTN_TEXT
+
+**Default:** `OpenID Login`
+
+set the OpenID Connect login button text
+
+#### SOCIAL_AUTH_OIDC_OIDC_ENDPOINT
+
+**Default:** `None`
+
+set the endpoint to the base url and the remaining configuration will be auto-completed like so: `<SOCIAL_AUTH_OIDC_OIDC_ENDPOINT>/.well-known/openid-configuration`
+
+#### SOCIAL_AUTH_OIDC_KEY
+
+**Default:** `None`
+
+set to the OpenID client ID that Squest should be configured to use
+
+#### SOCIAL_AUTH_OIDC_SECRET
+
+**Default:** `None`
+
+set to the OpenID client secret that Squest should be configured to use
+
+### Password
+
+#### PASSWORD_ENABLED
+
+**Default:** `True`
+
+set to `False` to disable the password form on the login view
+
 ### DEFAULT_ADMIN_TOKEN
 
 **Default:** `None`
