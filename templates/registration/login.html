@@ -8,6 +8,7 @@
         <div class="row justify-content-center align-items-center">
             <div class="col-8">
                 <div class="card card-secondary">
+                    {% if password_enabled %}
                     <form class="form-horizontal" method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <div class="card-body">
@@ -39,6 +40,14 @@
                         </div>
                         <!-- /.card-footer -->
                     </form>
+                    {% endif %}
+                    {% if openid_active %}
+                    <div class="card-footer">
+                        <div class="text-center">
+                            <a class="btn" style="background-color: #6ad3c2" href="{% url "social:begin" "oidc" %}" role="button"><strong>{{ openid_btn_text }}</strong></a>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
