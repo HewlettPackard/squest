@@ -35,6 +35,17 @@ class QuotaFormTests(BaseTestProfile):
         cpu_quota.refresh_from_db()
         self.assertEqual(cpu_quota.limit, 100)
 
+    def test_quota_form_update_with_empty_values(self):
+        Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)
+        data = {
+            f"attribute_definition_{self.cpu_attribute.id}": None,
+            f"attribute_definition_{self.other_attribute.id}": None,
+        }
+        form = QuotaForm(data, **self.parameters)
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertEqual(Quota.objects.count(), 0)
+
     def test_quota_form_create_quota_inserted_when_limit_zero(self):
         Quota.objects.create(limit=200, scope=self.test_org, attribute_definition=self.cpu_attribute)
         number_quota_before = Quota.objects.count()

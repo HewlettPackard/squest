@@ -72,8 +72,11 @@ class QuotaForm(SquestForm):
             attribute_id = form_attribute.split("attribute_definition_")[1]
             initial_value = Quota.objects.filter(scope=self.scope, attribute_definition_id=int(attribute_id)).first()
             if initial_value:
-                initial_value.limit = limit
-                initial_value.save()
+                if limit is None:
+                    initial_value.delete()
+                else:
+                    initial_value.limit = limit
+                    initial_value.save()
             else:
                 if limit is not None:
                     Quota.objects.create(scope=self.scope, attribute_definition_id=int(attribute_id), limit=limit)
