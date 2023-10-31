@@ -305,7 +305,7 @@ def generate_sidebar(user):
                     if (view_permission is None) or (view_permission is not None and user.has_perm(view_permission)):
                         user_has_perm = True
                         is_group_visible = True
-                    child_group.append(child_view_data_copy)
+                        child_group.append(child_view_data_copy)
                 view_data_copy["treeview_items"] = child_group
             if user_has_perm:
                 group_items.append(view_data_copy)
