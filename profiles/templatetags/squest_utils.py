@@ -281,7 +281,8 @@ def generate_sidebar(user):
                         'view_name': 'service_catalog:emailtemplate_list',
                         'icon': 'fas fa-envelope',
                         'permission_required': 'service_catalog.list_emailtemplate',
-                        'active': ["emailtemplate_list", "emailtemplate_create", "emailtemplate_edit", "emailtemplate_delete"]
+                        'active': ["emailtemplate_list", "emailtemplate_create", "emailtemplate_edit",
+                                   "emailtemplate_delete", "emailtemplate_details", "emailtemplate_send"]
                     },
                 ],
             }

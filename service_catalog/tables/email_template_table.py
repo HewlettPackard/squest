@@ -10,5 +10,5 @@ class EmailTemplateTable(SquestTable):
 
     class Meta:
         model = EmailTemplate
-        attrs = {"id": "custom_link_table", "class": "table squest-pagination-tables "}
+        attrs = {"class": "table squest-pagination-tables "}
         fields = ("name", "actions")

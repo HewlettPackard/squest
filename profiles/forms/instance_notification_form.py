@@ -24,4 +24,5 @@ class InstanceNotificationForm(SquestModelForm):
         obj = super().save(False)
         obj.profile = self.user.profile
         obj.save()
+        self.save_m2m()
         return obj

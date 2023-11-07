@@ -20,9 +20,9 @@ class RequestNotificationForm(SquestModelForm):
         self.user = user
         super(RequestNotificationForm, self).__init__(*args, **kwargs)
 
-
     def save(self, commit=True):
         obj = super().save(False)
         obj.profile = self.user.profile
         obj.save()
+        self.save_m2m()
         return obj
