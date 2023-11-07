@@ -206,7 +206,6 @@ def send_template_email(email_template, user_id_list):
     user_qs = _exclude_user_without_email(user_qs)
     for user in user_qs.exclude(profile__request_notification_enabled=False):
         user_emails.append(user.email)
-    print(user_emails)
     subject = f"{EMAIL_TITLE_PREFIX} {email_template.email_title}"
     plain_text = f"Squest notification"
     template_name = "service_catalog/mails/email_notification_template.html"
