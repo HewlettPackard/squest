@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from django_fsm import can_proceed
 from markdown.extensions.toc import TocExtension
 
-from service_catalog.models import BootstrapType, RequestState
+from service_catalog.models import BootstrapType, RequestState, InstanceState
 from service_catalog.models import Request
 from service_catalog.models.instance import Instance
 from service_catalog.models.operations import OperationType
@@ -168,3 +168,8 @@ def map_current_state(current_state, expected_state):
     if current_state in success_list:
         return "success"
     return "secondary"
+
+
+@register.filter(name="instance_state_integer_to_string")
+def instance_state_integer_to_string(integer_state):
+    return InstanceState(integer_state).label
