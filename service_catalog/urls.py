@@ -177,4 +177,12 @@ urlpatterns = [
          views.ApprovalStepDeleteView.as_view(),
          name='approvalstep_delete'),
 
+    # Email template
+    path('administration/email-template/', views.EmailTemplateListView.as_view(), name='emailtemplate_list'),
+    path('administration/email-template/<int:pk>/', views.EmailTemplateDetailView.as_view(), name='emailtemplate_details'),
+    path('administration/email-template/create/', views.EmailTemplateCreateView.as_view(), name='emailtemplate_create'),
+    path('administration/email-template/<int:pk>/edit/', views.EmailTemplateEditView.as_view(), name='emailtemplate_edit'),
+    path('administration/email-template/<int:pk>/delete/', views.EmailTemplateDeleteView.as_view(), name='emailtemplate_delete'),
+    path('administration/email-template/<int:pk>/send/', views.EmailTemplateSend.as_view(), name='emailtemplate_send'),
+
 ]

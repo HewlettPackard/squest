@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Email template
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block header_button %}
+    <a href="{% url 'service_catalog:emailtemplate_send' object.id %}" class="btn btn-light" title="Send email">
+        <i class="fas fa-envelope"></i> Send email
+    </a>
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title"><strong>{{ object.name }}</strong></h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>Name</b><span class="float-right">{{ object.name }}</span>
+                            </li>
+                        <li class="list-group-item">
+                                <b>Title</b><span class="float-right">{{ object.email_title }}</span>
+                            </li>
+                            {% if object.services.all %}
+                                <li class="list-group-item">
+                                    <b>Services</b>
+                                    <span class="float-right">
+                                    {% for service in object.services.distinct %}
+                                        <span class="badge bg-light">{{ service.name }}</span>
+                                    {% endfor %}
+                                </span>
+                                </li>
+                            {% endif %}
+                            {% if object.instance_states %}
+                                <li class="list-group-item">
+                                    <b>Instance states</b>
+                                    <span class="float-right">
+                                    {% for state in object.instance_states %}
+                                        <span class="badge bg-light">{{ state | instance_state_integer_to_string }}</span>
+{#                                        <span class="badge bg-light">{{ state }}</span>#}
+                                    {% endfor %}
+                                    </span>
+                                </li>
+                            {% endif %}
+                            {% if object.quota_scopes.all %}
+                                <li class="list-group-item">
+                                    <b>Scopes</b>
+                                    <span class="float-right">
+                                    {% for scope in object.quota_scopes.distinct %}
+                                        <span class="badge bg-light">{{ scope.name }}</span>
+                                    {% endfor %}
+                                    </span>
+                                </li>
+                            {% endif %}
+                            {% if object.when %}
+                                <li class="list-group-item">
+                                    <b>When</b></br>
+                                    <span>{{ object.when }}</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-envelope"></i> Content
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                {{ object.html_content |safe }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
