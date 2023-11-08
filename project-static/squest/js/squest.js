@@ -25,11 +25,11 @@ $(document).ready(function () {
 
     function containsAny(str, substrings) {
         for (var i = 0; i !== substrings.length; i++) {
-           var substring = substrings[i];
-           if (str.indexOf(substring) !== - 1) {
+            var substring = substrings[i];
+            if (str.indexOf(substring) !== - 1) {
                 // console.log("found:" + str );
                 return true;
-           }
+            }
         }
         return false;
     }
@@ -114,6 +114,12 @@ $(document).ready(function () {
     jsonTextareas.forEach(function (textarea) {
         reformatJSON(textarea);
     });
+
+
+    setTimeout(function () {
+        // auto hide the django message
+        $('#django_message_container').hide()
+        }, 5000);
 
 });
 

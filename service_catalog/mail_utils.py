@@ -195,3 +195,25 @@ def send_email_request_canceled(target_request, user_applied_state=None):
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
                            headers=_get_headers(subject))
+
+
+def send_template_email(email_template, user_id_list):
+    if not settings.SQUEST_EMAIL_NOTIFICATION_ENABLED:
+        logger.debug("SQUEST_EMAIL_NOTIFICATION_ENABLED false. No email will be sent")
+        return
+    user_emails = list()
+    user_qs = User.objects.filter(id__in=user_id_list)
+    user_qs = _exclude_user_without_email(user_qs)
+    for user in user_qs.exclude(profile__request_notification_enabled=False):
+        user_emails.append(user.email)
+    print(user_emails)
+    subject = f"{EMAIL_TITLE_PREFIX} {email_template.email_title}"
+    plain_text = f"Squest notification"
+    template_name = "service_catalog/mails/email_notification_template.html"
+    context = {'email_template': email_template,
+               'current_site': settings.SQUEST_HOST}
+    html_template = get_template(template_name)
+    html_content = html_template.render(context)
+    tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
+                           bcc=user_emails,
+                           headers=_get_headers(subject))

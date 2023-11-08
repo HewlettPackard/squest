@@ -126,3 +126,21 @@ Rendered links into the dropdown button:
 <a href="https://external_resource.domain/item1">name: item1</a>
 <a href="https://external_resource.domain/item2">name: item2</a>
 ```
+
+## Email template
+
+The Email template functionality allows Squest administrators to craft a message intended for future delivery to a selected group of Squest users via email.
+
+Emails are composed a **title** and an **HTML content**.
+
+Optionally, it is possible to establish filters such as services, instance states, and quota scopes, which can be employed to refine the ultimate recipient list. When the email is dispatched, Squest will present a list of users that align with the specified filters.
+
+!!! note
+
+    The act of creating a template does not result in the sending of any emails. After a template has been created, the "send" button grants the administrator the ability to make modifications to the ultimate list of users before initiating the email dispatch.
+
+A *when condition* can be also added to filter instances of the same service to particular criteria based for example on the instance specs.
+Example of `when` condition:
+```
+instance.user_spec.location == 'grenoble'
+```
