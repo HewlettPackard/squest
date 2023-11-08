@@ -1,3 +1,15 @@
+# 2.3.0 2023-11-08
+
+## Fix
+
+- Permission allow to show only the linked item in the sidebar group
+- Remove the quota when limit is unset in form
+- RequestNotification/InstanceNotificationFilter filter were not saved
+
+## Feature
+
+- Email notification template
+
 # 2.2.0 2023-10-26
 
 ## Fix
