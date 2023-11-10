@@ -281,7 +281,7 @@ Crontab line for ghost image cleanup. By default performed every day at 1:30 AM.
 
 **Default:**  Default randomly-generated
 
-Django secret key used for cryptographic signing. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-SECRET_KEY).
+Django secret key used for cryptographic signing. [Doc](https://docs.djangoproject.com/en/4.2/ref/settings/#std:setting-SECRET_KEY).
 
 ### DEBUG
 
@@ -293,7 +293,13 @@ Django DEBUG mode. Switch to `False` for production.
 
 **Default:** `*`
 
-Comma separated list of allowed FQDN. Refer to the complete [documentation](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).   
+Comma separated list of allowed FQDN. Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).   
+
+### CSRF_TRUSTED_ORIGINS
+
+**Default:** `http://127.0.0.1:8080,http://localhost:8080`
+
+Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins).
 
 ### CELERY_BROKER_URL
 
@@ -312,13 +318,13 @@ Async task execution timeout. [Doc](https://docs.celeryproject.org/en/v2.2.4/con
 
 **Default:** `en-us`
 
-Django language. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#language-code)
+Django language. [Doc](https://docs.djangoproject.com/en/4.2/ref/settings/#language-code)
 
 ### TIME_ZONE
 
 **Default:** `Europe/Paris`
 
-Time zone of the server that host Squest service. [Doc](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-TIME_ZONE)
+Time zone of the server that host Squest service. [Doc](https://docs.djangoproject.com/en/4.2/ref/settings/#std:setting-TIME_ZONE)
 
 ### DATE_FORMAT
 
