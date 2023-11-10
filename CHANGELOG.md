@@ -1,3 +1,9 @@
+# 2.3.1 2023-11-10
+
+## Fix
+
+- Add CSRF_TRUSTED_ORIGINS variable in Squest settings with default value
+
 # 2.3.0 2023-11-08
 
 ## Fix
