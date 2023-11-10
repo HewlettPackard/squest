@@ -308,12 +308,6 @@ Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/
 RabbitMQ message broker URL. The default value is localhost to match the development configuration. 
 Replace `localhost` by `rabbitmq` in production when using the docker-compose based deployment.
 
-### CELERY_TASK_SOFT_TIME_LIMIT
-
-**Default:** `300`
-
-Async task execution timeout. [Doc](https://docs.celeryproject.org/en/v2.2.4/configuration.html#celeryd-task-soft-time-limit).
-
 ### LANGUAGE_CODE
 
 **Default:** `en-us`
