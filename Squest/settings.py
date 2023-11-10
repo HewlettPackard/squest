@@ -290,8 +290,6 @@ LOGGING = {
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest')
 print(f"CELERY_BROKER_URL: {CELERY_BROKER_URL}")
 # Add a five-minutes timeout to all Celery tasks.
-CELERY_TASK_SOFT_TIME_LIMIT = int(os.environ.get('CELERY_TASK_SOFT_TIME_LIMIT', 300))
-print(f"CELERY_TASK_SOFT_TIME_LIMIT: {CELERY_TASK_SOFT_TIME_LIMIT}")
 CELERY_TASK_ALWAYS_EAGER = TESTING
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
