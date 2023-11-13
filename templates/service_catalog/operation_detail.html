@@ -33,20 +33,14 @@
                             <li class="list-group-item border-bottom-0">
                                 <b>Is admin</b>
                                 <div class="float-right">
-                                    {% if object.is_admin_operation %}
-                                        <i class="fas fa-circle text-success"></i>
-                                    {% else %}
-                                        <i class="fas fa-circle text-secondary"></i>
-                                    {% endif %}</div>
+                                    {{ object.is_admin_operation | display_boolean }}
+                                </div>
                             </li>
                             <li class="list-group-item border-bottom-0">
                                 <b>Enabled</b>
                                 <div class="float-right">
-                                    {% if object.enabled %}
-                                        <i class="fas fa-circle text-success"></i>
-                                    {% else %}
-                                        <i class="fas fa-circle text-secondary"></i>
-                                    {% endif %}</div>
+                                    {{ object.enabled | display_boolean }}
+                                </div>
                             </li>
                         </ul>
                     </div>
