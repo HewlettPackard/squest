@@ -9,6 +9,7 @@ from service_catalog.models import ApprovalStep, TowerSurveyField
 EXCLUDED_PERMISSION = ["add_approvalstep", "change_approvalstep", "delete_approvalstep", "list_approvalstep",
                        "view_approvalstep"]
 
+
 class ApprovalStepForm(SquestModelForm):
     readable_fields = ModelMultipleChoiceField(label="Readable fields",
                                                required=False,
@@ -20,7 +21,8 @@ class ApprovalStepForm(SquestModelForm):
 
     class Meta:
         model = ApprovalStep
-        fields = ['name', 'permission', 'readable_fields', 'editable_fields', 'approval_workflow', 'auto_accept_condition']
+        fields = ['name', 'permission', 'readable_fields', 'editable_fields', 'approval_workflow',
+                  'auto_accept_condition']
 
     def __init__(self, *args, **kwargs):
         self.approval_workflow = kwargs.pop('approval_workflow', None)
@@ -31,10 +33,11 @@ class ApprovalStepForm(SquestModelForm):
         self.fields['approval_workflow'].widget = HiddenInput()
         self.fields['approval_workflow'].initial = self.approval_workflow.id
 
-        self.fields['permission'].help_text = f"Create a <a href='{reverse('profiles:approvalstep_permission_create')}'>permission</a>"
+        self.fields[
+            'permission'].help_text = f"Create a <a href='{reverse('profiles:approvalstep_permission_create')}'>permission</a>"
         default_perm = Permission.objects.get(codename="approve_reject_approvalstep")
         self.fields['permission'].initial = (default_perm.id, default_perm.name)
-        self.fields['permission'].choices.field.queryset = self.fields['permission'].choices.queryset.\
+        self.fields['permission'].choices.field.queryset = self.fields['permission'].choices.queryset. \
             exclude(codename__in=EXCLUDED_PERMISSION)
 
     def clean(self):

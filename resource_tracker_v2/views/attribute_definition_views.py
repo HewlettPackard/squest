@@ -5,12 +5,11 @@ from profiles.tables.quota_table import QuotaTable
 from resource_tracker_v2.filters.attribute_definition_filter import AttributeDefinitionFilter
 from resource_tracker_v2.forms.attribute_definition_form import AttributeDefinitionForm
 from resource_tracker_v2.models import AttributeDefinition, ResourceGroup, Transformer
-from resource_tracker_v2.tables.attribute_defintion_table import AttributeDefinitionTable
+from resource_tracker_v2.tables.attribute_definition_table import AttributeDefinitionTable
 
 
 class AttributeDefinitionDetailView(SquestDetailView):
     model = AttributeDefinition
-    template_name = "resource_tracker_v2/attributedefinition_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

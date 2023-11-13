@@ -15,6 +15,7 @@ class Quota(SquestModel):
             ("change_team_quota", "Can change quota at team level"),
             ("change_organization_quota", "Can change quota at organization level"),
         ]
+        ordering = ('attribute_definition__attribute_group__name', 'attribute_definition__name')
 
     scope = ForeignKey("Scope",
                        blank=False,

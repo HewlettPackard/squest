@@ -7,4 +7,4 @@ class AttributeDefinitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AttributeDefinition
-        fields = ["id", "name", "description"]
+        fields = ["id", "name", "description", "attribute_group"]

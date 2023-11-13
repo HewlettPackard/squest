@@ -8,7 +8,7 @@ class AttributeDefinitionTable(SquestTable):
     class Meta:
         model = AttributeDefinition
         attrs = {"id": "attribute_definition_table", "class": "table squest-pagination-tables"}
-        fields = ("name", "description", "actions")
+        fields = ("name", "description", "attribute_group", "actions")
 
     actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
     name = LinkColumn()

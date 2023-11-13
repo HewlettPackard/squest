@@ -1,7 +1,8 @@
-from django.db.models import CharField
+from django.db.models import CharField, ForeignKey, CASCADE
 from django.urls import reverse
 
 from Squest.utils.squest_model import SquestModel
+from resource_tracker_v2.models.attribute_group import AttributeGroup
 
 
 class AttributeDefinition(SquestModel):
@@ -10,6 +11,15 @@ class AttributeDefinition(SquestModel):
                      blank=False)
 
     description = CharField(max_length=100, default='', null=True, blank=True)
+
+    attribute_group = ForeignKey(
+        AttributeGroup,
+        blank=True,
+        null=True,
+        on_delete=CASCADE,
+        related_name="attribute_definitions",
+        related_query_name="attribute_definition"
+    )
 
     def delete(self, using=None, keep_parents=False):
         # remove the pointer to this attribute in all transformer that were using it

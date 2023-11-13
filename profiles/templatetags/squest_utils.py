@@ -101,6 +101,16 @@ def generate_sidebar(user):
         ],
         'Resource tracking': [
             {
+                'name': 'Attribute groups',
+                'view_name': 'resource_tracker_v2:attributegroup_list',
+                'icon': 'fas fa-layer-group',
+                'permission_required': 'resource_tracker_v2.list_attributegroup',
+                'active': [
+                    "attributegroup_list", "attributegroup_create", "attributegroup_edit",
+                    "attributegroup_delete",
+                ]
+            },
+            {
                 'name': 'Attributes',
                 'view_name': 'resource_tracker_v2:attributedefinition_list',
                 'icon': 'fas fa-shapes',

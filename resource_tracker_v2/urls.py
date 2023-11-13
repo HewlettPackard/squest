@@ -5,6 +5,14 @@ from resource_tracker_v2 import views
 app_name = 'resource_tracker_v2'
 
 urlpatterns = [
+    # Attribute group CRUD
+    path('attribute-group/', views.AttributeGroupListView.as_view(), name='attributegroup_list'),
+    path('attribute-group/create/', views.AttributeGroupCreateView.as_view(), name='attributegroup_create'),
+    path('attribute-group/<int:pk>/', views.AttributeGroupDetailView.as_view(), name='attributegroup_details'),
+    path('attribute-group/<int:pk>/edit/', views.AttributeGroupEditView.as_view(), name='attributegroup_edit'),
+    path('attribute-group/<int:pk>/delete/', views.AttributeGroupDeleteView.as_view(),
+         name='attributegroup_delete'),
+
     # Attribute definition CRUD
     path('attribute/', views.AttributeDefinitionListView.as_view(), name='attributedefinition_list'),
     path('attribute/create/', views.AttributeDefinitionCreateView.as_view(), name='attributedefinition_create'),

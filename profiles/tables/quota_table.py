@@ -18,7 +18,7 @@ class QuotaTable(SquestTable):
     class Meta:
         model = Quota
         attrs = {"id": "quota_table", "class": "table squest-pagination-tables "}
-        fields = ("scope", "attribute_definition", "limit", "consumed", "available")
+        fields = ("scope", "attribute_definition__attribute_group", "attribute_definition", "limit", "consumed", "available")
 
     def render_consumed(self, value, record):
         link = record.get_absolute_url()
