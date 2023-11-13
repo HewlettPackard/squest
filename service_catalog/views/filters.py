@@ -173,3 +173,11 @@ def map_current_state(current_state, expected_state):
 @register.filter(name="instance_state_integer_to_string")
 def instance_state_integer_to_string(integer_state):
     return InstanceState(integer_state).label
+
+
+@register.filter(name="display_boolean", is_safe=True)
+def display_boolean(boolean_value):
+    if boolean_value:
+        return mark_safe('<i class="fas fa-circle text-success"></i>')
+    else:
+        return mark_safe('<i class="fas fa-circle text-secondary"></i>')
