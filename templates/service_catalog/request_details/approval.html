@@ -105,15 +105,15 @@
                                 <div class="row justify-content-md-center">
                                     <div class="timeline-footer">
                                         {% if has_step_permission %}
-                                            <a class="btn btn-danger"
-                                               title="Reject"
-                                               href="{% url 'service_catalog:request_reject' object.id %}">
-                                                <i class="fas fa-ban"></i> Reject
-                                            </a>
                                             <a class="btn btn-primary"
                                                title="Review"
                                                href="{% url 'service_catalog:request_approve' object.id %}">
                                                 <i class="fas fa-clipboard-check"></i> Review
+                                            </a>
+                                            <a class="btn btn-danger"
+                                               title="Reject"
+                                               href="{% url 'service_catalog:request_reject' object.id %}">
+                                                <i class="fas fa-ban"></i> Reject
                                             </a>
                                         {% endif %}
                                     </div>
