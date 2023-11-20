@@ -11,7 +11,6 @@ class OperationDeleteTestCase(BaseTest):
     def test_delete_service_operation(self):
         # delete a "CREATE" type operation
         args = {
-            'service_id': self.service_test.id,
             'pk': self.create_operation_test.id
         }
         url = reverse('service_catalog:operation_delete', kwargs=args)
@@ -24,7 +23,6 @@ class OperationDeleteTestCase(BaseTest):
 
         # delete an "UPDATE" type operation
         args = {
-            'service_id': self.service_test.id,
             'pk': self.update_operation_test.id
         }
         url = reverse('service_catalog:operation_delete', kwargs=args)

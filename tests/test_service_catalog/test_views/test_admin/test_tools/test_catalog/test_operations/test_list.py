@@ -7,10 +7,8 @@ class OperationListTestCase(BaseTest):
 
     def setUp(self):
         super(OperationListTestCase, self).setUp()
-        args = {
-            'service_id': self.service_test.id,
-        }
-        self.url = reverse('service_catalog:operation_list', kwargs=args)
+
+        self.url = reverse('service_catalog:operation_list')
 
     def test_get_operation_list(self):
         response = self.client.get(self.url)

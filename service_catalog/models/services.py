@@ -2,7 +2,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField, ManyToManyField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from Squest.utils.squest_model import SquestModel
@@ -38,9 +37,6 @@ class Service(SquestModel):
         blank=True,
         help_text="List of attributes linked to the service, they could be used on operation fields.",
     )
-
-    def get_absolute_url(self):
-        return reverse_lazy('service_catalog:operation_list', kwargs={"service_id": self.id})
 
     def can_be_enabled(self):
         operation_create_list = self.operations.filter(type=OperationType.CREATE, enabled=True)
