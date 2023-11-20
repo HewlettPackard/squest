@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import CheckboxInput, SelectMultiple
 from django.utils.translation import gettext_lazy as _
-from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter
+from django_filters import MultipleChoiceFilter, BooleanFilter, BaseInFilter, CharFilter, ModelMultipleChoiceFilter
 
 from Squest.utils.squest_filter import SquestFilter
 from profiles.models import Scope, AbstractScope
@@ -30,9 +30,7 @@ class InstanceFilterGeneric(SquestFilter):
         fields = ['id', 'name', 'requester', 'service', 'state', 'quota_scope']
 
     state = MultipleChoiceFilter(choices=InstanceState.choices)
-    quota_scope = MultipleChoiceFilter(
-        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id", flat=True)).values_list("id",
-                                                                                                            "name"))
+    quota_scope = ModelMultipleChoiceFilter(queryset=Scope.objects.all())
     service = MultipleChoiceFilter(choices=Service.objects.values_list("id", "name"))
     requester = MultipleChoiceFilter(choices=User.objects.values_list("id", "username"))
     no_requesters = BooleanFilter(method='no_requester', label="No requester", widget=CheckboxInput())
