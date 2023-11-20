@@ -7,6 +7,7 @@ class TestTowerSurveyFieldSerializer(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestTowerSurveyFieldSerializer, self).setUp()
+        self.create_operation_test.service.attribute_definitions.add(self.cpu_attribute)
         self.data = {
             'is_customer_field': True,
             'default': 'multiplechoice_variable_default',
@@ -18,6 +19,12 @@ class TestTowerSurveyFieldSerializer(BaseTestRequestAPI):
         field = self.create_operation_test.tower_survey_fields.filter(type="integer").first()
         serializer = TowerSurveyFieldSerializer(instance=field, data=self.data)
         self.assertTrue(serializer.is_valid())
+
+    def test_set_attribute_on_integer_field_not_in_service(self):
+        self.create_operation_test.service.attribute_definitions.remove(self.cpu_attribute)
+        field = self.create_operation_test.tower_survey_fields.filter(type="integer").first()
+        serializer = TowerSurveyFieldSerializer(instance=field, data=self.data)
+        self.assertFalse(serializer.is_valid())
 
     def test_cannot_set_attribute_on_float_field(self):
         field = self.create_operation_test.tower_survey_fields.filter(type="float").first()

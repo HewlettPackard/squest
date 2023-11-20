@@ -19,11 +19,15 @@ class TowerSurveyFieldForm(SquestModelForm):
         validator_files = [(file_name, file_name) for file_name in PluginController.get_user_provisioned_validators()]
         validator_choices.extend(validator_files)
         self.fields['validators'].choices = validator_choices
-        if self.instance is not None and self.instance.validators is not None:
-            # Converting comma separated string to python list
-            instance_validator_as_list = self.instance.validators.split(",")
-            # set the current value
-            self.initial["validators"] = instance_validator_as_list
+        self.fields['attribute_definition'].choices = [(None, "---------")]
+        if self.instance is not None:
+            if self.instance.type == 'integer':
+                self.fields['attribute_definition'].choices += list(self.instance.operation.service.attribute_definitions.values_list('id', 'name'))
+            if self.instance.validators is not None:
+                # Converting comma separated string to python list
+                instance_validator_as_list = self.instance.validators.split(",")
+                # set the current value
+                self.initial["validators"] = instance_validator_as_list
 
     def clean_validators(self):
         if not self.cleaned_data['validators']:
