@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField
+from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField, ManyToManyField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse_lazy
@@ -32,6 +32,12 @@ class Service(SquestModel):
     )
     extra_vars = JSONField(default=dict, blank=True)
     description_doc = ForeignKey('service_catalog.Doc', blank=True, null=True, on_delete=SET_NULL, verbose_name='Description documentation')
+    attribute_definitions = ManyToManyField(
+        'resource_tracker_v2.AttributeDefinition',
+        related_name="services",
+        blank=True,
+        help_text="List of attributes linked to the service, they could be used on operation fields.",
+    )
 
     def get_absolute_url(self):
         return reverse_lazy('service_catalog:operation_list', kwargs={"service_id": self.id})

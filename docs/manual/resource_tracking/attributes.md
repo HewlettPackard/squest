@@ -9,6 +9,8 @@ For example, to manage Kubernetes namespace (as Resource Group) you could create
 - limit.cpu
 - limit.memory
 
+Attributes can be linked to services. Then can be used by operation survey fields.
+
 ## Attributes and quota
 
 Attributes are defined in the resource tracking and then 

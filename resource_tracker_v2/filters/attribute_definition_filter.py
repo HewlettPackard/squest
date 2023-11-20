@@ -5,4 +5,4 @@ from resource_tracker_v2.models import AttributeDefinition
 class AttributeDefinitionFilter(SquestFilter):
     class Meta:
         model = AttributeDefinition
-        fields = ['name']
+        fields = ['name', 'services']

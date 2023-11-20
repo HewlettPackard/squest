@@ -20,8 +20,16 @@
                     <div class="card-body pt-0 pb-0">
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
-                                <u>Description</u>
+                                <b>Description</b>
                                 <p class="float-right">{{ object.description }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Services</b>
+                                <span class="float-right">
+                                    {% for service in object.services.distinct %}
+                                        <span class="badge bg-primary">{{ service.name }}</span>
+                                    {% endfor %}
+                                </span>
                             </li>
                         </ul>
                     </div>
