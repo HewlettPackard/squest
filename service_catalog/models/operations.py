@@ -12,13 +12,12 @@ from service_catalog.models.services import Service
 
 
 class Operation(SquestModel):
-    name = CharField(max_length=100, verbose_name="Operation name")
+    name = CharField(max_length=100)
     description = CharField(max_length=500, blank=True, null=True)
     type = CharField(
         max_length=10,
         choices=OperationType.choices,
         default=OperationType.CREATE,
-        verbose_name="Operation type"
     )
     service = ForeignKey(Service, on_delete=CASCADE, related_name="operations",
                          related_query_name="operation")
@@ -55,7 +54,7 @@ class Operation(SquestModel):
         return f"{self.name} ({self.service})"
 
     def get_absolute_url(self):
-        return reverse(f"service_catalog:operation_details", args=[self.service.id, self.pk])
+        return reverse(f"service_catalog:operation_details", args=[self.pk])
 
     def clean(self):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):

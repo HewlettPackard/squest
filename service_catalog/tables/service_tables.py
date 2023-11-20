@@ -1,4 +1,4 @@
-from django_tables2 import TemplateColumn
+from django_tables2 import TemplateColumn, LinkColumn
 
 from Squest.utils.squest_table import SquestTable
 from service_catalog.models import Service
@@ -9,6 +9,7 @@ class ServiceTable(SquestTable):
     enabled = TemplateColumn(template_name='generics/custom_columns/generic_boolean_check.html')
     operations = TemplateColumn(template_name='service_catalog/custom_columns/service_operations.html',
                                 verbose_name="Operations", orderable=False)
+    name = LinkColumn()
 
     class Meta:
         model = Service

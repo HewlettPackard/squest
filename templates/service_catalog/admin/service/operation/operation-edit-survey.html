@@ -63,7 +63,7 @@
                     </div>
                 {% endif %}
                 <form class="form-horizontal"
-                      action="{% url 'service_catalog:operation_edit_survey' service_id=service.id pk=operation.id %}"
+                      action="{% url 'service_catalog:operation_edit_survey' operation.id %}"
                       method="post">{% csrf_token %}
                     {{ formset.management_form }}
                     {% for form in formset %}

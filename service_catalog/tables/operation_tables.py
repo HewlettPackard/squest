@@ -17,7 +17,7 @@ class OperationTable(SquestTable):
     auto_accept = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
     auto_process = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
     is_admin_operation = TemplateColumn(template_name='generics/custom_columns/generic_boolean.html')
-    actions = TemplateColumn(template_name='service_catalog/custom_columns/operation_actions.html', orderable=False)
+    actions = TemplateColumn(template_name='generics/custom_columns/generic_actions.html', orderable=False)
 
 
 class OperationTableFromInstanceDetails(SquestTable):

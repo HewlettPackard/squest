@@ -1,12 +1,24 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited
-from service_catalog.forms import ServiceOperationForm
+from service_catalog.forms import OperationForm
 from service_catalog.models import Operation, Service, OperationType, ApprovalWorkflow
 from service_catalog.tables.approval_workflow_table import ApprovalWorkflowTable
 from service_catalog.tables.operation_tables import OperationTable, CreateOperationTable
+
+
+def get_breadcrumbs_for_operation(operation):
+    breadcrumbs = [
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
+        {'text': 'Service', 'url': reverse('service_catalog:service_list')},
+        {'text': operation.service, 'url': operation.service.get_absolute_url()},
+        {'text': 'Operation', 'url': ''},
+    ]
+    if operation is not None:
+        breadcrumbs.append({'text': operation, 'url': operation.get_absolute_url()})
+    return breadcrumbs
 
 
 class OperationListView(SquestListView):
@@ -14,77 +26,33 @@ class OperationListView(SquestListView):
     filterset_class = OperationFilter
     table_class = OperationTable
 
-    def get_generic_url_kwargs(self):
-        return {'service_id': self.kwargs.get('service_id')}
-
-    def get_queryset(self):
-        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-            {'text': 'Services', 'url': reverse('service_catalog:service_list')},
-            {'text': Service.objects.get(id=self.kwargs.get('service_id')), 'url': ""},
-            {'text': 'Operations', 'url': ""},
-        ]
-        return context
-
 
 class OperationCreateView(SquestCreateView):
     model = Operation
-    form_class = ServiceOperationForm
+    form_class = OperationForm
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        self.service = get_object_or_404(Service, pk=self.kwargs.get('service_id'))
-        kwargs['service'] = self.service
-        return kwargs
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["service"] = f"{self.request.GET.get('service')}"
+        return initial.copy()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-            {'text': 'Services', 'url': reverse('service_catalog:service_list')},
-            {'text': self.service, 'url': reverse('service_catalog:operation_list', args=[self.service.id])},
-            {'text': 'Create a new operation', 'url': ""},
+            {'text': 'Operation', 'url': reverse('service_catalog:operation_list')},
+            {'text': 'New operation', 'url': ""},
         ]
         return context
-
-    def get_success_url(self):
-        return reverse("service_catalog:operation_edit_survey", kwargs={"service_id": self.service.id,
-                                                                        "pk": self.object.id})
 
 
 class OperationDetailView(SquestDetailView):
     model = Operation
 
-    def get_queryset(self):
-        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         config = SquestRequestConfig(self.request)
 
-        context['breadcrumbs'] = [
-            {
-                'text': 'Service catalog',
-                'url': reverse('service_catalog:service_catalog_list')
-            },
-            {
-                'text': 'Service',
-                'url': reverse('service_catalog:service_list')
-            },
-            {
-                'text': self.get_object().service,
-                'url': reverse('service_catalog:operation_list',
-                               args=[self.get_object().service.id])
-            },
-            {
-                'text': self.get_object(),
-                'url': ''
-            }
-        ]
+        context['breadcrumbs'] = get_breadcrumbs_for_operation(self.get_object())
         context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
         if self.request.user.has_perm('service_catalog.view_approvalworkflow'):
             context['workflows_table'] = ApprovalWorkflowTable(
@@ -97,49 +65,22 @@ class OperationDetailView(SquestDetailView):
 
 class OperationEditView(SquestUpdateView):
     model = Operation
-    form_class = ServiceOperationForm
-
-    def get_queryset(self):
-        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
-
-    def get_success_url(self):
-        return self.get_object().service.get_absolute_url()
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['service'] = self.get_object().service
-        return kwargs
+    form_class = OperationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-            {'text': 'Services', 'url': reverse('service_catalog:service_list')},
-            {'text': self.get_object().service,
-             'url': reverse('service_catalog:operation_list', args=[self.get_object().service.id])},
-            {'text': self.get_object(), 'url': ""},
-        ]
+        context['breadcrumbs'] = get_breadcrumbs_for_operation(self.get_object())
+        context['breadcrumbs'].append({'text': 'Edit', 'url': ''})
         return context
 
 
 class OperationDeleteView(SquestDeleteView):
     model = Operation
 
-    def get_queryset(self):
-        return super().get_queryset().filter(service__id=self.kwargs.get('service_id'))
-
-    def get_generic_url_kwargs(self):
-        return {'service_id': self.kwargs.get('service_id')}
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-            {'text': 'Services', 'url': reverse('service_catalog:service_list')},
-            {'text': self.get_object().service,
-             'url': reverse('service_catalog:operation_list', args=[self.get_object().service.id])},
-            {'text': self.get_object(), 'url': ""},
-        ]
+        context['breadcrumbs'] = get_breadcrumbs_for_operation(self.get_object())
+        context['breadcrumbs'].append({'text': 'Delete', 'url': ''})
         return context
 
 

@@ -23,6 +23,11 @@ class TestServiceCatalogServicePermissionsViews(BaseTestRequest, TestPermissionE
                 }
             ),
             TestingGetContextView(
+                url='service_catalog:service_details',
+                perm_str='service_catalog.view_service',
+                url_kwargs={'pk': self.service_test.id}
+            ),
+            TestingGetContextView(
                 url='service_catalog:service_edit',
                 perm_str='service_catalog.change_service',
                 url_kwargs={'pk': self.service_test.id}

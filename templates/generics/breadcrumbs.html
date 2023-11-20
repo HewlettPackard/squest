@@ -1,7 +1,7 @@
 {% if breadcrumbs %}
     <ol class="breadcrumb">
         {% for breadcrumb in breadcrumbs %}
-            {% if breadcrumb == breadcrumbs|last and breadcrumb.url == ""%}
+            {% if breadcrumb == breadcrumbs|last or breadcrumb.url == ""%}
                 <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.text }}</li>
             {% elif breadcrumb == breadcrumbs|last %}
                 <li class="breadcrumb-item active" aria-current="page">
