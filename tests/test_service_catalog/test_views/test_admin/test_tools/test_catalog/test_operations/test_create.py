@@ -8,14 +8,13 @@ class OperationCreateTestCase(BaseTest):
 
     def setUp(self):
         super(OperationCreateTestCase, self).setUp()
-        args = {
-            'service_id': self.service_test.id,
-        }
-        self.url = reverse('service_catalog:operation_create', kwargs=args)
+
+        self.url = reverse('service_catalog:operation_create')
 
     def test_create_a_create_service_operation(self):
         self.service_test.operations.filter(type=OperationType.CREATE).delete()
         data = {
+            "service": self.service_test.id,
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,
@@ -32,6 +31,7 @@ class OperationCreateTestCase(BaseTest):
 
     def test_create_a_delete_service_operation(self):
         data = {
+            "service": self.service_test.id,
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,
@@ -48,6 +48,7 @@ class OperationCreateTestCase(BaseTest):
 
     def test_create_an_update_service_operation(self):
         data = {
+            "service": self.service_test.id,
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,
@@ -67,6 +68,7 @@ class OperationCreateTestCase(BaseTest):
         Can add several 'CREATE' operation
         """
         data = {
+            "service": self.service_test.id,
             "name": "new_create_operation",
             "description": "a new create operation",
             "job_template": self.job_template_test.id,
@@ -84,6 +86,7 @@ class OperationCreateTestCase(BaseTest):
     def test_cannot_add_service_operation_when_logout(self):
         self.client.logout()
         data = {
+            "service": self.service_test.id,
             "name": "new_service",
             "description": "a new service",
             "job_template": self.job_template_test.id,

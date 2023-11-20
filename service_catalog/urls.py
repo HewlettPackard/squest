@@ -47,13 +47,14 @@ urlpatterns = [
     path('service/create/', views.ServiceCreateView.as_view(), name='service_create'),
     path('service/<int:pk>/edit/', views.ServiceEditView.as_view(), name='service_edit'),
     path('service/<int:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
+    path('service/<int:pk>/', views.ServiceDetailView.as_view(), name='service_details'),
 
     # Operation CRUD
-    path('service/<int:service_id>/operation/', views.OperationListView.as_view(), name='operation_list'),
-    path('service/<int:service_id>/operation/create/', views.OperationCreateView.as_view(), name='operation_create'),
-    path('service/<int:service_id>/operation/<int:pk>/delete/', views.OperationDeleteView.as_view(), name='operation_delete'),
-    path('service/<int:service_id>/operation/<int:pk>/edit/', views.OperationEditView.as_view(), name='operation_edit'),
-    path('service/<int:service_id>/operation/<int:pk>/', views.OperationDetailView.as_view(), name='operation_details'),
+    path('operation/', views.OperationListView.as_view(), name='operation_list'),
+    path('operation/create/', views.OperationCreateView.as_view(), name='operation_create'),
+    path('operation/<int:pk>/delete/', views.OperationDeleteView.as_view(), name='operation_delete'),
+    path('operation/<int:pk>/edit/', views.OperationEditView.as_view(), name='operation_edit'),
+    path('operation/<int:pk>/', views.OperationDetailView.as_view(), name='operation_details'),
 
     # Request operation endpoints
     path('service/<int:service_id>/operation/<int:operation_id>/request/',
@@ -63,7 +64,7 @@ urlpatterns = [
          name='create_operation_list'),
 
     # Edit operation survey endpoint
-    path('service/<int:service_id>/operation/<int:pk>/survey/', views.operation_edit_survey, name='operation_edit_survey'),
+    path('operation/<int:pk>/survey/', views.operation_edit_survey, name='operation_edit_survey'),
 
     # Instance CRUD
     path('instance/', views.InstanceListView.as_view(), name='instance_list'),

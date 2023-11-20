@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Service
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block extra_header_button %}
+    <a href="{% url 'service_catalog:operation_create' %}?service={{ object.id }}"
+       class="btn btn-success">
+        <i class="fas fa-plus"></i> Add operation
+    </a>
+{% endblock %}
+{% block header_button %}
+    {% include 'generics/buttons/edit_button.html' %}
+    {% include 'generics/buttons/delete_button.html' %}
+{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col-lg-3">
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ object.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <img class="card-img-top" src="
+
+                                    {% if object.image %}{{ object.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
+                                 alt="Service image">
+                        </div>
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item border-bottom-0">
+                                <b>Enabled</b>
+                                <div class="float-right">
+                                    {% if object.enabled %}
+                                        <i class="fas fa-circle text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-circle text-secondary"></i>
+                                    {% endif %}</div>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Description</b>
+                                <br>
+                                <a class="float-right">{{ object.description }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Portfolio</b> <a class="float-right">{{ object.portfolio.name }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Attributes</b>
+                                <span class="float-right">
+                                    {% for attribute in object.attribute_definitions.distinct %}
+                                        <span class="badge bg-primary">{{ attribute.name }}</span>
+                                    {% endfor %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#operations" data-toggle="tab">Operations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#extravars" data-toggle="tab">Extra vars</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="operations">
+                                {% if operations_table %}
+                                    {% render_table operations_table %}
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="extravars">
+                                <pre><code class="language-json">{{ object.extra_vars | pretty_json }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+{% endblock %}
