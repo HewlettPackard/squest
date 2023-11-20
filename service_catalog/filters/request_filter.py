@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.forms import SelectMultiple, HiddenInput
-from django_filters import MultipleChoiceFilter
+from django_filters import MultipleChoiceFilter, ModelMultipleChoiceFilter
 
 from Squest.utils.squest_filter import SquestFilter
 from profiles.models import Scope, AbstractScope
@@ -20,10 +20,9 @@ class RequestFilterGeneric(SquestFilter):
         choices=[],
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
 
-    instance__quota_scope = MultipleChoiceFilter(
+    instance__quota_scope = ModelMultipleChoiceFilter(
         label="Quota scope",
-        choices=AbstractScope.objects.filter(id__in=Scope.objects.values_list("id", flat=True)).values_list("id",
-                                                                                                            "name"),
+        queryset=Scope.objects.all(),
         widget=SelectMultiple(attrs={'data-live-search': "true"}))
 
     operation__type = MultipleChoiceFilter(
