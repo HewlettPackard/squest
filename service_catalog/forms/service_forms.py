@@ -29,4 +29,4 @@ class ServiceForm(SquestModelForm):
     class Meta:
         model = Service
         fields = ["name", "description", "image", "enabled",
-                  "parent_portfolio", "external_support_url", "extra_vars", "description_doc"]
+                  "parent_portfolio", "external_support_url", "extra_vars", "description_doc", "attribute_definitions"]
