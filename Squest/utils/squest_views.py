@@ -180,7 +180,7 @@ class SquestDeleteView(LoginRequiredMixin, SquestPermissionRequiredMixin, Squest
         context['button_text'] = 'Delete'
         return context
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, request, *args, **kwargs):
         try:
             return super().delete(request, *args, **kwargs)
         except ProtectedError as e:
