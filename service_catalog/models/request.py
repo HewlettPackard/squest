@@ -346,6 +346,14 @@ class Request(SquestModel):
         if workflow.exists():
             return workflow.first()
 
+        if self.instance.quota_scope.is_team:
+            parent_workflow = ApprovalWorkflow.objects.filter(
+                operation=self.operation,
+                scopes__id__in=[self.instance.quota_scope.get_object().org.id]
+            )
+            if parent_workflow.exists():
+                return parent_workflow.first()
+
         default_workflow = ApprovalWorkflow.objects.filter(operation=self.operation, scopes__isnull=True)
         if default_workflow.exists():
             return default_workflow.first()
