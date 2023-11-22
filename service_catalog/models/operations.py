@@ -64,9 +64,11 @@ class Operation(SquestModel):
         if self.job_template is not None:
             spec_list = self.job_template.survey.get("spec", [])
             from service_catalog.models.tower_survey_field import TowerSurveyField
+            position = 0
             for field in spec_list:
                 squest_field, created = TowerSurveyField.objects.get_or_create(
                     variable=field['variable'],
+                    position=position,
                     operation=self,
                     defaults={
                         'is_customer_field': True,
@@ -84,6 +86,7 @@ class Operation(SquestModel):
                 )
                 if not created:
                     squest_field.name = field['question_name']
+                    squest_field.position = position
                     squest_field.description = field['question_description']
                     squest_field.type = field['type']
                     squest_field.required = field['required']
@@ -94,6 +97,7 @@ class Operation(SquestModel):
                         "default": field.get('default', '')
                     }
                     squest_field.save()
+                position += 1
             self.tower_survey_fields.exclude(
                 variable__in=[survey_spec["variable"] for survey_spec in spec_list]).delete()
 
@@ -113,9 +117,11 @@ class Operation(SquestModel):
             # copy the default survey and add a flag 'is_visible'
             default_survey = instance.job_template.survey
             if "spec" in default_survey:
+                position = 0
                 for field in default_survey["spec"]:
                     TowerSurveyField.objects.create(
                         variable=field['variable'],
+                        position=position,
                         is_customer_field=True,
                         operation=instance,
                         name=field['question_name'],
@@ -129,6 +135,7 @@ class Operation(SquestModel):
                             "default": field.get('default', '')
                         }
                     )
+                    position += 1
 
 
 post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Operation)
