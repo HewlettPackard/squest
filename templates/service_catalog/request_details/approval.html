@@ -103,6 +103,15 @@
                                                 <i class="fas fa-ban"></i> Reject
                                             </a>
                                         {% endif %}
+                                        {% with args_filter="cancel,"|addstr:object.id %}
+                                            {% if args_filter|can_proceed_request_action and can_cancel_request %}
+                                                <a class="btn btn-secondary"
+                                                   title="Cancel"
+                                                   href="{% url 'service_catalog:request_cancel' object.id %}">
+                                                    <i class="fas fa-window-close"></i> Cancel
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
                                     </div>
                                 </div>
                             {% else %}
