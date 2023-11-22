@@ -4,6 +4,7 @@
 
 - Add a transition in FSM to switch from "NEED INFO" to "ACCEPTED"
 - Add field "enabled" in ApprovalWorkflow
+- Remove "operations" field in ApprovalWorkflow form when editing
 
 ## Feature
 

@@ -1,6 +1,5 @@
-from profiles.models import GlobalScope
-from service_catalog.api.serializers.approval_step_state_serializer import ApprovalStepStateSerializer
-from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer
+from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer, \
+    ApprovalWorkflowSerializerEdit
 from service_catalog.models import ApprovalWorkflow
 from tests.test_service_catalog.base_test_approval import BaseTestApprovalAPI
 
@@ -28,7 +27,7 @@ class TestApprovalWorkflowSerializer(BaseTestApprovalAPI):
             "operation": self.create_operation_test.id,
             "scopes": [self.test_quota_scope.id, self.test_quota_scope2.id]
         }
-        serializer = ApprovalWorkflowSerializer(instance=self.test_approval_workflow, data=data)
+        serializer = ApprovalWorkflowSerializerEdit(instance=self.test_approval_workflow, data=data)
         self.assertTrue(serializer.is_valid())
 
     def test_cannot_valid_with_empty_scopes_if_already_exists(self):

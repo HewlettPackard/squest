@@ -2,7 +2,7 @@ from Squest.utils.squest_table import SquestRequestConfig
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestCreateView, SquestUpdateView, \
     SquestDeleteView, SquestConfirmView
 from service_catalog.filters.approval_workflow_filter import ApprovalWorkflowFilter
-from service_catalog.forms.approval_workflow_form import ApprovalWorkflowForm
+from service_catalog.forms.approval_workflow_form import ApprovalWorkflowForm, ApprovalWorkflowFormEdit
 from service_catalog.models import ApprovalWorkflow
 from service_catalog.tables.approval_workflow_table import ApprovalWorkflowTable
 from service_catalog.tables.request_tables import RequestTablesForApprovalWorkflow
@@ -41,7 +41,7 @@ class ApprovalWorkflowCreateView(SquestCreateView):
 
 class ApprovalWorkflowEditView(SquestUpdateView):
     model = ApprovalWorkflow
-    form_class = ApprovalWorkflowForm
+    form_class = ApprovalWorkflowFormEdit
 
 
 class ApprovalWorkflowDeleteView(SquestDeleteView):

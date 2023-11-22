@@ -10,7 +10,8 @@ from rest_framework.viewsets import ViewSet
 from Squest.utils.squest_api_views import SquestListCreateAPIView, SquestRetrieveUpdateDestroyAPIView, \
     SquestRetrieveAPIView
 from service_catalog.api.serializers.approval_step_serializer import ApprovalStepPositionSerializer
-from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer
+from service_catalog.api.serializers.approval_workflow_serializer import ApprovalWorkflowSerializer, \
+    ApprovalWorkflowSerializerEdit
 from service_catalog.api.serializers.approval_workflow_state_serializer import ApprovalWorkflowStateSerializer
 from service_catalog.api.serializers.approve_workflow_step_serializer import ApproveWorkflowStepSerializer
 from service_catalog.filters.approval_workflow_filter import ApprovalWorkflowFilter
@@ -26,7 +27,7 @@ class ApprovalWorkflowListCreate(SquestListCreateAPIView):
 
 class ApprovalWorkflowDetails(SquestRetrieveUpdateDestroyAPIView):
     queryset = ApprovalWorkflow.objects.all()
-    serializer_class = ApprovalWorkflowSerializer
+    serializer_class = ApprovalWorkflowSerializerEdit
 
 
 class ApprovalWorkflowStateDetails(SquestRetrieveAPIView):
