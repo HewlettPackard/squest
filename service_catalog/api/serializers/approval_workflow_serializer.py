@@ -27,3 +27,10 @@ class ApprovalWorkflowSerializer(ModelSerializer):
                 raise ValidationError({"scopes": f"The scope {scope} has already an approval workflow "
                                                  f"based on this operation"})
         return data
+
+
+class ApprovalWorkflowSerializerEdit(ApprovalWorkflowSerializer):
+    class Meta:
+        model = ApprovalWorkflow
+        fields = ['id', 'enabled', 'name', 'operation', 'scopes']
+        read_only_fields = ['id', "operation"]

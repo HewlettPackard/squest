@@ -23,3 +23,9 @@ class ApprovalWorkflowForm(SquestModelForm):
             if scope.approval_workflows.filter(operation=operation).exclude(id=exclude_id).exists():
                 raise ValidationError({"scopes": f"The scope {scope} has already an approval workflow "
                                                  f"based on this operation"})
+
+
+class ApprovalWorkflowFormEdit(ApprovalWorkflowForm):
+    class Meta:
+        model = ApprovalWorkflow
+        fields = ['name', 'scopes', 'enabled']
