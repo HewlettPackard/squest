@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from django.db.models import CharField, BooleanField, ForeignKey, CASCADE, SET_NULL, JSONField
+from django.db.models import CharField, BooleanField, ForeignKey, CASCADE, SET_NULL, JSONField, IntegerField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.forms import CharField as FormsCharField
@@ -47,9 +47,10 @@ class SquestIntegerField(FormsIntegerField):
 
 class TowerSurveyField(SquestModel):
     class Meta(SquestModel.Meta):
-        unique_together = ('operation', 'variable',)
+        unique_together = ('operation', 'position', 'variable',)
 
     variable = CharField(null=False, blank=False, max_length=200)
+    position = IntegerField(default=0)
     is_customer_field = BooleanField(default=True, null=False, blank=False, help_text="Display for non approver user")
     default = CharField(null=True, blank=True, max_length=200, verbose_name="Default value")
     operation = ForeignKey(Operation,
