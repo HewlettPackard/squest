@@ -1,4 +1,4 @@
-from service_catalog.forms.approval_workflow_form import ApprovalWorkflowForm
+from service_catalog.forms.approval_workflow_form import ApprovalWorkflowForm, ApprovalWorkflowFormEdit
 from service_catalog.models import ApprovalWorkflow
 from tests.test_service_catalog.base import BaseTest
 
@@ -41,9 +41,9 @@ class TestApprovalWorkflowForm(BaseTest):
         data = {
             'name': 'test_approval_workflow',
             'operation': self.create_operation_test,
-            'scopes': [self.test_quota_scope,self.test_quota_scope2]
+            'scopes': [self.test_quota_scope, self.test_quota_scope2]
         }
-        form = ApprovalWorkflowForm(instance=existing_approval,data=data)
+        form = ApprovalWorkflowFormEdit(instance=existing_approval, data=data)
         self.assertTrue(form.is_valid())
 
     def test_clean_with_empty_scopes(self):
