@@ -4,6 +4,10 @@
 
 - Service request for team will automatically use the approval workflow set by the parent organization
 
+## Fix
+
+- Fix step ordering in RequestDetail
+
 # 2.3.1 2023-11-10
 
 ## Fix

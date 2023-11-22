@@ -9,6 +9,7 @@ class ApprovalStepState(SquestModel):
 
     class Meta:
         unique_together = ('approval_workflow_state', 'approval_step')
+        ordering = ("approval_step__position",)
 
     approval_workflow_state = ForeignKey(
         "service_catalog.ApprovalWorkflowState",
