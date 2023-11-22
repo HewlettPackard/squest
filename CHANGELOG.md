@@ -1,3 +1,9 @@
+# dev
+
+## Feature
+
+- Service request for team will automatically use the approval workflow set by the parent organization
+
 # 2.3.1 2023-11-10
 
 ## Fix
