@@ -14,6 +14,7 @@
 ## Fix
 
 - Fix step ordering in RequestDetail
+- Fix bug on DeleteView related to Django 4
 
 # 2.3.1 2023-11-10
 
