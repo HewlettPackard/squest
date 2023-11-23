@@ -19,7 +19,8 @@ class TestApprovalWorkflowForm(BaseTest):
 
     def test_clean(self):
         existing_approval = ApprovalWorkflow.objects.create(name="test",
-                                                            operation=self.create_operation_test)
+                                                            operation=self.create_operation_test,
+                                                            enabled=True)
         existing_approval.scopes.set([self.test_quota_scope])
 
         data = {
@@ -33,7 +34,8 @@ class TestApprovalWorkflowForm(BaseTest):
 
     def test_add_scope_to_scopes(self):
         existing_approval = ApprovalWorkflow.objects.create(name="test",
-                                                            operation=self.create_operation_test)
+                                                            operation=self.create_operation_test,
+                                                            enabled=True)
         existing_approval.scopes.set([self.test_quota_scope])
 
         data = {
@@ -46,7 +48,8 @@ class TestApprovalWorkflowForm(BaseTest):
 
     def test_clean_with_empty_scopes(self):
         existing_approval = ApprovalWorkflow.objects.create(name="test",
-                                                            operation=self.create_operation_test)
+                                                            operation=self.create_operation_test,
+                                                            enabled=True)
 
         data = {
             'name': 'test_approval_workflow',
@@ -59,7 +62,8 @@ class TestApprovalWorkflowForm(BaseTest):
     def test_create_specific_workflow_with_generic_already_there(self):
         # we have a global workflow on a particular operation
         ApprovalWorkflow.objects.create(name="generic",
-                                        operation=self.create_operation_test)
+                                        operation=self.create_operation_test,
+                                        enabled=True)
 
         # we add a new workflow targeting the same operation but restricted to a scope
         data = {

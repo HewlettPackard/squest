@@ -8,7 +8,8 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
         super().setUp()
         self.approval_workflow = ApprovalWorkflow.objects.create(
             name="test_approval_workflow",
-            operation=self.create_operation_test
+            operation=self.create_operation_test,
+            enabled=True
         )
 
     def test_approvalworkflow_views(self):

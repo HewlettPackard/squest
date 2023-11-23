@@ -7,7 +7,7 @@ from service_catalog.models import ApprovalWorkflow
 class ApprovalWorkflowSerializer(ModelSerializer):
     class Meta:
         model = ApprovalWorkflow
-        fields = ['id', 'name', 'operation', 'scopes']
+        fields = ['id', 'enabled', 'name', 'operation', 'scopes']
         read_only_fields = ['id']
 
     def validate(self, data):
@@ -19,7 +19,8 @@ class ApprovalWorkflowSerializer(ModelSerializer):
         # check that selected scopes are not already in use by another approval workflow for the selected operation
         exclude_id = self.instance.id if self.instance else None
         if len(scopes) == 0:
-            if ApprovalWorkflow.objects.filter(operation=operation, scopes__isnull=True).exclude(id=exclude_id).exists():
+            if ApprovalWorkflow.objects.filter(enabled=True, operation=operation, scopes__isnull=True).exclude(
+                    id=exclude_id).exists():
                 raise ValidationError({"scopes": f"An approval workflow for all scopes already exists"})
         for scope in scopes:
             if scope.approval_workflows.filter(operation=operation).exclude(id=exclude_id).exists():

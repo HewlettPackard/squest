@@ -10,7 +10,8 @@ class TestApprovalStepForm(BaseTest):
     def setUp(self):
         super(TestApprovalStepForm, self).setUp()
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
         self.field1 = self.create_operation_test.tower_survey_fields.all()[0]
         self.field2 = self.create_operation_test.tower_survey_fields.all()[1]
 

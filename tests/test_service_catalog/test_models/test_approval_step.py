@@ -10,7 +10,8 @@ class TestApprovalStep(BaseTest):
         super(TestApprovalStep, self).setUp()
 
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
 
     def test_set_position(self):
         test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",

@@ -12,7 +12,7 @@ class ApprovalWorkflowTable(SquestTable):
     class Meta:
         model = ApprovalWorkflow
         attrs = {"id": "approval_workflow_table", "class": "table squest-pagination-tables "}
-        fields = ("name", "operation", "scopes", "actions")
+        fields = ("name", "operation", "scopes", "enabled", "actions")
 
     def render_scopes(self, value, record):
         scopes = record.scopes.all().distinct()
