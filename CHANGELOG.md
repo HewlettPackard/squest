@@ -1,5 +1,9 @@
 # dev
 
+## Enhancement
+
+- Add a transition in FSM to switch from "NEED INFO" to "ACCEPTED"
+
 ## Feature
 
 - Service request for team will automatically use the approval workflow set by the parent organization
