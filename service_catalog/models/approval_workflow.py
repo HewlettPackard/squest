@@ -7,7 +7,7 @@ from service_catalog.models import TowerSurveyField, ApprovalStep, RequestState,
 
 class ApprovalWorkflow(SquestModel):
     name = CharField(max_length=100, blank=False, unique=True)
-
+    enabled = BooleanField(default=False, help_text="Set to True to use the workflow")
     operation = ForeignKey(
         'service_catalog.Operation',
         related_name='approval_workflows',

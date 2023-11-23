@@ -343,20 +343,23 @@ class Request(SquestModel):
 
     def _get_approval_workflow(self):
         from service_catalog.models import ApprovalWorkflow
-        workflow = ApprovalWorkflow.objects.filter(operation=self.operation,
-                                                   scopes__id__in=[self.instance.quota_scope.id])
+        workflow = ApprovalWorkflow.objects.filter(
+            enabled=True,
+            operation=self.operation,
+            scopes__id__in=[self.instance.quota_scope.id])
         if workflow.exists():
             return workflow.first()
 
         if self.instance.quota_scope.is_team:
             parent_workflow = ApprovalWorkflow.objects.filter(
+                enabled=True,
                 operation=self.operation,
                 scopes__id__in=[self.instance.quota_scope.get_object().org.id]
             )
             if parent_workflow.exists():
                 return parent_workflow.first()
 
-        default_workflow = ApprovalWorkflow.objects.filter(operation=self.operation, scopes__isnull=True)
+        default_workflow = ApprovalWorkflow.objects.filter(enabled=True, operation=self.operation, scopes__isnull=True)
         if default_workflow.exists():
             return default_workflow.first()
         return None

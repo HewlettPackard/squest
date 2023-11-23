@@ -201,7 +201,8 @@ class TestRequest(BaseTestRequest):
 
     def test_auto_accept_with_approval_step(self):
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
         auto_accept_condition = "request.instance.name == 'test_instance_1'"
         ApprovalStep.objects.create(name="test_approval_step_1",
                                     approval_workflow=self.test_approval_workflow,
@@ -210,7 +211,8 @@ class TestRequest(BaseTestRequest):
 
     def test_auto_accept_with_2_approval_step(self):
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
         auto_accept_condition_1 = "request.instance.name == 'test_instance_1'"
         ApprovalStep.objects.create(name="test_approval_step_1",
                                     approval_workflow=self.test_approval_workflow,
