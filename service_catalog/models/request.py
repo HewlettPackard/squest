@@ -184,7 +184,8 @@ class Request(SquestModel):
             return False
         return True
 
-    @transition(field=state, source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED],
+    @transition(field=state,
+                source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED, RequestState.NEED_INFO],
                 target=RequestState.ACCEPTED)
     def accept(self, user, save=True):
         self.accepted_by = user

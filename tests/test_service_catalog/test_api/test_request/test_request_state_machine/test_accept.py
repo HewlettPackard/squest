@@ -3,7 +3,7 @@ from django.urls import reverse
 from service_catalog.models import RequestState, Request, Instance
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
-AUTHORIZED_STATES = [RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.FAILED]
+AUTHORIZED_STATES = [RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.FAILED, RequestState.NEED_INFO]
 
 
 class TestApiRequestAccept(BaseTestRequestAPI):
