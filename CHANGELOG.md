@@ -3,6 +3,7 @@
 ## Enhancement
 
 - Add a transition in FSM to switch from "NEED INFO" to "ACCEPTED"
+- Add field "enabled" in ApprovalWorkflow
 
 ## Feature
 

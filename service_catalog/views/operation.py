@@ -56,8 +56,8 @@ class OperationDetailView(SquestDetailView):
         context['extra_html_button_path'] = "service_catalog/buttons/operation_survey_button.html"
         if self.request.user.has_perm('service_catalog.view_approvalworkflow'):
             context['workflows_table'] = ApprovalWorkflowTable(
-                ApprovalWorkflow.objects.filter(operation=self.get_object()), exclude=['operation'],
-                prefix="operation-")
+                ApprovalWorkflow.objects.filter(enabled=True, operation=self.get_object()), exclude=['operation'],
+                prefix="operation-", hide_fields=["enabled"])
             config.configure(context['workflows_table'])
 
         return context

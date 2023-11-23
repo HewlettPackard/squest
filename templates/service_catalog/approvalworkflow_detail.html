@@ -37,6 +37,10 @@
                                 <b>Operation</b>
                                 <span class="float-right">{{ object.operation.name }}</span>
                             </li>
+                            <li class="list-group-item">
+                                <b>Enabled</b>
+                                <span class="float-right">{{ object.enabled | display_boolean }}</span>
+                            </li>
                             {% if object.scopes.all %}
                                 <li class="list-group-item">
                                     <b>Restricted scopes</b>

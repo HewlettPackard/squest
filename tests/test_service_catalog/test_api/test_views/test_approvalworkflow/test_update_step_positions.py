@@ -12,7 +12,8 @@ class TestApprovalWorkflowUpdateStepPositions(BaseTestApprovalAPI):
 
         # approval
         self.test_approval_workflow_2 = ApprovalWorkflow.objects.create(name="test_approval_workflow_2",
-                                                                        operation=self.update_operation_test)
+                                                                        operation=self.update_operation_test,
+                                                                        enabled=True)
 
         self.test_approval_step_3 = ApprovalStep.objects.create(name="test_approval_step_3",
                                                                 approval_workflow=self.test_approval_workflow_2)

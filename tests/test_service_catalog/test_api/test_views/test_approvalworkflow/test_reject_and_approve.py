@@ -10,7 +10,8 @@ class TestApprovalWorklowRejectApprove(BaseTestAPI):
     def setUp(self):
         super(TestApprovalWorklowRejectApprove, self).setUp()
         # Create approval workflow
-        self.approval_worklflow = ApprovalWorkflow.objects.create(operation=self.create_operation_test)
+        self.approval_worklflow = ApprovalWorkflow.objects.create(operation=self.create_operation_test,
+                                                                  enabled=True)
         self.approval_worklflow.scopes.set([self.test_quota_scope])
         self.approval_worklflow.save()
 

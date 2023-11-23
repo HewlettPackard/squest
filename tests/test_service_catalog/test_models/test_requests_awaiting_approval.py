@@ -32,7 +32,8 @@ class TestRequestsAwaitingApproval(BaseTestCommon):
 
         # Approval workflow1
         approval_workflow1 = ApprovalWorkflow.objects.create(name="approval_workflow1",
-                                                             operation=self.create_operation_test)
+                                                             operation=self.create_operation_test,
+                                                             enabled=True)
         approval_workflow1.scopes.set([self.organization1])
         content_type = ContentType.objects.get_for_model(ApprovalStep)
         permission_step1 = Permission.objects.create(codename="approve_step1", content_type=content_type)
@@ -47,7 +48,8 @@ class TestRequestsAwaitingApproval(BaseTestCommon):
 
         # Approval workflow2
         approval_workflow2 = ApprovalWorkflow.objects.create(name="approval_workflow2",
-                                                             operation=self.create_operation_test)
+                                                             operation=self.create_operation_test,
+                                                             enabled=True)
         approval_workflow2.scopes.set([self.organization2])
         content_type = ContentType.objects.get_for_model(ApprovalStep)
         permission_step2 = Permission.objects.create(codename="approve_step2", content_type=content_type)

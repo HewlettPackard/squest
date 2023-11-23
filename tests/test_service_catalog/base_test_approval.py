@@ -12,7 +12,8 @@ class BaseTestApprovalCommon(BaseTestRequestCommon):
 
         # approval
         self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
-                                                                      operation=self.create_operation_test)
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
 
         self.test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
                                                                 approval_workflow=self.test_approval_workflow)

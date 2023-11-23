@@ -10,7 +10,8 @@ class TestApprovalWorkflow(BaseTestRequest):
 
         self.test_approval_workflow_for_all_scopes = ApprovalWorkflow.objects.create(
             name="test_approval_workflow_for_all_scopes",
-            operation=self.create_operation_test)
+            operation=self.create_operation_test,
+            enabled=True)
 
         self.test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
                                                                 approval_workflow=self.test_approval_workflow_for_all_scopes)
@@ -18,9 +19,8 @@ class TestApprovalWorkflow(BaseTestRequest):
                                                                 approval_workflow=self.test_approval_workflow_for_all_scopes)
 
         self.test_approval_workflow_no_steps = ApprovalWorkflow.objects.create(name="test_approval_workflow_no_steps",
-                                                                               operation=self.create_operation_test)
-
-
+                                                                               operation=self.create_operation_test,
+                                                                               enabled=True)
 
     def test_first_step(self):
         self.assertEqual(self.test_approval_workflow_for_all_scopes.first_step, self.test_approval_step_1)
@@ -51,7 +51,8 @@ class TestApprovalWorkflow(BaseTestRequest):
         # Create a workflow for org1
         test_approval_workflow_for_org1 = ApprovalWorkflow.objects.create(
             name="test_approval_workflow_for_org1",
-            operation=self.create_operation_test)
+            operation=self.create_operation_test,
+            enabled=True)
         test_approval_workflow_for_org1.scopes.set([org1])
 
         # Create request with_quota_scope=org1 -> it will take the workflow dedicated to org1 for create_operation_test
@@ -73,7 +74,8 @@ class TestApprovalWorkflow(BaseTestRequest):
         # Create a workflow for org1
         test_approval_workflow_for_org1 = ApprovalWorkflow.objects.create(
             name="test_approval_workflow_for_org1",
-            operation=self.create_operation_test)
+            operation=self.create_operation_test,
+            enabled=True)
         test_approval_workflow_for_org1.scopes.set([org1])
 
         # Create request with_quota_scope=team1org1 -> it will take the workflow dedicated to org1 for self.create_operation_test
