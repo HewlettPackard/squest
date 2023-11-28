@@ -26,6 +26,7 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
         if self.steps.current == '1':
             docs = Doc.objects.filter(operations__in=[self.operation])
             context.update({'docs': docs})
+        context["title"] = f"Request - {self.operation}"
         return context
 
     def get_form_kwargs(self, step):
