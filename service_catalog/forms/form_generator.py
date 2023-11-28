@@ -1,6 +1,6 @@
 import logging
 
-from service_catalog.models import ApprovalState
+from service_catalog.models import ApprovalState, RequestState
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,10 @@ class FormGenerator:
             # get all field that are not disabled by the admin
             self._add_customer_field_only()
         elif self.squest_request and self.squest_request.approval_workflow_state:
-            self._add_field_from_approval_step()
+            if self.squest_request.state == RequestState.ACCEPTED:
+                self._add_all_fields()
+            else:
+                self._add_field_from_approval_step()
         else:
             self._add_all_fields()
         if self.squest_request:

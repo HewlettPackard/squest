@@ -244,6 +244,8 @@ def request_reject(request, pk):
 @login_required
 def request_accept(request, pk):
     target_request = get_object_or_404(Request, id=pk)
+    if target_request.approval_workflow_state != None and target_request.state != RequestState.ACCEPTED:
+        raise PermissionDenied
     if not request.user.has_perm('service_catalog.accept_request', target_request):
         raise PermissionDenied
     if not can_proceed(target_request.accept):
