@@ -1,0 +1,49 @@
+- name: Deploy RabbitMQ operator manifest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition: "{{ lookup('file', 'rabbitmq-operator.v2.5.0.yml') | from_yaml_all }}"
+
+- name: Deploy RabbitMQ cluster
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: rabbitmq.com/v1beta1
+      kind: RabbitmqCluster
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: rabbitmq
+        name: rabbitmq
+      spec:
+        replicas: 3
+        image: rabbitmq:3.10.23-management
+        service:
+          type: ClusterIP
+        persistence:
+          storageClassName: "{{ k8s_storage_class }}"
+          storage: 10
+        resources:
+          requests:
+            cpu: 256m
+            memory: 1Gi
+          limits:
+            cpu: 256m
+            memory: 1Gi
+        rabbitmq:
+          additionalPlugins:
+            - rabbitmq_management
+            - rabbitmq_peer_discovery_k8s
+          additionalConfig: |
+            cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+            cluster_formation.k8s.host = {{ k8s_api_service }}
+            cluster_formation.k8s.address_type = hostname
+            vm_memory_high_watermark_paging_ratio = 0.85
+            cluster_formation.node_cleanup.interval = 10
+            cluster_partition_handling = autoheal
+            queue_master_locator = min-masters
+            loopback_users.guest = false
+            default_user = {{ squest_rabbitmq_user }}
+            default_pass = {{ squest_rabbitmq_password }}
+          advancedConfig: ""
