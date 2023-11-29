@@ -1,0 +1,198 @@
+- name: Ensure DB config map is present
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+        name: db-env
+      data: "{{ squest_db_env }}"
+
+- name: Ensure volume for DB data is present
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+        name: db-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "{{ squest_db_volume_size }}"
+
+- name: Ensure DB deployment is present
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+        name: db
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: squest-db
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: squest
+              app.kubernetes.io/name: squest-db
+          spec:
+            containers:
+              - name: db
+                image: mariadb:11.0.2
+                envFrom:
+                  - configMapRef:
+                      name: db-env
+                ports:
+                  - containerPort: 3306
+                volumeMounts:
+                  - mountPath: /var/lib/mysql
+                    name: db-data
+                  - mountPath: /docker-entrypoint-initdb.d/
+                    name: db-init
+            restartPolicy: Always
+            volumes:
+              - name: db-data
+                persistentVolumeClaim:
+                  claimName: db-data
+              - name: db-init
+                configMap:
+                  name: db-init
+                  items:
+                    - key: db-init.sh
+                      path: db-init.sh
+
+- name: DB service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app.kubernetes.io/name: squest-db
+        name: db-service
+      spec:
+        ports:
+          - name: "3306"
+            port: 3306
+            targetPort: 3306
+        selector:
+          app.kubernetes.io/name: squest-db
+
+- when: squest_phpmyadmin.enabled
+  block:
+    - name: Deploy PHPMyAdmin configmap environment
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            namespace: "{{ squest_namespace }}"
+            labels:
+              app: squest
+            name: phpmyadmin-env
+          data: "{{ squest_phpmyadmin_env }}"
+
+    - name: PHPMyAdmin deployment
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            namespace: "{{ squest_namespace }}"
+            labels:
+              app: squest
+            name: phpmyadmin
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app.kubernetes.io/name: squest-phpmyadmin
+            strategy:
+              type: Recreate
+            template:
+              metadata:
+                labels:
+                  app: squest
+                  app.kubernetes.io/name: squest-phpmyadmin
+              spec:
+                containers:
+                  - name: phymyadmin
+                    image: phpmyadmin/phpmyadmin:5.1.3
+                    envFrom:
+                      - configMapRef:
+                          name: phpmyadmin-env
+                    ports:
+                      - containerPort: 80
+
+    - name: PHPMyAdmin service
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            namespace: "{{ squest_namespace }}"
+            labels:
+              app: squest
+              app.kubernetes.io/name: squest-phpmyadmin
+            name: phpmyadmin-service
+          spec:
+            ports:
+              - name: "http"
+                port: 80
+                targetPort: 80
+            selector:
+              app.kubernetes.io/name: squest-phpmyadmin
+
+    - when: squest_phpmyadmin is defined and squest_phpmyadmin.ingress_enabled
+      name: PHPMyAdmin ingress
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            namespace: "{{ squest_namespace }}"
+            name: phpmyadmin-ingress
+            annotations: "{{ squest_phpmyadmin.ingress_annotation }}"
+          spec:
+            rules:
+              - host: "{{ squest_phpmyadmin.ingress_host }}"
+                http:
+                  paths:
+                    - pathType: Prefix
+                      path: "/"
+                      backend:
+                        service:
+                          name: phpmyadmin-service
+                          port:
+                            number: 80

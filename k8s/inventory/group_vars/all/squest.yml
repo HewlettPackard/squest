@@ -1,0 +1,2 @@
+k8s_kubeconfig_path: "/home/nico/Documents/tools4ocp-clusters/talos-test.k8s.glabs.hpecorp.net/kubeconfig"
+k8s_cluster_fqdn: "talos-test.k8s.glabs.hpecorp.net"

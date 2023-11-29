@@ -1,0 +1,288 @@
+- name: Create a service account for Squest
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: "{{ squest_namespace }}"
+    state: present
+    definition:
+      kind: ServiceAccount
+      apiVersion: v1
+      metadata:
+        name: squest-sa
+      automountServiceAccountToken: true
+
+- name: Create a role allowed to get info on jobs
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: "{{ squest_namespace }}"
+    state: present
+    definition:
+      kind: Role
+      apiVersion: rbac.authorization.k8s.io/v1
+      metadata:
+        name: role-get-jobs
+      rules:
+        - verbs:
+            - list
+            - watch
+            - get
+          apiGroups:
+            - batch
+          resources:
+            - jobs
+
+- name: Link Squest service account to role
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: "{{ squest_namespace }}"
+    state: present
+    definition:
+      kind: RoleBinding
+      apiVersion: rbac.authorization.k8s.io/v1
+      metadata:
+        name: my-app
+      subjects:
+        - kind: ServiceAccount
+          name: squest-sa
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: role-get-jobs
+
+- name: Django env as config map
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: "{{ squest_namespace }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        labels:
+          app: squest
+          service: django
+        name: django-env
+      data: "{{ squest_django_env }}"
+
+- name: Persistent volume for static and media files
+  loop:
+    - "django-static"
+    - "django-media"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: "{{ squest_namespace }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        labels:
+          service: django
+          app: squest
+        name: "{{ item }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Django database migration job
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: django-migrations
+        labels:
+          app: squest
+          service: django
+      spec:
+        template:
+          backoffLimit: 3
+          spec:
+            securityContext:
+#              runAsUser: 1000
+#              runAsGroup: 1000
+              fsGroup: 999
+            containers:
+              - name: django
+                image: "{{ squest_docker_image }}"
+                command: ['/bin/bash', '-c']
+                args:
+                  - |
+                    echo $UID
+                    echo $USER
+                    echo ""
+                    echo "-----------------------------------------------------"                    
+                    echo "Wait for required services to start"
+                    /wait
+                    echo "Applying database migration"
+                    python manage.py migrate --database=${DATABASE:-default}
+                    echo ""
+                    echo "-----------------------------------------------------"
+                    echo "Collect static files"
+                    python manage.py collectstatic --noinput
+                    echo ""
+                    echo "-----------------------------------------------------"
+                    echo "Inserting default data"
+                    python manage.py insert_default_data
+                envFrom:
+                  - configMapRef:
+                      name: django-env
+                volumeMounts:
+                  - mountPath: /app/static
+                    name: django-static
+                  - mountPath: /app/media
+                    name: django-media
+            restartPolicy: Never
+            volumes:
+              - name: django-media
+                persistentVolumeClaim:
+                  claimName: django-media
+              - name: django-static
+                persistentVolumeClaim:
+                  claimName: django-static
+
+- name: Nginx config
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+          service: nginx
+        name: nginx-config
+      data:
+        nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/nginx.conf') }}"
+
+- name: Deploy Django app
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: squest
+          service: django
+        name: django
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: squest
+            service: django
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: squest
+              service: django
+          spec:
+            serviceAccountName: squest-sa
+            initContainers:
+              - name: wait-for-migration
+                image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+                imagePullPolicy: Always
+                args:
+                  - "job"
+                  - "django-migrations"
+            containers:
+              - name: django
+                image: "{{ squest_docker_image }}"
+                imagePullPolicy: Always
+                command: ['/bin/bash', '-c']
+                ports:
+                  - containerPort: 8000
+                args:
+                  - |
+                    echo "Wait for required services to start"
+                    /wait
+                    echo "Starting web server"
+                    gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
+                envFrom:
+                  - configMapRef:
+                      name: django-env
+              - name: nginx
+                image: nginx:1.23.4-alpine
+                ports:
+                  - containerPort: 8080
+                volumeMounts:
+                  - name: nginx-config
+                    mountPath: /etc/nginx/squest
+                  - mountPath: /app/static
+                    name: django-static
+                  - mountPath: /app/media
+                    name: django-media
+            restartPolicy: Always
+            volumes:
+              - name: django-media
+                persistentVolumeClaim:
+                  claimName: django-media
+              - name: django-static
+                persistentVolumeClaim:
+                  claimName: django-static
+              - name: nginx-config
+                configMap:
+                  name: nginx-config
+                  items:
+                    - key: nginx.conf
+                      path: nginx.conf
+
+- name: Django service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: django
+      spec:
+        selector:
+          app: squest
+          service: django
+        ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+
+- name: Squest ingress
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: squest-ingress
+        annotations:
+          kubernetes.io/ingress.class: "nginx"
+          ingress.kubernetes.io/ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      spec:
+        rules:
+          - host: "{{ squest_host_url }}"
+            http:
+              paths:
+                - pathType: Prefix
+                  path: "/"
+                  backend:
+                    service:
+                      name: django
+                      port:
+                        number: 8080

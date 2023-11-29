@@ -1,0 +1,9 @@
+#
+
+- name: "Deploy Squest"
+  hosts: localhost
+  gather_facts: False
+
+
+  roles:
+    - role: squest_k8s
