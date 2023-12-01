@@ -192,6 +192,10 @@
               service: django
           spec:
             serviceAccountName: squest-sa
+            hostAliases:
+              - ip: "127.0.0.1"
+                hostnames:
+                  - "django"  # to match nginx config
             initContainers:
               - name: wait-for-migration
                 image: ghcr.io/groundnuty/k8s-wait-for:v2.0
@@ -217,6 +221,7 @@
                       name: django-env
               - name: nginx
                 image: nginx:1.23.4-alpine
+                command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
                 ports:
                   - containerPort: 8080
                 volumeMounts:
