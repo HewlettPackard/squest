@@ -1,0 +1,101 @@
+- name: Deploy celery worker
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: squest
+          service: celery-worker
+        name: celery-worker
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: squest
+            service: celery-worker
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: squest
+              service: celery-worker
+          spec:
+            serviceAccountName: squest-sa
+            initContainers:
+              - name: wait-for-migration
+                image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+                imagePullPolicy: Always
+                args:
+                  - "job"
+                  - "django-migrations"
+            containers:
+              - name: celery-worker
+                image: "{{ squest_docker_image }}"
+                imagePullPolicy: Always
+                command: ['/bin/bash', '-c']
+                args:
+                  - |
+                    echo "Wait for required services to start"
+                    /wait
+                    echo "Starting celery worker"
+                    celery -A service_catalog worker -l info
+                envFrom:
+                  - configMapRef:
+                      name: django-env
+            restartPolicy: Always
+
+- name: Deploy celery beat
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: squest
+          service: celery-beat
+        name: celery-beat
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: squest
+            service: celery-beat
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: squest
+              service: celery-beat
+          spec:
+            serviceAccountName: squest-sa
+            initContainers:
+              - name: wait-for-migration
+                image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+                imagePullPolicy: Always
+                args:
+                  - "job"
+                  - "django-migrations"
+            containers:
+              - name: celery-beat
+                image: "{{ squest_docker_image }}"
+                imagePullPolicy: Always
+                command: ['/bin/bash', '-c']
+                args:
+                  - |
+                    echo "Wait for required services to start"
+                    /wait
+                    echo "Starting celery beat"
+                    celery -A service_catalog beat -l info
+                envFrom:
+                  - configMapRef:
+                      name: django-env
+            restartPolicy: Always
