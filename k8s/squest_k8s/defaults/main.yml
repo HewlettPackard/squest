@@ -1,3 +1,4 @@
+# Kubernetes
 k8s_kubeconfig_path: "/path/to/kubeconfig"
 k8s_cluster_fqdn: k8s.domain.local
 squest_namespace: "squest"
@@ -6,22 +7,13 @@ k8s_api_service: "kubernetes.default"
 squest_docker_image: "quay.io/hewlettpackardenterprise/squest:latest"
 
 # DATABASE
-squest_db_volume_size: 1000Mi
-squest_db_env:
-  MYSQL_DATABASE: squest_db
-  MYSQL_USER: squest_user
-  MYSQL_PASSWORD: "p@ssw0rd"
-  MYSQL_ROOT_PASSWORD: "p@ssw0rd"
-  TZ: Europe/Paris
+squest_db:
+  database: "squest_db"
+  user: "squest_user"
+  password: "squest_password"
+  root_password: "p@ssw0rd"
 
 # PHPMYADMIN
-squest_phpmyadmin_env:
-  TZ: Europe/Paris
-  PMA_HOST: db
-  PMA_ARBITRARY: "1"
-  MYSQL_USERNAME: root
-  MYSQL_ROOT_PASSWORD: "p@ssw0rd"
-
 squest_phpmyadmin:
   enabled: true
   ingress_enabled: true
@@ -30,6 +22,12 @@ squest_phpmyadmin:
     ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   ingress_host: "phpmyadmin.{{ k8s_cluster_fqdn }}"
+  env:
+    TZ: Europe/Paris
+    PMA_HOST: mariadb
+    PMA_ARBITRARY: "1"
+    MYSQL_USERNAME: root
+    MYSQL_ROOT_PASSWORD: "{{ squest_db.root_password }}"
 
 # RABBITMQ
 squest_rabbitmq_user: rabbitmq
@@ -39,9 +37,9 @@ squest_rabbitmq_password: rabbitmq
 squest_host_url: "squest.{{ k8s_cluster_fqdn }}"
 squest_django_env:
   TZ: "Europe/Paris"
-  DB_HOST: "db-service"
+  DB_HOST: "mariadb"
   DB_PORT: "3306"
   REDIS_CACHE_HOST: "rfrm-redisfailover"
-  DB_USER: "squest_user"
-  DB_PASSWORD: "p@ssw0rd"
-  WAIT_HOSTS: "db-service:3306,rabbitmq:5672"
+  DB_USER: "{{ squest_db.user }}"
+  DB_PASSWORD: "{{ squest_db.password }}"
+  WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"

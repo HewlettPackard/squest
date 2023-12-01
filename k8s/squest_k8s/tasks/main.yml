@@ -8,30 +8,37 @@
       metadata:
         name: "{{ squest_namespace }}"
 
+- name: K8S utils
+  ansible.builtin.include_tasks:
+    file: 01-utils.yml
+    apply:
+      tags: ["utils"]
+  tags: ["utils"]
+
 - name: Squest db
   ansible.builtin.include_tasks:
-    file: 01-db.yml
+    file: 02-db.yml
     apply:
       tags: ["db"]
   tags: ["db"]
 
 - name: Squest rabbitmq
   ansible.builtin.include_tasks:
-    file: 02-rabbitmq.yml
+    file: 03-rabbitmq.yml
     apply:
       tags: ["rabbitmq"]
   tags: ["rabbitmq"]
 
 - name: Squest redis
   ansible.builtin.include_tasks:
-    file: 03-redis.yml
+    file: 04-redis.yml
     apply:
       tags: ["redis"]
   tags: ["redis"]
 
 - name: Squest Django
   ansible.builtin.include_tasks:
-    file: 04-django.yml
+    file: 05-django.yml
     apply:
       tags: ["django"]
   tags: ["django"]
