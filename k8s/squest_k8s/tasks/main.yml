@@ -42,3 +42,10 @@
     apply:
       tags: ["django"]
   tags: ["django"]
+
+- name: Squest Celery
+  ansible.builtin.include_tasks:
+    file: 06-celery.yml
+    apply:
+      tags: ["celery"]
+  tags: ["celery"]
