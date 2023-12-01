@@ -207,9 +207,9 @@
               - name: django
                 image: "{{ squest_docker_image }}"
                 imagePullPolicy: Always
-                command: ['/bin/bash', '-c']
                 ports:
                   - containerPort: 8000
+                command: ['/bin/bash', '-c']
                 args:
                   - |
                     echo "Wait for required services to start"
