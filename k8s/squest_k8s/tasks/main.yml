@@ -49,3 +49,10 @@
     apply:
       tags: ["celery"]
   tags: ["celery"]
+
+- name: Squest maintenance nginx
+  ansible.builtin.include_tasks:
+    file: 07-maintenance.yml
+    apply:
+      tags: ["maintenance"]
+  tags: ["maintenance"]
