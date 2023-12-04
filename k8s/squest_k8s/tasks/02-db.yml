@@ -159,7 +159,7 @@
             selector:
               app.kubernetes.io/name: squest-phpmyadmin
 
-    - when: squest_phpmyadmin is defined and squest_phpmyadmin.ingress_enabled
+    - when: squest_phpmyadmin is defined and squest_phpmyadmin.ingress is defined and squest_phpmyadmin.ingress.enabled
       name: PHPMyAdmin ingress
       kubernetes.core.k8s:
         kubeconfig: "{{ k8s_kubeconfig_path }}"
@@ -170,10 +170,10 @@
           metadata:
             namespace: "{{ squest_namespace }}"
             name: phpmyadmin-ingress
-            annotations: "{{ squest_phpmyadmin.ingress_annotation }}"
+            annotations: "{{ squest_phpmyadmin.ingress.annotation }}"
           spec:
             rules:
-              - host: "{{ squest_phpmyadmin.ingress_host }}"
+              - host: "{{ squest_phpmyadmin.ingress.host }}"
                 http:
                   paths:
                     - pathType: Prefix

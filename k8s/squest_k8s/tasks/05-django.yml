@@ -61,7 +61,7 @@
           app: squest
           service: django
         name: django-env
-      data: "{{ squest_django_env }}"
+      data: "{{ squest_django.env }}"
 
 - name: Persistent volume for static and media files
   loop:
@@ -110,7 +110,7 @@
               fsGroup: 999
             containers:
               - name: django
-                image: "{{ squest_docker_image }}"
+                image: "{{ squest_django.image }}"
                 command: ['/bin/bash', '-c']
                 args:
                   - |
@@ -205,7 +205,7 @@
                   - "django-migrations"
             containers:
               - name: django
-                image: "{{ squest_docker_image }}"
+                image: "{{ squest_django.image }}"
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 8000
@@ -265,7 +265,8 @@
           port: 8080
           targetPort: 8080
 
-- name: Squest ingress
+- when: squest_django.ingress.enabled
+  name: Squest ingress
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
@@ -275,10 +276,7 @@
       kind: Ingress
       metadata:
         name: squest-ingress
-        annotations:
-          kubernetes.io/ingress.class: "nginx"
-          ingress.kubernetes.io/ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        annotations: "{{ squest_django.ingress.annotations }}"
       spec:
         rules:
           - host: "{{ squest_host_url }}"

@@ -1,0 +1,93 @@
+- name: Nginx maintenance config
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+          service: nginx
+        name: nginx-config-maintenance
+      data:
+        nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/maintenance.nginx.conf') }}"
+        maintenance.html: "{{ lookup('file', playbook_dir + '/../docker/maintenance.html') }}"
+
+- name: Deploy maintenance static page
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: squest
+          service: maintenance
+        name: maintenance
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: squest
+            service: maintenance
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: squest
+              service: maintenance
+          spec:
+            containers:
+              - name: nginx
+                image: nginx:1.23.4-alpine
+#                command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
+                ports:
+                  - containerPort: 8080
+                volumeMounts:
+                  - name: nginx-config-maintenance
+                    mountPath: /etc/nginx/conf.d/default.conf
+                    subPath: nginx.conf
+                  - name: nginx-config-maintenance
+                    mountPath: /usr/share/nginx/html/index.html
+                    subPath: maintenance.html
+                  - mountPath: /usr/share/nginx/html/squest_logo_v2_300_300.png
+                    name: django-static
+                    subPath: ./squest/img/squest_logo_v2_300_300.png
+            restartPolicy: Always
+            volumes:
+              - name: django-static
+                persistentVolumeClaim:
+                  claimName: django-static
+              - name: nginx-config-maintenance
+                configMap:
+                  name: nginx-config-maintenance
+                  items:
+                    - key: nginx.conf
+                      path: nginx.conf
+                    - key: maintenance.html
+                      path: maintenance.html
+
+- name: Maintenance service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: maintenance
+      spec:
+        selector:
+          app: squest
+          service: maintenance
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
