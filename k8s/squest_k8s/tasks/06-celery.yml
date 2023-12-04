@@ -35,7 +35,7 @@
                   - "django-migrations"
             containers:
               - name: celery-worker
-                image: "{{ squest_docker_image }}"
+                image: "{{ squest_django.image }}"
                 imagePullPolicy: Always
                 command: ['/bin/bash', '-c']
                 args:
@@ -86,7 +86,7 @@
                   - "django-migrations"
             containers:
               - name: celery-beat
-                image: "{{ squest_docker_image }}"
+                image: "{{ squest_django.image }}"
                 imagePullPolicy: Always
                 command: ['/bin/bash', '-c']
                 args:

@@ -50,8 +50,8 @@
         name: rabbitmq-user-secret
       type: Opaque
       stringData:
-          username: "{{ squest_rabbitmq_user }}"
-          password: "{{ squest_rabbitmq_password }}"
+          username: "{{ squest_rabbitmq.user }}"
+          password: "{{ squest_rabbitmq.password }}"
 
 - name: RabbitMQ user password secret
   kubernetes.core.k8s:
@@ -104,7 +104,7 @@
             - rabbitmq_peer_discovery_k8s
           additionalConfig: |
             cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
-            cluster_formation.k8s.host = {{ k8s_api_service }}
+            cluster_formation.k8s.host = kubernetes.default
             cluster_formation.k8s.address_type = hostname
             vm_memory_high_watermark_paging_ratio = 0.85
             cluster_formation.node_cleanup.interval = 10

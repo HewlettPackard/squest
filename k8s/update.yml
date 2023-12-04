@@ -1,0 +1,180 @@
+- name: "Update Squest"
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+    - name: Update ingress to point to maintenance pod
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: patched
+        namespace: "{{ squest_namespace }}"
+        definition:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            name: squest-ingress
+            annotations:
+              kubernetes.io/ingress.class: "nginx"
+              ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          spec:
+            rules:
+              - host: "{{ squest_host_url }}"
+                http:
+                  paths:
+                    - pathType: Prefix
+                      path: "/"
+                      backend:
+                        service:
+                          name: maintenance
+                          port:
+                            number: 80
+
+    - name: Update Django env as config map
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        namespace: "{{ squest_namespace }}"
+        state: patched
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            labels:
+              app: squest
+              service: django
+            name: django-env
+          data: "{{ squest_django_env }}"
+
+    - name: Delete migration job
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        namespace: "{{ squest_namespace }}"
+        kind: Job
+        api_version: batch/v1
+        name: "django-migrations"
+        state: absent
+
+    - name: Create back Django database migration job
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        namespace: "{{ squest_namespace }}"
+        definition:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: django-migrations
+            labels:
+              app: squest
+              service: django
+          spec:
+            template:
+              backoffLimit: 3
+              spec:
+                securityContext:
+                  fsGroup: 999
+                containers:
+                  - name: django
+                    image: "{{ squest_django.image }}"
+                    command: ['/bin/bash', '-c']
+                    args:
+                      - |
+                        echo $UID
+                        echo $USER
+                        echo ""
+                        echo "-----------------------------------------------------"                    
+                        echo "Wait for required services to start"
+                        /wait
+                        echo "Applying database migration"
+                        python manage.py migrate --database=${DATABASE:-default}
+                        echo ""
+                        echo "-----------------------------------------------------"
+                        echo "Collect static files"
+                        python manage.py collectstatic --noinput
+                        echo ""
+                        echo "-----------------------------------------------------"
+                        echo "Inserting default data"
+                        python manage.py insert_default_data
+                    envFrom:
+                      - configMapRef:
+                          name: django-env
+                    volumeMounts:
+                      - mountPath: /app/static
+                        name: django-static
+                      - mountPath: /app/media
+                        name: django-media
+                restartPolicy: Never
+                volumes:
+                  - name: django-media
+                    persistentVolumeClaim:
+                      claimName: django-media
+                  - name: django-static
+                    persistentVolumeClaim:
+                      claimName: django-static
+
+    - name: Update Squest images and force rollout
+      loop:
+        - django
+        - celery-worker
+        - celery-beat
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        namespace: "{{ squest_namespace }}"
+        kind: Deployment
+        name: "{{ item }}"
+        state: patched
+        definition:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  kubectl.kubernetes.io/restartedAt: "{{ now(fmt='%Y-%m-%dT%H:%M:%SZ') }}"
+              spec:
+                containers:
+                  - name: "{{ item }}"
+                    image: "{{ squest_django.image }}"
+
+    - name: Wait until deployments back available
+      loop:
+        - django
+        - celery-worker
+        - celery-beat
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        api_version: "apps/v1"
+        kind: Deployment
+        name: "{{ item }}"
+        namespace: "{{ squest_namespace }}"
+        wait: yes
+        wait_sleep: 10
+        wait_timeout: 600
+        wait_condition:
+          type: Available
+          status: "True"
+
+    - name: Restore ingress
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: patched
+        namespace: "{{ squest_namespace }}"
+        definition:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            name: squest-ingress
+            annotations:
+              kubernetes.io/ingress.class: "nginx"
+              ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          spec:
+            rules:
+              - host: "{{ squest_host_url }}"
+                http:
+                  paths:
+                    - pathType: Prefix
+                      path: "/"
+                      backend:
+                        service:
+                          name: django
+                          port:
+                            number: 8080
