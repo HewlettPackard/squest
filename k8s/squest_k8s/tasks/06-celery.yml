@@ -26,6 +26,10 @@
               service: celery-worker
           spec:
             serviceAccountName: squest-sa
+            dnsConfig:
+              options:
+                - name: ndots
+                  value: "1"
             initContainers:
               - name: wait-for-migration
                 image: ghcr.io/groundnuty/k8s-wait-for:v2.0
@@ -77,6 +81,10 @@
               service: celery-beat
           spec:
             serviceAccountName: squest-sa
+            dnsConfig:
+              options:
+                - name: ndots
+                  value: "1"
             initContainers:
               - name: wait-for-migration
                 image: ghcr.io/groundnuty/k8s-wait-for:v2.0

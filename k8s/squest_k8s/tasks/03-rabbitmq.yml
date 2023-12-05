@@ -37,7 +37,7 @@
     wait_condition:
       type: Established
       status: "True"
-#
+
 - name: RabbitMQ user password secret
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
@@ -90,7 +90,7 @@
           type: ClusterIP
         persistence:
           storageClassName: "{{ k8s_storage_class }}"
-          storage: 10
+          storage: 10Gi
         resources:
           requests:
             cpu: 256m

@@ -56,3 +56,10 @@
     apply:
       tags: ["maintenance"]
   tags: ["maintenance"]
+
+- name: Squest backup
+  ansible.builtin.include_tasks:
+    file: 08-backup.yml
+    apply:
+      tags: ["backup"]
+  tags: ["backup"]

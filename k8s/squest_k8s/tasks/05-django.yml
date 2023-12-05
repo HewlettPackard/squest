@@ -63,10 +63,11 @@
         name: django-env
       data: "{{ squest_django.env }}"
 
-- name: Persistent volume for static and media files
+- name: Persistent volume for static, media and backup
   loop:
     - "django-static"
     - "django-media"
+    - "squest-backup"
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
@@ -75,7 +76,6 @@
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        creationTimestamp: null
         labels:
           service: django
           app: squest
@@ -192,6 +192,10 @@
               service: django
           spec:
             serviceAccountName: squest-sa
+            dnsConfig:
+              options:
+                - name: ndots
+                  value: "1"
             hostAliases:
               - ip: "127.0.0.1"
                 hostnames:
@@ -279,7 +283,7 @@
         annotations: "{{ squest_django.ingress.annotations }}"
       spec:
         rules:
-          - host: "{{ squest_host_url }}"
+          - host: "{{ squest_django.ingress.host }}"
             http:
               paths:
                 - pathType: Prefix
