@@ -3,6 +3,10 @@
     background-color: #343a40 !important;
     color: #fff !important;
 }
+.bg-dark table tr {
+    background-color: #343a40 !important;
+    color: #fff !important;
+}
 
 .dtfc-fixed-left {
     background-color: #343a40 !important;
