@@ -1,0 +1,112 @@
+- when: squest_django.backup.enabled
+  name: Squest backup
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: squest-backup
+      spec:
+        schedule: "{{ squest_django.backup.crontab }}"
+        jobTemplate:
+          spec:
+            template:
+              spec:
+                serviceAccountName: squest-sa
+                restartPolicy: Never
+                initContainers:
+                  - name: wait-for-migration
+                    image: ghcr.io/groundnuty/k8s-wait-for:v2.0
+                    imagePullPolicy: Always
+                    args:
+                      - "job"
+                      - "django-migrations"
+                securityContext:
+                  fsGroup: 999
+                containers:
+                  - name: django
+                    image: "{{ squest_django.image }}"
+                    imagePullPolicy: Always
+                    command: ['/bin/bash', '-c']
+                    args:
+                      - |
+                        echo "Wait for required services to start"
+                        /wait
+                        echo "Run backup"
+                        python manage.py dbbackup --clean
+                        python manage.py mediabackup --clean
+                    envFrom:
+                      - configMapRef:
+                          name: django-env
+                    volumeMounts:
+                      - name: squest-backup
+                        mountPath: /app/backup
+                volumes:
+                  - name: squest-backup
+                    persistentVolumeClaim:
+                      claimName: squest-backup
+
+- when: squest_django.externalize_backup_via_rsync.enabled
+  block:
+    - name: Create a secret with the private ssh key
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        namespace: "{{ squest_namespace }}"
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: squest-rsync-ssh-key
+          type: Opaque
+          data:
+            ssh.key: "{{ squest_django.externalize_backup_via_rsync.private_ssh_key |b64encode }}"
+
+    - name: Create a cronjob for rsync external copy
+      kubernetes.core.k8s:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        state: present
+        namespace: "{{ squest_namespace }}"
+        definition:
+          apiVersion: batch/v1
+          kind: CronJob
+          metadata:
+            name: squest-rsync-backup
+          spec:
+            schedule: "{{ squest_django.backup.crontab }}"
+            jobTemplate:
+              spec:
+                template:
+                  spec:
+                    restartPolicy: Never
+                    dnsConfig:
+                      options:
+                        - name: ndots
+                          value: "1"
+                    containers:
+                      - name: rsync
+                        image: instrumentisto/rsync-ssh:alpine3.18
+                        imagePullPolicy: Always
+                        command: ["/bin/sh","-c", "-x"]
+                        args:
+                          - |
+                            rsync \
+                            -avz --ignore-existing --delete \
+                            -e "ssh -i /root/.ssh/ssh.key -o StrictHostKeyChecking=no" \
+                            /app/backup {{ squest_django.externalize_backup_via_rsync.ssh_user }}@{{ squest_django.externalize_backup_via_rsync.ssh_server }}:{{ squest_django.externalize_backup_via_rsync.remote_path }}
+                        volumeMounts:
+                          - name: squest-rsync-ssh-key
+                            mountPath: /root/.ssh/
+                          - name: squest-backup
+                            mountPath: /app/backup
+                    volumes:
+                      - name: squest-backup
+                        persistentVolumeClaim:
+                          claimName: squest-backup
+                      - name: squest-rsync-ssh-key
+                        secret:
+                          defaultMode: 0600
+                          secretName: squest-rsync-ssh-key
