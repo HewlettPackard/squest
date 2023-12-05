@@ -38,7 +38,7 @@ squest_rabbitmq:
 
 # Django
 squest_django:
-  image: "quay.io/hewlettpackardenterprise/squest:latest"
+  image: "quay.io/hewlettpackardenterprise/squest:dev"
   ingress:
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
@@ -54,3 +54,13 @@ squest_django:
     DB_USER: "{{ squest_db.user }}"
     DB_PASSWORD: "{{ squest_db.password }}"
     WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"
+  backup:
+    enabled: true
+    crontab: "0 1 * * *"
+  externalize_backup_via_rsync:
+    enabled: true
+    crontab: "30 1 * * *"
+    private_ssh_key: "{{ lookup('file', '/home/nico/Desktop/id_ed25519_squest_k8s_dev') + '\n' }}"
+    ssh_user: "squest_k8s_dev"
+    ssh_server: "siam017.gre.hpecorp.net"
+    remote_path: "/backup/squest_k8s_dev/backup"
