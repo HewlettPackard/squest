@@ -1,4 +1,4 @@
-from django.forms import MultipleChoiceField, SelectMultiple
+from django.forms import TypedMultipleChoiceField, SelectMultiple
 
 from Squest.utils.squest_model_form import SquestModelForm
 from profiles.models import InstanceNotification
@@ -10,10 +10,11 @@ class InstanceNotificationForm(SquestModelForm):
         model = InstanceNotification
         fields = ["name", "services", "instance_states", "when"]
 
-    instance_states = MultipleChoiceField(label="Instance states",
-                                          required=False,
-                                          choices=InstanceState.choices,
-                                          widget=SelectMultiple(attrs={'class': 'form-control'}))
+    instance_states = TypedMultipleChoiceField(label="Instance states",
+                                               coerce=int,
+                                               required=False,
+                                               choices=InstanceState.choices,
+                                               widget=SelectMultiple(attrs={'class': 'form-control'}))
 
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
