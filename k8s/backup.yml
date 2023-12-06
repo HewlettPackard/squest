@@ -1,0 +1,60 @@
+- name: "Execute a one shot backup of Squest"
+  hosts: localhost
+  gather_facts: true
+
+  tasks:
+    - name: Generate job name
+      ansible.builtin.set_fact:
+        job_name: backup-{{ ansible_date_time.date }}
+
+    - name: Create Job from backup cronjob
+      shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-backup {{ job_name }}"
+      environment:
+        KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+      register: register_backup
+      failed_when:
+        - register_backup.rc != 0
+        - '"already exists" not in register_backup.stdout'
+
+    - name: Wait until backup complete
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig_path }}"
+        api_version: "batch/v1"
+        kind: Job
+        name: "{{ job_name }}"
+        namespace: "{{ squest_namespace }}"
+        wait: yes
+        wait_sleep: 10
+        wait_timeout: 120
+        wait_condition:
+          type: Complete
+          status: "True"
+
+    - when: squest_django.externalize_backup_via_rsync.enabled
+      block:
+        - name: Generate job name
+          ansible.builtin.set_fact:
+            job_name: rsync-backup-{{ ansible_date_time.date }}
+
+        - name: Create Job from rsync backup cronjob
+          shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-rsync-backup {{ job_name }}"
+          environment:
+            KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+          register: register_backup
+          failed_when:
+            - register_backup.rc != 0
+            - '"already exists" not in register_backup.stdout'
+
+        - name: Wait until rsync backup complete
+          kubernetes.core.k8s_info:
+            kubeconfig: "{{ k8s_kubeconfig_path }}"
+            api_version: "batch/v1"
+            kind: Job
+            name: "{{ job_name }}"
+            namespace: "{{ squest_namespace }}"
+            wait: yes
+            wait_sleep: 10
+            wait_timeout: 120
+            wait_condition:
+              type: Complete
+              status: "True"

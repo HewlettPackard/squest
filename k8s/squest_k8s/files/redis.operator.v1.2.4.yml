@@ -143,37 +143,37 @@ spec:
     app: redisoperator
 ---
 
-#apiVersion: monitoring.coreos.com/v1
-#kind: ServiceMonitor
-#metadata:
-#  name: redis-operator-metrics
-#  namespace: redis-operator
-#  labels:
-#    app: redisoperator
-#    release: prometheus
-#spec:
-#  selector:
-#    matchLabels:
-#      app: redisoperator
-#  endpoints:
-#  - port: metrics
-#  namespaceSelector:
-#    matchNames:
-#    - redis-operator
-#---
-#
-#
-#apiVersion: monitoring.coreos.com/v1
-#kind: PodMonitor
-#metadata:
-#  name: redisoperator
-#  namespace: redis-operator
-#  labels:
-#    app: redisoperator
-#    release: prometheus
-#spec:
-#  selector:
-#    matchLabels:
-#      app: redisoperator
-#  podMetricsEndpoints:
-#  - port: metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: redis-operator-metrics
+  namespace: redis-operator
+  labels:
+    app: redisoperator
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: redisoperator
+  endpoints:
+  - port: metrics
+  namespaceSelector:
+    matchNames:
+    - redis-operator
+---
+
+
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: redisoperator
+  namespace: redis-operator
+  labels:
+    app: redisoperator
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: redisoperator
+  podMetricsEndpoints:
+  - port: metrics
