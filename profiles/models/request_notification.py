@@ -1,6 +1,5 @@
-from django.db.models import CASCADE, ForeignKey, ManyToManyField, CharField
+from django.db.models import CASCADE, ForeignKey, ManyToManyField, JSONField
 from django.urls import reverse_lazy
-from django_mysql.models import ListCharField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from profiles.models.notification_filter import NotificationFilter
@@ -15,9 +14,7 @@ class RequestNotification(NotificationFilter):
         related_name="request_notification_filters",
         related_query_name="request_notification_filter",
     )
-    request_states = ListCharField(base_field=CharField(max_length=50),
-                                   size=15,
-                                   max_length=(15 * 50 + 14))
+    request_states = JSONField(default=list, blank=True)
     operations = ManyToManyField(
         "service_catalog.Operation",
         blank=True,

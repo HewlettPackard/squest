@@ -1,6 +1,5 @@
-from django.db.models import CASCADE, ForeignKey, CharField
+from django.db.models import CASCADE, ForeignKey, JSONField
 from django.urls import reverse_lazy
-from django_mysql.models import ListCharField
 
 from Squest.utils.ansible_when import AnsibleWhen
 from profiles.models.notification_filter import NotificationFilter
@@ -15,9 +14,7 @@ class InstanceNotification(NotificationFilter):
         related_name="instance_notification_filters",
         related_query_name="instance_notification_filter",
     )
-    instance_states = ListCharField(base_field=CharField(max_length=50),
-                                    size=15,
-                                    max_length=(15 * 50 + 14))
+    instance_states = JSONField(default=list, blank=True)
 
     def is_authorized(self, instance):
         if self.instance_states and instance.state not in self.instance_states:
