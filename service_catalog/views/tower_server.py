@@ -1,3 +1,4 @@
+import logging
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse, HttpResponseNotAllowed
@@ -14,6 +15,8 @@ from service_catalog.forms import TowerServerForm
 from service_catalog.models import TowerServer
 from service_catalog.tables.job_template_tables import JobTemplateTable
 from service_catalog.tables.tower_server_tables import TowerServerTable
+
+logger = logging.getLogger(__name__)
 
 
 class TowerServerListView(SquestListView):
@@ -62,6 +65,7 @@ def towerserver_sync(request, tower_id, pk=None):
     tower_server = get_object_or_404(TowerServer, pk=tower_id)
     if not request.user.has_perm('service_catalog.sync_towerserver', tower_server):
         raise PermissionDenied
+    logger.debug(f'Celery task: "towerserver_sync" will be send with tower_id: {tower_id} and job_template_id: {pk}')
     task = tasks.towerserver_sync.delay(tower_id, pk)
     task_result = TaskResult(task_id=task.task_id)
     task_result.save()

@@ -40,7 +40,7 @@ def _apply_when_filter_instance(user_qs, squest_object):
     user_qs = _exclude_user_without_email(user_qs)
     if user_qs.filter(profile__instance_notification_enabled=False).exists():
         logger.info(f"The following users have disabled their instance notification. They won't be notified:"
-                       f'{linesep.join(f" - {user.username}" for user in user_qs.filter(profile__instance_notification_enabled=False))}')
+                    f'{linesep.join(f" - {user.username}" for user in user_qs.filter(profile__instance_notification_enabled=False))}')
     for user in user_qs.exclude(profile__instance_notification_enabled=False):
         if user.profile.is_notification_authorized_for_instance(squest_object):
             user_emails.append(user.email)
@@ -52,7 +52,7 @@ def _apply_when_filter_request(user_qs, squest_object):
     user_qs = _exclude_user_without_email(user_qs)
     if user_qs.filter(profile__request_notification_enabled=False).exists():
         logger.info(f"The following users have disabled their request notification. They won't be notified:"
-                       f'{linesep.join(user.username for user in user_qs.filter(profile__request_notification_enabled=False))}')
+                    f'{linesep.join(user.username for user in user_qs.filter(profile__request_notification_enabled=False))}')
     for user in user_qs.exclude(profile__request_notification_enabled=False):
         if user.profile.is_notification_authorized_for_request(squest_object):
             user_emails.append(user.email)
@@ -120,9 +120,14 @@ def send_mail_request_update(target_request, user_applied_state=None, message=No
     html_content = html_template.render(context)
     if receiver_email_list is None:
         receiver_email_list = _get_receivers_for_request(target_request)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {receiver_email_list}, '
+        f'reply_to: None, headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
-                           headers=_get_headers(subject))
+                           headers=headers)
 
 
 def send_mail_new_support_message(message):
@@ -136,6 +141,11 @@ def send_mail_new_support_message(message):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_support_message(message)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {receiver_email_list}, '
+        f'reply_to: None, headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
                            headers=_get_headers(subject))
@@ -151,9 +161,14 @@ def send_mail_support_is_closed(support):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_support(support)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {receiver_email_list}, '
+        f'reply_to: None, headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
-                           headers=_get_headers(subject))
+                           headers=headers)
 
 
 def send_mail_new_comment_on_request(message):
@@ -166,9 +181,14 @@ def send_mail_new_comment_on_request(message):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_request_message(message)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {receiver_email_list}, '
+        f'reply_to: None, headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
-                           headers=_get_headers(subject))
+                           headers=headers)
 
 
 def send_email_request_canceled(target_request, user_applied_state=None):
@@ -192,9 +212,14 @@ def send_email_request_canceled(target_request, user_applied_state=None):
     html_template = get_template(template_name)
     html_content = html_template.render(context)
     receiver_email_list = _get_receivers_for_request(target_request)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {receiver_email_list}, '
+        f'reply_to: None, headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=receiver_email_list,
-                           headers=_get_headers(subject))
+                           headers=headers)
 
 
 def send_template_email(email_template, user_id_list):
@@ -213,6 +238,11 @@ def send_template_email(email_template, user_id_list):
                'current_site': settings.SQUEST_HOST}
     html_template = get_template(template_name)
     html_content = html_template.render(context)
+    headers = _get_headers(subject)
+    logger.debug(
+        f'Celery task: "send_email" will be send with subject: {subject}, plain_text: {plain_text}, html_template: '
+        f'{html_content}, from_email: {DEFAULT_FROM_EMAIL}, receivers: None, bcc: {user_emails}, reply_to: None, '
+        f'headers: {headers}')
     tasks.send_email.delay(subject, plain_text, html_content, DEFAULT_FROM_EMAIL,
                            bcc=user_emails,
-                           headers=_get_headers(subject))
+                           headers=headers)
