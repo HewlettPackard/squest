@@ -1,4 +1,4 @@
-from django.forms import MultipleChoiceField, SelectMultiple
+from django.forms import TypedMultipleChoiceField, SelectMultiple
 
 from Squest.utils.squest_model_form import SquestModelForm
 from profiles.models.request_notification import RequestNotification
@@ -10,10 +10,11 @@ class RequestNotificationForm(SquestModelForm):
         model = RequestNotification
         fields = ["name", "services", "operations", "request_states", "when"]
 
-    request_states = MultipleChoiceField(label="Request states",
-                                         required=False,
-                                         choices=RequestState.choices,
-                                         widget=SelectMultiple(attrs={'class': 'form-control'}))
+    request_states = TypedMultipleChoiceField(label="Request states",
+                                              coerce=int,
+                                              required=False,
+                                              choices=RequestState.choices,
+                                              widget=SelectMultiple(attrs={'class': 'form-control'}))
 
     def __init__(self, user, *args, **kwargs):
         # get arguments from instance
