@@ -164,6 +164,26 @@
       data:
         nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/nginx.conf') }}"
 
+- name: Set the path of the ldap config from the user config or use default
+  ansible.builtin.set_fact:
+    ldap_config_file_content: "{% if 'ldap' in squest_django  %}{{ squest_django.ldap.ldap_config_file }}{% else %}{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}{% endif %}"
+
+- name: LDAP config
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        labels:
+          app: squest
+          service: ldap
+        name: ldap-config
+      data:
+        ldap_config.py: "{{ ldap_config_file_content }}"
+
 - name: Deploy Django app
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
@@ -233,8 +253,8 @@
                     mountPath: /etc/nginx/squest
                   - mountPath: /app/static
                     name: django-static
-                  - mountPath: /app/media
-                    name: django-media
+                  - mountPath: /app/Squest/ldap_config.py
+                    name: ldap-config
             restartPolicy: Always
             volumes:
               - name: django-media
@@ -249,6 +269,12 @@
                   items:
                     - key: nginx.conf
                       path: nginx.conf
+              - name: ldap-config
+                configMap:
+                  name: ldap-config
+                  items:
+                    - key: ldap_config.py
+                      path: ldap_config.py
 
 - name: Django service
   kubernetes.core.k8s:
