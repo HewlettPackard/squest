@@ -1,0 +1,14 @@
+{% extends 'django_tables2/bootstrap4.html' %}
+{% block table %}
+    {{ block.super }}
+    <hr>
+    <small class="text-end text-muted">
+        {% if table.page %}
+            Showing {{ table.page.start_index }}-{{ table.page.end_index }} of {{ table.page.paginator.count }}
+        {% else %}
+            {% if tables.rows|length != 0 %}
+                Showing 1-{{ table.rows|length }} of {{ table.rows|length }}
+            {% endif %}
+        {% endif %}
+    </small>
+{% endblock table %}
