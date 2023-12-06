@@ -35,8 +35,13 @@ def home(request):
 
     requests_awaiting_approval = Request.get_requests_awaiting_approval(request.user)
     if requests_awaiting_approval.exists():
-        context["request_waiting_for_action_table"] = RequestTableWaitingForActions(requests_awaiting_approval)
-
+        context["request_waiting_for_action_table"] = RequestTableWaitingForActions(
+            requests_awaiting_approval.prefetch_related(
+                "user", "operation", "instance__requester", "instance__quota_scope", "instance__service",
+                "operation__service", "approval_workflow_state", "approval_workflow_state__approval_workflow",
+                "approval_workflow_state__current_step",
+                "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
+            ))
 
     if request.user.has_perm('service_catalog.list_request'):
         context['total_request'] = sum([x["count"] for x in all_requests if x["state"] == RequestState.SUBMITTED])

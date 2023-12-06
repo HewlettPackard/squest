@@ -32,7 +32,8 @@ class RequestListViewGeneric(SquestListView):
             self.request.user, 'service_catalog.view_request'
         ).prefetch_related(
             "user", "operation", "instance__requester", "instance__quota_scope", "instance__service",
-            "operation__service", "approval_workflow_state", "approval_workflow_state__current_step",
+            "operation__service", "approval_workflow_state", "approval_workflow_state__approval_workflow",
+            "approval_workflow_state__current_step",
             "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
         )
 
