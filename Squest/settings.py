@@ -139,8 +139,8 @@ TEMPLATES = [
 ]
 
 if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
-    TEMPLATES['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
-    TEMPLATES['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
+    TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
+    TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
 
 WSGI_APPLICATION = 'Squest.wsgi.application'
 
