@@ -1,4 +1,4 @@
-from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, TextField
+from django.db.models import ForeignKey, CharField, CASCADE, IntegerField, ManyToManyField, PROTECT, TextField
 from django.db.models.signals import post_save
 from django.urls import reverse
 from hashlib import sha256
@@ -22,15 +22,6 @@ class ApprovalStep(SquestModel):
 
     name = CharField(max_length=100, blank=False)
     position = IntegerField(null=True, blank=True, default=0)
-
-    next = ForeignKey(
-        "service_catalog.ApprovalStep",
-        blank=True,
-        null=True,
-        default=None,
-        on_delete=SET_NULL,
-        related_name="previous"
-    )
 
     permission = ForeignKey(
         Permission,
