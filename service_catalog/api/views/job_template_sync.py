@@ -1,3 +1,5 @@
+import logging
+
 from django_celery_results.models import TaskResult
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -6,10 +8,11 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from service_catalog import tasks
 from service_catalog.api.serializers import TaskResultSerializer
 from service_catalog.models import TowerServer, JobTemplate
+
+logger = logging.getLogger(__name__)
 
 
 class JobTemplateSync(APIView):
@@ -23,6 +26,7 @@ class JobTemplateSync(APIView):
             job_template = get_object_or_404(JobTemplate, id=job_template_id, tower_server=tower_server.id)
         if not request.user.has_perm('service_catalog.sync_towerserver', tower_server):
             raise PermissionDenied
+        logger.debug(f'Celery task: "towerserver_sync" will be send with tower_id: {tower_server.id} and job_template_id: {job_template_id}')
         task = tasks.towerserver_sync.delay(tower_server.id, job_template_id)
         task_result = TaskResult(task_id=task.task_id)
         task_result.save()
