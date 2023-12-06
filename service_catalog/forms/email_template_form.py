@@ -1,7 +1,7 @@
 import logging
 
 from django.contrib.auth.models import User
-from django.forms import MultipleChoiceField, SelectMultiple
+from django.forms import TypedMultipleChoiceField, SelectMultiple
 
 from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_form import SquestForm
@@ -10,25 +10,19 @@ from profiles.models import Scope
 from service_catalog.mail_utils import send_template_email
 from service_catalog.models import EmailTemplate, InstanceState, Service, Instance
 
-
 logger = logging.getLogger(__name__)
 
 
 class EmailTemplateForm(SquestModelForm):
-
-    instance_states = MultipleChoiceField(label="Instance states",
-                                          required=False,
-                                          choices=InstanceState.choices,
-                                          widget=SelectMultiple(attrs={'class': 'form-control'}))
+    instance_states = TypedMultipleChoiceField(label="Instance states",
+                                               coerce=int,
+                                               required=False,
+                                               choices=InstanceState.choices,
+                                               widget=SelectMultiple(attrs={'class': 'form-control'}))
 
     class Meta:
         model = EmailTemplate
         fields = ["name", "email_title", "html_content", "services", "instance_states", "quota_scopes", "when"]
-
-    def clean_instance_states(self):
-        data = self.cleaned_data["instance_states"]
-        data_as_int = [int(el) for el in data]
-        return data_as_int
 
 
 class EmailTemplateSendForm(SquestForm):
@@ -60,8 +54,9 @@ class EmailTemplateSendForm(SquestForm):
 
         limit_users = User.objects.filter(instance__in=qs_instance).distinct()
 
-        self.fields["users"] = MultipleChoiceField(
+        self.fields["users"] = TypedMultipleChoiceField(
             label="User emails",
+            coerce=int,
             required=True,
             choices=User.objects.all().values_list("id", "username"),
             initial=list(limit_users.values_list("id", flat=True)),
@@ -80,5 +75,6 @@ class EmailTemplateSendForm(SquestForm):
 
     def save(self):
         user_id_list = self.cleaned_data.get('users')
-        logger.info(f"Sending email template name '{self.email_template.name}' to users: '{self.cleaned_data.get('users')}'")
+        logger.info(
+            f"Sending email template name '{self.email_template.name}' to users: '{self.cleaned_data.get('users')}'")
         send_template_email(self.email_template, user_id_list)
