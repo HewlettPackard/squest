@@ -46,6 +46,8 @@ squest_django:
       kubernetes.io/ingress.class: "nginx"
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+#  ldap:
+#    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
   env:
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"

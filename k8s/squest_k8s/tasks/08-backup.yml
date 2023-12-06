@@ -76,7 +76,7 @@
           metadata:
             name: squest-rsync-backup
           spec:
-            schedule: "{{ squest_django.backup.crontab }}"
+            schedule: "{{ squest_django.externalize_backup_via_rsync.crontab }}"
             jobTemplate:
               spec:
                 template:
