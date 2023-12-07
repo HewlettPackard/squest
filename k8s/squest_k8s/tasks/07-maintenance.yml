@@ -15,6 +15,8 @@
       data:
         nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/maintenance.nginx.conf') }}"
         maintenance.html: "{{ lookup('file', playbook_dir + '/../docker/maintenance.html') }}"
+      binaryData:
+        squest_logo_v2_300_300.png: "{{ lookup('file', playbook_dir + '/../project-static/squest/img/squest_logo_v2_300_300.png')  |b64encode }}"
 
 - name: Deploy maintenance static page
   kubernetes.core.k8s:
@@ -56,14 +58,11 @@
                   - name: nginx-config-maintenance
                     mountPath: /usr/share/nginx/html/index.html
                     subPath: maintenance.html
-                  - mountPath: /usr/share/nginx/html/squest_logo_v2_300_300.png
-                    name: django-static
-                    subPath: ./squest/img/squest_logo_v2_300_300.png
+                  - name: nginx-config-maintenance
+                    mountPath: /usr/share/nginx/html/squest_logo_v2_300_300.png
+                    subPath: squest_logo_v2_300_300.png
             restartPolicy: Always
             volumes:
-              - name: django-static
-                persistentVolumeClaim:
-                  claimName: django-static
               - name: nginx-config-maintenance
                 configMap:
                   name: nginx-config-maintenance
@@ -72,6 +71,8 @@
                       path: nginx.conf
                     - key: maintenance.html
                       path: maintenance.html
+                    - key: squest_logo_v2_300_300.png
+                      path: squest_logo_v2_300_300.png
 
 - name: Maintenance service
   kubernetes.core.k8s:

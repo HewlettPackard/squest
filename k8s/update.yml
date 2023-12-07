@@ -19,7 +19,7 @@
               nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           spec:
             rules:
-              - host: "{{ squest_host_url }}"
+              - host: "{{ squest_django.ingress.host }}"
                 http:
                   paths:
                     - pathType: Prefix
@@ -30,7 +30,7 @@
                           port:
                             number: 80
 
-    - name: Update Django env as config map
+    - name: Update Django env config map
       kubernetes.core.k8s:
         kubeconfig: "{{ k8s_kubeconfig_path }}"
         namespace: "{{ squest_namespace }}"
@@ -43,7 +43,7 @@
               app: squest
               service: django
             name: django-env
-          data: "{{ squest_django_env }}"
+          data: "{{ squest_django.env }}"
 
     - name: Delete migration job
       kubernetes.core.k8s:
@@ -168,7 +168,7 @@
               nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           spec:
             rules:
-              - host: "{{ squest_host_url }}"
+              - host: "{{ squest_django.ingress.host }}"
                 http:
                   paths:
                     - pathType: Prefix
