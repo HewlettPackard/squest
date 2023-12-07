@@ -48,6 +48,9 @@
       kind: Secret
       metadata:
         name: rabbitmq-user-secret
+        labels:
+          app: squest
+          service: rabbitmq
       type: Opaque
       stringData:
           username: "{{ squest_rabbitmq.user }}"
@@ -63,6 +66,9 @@
       kind: User
       metadata:
         name: rabbitmq-user
+        labels:
+          app: squest
+          service: rabbitmq
       spec:
         tags:
           - administrator
@@ -81,7 +87,8 @@
       kind: RabbitmqCluster
       metadata:
         labels:
-          app: rabbitmq
+          app: squest
+          service: rabbitmq
         name: rabbitmq
       spec:
         replicas: 3
@@ -123,6 +130,9 @@
       kind: Vhost
       metadata:
         name: squest-vhost
+        labels:
+          app: squest
+          service: rabbitmq
       spec:
         name: squest # vhost name
         defaultQueueType: quorum # default queue type for this vhost; require RabbitMQ version 3.11.12 or above
