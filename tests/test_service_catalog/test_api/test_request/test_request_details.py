@@ -1,8 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers import ScopeSerializer
-from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.api.serializers import ScopeSerializerNested, UserSerializerNested
 from profiles.models import Permission
 from service_catalog.models import Request
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
@@ -51,7 +50,7 @@ class TestApiRequestDetails(BaseTestRequestAPI):
             'tower_job_id': self.test_request_standard_user_1.tower_job_id,
             'state': self.test_request_standard_user_1.state,
             'operation': self.test_request_standard_user_1.operation.id,
-            'user': UserSerializer(instance=self.test_request_standard_user_1.user).data
+            'user': UserSerializerNested(instance=self.test_request_standard_user_1.user).data
         }
         self.expected_instance = {
             'id': self.test_request_standard_user_1.instance.id,
@@ -60,8 +59,8 @@ class TestApiRequestDetails(BaseTestRequestAPI):
             'spec': self.test_request_standard_user_1.instance.spec,
             'user_spec': self.test_request_standard_user_1.instance.user_spec,
             'service': self.test_request_standard_user_1.instance.service.id,
-            'requester': UserSerializer(self.test_request_standard_user_1.instance.requester).data,
-            'quota_scope': ScopeSerializer(self.test_request_standard_user_1.instance.quota_scope).data
+            'requester': UserSerializerNested(self.test_request_standard_user_1.instance.requester).data,
+            'quota_scope': ScopeSerializerNested(self.test_request_standard_user_1.instance.quota_scope).data
         }
         self.expected_data_list = [self.expected_data, self.expected_instance]
 
