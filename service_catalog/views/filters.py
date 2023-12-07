@@ -2,6 +2,7 @@ import json
 
 import markdown as md
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.template.defaultfilters import stringfilter
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
@@ -186,3 +187,8 @@ def display_boolean(boolean_value):
         return mark_safe('<i class="fas fa-circle text-success"></i>')
     else:
         return mark_safe('<i class="fas fa-circle text-secondary"></i>')
+
+
+@register.simple_tag()
+def who_can_approve(object):
+    return object.who_can_accept()

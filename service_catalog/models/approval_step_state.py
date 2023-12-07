@@ -6,7 +6,6 @@ from service_catalog.models.approval_state import ApprovalState
 
 
 class ApprovalStepState(SquestModel):
-
     class Meta:
         unique_together = ('approval_workflow_state', 'approval_step')
         ordering = ("approval_step__position",)
@@ -61,7 +60,11 @@ class ApprovalStepState(SquestModel):
         return self.approval_workflow_state.get_scopes()
 
     def who_can_approve(self):
-        return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(self.approval_step.permission.permission_str)
+        return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(
+            self.approval_step.permission.permission_str)
+
+    def who_can_accept(self):
+        return self.who_can_approve()
 
     @classmethod
     def get_q_filter(cls, user, perm):

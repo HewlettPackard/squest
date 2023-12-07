@@ -4,7 +4,9 @@
 {% has_perm request.user "service_catalog.reject_request" object as can_reject_request %}
 {% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
 {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
+{% has_perm request.user "service_catalog.can_list_approvers" object as can_list_approvers %}
 {% has_perm request.user "service_catalog.view_admin_spec_instance" object.instance as can_view_admin_spec_instance %}
+
 
 <div class="timeline">
     <div>
@@ -56,6 +58,21 @@
                     </span>
                     <h3 class="timeline-header text-success">{{ step.approval_step.name }}</h3>
                     <div class="timeline-body">
+
+                        {% if can_list_approvers %}
+                            {% who_can_approve step as list_who_can_approve %}
+                            <details>
+                                <summary>Approvers</summary>
+                                <table class="row">
+                                    {% for user in list_who_can_approve %}
+                                        <tr>
+                                            <td class="col-sm-2"><b>{{ user.username }}</b></td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </details>
+                        {% endif %}
+
                         {% if step.get_state_display == "APPROVED" %}
                             <details>
                                 <summary>Survey</summary>
@@ -130,6 +147,18 @@
             <div class="timeline-item">
                 <h3 class="timeline-header">Admin review</h3>
                 <div class="timeline-body">
+                    {% if can_list_approvers %}
+                        <details>
+                            <summary>Approvers</summary>
+                            <table class="row">
+                                {% for user in list_who_can_approve %}
+                                    <tr>
+                                        <td class="col-sm-2"><b>{{ user.username }}</b></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </details>
+                    {% endif %}
                     {% if object.get_state_display == "SUBMITTED" %}
                         <div class="callout callout-info">
                             <i class="fas fa-pause text-info"></i> This request is waiting for an approval
