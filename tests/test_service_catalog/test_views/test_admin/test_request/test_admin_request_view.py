@@ -2,8 +2,7 @@ from unittest import mock
 
 from django.urls import reverse
 
-from profiles.api.serializers import ScopeSerializer
-from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.api.serializers import ScopeSerializerNested, UserSerializerNested
 from profiles.models import Role, Permission, GlobalScope
 from service_catalog.models import Request, RequestMessage, ExceptionServiceCatalog
 from service_catalog.models.instance import InstanceState
@@ -326,8 +325,8 @@ class AdminRequestViewTest(BaseTestRequest):
                 'spec': {},
                 'state': expected_instance_state,
                 'service': self.test_request.operation.service.id,
-                'quota_scope': ScopeSerializer(self.test_request.instance.quota_scope).data,
-                'requester': UserSerializer(self.test_request.instance.requester).data
+                'quota_scope': ScopeSerializerNested(self.test_request.instance.quota_scope).data,
+                'requester': UserSerializerNested(self.test_request.instance.requester).data
             }
             self.test_instance.refresh_from_db()
             self.assertEqual(self.test_instance.state, expected_instance_state)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from profiles.api.serializers import UserSerializer, ScopeSerializer
+from profiles.api.serializers import ScopeSerializerNested, UserSerializerNested
 from resource_tracker_v2.api.serializers.resource_serializer import ResourceSerializer
 from service_catalog.models import Instance, InstanceState
 
@@ -8,8 +8,8 @@ from service_catalog.models import Instance, InstanceState
 class InstanceReadSerializer(serializers.ModelSerializer):
     state = serializers.ChoiceField(choices=InstanceState.choices)
     resources = ResourceSerializer(many=True, read_only=True)
-    requester = UserSerializer(read_only=True)
-    quota_scope = ScopeSerializer(read_only=True)
+    requester = UserSerializerNested()
+    quota_scope = ScopeSerializerNested(read_only=True)
 
     class Meta:
         model = Instance
@@ -17,7 +17,7 @@ class InstanceReadSerializer(serializers.ModelSerializer):
 
 
 class RestrictedInstanceReadSerializer(InstanceReadSerializer):
-    requester = UserSerializer(read_only=True)
+    requester = UserSerializerNested(read_only=True)
 
     class Meta:
         model = Instance

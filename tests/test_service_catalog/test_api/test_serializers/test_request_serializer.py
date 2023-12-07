@@ -54,5 +54,3 @@ class TestRequestSerializer(BaseTestRequestAPI):
                          self.local_test_request.user.is_superuser)
         self.assertEqual(serializer.data['user']['is_staff'],
                          self.local_test_request.user.is_staff)
-        self.assertEqual(serializer.data['user']['profile']['request_notification_enabled'],
-                         self.local_test_request.user.profile.request_notification_enabled)

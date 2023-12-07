@@ -5,7 +5,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField
 
 from Squest.utils.squest_encoder import SquestEncoder
-from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.api.serializers.user_serializers import UserSerializerNested
 from profiles.models import Scope
 from service_catalog.api.serializers import DynamicSurveySerializer, InstanceReadSerializer
 from service_catalog.models.instance import Instance
@@ -125,7 +125,7 @@ class RequestSerializer(ModelSerializer):
         read_only = True
 
     instance = InstanceReadSerializer(read_only=True)
-    user = UserSerializer(read_only=True)
+    user = UserSerializerNested(read_only=True)
 
 
 class AdminRequestSerializer(ModelSerializer):
@@ -134,4 +134,4 @@ class AdminRequestSerializer(ModelSerializer):
         exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
 
     instance = InstanceReadSerializer(read_only=True)
-    user = UserSerializer(read_only=True)
+    user = UserSerializerNested(read_only=True)

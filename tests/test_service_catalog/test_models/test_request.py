@@ -9,8 +9,8 @@ from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
 from django_fsm import can_proceed
 
-from profiles.api.serializers import ScopeSerializer
-from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.api.serializers import ScopeSerializerNested
+from profiles.api.serializers.user_serializers import UserSerializerNested
 from service_catalog.models import ApprovalWorkflow, ApprovalStep
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
@@ -41,7 +41,7 @@ class TestRequest(BaseTestRequest):
                 'id': self.test_request.id,
                 'state': RequestState.PROCESSING,
                 'operation': self.test_request.operation.id,
-                'user': UserSerializer(self.test_request.user).data
+                'user': UserSerializerNested(self.test_request.user).data
             }
             expected_instance = {
                 'id': self.test_instance.id,
@@ -49,10 +49,10 @@ class TestRequest(BaseTestRequest):
                 'spec': {},
                 'state': expected_state,
                 'service': self.test_request.operation.service.id,
-                'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
-                'requester': UserSerializer(self.test_request.instance.requester).data
+                'quota_scope': ScopeSerializerNested(self.test_quota_scope_org).data,
+                'requester': UserSerializerNested(self.test_request.instance.requester).data
             }
-            expected_user = UserSerializer(self.test_request.user).data
+            expected_user = UserSerializerNested(self.test_request.user).data
             mock_job_execute.assert_called()
             kwargs = mock_job_execute.call_args[1]
             expected_data_list = [expected_extra_vars, expected_request, expected_instance, expected_user]
@@ -162,7 +162,7 @@ class TestRequest(BaseTestRequest):
                     'id': self.test_request.id,
                     'state': RequestState.PROCESSING,
                     'operation': self.test_request.operation.id,
-                    'user': UserSerializer(self.test_request.user).data
+                    'user': UserSerializerNested(self.test_request.user).data
                 }
                 expected_instance = {
                     'id': self.test_instance.id,
@@ -170,10 +170,10 @@ class TestRequest(BaseTestRequest):
                     'spec': {},
                     'state': expected_instance_state,
                     'service': self.test_request.operation.service.id,
-                    'quota_scope': ScopeSerializer(self.test_quota_scope_org).data,
-                    'requester': UserSerializer(self.test_request.instance.requester).data
+                    'quota_scope': ScopeSerializerNested(self.test_quota_scope_org).data,
+                    'requester': UserSerializerNested(self.test_request.instance.requester).data
                 }
-                expected_user = UserSerializer(self.test_request.user).data
+                expected_user = UserSerializerNested(self.test_request.user).data
                 mock_job_execute.assert_called()
                 kwargs = mock_job_execute.call_args[1]
                 expected_data_list = [expected_extra_vars, expected_request, expected_instance, expected_user]
