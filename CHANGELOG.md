@@ -6,6 +6,8 @@
 - Add field "enabled" in ApprovalWorkflow
 - Remove "operations" field in ApprovalWorkflow form when editing
 - Add the number of items displayed at the end of lists
+- Improve API performance for /api/service-catalog/request/ and /api/service-catalog/instance/
+- Improve performance in homepage when several requests where displayed in "To be reviewed"
 
 ## Feature
 

@@ -15,7 +15,9 @@ class InstanceList(SquestListCreateAPIView):
     filterset_class = InstanceFilter
 
     def get_queryset(self):
-        return Instance.get_queryset_for_user(self.request.user, 'service_catalog.view_instance')
+        return Instance.get_queryset_for_user(self.request.user, 'service_catalog.view_instance').prefetch_related(
+            "requester", "requester__profile", "resources", "requester__groups", "quota_scope", "service",
+        )
 
     def get_serializer_class(self):
         if self.request.method in ["POST"]:

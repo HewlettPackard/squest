@@ -1,3 +1,4 @@
+from profiles.models import Organization
 from service_catalog.models import ApprovalWorkflow, Request, RequestState
 from tests.setup import SetupRequest
 from tests.utils import TransactionTestUtils
@@ -43,6 +44,18 @@ class TestApprovalWorkflowReset(TransactionTestUtils, SetupRequest):
             enabled=True
         )
         aw.scopes.set([self.team1org2])
+        return aw
+
+    def _create_approval_for_org3_team1(self):
+        ##################################
+        # Approval workflow for Org2 - Team 1
+        ##################################
+        aw = ApprovalWorkflow.objects.create(
+            name="AW - Org3 - Team 1",
+            operation=self.operation_create_1,
+            enabled=True
+        )
+        aw.scopes.set([self.team1org3])
         return aw
 
     def assertRequestUseWorkflow(self, qs, workflow=None):
@@ -270,7 +283,8 @@ class TestApprovalWorkflowReset(TransactionTestUtils, SetupRequest):
 
         self.assertQuerysetEqualID(other_requests, wf_for_all._get_all_requests_that_should_use_workflow())
         self.assertQuerysetEqualID(request_of_org2, wf_for_org2._get_all_requests_that_should_use_workflow())
-        self.assertQuerysetEqualID(request_of_org2_team1, wf_for_org2_team1._get_all_requests_that_should_use_workflow())
+        self.assertQuerysetEqualID(request_of_org2_team1,
+                                   wf_for_org2_team1._get_all_requests_that_should_use_workflow())
 
         wf_for_org2_team1.reset_all_approval_workflow_state()
         # Org        |  1   |  2   |  2   |  2   |  2   |  2   |  3   |  3   |
@@ -402,3 +416,55 @@ class TestApprovalWorkflowReset(TransactionTestUtils, SetupRequest):
         self.assertRequestDontUseWorkflow(other_requests.all())
         self.assertRequestDontUseWorkflow(request_of_org2.all())
         self.assertRequestUseWorkflow(request_of_org2_team1.all(), wf_for_org2_team1)
+
+    def test_scenario5(self):
+
+        # Scenario: setup a workflow for org3_team1 then change scopes and reset
+        request_of_org3_team1 = Request.objects.filter(
+            id__in=[
+                # self.request_1_org1.id,
+                # self.request_2_team1org2.id,
+                # self.request_3_team1org2.id,
+                # self.request_4_team2org2.id,
+                # self.request_5_team2org2.id,
+                # self.request_6_org2.id,
+                self.request_7_team1org3.id,
+                # self.request_8_org3.id,
+            ]
+        ).all()
+        request_of_org1 = Request.objects.filter(
+            id__in=[
+                self.request_1_org1.id,
+                # self.request_2_team1org2.id,
+                # self.request_3_team1org2.id,
+                # self.request_4_team2org2.id,
+                # self.request_5_team2org2.id,
+                # self.request_6_org2.id,
+                # self.request_7_team1org3.id,
+                # self.request_8_org3.id,
+            ]
+        ).all()
+
+        # Workflow for org3 team1
+        aw = self._create_approval_for_org3_team1()
+        aw.scopes.add(self.org1)
+        self.assertQuerysetEqualID(aw._get_request_to_reset(), request_of_org1 | request_of_org3_team1)
+        aw.reset_all_approval_workflow_state()
+        self.assertQuerysetEqualID(request_of_org1 | request_of_org3_team1, aw._get_request_using_workflow())
+
+        # Org        |  1   |  2   |  2   |  2   |  2   |  2   |  3   |  3   |
+        # Team       | None |  1   |  1   |  2   |  2   | None |  1   | None |
+        # Request ID |  1   |  2   |  3   |  4   |  5   |  6   |  7   |  8   |
+        # -----------|------|------|------|------|------|------|------|------|
+        # WF ID      |  1   | None | None | None | None | None |  1   | None |
+
+        aw.scopes.remove(self.team1org3)
+        self.assertQuerysetEqualID(aw._get_request_to_reset(), request_of_org3_team1)
+        aw.reset_all_approval_workflow_state()
+        # Org        |  1   |  2   |  2   |  2   |  2   |  2   |  3   |  3   |
+        # Team       | None |  1   |  1   |  2   |  2   | None |  1   | None |
+        # Request ID |  1   |  2   |  3   |  4   |  5   |  6   |  7   |  8   |
+        # -----------|------|------|------|------|------|------|------|------|
+        # WF ID      |  1   | None | None | None | None | None | None | None |
+        self.assertQuerysetEqualID(request_of_org1, aw._get_request_using_workflow())
+        self.assertRequestDontUseWorkflow(request_of_org3_team1)

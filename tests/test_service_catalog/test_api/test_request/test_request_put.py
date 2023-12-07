@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from profiles.api.serializers.user_serializers import UserSerializer
+from profiles.api.serializers.user_serializers import UserSerializerNested
 from service_catalog.models import Request, RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.utils import check_data_in_dict
@@ -39,7 +39,7 @@ class TestApiRequestPut(BaseTestRequestAPI):
         response = self.client.put(self.get_request_details_url, data=self.put_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = self.put_data
-        expected['user'] = UserSerializer(instance=self.standard_user).data
+        expected['user'] = UserSerializerNested(instance=self.standard_user).data
         check_data_in_dict(self, [expected], [response.data])
 
     def test_admin_cannot_put_on_request_not_full(self):

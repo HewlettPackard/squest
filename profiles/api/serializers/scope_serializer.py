@@ -14,7 +14,7 @@ class AbstractScopeSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class ScopeSerializer(AbstractScopeSerializer):
+class ScopeSerializerManager(ModelSerializer):
     organization = SerializerMethodField()
     team = SerializerMethodField()
 
@@ -38,6 +38,16 @@ class ScopeSerializer(AbstractScopeSerializer):
             return {"id": obj.id, "name": obj.name}
         else:
             return {}
+
+
+class ScopeSerializerNested(ScopeSerializerManager):
+    pass
+
+
+class ScopeSerializer(AbstractScopeSerializer, ScopeSerializerManager):
+    class Meta:
+        model = Scope
+        fields = '__all__'
 
 
 class AbstractScopeCreateRBACSerializer(ModelSerializer):
