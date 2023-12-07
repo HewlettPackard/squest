@@ -10,7 +10,7 @@
         namespace: "{{ squest_namespace }}"
         labels:
           app: squest
-          service: nginx
+          service: maintenance
         name: nginx-config-maintenance
       data:
         nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/maintenance.nginx.conf') }}"
@@ -48,7 +48,6 @@
             containers:
               - name: nginx
                 image: nginx:1.23.4-alpine
-#                command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
                 ports:
                   - containerPort: 8080
                 volumeMounts:

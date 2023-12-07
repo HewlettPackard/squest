@@ -8,6 +8,9 @@
       apiVersion: v1
       metadata:
         name: squest-sa
+        labels:
+          app: squest
+          service: django
       automountServiceAccountToken: true
 
 - name: Create a role allowed to get info on jobs
@@ -20,6 +23,9 @@
       apiVersion: rbac.authorization.k8s.io/v1
       metadata:
         name: role-get-jobs
+        labels:
+          app: squest
+          service: django
       rules:
         - verbs:
             - list
@@ -39,7 +45,10 @@
       kind: RoleBinding
       apiVersion: rbac.authorization.k8s.io/v1
       metadata:
-        name: my-app
+        name: django-role-binding
+        labels:
+          app: squest
+          service: django
       subjects:
         - kind: ServiceAccount
           name: squest-sa
@@ -77,8 +86,8 @@
       kind: PersistentVolumeClaim
       metadata:
         labels:
-          service: django
           app: squest
+          service: django
         name: "{{ item }}"
       spec:
         accessModes:
@@ -105,8 +114,6 @@
           backoffLimit: 3
           spec:
             securityContext:
-#              runAsUser: 1000
-#              runAsGroup: 1000
               fsGroup: 999
             containers:
               - name: django
@@ -302,6 +309,9 @@
       apiVersion: networking.k8s.io/v1
       kind: Ingress
       metadata:
+        labels:
+          app: squest
+          service: django
         name: squest-ingress
         annotations: "{{ squest_django.ingress.annotations }}"
       spec:

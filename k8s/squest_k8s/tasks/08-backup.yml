@@ -9,6 +9,9 @@
       kind: CronJob
       metadata:
         name: squest-backup
+        labels:
+          app: squest
+          service: backup
       spec:
         schedule: "{{ squest_django.backup.crontab }}"
         jobTemplate:
@@ -61,6 +64,9 @@
           kind: Secret
           metadata:
             name: squest-rsync-ssh-key
+            labels:
+              app: squest
+              service: backup
           type: Opaque
           data:
             ssh.key: "{{ squest_django.externalize_backup_via_rsync.private_ssh_key |b64encode }}"
@@ -75,6 +81,9 @@
           kind: CronJob
           metadata:
             name: squest-rsync-backup
+            labels:
+              app: squest
+              service: backup
           spec:
             schedule: "{{ squest_django.externalize_backup_via_rsync.crontab }}"
             jobTemplate:

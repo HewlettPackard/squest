@@ -29,6 +29,9 @@
       apiVersion: v1
       metadata:
         name: "mariadb"
+        labels:
+          app: squest
+          service: mariadb
       data:
         root-password: "{{ squest_db.root_password |b64encode }}"
         password: "{{ squest_db.password |b64encode }}"
@@ -43,6 +46,9 @@
       kind: MariaDB
       metadata:
         name: mariadb
+        labels:
+          app: squest
+          service: mariadb
       spec:
         rootPasswordSecretKeyRef:
           name: mariadb
@@ -100,6 +106,7 @@
             namespace: "{{ squest_namespace }}"
             labels:
               app: squest
+              service: phpmyadmin
             name: phpmyadmin-env
           data: "{{ squest_phpmyadmin.env }}"
 
@@ -114,6 +121,7 @@
             namespace: "{{ squest_namespace }}"
             labels:
               app: squest
+              service: phpmyadmin
             name: phpmyadmin
           spec:
             replicas: 1
@@ -148,7 +156,7 @@
             namespace: "{{ squest_namespace }}"
             labels:
               app: squest
-              app.kubernetes.io/name: squest-phpmyadmin
+              service: phpmyadmin
             name: phpmyadmin-service
           spec:
             ports:
@@ -167,6 +175,9 @@
           apiVersion: networking.k8s.io/v1
           kind: Ingress
           metadata:
+            labels:
+              app: squest
+              service: phpmyadmin
             namespace: "{{ squest_namespace }}"
             name: phpmyadmin-ingress
             annotations: "{{ squest_phpmyadmin.ingress.annotation }}"

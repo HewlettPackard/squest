@@ -1,3 +1,11 @@
+# HOW TO RESTORE
+# copy backup into django
+# kubectl -n squest cp ~/Desktop/db-2023-12-06-182115.dump django-54b69fbb48-wrt9j:/app/backup
+# check backup is listed
+# kubectl -n squest exec -it django-54b69fbb48-wrt9j python manage.py listbackups
+# restore by passing backup file name
+# kubectl -n squest exec -it django-54b69fbb48-wrt9j -- python manage.py dbrestore --database default -i db-2023-12-06-182115.dump
+
 - name: "Execute a one shot backup of Squest"
   hosts: localhost
   gather_facts: true
