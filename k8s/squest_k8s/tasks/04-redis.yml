@@ -38,7 +38,7 @@
       type: Available
       status: "True"
 
-- name: Deploy Redis stack via CRD
+- name: Deploy Redis
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
@@ -46,8 +46,11 @@
       apiVersion: databases.spotahome.com/v1
       kind: RedisFailover
       metadata:
-        name: redisfailover
+        name: redis
         namespace: "{{ squest_namespace }}"
+        labels:
+          app: squest
+          service: redis
       spec:
         sentinel:
           replicas: 3
