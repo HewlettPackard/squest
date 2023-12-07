@@ -38,6 +38,23 @@
       type: Available
       status: "True"
 
+- name: Redis password secret
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    namespace: "{{ squest_namespace }}"
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: redis-password
+        labels:
+          app: squest
+          service: redis
+      type: Opaque
+      stringData:
+        password: "{{ squest_redis.password }}"
+
 - name: Deploy Redis
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
@@ -52,6 +69,8 @@
           app: squest
           service: redis
       spec:
+        auth:
+          secretPath: redis-password
         sentinel:
           replicas: 3
           resources:
@@ -60,7 +79,15 @@
             limits:
               memory: 100Mi
         redis:
+#          env:
+#            - name: REDIS_PASSWORD
+#              value: "{{ squest_redis.password }}"
           replicas: 3
+#          extraVolumes:
+#            - name: redis-password
+#              secret:
+#                secretName: redis-user-secret
+#                optional: false
           resources:
             requests:
               cpu: 100m

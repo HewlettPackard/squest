@@ -150,6 +150,20 @@
                 persistentVolumeClaim:
                   claimName: django-static
 
+- name: Wait until migration job done
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    api_version: "batch/v1"
+    kind: Job
+    name: "django-migrations"
+    namespace: "{{ squest_namespace }}"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Complete
+      status: "True"
+
 - name: Nginx config
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
