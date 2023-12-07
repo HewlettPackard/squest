@@ -1,11 +1,8 @@
 # Kubernetes
-k8s_kubeconfig_path: "/home/nico/Documents/tools4ocp-clusters/talos-test.k8s.glabs.hpecorp.net/kubeconfig"
-k8s_cluster_fqdn: "talos-test.k8s.glabs.hpecorp.net"
-#k8s_kubeconfig_path: "/path/to/kubeconfig"
-#k8s_cluster_fqdn: k8s.domain.local
+k8s_kubeconfig_path: "/path/to/kubeconfig"
+k8s_cluster_fqdn: "k8s.domain.local"
 squest_namespace: "squest"
 k8s_storage_class: "thin"
-
 
 # DATABASE
 squest_db:
@@ -36,9 +33,12 @@ squest_rabbitmq:
   user: rabbitmq
   password: rabbitmq
 
+squest_redis:
+  password: redis_secret_password
+
 # Django
 squest_django:
-  image: "quay.io/hewlettpackardenterprise/squest:dev"
+  image: "quay.io/hewlettpackardenterprise/squest:latest"
   ingress:
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
@@ -52,17 +52,18 @@ squest_django:
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
-    REDIS_CACHE_HOST: "redis"
+    REDIS_CACHE_HOST: "rfrm-redis"
+    DEBUG: "true"
     DB_USER: "{{ squest_db.user }}"
     DB_PASSWORD: "{{ squest_db.password }}"
     WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"
   backup:
-    enabled: true
+    enabled: false
     crontab: "0 1 * * *"
   externalize_backup_via_rsync:
-    enabled: true
+    enabled: false
     crontab: "30 1 * * *"
-    private_ssh_key: "{{ lookup('file', '/home/nico/Desktop/id_ed25519_squest_k8s_dev') + '\n' }}"
+    private_ssh_key: "{{ lookup('file', '/path/to/id_ed25519_squest_k8s_dev') + '\n' }}"
     ssh_user: "squest_k8s_dev"
-    ssh_server: "siam017.gre.hpecorp.net"
+    ssh_server: "remote.server.ssh.net"
     remote_path: "/backup/squest_k8s_dev/"

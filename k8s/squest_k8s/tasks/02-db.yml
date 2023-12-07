@@ -93,6 +93,21 @@
           periodSeconds: 10
           timeoutSeconds: 5
 
+- name: Wait until MariaDB deployment available
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    api_version: "mariadb.mmontes.io/v1alpha1"
+    kind: "MariaDB"
+    name: "mariadb"
+    namespace: "{{ squest_namespace }}"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Ready
+      status: "True"
+
+
 - when: squest_phpmyadmin.enabled
   block:
     - name: Deploy PHPMyAdmin configmap environment
