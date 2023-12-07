@@ -136,14 +136,10 @@
                 volumeMounts:
                   - mountPath: /app/static
                     name: django-static
-                  - mountPath: /app/media
-                    name: django-media
             restartPolicy: Never
             volumes:
-              - name: django-media
-                persistentVolumeClaim:
-                  claimName: django-media
               - name: django-static
+                readOnly: true
                 persistentVolumeClaim:
                   claimName: django-static
 
@@ -261,6 +257,7 @@
                 persistentVolumeClaim:
                   claimName: django-media
               - name: django-static
+                readOnly: true
                 persistentVolumeClaim:
                   claimName: django-static
               - name: nginx-config
@@ -319,3 +316,17 @@
                       name: django
                       port:
                         number: 8080
+
+- name: Wait until Django deployment available
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    api_version: "apps/v1"
+    kind: Deployment
+    name: "django"
+    namespace: "{{ squest_namespace }}"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Available
+      status: "True"
