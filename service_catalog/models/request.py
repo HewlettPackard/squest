@@ -39,6 +39,7 @@ class Request(SquestModel):
             ("process_request", "Can process request"),
             ("need_info_request", "Can ask info request"),
             ("view_admin_survey", "Can view admin survey"),
+            ("list_approvers", "Can view who can accept"),
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
