@@ -4,7 +4,7 @@ from service_catalog.models import RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-AUTHORIZED_STATES = [RequestState.NEED_INFO, RequestState.REJECTED]
+AUTHORIZED_STATES = [RequestState.SUBMITTED]
 
 
 class TestApiRequestReSubmit(BaseTestRequestAPI):
@@ -34,11 +34,10 @@ class TestApiRequestReSubmit(BaseTestRequestAPI):
             self._re_submit()
 
     def test_admin_can_re_submit_request_with_comment(self):
-        data = {"content": "test comment"}
         for state in AUTHORIZED_STATES:
             self.test_request.state = state
             self.test_request.save()
-            self._re_submit(data=data)
+            self._re_submit()
 
     def test_admin_cannot_re_submit_request_in_forbidden_state(self):
         forbidden_state = RequestState.values

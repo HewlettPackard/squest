@@ -60,7 +60,7 @@
                             <details>
                                 <summary>Survey</summary>
                                 <table class="row">
-                                    {% if can_view_step %}
+                                    {% if has_step_permission %}
                                         {% for variable_name, value in step.fill_in_survey.items %}
                                             <tr>
                                                 <td class="col-sm-2"><b>{{ variable_name }}</b></td>
@@ -87,21 +87,8 @@
                                 <i class="fas fa-ban text-danger"></i> Rejected by
                                 <strong>{{ step.updated_by }}</strong> on {{ step.date_updated | squest_date_format }}
                             </blockquote>
-                            <div class="row justify-content-md-center">
-                                {% with args_filter="re_submit,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_re_submit_request %}
-                                        <div class="timeline-footer">
-                                            <a class="btn btn-info"
-                                               title="Re-submit"
-                                               href="{% url 'service_catalog:request_re_submit' object.id %}">
-                                                <i class="fas fa-redo"></i> Re-submit
-                                            </a>
-                                        </div>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
                         {% else %}
-                            {% if step.is_current_step_in_approval %}
+                            {% if step.is_current_step_in_approval and object.get_state_display == "SUBMITTED" %}
                                 <div class="row justify-content-md-center">
                                     <div class="timeline-footer">
                                         {% if has_step_permission %}
@@ -209,15 +196,6 @@
                                         {% endif %}
                                     {% endwith %}
                                 {% endif %}
-                                {% with args_filter="re_submit,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_re_submit_request %}
-                                        <a class="btn btn-info"
-                                           title="Re-submit"
-                                           href="{% url 'service_catalog:request_re_submit' object.id %}">
-                                            <i class="fas fa-undo"></i> Re-submit
-                                        </a>
-                                    {% endif %}
-                                {% endwith %}
                                 {% with args_filter="accept,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_accept_request %}
                                         <a class="btn btn-primary"

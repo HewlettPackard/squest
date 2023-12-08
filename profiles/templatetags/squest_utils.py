@@ -26,6 +26,9 @@ def to_app_name(value):
 def has_perm(user, permission, object=None):
     return user.has_perm(permission, object)
 
+@register.filter
+def to_hexa(value):
+    return hex(value)
 
 @register.simple_tag()
 def get_full_survey_user(squest_request, approval_step_state=None):

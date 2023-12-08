@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import CharField, ManyToManyField, Prefetch, Q
+from django.db.models import CharField, ManyToManyField, Prefetch, Q, Manager, QuerySet
 from django.urls import reverse_lazy
 
 from Squest.utils.squest_model import SquestModel
@@ -103,6 +103,26 @@ class AbstractScope(SquestModel):
         return reverse_lazy("profiles:scope_details", kwargs={"pk": self.pk})
 
 
+class ScopeQuerySet(QuerySet):
+    def expand(self):
+        # Methods that will add all teams belonging to scope that are organizations
+        expanded_scopes = Scope.objects.none()
+        for scope in self.all():
+            expanded_scopes = expanded_scopes | Scope.objects.filter(id=scope.id)
+            if scope.is_org:
+                for team in scope.get_object().teams.all():
+                    expanded_scopes = expanded_scopes | Scope.objects.filter(id=team.id)
+        return expanded_scopes
+
+
+class ScopeManager(Manager):
+
+    def get_queryset(self):
+        return ScopeQuerySet(self.model)
+
+    def expand(self):
+        return self.get_queryset().expand()
+
 class Scope(AbstractScope):
     class Meta:
         permissions = [
@@ -110,6 +130,7 @@ class Scope(AbstractScope):
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
+    objects = ScopeManager()
     roles = ManyToManyField(
         Role,
         blank=True,

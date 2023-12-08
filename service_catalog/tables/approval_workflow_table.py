@@ -18,5 +18,5 @@ class ApprovalWorkflowTable(SquestTable):
         scopes = record.scopes.all().distinct()
         html = ""
         for scope in scopes:
-            html += f"<span class=\"badge bg-primary\">{scope.name}</span>  "
+            html += f"<span class=\"badge bg-primary\">{scope}</span>  "
         return format_html(html)

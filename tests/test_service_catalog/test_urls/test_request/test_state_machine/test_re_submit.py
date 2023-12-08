@@ -6,7 +6,7 @@ from tests.permission_endpoint import TestingGetContextView, TestingPostContextV
 class TestServiceCatalogRequestPermissionsReSubmitView(BaseTestRequest, TestPermissionEndpoint):
     def setUp(self):
         super().setUp()
-        self.test_request.state = RequestState.NEED_INFO
+        self.test_request.state = RequestState.SUBMITTED
         self.test_request.save()
 
     def test_re_submit_view(self):
@@ -19,10 +19,7 @@ class TestServiceCatalogRequestPermissionsReSubmitView(BaseTestRequest, TestPerm
             TestingPostContextView(
                 url='service_catalog:request_re_submit',
                 perm_str='service_catalog.re_submit_request',
-                url_kwargs={'pk': self.test_request.id},
-                data={
-                    'content': 'My comment'
-                }
+                url_kwargs={'pk': self.test_request.id}
             )
         ]
         self.run_permissions_tests(testing_view_list)

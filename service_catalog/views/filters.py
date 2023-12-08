@@ -76,6 +76,11 @@ def can_proceed_request_action(args):
     return False
 
 
+@register.simple_tag()
+def can_proceed_action(action, instance):
+    return can_proceed(instance.__getattribute__(action))
+
+
 @register.filter(name='can_proceed_instance_action')
 def can_proceed_instance_action(args):
     target_action = args.split(',')[0]

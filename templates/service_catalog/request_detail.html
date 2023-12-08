@@ -5,6 +5,15 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
+    {% has_perm request.user "service_catalog.re_submit_request" object as can_reset_request %}
+    {% can_proceed_action 're_submit' object as can_proceed_re_submit %}
+    {% if can_reset_request and can_proceed_re_submit %}
+        <a href="{% url "service_catalog:request_re_submit" object.id %}"
+           class="btn btn-warning"
+        > Reset to submitted
+            <i class="fas fa-redo"></i>
+        </a>
+    {% endif %}
     {% include 'service_catalog/buttons/request_state_machine.html' %}
     {% include 'generics/buttons/edit_button.html' %}
     {% include 'generics/buttons/delete_button.html' %}

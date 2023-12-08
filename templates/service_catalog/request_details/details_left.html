@@ -1,4 +1,5 @@
 {% has_perm request.user "service_catalog.view_instance" object.instance as can_view_instance %}
+{% has_perm request.user "service_catalog.view_approvalworkflow" object.instance as can_view_workflow %}
 <div class="card card-default">
     <div class="card-header">
         <h3 class="card-title">Request <strong>#{{ object.id }}</strong></h3>
@@ -55,7 +56,7 @@
             </li>
             <li class="list-group-item">
                 <b>User</b> <a href="{% url 'profiles:user_details' object.user.id %}"
-                                    class="float-right">{{ object.user.username }}</a>
+                               class="float-right">{{ object.user.username }}</a>
             </li>
             <li class="list-group-item">
                 <b>Date submitted</b><span
@@ -81,10 +82,28 @@
             {% endif %}
             {% if object.date_archived %}
                 <li class="list-group-item">
-                    <b>Date archived</b><span
-                        class="float-right">{{ object.date_archived |squest_date_format }}</span>
+                    <b>Date archived</b>
+                    <span class="float-right">{{ object.date_archived |squest_date_format }}</span>
                 </li>
             {% endif %}
+            {% if object.approval_workflow_state %}
+                <li class="list-group-item">
+                    <b>Approval workflow</b>
+                    {% if can_view_workflow %}
+                        <a class="float-right"
+                           href="{{ object.approval_workflow_state.approval_workflow.get_absolute_url }}">
+                            {{ object.approval_workflow_state.approval_workflow }}
+                            {% if object.get_state_display == "SUBMITTED" and object.approval_workflow_state.hash != object.approval_workflow_state.approval_workflow.hash %}
+                                <i class="fas fa-exclamation-triangle"
+                                   title="This request is not using the latest version of the workflow (current hash: {{ object.approval_workflow_state.hash | to_hexa }})"></i>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <span class="float-right">{{ object.approval_workflow_state.approval_workflow }}</span>
+                    {% endif %}
+                </li>
+            {% endif %}
+
         </ul>
     </div>
 </div>

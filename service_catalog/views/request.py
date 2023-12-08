@@ -201,35 +201,6 @@ def request_need_info(request, pk):
     return render(request, "service_catalog/admin/request/request-need-info.html", context)
 
 
-@login_required
-def request_re_submit(request, pk):
-    target_request = get_object_or_404(Request, id=pk)
-    if not request.user.has_perm('service_catalog.re_submit_request', target_request):
-        raise PermissionDenied
-    if not can_proceed(target_request.re_submit):
-        raise PermissionDenied
-    if request.method == "POST":
-        form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
-                                  target_request=target_request)
-        if form.is_valid():
-            message = form.save(send_notification=False)
-            target_request.re_submit()
-            target_request.save()
-            send_mail_request_update(target_request, user_applied_state=request.user, message=message)
-            return redirect(target_request.get_absolute_url())
-    else:
-        form = RequestMessageForm(sender=request.user, target_request=target_request)
-    breadcrumbs = [
-        {'text': 'Requests', 'url': reverse('service_catalog:request_list')},
-        {'text': pk, 'url': ""},
-    ]
-    context = {
-        'form': form,
-        'target_request': target_request,
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request, "service_catalog/admin/request/request-re-submit.html", context)
-
 
 @login_required
 def request_reject(request, pk):
@@ -449,13 +420,43 @@ def request_bulk_delete(request):
         return redirect("service_catalog:request_list")
 
 
+class RequestReSubmitView(SquestConfirmView):
+    model = Request
+
+    def get_permission_required(self):
+        if not can_proceed(self.get_object().re_submit):
+            raise PermissionDenied
+        return "service_catalog.re_submit_request"
+
+    def form_valid(self, form):
+        self.get_object().re_submit(save=False)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        new_workflow = self.get_object()._get_approval_workflow()
+        context['confirm_text'] = mark_safe(f"Confirm reset of <strong>{self.object}</strong> ?"
+                                            f"<br>It will reset approval steps")
+        if new_workflow:
+            context['confirm_text'] += mark_safe(f" and instantiate the workflow <strong>{new_workflow}</strong>")
+        context['button_text'] = 'Reset to submitted'
+        context['breadcrumbs'].append(
+            {
+                'text': 'Reset to submitted',
+                'url': ''
+            }
+        )
+        return context
+
+
 class RequestApproveView(SquestFormView):
     template_name = 'generics/generic_form.html'
     form_class = ApproveWorkflowStepForm
     model = Request
 
     def dispatch(self, request, *args, **kwargs):
-        if self.get_object().approval_workflow_state.current_step is None:
+        if self.get_object().approval_workflow_state is None or self.get_object().approval_workflow_state.current_step is None:
             return redirect(self.get_success_url())
         return super(RequestApproveView, self).dispatch(request, *args, **kwargs)
 

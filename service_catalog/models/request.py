@@ -61,7 +61,7 @@ class Request(SquestModel):
         "service_catalog.ApprovalWorkflowState",
         blank=True,
         null=True,
-        on_delete=CASCADE
+        on_delete=SET_NULL
     )
 
     @classmethod
@@ -161,11 +161,11 @@ class Request(SquestModel):
     def need_info(self):
         pass
 
-    @transition(field=state, source=[RequestState.NEED_INFO, RequestState.REJECTED], target=RequestState.SUBMITTED)
-    def re_submit(self):
-        if self.approval_workflow_state is not None:
-            self.approval_workflow_state.current_step.reset_to_pending()
-
+    @transition(field=state, source=[RequestState.SUBMITTED], target=RequestState.SUBMITTED)
+    def re_submit(self, save=True):
+        self.setup_approval_workflow()
+        if save:
+            self.save()
     @transition(field=state, source=[RequestState.SUBMITTED,
                                      RequestState.NEED_INFO,
                                      RequestState.REJECTED,
@@ -360,11 +360,14 @@ class Request(SquestModel):
         return None
 
     def setup_approval_workflow(self):
+        if self.approval_workflow_state:
+            self.approval_workflow_state.delete()
         # search for a workflow on this operation
         workflow = self._get_approval_workflow()
         if not workflow:
+            logger.debug(f"Workflow not found for request #{self.id}")
             return
-        logger.debug(f"Workflow found: {workflow.name}")
+        logger.debug(f"Workflow found: {workflow.name} for request #{self.id}")
         # create pending steps
         self.approval_workflow_state = workflow.instantiate()
         self.save()
@@ -461,10 +464,6 @@ class Request(SquestModel):
                                          source=previous.state, target=instance.state,
                                          *args, **kwargs)
 
-            # reset all approval step to pending if an approval workflow was attached to the request
-            if previous.state != RequestState.SUBMITTED and instance.state == RequestState.SUBMITTED:
-                if instance.approval_workflow_state is not None:
-                    instance.approval_workflow_state.reset()
 
 
 pre_save.connect(Request.on_change, sender=Request)

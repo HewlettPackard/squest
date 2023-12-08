@@ -1,6 +1,7 @@
 from django.db.models import ForeignKey, CharField, SET_NULL, CASCADE, IntegerField, ManyToManyField, PROTECT, TextField
 from django.db.models.signals import post_save
 from django.urls import reverse
+from hashlib import sha256
 
 from Squest.utils.squest_model import SquestModel
 from profiles.models.squest_permission import Permission
@@ -61,6 +62,17 @@ class ApprovalStep(SquestModel):
     def __str__(self):
         return self.name
 
+    @property
+    def hash(self):
+        string = ""
+        string += f"{self.id}_"
+        string += f"{self.position}_"
+        string += f"{self.permission.id}_"
+        string += f"{list(self.readable_fields.values_list('id', flat=True))}_"
+        string += f"{list(self.editable_fields.values_list('id', flat=True))}_"
+        string += f"{self.auto_accept_condition}_"
+        return int(sha256(string.encode("utf-8")).hexdigest(), 16) % 2 ** 31
+
     @classmethod
     def on_create_set_position(cls, sender, instance, created, *args, **kwargs):
         if created:
@@ -68,8 +80,7 @@ class ApprovalStep(SquestModel):
                 previous_steps = ApprovalStep.objects.filter(
                     approval_workflow=instance.approval_workflow).order_by('position').exclude(id=instance.id)
                 if previous_steps.exists():
-                    instance.position = previous_steps.last().position + 1
-                    instance.save()
+                    ApprovalStep.objects.filter(id=instance.id).update(position=previous_steps.last().position + 1)
 
     def save(self, *args, **kwargs):
         # set the default permission
