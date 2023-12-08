@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}
-    #{{ instance.id }} | Approval
+    #{{ object.id }} | Approval Workflow
 {% endblock %}
 {% load render_table from django_tables2 %}
 {% load static %}
 {% block header_button %}
+    <a href="{% url "service_catalog:approvalworkflow_reset_requests" object.id %}"
+       class="btn btn-warning">
+        Apply to requests
+        <i class="fas fa-redo"></i>
+    </a>
     {% include 'generics/buttons/edit_button.html' %}
     {% include 'generics/buttons/delete_button.html' %}
 {% endblock %}
@@ -26,6 +31,9 @@
                                 <b>Name</b><span class="float-right">{{ object.name }}</span>
                             </li>
                             <li class="list-group-item">
+                                <b>Hash</b><span class="float-right">{{ object.hash | to_hexa }}</span>
+                            </li>
+                            <li class="list-group-item">
                                 <b>Operation</b>
                                 <span class="float-right">{{ object.operation.name }}</span>
                             </li>
@@ -34,7 +42,7 @@
                                     <b>Restricted scopes</b>
                                     <span class="float-right">
                                     {% for scope in object.scopes.distinct %}
-                                        <span class="badge bg-primary">{{ scope.name }}</span>
+                                        <span class="badge bg-primary">{{ scope }}</span>
                                     {% endfor %}
                                 </span>
                                 </li>
@@ -51,29 +59,42 @@
                                 </span>
                                 </li>
                             {% endif %}
+
                         </ul>
                     </div>
                 </div>
             </section>
             <section class="col-lg-9">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-sort-numeric-down"></i> Steps
-                        </h3>
-                        <div class="card-tools">
-                            <a href="{% url 'service_catalog:approvalstep_create' object.id %}" type="button"
-                               class="btn btn-tool btn-success">
-                                <i class="fas fa-plus"></i> Add a step
-                            </a>
-                        </div>
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills squest-default-active" id="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#steps" data-toggle="tab">Steps</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#requests"
+                                   data-toggle="tab">Requests</a>
+                            </li>
+
+                        </ul>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="callout callout-info">
-                                    <p>Drag and drop steps to reorganize the order</p>
+                        <div class="tab-content">
+                            <div class="tab-pane" id="steps">
+                                <div class="d-flex">
+
+                                    <div class="callout callout-info flex-grow-1">
+                                        <p>Drag and drop steps to reorganize the order</p>
+                                    </div>
+
+                                    <a href="{% url 'service_catalog:approvalstep_create' object.id %}"
+                                       type="button"
+                                       class="btn btn-success h-100"
+                                       style="margin: 0.5em">
+                                        <i class="fas fa-plus"></i> Add a step
+                                    </a>
                                 </div>
+
                                 <div id="draggableApprovalStepList"
                                      data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
                                     {% for approval_step in object.approval_steps.all|dictsort:"position" %}
@@ -118,13 +139,21 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-
+                            </div>
+                            <div class="tab-pane" id="requests">
+                                <div class="callout callout-info">
+                                    Requests currently using workflow
+                                </div>
+                                {% render_table request_table %}
                             </div>
                         </div>
-
                     </div>
+
                 </div>
             </section>
         </div>
     </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
 {% endblock %}

@@ -3,6 +3,9 @@
 ## Feature
 
 - Service request for team will automatically use the approval workflow set by the parent organization
+- ApprovalWorkflow can now reset all submitted requests using (or no more using) the workflow
+- In RequestDetail, Submitted request can now be re_submit to reset all approval steps (Permission "service_catalog.re_submit_request" needed)
+
 
 ## Fix
 

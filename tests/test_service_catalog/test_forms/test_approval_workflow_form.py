@@ -69,3 +69,18 @@ class TestApprovalWorkflowForm(BaseTest):
         }
         form = ApprovalWorkflowForm(data)
         self.assertTrue(form.is_valid())
+
+    def test_cannot_change_operation_when_edit(self):
+        existing_approval = ApprovalWorkflow.objects.create(name="test",
+                                                            operation=self.create_operation_test_2,
+                                                            enabled=True)
+
+        data = {
+            'name': "test1",
+            'operation': self.update_operation_test
+        }
+        form = ApprovalWorkflowFormEdit(instance=existing_approval, data=data)
+        self.assertTrue(form.is_valid())
+        # Check that operation is not changed
+        self.assertEqual(existing_approval.operation, self.create_operation_test_2)
+        self.assertEqual(existing_approval.name, data["name"])

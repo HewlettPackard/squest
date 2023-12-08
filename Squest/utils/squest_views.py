@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import ProtectedError
+from django.forms import Form
 from django.urls import reverse_lazy, NoReverseMatch, reverse
 from django.utils.safestring import mark_safe
 from django.views import View
@@ -39,7 +40,7 @@ class SquestView(View):
         except AttributeError:
             try:
                 return reverse(f'{self.django_content_type.app_label}:{self.django_content_type.model}_{action}',
-                                    kwargs=self.get_generic_url_kwargs())
+                               kwargs=self.get_generic_url_kwargs())
             except NoReverseMatch:
                 return '#'
 
@@ -243,4 +244,39 @@ class SquestFormView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleOb
             },
         ]
         context['action'] = "edit"
+        return context
+
+
+class SquestConfirmView(LoginRequiredMixin, SquestPermissionRequiredMixin, SingleObjectMixin, SquestView, FormView):
+    template_name = 'generics/confirm.html'
+    context_object_name = "object"
+    form_class = Form
+
+    def get_success_url(self):
+        return self.get_object().get_absolute_url()
+
+    def get_permission_required(self):
+        pass
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        try:
+            object_url = self.object.get_absolute_url()
+        except AttributeError:
+            object_url = ""
+        context["bootstrap_type"] = "warning"
+        context['breadcrumbs'] = [
+            {
+                'text': self.django_content_type.name.capitalize(),
+                'url': self.get_generic_url('list')
+            },
+            {
+                'text': self.object,
+                'url': object_url
+            },
+
+        ]
+
+        context['action'] = 'apply'
         return context

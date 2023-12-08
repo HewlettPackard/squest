@@ -45,6 +45,19 @@ class RequestTable(SquestTable):
             f'<a href="{record.get_absolute_url()}"><strong class="text-{map_request_state(record.state)}">{value}</strong></a>')
 
 
+class RequestTablesForApprovalWorkflow(RequestTable):
+    approval_workflow_state__hash = Column(verbose_name="Approval workflow hash")
+    approval_workflow_state__approval_workflow__name = Column(verbose_name="Approval workflow name")
+
+    class Meta(RequestTable.Meta):
+        fields = (
+            "id", "approval_workflow_state__approval_workflow__name", "approval_workflow_state__hash", "user__username",
+            "instance__quota_scope__name", "instance__service", "operation", "state", "instance")
+
+    def render_approval_workflow_state__hash(self, value, record):
+        return hex(value)
+
+
 class RequestTableWaitingForActions(SquestTable):
     id = Column(linkify=True, verbose_name="Request", orderable=False)
     user__username = Column(orderable=False)
@@ -53,6 +66,7 @@ class RequestTableWaitingForActions(SquestTable):
     review = Column(empty_values=(), orderable=False)
     operation = Column(orderable=False)
     state = Column(orderable=False)
+
     class Meta:
         model = Request
         attrs = {"id": "request_table", "class": "table squest-pagination-tables"}
