@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block main %}
+    <div class="content">
+        <div class="container-fluid">
+            {% if error_message %}
+                <div class="card card-{{ bootstrap_type }}">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ error_message }}</h3>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card card-{{ bootstrap_type }}">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ confirm_text }}</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if details.details_list %}
+                            <blockquote class="quote-warning">
+                                <h5>Warning</h5>
+                                <p>{{ details.warning_sentence }}</p>
+                                <ul>
+                                    <ul>{{ details.details_list | unordered_list }}</ul>
+                                </ul>
+                            </blockquote>
+                        {% endif %}
+                        {% if detail_table %}
+                            {% render_table detail_table %}
+                        {% endif %}
+                        <form class="form-horizontal" method="post">{% csrf_token %}
+                            <button class="btn btn-{{ bootstrap_type }}" type="submit">
+                                Confirm
+                            </button>
+                            <button class="btn btn-light" type="button" onclick=window.history.back()>
+                                <i class="fas fa-window-close"></i>
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'squest/js/admin_service_form.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
+    <script src="{% static 'admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js' %}"></script>
+{% endblock %}

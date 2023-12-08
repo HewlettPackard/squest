@@ -69,16 +69,15 @@ class AdminRequestViewTest(BaseTestRequest):
             self.assertEqual(403, response.status_code)
 
     def test_request_re_submit(self):
-        self.test_request.state = RequestState.NEED_INFO
+        self.test_request.state = RequestState.SUBMITTED
         self.test_request.save()
         args = {
             'pk': self.test_request.id
         }
-        data = {'content': 're-submited'}
         url = reverse('service_catalog:request_re_submit', kwargs=args)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
-        response = self.client.post(url, data=data)
+        response = self.client.post(url)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.state, RequestState.SUBMITTED)
@@ -87,14 +86,13 @@ class AdminRequestViewTest(BaseTestRequest):
         args = {
             'pk': self.test_request.id
         }
-        data = {'content': 're-submited'}
         url = reverse('service_catalog:request_re_submit', kwargs=args)
-        forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
-                            RequestState.COMPLETE, RequestState.ARCHIVED, RequestState.SUBMITTED]
+        forbidden_states = [RequestState.NEED_INFO, RequestState.REJECTED, RequestState.CANCELED, RequestState.ACCEPTED,
+                            RequestState.PROCESSING, RequestState.COMPLETE, RequestState.FAILED, RequestState.ARCHIVED]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
-            response = self.client.post(url, data=data)
+            response = self.client.post(url)
             self.assertEqual(403, response.status_code)
 
     def test_request_reject(self):

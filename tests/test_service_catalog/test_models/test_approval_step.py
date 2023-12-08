@@ -19,6 +19,7 @@ class TestApprovalStep(BaseTest):
 
         test_approval_step_2 = ApprovalStep.objects.create(name="test_approval_step_2",
                                                            approval_workflow=self.test_approval_workflow)
+        test_approval_step_2.refresh_from_db()
         self.assertEqual(test_approval_step_2.position, 1)
 
     def test_default_perm_added_on_save(self):

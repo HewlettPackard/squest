@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
-from profiles.models.squest_permission import Permission
 from django.core.exceptions import ValidationError
 
 from profiles.models import Team, Organization, AbstractScope, Scope, GlobalScope, Role
-from django.test.testcases import TransactionTestCase
+
+from tests.utils import TransactionTestUtils
 
 
-class TestModelScope(TransactionTestCase):
+class TestModelScope(TransactionTestUtils):
 
     def setUp(self):
         self.role1 = Role.objects.create(name="role1")
@@ -167,3 +167,23 @@ class TestModelScope(TransactionTestCase):
         team1 = Team.objects.create(name="Team #1", org=org1)
         with self.assertRaises(ValidationError):
             team1.add_user_in_role(self.user1, self.role1)
+
+    def test_expand(self):
+        # Empty queryset
+        self.assertQuerysetEqualID(Scope.objects.none().expand(), Scope.objects.none())
+        self.assertQuerysetEqualID(Scope.objects.all().expand(), Scope.objects.all())
+
+        org1 = Organization.objects.create(name="Organization #1")
+        teams = []
+        teams.append(Team.objects.create(name="Team #1", org=org1))
+        teams.append(Team.objects.create(name="Team #2", org=org1))
+        teams.append(Team.objects.create(name="Team #3", org=org1))
+        teams.append(Team.objects.create(name="Team #4", org=org1))
+
+        queryset_test = Scope.objects.filter(id=org1.id)
+        all_scopes = Scope.objects.none()
+        all_scopes = all_scopes | Scope.objects.filter(id=org1.id)
+        for team in teams:
+            all_scopes |= Scope.objects.filter(id=team.id)
+
+        self.assertQuerysetEqualID(queryset_test.expand(), all_scopes)

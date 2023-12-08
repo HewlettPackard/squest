@@ -16,7 +16,7 @@ urlpatterns = [
     # Request State Machine
     path('request/<int:pk>/cancel/', views.request_cancel, name='request_cancel'),
     path('request/<int:pk>/need-info/', views.request_need_info, name='request_need_info'),
-    path('request/<int:pk>/re-submit/', views.request_re_submit, name='request_re_submit'),
+    path('request/<int:pk>/re-submit/', views.RequestReSubmitView.as_view(), name='request_re_submit'),
     path('request/<int:pk>/reject/', views.request_reject, name='request_reject'),
     path('request/<int:pk>/accept/', views.request_accept, name='request_accept'),
     path('request/<int:pk>/process/', views.request_process, name='request_process'),
@@ -163,7 +163,8 @@ urlpatterns = [
     path('administration/approval/<int:pk>/', views.ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
     path('administration/approval/create/', views.ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
     path('administration/approval/<int:pk>/edit/', views.ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
-    path('administration/approval/<int:pk>/delete/', views.AttributeDefinitionDeleteView.as_view(), name='approvalworkflow_delete'),
+    path('administration/approval/<int:pk>/delete/', views.ApprovalWorkflowDeleteView.as_view(), name='approvalworkflow_delete'),
+    path('administration/approval/<int:pk>/reset_requests/', views.ApprovalWorkflowResetRequests.as_view(), name='approvalworkflow_reset_requests'),
     # Approval Workflow ajax
     path('administration/approval/step_position_update/',
          views.ajax_approval_step_position_update, name='ajax_approval_step_position_update'),

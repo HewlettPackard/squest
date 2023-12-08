@@ -46,7 +46,7 @@ class TestApprovalWorkflow(BaseTestRequest):
                                                  requester=self.standard_user)
         # Create request with_quota_scope=org1 -> it will take the general workflow for self.create_operation_test
         request1 = Request.objects.create(instance=instance1, operation=self.create_operation_test)
-        self.assertEqual(self.test_approval_workflow_for_all_scopes, request1._get_approval_workflow())
+        self.assertEqual(self.test_approval_workflow_for_all_scopes, request1.approval_workflow_state.approval_workflow)
 
         # Create a workflow for org1
         test_approval_workflow_for_org1 = ApprovalWorkflow.objects.create(
@@ -56,7 +56,7 @@ class TestApprovalWorkflow(BaseTestRequest):
 
         # Create request with_quota_scope=org1 -> it will take the workflow dedicated to org1 for create_operation_test
         request2 = Request.objects.create(instance=instance1, operation=self.create_operation_test)
-        self.assertEqual(test_approval_workflow_for_org1, request2._get_approval_workflow())
+        self.assertEqual(test_approval_workflow_for_org1, request2.approval_workflow_state.approval_workflow)
 
     def test_get_approval_workflow_for_teams(self):
         org1 = Organization.objects.create(name="Org1")
@@ -68,7 +68,7 @@ class TestApprovalWorkflow(BaseTestRequest):
 
         # Create request with_quota_scope=team1org1 -> it will take the general workflow for self.create_operation_test
         request1 = Request.objects.create(instance=instance, operation=self.create_operation_test)
-        self.assertEqual(self.test_approval_workflow_for_all_scopes, request1._get_approval_workflow())
+        self.assertEqual(self.test_approval_workflow_for_all_scopes, request1.approval_workflow_state.approval_workflow)
 
         # Create a workflow for org1
         test_approval_workflow_for_org1 = ApprovalWorkflow.objects.create(
@@ -78,4 +78,4 @@ class TestApprovalWorkflow(BaseTestRequest):
 
         # Create request with_quota_scope=team1org1 -> it will take the workflow dedicated to org1 for self.create_operation_test
         request2 = Request.objects.create(instance=instance, operation=self.create_operation_test)
-        self.assertEqual(test_approval_workflow_for_org1, request2._get_approval_workflow())
+        self.assertEqual(test_approval_workflow_for_org1, request2.approval_workflow_state.approval_workflow)

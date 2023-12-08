@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from django.db.models import ForeignKey, CASCADE
+from django.db.models import ForeignKey, CASCADE, PositiveIntegerField
 
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models import ApprovalState
@@ -25,6 +25,8 @@ class ApprovalWorkflowState(SquestModel):
         related_name='current_approval_workflow_states',
         related_query_name='current_approval_workflow_state'
     )
+
+    hash = PositiveIntegerField(help_text="ApprovalWorkflow hash when instantiated", default=1)
 
     def get_scopes(self):
         return self.request.get_scopes()
@@ -58,15 +60,6 @@ class ApprovalWorkflowState(SquestModel):
         if first_step.exists():
             return first_step.first()
         return None
-
-    def reset(self):
-        """
-        reset the workflow to the beginning
-        """
-        for step in self.approval_step_states.all():
-            step.reset_to_pending()
-        self.current_step = self.first_step
-        self.save()
 
     def who_can_approve(self):
         if self.current_step is not None:

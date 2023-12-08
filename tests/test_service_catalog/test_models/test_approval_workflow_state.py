@@ -40,16 +40,16 @@ class TestApprovalWorkflowState(BaseTestApproval):
         self.assertEqual(self.test_approval_workflow_state.current_step.state, ApprovalState.REJECTED)
 
     def test_reset(self):
-        step1 = self.test_approval_workflow_state.approval_step_states.filter(approval_step__position=0).first()
+        step1 = self.test_approval_workflow_state.approval_step_states.get(approval_step__position=0)
         step1.state = ApprovalState.APPROVED
         step1.save()
-        step2 = self.test_approval_workflow_state.approval_step_states.filter(approval_step__position=1).first()
+        step2 = self.test_approval_workflow_state.approval_step_states.get(approval_step__position=1)
         self.test_approval_workflow_state.current_step = step2
         self.test_approval_workflow_state.save()
 
         # reset
-        self.test_approval_workflow_state.reset()
-        self.test_approval_workflow_state.refresh_from_db()
-        self.assertEqual(self.test_approval_workflow_state.current_step, step1)
+        self.test_approval_workflow_state.request.setup_approval_workflow()
+        self.test_approval_workflow_state = self.test_request.approval_workflow_state
+        self.assertEqual(self.test_approval_workflow_state.current_step.approval_step.position, 0)
         for step in self.test_approval_workflow_state.approval_step_states.all():
             self.assertEqual(step.state, ApprovalState.PENDING)
