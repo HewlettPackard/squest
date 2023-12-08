@@ -59,6 +59,7 @@ TESTING = sys.argv[1:2] == ['test']
 IS_COLLECTING_STATIC = sys.argv[1:2] == ['collectstatic']
 IS_MAKING_MIGRATION = sys.argv[1:2] == ['makemigrations']
 IS_MIGRATING = sys.argv[1:2] == ['migrate']
+IS_INSERTING_DEFAULT_DATA = sys.argv[1:2] == ['insert_default_data']
 IS_GUNICORN_EXECUTION = False
 if "gunicorn" in sys.argv[0]:
     IS_GUNICORN_EXECUTION = True
@@ -67,6 +68,9 @@ print(f"BASE_DIR: {BASE_DIR}")
 print(f"DEBUG: {DEBUG}")
 print(f"TESTING: {TESTING}")
 print(f"IS_COLLECTING_STATIC: {IS_COLLECTING_STATIC}")
+print(f"IS_MAKING_MIGRATION: {IS_MAKING_MIGRATION}")
+print(f"IS_MIGRATING: {IS_MIGRATING}")
+print(f"IS_INSERTING_DEFAULT_DATA: {IS_INSERTING_DEFAULT_DATA}")
 print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 print(f"CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}")
 print(f"IS_GUNICORN_EXECUTION: {IS_GUNICORN_EXECUTION}")
@@ -494,7 +498,7 @@ CACHES = {
         "LOCATION": f"redis://{REDIS_CACHE_USER}:{REDIS_CACHE_PASSWORD}@{REDIS_CACHE_HOST}:{REDIS_CACHE_PORT}/0",
     }
 }
-if TESTING or DEBUG or IS_MAKING_MIGRATION or IS_MIGRATING or IS_COLLECTING_STATIC:
+if TESTING or DEBUG or IS_MAKING_MIGRATION or IS_MIGRATING or IS_COLLECTING_STATIC or IS_INSERTING_DEFAULT_DATA:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
