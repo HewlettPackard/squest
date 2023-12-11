@@ -1,29 +1,4 @@
 
-Pre-requisites:
-
-- docker
-- docker-compose
-- Instance of Red Hat Ansible Automation Platform or AWX
-
-## Deploy Squest
-
-The current deployment is based on Docker Compose. To run the application, execute the `docker-compose.yml` file:
-```bash
-docker-compose up
-```
-
-Then connect with your web browser to [http://127.0.0.1:8080](http://127.0.0.1:8080)
-The default admin account is `admin // admin`
-
-The default export the port 8080. If you want to use the standard HTTP port 80, update the 
-file `docker-compose.override.yml`.
-```yaml
-services:
-  nginx:
-    ports:
-      - "80:8080"
-```
-
 ## Connect Squest to your controller
 
 The first step consist into adding a **backend controller** (RHAAP/AWX).

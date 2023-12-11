@@ -39,16 +39,16 @@ squest_redis:
 # Django
 squest_django:
   image: "quay.io/hewlettpackardenterprise/squest:latest"
-  ingress:
+  ingress:  # default ingress based on nginx controller
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
     annotations:
       kubernetes.io/ingress.class: "nginx"
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-#  ldap:
+#  ldap:  # extra ldap config
 #    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
-  env:
+  env:  # squest settings
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
@@ -57,10 +57,10 @@ squest_django:
     DB_USER: "{{ squest_db.user }}"
     DB_PASSWORD: "{{ squest_db.password }}"
     WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"
-  backup:
+  backup: # backup squest db and media to a PVC
     enabled: false
     crontab: "0 1 * * *"
-  externalize_backup_via_rsync:
+  externalize_backup_via_rsync:  # rsync backup files into and external server
     enabled: false
     crontab: "30 1 * * *"
     private_ssh_key: "{{ lookup('file', '/path/to/id_ed25519_squest_k8s_dev') + '\n' }}"
