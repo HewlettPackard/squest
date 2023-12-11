@@ -13,7 +13,7 @@
   tasks:
     - name: Generate job name
       ansible.builtin.set_fact:
-        job_name: backup-{{ ansible_date_time.date }}
+        job_name: "backup-{{ ansible_date_time.iso8601 }}"
 
     - name: Create Job from backup cronjob
       shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-backup {{ job_name }}"
@@ -42,7 +42,7 @@
       block:
         - name: Generate job name
           ansible.builtin.set_fact:
-            job_name: rsync-backup-{{ ansible_date_time.date }}
+            job_name: "rsync-backup-{{ ansible_date_time.iso8601 }}"
 
         - name: Create Job from rsync backup cronjob
           shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-rsync-backup {{ job_name }}"
