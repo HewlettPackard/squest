@@ -37,7 +37,7 @@ class Request(SquestModel):
             ("unarchive_request", "Can unarchive request"),
             ("re_submit_request", "Can re-submit request"),
             ("process_request", "Can process request"),
-            ("need_info_request", "Can ask info request"),
+            ("hold_request", "Can hold request"),
             ("view_admin_survey", "Can view admin survey"),
             ("list_approvers", "Can view who can accept"),
         ]
@@ -158,8 +158,8 @@ class Request(SquestModel):
     def tower_job_url(self):
         return f"{self.operation.job_template.tower_server.url}/#/jobs/playbook/{self.tower_job_id}/output"
 
-    @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.NEED_INFO)
-    def need_info(self):
+    @transition(field=state, source=RequestState.SUBMITTED, target=RequestState.ON_HOLD)
+    def on_hold(self):
         pass
 
     @transition(field=state, source=[RequestState.SUBMITTED], target=RequestState.SUBMITTED)
@@ -168,7 +168,7 @@ class Request(SquestModel):
         if save:
             self.save()
     @transition(field=state, source=[RequestState.SUBMITTED,
-                                     RequestState.NEED_INFO,
+                                     RequestState.ON_HOLD,
                                      RequestState.REJECTED,
                                      RequestState.ACCEPTED], target=RequestState.CANCELED)
     def cancel(self):
@@ -176,7 +176,7 @@ class Request(SquestModel):
             self.instance.abort()
             self.instance.save()
 
-    @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO],
+    @transition(field=state, source=[RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.ON_HOLD],
                 target=RequestState.REJECTED)
     def reject(self, user):
         if self.instance.state == InstanceState.PENDING:
@@ -186,7 +186,7 @@ class Request(SquestModel):
         return True
 
     @transition(field=state,
-                source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED, RequestState.NEED_INFO],
+                source=[RequestState.ACCEPTED, RequestState.SUBMITTED, RequestState.FAILED, RequestState.ON_HOLD],
                 target=RequestState.ACCEPTED)
     def accept(self, user, save=True):
         self.accepted_by = user

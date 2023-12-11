@@ -35,11 +35,11 @@ class AdminRequestViewTest(BaseTestRequest):
         self.test_request.refresh_from_db()
         self.assertEqual(self.test_request.instance.state, InstanceState.ABORTED)
 
-    def test_request_need_info(self):
+    def test_request_on_hold(self):
         args = {
             'pk': self.test_request.id
         }
-        url = reverse('service_catalog:request_need_info', kwargs=args)
+        url = reverse('service_catalog:request_on_hold', kwargs=args)
         data = {
             "content": "admin message"
         }
@@ -48,19 +48,19 @@ class AdminRequestViewTest(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.test_request.refresh_from_db()
-        self.assertEqual(self.test_request.state, RequestState.NEED_INFO)
+        self.assertEqual(self.test_request.state, RequestState.ON_HOLD)
         self.assertEqual(1, RequestMessage.objects.filter(request=self.test_request.id).count())
 
-    def test_admin_cannot_request_need_info_on_forbidden_states(self):
+    def test_admin_cannot_request_on_hold_on_forbidden_states(self):
         args = {
             'pk': self.test_request.id
         }
-        url = reverse('service_catalog:request_need_info', kwargs=args)
+        url = reverse('service_catalog:request_on_hold', kwargs=args)
         data = {
             "message": "admin message"
         }
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
-                            RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.NEED_INFO]
+                            RequestState.COMPLETE, RequestState.REJECTED, RequestState.ARCHIVED, RequestState.ON_HOLD]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
             self.test_request.save()
@@ -86,7 +86,7 @@ class AdminRequestViewTest(BaseTestRequest):
             'pk': self.test_request.id
         }
         url = reverse('service_catalog:request_re_submit', kwargs=args)
-        forbidden_states = [RequestState.NEED_INFO, RequestState.REJECTED, RequestState.CANCELED, RequestState.ACCEPTED,
+        forbidden_states = [RequestState.ON_HOLD, RequestState.REJECTED, RequestState.CANCELED, RequestState.ACCEPTED,
                             RequestState.PROCESSING, RequestState.COMPLETE, RequestState.FAILED, RequestState.ARCHIVED]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
@@ -545,7 +545,7 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:request_archive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
-                            RequestState.REJECTED, RequestState.SUBMITTED, RequestState.NEED_INFO,
+                            RequestState.REJECTED, RequestState.SUBMITTED, RequestState.ON_HOLD,
                             RequestState.ARCHIVED]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state
@@ -559,7 +559,7 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         url = reverse('service_catalog:request_unarchive', kwargs=args)
         forbidden_states = [RequestState.CANCELED, RequestState.ACCEPTED, RequestState.PROCESSING, RequestState.FAILED,
-                            RequestState.REJECTED, RequestState.SUBMITTED, RequestState.NEED_INFO,
+                            RequestState.REJECTED, RequestState.SUBMITTED, RequestState.ON_HOLD,
                             RequestState.COMPLETE]
         for forbidden_state in forbidden_states:
             self.test_request.state = forbidden_state

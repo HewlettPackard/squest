@@ -3,24 +3,24 @@ from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
 
 
-class TestServiceCatalogRequestNeedInfoPermissionsEndpoint(BaseTestRequestAPI, TestPermissionEndpoint):
+class TestServiceCatalogRequestOnHoldPermissionsEndpoint(BaseTestRequestAPI, TestPermissionEndpoint):
     def setUp(self):
         super().setUp()
         self.test_request.state = RequestState.SUBMITTED
         self.test_request.save()
 
-    def test_need_info_view(self):
+    def test_on_hold_view(self):
         testing_view_list = [
             TestingGetContextView(
-                url='api_request_need_info',
-                perm_str='service_catalog.need_info_request',
+                url='api_request_on_hold',
+                perm_str='service_catalog.hold_request',
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostContextView(
-                url='api_request_need_info',
-                perm_str='service_catalog.need_info_request',
+                url='api_request_on_hold',
+                perm_str='service_catalog.hold_request',
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'content': 'My comment'

@@ -35,7 +35,7 @@
                                     <th class="text-center">Instance</th>
                                     <th class="text-center">Submitted</th>
                                     <th class="text-center">Accepted</th>
-                                    <th class="text-center">Need info</th>
+                                    <th class="text-center">On hold</th>
                                     <th class="text-center">Failed</th>
                                     {% if can_list_support %}
                                         <th class="text-center">Supports</th>
@@ -80,9 +80,9 @@
                                             {% endif %}
                                         </td>
                                         <td class="align-middle text-center">
-                                            {% if service.need_info_requests %}
+                                            {% if service.hold_requests %}
                                                 <a href="{% url 'service_catalog:request_list' %}?state=2&instance__service__id={{ service.service.id }}"
-                                                   class="btn btn-warning btn-lg">{{ service.need_info_requests }}
+                                                   class="btn btn-warning btn-lg">{{ service.hold_requests }}
                                                 </a>
                                             {% endif %}
                                         </td>

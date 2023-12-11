@@ -2,7 +2,8 @@
 
 Role-based access control (RBAC), is a mechanism that restricts Squest access.
 It involves setting **permissions** to enable access to authorized users. Permissions are then grouped
-into **Roles** and given to a scope which can be a _team_ or and _organizations_ or _global_. **RBAC** is the link between a role, a scope and a user.
+into **Roles** and given to a scope which can be a _team_ or and _organizations_ or _global_. **RBAC** is the link
+between a role, a scope and a user.
 
 The Squest RBAC system enable an administrator to grant users or groups the ability to perform an action
 on arbitrary subsets of objects in Squest.
@@ -13,12 +14,13 @@ on arbitrary subsets of objects in Squest.
 
 Permission in Squest represent a relationship with following components:
 
-- **Name:** A short description  of the permission.
+- **Name:** A short description of the permission.
 - **Codename:** A unique identifier for the permission with camel case format.
 - **Content type:** A Squest object (E.g: Request, Instance)
 
 For example, a permission named "Can request a day2 operation on instance" attached to the content type "instance".
-This permission is required, like the name is suggesting, to create a request for a day 2 operation on an existing instance.
+This permission is required, like the name is suggesting, to create a request for a day 2 operation on an existing
+instance.
 
 All objects have **generic** CRUD (Create, Retrieve/List, Update, Delete) permissions by default:
 
@@ -35,7 +37,7 @@ All objects have **generic** CRUD (Create, Retrieve/List, Update, Delete) permis
 **Specific** Squest permissions:
 
 | Short description                               | Codename                    | Object       |
-| ----------------------------------------------- | --------------------------- | ------------ |
+|-------------------------------------------------|-----------------------------|--------------|
 | Can add users in global scope                   | add_users_globalscope       | globalscope  |
 | Can delete users in global scope                | delete_users_globalscope    | globalscope  |
 | Can view users in global scope                  | view_users_globalscope      | globalscope  |
@@ -57,7 +59,7 @@ All objects have **generic** CRUD (Create, Retrieve/List, Update, Delete) permis
 | Can accept request                              | accept_request              | request      |
 | Can archive request                             | archive_request             | request      |
 | Can cancel request                              | cancel_request              | request      |
-| Can ask info request                            | need_info_request           | request      |
+| Can hold request                                | hold_request                | request      |
 | Can process request                             | process_request             | request      |
 | Can reject request                              | reject_request              | request      |
 | Can re-submit request                           | re_submit_request           | request      |
@@ -74,7 +76,8 @@ All objects have **generic** CRUD (Create, Retrieve/List, Update, Delete) permis
 
 ## Global permissions
 
-Global permissions are permissions granted to all logged Squest user. Permissions are purely additive (there are no "deny" rules).
+Global permissions are permissions granted to all logged Squest user. Permissions are purely additive (there are no "
+deny" rules).
 
 !!!warning
 
@@ -86,12 +89,14 @@ Owner permissions are permissions granted to the owner of an Instance, Request o
 
 Are considered as owner:
 
- * `requester` for Instance
- * `user` for Request
- * `opened_by` for Support
+* `requester` for Instance
+* `user` for Request
+* `opened_by` for Support
 
-Configuring "view_instance" permissions within the Owner Permissions will grant users the ability to see all instances for which they are the requester.  
-Adding "view_support" permission will grant users the ability to see all supports related to their instances and supports they opened.
+Configuring "view_instance" permissions within the Owner Permissions will grant users the ability to see all instances
+for which they are the requester.  
+Adding "view_support" permission will grant users the ability to see all supports related to their instances and
+supports they opened.
 
 !!!warning
 

@@ -72,7 +72,7 @@ squest_request_per_state_total{state="ACCEPTED"} 4.0
 squest_request_per_state_total{state="CANCELED"} 3.0
 squest_request_per_state_total{state="COMPLETE"} 5.0
 squest_request_per_state_total{state="FAILED"} 4.0
-squest_request_per_state_total{state="NEED_INFO"} 2.0
+squest_request_per_state_total{state="ON_HOLD"} 2.0
 squest_request_per_state_total{state="PROCESSING"} 3.0
 squest_request_per_state_total{state="REJECTED"} 5.0
 squest_request_per_state_total{state="SUBMITTED"} 4.00
@@ -111,7 +111,7 @@ E.g:
 squest_request_total{service="VMWare",state="COMPLETE"} 3.0
 squest_request_total{service="VMWare",state="PROCESSING"} 2.0
 squest_request_total{service="VMWare",state="ACCEPTED"} 2.0
-squest_request_total{service="VMWare",state="NEED_INFO"} 1.0
+squest_request_total{service="VMWare",state="ON_HOLD"} 1.0
 squest_request_total{service="VMWare",state="REJECTED"} 4.0
 squest_request_total{service="VMWare",state="SUBMITTED"} 1.0
 squest_request_total{service="VMWare",state="FAILED"} 1.0
@@ -125,7 +125,7 @@ squest_request_total{service="Kubernetes",state="SUBMITTED"} 1.0
 squest_request_total{service="Kubernetes",state="COMPLETE"} 1.0
 squest_request_total{service="Kubernetes",state="CANCELED"} 1.0
 squest_request_total{service="Kubernetes",state="PROCESSING"} 1.0
-squest_request_total{service="Kubernetes",state="NEED_INFO"} 1.0
+squest_request_total{service="Kubernetes",state="ON_HOLD"} 1.0
 ```
 
 ### squest_support_total

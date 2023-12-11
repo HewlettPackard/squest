@@ -28,7 +28,7 @@ class TestServiceCatalogRequestCRUDPermissionsEndpoint(BaseTestRequestAPI, TestP
                 data={
                     'fill_in_survey': dict(),
                     'tower_job_id': 6,
-                    'state': RequestState.NEED_INFO,
+                    'state': RequestState.ON_HOLD,
                     'operation': self.update_operation_test.id,
                     'user': {'id': self.standard_user.id}
                 },

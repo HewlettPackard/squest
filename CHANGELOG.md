@@ -2,7 +2,7 @@
 
 ## Enhancement
 
-- Add a transition in FSM to switch from "NEED INFO" to "ACCEPTED"
+- Add a transition in FSM to switch from "ON HOLD" to "ACCEPTED"
 - Add field "enabled" in ApprovalWorkflow
 - Remove "operations" field in ApprovalWorkflow form when editing
 - Add the number of items displayed at the end of lists

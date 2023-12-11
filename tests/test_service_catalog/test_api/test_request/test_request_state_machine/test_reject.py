@@ -4,7 +4,7 @@ from service_catalog.models import RequestState
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
-AUTHORIZED_STATES = [RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.NEED_INFO]
+AUTHORIZED_STATES = [RequestState.SUBMITTED, RequestState.ACCEPTED, RequestState.ON_HOLD]
 
 
 class TestApiRequestReject(BaseTestRequestAPI):
@@ -44,7 +44,7 @@ class TestApiRequestReject(BaseTestRequestAPI):
         forbidden_state = RequestState.values
         forbidden_state.remove(RequestState.SUBMITTED)
         forbidden_state.remove(RequestState.ACCEPTED)
-        forbidden_state.remove(RequestState.NEED_INFO)
+        forbidden_state.remove(RequestState.ON_HOLD)
         for state in forbidden_state:
             self.test_request.state = state
             self.test_request.save()

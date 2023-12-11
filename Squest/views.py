@@ -45,8 +45,8 @@ def home(request):
 
     if request.user.has_perm('service_catalog.list_request'):
         context['total_request'] = sum([x["count"] for x in all_requests if x["state"] == RequestState.SUBMITTED])
-        context['total_request_need_info'] = sum(
-            [x["count"] for x in all_requests if x["state"] == RequestState.NEED_INFO])
+        context['total_request_on_hold'] = sum(
+            [x["count"] for x in all_requests if x["state"] == RequestState.ON_HOLD])
 
     if request.user.has_perm('service_catalog.list_instance'):
         context['total_instance'] = sum([x["count"] for x in all_instances if x["state"] == InstanceState.AVAILABLE])
@@ -77,8 +77,8 @@ def home(request):
                                                x["state"] == RequestState.FAILED and x[
                                                    "instance__service"] == service.id])
 
-        service_dict["need_info_requests"] = sum([x["count"] for x in all_requests if
-                                                  x["state"] == RequestState.NEED_INFO and x[
+        service_dict["hold_requests"] = sum([x["count"] for x in all_requests if
+                                                  x["state"] == RequestState.ON_HOLD and x[
                                                       "instance__service"] == service.id])
 
         service_dict["opened_supports"] = sum([x["count"] for x in all_supports if

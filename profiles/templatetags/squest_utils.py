@@ -65,7 +65,7 @@ def generate_sidebar(user):
                 'permission_required': 'service_catalog.list_request',
                 'active': [
                     "request_list", "request_create", "request_edit", "request_delete",
-                    "request_details", "request_cancel", "request_need_info", "request_re_submit", "request_reject",
+                    "request_details", "request_cancel", "request_on_hold", "request_re_submit", "request_reject",
                     "request_accept", "request_process", "request_archive", "request_unarchive", "request_approve",
                     "request_bulk_delete", "request_archived_list", "requestmessage_edit", "requestmessage_create"
                 ]
