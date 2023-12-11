@@ -4,7 +4,7 @@ from service_catalog.models.request import RequestState
 
 map_dict_request_state = {
     RequestState.ACCEPTED: "primary",
-    RequestState.NEED_INFO: "warning",
+    RequestState.ON_HOLD: "warning",
     RequestState.SUBMITTED: "info",
     RequestState.REJECTED: "dark",
     RequestState.PROCESSING: "orange",

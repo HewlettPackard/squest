@@ -100,14 +100,14 @@ class RequestStateMachine(ViewSet):
 
     @swagger_auto_schema(request_body=MessageSerializer, responses={200: AdminRequestSerializer()})
     @action(detail=True)
-    def need_info(self, request, pk=None):
+    def hold(self, request, pk=None):
         """
-        Ask for more info : change the state of the request to 'NEED_INFO'.
+        Ask for more info : change the state of the request to 'ON_HOLD'.
         """
         target_request = get_object_or_404(Request, id=pk)
-        if not request.user.has_perm('service_catalog.need_info_request', target_request):
+        if not request.user.has_perm('service_catalog.hold_request', target_request):
             raise PermissionDenied
-        if not can_proceed(target_request.need_info):
+        if not can_proceed(target_request.on_hold):
             raise PermissionDenied
         data = deepcopy(request.data)
         data['sender'] = request.user.id
@@ -115,7 +115,7 @@ class RequestStateMachine(ViewSet):
         message = RequestMessageSerializer(data=data)
         if message.is_valid():
             message.save()
-        target_request.need_info()
+        target_request.on_hold()
         target_request.save()
         send_mail_request_update(target_request, user_applied_state=request.user, message=message)
         return Response(AdminRequestSerializer(target_request).data, status=status.HTTP_200_OK)

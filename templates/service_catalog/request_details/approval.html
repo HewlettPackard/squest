@@ -1,10 +1,10 @@
 {% has_perm request.user "service_catalog.cancel_request" object as can_cancel_request %}
-{% has_perm request.user "service_catalog.need_info_request" object as can_need_info_request %}
+{% has_perm request.user "service_catalog.hold_request" object as can_hold_request %}
 {% has_perm request.user "service_catalog.re_submit_request" object as can_re_submit_request %}
 {% has_perm request.user "service_catalog.reject_request" object as can_reject_request %}
 {% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
 {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
-{% has_perm request.user "service_catalog.can_list_approvers" object as can_list_approvers %}
+{% has_perm request.user "service_catalog.list_approvers" object as can_list_approvers %}
 {% has_perm request.user "service_catalog.view_admin_spec_instance" object.instance as can_view_admin_spec_instance %}
 
 
@@ -27,11 +27,15 @@
                     </table>
                     <div class="col-md-6">
                         <div class="row justify-content-end">
-                            <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body" data-toggle="popover" data-placement="right" data-content="<pre>{{ object.instance.user_spec | pretty_json }}</pre>">
+                            <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body"
+                                    data-toggle="popover" data-placement="right"
+                                    data-content="<pre>{{ object.instance.user_spec | pretty_json }}</pre>">
                                 Instance spec
                             </button>
                             {% if can_view_admin_spec_instance %}
-                                <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body" data-toggle="popover" data-placement="right" data-content="<pre>{{ object.instance.spec | pretty_json }}</pre>">
+                                <button data-html="true" type="button" class="btn btn-secondary m-1"
+                                        data-container="body" data-toggle="popover" data-placement="right"
+                                        data-content="<pre>{{ object.instance.spec | pretty_json }}</pre>">
                                     Instance admin spec
                                 </button>
                             {% endif %}
@@ -148,6 +152,7 @@
                 <h3 class="timeline-header">Admin review</h3>
                 <div class="timeline-body">
                     {% if can_list_approvers %}
+                        {% who_can_approve object as list_who_can_approve %}
                         <details>
                             <summary>Approvers</summary>
                             <table class="row">
@@ -164,7 +169,7 @@
                             <i class="fas fa-pause text-info"></i> This request is waiting for an approval
                         </div>
                     {% endif %}
-                    {% if object.get_state_display == "NEED_INFO" %}
+                    {% if object.get_state_display == "ON_HOLD" %}
                         <div class="callout callout-warning">
                             <i class="fas fa-pause text-warning"></i> This request is waiting for information as
                             comment.
@@ -223,12 +228,12 @@
                                         </a>
                                     {% endif %}
                                 {% endwith %}
-                                {% if object.get_state_display != "NEED_INFO" %}
-                                    {% with args_filter="need_info,"|addstr:object.id %}
-                                        {% if args_filter|can_proceed_request_action and can_need_info_request %}
+                                {% if object.get_state_display != "ON_HOLD" %}
+                                    {% with args_filter="on_hold,"|addstr:object.id %}
+                                        {% if args_filter|can_proceed_request_action and can_hold_request %}
                                             <a class="btn btn-warning"
                                                title="Ask more info"
-                                               href="{% url 'service_catalog:request_need_info' object.id %}">
+                                               href="{% url 'service_catalog:request_on_hold' object.id %}">
                                                 <i class="fas fa-info-circle"></i> Ask info
                                             </a>
                                         {% endif %}
@@ -279,25 +284,46 @@
                             <strong>{{ object.processed_by }}</strong>
                         </blockquote>
                     {% endif %}
-                    {% if can_process_request and object.get_state_display == "ACCEPTED" %}
+                    {% if object.get_state_display == "ACCEPTED" %}
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
+                                {% with args_filter="accept,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_accept_request %}
+                                        <a class="btn btn-primary"
+                                           title="Review"
+                                           href="{% url 'service_catalog:request_accept' object.id %}">
+                                            <i class="fas fa-clipboard-check"></i> Review
+                                        </a>
+                                    {% endif %}
+                                {% endwith %}
+                                {% with args_filter="reject,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_reject_request %}
+                                        <a class="btn btn-danger"
+                                           title="Reject"
+                                           href="{% url 'service_catalog:request_reject' object.id %}">
+                                            <i class="fas fa-ban"></i> Reject
+                                        </a>
+
+                                    {% endif %}
+                                {% endwith %}
+                                {% with args_filter="cancel,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_cancel_request %}
+                                        <a class="btn btn-secondary"
+                                           title="Cancel"
+                                           href="{% url 'service_catalog:request_cancel' object.id %}">
+                                            <i class="fas fa-window-close"></i> Cancel
+                                        </a>
+
+                                    {% endif %}
+                                {% endwith %}
                                 {% with args_filter="process,"|addstr:object.id %}
                                     {% if args_filter|can_proceed_request_action and can_process_request %}
-                                        {% with args_filter="accept,"|addstr:object.id %}
-                                            {% if args_filter|can_proceed_request_action and can_accept_request %}
-                                                <a class="btn btn-primary"
-                                                   title="Review"
-                                                   href="{% url 'service_catalog:request_accept' object.id %}">
-                                                    <i class="fas fa-clipboard-check"></i> Review
-                                                </a>
-                                            {% endif %}
-                                        {% endwith %}
                                         <a class="btn btn-success"
                                            title="Process"
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Process
                                         </a>
+
                                     {% endif %}
                                 {% endwith %}
                             </div>
@@ -315,7 +341,8 @@
             <i class="fas fa-cog bg-success"></i>
             <div class="timeline-item">
                 {% if object.date_complete %}
-                    <span class="time"><i class="fas fa-clock"></i> {{ object.date_complete | squest_date_format }}</span>
+                    <span class="time"><i
+                            class="fas fa-clock"></i> {{ object.date_complete | squest_date_format }}</span>
                 {% endif %}
                 <h3 class="timeline-header text-success">Processing</h3>
                 <div class="timeline-body">
@@ -326,7 +353,7 @@
                             <i class="fas fa-check text-success"></i> Request processed successfully.
                         </blockquote>
                     {% endif %}
-                    {% if can_process_request and object.tower_job_id is not None%}
+                    {% if can_process_request and object.tower_job_id is not None %}
                         <a class="btn btn-default"
                            title="Job"
                            href="{{ object.tower_job_url }}">

@@ -173,18 +173,18 @@ def requestmessage_edit(request, request_id, pk):
 
 
 @login_required
-def request_need_info(request, pk):
+def request_hold(request, pk):
     target_request = get_object_or_404(Request, id=pk)
-    if not request.user.has_perm('service_catalog.need_info_request', target_request):
+    if not request.user.has_perm('service_catalog.hold_request', target_request):
         raise PermissionDenied
-    if not can_proceed(target_request.need_info):
+    if not can_proceed(target_request.on_hold):
         raise PermissionDenied
     if request.method == "POST":
         form = RequestMessageForm(request.POST or None, request.FILES or None, sender=request.user,
                                   target_request=target_request)
         if form.is_valid():
             message = form.save(send_notification=False)
-            target_request.need_info()
+            target_request.on_hold()
             target_request.save()
             send_mail_request_update(target_request, user_applied_state=request.user, message=message)
             return redirect(target_request.get_absolute_url())
@@ -199,7 +199,7 @@ def request_need_info(request, pk):
         'target_request': target_request,
         'breadcrumbs': breadcrumbs
     }
-    return render(request, "service_catalog/admin/request/request-need-info.html", context)
+    return render(request, "service_catalog/admin/request/request-hold.html", context)
 
 
 
