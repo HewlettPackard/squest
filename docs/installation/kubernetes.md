@@ -11,12 +11,12 @@ The Kubernetes deployment is wrapped by Ansible. The code has been tested with A
 Install Ansible dependencies:
 
 ```bash
-ansible-galaxy collection install kubernetes.core
+ansible-galaxy install -r k8s/requirements.yml
 ```
 
 Install Python dependencies:
 ```bash
-pip3 install kubernetes
+pip3 install -r k8s/requirements.txt
 ```
 
 ## Ansible inventory
