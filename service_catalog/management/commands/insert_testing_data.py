@@ -65,7 +65,7 @@ class Command(BaseCommand):
                                             type=OperationType.DELETE,
                                             service=service,
                                             job_template=job_templates.get(name="Demo Job Template"))
-            states = [RequestState.SUBMITTED, RequestState.FAILED, RequestState.ACCEPTED, RequestState.NEED_INFO,
+            states = [RequestState.SUBMITTED, RequestState.FAILED, RequestState.ACCEPTED, RequestState.ON_HOLD,
                       RequestState.REJECTED, RequestState.CANCELED, RequestState.PROCESSING, RequestState.COMPLETE]
             for i in range(random.randint(1, 3)):
                 for username in users:

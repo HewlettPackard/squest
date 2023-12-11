@@ -12,29 +12,32 @@ graph TB
     style auto_accept fill:#80CBC4
     instance_pending([instance pending])
     submitted --> instance_pending
+    submitted --> |re-submit|submitted
     instance_pending --> auto_accept
     accepted[ACCEPTED]
     auto_accept -->|Yes| accepted
     admin_action_1{admin action}
     style admin_action_1 fill:#80DEEA
     auto_accept -->|No| admin_action_1
-    need_info[NEED_INFO]
-    admin_action_1 -->|need_info| need_info
+    on_hold[ON_HOLD]
+    admin_action_1 -->|on_hold| on_hold
+    admin_action_1 -->|cancel| canceled
+    admin_action_1 -->|reject| rejected
     admin_action_1 -->|accept| accepted
     rejected[REJECTED]
-    need_info -->|reject| rejected
-    need_info -->|Submit| submitted
+    on_hold -->|reject| rejected
     canceled[CANCELED]
-    need_info --> |cancel|canceled
+    on_hold --> |cancel|canceled
+    on_hold --> |accept|accepted
     rejected --> |cancel|canceled
-    submitted --> |cancel|canceled
-    submitted -->|reject| rejected
     canceled --> |delete| deleted
     deleted((Deleted))
     auto_pocess{auto process?}
     style auto_pocess fill:#80CBC4
     accepted --> auto_pocess
     accepted -->|reject| rejected
+    accepted -->|review| accepted
+    accepted -->|cancel| canceled
     auto_pocess --> |Yes| operation_type
     admin_action_2{admin action}
     auto_pocess --> |No| admin_action_2
@@ -60,7 +63,7 @@ graph TB
     processing_ok --> |Yes| complete
     processing_ok --> |No| failed
     failed --> |retry| processing
-    failed --> |cancel| accepted
+    failed --> |review| accepted
     archived[ARCHIVED] 
     complete -->|archive| archived
     archived -->|unarchive| complete

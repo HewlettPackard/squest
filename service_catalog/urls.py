@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Request State Machine
     path('request/<int:pk>/cancel/', views.request_cancel, name='request_cancel'),
-    path('request/<int:pk>/need-info/', views.request_need_info, name='request_need_info'),
+    path('request/<int:pk>/hold/', views.request_hold, name='request_on_hold'),
     path('request/<int:pk>/re-submit/', views.RequestReSubmitView.as_view(), name='request_re_submit'),
     path('request/<int:pk>/reject/', views.request_reject, name='request_reject'),
     path('request/<int:pk>/accept/', views.request_accept, name='request_accept'),

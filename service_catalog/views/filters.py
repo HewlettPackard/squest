@@ -60,8 +60,8 @@ def can_proceed_request_action(args):
     target_request = Request.objects.get(id=args.split(',')[1])
     if target_action == "cancel":
         return can_proceed(target_request.cancel)
-    elif target_action == "need_info":
-        return can_proceed(target_request.need_info)
+    elif target_action == "on_hold":
+        return can_proceed(target_request.on_hold)
     elif target_action == "reject":
         return can_proceed(target_request.reject)
     elif target_action == "accept":
@@ -154,7 +154,7 @@ def squest_date_format(date_to_format):
 
 @register.filter(name="map_color_next_state")
 def map_color_next_state(current_state, next_state):
-    if current_state == "NEED_INFO":
+    if current_state == "ON_HOLD":
         return "warning"
     if current_state == next_state:
         return "primary"
