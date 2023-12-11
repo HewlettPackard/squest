@@ -2,19 +2,56 @@
 
 from django.db import migrations, models;
 
+
 def update_state_field(apps, schema_editor):
+    INSTANCE_STATES = {
+        'PENDING': 1,
+        'PROVISION_FAILED': 2,
+        'PROVISIONING': 3,
+        'UPDATING': 4,
+        'UPDATE_FAILED': 5,
+        'DELETING': 6,
+        'DELETED': 7,
+        'DELETE_FAILED': 8,
+        'ARCHIVED': 9,
+        'AVAILABLE': 10,
+        'ABORTED': 11,
+    }
+    REQUEST_STATES = {
+        'SUBMITTED': 1,
+        'NEED_INFO': 2,
+        'REJECTED': 3,
+        'CANCELED': 4,
+        'ACCEPTED': 5,
+        'PROCESSING': 6,
+        'COMPLETE': 7,
+        'FAILED': 8,
+        'ARCHIVED': 9,
+    }
+
+    def instance_state_converter(value):
+        if value in INSTANCE_STATES.keys():
+            return INSTANCE_STATES[value]
+        else:
+            return int(value)
+
+    def request_state_converter(value):
+        if value in REQUEST_STATES.keys():
+            return REQUEST_STATES[value]
+        else:
+            return int(value)
+
     InstanceNotification = apps.get_model('profiles', 'InstanceNotification')
     RequestNotification = apps.get_model('profiles', 'RequestNotification')
     for notification in InstanceNotification.objects.all():
-        notification.instance_states_tmp = list(map(int, notification.instance_states))
+        notification.instance_states_tmp = list(map(instance_state_converter, notification.instance_states))
         notification.save()
     for notification in RequestNotification.objects.all():
-        notification.request_states_tmp = list(map(int, notification.request_states))
+        notification.request_states_tmp = list(map(request_state_converter, notification.request_states))
         notification.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('profiles', '0022_alter_permission_options'),
     ]
