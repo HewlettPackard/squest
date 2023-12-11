@@ -3,7 +3,9 @@
 Default settings are configured to provide a testing/development environment. For a production setup it is recommended
 to adjust them following your target environment.
 
-The configuration is loaded from environment variables file placed in the folder `docker/environment_variables`.
+When using docker-compose, the configuration is loaded from environment variables file placed in the folder `docker/environment_variables`.
+
+When using Kubernetes, the configuration need to be placed in the `squest.yml` inventory file in the variable `squest_django/env`.
 
 ## Database
 
@@ -359,4 +361,3 @@ Redis hostname.
 **Default:** `6379`
 
 Redis port.
-

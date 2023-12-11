@@ -1,9 +1,9 @@
-# LDAP authentication backend
+# LDAP
 
 ## Default configuration
 
 The configuration is loaded from environment variables file placed in the folder `docker/environment_variables`.
-Retrieve environment variables from the [Squest configuration settings documentation](../configuration/squest_settings.md#ldap)
+Retrieve environment variables from the [Squest configuration settings documentation](../../configuration/squest_settings.md#ldap)
 
 ## Advanced configuration
 
@@ -45,6 +45,9 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 ```
 
+## Use custom config
+
+### Docker compose
 Update the `ldap.docker-compose.yml` file to mount your configuration file and the CA certificate of the LDAP
 server (if LDAPS is used) in django and celery containers:
 ```yaml
@@ -65,4 +68,24 @@ server (if LDAPS is used) in django and celery containers:
 Run docker compose with the ldap config
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f ldap.docker-compose.yml up
+```
+
+### Kubernetes
+
+Declare your custom configuration file in the `squest_django` section of `squest.yml` inventory:
+
+```yaml
+squest_django:
+  ldap:  # extra ldap config
+    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
+```
+
+Push the new configuration
+```
+ansible-playbook -v -i inventory deploy.yml --tags django
+```
+
+Rollout django pod
+```
+kubectl rollout restart -n squest deployment/django
 ```

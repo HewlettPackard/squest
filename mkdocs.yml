@@ -28,12 +28,11 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Installation:
+    - Docker compose: installation/docker-compose.md
+    - Kubernetes: installation/kubernetes.md
   - Getting Started: getting_started.md
-  - Configuration:
-    - Squest: configuration/squest_settings.md
-    - LDAP: configuration/ldap.md
-    - TLS: configuration/tls.md
-    - OpenID Connect: configuration/openid.md
+  - Configuration: configuration/squest_settings.md
   - Manual:
     - Service catalog:
       - Concept: manual/service_catalog/concept.md
@@ -55,6 +54,7 @@ nav:
         - manual/advanced/filters.md
         - manual/advanced/jinja.md
         - manual/advanced/validators.md
+        - manual/advanced/ldap.md
     - Notifications: manual/notifications.md
   - Administration:
       - Backup: administration/backup.md
