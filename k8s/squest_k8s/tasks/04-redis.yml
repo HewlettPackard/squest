@@ -1,16 +1,25 @@
-- name: Deploy Redis CRD
-  kubernetes.core.k8s:
+- name: Add helm repo for Redis operator
+  kubernetes.core.helm_repository:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
-    state: present
-    definition: "{{ lookup('file', 'redis.crd.v1.2.4.yml') | from_yaml_all }}"
+    name: ot-helm
+    repo_url: "https://ot-container-kit.github.io/helm-charts/"
+
+- name: Install Redis operator
+  kubernetes.core.helm:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    name: redis-operator
+    release_namespace: "redis-operator"
+    create_namespace: true
+    chart_version: "{{ redis_operator_chart_version }}"
+    chart_ref: ot-helm/redis-operator
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
-    name: "redisfailovers.databases.spotahome.com"
-    namespace: "redis-operator"
+    name: "redisreplications.redis.redis.opstreelabs.in"
+    namespace: "{{ squest_namespace }}"
     wait: yes
     wait_sleep: 10
     wait_timeout: 600
@@ -18,18 +27,12 @@
       type: Established
       status: "True"
 
-- name: Deploy Redis Operator
-  kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
-    state: present
-    definition: "{{ lookup('file', 'redis.operator.v1.2.4.yml') | from_yaml_all }}"
-
 - name: Wait until deployment available
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apps/v1"
     kind: Deployment
-    name: "redisoperator"
+    name: "redis-operator"
     namespace: "redis-operator"
     wait: yes
     wait_sleep: 10
@@ -47,65 +50,118 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: redis-password
+        name: redis-secret
         labels:
           app: squest
           service: redis
-      type: Opaque
-      stringData:
-        password: "{{ squest_redis.password }}"
+      data:
+        password: "{{ squest_redis.password | b64encode }}"
 
-- name: Deploy Redis
+- name: Deploy Redis standalone server
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
+    namespace: "{{ squest_namespace }}"
     definition:
-      apiVersion: databases.spotahome.com/v1
-      kind: RedisFailover
+      apiVersion: redis.redis.opstreelabs.in/v1beta2
+      kind: Redis
       metadata:
-        name: redis
-        namespace: "{{ squest_namespace }}"
-        labels:
-          app: squest
-          service: redis
+        name: redis-standalone
       spec:
-        auth:
-          secretPath: redis-password
-        sentinel:
-          replicas: 3
+        podSecurityContext:
+          runAsUser: 1000
+          fsGroup: 1000
+        kubernetesConfig:
+          image: quay.io/opstree/redis:v7.0.12
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 101m
+              memory: 128Mi
+            limits:
+              cpu: 101m
+              memory: 128Mi
+          redisSecret:
+            name: redis-secret
+            key: password
+        redisExporter:
+          enabled: false
+          image: quay.io/opstree/redis-exporter:v1.44.0
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 100m
+              memory: 128Mi
             limits:
-              memory: 100Mi
-        redis:
-#          env:
-#            - name: REDIS_PASSWORD
-#              value: "{{ squest_redis.password }}"
-          replicas: 3
-#          extraVolumes:
-#            - name: redis-password
-#              secret:
-#                secretName: redis-user-secret
-#                optional: false
-          resources:
-            requests:
               cpu: 100m
-              memory: 100Mi
-            limits:
-              cpu: 400m
-              memory: 500Mi
+              memory: 128Mi
+        storage:
+          volumeClaimTemplate:
+            spec:
+              # storageClassName: standard
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 1Gi
 
-- name: Wait until redis deployment available
+- name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
-    api_version: "apps/v1"
-    kind: Deployment
-    name: "redisoperator"
-    namespace: "redis-operator"
-    wait: yes
-    wait_sleep: 10
-    wait_timeout: 600
-    wait_condition:
-      type: Available
-      status: "True"
+    api_version: v1
+    kind: StatefulSet
+    namespace: "{{ squest_namespace }}"
+    name: redis-standalone
+  register: output_info
+  until: "'readyReplicas' in output_info.resources[0].status and output_info.resources[0].status.readyReplicas >= 1"
+  delay: 2
+  retries: 10
+
+#- name: Deploy Redis cluster
+#  kubernetes.core.k8s:
+#    kubeconfig: "{{ k8s_kubeconfig_path }}"
+#    state: present
+#    namespace: "{{ squest_namespace }}"
+#    definition:
+#      apiVersion: redis.redis.opstreelabs.in/v1beta2
+#      kind: RedisCluster
+#      metadata:
+#        name: redis-cluster
+#      spec:
+#        clusterSize: 3
+#        clusterVersion: v7
+#        podSecurityContext:
+#          runAsUser: 1000
+#          fsGroup: 1000
+#        persistenceEnabled: false
+#        kubernetesConfig:
+#          image: quay.io/opstree/redis:v7.0.12
+#          imagePullPolicy: IfNotPresent
+#          redisSecret:
+#            name: redis-secret
+#            key: password
+#        redisExporter:
+#          enabled: false
+#          image: quay.io/opstree/redis-exporter:v1.44.0
+#        storage:
+#          nodeConfVolume: true
+#          volumeMount:
+#            volume:
+#              - name: data
+#                emptyDir:
+#                  sizeLimit: 1Gi
+#            mountPath:
+#              - mountPath: /data
+#                name: data
+#          volumeClaimTemplate:
+#            spec:
+#              # storageClassName: standard
+#              accessModes: ["ReadWriteOnce"]
+#              resources:
+#                requests:
+#                  storage: 1Gi
+#          nodeConfVolumeClaimTemplate:
+#            spec:
+#              accessModes: ["ReadWriteOnce"]
+#              resources:
+#                requests:
+#                  storage: 1Gi
