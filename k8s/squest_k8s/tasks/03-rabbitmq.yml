@@ -1,8 +1,16 @@
-- name: Deploy RabbitMQ operator
-  kubernetes.core.k8s:
+- name: Add helm repo for RabbitMQ operator
+  kubernetes.core.helm_repository:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
-    state: present
-    definition: "{{ lookup('file', 'rabbitmq-operator.v2.5.0.yml') | from_yaml_all }}"
+    name: bitnami
+    repo_url: "https://charts.bitnami.com/bitnami"
+
+- name: Install RabbitMQ operator
+  kubernetes.core.helm:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    name: rabbitmq-cluster-operator
+    release_namespace: "{{ squest_namespace }}"
+    chart_version: "{{ rabbitmq_operator_chart_version }}"
+    chart_ref: bitnami/rabbitmq-cluster-operator
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
@@ -18,18 +26,28 @@
       type: Established
       status: "True"
 
-- name: Deploy RabbitMQ topology operator
+- name: Download RabbitMQ messaging-topology-operator manifest
+  ansible.builtin.get_url:
+    url: "{{ rabbitmq_topology_operator_manifest_url }}"
+    dest: "/tmp/rabbitmq_topology_operator_manifest.yaml"
+    mode: '0664'
+
+- name: Deploy RabbitMQ messaging-topology-operator
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
-    definition: "{{ lookup('file', 'rabbitmq-topology-operator.v.1.12.1.yml') | from_yaml_all }}"
+    src: "/tmp/rabbitmq_topology_operator_manifest.yaml"
 
 - name: Wait until CSV installed
+  loop:
+    - users.rabbitmq.com
+    - vhosts.rabbitmq.com
+    - rabbitmqclusters.rabbitmq.com
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
-    name: "vhosts.rabbitmq.com"
+    name: "{{ item }}"
     namespace: "{{ squest_namespace }}"
     wait: yes
     wait_sleep: 10
@@ -53,10 +71,10 @@
           service: rabbitmq
       type: Opaque
       stringData:
-          username: "{{ squest_rabbitmq.user }}"
-          password: "{{ squest_rabbitmq.password }}"
+        username: "{{ squest_rabbitmq.user }}"
+        password: "{{ squest_rabbitmq.password }}"
 
-- name: RabbitMQ user password secret
+- name: RabbitMQ user
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present

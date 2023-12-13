@@ -8,16 +8,24 @@
 
 The Kubernetes deployment is wrapped by Ansible. The code has been tested with Ansible version `2.15.5`.
 
+### Ansible
+
 Install Ansible dependencies:
 
 ```bash
 ansible-galaxy install -r k8s/requirements.yml
 ```
 
+### Python
+
 Install Python dependencies:
 ```bash
 pip3 install -r k8s/requirements.txt
 ```
+
+### Helm
+
+Operators installation is handled by Helm. Follow [the official documentation](https://helm.sh/docs/intro/install/) to install Helm on your workstation.
 
 ## Ansible inventory
 
