@@ -52,7 +52,7 @@ squest_django:
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
-    REDIS_CACHE_HOST: "rfrm-redis"
+    REDIS_CACHE_HOST: "redis-standalone"
     DEBUG: "true"
     DB_USER: "{{ squest_db.user }}"
     DB_PASSWORD: "{{ squest_db.password }}"

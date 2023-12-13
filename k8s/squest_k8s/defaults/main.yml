@@ -1,0 +1,13 @@
+prometheus_operator_crds_chart_version: "8.0.1"
+
+cert_manager_chart_version: "v1.13.3"
+
+mariadb_operator_chart_version: "0.23.1"
+
+rabbitmq_operator_chart_version: "3.10.7"
+
+rabbitmq_topology_operator_manifest_version: "v1.12.2"
+rabbitmq_topology_operator_manifest_url: "https://github.com/rabbitmq/messaging-topology-operator/releases/download/{{ rabbitmq_topology_operator_manifest_version }}/messaging-topology-operator-with-certmanager.yaml"
+
+# Redis operator: https://github.com/OT-CONTAINER-KIT/redis-operator
+redis_operator_chart_version: "0.15.9"

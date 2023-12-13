@@ -1,28 +1,16 @@
-- name: Deploy Cert Manager CRDs
-  kubernetes.core.k8s:
+- name: Add helm repo for Prometheus
+  kubernetes.core.helm_repository:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
-    state: present
-    definition: "{{ lookup('file', 'cert-manager.v1.13.2.yml') | from_yaml_all }}"
+    name: prometheus-community
+    repo_url: "https://prometheus-community.github.io/helm-charts"
 
-- name: Wait until CSV installed
-  kubernetes.core.k8s_info:
+- name: Install Prometheus operator CRDs
+  kubernetes.core.helm:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
-    api_version: "apiextensions.k8s.io/v1"
-    kind: CustomResourceDefinition
-    name: "certificates.cert-manager.io"
-    namespace: "{{ squest_namespace }}"
-    wait: yes
-    wait_sleep: 10
-    wait_timeout: 600
-    wait_condition:
-      type: Established
-      status: "True"
-
-- name: Deploy Prometheus CRDs
-  kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
-    state: present
-    definition: "{{ lookup('file', 'prometheus-operator.v0.70.0.yml') | from_yaml_all }}"
+    name: prometheus-operator-crds
+    release_namespace: kube-system
+    chart_version: "{{ prometheus_operator_crds_chart_version }}"
+    chart_ref: prometheus-community/prometheus-operator-crds
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
@@ -30,10 +18,55 @@
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "prometheuses.monitoring.coreos.com"
-    namespace: "{{ squest_namespace }}"
+    namespace: "default"
     wait: yes
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
       type: Established
+      status: "True"
+
+- name: Add helm repo for Cert Manager
+  kubernetes.core.helm_repository:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    name: "jetstack"
+    repo_url: "https://charts.jetstack.io"
+
+- name: Install Cert Manager
+  kubernetes.core.helm:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    name: cert-manager
+    release_namespace: cert-manager
+    create_namespace: true
+    chart_version: "{{ cert_manager_chart_version }}"
+    chart_ref: jetstack/cert-manager
+    values:
+      installCRDs: true
+
+- name: Wait until CSV installed
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    api_version: "apiextensions.k8s.io/v1"
+    kind: CustomResourceDefinition
+    name: "certificates.cert-manager.io"
+    namespace: "default"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Established
+      status: "True"
+
+- name: Wait until Cert manager deployment available
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    api_version: "apps/v1"
+    kind: Deployment
+    name: "cert-manager"
+    namespace: "cert-manager"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Available
       status: "True"
