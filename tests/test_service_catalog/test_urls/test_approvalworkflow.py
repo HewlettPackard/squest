@@ -52,6 +52,16 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
                 }
             ),
             TestingGetContextView(
+                url='service_catalog:approvalworkflow_reset_requests',
+                perm_str='service_catalog.re_submit_request',
+                url_kwargs={'pk': self.approval_workflow.id}
+            ),
+            TestingPostContextView(
+                url='service_catalog:approvalworkflow_reset_requests',
+                perm_str='service_catalog.re_submit_request',
+                url_kwargs={'pk': self.approval_workflow.id}
+            ),
+            TestingGetContextView(
                 url='service_catalog:approvalworkflow_delete',
                 perm_str='service_catalog.delete_approvalworkflow',
                 url_kwargs={'pk': self.approval_workflow.id}

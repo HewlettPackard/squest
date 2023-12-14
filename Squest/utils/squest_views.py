@@ -256,7 +256,8 @@ class SquestConfirmView(LoginRequiredMixin, SquestPermissionRequiredMixin, Singl
         return self.get_object().get_absolute_url()
 
     def get_permission_required(self):
-        pass
+        if self.permission_required is not None:
+            return self.permission_required
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
