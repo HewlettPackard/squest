@@ -3,15 +3,23 @@
     background-color: #343a40 !important;
     color: #fff !important;
 }
+
 .bg-dark table tr {
     background-color: #343a40 !important;
     color: #fff !important;
 }
 
+.bg-dark blockquote {
+    background-color: #343a40 !important;
+    color: #fff !important;
+}
+
+
 .dtfc-fixed-left {
     background-color: #343a40 !important;
     z-index: 1;
 }
+
 input.form-control[disabled] {
     opacity: 0.4;
 }
