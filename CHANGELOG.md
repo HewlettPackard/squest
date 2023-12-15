@@ -1,4 +1,8 @@
-# dev
+# 2.4.0 2023-12-15
+
+## Breaking changes ⚠
+
+- Rename "NEED INFO" state into "ON HOLD", related urls changed
 
 ## Enhancement
 
@@ -7,21 +11,29 @@
 - Remove "operations" field in ApprovalWorkflow form when editing
 - Add the number of items displayed at the end of lists
 - Improve API performance for /api/service-catalog/request/ and /api/service-catalog/instance/
-- Improve performance in homepage when several requests where displayed in "To be reviewed"
+- Improve performance in homepage when several requests where displayed in "To be reviewed"*
+- Cache is disabled during django command execution (e.g. migration, collect-static,...)
+- In quota filter, display the Organization and Team name instead of the Team name
+- Service details page added
 
 ## Feature
 
+- Support Kubernetes deployment (Beta)
 - Service request for team will automatically use the approval workflow set by the parent organization
 - ApprovalWorkflow can now reset all submitted requests using (or no more using) the workflow
 - In RequestDetail, Submitted request can now be re_submit to reset all approval steps (Permission "service_catalog.re_submit_request" needed)
 - Add new permission "service_catalog.list_approvers" that allow users to see who can accept a request
-
+- Link attributes to services
 
 ## Fix
 
 - Fix step ordering in RequestDetail
 - Fix bug on DeleteView related to Django 4
 - Cancel button was not displayed in RequestDetail when using ApprovalWorkflow
+- Documentation contrast fixed when using dark mode
+- Notifications were not sent when filtering on states
+- Squest survey fields are sorted in the same way as AWX survey fields.
+- Fix TypeError error when social login (OIDC) is enabled
 
 # 2.3.1 2023-11-10
 
