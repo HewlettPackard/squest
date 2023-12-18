@@ -68,10 +68,10 @@ class Operation(SquestModel):
             for field in spec_list:
                 squest_field, created = TowerSurveyField.objects.get_or_create(
                     variable=field['variable'],
-                    position=position,
                     operation=self,
                     defaults={
                         'is_customer_field': True,
+                        'position': position,
                         'name': field['question_name'],
                         'description': field['question_description'],
                         'type': field['type'],
