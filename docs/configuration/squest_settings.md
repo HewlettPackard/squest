@@ -301,7 +301,12 @@ Comma separated list of allowed FQDN. Refer to the complete [documentation](http
 
 **Default:** `http://127.0.0.1:8080,http://localhost:8080`
 
+Comma separated list of trusted origin. 
 Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins).
+
+!!! note
+
+    If you deploy with `http://1.2.3.4:8080`, please add `CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080,http://1.2.3.4:8080` in your variables.
 
 ### CELERY_BROKER_URL
 
