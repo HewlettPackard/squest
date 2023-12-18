@@ -1,4 +1,14 @@
+# 2.4.1 2023-12-18
+
+## Fix
+
+- Fix duplicate fields after sync AWX
+- Fix requirement for k8s deployment
+
 # 2.4.0 2023-12-15
+
+⚠ Please do not use this version, as the survey fields may be duplicated during AWX sync.
+This error is fixed in the 2.4.1 version and a database cleanup is performed during migration.
 
 ## Breaking changes ⚠
 
