@@ -47,7 +47,8 @@ class SquestIntegerField(FormsIntegerField):
 
 class TowerSurveyField(SquestModel):
     class Meta(SquestModel.Meta):
-        unique_together = ('operation', 'position', 'variable',)
+        unique_together = ('operation', 'variable')
+        ordering = ('position',)
 
     variable = CharField(null=False, blank=False, max_length=200)
     position = IntegerField(default=0)
