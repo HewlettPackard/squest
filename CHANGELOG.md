@@ -1,3 +1,9 @@
+# dev
+
+## Fix 
+
+- Hide disabled operations from Instance view
+
 # 2.4.1 2023-12-18
 
 ## Fix
