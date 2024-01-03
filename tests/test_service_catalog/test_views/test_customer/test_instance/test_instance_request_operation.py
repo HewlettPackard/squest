@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Request, RequestMessage
+from service_catalog.models import Request, RequestMessage, Doc
 from service_catalog.models.instance import InstanceState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -102,3 +102,19 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         self.assertEqual(created_request.comments.count(), 1)
         self.assertEqual(created_request.comments.first().content, "here_is_a_comment")
         self.assertEqual(created_request.comments.first().sender, self.superuser)
+
+    def test_doc_template_with_instance_when_requesting_day2(self):
+        self.new_doc = Doc.objects.create(title="test_doc", content="start {{ instance.spec.dns }} end")
+        self.new_doc.operations.add(self.update_operation_test)
+
+        self.test_instance.spec["dns"] = "name.domain.local"
+        self.test_instance.save()
+
+        args = {
+            'instance_id': self.test_instance.id,
+            'operation_id': self.update_operation_test.id
+        }
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertIn(b"start name.domain.local end", response.content)

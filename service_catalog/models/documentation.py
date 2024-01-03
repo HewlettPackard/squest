@@ -1,4 +1,5 @@
 from django.db.models import CharField, ManyToManyField
+from jinja2 import Template
 from martor.models import MartorField
 
 from Squest.utils.squest_model import SquestModel
@@ -25,3 +26,12 @@ class Doc(SquestModel):
 
     def __str__(self):
         return self.title
+
+    def render(self, instance=None):
+        if instance is None:
+            return self.content
+        template = Template(self.content)
+        context = {
+            "instance": instance
+        }
+        return template.render(context)
