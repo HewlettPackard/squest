@@ -68,3 +68,33 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def test_get_doc_page(self):
         response = self.client.get(reverse('service_catalog:doc_details', args=[self.new_doc.id]))
         self.assertEqual(200, response.status_code)
+
+    def test_get_doc_page_with_instance(self):
+        self.test_instance.spec["dns"] = "name.domain.local"
+        self.test_instance.save()
+        self.new_doc.content = "start {{ instance.spec.dns }} end"
+        self.new_doc.save()
+        response = self.client.get(reverse('service_catalog:doc_details',
+                                           args=[self.new_doc.id, self.test_instance.id]))
+        self.assertEqual(200, response.status_code)
+        self.assertIn(b"start name.domain.local end", response.content)
+
+        # selected attribute not present in the instance spec
+        self.test_instance.spec = {}
+        self.test_instance.save()
+        response = self.client.get(reverse('service_catalog:doc_details',
+                                           args=[self.new_doc.id, self.test_instance.id]))
+        self.assertEqual(200, response.status_code)
+        self.assertIn(b"start  end", response.content)
+
+        # user has no right on the instance
+        self.client.force_login(self.standard_user_2)
+        response = self.client.get(reverse('service_catalog:doc_details',
+                                           args=[self.new_doc.id, self.test_instance.id]))
+        self.assertEqual(403, response.status_code)
+
+        # user has right on the instance
+        self.client.force_login(self.standard_user)
+        response = self.client.get(reverse('service_catalog:doc_details',
+                                           args=[self.new_doc.id, self.test_instance.id]))
+        self.assertEqual(200, response.status_code)

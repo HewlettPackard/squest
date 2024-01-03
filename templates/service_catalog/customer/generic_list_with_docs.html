@@ -1,12 +1,7 @@
 {% extends 'base.html' %}
 {% load martortags %}
-{% block header_button %}
-    {% if html_button_path %}
-        {% include html_button_path %}
-    {% endif %}
-{% endblock %}
+
 {% block main %}
-    <div class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-6">
@@ -22,9 +17,7 @@
                 </div>
             </div>
         </div>
-    </div>
     {% load static %}
-    <script src="{% static 'squest/js/admin_service_form.js' %}"></script>
     <script src="{% static 'admin-lte/plugins/daterangepicker/daterangepicker.js' %}"></script>
     <script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
     <script src="{% static 'admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js' %}"></script>

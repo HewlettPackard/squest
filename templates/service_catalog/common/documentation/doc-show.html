@@ -1,45 +1,37 @@
 {% extends 'base.html' %}
 {% block title %}
- Docs
-{%  endblock %}
+    Docs #{{ doc.id }}
+{% endblock %}
 {% load static %}
 {% load martortags %}
 
-{% block content %}
-    <div class="content-wrapper">
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        {% include "generics/breadcrumbs.html" %}
-                    </div>
-                    <div class="col-sm-6">
-                        {% if request.user.is_staff %}
-                            <a class="btn btn-default float-sm-right" href="{% url 'admin:service_catalog_doc_change' doc.id %}">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
-                            {{ doc.content|safe_markdown }}
-                        </div>
-                    </div>
+
+
+{% block extra_header_button %}
+    {% if request.user.is_staff %}
+        <a class="btn btn-default float-sm-right"
+           href="{% url 'admin:service_catalog_doc_change' doc.id %}">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
+                    {{ rendered_doc | safe_markdown }}
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
+
 {% block js %}
     <script type="text/javascript" src="{% static 'plugins/js/highlight.min.js' %}"></script>
     <script>
-        $('.martor-preview pre').each(function(i, block){
+        $('.martor-preview pre').each(function (i, block) {
             hljs.highlightBlock(block);
         });
     </script>

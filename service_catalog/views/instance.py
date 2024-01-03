@@ -25,6 +25,10 @@ from service_catalog.tables.operation_tables import OperationTableFromInstanceDe
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.tables.support_tables import SupportTable
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class InstanceListViewGeneric(SquestListView):
     table_class = InstanceTable
@@ -163,6 +167,21 @@ def instance_request_new_operation(request, instance_id, operation_id):
     else:
         form = OperationRequestForm(request.user, **parameters)
     docs = Doc.objects.filter(operations__in=[operation])
+    # add instance so it can be used in doc templating
+    rendered_docs = list()
+    for doc in docs:
+        rendered_doc = doc.content
+        try:
+            rendered_doc = doc.render(instance)
+        except UndefinedError as e:
+            logger.warning(f"Error: {e.message}, instance: {instance}, doc: {doc}")
+            messages.warning(request, f'Failure while templating documentation: {doc.title}. {e.message}')
+        rendered_docs.append({
+            "id": doc.id,
+            "rendered_doc": rendered_doc,
+            "title": doc.title
+        })
+
     context = {
         'form': form,
         'operation': operation,
@@ -176,7 +195,7 @@ def instance_request_new_operation(request, instance_id, operation_id):
         'icon_button': "fas fa-shopping-cart",
         'text_button': "Request the operation",
         'color_button': "success",
-        'docs': docs
+        'docs': rendered_docs
     }
     return render(request, 'service_catalog/customer/generic_list_with_docs.html', context)
 
