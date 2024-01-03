@@ -18,7 +18,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
-                    {{ doc.content|safe_markdown }}
+                    {{ doc.rendered_doc| safe_markdown }}
                 </div>
             </div>
         </div>

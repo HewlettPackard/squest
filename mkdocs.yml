@@ -39,6 +39,7 @@ nav:
       - Service: manual/service_catalog/service.md
       - Operation: manual/service_catalog/operation.md
       - Survey: manual/service_catalog/survey.md
+      - Docs: manual/service_catalog/docs.md
     - Resource tracking:
       - Concept: manual/resource_tracking/concept.md
       - Attribute: manual/resource_tracking/attributes.md

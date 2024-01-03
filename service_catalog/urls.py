@@ -104,6 +104,7 @@ urlpatterns = [
     # Doc CRUD
     path('doc/', views.DocListView.as_view(), name='doc_list'),
     path('doc/<int:pk>/', views.doc_details, name='doc_details'),
+    path('doc/<int:pk>/instance/<int:instance_id>/', views.doc_details, name='doc_details'),
 
     # Tower server CRUD
     path('tower/', views.TowerServerListView.as_view(), name='towerserver_list'),
