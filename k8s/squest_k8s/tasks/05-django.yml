@@ -237,6 +237,7 @@
               - ip: "127.0.0.1"
                 hostnames:
                   - "django"  # to match nginx config
+                  - "maintenance"  # to match nginx config
             initContainers:
               - name: wait-for-migration
                 image: ghcr.io/groundnuty/k8s-wait-for:v2.0
