@@ -80,14 +80,6 @@
                                     {% endfor %}
                                 </li>
                             {% endif %}
-                            <li class="list-group-item border-bottom-0">
-                                <b>Docs</b>
-                                {% for doc in object.docs %}
-                                    <a class="float-right" href="{% url 'service_catalog:doc_details' pk=doc.id instance_id=object.id %}">
-                                        {{ doc.title }}
-                                    </a> <br>
-                                {% endfor %}
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -112,6 +104,9 @@
                                     <a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
                                 </li>
                             {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#docs" data-toggle="tab">Docs</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
@@ -171,6 +166,9 @@
                                 {% if requests_table %}
                                     {% render_table requests_table %}
                                 {% endif %}
+                            </div>
+                            <div class="tab-pane" id="docs">
+                                {% include "generics/doc_aside.html" with expanded=False %}
                             </div>
                         </div>
                     </div>

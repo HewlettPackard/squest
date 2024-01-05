@@ -1,8 +1,12 @@
 from django.db.models import CharField, ManyToManyField
-from jinja2 import Template
+from jinja2 import Template, UndefinedError, TemplateSyntaxError, TemplateError
 from martor.models import MartorField
 
 from Squest.utils.squest_model import SquestModel
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Doc(SquestModel):
@@ -30,7 +34,15 @@ class Doc(SquestModel):
     def render(self, instance=None):
         if instance is None:
             return self.content
-        template = Template(self.content)
+        try:
+            template = Template(self.content)
+        except UndefinedError as e:
+            logger.warning(f"Error: {e.message}, instance: {instance}, doc: {self}")
+            raise TemplateError(e)
+        except TemplateSyntaxError as e:
+            logger.warning(f"Error: {e.message}, instance: {instance}, doc: {self}")
+            raise TemplateError(e)
+
         context = {
             "instance": instance
         }
