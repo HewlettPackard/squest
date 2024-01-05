@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_fsm import can_proceed
 from Squest.utils.squest_table import SquestRequestConfig
-from jinja2 import UndefinedError
+from jinja2 import UndefinedError, TemplateError
 
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
     SquestPermissionDenied
@@ -126,6 +126,22 @@ class InstanceDetailView(SquestDetailView):
             )
             config.configure(context['supports_table'])
 
+        # doc
+        rendered_docs = list()
+        for doc in self.get_object().docs:
+            rendered_doc = doc.content
+            try:
+                rendered_doc = doc.render(self.get_object())
+            except TemplateError as e:
+                logger.warning(f"Error: {e.message}, instance: {self.get_object()}, doc: {doc}")
+                messages.warning(self.request, f'Failure while templating documentation: {doc.title}. {e.message}')
+            rendered_docs.append({
+                "id": doc.id,
+                "content": rendered_doc,
+                "title": doc.title
+            })
+        context["docs"] = rendered_docs
+
         return context
 
 
@@ -175,12 +191,12 @@ def instance_request_new_operation(request, instance_id, operation_id):
         rendered_doc = doc.content
         try:
             rendered_doc = doc.render(instance)
-        except UndefinedError as e:
+        except TemplateError as e:
             logger.warning(f"Error: {e.message}, instance: {instance}, doc: {doc}")
             messages.warning(request, f'Failure while templating documentation: {doc.title}. {e.message}')
         rendered_docs.append({
             "id": doc.id,
-            "rendered_doc": rendered_doc,
+            "content": rendered_doc,
             "title": doc.title
         })
 
