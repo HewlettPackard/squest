@@ -1,13 +1,13 @@
 from django import forms
 
+from Squest.utils.squest_form import SquestForm
 from service_catalog.forms.form_generator import FormGenerator
 from service_catalog.models import Request, RequestMessage
 
 EXCLUDED_SURVEY_FIELDS = ["request_comment"]
 
 
-class OperationRequestForm(forms.Form):
-
+class OperationRequestForm(SquestForm):
     request_comment = forms.CharField(label="Comment",
                                       help_text="Add a comment to your request",
                                       widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
@@ -40,3 +40,16 @@ class OperationRequestForm(forms.Form):
         from service_catalog.mail_utils import send_mail_request_update
         send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
+
+    def clean(self):
+        super().clean()
+        for validators in self.operation.get_validators():
+            # load dynamically the user provided validator
+            validators(
+                survey=self.cleaned_data,
+                user=self.user,
+                operation=self.operation,
+                instance=self.instance,
+                form=self
+            )._validate()
+        return self.cleaned_data

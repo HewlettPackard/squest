@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from service_catalog.models import Request
+from service_catalog.models import Request, InstanceState
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
 
 
@@ -9,6 +9,8 @@ class TestApiOperationRequestCreate(BaseTestRequestAPI):
 
     def setUp(self):
         super(TestApiOperationRequestCreate, self).setUp()
+        self.test_instance.state = InstanceState.AVAILABLE
+        self.test_instance.save()
         self.kwargs = {
             "instance_id": self.test_instance.id,
             "operation_id": self.update_operation_test.id,
@@ -19,7 +21,7 @@ class TestApiOperationRequestCreate(BaseTestRequestAPI):
                 'text_variable': 'my text'
             }
         }
-        self.expected = {'text_variable': 'my text'}
+        self.expected = {'text_variable': 'my text', 'request_comment': None}
 
     def test_can_create(self):
         request_count = Request.objects.count()

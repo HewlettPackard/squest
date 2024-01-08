@@ -16,7 +16,7 @@ class TowerSurveyFieldForm(SquestModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         validator_choices = list()
-        validator_files = [(file_name, file_name) for file_name in PluginController.get_user_provisioned_validators()]
+        validator_files = [(file_name, file_name) for file_name in PluginController.get_user_provisioned_field_validators()]
         validator_choices.extend(validator_files)
         self.fields['validators'].choices = validator_choices
         self.fields['attribute_definition'].choices = [(None, "---------")]
