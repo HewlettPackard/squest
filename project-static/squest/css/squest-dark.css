@@ -1,3 +1,6 @@
+footer{
+    z-index: auto !important;
+}
 /*fix select button color*/
 .btn-light {
     background-color: #343a40 !important;
