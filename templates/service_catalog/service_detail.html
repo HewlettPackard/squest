@@ -26,6 +26,7 @@
                         <div class="text-center">
                             <img class="card-img-top" src="
 
+
                                     {% if object.image %}{{ object.image.url }}{% else %}{% static '/squest/img/no_image.png' %}{% endif %}"
                                  alt="Service image">
                         </div>
@@ -54,6 +55,15 @@
                                         <span class="badge bg-primary">{{ attribute.name }}</span>
                                     {% endfor %}
                                 </span>
+                            </li>
+                            <li class="list-group-item border-bottom-0">
+                                <b>Docs</b>
+                                {% for doc in object.docs.all %}
+                                    <a class="float-right"
+                                       href="{% url 'service_catalog:doc_details' pk=doc.id %}">
+                                        {{ doc.title }}
+                                    </a> <br>
+                                {% endfor %}
                             </li>
                         </ul>
                     </div>
