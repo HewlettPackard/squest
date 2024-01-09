@@ -4,6 +4,9 @@
 
 - CSS issue in documentation rendering for <pre></pre> block in dark theme
 
+## Enhancement
+
+- List related docs in OperationDetails and ServiceDetails view
 # 2.5.0 2024-01-09
 
 ## Fix 
