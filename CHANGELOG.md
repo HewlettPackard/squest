@@ -1,12 +1,18 @@
-# dev
+# 2.5.0 2024-01-09
 
 ## Fix 
 
-- Hide disabled operations from Instance view
+- Disabled operations were not removed from Instance view
+- Long dropdown choices were hidden behind the footer
+
+## Enhancement
+
+- Docs are now displayed in a dedicated tab in the instance details
 
 ## Feature
 
-- Add SurveyValidator on Operation. It allows you to implement your own validation logic with Python on the entire form. See documentation [here](https://hewlettpackard.github.io/squest/latest/manual/advanced/survey_validators/)
+- doc templating
+- Survey validator (Replace field validator which is now deprecated and will be removed in future release)
 
 # 2.4.1 2023-12-18
 
