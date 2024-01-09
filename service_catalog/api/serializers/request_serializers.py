@@ -1,6 +1,6 @@
 from json import dumps, loads
 
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, CharField
 
@@ -8,7 +8,10 @@ from Squest.utils.squest_encoder import SquestEncoder
 from profiles.api.serializers.user_serializers import UserSerializerNested
 from profiles.models import Scope
 from service_catalog.api.serializers import DynamicSurveySerializer, InstanceReadSerializer
-from service_catalog.models.instance import Instance
+from service_catalog.models import InstanceState, OperationType
+
+
+from service_catalog.models import Instance, FakeInstance
 from service_catalog.models.message import RequestMessage
 from service_catalog.models.request import Request
 
@@ -41,21 +44,32 @@ class ServiceRequestSerializer(ModelSerializer):
     def validate(self, data):
         super(ServiceRequestSerializer, self).validate(data)
         quota_scope = data.get("quota_scope")
-        fill_in_survey = data.get("fill_in_survey")
+        fill_in_survey = data.get("fill_in_survey", {})
+        request_comment = data.get("request_comment")
         # validate the quota if set on one of the fill_in_survey
-        if fill_in_survey is not None:
-            for field_name, value in fill_in_survey.items():
-                # get the tower field
-                tower_field = self.operation.tower_survey_fields.get(variable=field_name)
-                if tower_field.attribute_definition is not None:
-                    # try to find the field in the quota linked to the scope
-                    quota_set_on_attribute = quota_scope.quotas.filter(attribute_definition=tower_field.attribute_definition)
-                    if quota_set_on_attribute.exists():
-                        quota_set_on_attribute = quota_set_on_attribute.first()
-                        if value > quota_set_on_attribute.available:
-                            raise ValidationError({"fill_in_survey":
-                                                       f"Quota limit reached on '{field_name}'. "
-                                                       f"Available: {quota_set_on_attribute.available}"})
+        for field_name, value in fill_in_survey.items():
+            # get the tower field
+            tower_field = self.operation.tower_survey_fields.get(variable=field_name)
+            if tower_field.attribute_definition is not None:
+                # try to find the field in the quota linked to the scope
+                quota_set_on_attribute = quota_scope.quotas.filter(
+                    attribute_definition=tower_field.attribute_definition)
+                if quota_set_on_attribute.exists():
+                    quota_set_on_attribute = quota_set_on_attribute.first()
+                    if value > quota_set_on_attribute.available:
+                        raise ValidationError({"fill_in_survey":
+                                                   f"Quota limit reached on '{field_name}'. "
+                                                   f"Available: {quota_set_on_attribute.available}"})
+        fill_in_survey.update({"request_comment": request_comment})
+        for validators in self.operation.get_validators():
+            # load dynamically the user provided validator
+            validators(
+                survey=fill_in_survey,
+                user=self.user,
+                operation=self.operation,
+                instance=FakeInstance(quota_scope=quota_scope, name=data.get("squest_instance_name")),
+                form=None
+            )._validate()
         return data
 
     def save(self):
@@ -116,6 +130,36 @@ class OperationRequestSerializer(ModelSerializer):
         from service_catalog.mail_utils import send_mail_request_update
         send_mail_request_update(target_request=new_request, user_applied_state=new_request.user, message=message)
         return new_request
+
+    def validate(self, data):
+        super(OperationRequestSerializer, self).validate(data)
+
+        if self.operation.is_admin_operation and not self.user.has_perm("service_catalog.admin_request_on_instance"):
+            raise PermissionDenied
+        if not self.operation.is_admin_operation and not self.user.has_perm("service_catalog.request_on_instance"):
+            raise PermissionDenied
+        if self.squest_instance.state not in [InstanceState.AVAILABLE]:
+            raise PermissionDenied("Instance not available")
+        if self.operation.enabled is False:
+            raise PermissionDenied(f"Operation is not enabled.")
+        if self.operation.service.id != self.squest_instance.service.id:
+            raise PermissionDenied("Operation service and instance service doesn't match")
+        if self.operation.type not in [OperationType.UPDATE, OperationType.DELETE]:
+            raise PermissionDenied("Operation type UPDATE and DELETE only")
+        fill_in_survey = data.get("fill_in_survey")
+        request_comment = data.get("request_comment")
+        fill_in_survey.update({"request_comment": request_comment})
+
+        for validators in self.operation.get_validators():
+            # load dynamically the user provided validator
+            validators(
+                survey=fill_in_survey,
+                user=self.user,
+                operation=self.operation,
+                instance=self.squest_instance,
+                form=None
+            )._validate()
+        return data
 
 
 class RequestSerializer(ModelSerializer):

@@ -4,6 +4,10 @@
 
 - Hide disabled operations from Instance view
 
+## Feature
+
+- Add SurveyValidator on Operation. It allows you to implement your own validation logic with Python on the entire form. See documentation [here](https://hewlettpackard.github.io/squest/latest/manual/advanced/survey_validators/)
+
 # 2.4.1 2023-12-18
 
 ## Fix

@@ -523,6 +523,7 @@ SWAGGER_SETTINGS = {
 # Plugins
 # -----------------------------------------
 FIELD_VALIDATOR_PATH = "plugins/field_validators"
+SURVEY_VALIDATOR_PATH = "plugins/survey_validators"
 
 # -----------------------------------------
 # SQL Debug

@@ -337,9 +337,19 @@ Change the format of all date in Squest UI. Based on Python [strftime](https://s
 
 ### FIELD_VALIDATOR_PATH
 
+!!!warning
+
+    FIELD_VALIDATOR_PATH is now deprecated. Please use [SURVEY_VALIDATOR_PATH](#survey_validator_path) instead.
+
 **Default:** `plugins/field_validators`
 
 Path to form field validation modules.
+
+### SURVEY_VALIDATOR_PATH
+
+**Default:** `plugins/survey_validators`
+
+Path to SurveyValidator modules.
 
 ## Redis
 

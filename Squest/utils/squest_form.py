@@ -16,8 +16,9 @@ class SquestForm(Form):
     def is_valid(self):
         returned_value = super(SquestForm, self).is_valid()
         for field_name in self.errors.keys():
-            current_class = self.fields.get(field_name).widget.attrs.get('class', '')
-            self.fields.get(field_name).widget.attrs['class'] = f"{current_class} {self.error_css_class}"
+            if field_name != "__all__":
+                current_class = self.fields.get(field_name).widget.attrs.get('class', '')
+                self.fields.get(field_name).widget.attrs['class'] = f"{current_class} {self.error_css_class}"
         return returned_value
 
     def beautify(self):

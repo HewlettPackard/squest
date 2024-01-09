@@ -32,7 +32,7 @@ class SetupDummyAWXCommon(TransactionTestCase):
                 "required": False,
                 "variable": "ram",
                 "new_question": False,
-                "question_name": "ram",
+                "question_name": "RAM",
                 "question_description": ""
             }
         ]

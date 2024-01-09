@@ -31,7 +31,7 @@ services:
       - django_static:/app/static
       - django_media:/app/media
       - backup:/app/backup
-      - ./plugins/field_validators:/app/plugins/field_validators
+      - ./plugins:/app/plugins
     depends_on:
       - db
       - rabbitmq
