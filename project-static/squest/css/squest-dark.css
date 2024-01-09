@@ -7,7 +7,7 @@ footer{
     color: #fff !important;
 }
 
-.bg-dark table tr,.bg-dark blockquote,.bg-dark pre {
+.bg-dark table tr,.bg-dark blockquote,details.bg-dark pre {
     background-color: #343a40 !important;
     color: #fff !important;
 }

@@ -1,3 +1,9 @@
+# dev 
+
+## Fix 
+
+- CSS issue in documentation rendering for <pre></pre> block in dark theme
+
 # 2.5.0 2024-01-09
 
 ## Fix 
