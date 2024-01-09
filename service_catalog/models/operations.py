@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operation_type import OperationType
@@ -49,6 +50,18 @@ class Operation(SquestModel):
                                   help_text="Jinja supported. Show changes")
     default_job_type = CharField(max_length=500, blank=True, null=True,
                                  help_text="Jinja supported. Job template type")
+    validators = CharField(null=True, blank=True, max_length=200, verbose_name="Survey validators")
+
+    def get_validators(self):
+        validators = list()
+        if self.validators is not None:
+            all_validators = self.validators.split(",")
+            all_validators.sort()
+            for validator_file in all_validators:
+                validator = PluginController.get_survey_validator_def(validator_file)
+                if validator:
+                    validators.append(validator)
+        return validators
 
     def __str__(self):
         return f"{self.name} ({self.service})"

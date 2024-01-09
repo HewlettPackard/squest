@@ -37,8 +37,10 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
         if step == "1":
             # add data from step 0
             scope_id = self.storage.data['step_data']['0']['0-quota_scope'][0]
+            instance_name = self.storage.data['step_data']['0']['0-name'][0]
             quota_scope = get_object_or_404(Scope, id=scope_id)
             kwargs.update({'quota_scope': quota_scope})
+            kwargs.update({'instance_name': instance_name})
         return kwargs
 
     def get_template_names(self):

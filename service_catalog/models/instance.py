@@ -220,3 +220,12 @@ post_save.connect(Instance.on_create_call_hook_manager, sender=Instance)
 @receiver(pre_delete, sender=Instance)
 def pre_delete(sender, instance, **kwargs):
     instance.delete_linked_resources()
+
+
+class FakeInstance(Instance):
+    class Meta:
+        proxy = True
+        managed = False
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        return False

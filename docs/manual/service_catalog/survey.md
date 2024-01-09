@@ -49,8 +49,8 @@ Full `instance` and `user `object definition can be retrieved through the [API d
 
 ## Validators
 
-Field validators are python modules that can be added as plugin to perform a custom check on a form field.
-See related [documentation here](../advanced/validators.md).
+SurveyValidator are python modules that can be added as plugins to perform a custom check on your form.
+See related [documentation here](../advanced/survey_validators.md).
 
 
 ## Attribute definition

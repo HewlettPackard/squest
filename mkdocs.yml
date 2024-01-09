@@ -54,7 +54,8 @@ nav:
     - Advanced:
         - manual/advanced/filters.md
         - manual/advanced/jinja.md
-        - manual/advanced/validators.md
+        - manual/advanced/field_validators.md
+        - manual/advanced/survey_validators.md
         - manual/advanced/ldap.md
     - Notifications: manual/notifications.md
   - Administration:

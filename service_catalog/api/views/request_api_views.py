@@ -18,11 +18,12 @@ class RequestList(SquestListAPIView):
 
     def get_queryset(self):
         return Request.get_queryset_for_user(self.request.user, 'service_catalog.view_request').prefetch_related(
-                "user", "operation", "instance__requester","instance__requester__profile","instance__resources","instance__requester__groups" ,"instance__quota_scope", "instance__service",
-                "operation__service", "approval_workflow_state", "approval_workflow_state__approval_workflow",
-                "approval_workflow_state__current_step",
-                "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
-            )
+            "user", "operation", "instance__requester", "instance__requester__profile", "instance__resources",
+            "instance__requester__groups", "instance__quota_scope", "instance__service",
+            "operation__service", "approval_workflow_state", "approval_workflow_state__approval_workflow",
+            "approval_workflow_state__current_step",
+            "approval_workflow_state__current_step__approval_step", "approval_workflow_state__approval_step_states"
+        )
 
     def get_serializer_class(self):
         if self.request.user.has_perm("service_catalog.view_admin_survey"):
@@ -62,11 +63,6 @@ class OperationRequestCreate(SquestCreateAPIView):
         operation = get_object_or_404(
             Operation,
             id=kwargs.get('operation_id'), type__in=[OperationType.UPDATE, OperationType.DELETE], enabled=True)
-
-        if operation.is_admin_operation and not self.request.user.has_perm("service_catalog.admin_request_on_instance"):
-            raise PermissionDenied
-        if not operation.is_admin_operation and not self.request.user.has_perm("service_catalog.request_on_instance"):
-            raise PermissionDenied
 
         serializer = self.get_serializer(operation=operation, instance=self.get_object(), user=request.user,
                                          data=request.data)
