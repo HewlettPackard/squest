@@ -80,6 +80,9 @@ def home(request):
         service_dict["hold_requests"] = sum([x["count"] for x in all_requests if
                                                   x["state"] == RequestState.ON_HOLD and x[
                                                       "instance__service"] == service.id])
+        service_dict["processing_requests"] = sum([x["count"] for x in all_requests if
+                                                  x["state"] == RequestState.PROCESSING and x[
+                                                      "instance__service"] == service.id])
 
         service_dict["opened_supports"] = sum([x["count"] for x in all_supports if
                                                x["state"] == SupportState.OPENED and x[

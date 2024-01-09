@@ -7,6 +7,8 @@
 ## Enhancement
 
 - List related docs in OperationDetails and ServiceDetails view
+- Add PROCESSING requests in the dashboard of the main page
+
 # 2.5.0 2024-01-09
 
 ## Fix 
