@@ -7,16 +7,10 @@ footer{
     color: #fff !important;
 }
 
-.bg-dark table tr {
+.bg-dark table tr,.bg-dark blockquote,.bg-dark pre {
     background-color: #343a40 !important;
     color: #fff !important;
 }
-
-.bg-dark blockquote {
-    background-color: #343a40 !important;
-    color: #fff !important;
-}
-
 
 .dtfc-fixed-left {
     background-color: #343a40 !important;

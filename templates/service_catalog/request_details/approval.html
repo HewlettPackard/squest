@@ -16,8 +16,8 @@
             <h3 class="timeline-header">Requested by <a
                     href="{% url 'profiles:user_details' object.user.id %}">{{ object.user }}</a></h3>
             <div class="timeline-body">
-                <div class="row">
-                    <table class="col-md-6">
+                <div class="row overflow-auto">
+                    <table>
                         {% for variable_name, value in object.fill_in_survey.items %}
                             <tr>
                                 <td class="col-sm-2"><b>{{ variable_name }}</b></td>
@@ -25,21 +25,17 @@
                             </tr>
                         {% endfor %}
                     </table>
-                    <div class="col-md-6">
-                        <div class="row justify-content-end">
-                            <button data-html="true" type="button" class="btn btn-secondary m-1" data-container="body"
-                                    data-toggle="popover" data-placement="right"
-                                    data-content="<pre>{{ object.instance.user_spec | pretty_json }}</pre>">
-                                Instance spec
-                            </button>
-                            {% if can_view_admin_spec_instance %}
-                                <button data-html="true" type="button" class="btn btn-secondary m-1"
-                                        data-container="body" data-toggle="popover" data-placement="right"
-                                        data-content="<pre>{{ object.instance.spec | pretty_json }}</pre>">
-                                    Instance admin spec
-                                </button>
-                            {% endif %}
-                        </div>
+                    <div class="timeline-footer mt-2">
+                        <details class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
+                            <summary class="text-primary">Spec</summary>
+                            <pre>{{ object.instance.user_spec | pretty_json }}</pre>
+                        </details>
+                        {% if can_view_admin_spec_instance %}
+                            <details class="martor-preview{% if request.user.profile.theme == "dark" %} bg-dark{% endif %}">
+                                <summary class="text-primary">Admin spec</summary>
+                                <pre>{{ object.instance.spec | pretty_json }}</pre>
+                            </details>
+                        {% endif %}
                     </div>
                 </div>
             </div>
