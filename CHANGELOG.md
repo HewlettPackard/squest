@@ -3,6 +3,7 @@
 ## Fix 
 
 - CSS issue in documentation rendering for <pre></pre> block in dark theme
+- Template issue on documentation when applying jinja filters on None
 
 ## Enhancement
 
