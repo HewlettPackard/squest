@@ -55,8 +55,8 @@
                                             >
                                         </td>
                                         <td class="align-middle text-center">
-                                            <a href="{{ service.service.get_absolute_url }}">
-                                                {{ service.service.name }}
+                                            <a href="{% url 'service_catalog:instance_list' %}?service={{ service.service.id }}">
+                                            {{ service.service.name }}
                                             </a>
                                         </td>
                                         <td class="align-middle text-center">
@@ -131,7 +131,7 @@
                 {% if can_list_instance %}
                     <div class="col-12">
                         <!-- small card -->
-                        <div class="h-100 small-box d-flex flex-column bg-{% if total_instance > 0 %}success{%  else %}default{% endif %}">
+                        <div class="h-100 small-box d-flex flex-column bg-{% if total_instance > 0 %}success{% else %}default{% endif %}">
                             <div class="inner flex-grow-1">
                                 <h3>{{ total_instance }}</h3>
                                 <p>Available instances</p>
@@ -148,7 +148,7 @@
                 {% endif %}
                 {% if can_list_request %}
                     <div class="col-12">
-                        <div class="h-100 small-box d-flex flex-column bg-{% if total_request > 0 %}info{%  else %}default{% endif %}">
+                        <div class="h-100 small-box d-flex flex-column bg-{% if total_request > 0 %}info{% else %}default{% endif %}">
                             <!-- small card -->
                             <div class="inner flex-grow-1">
                                 <h3>{{ total_request }}</h3>
@@ -168,7 +168,7 @@
                 {% if can_list_support %}
                     <div class="col-12">
                         <!-- small card -->
-                        <div class="h-100 small-box d-flex flex-column bg-{% if total_support_opened > 0 %}warning{%  else %}default{% endif %}">
+                        <div class="h-100 small-box d-flex flex-column bg-{% if total_support_opened > 0 %}warning{% else %}default{% endif %}">
                             <div class="inner flex-grow-1">
                                 <h3>{{ total_support_opened }}</h3>
                                 <p>Opened supports</p>
