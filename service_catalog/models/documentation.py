@@ -36,14 +36,16 @@ class Doc(SquestModel):
             return self.content
         try:
             template = Template(self.content)
+            context = {
+                "instance": instance
+            }
+            return template.render(context)
         except UndefinedError as e:
             logger.warning(f"Error: {e.message}, instance: {instance}, doc: {self}")
             raise TemplateError(e)
         except TemplateSyntaxError as e:
             logger.warning(f"Error: {e.message}, instance: {instance}, doc: {self}")
             raise TemplateError(e)
-
-        context = {
-            "instance": instance
-        }
-        return template.render(context)
+        except TypeError as e:
+            logger.warning(f"Error: {e}, instance: {instance}, doc: {self}")
+            raise TemplateError(e)
