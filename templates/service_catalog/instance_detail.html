@@ -36,6 +36,11 @@
                         </div>
                         <ul class="list-group list-group-unbordered mb-3">
                             <li class="list-group-item">
+                                <b>ID</b>
+                                <strong class="float-right">{{ object.id }}</strong>
+                            </li>
+
+                            <li class="list-group-item">
                                 <b>Service</b>
                                 {% has_perm request.user "service_catalog.change_service" object.service as can_edit_service %}
 
