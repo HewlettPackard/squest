@@ -28,7 +28,7 @@ class OperationForm(SquestModelForm):
         if self.instance is not None:
             if self.instance.validators is not None:
                 # Converting comma separated string to python list
-                instance_validator_as_list = self.instance.validators.split(",")
+                instance_validator_as_list = self.instance.validators_name
                 # set the current value
                 self.initial["validators"] = instance_validator_as_list
 

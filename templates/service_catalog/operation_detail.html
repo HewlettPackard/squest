@@ -51,6 +51,14 @@
                                     </a> <br>
                                 {% endfor %}
                             </li>
+                            <li class="list-group-item border-bottom-0">
+                                <b>Validators</b>
+                                {% for validator in object.validators_name %}
+                                    <span class="float-right">
+                                        {{ validator }}
+                                    </span> <br>
+                                {% endfor %}
+                            </li>
                         </ul>
                     </div>
                 </div>
