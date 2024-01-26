@@ -11,7 +11,10 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.client.login(username=self.standard_user, password=self.common_password)
 
         self.new_doc = Doc.objects.create(title="test_doc", content="# tittle 1")
-        self.new_doc.services.add(self.service_test)
+        self.new_doc_on_service = Doc.objects.create(title="test_doc_service", content="Service")
+        self.new_doc_on_service.services.add(self.service_test)
+        self.new_doc_on_operation = Doc.objects.create(title="test_doc_operation", content="Operation")
+        self.new_doc_on_operation.operations.add(self.create_operation_test_2)
 
     def _test_can_list_doc(self):
         url = reverse('service_catalog:doc_list')
