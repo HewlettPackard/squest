@@ -4,6 +4,10 @@ Docs section allow administrators to create and link documentation to Squest ser
 
 Documentation are writen with Markdown syntax.
 
+!!!note
+
+    Docs linked to a service or an operation are not listed in the global doc list from the sidebar menu.
+
 ## Linked to services
 
 When linked to one or more service, the documentation is shown in each "instance detail" page that correspond to the type of selected services.

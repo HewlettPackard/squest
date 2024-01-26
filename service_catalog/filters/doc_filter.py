@@ -13,8 +13,6 @@ class ServiceFilter(ModelMultipleChoiceFilter):
 
 
 class DocFilter(SquestFilter):
-    services = ServiceFilter(widget=SelectMultiple(attrs={'data-live-search': "true"}))
-
     class Meta:
         model = Doc
-        fields = ['title', 'services']
+        fields = ['title']
