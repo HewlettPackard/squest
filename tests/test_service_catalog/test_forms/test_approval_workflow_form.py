@@ -32,6 +32,24 @@ class TestApprovalWorkflowForm(BaseTest):
         self.assertFalse(form.is_valid())
         self.assertIn("has already an approval workflow", form["scopes"].errors[0])
 
+    def test_clean_edit(self):
+        existing_approval = ApprovalWorkflow.objects.create(name="test",
+                                                            operation=self.create_operation_test,
+                                                            enabled=True)
+        existing_approval.scopes.set([self.test_quota_scope])
+
+        new_approval = ApprovalWorkflow.objects.create(name="test2",
+                                                       operation=self.create_operation_test,
+                                                       enabled=True)
+        data = {
+            'name': 'test_approval_workflow',
+            'operation': self.create_operation_test,
+            'scopes': [self.test_quota_scope]
+        }
+        form = ApprovalWorkflowFormEdit(data, instance=new_approval)
+        self.assertFalse(form.is_valid())
+        self.assertIn("has already an approval workflow", form["scopes"].errors[0])
+
     def test_add_scope_to_scopes(self):
         existing_approval = ApprovalWorkflow.objects.create(name="test",
                                                             operation=self.create_operation_test,
@@ -45,6 +63,24 @@ class TestApprovalWorkflowForm(BaseTest):
         }
         form = ApprovalWorkflowFormEdit(instance=existing_approval, data=data)
         self.assertTrue(form.is_valid())
+
+    def test_clean_edit_with_empty_scopes(self):
+        existing_approval = ApprovalWorkflow.objects.create(name="test",
+                                                            operation=self.create_operation_test,
+                                                            enabled=True)
+
+        new_approval = ApprovalWorkflow.objects.create(name="test2",
+                                                       operation=self.create_operation_test,
+                                                       enabled=True)
+        new_approval.scopes.set([self.test_quota_scope])
+
+        data = {
+            'name': 'test_approval_workflow',
+            'operation': self.create_operation_test
+        }
+        form = ApprovalWorkflowFormEdit(data, instance=new_approval)
+        self.assertFalse(form.is_valid())
+        self.assertIn("An approval workflow for all scopes already exists", form["scopes"].errors[0])
 
     def test_clean_with_empty_scopes(self):
         existing_approval = ApprovalWorkflow.objects.create(name="test",
