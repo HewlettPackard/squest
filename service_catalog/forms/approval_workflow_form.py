@@ -10,9 +10,12 @@ class ApprovalWorkflowForm(SquestModelForm):
         fields = ['name', 'operation', 'scopes', 'enabled']
 
     def clean(self):
-        cleaned_data = super().clean()
+        cleaned_data = super(ApprovalWorkflowForm, self).clean()
         operation = cleaned_data.get("operation")
         scopes = cleaned_data.get("scopes")
+        self.custom_clean_scopes(operation, scopes)
+
+    def custom_clean_scopes(self, operation, scopes):
         # check that selected scopes are not already in use by another approval workflow for the selected operation
         exclude_id = self.instance.id if self.instance else None
         if not scopes.exists():
@@ -29,3 +32,8 @@ class ApprovalWorkflowFormEdit(ApprovalWorkflowForm):
     class Meta:
         model = ApprovalWorkflow
         fields = ['name', 'scopes', 'enabled']
+
+    def clean(self):
+        cleaned_data = super(ApprovalWorkflowForm, self).clean()
+        scopes = cleaned_data.get("scopes")
+        self.custom_clean_scopes(self.instance.operation, scopes)
