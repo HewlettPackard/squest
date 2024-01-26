@@ -20,6 +20,9 @@ class DocListView(SquestListView):
     model = Doc
     filterset_class = DocFilter
 
+    def get_queryset(self):
+        return Doc.objects.filter(services__isnull=True, operations__isnull=True)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['html_button_path'] = ""
