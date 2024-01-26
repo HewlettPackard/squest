@@ -52,10 +52,14 @@ class Operation(SquestModel):
                                  help_text="Jinja supported. Job template type")
     validators = CharField(null=True, blank=True, max_length=200, verbose_name="Survey validators")
 
+    @property
+    def validators_name(self):
+        return self.validators.split(",") if self.validators else None
+
     def get_validators(self):
         validators = list()
         if self.validators is not None:
-            all_validators = self.validators.split(",")
+            all_validators = self.validators_name
             all_validators.sort()
             for validator_file in all_validators:
                 validator = PluginController.get_survey_validator_def(validator_file)
