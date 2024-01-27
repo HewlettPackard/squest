@@ -62,7 +62,7 @@ class ApprovalWorkflowState(SquestModel):
             return first_step.first()
         return None
 
-    def who_can_approve(self):
+    def who_can_approve(self, exclude_superuser=False):
         if self.current_step is not None:
-            return self.current_step.who_can_approve()
+            return self.current_step.who_can_approve(exclude_superuser=exclude_superuser)
         return User.objects.none()
