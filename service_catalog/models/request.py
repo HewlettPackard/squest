@@ -104,11 +104,12 @@ class Request(SquestModel):
     def __str__(self):
         return f"#{self.id}"
 
-    def who_can_accept(self):
+    def who_can_accept(self, exclude_superuser=False):
         if self.approval_workflow_state is not None:
-            return self.approval_workflow_state.who_can_approve()
+            return self.approval_workflow_state.who_can_approve(exclude_superuser=exclude_superuser)
         else:
-            return self.instance.quota_scope.who_has_perm("service_catalog.accept_request")
+            return self.instance.quota_scope.who_has_perm("service_catalog.accept_request",
+                                                          exclude_superuser=exclude_superuser)
 
     def full_survey_user(self, approval_step_state=None):
 
@@ -167,6 +168,7 @@ class Request(SquestModel):
         self.setup_approval_workflow()
         if save:
             self.save()
+
     @transition(field=state, source=[RequestState.SUBMITTED,
                                      RequestState.ON_HOLD,
                                      RequestState.REJECTED,
@@ -468,7 +470,6 @@ class Request(SquestModel):
                 HookManager.trigger_hook(sender=sender, instance=instance, name="on_change_request",
                                          source=previous.state, target=instance.state,
                                          *args, **kwargs)
-
 
 
 pre_save.connect(Request.on_change, sender=Request)

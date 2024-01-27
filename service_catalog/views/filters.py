@@ -190,5 +190,10 @@ def display_boolean(boolean_value):
 
 
 @register.simple_tag()
+def who_can_approve_on_scope(step, scope):
+    return scope.who_has_perm(step.permission.permission_str, exclude_superuser=True)
+
+
+@register.simple_tag()
 def who_can_approve(object):
-    return object.who_can_accept()
+    return object.who_can_accept(exclude_superuser=True)
