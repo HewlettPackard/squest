@@ -111,8 +111,7 @@ class SquestRBAC(Model):
         squest_scope = GlobalScope.load()
         return squest_scope.get_scopes()
 
-
-    def who_has_perm(self, permission_str):
+    def who_has_perm(self, permission_str, exclude_superuser=False):
         app_label, codename = permission_str.split(".")
 
         # Global Perm permission for all users
@@ -134,7 +133,11 @@ class SquestRBAC(Model):
         )
 
         rbacs = rbac0 | rbac1
-        return User.objects.filter(Q(groups__in=rbacs) | Q(is_superuser=True)).distinct()
+        if exclude_superuser is True:
+            return User.objects.filter(Q(groups__in=rbacs)).distinct()
+        else:
+            return User.objects.filter(Q(groups__in=rbacs) | Q(is_superuser=True)).distinct()
+
 
 class SquestChangelog(Model):
     class Meta:

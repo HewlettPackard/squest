@@ -59,12 +59,12 @@ class ApprovalStepState(SquestModel):
     def get_scopes(self):
         return self.approval_workflow_state.get_scopes()
 
-    def who_can_approve(self):
+    def who_can_approve(self, exclude_superuser=False):
         return self.approval_workflow_state.request.instance.quota_scope.who_has_perm(
-            self.approval_step.permission.permission_str)
+            self.approval_step.permission.permission_str, exclude_superuser=exclude_superuser)
 
-    def who_can_accept(self):
-        return self.who_can_approve()
+    def who_can_accept(self, exclude_superuser=False):
+        return self.who_can_approve(exclude_superuser)
 
     @classmethod
     def get_q_filter(cls, user, perm):

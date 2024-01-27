@@ -4,6 +4,7 @@
 
 - CSS issue in documentation rendering for <pre></pre> block in dark theme
 - Template issue on documentation when applying jinja filters on None
+- Remove superusers from "list_approvers". They still can approve but are not displayed in the list.
 
 ## Enhancement
 
