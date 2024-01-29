@@ -1,4 +1,3 @@
-
 from django.utils.html import format_html
 from django_tables2 import TemplateColumn, LinkColumn, CheckBoxColumn, Column
 
@@ -8,8 +7,10 @@ from service_catalog.models import Instance
 
 class InstanceTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
+    id = LinkColumn()
     quota_scope__name = Column(verbose_name='Quota scope')
-    name = LinkColumn()
+    name = LinkColumn(verbose_name="Name")
+    service__name = Column(verbose_name="Service")
     date_available = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
     last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
 
@@ -20,8 +21,13 @@ class InstanceTable(SquestTable):
     class Meta:
         model = Instance
         attrs = {"id": "instance_table", "class": "table squest-pagination-tables"}
-        fields = ("selection", "name", "service__name", "quota_scope__name", "state", "requester", "date_available", "last_updated")
+        fields = (
+            "selection", "id", "name", "service__name", "quota_scope__name", "state", "requester", "date_available",
+            "last_updated")
 
     def render_state(self, record, value):
         from service_catalog.views import map_instance_state
-        return format_html(f'<strong class ="text-{ map_instance_state(record.state) }" > { value } </strong>')
+        return format_html(f'<strong class ="text-{map_instance_state(record.state)}" > {value} </strong>')
+
+    def render_id(self, value, record):
+        return f"#{value}"
