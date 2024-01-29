@@ -7,6 +7,7 @@ from profiles.models.organization import Organization
 from profiles.models.team import Team
 from profiles.tables import UserRoleTable, ScopeRoleTable, TeamTable
 from profiles.tables.quota_table import QuotaTable
+from service_catalog.tables.approval_workflow_table import ApprovalWorkflowPreviewTable
 
 
 def get_organization_breadcrumbs(team):
@@ -43,6 +44,11 @@ class TeamDetailView(SquestDetailView):
 
         context['roles'] = ScopeRoleTable(self.object.roles.distinct(), prefix="role-")
         config.configure(context['roles'])
+
+        if self.request.user.has_perm("service_catalog.view_approvalworkflow"):
+            context["workflows"] = ApprovalWorkflowPreviewTable(self.get_object().get_workflows(), prefix="workflow-",
+                                                         hide_fields=["enabled", "actions", "scopes"])
+            config.configure(context["workflows"])
 
         return context
 

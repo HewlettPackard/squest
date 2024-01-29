@@ -20,3 +20,13 @@ class ApprovalWorkflowTable(SquestTable):
         for scope in scopes:
             html += f"<span class=\"badge bg-primary\">{scope}</span>  "
         return format_html(html)
+
+
+class ApprovalWorkflowPreviewTable(SquestTable):
+    class Meta:
+        model = ApprovalWorkflow
+        attrs = {"id": "approval_workflow_table", "class": "table squest-pagination-tables "}
+        fields = ("name", "operation", "preview")
+
+    name = LinkColumn()
+    preview = TemplateColumn(template_name='service_catalog/custom_columns/preview_workflow.html', orderable=False)
