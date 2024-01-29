@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}
+    #{{ object.id }} | Approval Workflow for {{ scope }}
+{% endblock %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <section class="col">
+                <div class="card">
+                    <div class="card-body">
+                        {% if current_workflow.id != object.id %}
+                            <div class="callout callout-warning">
+                                {% if current_workflow %}
+                                    <b>{{ scope }}</b> doesn't use this
+                                    workflow. <b>{{ scope }}</b> use <a
+                                        href="{{ current_workflow.get_absolute_url }}">{{ current_workflow }}</a> to
+                                    handle <b>{{ object.operation }}</b>.
+                                {% else %}
+                                    <b>{{ scope }}</b> doesn't use workflow for <b>{{ object.operation }}</b>
+                                {% endif %}
+                            </div>
+
+                        {% endif %}
+                        <div class="callout callout-info">
+                            Example of workflow <b>{{ object }}</b> when requesting <b>{{ object.operation }}</b> for
+                            <b>{{ scope }}</b>.<br>
+
+                        </div>
+
+                        <div>
+                            {% for approval_step in object.approval_steps.all %}
+                                <div id="{{ approval_step.id }}" class="card card-default">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><strong>{{ approval_step.name }}</strong></h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Permission</dt>
+                                            <dd class="col-sm-8">
+                                                {{ approval_step.permission.permission_str }}
+                                            </dd>
+                                            <dt class="col-sm-4">Related roles</dt>
+                                            <dd class="col-sm-8">
+                                                {% for role in approval_step.permission.role_set.all %}
+                                                    <a href="{{ role.get_absolute_url }}">{{ role.name }}</a><br>
+                                                {% empty %}
+                                                    No related roles, create a role first.
+                                                {% endfor %}
+                                            </dd>
+                                            <dt class="col-sm-4">Read survey fields</dt>
+                                            <dd class="col-sm-8">
+                                                {% for field in approval_step.readable_fields.all %}
+                                                    <span class="badge bg-secondary">{{ field.name }}</span>
+                                                {% endfor %}
+                                            </dd>
+                                            <dt class="col-sm-4">Write survey fields</dt>
+                                            <dd class="col-sm-8">
+                                                {% for field in approval_step.editable_fields.all %}
+                                                    <span class="badge bg-primary">{{ field.name }}</span>
+                                                {% endfor %}
+                                            </dd>
+                                            {% if approval_step.auto_accept_condition %}
+                                                <dt class="col-sm-4">Auto accept condition</dt>
+                                                <dd class="col-sm-8">{{ approval_step.auto_accept_condition }}</dd>
+                                            {% endif %}
+                                            <dt class="col-sm-4">Approvers</dt>
+
+                                            <dd class="col-sm-8">
+                                                {% who_can_approve_on_scope approval_step scope as list_who_can_approve %}
+                                                {% if  list_who_can_approve.all %}
+                                                    {{ list_who_can_approve|join:", " }}
+                                                {% else %}
+                                                    <i class="fas fa-exclamation-triangle text-warning"></i> No
+                                                    approvers
+                                                {% endif %}
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                    <div class="card-footer">
+
+                                        <div class="row" style="gap: 4px">
+                                            {% if can_add_role %}
+                                                <a href="{% url "profiles:role_create" %}" type="button"
+                                                   class="btn btn-success"
+                                                   data-container="body"
+                                                   data-toggle="popover"
+                                                   data-placement="top"
+                                                   data-content="Add the permission {{ approval_step.permission.permission_str }} to your new role"
+                                                >
+                                                    Create new role
+                                                </a>
+                                            {% endif %}
+                                            {% if can_add_approvers %}
+                                                <a href="{{ scope.get_absolute_url }}role/create" type="button"
+                                                   class="btn btn-primary"
+                                                   data-container="body"
+                                                   data-toggle="popover"
+                                                   data-placement="top"
+                                                   data-content="Assign related role to users to add new approvers"
+                                                >Add approvers</a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="callout callout-danger">
+                                    No steps in the workflow
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script>add_tab_management();</script>
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+{% endblock %}

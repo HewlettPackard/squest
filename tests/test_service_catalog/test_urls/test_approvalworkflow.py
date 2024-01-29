@@ -41,6 +41,11 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
                 perm_str='service_catalog.change_approvalworkflow',
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
+            TestingGetContextView(
+                url='service_catalog:approvalworkflow_preview',
+                perm_str='service_catalog.view_approvalworkflow',
+                url_kwargs={'pk': self.approval_workflow.id, 'scope_id': self.test_quota_scope.id}
+            ),
             TestingPostContextView(
                 url='service_catalog:approvalworkflow_edit',
                 perm_str='service_catalog.change_approvalworkflow',

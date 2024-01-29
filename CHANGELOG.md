@@ -11,6 +11,10 @@
 - List related docs in OperationDetails and ServiceDetails view
 - Add PROCESSING requests in the dashboard of the main page
 
+## Feature
+
+- ApprovalWorkflow preview.
+
 # 2.5.0 2024-01-09
 
 ## Fix 

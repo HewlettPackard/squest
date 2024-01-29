@@ -123,6 +123,7 @@ class ScopeManager(Manager):
     def expand(self):
         return self.get_queryset().expand()
 
+
 class Scope(AbstractScope):
     class Meta:
         permissions = [
@@ -178,3 +179,24 @@ class Scope(AbstractScope):
 
     def get_absolute_url(self):
         return self.get_object().get_absolute_url()
+
+    def get_workflows(self):
+        from service_catalog.models import Operation, ApprovalWorkflow
+        operations = Operation.objects.filter(enabled=True)
+
+        # Teams
+        approval_workflow = ApprovalWorkflow.objects.filter(scopes__id=self.id, operation__in=operations, enabled=True)
+        operations = operations.exclude(id__in=approval_workflow.values_list('operation__id', flat=True))
+
+        # Org
+        if self.is_team:
+            approval_workflow = approval_workflow | ApprovalWorkflow.objects.filter(scopes__id=self.get_object().org.id,
+                                                                                    operation__in=operations,
+                                                                                    enabled=True)
+            operations = operations.exclude(id__in=approval_workflow.values_list('operation__id', flat=True))
+
+        # Default
+        approval_workflow = approval_workflow | ApprovalWorkflow.objects.filter(scopes__isnull=True,
+                                                                                operation__in=operations,
+                                                                                enabled=True)
+        return approval_workflow

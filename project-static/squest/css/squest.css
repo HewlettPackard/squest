@@ -93,3 +93,7 @@ input.form-control[disabled] {
 .popover {
     max-width: 100%;
 }
+
+.callout a{
+    color: unset;
+}

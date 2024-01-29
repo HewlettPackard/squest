@@ -15,148 +15,161 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid">
-        <div class="row">
-            <section class="col-lg-3">
-                <div class="card card-default">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ object.name }}</h3>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item border-top-0">
-                                <b>ID</b><span class="float-right">{{ object.id }}</span>
-                            </li>
+<div class="container-fluid">
+    <div class="row">
+        <section class="col-lg-3">
+            <div class="card card-default">
+                <div class="card-header">
+                    <h3 class="card-title">{{ object.name }}</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item border-top-0">
+                            <b>ID</b><span class="float-right">{{ object.id }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Name</b><span class="float-right">{{ object.name }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Hash</b><span class="float-right">{{ object.hash | to_hexa }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Operation</b>
+                            <span class="float-right">{{ object.operation.name }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Enabled</b>
+                            <span class="float-right">{{ object.enabled | display_boolean }}</span>
+                        </li>
+                        {% if object.scopes.all %}
                             <li class="list-group-item">
-                                <b>Name</b><span class="float-right">{{ object.name }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Hash</b><span class="float-right">{{ object.hash | to_hexa }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Operation</b>
-                                <span class="float-right">{{ object.operation.name }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Enabled</b>
-                                <span class="float-right">{{ object.enabled | display_boolean }}</span>
-                            </li>
-                            {% if object.scopes.all %}
-                                <li class="list-group-item">
-                                    <b>Restricted scopes</b>
-                                    <span class="float-right">
+                                <b>Restricted scopes</b>
+                                <span class="float-right">
                                     {% for scope in object.scopes.distinct %}
                                         <span class="badge bg-primary">{{ scope }}</span>
                                     {% endfor %}
                                 </span>
-                                </li>
-                            {% endif %}
-                            {% if object.get_unused_fields %}
-                                <li class="list-group-item">
+                            </li>
+                        {% endif %}
+                        {% if object.get_unused_fields %}
+                            <li class="list-group-item">
                                 <span title="Fields that are not used yet in any steps but marked as required by the job template">
                                     <b>Unused required fields</b>
                                 </span>
-                                    <span class="float-right">
+                                <span class="float-right">
                                     {% for field in object.get_unused_fields %}
                                         <span class="badge bg-warning">{{ field }}</span>
                                     {% endfor %}
                                 </span>
-                                </li>
-                            {% endif %}
+                            </li>
+                        {% endif %}
 
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
-            </section>
-            <section class="col-lg-9">
-                <div class="card">
-                    <div class="card-header p-2">
-                        <ul class="nav nav-pills squest-default-active" id="tabs">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#steps" data-toggle="tab">Steps</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#requests"
-                                   data-toggle="tab">Requests</a>
-                            </li>
+            </div>
+        </section>
+        <section class="col-lg-9">
+            <div class="card">
+                <div class="card-header p-2">
+                    <ul class="nav nav-pills squest-default-active" id="tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#steps" data-toggle="tab">Steps</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#requests"
+                               data-toggle="tab">Requests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#preview"
+                               data-toggle="tab">Preview</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane" id="steps">
+                            <div class="d-flex">
 
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="tab-pane" id="steps">
-                                <div class="d-flex">
-
-                                    <div class="callout callout-info flex-grow-1">
-                                        <p>Drag and drop steps to reorganize the order</p>
-                                    </div>
-
-                                    <a href="{% url 'service_catalog:approvalstep_create' object.id %}"
-                                       type="button"
-                                       class="btn btn-success h-100"
-                                       style="margin: 0.5em">
-                                        <i class="fas fa-plus"></i> Add a step
-                                    </a>
+                                <div class="callout callout-info flex-grow-1">
+                                    <p>Drag and drop steps to reorganize the order</p>
                                 </div>
 
-                                <div id="draggableApprovalStepList"
-                                     data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
-                                    {% for approval_step in object.approval_steps.all|dictsort:"position" %}
-                                        <div id="{{ approval_step.id }}" class="card card-default">
-                                            <div class="card-header">
-                                                <h3 class="card-title"><strong>{{ approval_step.name }}</strong></h3>
-                                                <div class="card-tools">
-                                                    <a href="{% url 'service_catalog:approvalstep_edit' approval_step.approval_workflow.id approval_step.id %}"
-                                                       class="btn btn-tool btn-primary">
-                                                        <i class="fas fa-pencil-alt"></i>
-                                                    </a>
-                                                    <a href="{% url 'service_catalog:approvalstep_delete' approval_step.approval_workflow.id approval_step.id %}"
-                                                       type="button" class="btn btn-tool btn-danger">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <dl class="row">
-                                                    <dt class="col-sm-4">Permission</dt>
-                                                    <dd class="col-sm-8">{{ approval_step.permission }}</dd>
+                                <a href="{% url 'service_catalog:approvalstep_create' object.id %}"
+                                   type="button"
+                                   class="btn btn-success h-100"
+                                   style="margin: 0.5em">
+                                    <i class="fas fa-plus"></i> Add a step
+                                </a>
+                            </div>
 
-                                                    <dt class="col-sm-4">Read survey fields</dt>
-                                                    <dd class="col-sm-8">
-                                                        {% for field in approval_step.readable_fields.all %}
-                                                            <span class="badge bg-secondary">{{ field.name }}</span>
-                                                        {% endfor %}
-                                                    </dd>
-
-                                                    <dt class="col-sm-4">Write survey fields</dt>
-                                                    <dd class="col-sm-8">
-                                                        {% for field in approval_step.editable_fields.all %}
-                                                            <span class="badge bg-primary">{{ field.name }}</span>
-                                                        {% endfor %}
-                                                    </dd>
-                                                    {% if approval_step.auto_accept_condition %}
-                                                        <dt class="col-sm-4">Auto accept condition</dt>
-                                                        <dd class="col-sm-8">{{ approval_step.auto_accept_condition }}</dd>
-                                                    {% endif %}
-                                                </dl>
+                            <div id="draggableApprovalStepList"
+                                 data-url-sync-step="{% url 'service_catalog:ajax_approval_step_position_update' %}">
+                                {% for approval_step in object.approval_steps.all|dictsort:"position" %}
+                                    <div id="{{ approval_step.id }}" class="card card-default">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><strong>{{ approval_step.name }}</strong></h3>
+                                            <div class="card-tools">
+                                                <a href="{% url 'service_catalog:approvalstep_edit' approval_step.approval_workflow.id approval_step.id %}"
+                                                   class="btn btn-tool btn-primary">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                                <a href="{% url 'service_catalog:approvalstep_delete' approval_step.approval_workflow.id approval_step.id %}"
+                                                   type="button" class="btn btn-tool btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </div>
                                         </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="requests">
-                                <div class="callout callout-info">
-                                    Requests currently using workflow
-                                </div>
-                                {% render_table request_table %}
+                                        <div class="card-body">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Permission</dt>
+                                                <dd class="col-sm-8">{{ approval_step.permission }}</dd>
+
+                                                <dt class="col-sm-4">Read survey fields</dt>
+                                                <dd class="col-sm-8">
+                                                    {% for field in approval_step.readable_fields.all %}
+                                                        <span class="badge bg-secondary">{{ field.name }}</span>
+                                                    {% endfor %}
+                                                </dd>
+
+                                                <dt class="col-sm-4">Write survey fields</dt>
+                                                <dd class="col-sm-8">
+                                                    {% for field in approval_step.editable_fields.all %}
+                                                        <span class="badge bg-primary">{{ field.name }}</span>
+                                                    {% endfor %}
+                                                </dd>
+                                                {% if approval_step.auto_accept_condition %}
+                                                    <dt class="col-sm-4">Auto accept condition</dt>
+                                                    <dd class="col-sm-8">{{ approval_step.auto_accept_condition }}</dd>
+                                                {% endif %}
+                                            </dl>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="callout callout-danger">
+                                        No steps in the workflow
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
+                        <div class="tab-pane" id="requests">
+                            <div class="callout callout-info">
+                                Requests currently using workflow
+                            </div>
+                            {% render_table request_table %}
+                        </div>
+                        <div class="tab-pane" id="preview">
+                            <div class="callout callout-info">
+                                Preview your workflow on your Organization/Team
+                            </div>
+                            {% render_table scope_table %}
+                        </div>
                     </div>
-
                 </div>
-            </section>
-        </div>
+
+            </div>
+        </section>
     </div>
+</div>
 {% endblock %}
 {% block custom_script %}
     <script>add_tab_management();</script>

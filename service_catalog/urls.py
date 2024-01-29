@@ -162,6 +162,7 @@ urlpatterns = [
     # Approval Workflow CRUD
     path('administration/approval/', views.ApprovalWorkflowListView.as_view(), name='approvalworkflow_list'),
     path('administration/approval/<int:pk>/', views.ApprovalWorkflowDetailView.as_view(), name='approvalworkflow_details'),
+    path('administration/approval/<int:pk>/scope/<int:scope_id>', views.ApprovalWorkflowPreviewView.as_view(), name='approvalworkflow_preview'),
     path('administration/approval/create/', views.ApprovalWorkflowCreateView.as_view(), name='approvalworkflow_create'),
     path('administration/approval/<int:pk>/edit/', views.ApprovalWorkflowEditView.as_view(), name='approvalworkflow_edit'),
     path('administration/approval/<int:pk>/delete/', views.ApprovalWorkflowDeleteView.as_view(), name='approvalworkflow_delete'),
