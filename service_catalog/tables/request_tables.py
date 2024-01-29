@@ -8,7 +8,8 @@ from service_catalog.models import Request
 
 class RequestTable(SquestTable):
     selection = CheckBoxColumn(accessor='pk', attrs={"th__input": {"onclick": "toggle(this)"}})
-    id = Column(linkify=True, verbose_name="Request")
+    id = Column(linkify=True, verbose_name="ID")
+    user__username = Column(verbose_name="User")
     date_submitted = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
     instance = LinkColumn()
     last_updated = TemplateColumn(template_name='generics/custom_columns/generic_date_format.html')
