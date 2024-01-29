@@ -7,6 +7,7 @@ from profiles.forms import OrganizationForm
 from profiles.models import Organization, Team
 from profiles.tables import OrganizationTable, ScopeRoleTable, TeamTable, UserRoleTable
 from profiles.tables.quota_table import QuotaTable
+from service_catalog.tables.approval_workflow_table import ApprovalWorkflowPreviewTable
 
 
 class OrganizationListView(SquestListView):
@@ -38,7 +39,10 @@ class OrganizationDetailView(SquestDetailView):
             hide_fields=('org',), prefix="team-"
         )
         config.configure(context['teams'])
-
+        if self.request.user.has_perm("service_catalog.view_approvalworkflow"):
+            context["workflows"] = ApprovalWorkflowPreviewTable(self.get_object().get_workflows(), prefix="workflow-",
+                                                         hide_fields=["enabled", "actions", "scopes"])
+            config.configure(context["workflows"])
         context['roles'] = ScopeRoleTable(self.object.roles.distinct())
         config.configure(context['roles'])
 

@@ -87,6 +87,11 @@
                                     <a class="nav-link" href="#teams" data-toggle="tab">Teams</a>
                                 </li>
                             {% endif %}
+                            {% if workflows %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#workflows" data-toggle="tab">Workflows</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
@@ -110,6 +115,11 @@
                             <div class="tab-pane" id="quotas">
                                 {% if quotas %}
                                     {% render_table quotas %}
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="workflows">
+                                {% if workflows %}
+                                    {% render_table workflows %}
                                 {% endif %}
                             </div>
                         </div>
