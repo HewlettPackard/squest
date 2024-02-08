@@ -1,4 +1,4 @@
-# dev 
+# 2.5.1 2024-02-08
 
 ## Fix 
 
@@ -16,6 +16,7 @@
 ## Feature
 
 - ApprovalWorkflow preview.
+- Provided field validators (json and public ssh key).
 
 # 2.5.0 2024-01-09
 
