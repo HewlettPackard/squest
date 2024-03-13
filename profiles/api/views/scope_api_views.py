@@ -84,4 +84,4 @@ class RedirectScopeDetails(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         pk = kwargs.pop("pk")
         scope = get_object_or_404(Scope, pk=pk)
-        return scope.get_url()
+        return scope.get_url().replace('/ui/', '/api/')
