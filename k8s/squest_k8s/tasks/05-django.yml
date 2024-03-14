@@ -229,6 +229,8 @@
               service: django
           spec:
             serviceAccountName: squest-sa
+            securityContext:
+              fsGroup: 999
             dnsConfig:
               options:
                 - name: ndots
@@ -260,6 +262,11 @@
                 envFrom:
                   - configMapRef:
                       name: django-env
+                volumeMounts:
+                  - mountPath: /app/media
+                    name: django-media
+                  - mountPath: /app/Squest/ldap_config.py
+                    name: ldap-config
               - name: nginx
                 image: nginx:1.23.4-alpine
                 command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
@@ -268,10 +275,13 @@
                 volumeMounts:
                   - name: nginx-config
                     mountPath: /etc/nginx/squest
+                    readOnly: true
                   - mountPath: /app/static
                     name: django-static
-                  - mountPath: /app/Squest/ldap_config.py
-                    name: ldap-config
+                    readOnly: true
+                  - name: django-media
+                    mountPath: /app/media
+                    readOnly: true
             restartPolicy: Always
             volumes:
               - name: django-media
