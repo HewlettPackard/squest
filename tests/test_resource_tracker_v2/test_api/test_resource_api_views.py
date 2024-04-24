@@ -214,10 +214,18 @@ class TestResourceAPIView(BaseTestResourceTrackerV2API):
         self.assertEqual(2, self.server1.resource_attributes.get(attribute_definition=self.memory_attribute).value)
 
     def test_delete_resource(self):
+        transformer = Transformer.objects.get(attribute_definition=self.core_attribute,
+                                              resource_group=self.cluster)
+        available_before = transformer.available
+
         resource_to_delete = self.server1.id
         response = self.client.delete(self._details_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Resource.objects.filter(id=resource_to_delete).exists())
+
+        # check consumption updated
+        transformer.refresh_from_db()
+        self.assertEqual(transformer.available, available_before - 10)
 
     def test_update_resource_group_of_resource(self):
         new_rg = ResourceGroup.objects.create(name="new_rg")

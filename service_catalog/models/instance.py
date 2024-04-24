@@ -193,7 +193,8 @@ class Instance(SquestModel):
             self.state = InstanceState.AVAILABLE
 
     def delete_linked_resources(self):
-        self.resources.filter(is_deleted_on_instance_deletion=True).delete()
+        for resource in self.resources.filter(is_deleted_on_instance_deletion=True):
+            resource.delete()
 
     @classmethod
     def on_create_call_hook_manager(cls, sender, instance, created, *args, **kwargs):
