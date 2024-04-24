@@ -1,7 +1,6 @@
 from copy import copy
 
-from django.contrib.auth.models import User
-
+from resource_tracker_v2.models import Transformer
 from resource_tracker_v2.models.resource import Resource, InvalidAttributeDefinition
 from service_catalog.models import Service, Instance, InstanceState
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2
@@ -58,3 +57,26 @@ class TestModelResource(BaseTestResourceTrackerV2):
         server2 = self.cluster.create_resource(name="server2")
         with self.assertRaises(InvalidAttributeDefinition):
             server2.set_attribute(self.vcpu_attribute, 10)
+
+    def test_transformer_consumption_updated_on_resource_delete(self):
+        transformer = Transformer.objects.get(attribute_definition=self.core_attribute,
+                                              resource_group=self.cluster)
+        available_before = transformer.available
+        self.server1.delete()
+        # check consumption updated
+        transformer.refresh_from_db()
+        self.assertEqual(transformer.available, available_before - 10)
+
+    def test_consumption_updated_on_delete_resource_linked_to_instance(self):
+        self._prepare_service_catalog()
+
+        transformer = Transformer.objects.get(attribute_definition=self.vcpu_attribute,
+                                              resource_group=self.single_vms)
+        available_before = transformer.available
+        self.test_instance.delete()
+        # check resource is deleted
+        self.assertFalse(Resource.objects.filter(id=self.resource_id_to_delete).exists())
+
+        # check consumption updated
+        transformer.refresh_from_db()
+        self.assertEqual(transformer.available, available_before - 5)
