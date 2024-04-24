@@ -2,7 +2,7 @@ from copy import copy
 
 from django.urls import reverse
 
-from resource_tracker_v2.models import Resource, ResourceGroup
+from resource_tracker_v2.models import Resource, ResourceGroup, Transformer
 from tests.test_resource_tracker_v2.base_test_resource_tracker_v2 import BaseTestResourceTrackerV2
 
 
@@ -42,18 +42,27 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
             f"{self.memory_attribute.name}": 20,
             "is_deleted_on_instance_deletion": True
         }
+        # Check consumption before update
+        transformer = Transformer.objects.get(attribute_definition=self.core_attribute,
+                                              resource_group=self.cluster)
+        available_before = transformer.available
+        core_attribute_value = 10
+
         response = self.client.post(url, data=data)
         self.assertEqual(302, response.status_code)
         self.assertTrue(Resource.objects.filter(name="new_resource",
                                                 resource_group=self.cluster).exists())
         target_resource = Resource.objects.get(name="new_resource",
                                                resource_group=self.cluster)
-        self.assertEqual(10, target_resource.resource_attributes.
+        self.assertEqual(core_attribute_value, target_resource.resource_attributes.
                          filter(attribute_definition=self.core_attribute).first().value)
         self.assertEqual(20, target_resource.resource_attributes.
                          filter(attribute_definition=self.memory_attribute).first().value)
         self.assertEqual(0, target_resource.resource_attributes.
                          filter(attribute_definition=self.three_par_attribute).first().value)
+
+        transformer.refresh_from_db()
+        self.assertEqual(transformer.available, available_before + core_attribute_value)
 
     def test_resource_group_resources_edit(self):
         args = {

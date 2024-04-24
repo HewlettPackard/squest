@@ -59,10 +59,9 @@ class ResourceSerializer(serializers.ModelSerializer):
         resource_attributes = validated_data.pop('resource_attributes', list())
         new_resource = super().create(validated_data)
         for attribute in resource_attributes:
+
             attribute_definition = AttributeDefinition.objects.get(name=attribute["attribute_definition"].get('name'))
-            ResourceAttribute.objects.create(value=attribute.pop('value'),
-                                             resource=new_resource,
-                                             attribute_definition=attribute_definition)
+            new_resource.set_attribute(attribute_definition, attribute.pop('value'))
         return new_resource
 
     def update(self, instance, validated_data):
@@ -80,7 +79,11 @@ class ResourceSerializer(serializers.ModelSerializer):
                     # the resource attribute is not yet created
                     ResourceAttribute.objects.create(resource=instance, attribute_definition=attribute_def,
                                                      value=attribute.get('value', 0))
-
+                # notify transformer (we should have only one single transformer)
+                transformer = Transformer.objects.get(attribute_definition=attribute_def,
+                                                      resource_group=instance.resource_group)
+                transformer.calculate_total_produced()
+                transformer.notify_parent()
             except AttributeDefinition.DoesNotExist:
                 raise serializers.ValidationError({
                     attribute_item_name: f"'{attribute_item_name}' is not a valid attribute of the resource group {instance.resource_group.name}"
