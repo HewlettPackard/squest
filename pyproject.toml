@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "squest"
-version = "2.5.2"
+version = "2.5.3b"
 description = "Service catalog on top of Red Hat Ansible Automation Platform(RHAAP)/AWX (formerly known as Ansible Tower)"
 authors = ["Nicolas Marcq <nicolas.marcq@hpe.com>", "Elias Boulharts <elias.boulharts@hpe.com", "Anthony Belhadj <abelhadj@hpe.com>"]
 license = "MIT"
