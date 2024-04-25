@@ -1,3 +1,12 @@
+# 2.5.2 2024-04-25
+
+## Fix 
+
+- Redirection of "Scope" API returned UI instead API
+- add missing securitycontext and missing volumeMounts in K8S deployment
+- Consumption were not calculated on resource deletion
+
+
 # 2.5.1 2024-02-08
 
 ## Fix 
