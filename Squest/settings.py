@@ -82,6 +82,9 @@ print(f"SQL_DEBUG: {SQL_DEBUG}")
 if BACKUP_ENABLED:
     print(f"BACKUP_CRONTAB: {BACKUP_CRONTAB}")
 
+if DEBUG:
+    print(os.environ)
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

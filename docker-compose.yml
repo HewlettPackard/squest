@@ -11,7 +11,7 @@ services:
       - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
 
   rabbitmq:
-    image: rabbitmq:3.10.23-management
+    image: rabbitmq:3.13.2-management
     env_file: docker/environment_variables/rabbitmq.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq

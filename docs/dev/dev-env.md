@@ -8,10 +8,10 @@ Following tools need to be installed on your workstation:
 
 - Docker
 - Docker-compose
-- Python 3.9
+- Python 3.12
 - Python virtualenv
 - [Poetry](https://python-poetry.org/)
-- npm 8
+- npm
 
 ### System packages
 
@@ -53,6 +53,21 @@ npm install
 ```
 
 ### Python environment
+
+Install python via pyenv then create a virtual environment for Squest
+```
+cd /path/to/squest
+# install python
+pyenv install 3.12.3
+# create a venv
+pyenv virtualenv 3.12.3 squest
+# assign the venv to the current folder
+pyenv local squest
+# activate the env
+pyenv activate squest
+# Install poetry in the venv
+pip3 install poetry
+```
 
 Initializing and installing python libraries with Poetry
 ```bash
