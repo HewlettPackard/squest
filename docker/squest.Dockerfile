@@ -9,17 +9,13 @@
 #-p 8000:8000 \
 #squest
 
-FROM python:3.10-slim-bullseye
+FROM python:3.12-slim-bullseye
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE=Squest.settings
-ENV POETRY_VERSION=1.3.2
-ENV NODE_VERSION=16.15.1
-ENV NVM_VERSION=v0.39.1
-ENV NVM_DIR=/root/.nvm
-ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev libpq-dev python3-dev libssl-dev pkg-config"
+ENV POETRY_VERSION=1.8.0
+ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev libpq-dev python3-dev libssl-dev pkg-config npm"
 ENV BUID_DEPS="gcc"
 
 # Install system deps
@@ -30,12 +26,6 @@ RUN set -ex \
 
 # Install poetry
 RUN pip install "poetry==$POETRY_VERSION"
-
-# Install node and NPM from NodeJS
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm use ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Prepare a path to receive the project
 RUN mkdir /app
