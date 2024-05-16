@@ -9,12 +9,14 @@
                 <h2 class="headline text-warning text-center">403</h2>
                 <div class="error-content align-content-center">
                     <h3><i class="fas fa-exclamation-triangle text-warning"></i> Access denied</h3>
-                    <p>
-                        The page you are trying to access has restricted access.
-                        <br>
-                        {{ exception }}
+                    <p class="text-warning">                        
+                        {% if exception %}
+                            {{ exception }}
+                        {% else %}
+                            The page you are trying to access has restricted access.
+                        {% endif %}
+                    <br>
                     </p>
-
                 </div>
             </div>
         </section>
