@@ -139,5 +139,6 @@ def resource_group_resource_bulk_delete(request, resource_group_id):
         return render(request, 'generics/confirm-bulk-delete-template.html', context=context)
 
     elif request.method == "POST":
-        context['object_list'].delete()
+        for resource in context['object_list']:  # loop to transform the queryset into objects
+            resource.delete()
         return redirect("resource_tracker_v2:resource_list", resource_group_id)
