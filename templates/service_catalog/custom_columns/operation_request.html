@@ -1,4 +1,6 @@
-<a href="{% url 'service_catalog:instance_request_new_operation' instance_id=object.id operation_id=record.id %}"
-   class="btn btn-info bg-sm">
-    <i class="fas fa-shopping-cart"></i>
-</a>
+<div {% if object.has_pending_delete_request %}data-toggle='tooltip' data-placement='left' title='A deletion request has already been submitted for this instance'{% endif %}>
+    <a href="{% url 'service_catalog:instance_request_new_operation' instance_id=object.id operation_id=record.id %}"
+               class="btn btn-info bg-sm {% if object.has_pending_delete_request %}disabled{% endif %}">
+        <i class="fas fa-shopping-cart"></i>
+    </a>
+</div>
