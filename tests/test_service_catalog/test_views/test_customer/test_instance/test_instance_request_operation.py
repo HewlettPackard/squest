@@ -67,6 +67,19 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
         response = self.client.post(url, data=data)
         self.assertEqual(403, response.status_code)
 
+    def test_cannot_request_operation_when_deletion_already_asked(self):
+        self.test_request.operation = self.delete_operation_test
+        self.test_request.save()
+        args = {
+            'instance_id': self.test_instance.id,
+            'operation_id': self.delete_operation_test.id
+        }
+        data = {'text_variable': 'my_var'}
+        url = reverse('service_catalog:instance_request_new_operation', kwargs=args)
+        self.client.force_login(user=self.standard_user)
+        response = self.client.post(url, data=data)
+        self.assertEqual(403, response.status_code)
+
     def test_cannot_request_non_available_instance(self):
         for state in [InstanceState.PENDING, InstanceState.PROVISIONING, InstanceState.DELETING, InstanceState.DELETED]:
             self.test_instance.state = state
