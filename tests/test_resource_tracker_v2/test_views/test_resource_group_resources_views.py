@@ -1,4 +1,5 @@
 from copy import copy
+from unittest import mock
 
 from django.urls import reverse
 
@@ -127,9 +128,11 @@ class TestResourceGroupResourcesViews(BaseTestResourceTrackerV2):
     def test_admin_can_bulk_delete(self):
         resource_list_to_delete = [self.server1.id, self.server2.id]
         data = {"selection": resource_list_to_delete}
-        response = self.client.post(self.url_delete, data=data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Resource.objects.filter(id__in=resource_list_to_delete).count(), 0)
+        with mock.patch("resource_tracker_v2.models.transformer.Transformer.calculate_total_produced") as mock_calculate_total_produced:
+            response = self.client.post(self.url_delete, data=data)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(Resource.objects.filter(id__in=resource_list_to_delete).count(), 0)
+            mock_calculate_total_produced.assert_called()
 
     def test_resource_group_resources_move(self):
         args = {
