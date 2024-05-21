@@ -21,6 +21,8 @@ default_roles = {
             "service_catalog.view_instance",
             "service_catalog.archive_instance",
             "service_catalog.unarchive_instance",
+            "service_catalog.rename_instance",
+            "service_catalog.change_requester_on_instance",
 
             "service_catalog.view_request",
             "service_catalog.cancel_request",
