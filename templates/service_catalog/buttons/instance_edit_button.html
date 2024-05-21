@@ -1,0 +1,10 @@
+
+{% has_perm request.user "service_catalog.rename_instance" object as can_rename_instance %}
+{% has_perm request.user "service_catalog.change_instance" object as can_change_requester_instance %}
+{% has_perm request.user "service_catalog.change_owner_instance" object as can_change_instance %}
+{% if can_rename_instance or can_change_requester_instance or can_change_instance %}
+    <a href="{% url "service_catalog:instance_edit" object.id %}"
+       class="btn btn-primary">
+        <i class="fas fa-pencil-alt"></i>
+    </a>
+{% endif %}
