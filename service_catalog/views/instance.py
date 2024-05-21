@@ -14,7 +14,8 @@ from Squest.utils.squest_table import SquestRequestConfig
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
     SquestPermissionDenied
 from service_catalog.filters.instance_filter import InstanceFilter, InstanceArchivedFilter
-from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm
+from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm, \
+    InstanceFormRestricted
 from service_catalog.models.documentation import Doc
 from service_catalog.models.instance import Instance
 from service_catalog.models.instance_state import InstanceState
@@ -147,7 +148,31 @@ class InstanceDetailView(SquestDetailView):
 
 class InstanceEditView(SquestUpdateView):
     model = Instance
-    form_class = InstanceForm
+    form_class = None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def has_permission(self):
+        try:
+            obj = self.get_object()
+        except AttributeError:
+            obj = None
+        if self.request.user.has_perm("service_catalog.change_instance", obj) or \
+                self.request.user.has_perm("service_catalog.rename_instance", obj) or \
+                self.request.user.has_perm("service_catalog.change_owner_instance", obj):
+            return True
+        return False
+
+    def get_form_class(self):
+        if self.request.user.has_perm("service_catalog.change_instance", self.object):
+            return InstanceForm
+        elif (self.request.user.has_perm("service_catalog.rename_instance", self.object) or
+              self.request.user.has_perm("service_catalog.change_owner_instance", self.object)):
+            return InstanceFormRestricted
+        return None
 
 
 class InstanceDeleteView(SquestDeleteView):

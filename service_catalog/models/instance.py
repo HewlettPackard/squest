@@ -30,6 +30,8 @@ class Instance(SquestModel):
             ("admin_request_on_instance", "Can request an admin day2 operation on instance"),
             ("view_admin_spec_instance", "Can view admin spec on instance"),
             ("change_admin_spec_instance", "Can change admin spec on instance"),
+            ("rename_instance", "Can rename instance"),
+            ("change_requester_on_instance", "Can change owner of the instance"),
         ]
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
