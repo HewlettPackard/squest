@@ -127,12 +127,14 @@ class Request(SquestModel):
 
     @property
     def full_survey(self):
-        # by default the survey is composed by what the end user provided, overriden by what the admin provided
-        full_survey = {k: v for k, v in {**self.fill_in_survey, **self.admin_fill_in_survey}.items() if v is not None}
+        # by default the survey is composed by what the end user provided
+        full_survey = {k: v for k, v in {**self.fill_in_survey}.items() if v is not None}
         # when an approval workflow is used, we override with the content provided by each step
         if self.approval_workflow_state is not None:
             for step in self.approval_workflow_state.approval_step_states.all():
                 full_survey.update(step.fill_in_survey)
+        # the admin step always override what has been set in previous steps
+        full_survey.update({k: v for k, v in {**self.admin_fill_in_survey}.items() if v is not None})
         return full_survey
 
     def clean(self):
