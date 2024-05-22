@@ -1,3 +1,16 @@
+# 2.6.0 2024-05-22
+
+## Fix 
+
+- Do not allow multiple deletion request against the same instance
+- Bulk deletion on resource now calculate total produced in the resource group
+- Admin can update a request on the last review when using an approval workflow
+
+## Feature
+
+- Added permissions "rename_instance" and "change_requester_on_instance"
+- End user can now rename his instances and change the owner (requester) to another user in the same organization or team
+
 # 2.5.2 2024-04-25
 
 ## Fix 
