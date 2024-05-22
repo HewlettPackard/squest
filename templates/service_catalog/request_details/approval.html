@@ -283,12 +283,12 @@
                     {% if object.get_state_display == "ACCEPTED" %}
                         <div class="row justify-content-md-center">
                             <div class="timeline-footer">
-                                {% with args_filter="accept,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_accept_request %}
-                                        <a class="btn btn-primary"
-                                           title="Review"
-                                           href="{% url 'service_catalog:request_accept' object.id %}">
-                                            <i class="fas fa-clipboard-check"></i> Review
+                                {% with args_filter="cancel,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_cancel_request %}
+                                        <a class="btn btn-secondary"
+                                           title="Cancel"
+                                           href="{% url 'service_catalog:request_cancel' object.id %}">
+                                            <i class="fas fa-window-close"></i> Cancel
                                         </a>
                                     {% endif %}
                                 {% endwith %}
@@ -299,17 +299,15 @@
                                            href="{% url 'service_catalog:request_reject' object.id %}">
                                             <i class="fas fa-ban"></i> Reject
                                         </a>
-
                                     {% endif %}
                                 {% endwith %}
-                                {% with args_filter="cancel,"|addstr:object.id %}
-                                    {% if args_filter|can_proceed_request_action and can_cancel_request %}
-                                        <a class="btn btn-secondary"
-                                           title="Cancel"
-                                           href="{% url 'service_catalog:request_cancel' object.id %}">
-                                            <i class="fas fa-window-close"></i> Cancel
+                                {% with args_filter="accept,"|addstr:object.id %}
+                                    {% if args_filter|can_proceed_request_action and can_accept_request %}
+                                        <a class="btn btn-primary"
+                                           title="Review"
+                                           href="{% url 'service_catalog:request_accept' object.id %}">
+                                            <i class="fas fa-clipboard-check"></i> Review
                                         </a>
-
                                     {% endif %}
                                 {% endwith %}
                                 {% with args_filter="process,"|addstr:object.id %}
@@ -319,7 +317,6 @@
                                            href="{% url 'service_catalog:request_process' object.id %}">
                                             <i class="fas fa-play"></i> Process
                                         </a>
-
                                     {% endif %}
                                 {% endwith %}
                             </div>

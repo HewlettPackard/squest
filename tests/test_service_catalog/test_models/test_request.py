@@ -11,7 +11,7 @@ from django_fsm import can_proceed
 
 from profiles.api.serializers import ScopeSerializerNested
 from profiles.api.serializers.user_serializers import UserSerializerNested
-from service_catalog.models import ApprovalWorkflow, ApprovalStep
+from service_catalog.models import ApprovalWorkflow, ApprovalStep, ApprovalWorkflowState, ApprovalStepState
 from service_catalog.models.instance import InstanceState, Instance
 from service_catalog.models.request import RequestState, Request
 from tests.test_service_catalog.base_test_request import BaseTestRequest
@@ -383,31 +383,37 @@ class TestRequest(BaseTestRequest):
             self.assertTrue(can_proceed(self.test_request.process))
 
     def test_get_full_survey(self):
-        fields_in_survey = ['text_variable', 'multiplechoice_variable', 'multiselect_var', 'textarea_var',
-                            'password_var', 'float_var']
-        fields_not_in_survey = ['integer_var']
-        self.test_request.admin_fill_in_survey = {
-            'multiplechoice_variable': "choice1",
-            'multiselect_var': [],
-            'textarea_var': "",
-            'password_var': "password_val",
-            'float_var': 0,
-            'integer_var': None
+        # end user survey
+        self.test_request.fill_in_survey = {
+            'text_variable': "myvar"
         }
-        for field_name in fields_in_survey:
-            self.assertIn(field_name, self.test_request.full_survey.keys())
-        for field_name in fields_not_in_survey:
-            self.assertNotIn(field_name, self.test_request.full_survey.keys())
-        self.test_request.admin_fill_in_survey['integer_var'] = 1
-        self.test_request.fill_in_survey['text_variable'] = None
-        fields_not_in_survey.remove('integer_var')
-        fields_in_survey.append('integer_var')
-        fields_in_survey.remove('text_variable')
-        fields_not_in_survey.append('text_variable')
-        for field_name in fields_in_survey:
-            self.assertIn(field_name, self.test_request.full_survey.keys())
-        for field_name in fields_not_in_survey:
-            self.assertNotIn(field_name, self.test_request.full_survey.keys())
+        self.test_request.save()
+        self.assertEqual(self.test_request.full_survey['text_variable'], "myvar")
+
+        # add a step on the opereration
+        self.test_approval_workflow = ApprovalWorkflow.objects.create(name="test_approval_workflow",
+                                                                      operation=self.create_operation_test,
+                                                                      enabled=True)
+        self.test_approval_workflow_state = ApprovalWorkflowState.objects.create(approval_workflow=self.test_approval_workflow)
+        self.test_request.approval_workflow_state = self.test_approval_workflow_state
+        self.test_request.save()
+        self.test_approval_step_1 = ApprovalStep.objects.create(name="test_approval_step_1",
+                                                                approval_workflow=self.test_approval_workflow)
+        self.test_approval_step_state_1 = ApprovalStepState.objects.create(
+            approval_workflow_state=self.test_approval_workflow_state,
+            approval_step=self.test_approval_step_1)
+        self.test_approval_step_state_1.fill_in_survey = {
+            'text_variable': "updated_by_step"
+        }
+        self.test_approval_step_state_1.save()
+        self.assertEqual(self.test_request.full_survey['text_variable'], "updated_by_step")
+
+        # Admin replace a value
+        self.test_request.admin_fill_in_survey = {
+            'text_variable': "updated_by_admin"
+        }
+        self.test_request.save()
+        self.assertEqual(self.test_request.full_survey['text_variable'], "updated_by_admin")
 
     def test_update_fill_in_surveys_accept_request(self):
         new_survey_config = {
