@@ -209,7 +209,25 @@ The SMTP host to use for sending email.
 
 **Default:** `25`
 
-Port to use for the SMTP server defined in `EMAIL_HOST`.  
+Port to use for the SMTP server defined in `EMAIL_HOST`.
+
+### EMAIL_HOST_USER
+
+**Default:** None
+
+User to use to authenticate with the SMTP server defined in `EMAIL_HOST` in combination with `EMAIL_HOST_PASSWORD`. Leave empty/unconfigured to send emails unauthenticated.
+
+### EMAIL_HOST_PASSWORD
+
+**Default:** None
+
+Password to use to authenticate with the SMTP server defined in `EMAIL_HOST` in combination with `EMAIL_HOST_USER`. Leave empty/unconfigured to send emails unauthenticated.
+
+### EMAIL_USE_SSL
+
+**Default:** False
+
+Whether to use an implicit TLS (secure) connection when talking to the SMTP server defined in `EMAIL_HOST`.
 
 ## Backup
 
