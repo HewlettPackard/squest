@@ -280,6 +280,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "include_html": True,
+        },
     },
     'loggers': {
         '': {
@@ -311,8 +316,10 @@ CELERY_BEAT_SCHEDULE = {}
 # -----------------------------------------
 # Squest email config
 # -----------------------------------------
+ADMINS = [("", element) for element in os.environ.get('SQUEST_ADMINS', '').split(',') if element]
 SQUEST_HOST = os.environ.get('SQUEST_HOST', "http://squest.domain.local")
 SQUEST_EMAIL_HOST = os.environ.get('SQUEST_EMAIL_HOST', "squest@squest.domain.local")
+SERVER_EMAIL = SQUEST_EMAIL_HOST
 SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(os.environ.get('SQUEST_EMAIL_NOTIFICATION_ENABLED', False))
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
@@ -320,6 +327,7 @@ EMAIL_HOST_USER= os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD', None)
 EMAIL_USE_SSL= os.environ.get('EMAIL_USE_SSL', False)
 
+print(f"ADMINS: {ADMINS}")
 print(f"SQUEST_HOST: {SQUEST_HOST}")
 print(f"SQUEST_EMAIL_HOST: {SQUEST_EMAIL_HOST}")
 print(f"SQUEST_EMAIL_NOTIFICATION_ENABLED: {SQUEST_EMAIL_NOTIFICATION_ENABLED}")

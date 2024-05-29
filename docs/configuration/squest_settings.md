@@ -185,6 +185,17 @@ Address of the Squest portal instance. Used in email templates and in metadata s
 
 Domain name used as email sender. E.g: "squest@squest.domain.local". 
 
+### SQUEST_ADMINS
+
+**Default:** `''`
+
+A list of all the email who get code error notifications. When DEBUG=False.
+Example:
+
+```text
+elias.boulharts@mail.com,nicolas.marcq@mail.com
+```
+
 ### SQUEST_EMAIL_NOTIFICATION_ENABLED
 
 **Default:** Based on `DEBUG` value by default
