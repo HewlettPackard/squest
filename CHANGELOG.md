@@ -1,3 +1,10 @@
+# 2.6.1 XXXX-XX-XX
+
+## Enhancement
+
+- Add parameter to define list of administrators to which to send 500 errors via SMTP
+- Add parameters to login into SMTP server
+
 # 2.6.0 2024-05-22
 
 ## Fix 
