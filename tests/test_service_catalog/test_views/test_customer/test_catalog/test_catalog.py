@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from service_catalog.models import Request, Service, RequestMessage, Portfolio, Operation
+from service_catalog.models import Request, Service, RequestMessage, Portfolio, Operation, OperationType
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
@@ -127,6 +127,13 @@ class TestCustomerCatalogViews(BaseTestRequest):
                                                           job_template=self.job_template_test,
                                                           is_admin_operation=True,
                                                           process_timeout_second=20)
+        # add a second create operation to avoid being redirected directly to the unique operation form
+        Operation.objects.create(name="create non admin",
+                                 service=self.service_test,
+                                 job_template=self.job_template_test,
+                                 is_admin_operation=False,
+                                 type=OperationType.CREATE,
+                                 process_timeout_second=20)
         self.client.force_login(user=self.standard_user)
         args = {
             "service_id": self.service_test.id
@@ -153,3 +160,32 @@ class TestCustomerCatalogViews(BaseTestRequest):
         for step, data_step in enumerate(STEPS_DATA, 1):
             response = self.client.post(url, data=data_step)
             self.assertEqual(403, response.status_code)
+
+    def test_user_cannot_list_admin_create_operation(self):
+        Operation.objects.create(name="second create admin",
+                                 service=self.service_test,
+                                 job_template=self.job_template_test,
+                                 is_admin_operation=True,
+                                 type=OperationType.CREATE,
+                                 process_timeout_second=20)
+        Operation.objects.create(name="third create non admin",
+                                 service=self.service_test,
+                                 job_template=self.job_template_test,
+                                 is_admin_operation=False,
+                                 type=OperationType.CREATE,
+                                 process_timeout_second=20)
+        self.client.force_login(user=self.superuser)
+        args = {
+            "service_id": self.service_test.id
+        }
+        url = reverse('service_catalog:create_operation_list', kwargs=args)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # admin is able to get the 3 create operation
+        self.assertEqual(response.context_data["operation_list"].count(), 3)
+
+        self.client.force_login(user=self.standard_user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # standard user get all create operation except the admin protected one
+        self.assertEqual(response.context_data["operation_list"].count(), 2)
