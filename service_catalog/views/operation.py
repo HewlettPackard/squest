@@ -93,10 +93,14 @@ class CreateOperationListView(SquestListView):
         return ""
 
     def get_queryset(self):
-        return Operation.get_queryset_for_user(self.request.user, "service_catalog.view_operation").filter(
-            service__id=self.kwargs.get('service_id'),
-            enabled=True, type=OperationType.CREATE,
-        )
+        operation_qs = Operation.get_queryset_for_user(self.request.user, "service_catalog.view_operation").filter(
+                service__id=self.kwargs.get('service_id'),
+                enabled=True, type=OperationType.CREATE,
+            )
+        if Service.get_queryset_for_user(self.request.user, perm="service_catalog.admin_request_on_service").filter(id=self.kwargs.get('service_id')).exists():
+            return operation_qs
+        else:
+            return operation_qs.exclude(is_admin_operation=True)
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_queryset().count() == 1:
