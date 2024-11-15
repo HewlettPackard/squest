@@ -1,7 +1,16 @@
-# 2.6.1 XXXX-XX-XX
+# 2.6.1 2024-11-15
+
+## Fix 
+
+- Fix file image upload in documentation
+- Standard users no longer able to list admin CREATE operation
+
 
 ## Enhancement
 
+- UI: accept button show when auto process will be executed after approval
+- UI: add auto accept and auto process status icon for all user
+- add when condition parameter on day 2 operations
 - Add parameter to define list of administrators to which to send 500 errors via SMTP
 - Add parameters to login into SMTP server
 
