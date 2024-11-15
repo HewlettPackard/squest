@@ -103,6 +103,12 @@ class InstanceDetailView(SquestDetailView):
                                                                             enabled=True,
                                                                             type__in=[OperationType.UPDATE,
                                                                                       OperationType.DELETE])
+
+        # filter operation with when condition
+        for operation in operations.all():
+            if not operation.when_instance_authorized(self.object):
+                operations = operations.exclude(id=operation.id)
+
         if operations.exists():
             context['operations_table'] = OperationTableFromInstanceDetails(operations, prefix="operation-")
             if not self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
@@ -200,6 +206,8 @@ def instance_request_new_operation(request, instance_id, operation_id):
     # do not allow to ask for a deletion if delete request already there
     if instance.has_pending_delete_request:
         raise PermissionDenied("A deletion request has already been submitted for this instance")
+    if not operation.when_instance_authorized(instance):
+        raise PermissionDenied("Operation not available for this instance")
 
     parameters = {
         'operation': operation,

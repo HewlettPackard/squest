@@ -32,3 +32,22 @@ class TestApiOperationListInInstance(BaseTestRequestAPI):
         if response_status == status.HTTP_200_OK:
             self.assertEqual(response.data['count'],
                              self.test_instance.service.operations.exclude(type=OperationType.CREATE).count())
+
+    def test_list_exclude_operation_with_when_condition(self):
+        available_operation = self.test_instance.service.operations.exclude(type=OperationType.CREATE).count()
+
+        # add a condition on the operation. We should not get it anymore in the list
+        self.update_operation_test.when = "instance.user_spec.location=='grenoble'"
+        self.update_operation_test.save()
+        response = self.client.get(self.get_operation_list_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], available_operation - 1)
+
+        # add the right spec to the instance to get the operation back in the list
+        self.test_instance.user_spec = {
+            "location": "grenoble"
+        }
+        self.test_instance.save()
+        response = self.client.get(self.get_operation_list_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], available_operation)

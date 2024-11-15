@@ -146,6 +146,8 @@ class OperationRequestSerializer(ModelSerializer):
             raise PermissionDenied("Operation service and instance service doesn't match")
         if self.operation.type not in [OperationType.UPDATE, OperationType.DELETE]:
             raise PermissionDenied("Operation type UPDATE and DELETE only")
+        if not self.operation.when_instance_authorized(self.squest_instance):
+            raise PermissionDenied("Operation not allowed")
         fill_in_survey = data.get("fill_in_survey")
         request_comment = data.get("request_comment")
         fill_in_survey.update({"request_comment": request_comment})
