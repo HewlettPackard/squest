@@ -1,10 +1,10 @@
 from copy import deepcopy
 
 from service_catalog.models import Operation, OperationType
-from tests.test_service_catalog.base import BaseTest
+from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
-class TestOperation(BaseTest):
+class TestOperation(BaseTestRequest):
 
     def assertSurveyIsValid(self):
         self.job_template_test.refresh_from_db()
@@ -60,3 +60,23 @@ class TestOperation(BaseTest):
         self.assertEqual(previous_count + 1, current_count)
         self.new_operation.update_survey()
         self.assertSurveyIsValid()
+
+    def test_when_instance_authorized(self):
+        self.test_instance.user_spec = {
+            "location": "chambery"
+        }
+        self.test_instance.save()
+        # by default when no condition set we always return true
+        self.assertTrue(self.update_operation_test.when_instance_authorized(self.test_instance))
+
+        # set a condition
+        self.update_operation_test.when = "instance.user_spec.location=='grenoble'"
+        self.update_operation_test.save()
+        self.assertFalse(self.update_operation_test.when_instance_authorized(self.test_instance))
+
+        # update the instance spec to match the condition
+        self.test_instance.user_spec = {
+            "location": "grenoble"
+        }
+        self.test_instance.save()
+        self.assertTrue(self.update_operation_test.when_instance_authorized(self.test_instance))

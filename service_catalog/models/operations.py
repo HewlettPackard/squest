@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model import SquestModel
 from service_catalog.models.job_templates import JobTemplate
@@ -51,6 +52,8 @@ class Operation(SquestModel):
     default_job_type = CharField(max_length=500, blank=True, null=True,
                                  help_text="Jinja supported. Job template type")
     validators = CharField(null=True, blank=True, max_length=200, verbose_name="Survey validators")
+    when = CharField(max_length=2000, blank=True, null=True,
+                     help_text="Ansible like 'when' with `instance` as context. No Jinja brackets needed. Cannot be set on 'create' type of operation as the instance does not exist yet")
 
     @property
     def validators_name(self):
@@ -154,6 +157,15 @@ class Operation(SquestModel):
                     )
                     position += 1
 
+
+    def when_instance_authorized(self, instance):
+        from service_catalog.api.serializers import InstanceSerializer
+        if not self.when:
+            return True
+        when_context = {
+            "instance": InstanceSerializer(instance).data
+        }
+        return AnsibleWhen.when_render(context=when_context, when_string=self.when)
 
 post_save.connect(Operation.add_job_template_survey_as_default_survey, sender=Operation)
 

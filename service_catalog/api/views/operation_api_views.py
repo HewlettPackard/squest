@@ -30,4 +30,10 @@ class InstanceOperationList(SquestListAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Operation.objects.none()
-        return self.get_object().service.operations.exclude(type=OperationType.CREATE)
+
+        operations = self.get_object().service.operations.exclude(type=OperationType.CREATE)
+        # filter operation with when condition
+        for operation in operations.all():
+            if not operation.when_instance_authorized(self.get_object()):
+                operations = operations.exclude(id=operation.id)
+        return operations

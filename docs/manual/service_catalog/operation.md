@@ -27,10 +27,11 @@ Operations of type "update" or "delete" can be then added to manage the lifecycl
 | Default job type       | Job type (Run or Check)                                                                                   |
 | Default diff mode      | Default `False`. This is equivalent to Ansible's --diff mode in the CLI                                   |
 | Default credential IDs | Comma separated list of credentials ID                                                                    |
+| When                   | Ansible 'when' condition to make operation available to some instance spec condition                      |
 
 ## Job template config
 
-By default, Squest will execute the selected Job Template with the config as set in RHAAP/AWX. 
+By default, Squest will execute the selected Job Template with the config as set in RHAAP/AWX.
 
 If a field is configured to "Prompt on launch" in RHAAP/AWX, the administrator can override it from the "Process" page of an accepted request:
 
@@ -62,3 +63,23 @@ flowchart LR
     **Default inventory ID** field is expecting an integer that correspond the the inventory ID in RHAAP/AWX.
 
     **Default credential IDs** field is expecting a comma separated list of integer that correspond existings credentials ID in RHAAP/AWX.
+
+## When condition
+
+The when configuration allows to filter day 2 operations following conditions based on the `instance` object state.
+
+For example, to expose an operation based on a user spec of an instance. The `when` condition can be setup like the following:
+```
+instance.user_spec.location==grenoble
+```
+
+With this configuration, only instances with the following user_spec will see the operation from the instance details view:
+```json
+{
+    "location": "grenoble"
+}
+```
+
+!!! note
+
+    Like for Ansible, double curly braces are not used in 'when' declaration.
