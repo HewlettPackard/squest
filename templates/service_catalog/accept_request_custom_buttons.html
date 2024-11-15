@@ -3,12 +3,25 @@
    href="{% url 'service_catalog:request_reject' object.id %}">
     <i class="fas fa-ban"></i> Reject
 </a>
-<button class="btn btn-primary" type="submit" name="accept_only">
-    <i class="fas fa-thumbs-up"></i> Accept the request
-</button>
-{% has_perm request.user "service_catalog.process_request" object as can_process_request %}
-{% if can_process_request and not object.operation.auto_process %}
-<button class="btn btn-success" type="submit" name="accept_and_process">
-    <i class="fas fa-play"></i> Accept and process the request
-</button>
+{% has_perm request.user "service_catalog.accept_request" object as can_accept_request %}
+{% if not object.operation.auto_process %}
+    {% if can_accept_request %}
+        <button class="btn btn-primary" type="submit" name="accept_only">
+            <i class="fas fa-thumbs-up"></i> Accept the request
+        </button>
+    {% endif %}
+    
+    {% has_perm request.user "service_catalog.process_request" object as can_process_request %}
+    {% if can_process_request %}
+        <button class="btn btn-success" type="submit" name="accept_and_process">
+            <i class="fas fa-play"></i> Accept and process the request
+        </button>
+    {% endif %}
+{%  else %}
+    {% if can_accept_request %}
+    <button class="btn btn-success" type="submit" name="accept_only">
+        <i class="fas fa-play"></i> Accept (auto process)
+    </button>
+    {% endif %}
 {% endif %}
+
