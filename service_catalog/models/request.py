@@ -233,6 +233,26 @@ class Request(SquestModel):
             "squest_host": settings.SQUEST_HOST,
             "request": AdminRequestSerializer(self).data
         }
+
+        # load default override from the operation
+        if inventory_override is None:
+            inventory_override = self.operation.default_inventory_id
+        if credentials_override is None:
+            if  self.operation.default_credentials_ids is not None:
+                credentials_override = self.operation.default_credentials_ids.split(",")
+        if tags_override is None and self.operation.default_tags is not None:
+            tags_override = self.operation.default_tags.split(",")
+        if skip_tags_override is None and self.operation.default_skip_tags is not None:
+            skip_tags_override = self.operation.default_skip_tags.split(",")
+        if limit_override is None and self.operation.default_limits is not None:
+            limit_override = self.operation.default_limits.split(",")
+        if verbosity_override is None:
+            verbosity_override = self.operation.default_verbosity
+        if job_type_override is None:
+            job_type_override = self.operation.default_job_type
+        if diff_mode_override is None:
+            diff_mode_override = self.operation.default_diff_mode
+
         tower_job_id = None
         try:
             tower_job_id, error_message = self.operation.job_template.execute(extra_vars=tower_extra_vars,
