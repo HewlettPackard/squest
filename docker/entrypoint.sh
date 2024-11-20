@@ -13,4 +13,4 @@ echo "Inserting default data"
 python manage.py insert_default_data
 
 echo "Starting web server"
-gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
+gunicorn --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-4} --pythonpath /app/squest Squest.wsgi
