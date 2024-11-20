@@ -208,6 +208,12 @@ Set to `True` to enable email notifications.
 
 Set to `True` to change the navbar and footer color to visually identify a testing instance of Squest.
 
+### GUNICORN_WORKERS
+
+**Default:** `4`
+
+Number of workers used by Gunicorn process in charge of serving client connection. Increase the number of worker threads to serve more clients concurrently
+
 ## SMTP
 
 ### EMAIL_HOST
