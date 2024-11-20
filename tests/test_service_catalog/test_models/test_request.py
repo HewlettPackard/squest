@@ -537,3 +537,42 @@ class TestRequest(BaseTestRequest):
         old_submitted_date = new_request.date_submitted
         new_request.save()
         self.assertEqual(old_submitted_date, new_request.date_submitted)
+
+    def setup_default_on_operation(self):
+        self.create_operation_test.default_inventory_id = 1
+        self.create_operation_test.default_limits = "machine_one,machine_two"
+        self.create_operation_test.default_tags = "tag1,tag2"
+        self.create_operation_test.default_skip_tags = "skipped_tag1,skipped_tag2"
+        self.create_operation_test.default_credentials_ids = "4,5"
+        self.create_operation_test.default_verbosity = "3"
+        self.create_operation_test.default_diff_mode = "new_diff"
+        self.create_operation_test.default_job_type = "new_job"
+        self.create_operation_test.save()
+
+    def test_perform_processing_uses_default_from_operation(self):
+        self.create_operation_test.auto_process = True
+        self.setup_default_on_operation()
+
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10, ""
+            self.test_request.accept(user=self.superuser)
+            args, called_args = mock_job_execute.call_args
+            self.assertEqual(called_args["inventory_override"],1)
+            self.assertEqual(called_args["credentials_override"],['4','5'])
+            self.assertEqual(called_args["tags_override"],["tag1", "tag2"])
+            self.assertEqual(called_args["skip_tags_override"],["skipped_tag1","skipped_tag2"])
+            self.assertEqual(called_args["limit_override"],["machine_one", "machine_two"])
+            self.assertEqual(called_args["verbosity_override"],"3")
+            self.assertEqual(called_args["job_type_override"],"new_job")
+            self.assertEqual(called_args["diff_mode_override"],"new_diff")
+
+    def test_perform_processing_uses_default_from_operation_override_on_accept(self):
+        # in this test we've set default credentials on the operation, but we override them on the process request page
+        self.setup_default_on_operation()
+        self.test_request.state = RequestState.PROCESSING
+        self.test_request.save()
+        with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
+            mock_job_execute.return_value = 10, ""
+            self.test_request.perform_processing(inventory_override=3)
+            args, called_args = mock_job_execute.call_args
+            self.assertEqual(called_args["inventory_override"], 3)
