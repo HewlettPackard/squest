@@ -11,7 +11,27 @@ from service_catalog.models.operations import OperationType
 
 
 class BaseTestCommon(TransactionTestCase):
+    class FakeJobTemplate:
+        def __init__(self, job_template_id, name, survey_spec, data):
+            self.id = job_template_id
+            self.name = name
+            self.survey_spec = survey_spec
+            self._data = data
 
+    class FakeTower:
+        def __init__(self, testing_survey, data, job_template_count=1):
+            self.job_templates = [BaseTestCommon.FakeJobTemplate(i, f"job-template-test-{i}", testing_survey, data) for i in range(1, job_template_count+1)]
+            self.inventories = []
+            self.credentials = []
+
+        def get_job_template_by_name(self, name):
+            for job in self.job_templates:
+                if name == job.name:
+                    return job
+            return None
+
+        def get_tower_instance(self):
+            return
     def setUp(self):
         # Organization
         self.test_quota_scope_org = Organization.objects.create(name='Test Organization 1')
@@ -268,12 +288,12 @@ class BaseTestCommon(TransactionTestCase):
                 }
             ]
         }
-        self.job_template_test = JobTemplate.objects.create(name="job-template-test",
+        self.job_template_test = JobTemplate.objects.create(name="job-template-test-1",
                                                             survey=self.testing_survey,
                                                             tower_id=1,
                                                             tower_server=self.tower_server_test,
                                                             tower_job_template_data=self.job_template_testing_data)
-        self.job_template_test_2 = JobTemplate.objects.create(name="job-template-test",
+        self.job_template_test_2 = JobTemplate.objects.create(name="job-template-test-2",
                                                               survey=self.testing_survey,
                                                               tower_id=1,
                                                               tower_server=self.tower_server_test_2,

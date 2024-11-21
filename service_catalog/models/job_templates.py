@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class JobTemplate(SquestModel):
     class Meta:
-        unique_together = ('tower_id', 'tower_server',)
+        unique_together = ('name', 'tower_server',)
         default_permissions = ('add', 'change', 'delete', 'view', 'list')
 
     name = CharField(max_length=100)
@@ -33,7 +33,7 @@ class JobTemplate(SquestModel):
     def execute(self, extra_vars, inventory_override=None, credentials_override=None, tags_override=None,
                 skip_tags_override=None, limit_override=None, verbosity_override=None, job_type_override=None,
                 diff_mode_override=None):
-        tower_job_template = self.tower_server.get_tower_instance().get_job_template_by_id(self.tower_id)
+        tower_job_template = self.tower_server.get_tower_instance().get_job_template_by_name(self.name)
         if tower_job_template is None:
             raise ExceptionServiceCatalog.JobTemplateNotFound(tower_name=self.tower_server.name,
                                                               job_template_id=self.tower_id)

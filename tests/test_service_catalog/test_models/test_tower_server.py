@@ -46,16 +46,7 @@ class TestTowerServer(BaseTest):
     @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_same_survey(self, mock_tower_instance):
         # test sync with same job template
-        mock_tower_instance.return_value = MagicMock(
-            job_templates=[
-                MagicMock(
-                    id=1,
-                    survey_spec=self.testing_survey,
-                    _data=self.job_template_testing_data
-                )
-            ]
-        )
-        mock_tower_instance.return_value.job_templates[0].name = "Mock"
+        mock_tower_instance.return_value = BaseTest.FakeTower(self.testing_survey, self.job_template_testing_data)
         self.tower_server_test.sync()
         mock_tower_instance.assert_called()
         # assert that the survey is the same
@@ -63,19 +54,10 @@ class TestTowerServer(BaseTest):
 
     @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
     def test_sync_survey_changed(self, mock_tower_instance):
-        mock_tower_instance.return_value = MagicMock(
-            job_templates=[
-                MagicMock(
-                    id=1,
-                    survey_spec=self.new_survey,
-                    _data=self.job_template_testing_data
-                )
-            ]
-        )
-        mock_tower_instance.return_value.job_templates[0].name = "Mock"
+        mock_tower_instance.return_value = BaseTest.FakeTower(self.new_survey, self.job_template_testing_data)
         self.tower_server_test.sync()
         # assert that the survey has been updated
-        updated_template = JobTemplate.objects.get(id=self.job_template_test.id,
+        updated_template = JobTemplate.objects.get(name="job-template-test-1",
                                                    tower_server=self.tower_server_test)
         self.assertDictEqual(self.new_survey, updated_template.survey)
         # check that the operation tower_survey_fields has been updated
@@ -84,14 +66,14 @@ class TestTowerServer(BaseTest):
             self.assertTrue(updated_operation.tower_survey_fields.filter(variable=field["variable"], is_customer_field=True).exists())
 
     @patch('service_catalog.models.tower_server.TowerServer._update_job_template_from_tower')
-    @patch('towerlib.towerlib.Tower.get_job_template_by_id')
+    @patch('towerlib.towerlib.Tower.get_job_template_by_name')
     @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
-    def test_sync_selected_job_template(self, mock_tower_instance, mock_get_job_template_by_id,
+    def test_sync_selected_job_template(self, mock_tower_instance, mock_get_job_template_by_name,
                                         mock_update_job_template_from_tower):
-        self.job_template_test.tower_id = 20
+        self.job_template_test.name = "test-survey"
         self.job_template_test.save()
-        mock_tower_instance.return_value = MagicMock()
-        mock_get_job_template_by_id.return_value = MagicMock(
+        mock_tower_instance.return_value = BaseTest.FakeTower(self.testing_survey, self.job_template_testing_data)
+        mock_get_job_template_by_name.return_value = MagicMock(
             id=1,
             survey_spec=self.new_survey,
             _data=self.job_template_testing_data
@@ -99,15 +81,27 @@ class TestTowerServer(BaseTest):
         self.tower_server_test.sync(job_template_id=self.job_template_test.id)
         mock_update_job_template_from_tower.assert_called()
 
-    def test_update_job_template_from_tower(self):
+    @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
+    def test_update_job_template_from_tower(self, mock_tower_instance):
         self.job_template_test.tower_id = 10
         self.job_template_test.save()
-        job_template_from_tower = MagicMock(id=10,
-                                            _data=self.job_template_testing_data,
-                                            survey_spec=self.new_survey)
-        job_template_from_tower.name = "tower_job_template_update"
-        self.tower_server_test._update_job_template_from_tower(job_template_from_tower)
         self.job_template_test.refresh_from_db()
-        self.assertEqual(self.job_template_test.name, "tower_job_template_update")
+        self.assertEqual(self.job_template_test.tower_id, 10)
+        mock_tower_instance.return_value = BaseTest.FakeTower(self.new_survey, self.job_template_testing_data)
+        self.tower_server_test._update_job_template_from_tower(self.job_template_test.name)
+        self.job_template_test.refresh_from_db()
+        self.assertEqual(self.job_template_test.tower_id, 1)
         self.assertEqual(self.job_template_test.survey, self.new_survey)
         self.assertEqual(self.job_template_test.tower_job_template_data, self.job_template_testing_data)
+
+    @patch('towerlib.towerlib.Tower.get_job_template_by_name')
+    @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
+    def test_update_non_existing_job_template_from_tower(self, mock_tower_instance, mock_get_job_template_by_name):
+        self.job_template_test.name = "non-existing"
+        self.job_template_test.save()
+        job_template_id = self.job_template_test.id
+        mock_tower_instance.return_value = BaseTest.FakeTower(self.testing_survey, self.job_template_testing_data)
+        mock_get_job_template_by_name.return_value = None
+        self.assertTrue(JobTemplate.objects.filter(id=job_template_id).exists())
+        self.tower_server_test.sync(job_template_id)
+        self.assertFalse(JobTemplate.objects.filter(id=job_template_id).exists())

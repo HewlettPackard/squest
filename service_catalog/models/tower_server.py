@@ -42,14 +42,16 @@ class TowerServer(SquestModel):
 
         # sync job template
         if job_template_id is None:
-            job_template_id_in_tower = []
+            job_template_names = []
             for job_template_from_tower in tower.job_templates:
-                job_template_id_in_tower.append(job_template_from_tower.id)
-                self._update_job_template_from_tower(job_template_from_tower)
-            JobTemplateLocal.objects.filter(tower_server=self).exclude(tower_id__in=job_template_id_in_tower).delete()
+                job_template_names.append(job_template_from_tower.name)
+                self._update_job_template_from_tower(job_template_from_tower.name)
+            JobTemplateLocal.objects.filter(tower_server=self).exclude(name__in=job_template_names).delete()
         else:
             job_template = JobTemplateLocal.objects.get(id=job_template_id)
-            self._update_job_template_from_tower(tower.get_job_template_by_id(job_template.tower_id))
+            existing = self._update_job_template_from_tower(job_template.name)
+            if not existing:
+                job_template.delete()
 
         # sync inventories
         inventory_ids_in_tower = []
@@ -65,7 +67,7 @@ class TowerServer(SquestModel):
         for credential_from_tower in tower.credentials:
             credentials_ids_in_tower.append(credential_from_tower.id)
             self._update_credential_from_tower(credential_from_tower)
-        # delete inventories that do not exist anymore in Tower
+        # delete credentials that do not exist anymore in Tower
         from .credential import Credential as CredentialLocal
         CredentialLocal.objects.filter(tower_server=self).exclude(tower_id__in=credentials_ids_in_tower).delete()
 
@@ -77,18 +79,22 @@ class TowerServer(SquestModel):
     def get_tower_instance(self):
         return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)
 
-    def _update_job_template_from_tower(self, job_template_from_tower):
+    def _update_job_template_from_tower(self, job_template_name):
+        tower_server = self.get_tower_instance()
+        job_template_from_tower = tower_server.get_job_template_by_name(job_template_name)
+        if job_template_from_tower is None:
+            return False
         from .job_templates import JobTemplate as JobTemplateLocal
         logger.info(f"Sync job template id '{job_template_from_tower.id}'")
-        job_template, _ = JobTemplateLocal.objects.get_or_create(tower_id=job_template_from_tower.id,
-                                                                 tower_server=self,
-                                                                 defaults={'name': job_template_from_tower.name})
+        job_template, _ = JobTemplateLocal.objects.get_or_create(tower_server=self, name=job_template_from_tower.name, defaults={'tower_id': job_template_from_tower.id })
+
         # update data
-        job_template.name = job_template_from_tower.name
+        job_template.tower_id = job_template_from_tower.id
         job_template.tower_job_template_data = job_template_from_tower._data
         job_template.survey = job_template_from_tower.survey_spec
         job_template.is_compliant = job_template.check_is_compliant()
         job_template.save()
+        return True
 
     def _update_inventory_from_tower(self, inventory_from_tower):
         from .inventory import Inventory as InventoryLocal

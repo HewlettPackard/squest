@@ -1,7 +1,7 @@
 import json
 import copy
 from unittest import mock
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 
 from django.urls import reverse
 
@@ -32,28 +32,17 @@ class AdminTowerGetViewsTest(BaseTestTower):
     def test_towerserver_sync_when_deleted_job_template(self):
         self.mock_tower_sync(-1)
 
-    def mock_tower_sync(self, delta):
-        with mock.patch('service_catalog.models.tower_server.TowerServer.get_tower_instance') as mock_tower_instance:
-            current_number_job_template = JobTemplate.objects.filter(tower_server=self.tower_server_test).count()
-            target_number_job_template = current_number_job_template + delta
-            job_template_list = list()
-            for i in range(target_number_job_template):
-                magic_mock = MagicMock(
-                    id=i + 100,
-                    survey_spec=self.testing_survey,
-                    _data=self.job_template_testing_data
-                )
-                magic_mock.name = f"Test {i}"
-                job_template_list.append(magic_mock)
-            mock_tower_instance.return_value = MagicMock(
-                job_templates=job_template_list
-            )
-            self.tower_server_test.sync()
-            self.tower_server_test.refresh_from_db()
-            mock_tower_instance.assert_called()
-            # assert that the survey is the same
-            self.assertEqual(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
-                             target_number_job_template)
+    @patch('service_catalog.models.tower_server.TowerServer.get_tower_instance')
+    def mock_tower_sync(self, delta, mock_tower_instance):
+        current_number_job_template = JobTemplate.objects.filter(tower_server=self.tower_server_test).count()
+        target_number_job_template = current_number_job_template + delta
+        mock_tower_instance.return_value = BaseTestTower.FakeTower(self.testing_survey, self.job_template_testing_data, target_number_job_template)
+        self.tower_server_test.sync()
+        self.tower_server_test.refresh_from_db()
+        mock_tower_instance.assert_called()
+        # assert that the survey is the same
+        self.assertEqual(JobTemplate.objects.filter(tower_server=self.tower_server_test).count(),
+                         target_number_job_template)
 
     def test_jobtemplate_sync(self):
         with mock.patch("service_catalog.models.tower_server.TowerServer.sync") as mock_sync:
