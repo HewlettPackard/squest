@@ -15,7 +15,7 @@ from django.forms import Select as FormsSelect
 from django.forms import SelectMultiple as FormsSelectMultiple
 from django.forms import TextInput as FormsTextInput
 from django.forms import Textarea as FormsTextarea
-from jinja2 import Template
+from jinja2 import Template, Environment
 from jinja2.exceptions import UndefinedError
 from rest_framework.serializers import CharField as DjangoRestCharField
 from rest_framework.serializers import ChoiceField as DjangoRestChoiceField
@@ -27,8 +27,20 @@ from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model import SquestModel
 from resource_tracker_v2.models import AttributeDefinition
 from service_catalog.models import Operation
+import json
 
 logger = logging.getLogger(__name__)
+
+custom_filters = {
+    "to_json": lambda value: json.dumps(value, indent=2),  # Convert to JSON
+}
+
+# Initialize Jinja2 environment
+custom_env = Environment()
+
+# Dynamically add filters
+for filter_name, filter_func in custom_filters.items():
+    custom_env.filters[filter_name] = filter_func
 
 
 def get_choices_as_tuples_list(choices, default=None):
@@ -83,7 +95,9 @@ class TowerSurveyField(SquestModel):
         default_value = self.field_options.get('default')
         if self.default is None:
             return default_value
-        template = Template(self.default)
+
+        # Use the custom environment to create a Template
+        template = custom_env.from_string(self.default)
         from service_catalog.api.serializers import InstanceSerializer
         from profiles.api.serializers import UserSerializer
         context = {
