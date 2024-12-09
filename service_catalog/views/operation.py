@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from Squest.utils.squest_table import SquestRequestConfig
 
 from Squest.utils.squest_views import *
+from profiles.models import Permission
 from service_catalog.filters.operation_filter import OperationFilter, OperationFilterLimited
 from service_catalog.forms import OperationForm
 from service_catalog.models import Operation, Service, OperationType, ApprovalWorkflow
@@ -93,14 +94,23 @@ class CreateOperationListView(SquestListView):
         return ""
 
     def get_queryset(self):
-        operation_qs = Operation.get_queryset_for_user(self.request.user, "service_catalog.view_operation").filter(
-                service__id=self.kwargs.get('service_id'),
-                enabled=True, type=OperationType.CREATE,
-            )
-        if Service.get_queryset_for_user(self.request.user, perm="service_catalog.admin_request_on_service").filter(id=self.kwargs.get('service_id')).exists():
-            return operation_qs
-        else:
-            return operation_qs.exclude(is_admin_operation=True)
+        service_id = self.kwargs.get('service_id')
+        current_service = Service.objects.get(id=service_id)
+        # get all create and enabled permission for current selected service
+        all_permission_current_service = Permission.objects.filter(operation__service=current_service,
+                                                                   operation__enabled=True,
+                                                                   operation__type__in=[OperationType.CREATE]).distinct()
+        # Init empty queryset to be returned
+        operation_qs = Operation.objects.none()
+        for permission in all_permission_current_service.all():
+            # add allowed operation for all service if the user has the permission
+            operation_qs = operation_qs | Operation.get_queryset_for_user_filtered(self.request.user,
+                                                                               permission.permission_str)
+        # restrict to only the selected service
+        operation_qs = operation_qs.filter(service=current_service,
+                                       enabled=True,
+                                       type__in=[OperationType.CREATE])
+        return operation_qs
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_queryset().count() == 1:

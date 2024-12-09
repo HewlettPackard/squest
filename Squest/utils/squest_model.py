@@ -74,6 +74,12 @@ class SquestRBAC(Model):
         return Q(pk=None)
 
     @classmethod
+    def get_queryset_for_user_filtered(cls, user, perm, unique=True):
+        app_label, codename = perm.split(".")
+        return cls.get_queryset_for_user(user, perm).filter(permission__content_type__app_label=app_label,
+                                                            permission__codename=codename)
+
+    @classmethod
     def get_queryset_for_user(cls, user, perm, unique=True):
         from profiles.models.squest_permission import Permission
 

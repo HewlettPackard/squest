@@ -1,4 +1,5 @@
 import logging
+from gc import enable
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,7 @@ from jinja2 import UndefinedError, TemplateError
 from Squest.utils.squest_table import SquestRequestConfig
 from Squest.utils.squest_views import SquestListView, SquestDetailView, SquestUpdateView, SquestDeleteView, \
     SquestPermissionDenied
+from profiles.models import Permission
 from service_catalog.filters.instance_filter import InstanceFilter, InstanceArchivedFilter
 from service_catalog.forms import InstanceForm, OperationRequestForm, SupportRequestForm, SupportMessageForm, \
     InstanceFormRestricted
@@ -89,31 +91,29 @@ class InstanceDetailView(SquestDetailView):
         context = super().get_context_data(**kwargs)
         config = SquestRequestConfig(self.request)
 
+        current_service = self.get_object().service
+        all_permission_current_service = Permission.objects.filter(operation__service=current_service, operation__enabled=True,
+                                                                   operation__type__in=[OperationType.UPDATE,
+                                                                                        OperationType.DELETE]).distinct()
+
         # operations
         operations = Operation.objects.none()
-        if self.request.user.has_perm("service_catalog.request_on_instance", self.object):
-            operations = operations | self.object.service.operations.filter(is_admin_operation=False,
-                                                                            enabled=True,
-                                                                            type__in=[OperationType.UPDATE,
-                                                                                      OperationType.DELETE])
+        for permission in all_permission_current_service.all():
+            operations = operations | Operation.get_queryset_for_user_filtered(self.request.user, permission.permission_str)
 
-        # admin operations
-        if self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
-            operations = operations | self.object.service.operations.filter(is_admin_operation=True,
-                                                                            enabled=True,
-                                                                            type__in=[OperationType.UPDATE,
-                                                                                      OperationType.DELETE])
+        operations = operations.filter(service=current_service,
+                                       enabled=True,
+                                       type__in=[OperationType.UPDATE,
+                                                 OperationType.DELETE])
+
+        # TODO: service form
+        # TODO: portfolio form
+        # TODO: tests
 
         # filter operation with when condition
         for operation in operations.all():
             if not operation.when_instance_authorized(self.object):
                 operations = operations.exclude(id=operation.id)
-
-        if operations.exists():
-            context['operations_table'] = OperationTableFromInstanceDetails(operations, prefix="operation-")
-            if not self.request.user.has_perm("service_catalog.admin_request_on_instance", self.object):
-                context['operations_table'].exclude = ("is_admin_operation",)
-            config.configure(context['operations_table'])
 
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):
@@ -189,12 +189,8 @@ class InstanceDeleteView(SquestDeleteView):
 def instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
     operation = get_object_or_404(Operation, id=operation_id)
-    if not operation.is_admin_operation and not request.user.has_perm('service_catalog.request_on_instance',
-                                                                      instance):
-        raise SquestPermissionDenied(permission='service_catalog.request_on_instance')
-    if operation.is_admin_operation and not request.user.has_perm('service_catalog.admin_request_on_instance',
-                                                                  instance):
-        raise SquestPermissionDenied(permission="service_catalog.admin_request_on_instance")
+    if not request.user.has_perm(operation.permission, instance):
+        raise SquestPermissionDenied(permission=operation.permission)
     if instance.state not in [InstanceState.AVAILABLE]:
         raise PermissionDenied("Instance not available")
     if operation.enabled is False:

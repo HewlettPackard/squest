@@ -3,7 +3,7 @@ from formtools.wizard.views import SessionWizardView
 
 from Squest.utils.squest_rbac import SquestPermissionRequiredMixin
 from profiles.models import Scope
-from service_catalog.models import Service, OperationType, Doc
+from service_catalog.models import Service, OperationType, Doc, Operation
 
 
 class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView):
@@ -11,15 +11,9 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
     def get_permission_required(self):
         service_id = self.kwargs['service_id']
         operation_id = self.kwargs['operation_id']
-        self.service = get_object_or_404(Service, **{'id': service_id, 'enabled': True})
-        self.operation = get_object_or_404(
-            self.service.operations.filter(enabled=True, type=OperationType.CREATE),
-            id=operation_id
-        )
-        if self.operation.is_admin_operation:
-            return 'service_catalog.admin_request_on_service'
-        if not self.operation.is_admin_operation:
-            return 'service_catalog.request_on_service'
+        self.operation = get_object_or_404(Operation, enabled=True, service__enabled=True, id=operation_id, type=OperationType.CREATE, service__id=service_id)
+        return self.operation.permission
+
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)

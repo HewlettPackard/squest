@@ -1,11 +1,9 @@
+import inspect
 import logging
+
 from jinja2 import Template
 from jinja2.exceptions import UndefinedError
-import inspect
-
 from rest_framework.exceptions import ValidationError
-
-from service_catalog.models import Instance
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +27,11 @@ class FormUtils:
             logger.warning(f"[template_field] templating error: {e.message}")
             pass
         return templated_string
+
+    @classmethod
+    def get_default_permission_for_operation(cls):
+        from django.contrib.auth.models import Permission
+        return Permission.objects.get(codename="view_operation").id
 
 
 
@@ -62,3 +65,4 @@ class SurveyValidator:
             self._form.add_error(field, message)
         else:
             raise ValidationError({field: message})
+
