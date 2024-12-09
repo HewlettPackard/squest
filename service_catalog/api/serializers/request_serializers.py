@@ -133,10 +133,9 @@ class OperationRequestSerializer(ModelSerializer):
 
     def validate(self, data):
         super(OperationRequestSerializer, self).validate(data)
-
-        if self.operation.is_admin_operation and not self.user.has_perm("service_catalog.admin_request_on_instance"):
+        if not self.user.has_perm("service_catalog.request_on_instance"):
             raise PermissionDenied
-        if not self.operation.is_admin_operation and not self.user.has_perm("service_catalog.request_on_instance"):
+        if not self.user.has_perm(self.operation.permission.permission_str, self.squest_instance):
             raise PermissionDenied
         if self.squest_instance.state not in [InstanceState.AVAILABLE]:
             raise PermissionDenied("Instance not available")

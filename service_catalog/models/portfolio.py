@@ -34,3 +34,7 @@ class Portfolio(SquestModel):
         self.portfolio_list.update(**{"parent_portfolio": self.parent_portfolio})
         self.service_list.update(**{"parent_portfolio": self.parent_portfolio})
         super(Portfolio, self).delete(using, keep_parents)
+
+    def bulk_set_permission_on_operation(self, target_permission):
+        for service in self.service_list.all():
+            service.bulk_set_permission_on_operation(target_permission)

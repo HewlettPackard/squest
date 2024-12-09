@@ -1,8 +1,9 @@
 from Squest.utils.squest_views import *
+from profiles.models import Permission
 from service_catalog.filters.service_filter import ServiceFilter
 from service_catalog.forms import ServiceForm
 
-from service_catalog.models import Service, Operation
+from service_catalog.models import Service, Operation, OperationType
 from service_catalog.tables.operation_tables import OperationTable
 from service_catalog.tables.service_tables import ServiceTable
 
@@ -25,6 +26,22 @@ class ServiceListView(SquestListView):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = get_breadcrumbs_for_service()
         return context
+
+    def get_queryset(self):
+        # get all create and enabled permission for current selected service
+        all_permission_current_service = Permission.objects.filter(operation__enabled=True,
+                                                                   operation__type__in=[
+                                                                       OperationType.CREATE]).distinct()
+        # Init empty queryset to be returned
+        operation_qs = Operation.objects.none()
+        for permission in all_permission_current_service.all():
+            # add allowed operation for all service if the user has the permission
+            operation_qs = operation_qs | Operation.get_queryset_for_user_filtered(self.request.user,
+                                                                                   permission.permission_str)
+        # restrict to only the selected service
+        service_ids = operation_qs.filter(enabled=True,
+                                           type__in=[OperationType.CREATE]).values_list('service__id', flat=True)
+        return Service.objects.filter(id__in=service_ids)
 
 
 class ServiceDetailView(SquestDetailView):

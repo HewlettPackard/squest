@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ImageField, BooleanField, ForeignKey, SET_NULL, JSONField, ManyToManyField
 from django.db.models.signals import pre_save
@@ -5,8 +7,10 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from Squest.utils.squest_model import SquestModel
+from profiles.models import Permission
 from service_catalog.models.operation_type import OperationType
 
+logger = logging.getLogger(__name__)
 
 class Service(SquestModel):
     class Meta:
@@ -56,6 +60,17 @@ class Service(SquestModel):
 
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
+
+    def bulk_set_permission_on_operation(self, target_permission):
+        from service_catalog.models import Operation
+        logger.debug(f"Bulk edit permission on service {self.name} to permission {target_permission}")
+        # check if all permission are already set to the target perm
+        all_permission_current_service = Permission.objects.filter(operation__service=self).distinct()
+        # if the target perm is already the one used we do nothing
+        if all_permission_current_service.count() == 1:
+            if all_permission_current_service.first() == target_permission:
+                return
+        Operation.objects.filter(service=self).update(permission=target_permission)
 
 
 @receiver(pre_save, sender=Service)
