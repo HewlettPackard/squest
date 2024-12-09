@@ -67,10 +67,8 @@ class Command(BaseCommand):
                                             job_template=job_templates.get(name="Demo Job Template"))
             states = [RequestState.SUBMITTED, RequestState.FAILED, RequestState.ACCEPTED, RequestState.ON_HOLD,
                       RequestState.REJECTED, RequestState.CANCELED, RequestState.PROCESSING, RequestState.COMPLETE]
-            for i in range(random.randint(1, 3)):
+            for i in range(3):
                 for username in users:
-                    if random.randint(0, 2) == 1:
-                        continue
                     user = users[username]
                     new_instance = Instance.objects.create(service=service, name=f"Instance - {username} - {i}",
                                                            requester=user, quota_scope=random.choice(organization))

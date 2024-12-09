@@ -62,7 +62,7 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingPostContextView(
                 url='api_operation_request_create',
-                perm_str='service_catalog.admin_request_on_instance',
+                perm_str=self.update_operation_test_2.permission.permission_str,
                 url_kwargs={'instance_id': self.test_instance_2.id, 'operation_id': self.update_operation_test_2.id},
                 data={
                     'fill_in_survey': {

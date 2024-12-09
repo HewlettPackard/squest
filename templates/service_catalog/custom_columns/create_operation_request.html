@@ -1,8 +1,4 @@
-{% if record.is_admin_operation %}
-    {% has_perm request.user "service_catalog.admin_request_on_service" as can_request_operation %}
-{% else %}
-    {% has_perm request.user "service_catalog.request_on_service" as can_request_operation %}
-{% endif %}
+{% has_perm request.user record.permission as can_request_operation %}
 {% if can_request_operation %}
     <a href="{% url 'service_catalog:request_service' service_id=service_id operation_id=record.id %}"
        class="btn btn-info bg-sm">

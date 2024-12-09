@@ -2,9 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 
 from Squest.utils.squest_views import *
+from profiles.models import Permission
 from service_catalog.filters.portfolio_filter import PortfolioFilter
 from service_catalog.forms import PortfolioForm
-from service_catalog.models import Service
+from service_catalog.models import Service, Operation, OperationType
 from service_catalog.models.portfolio import Portfolio
 from service_catalog.tables.portfolio_tables import PortfolioTable
 
@@ -30,8 +31,8 @@ class PortfolioCreateView(SquestCreateView):
         context = super().get_context_data(**kwargs)
         context['multipart'] = True
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-        ] + context['breadcrumbs']
+                                     {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
+                                 ] + context['breadcrumbs']
         return context
 
 
@@ -43,8 +44,8 @@ class PortfolioEditView(SquestUpdateView):
         context = super().get_context_data(**kwargs)
         context['multipart'] = True
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-        ] + context['breadcrumbs']
+                                     {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
+                                 ] + context['breadcrumbs']
         return context
 
 
@@ -54,8 +55,8 @@ class PortfolioDeleteView(SquestDeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-        ] + context['breadcrumbs']
+                                     {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
+                                 ] + context['breadcrumbs']
         return context
 
 
@@ -64,7 +65,27 @@ def service_catalog_list(request):
     current_portfolio_id = request.GET.get('parent_portfolio') if request.GET.get('parent_portfolio') else None
     current_portfolio = get_object_or_404(Portfolio.objects.all(), id=current_portfolio_id) if current_portfolio_id else None
     sub_portfolio_list = Portfolio.objects.filter(parent_portfolio__id=current_portfolio_id)
-    service_list = Service.objects.filter(parent_portfolio__id=current_portfolio_id, enabled=True)
+
+    # service_list = Service.objects.filter(parent_portfolio__id=current_portfolio_id, enabled=True)
+
+    # get all create and enabled permission for current selected service
+    all_permission_current_service = Permission.objects.filter(operation__service__parent_portfolio__id=current_portfolio_id,
+                                                               operation__enabled=True,
+                                                               operation__type__in=[
+                                                                   OperationType.CREATE]).distinct()
+    # Init empty queryset to be returned
+    operation_qs = Operation.objects.none()
+    for permission in all_permission_current_service.all():
+        # add allowed operation for all service if the user has the permission
+        operation_qs = operation_qs | Operation.get_queryset_for_user_filtered(request.user,
+                                                                               permission.permission_str)
+    # restrict to only the selected service
+    service_ids = operation_qs.filter(service__parent_portfolio__id=current_portfolio_id,
+                                      enabled=True,
+                                      type__in=[OperationType.CREATE]).values_list('service__id', flat=True)
+    service_list = Service.objects.filter(id__in=service_ids)
+
+
     context = {
         'breadcrumbs': get_portfolio_breadcrumbs(current_portfolio_id),
         'portfolio_list': sub_portfolio_list,

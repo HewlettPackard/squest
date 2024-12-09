@@ -1,9 +1,11 @@
-from django.forms import MultipleChoiceField, SelectMultiple
+from django.forms import MultipleChoiceField, SelectMultiple, CharField, ModelChoiceField, forms
 
 from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model_form import SquestModelForm
-from service_catalog.models import Operation
+from profiles.models import Permission
+from service_catalog.forms.form_utils import FormUtils
 
+from service_catalog.models import Operation
 
 class OperationForm(SquestModelForm):
     validators = MultipleChoiceField(label="Validators",
@@ -11,12 +13,16 @@ class OperationForm(SquestModelForm):
                                      choices=[],
                                      widget=SelectMultiple(attrs={'data-live-search': "true"}))
 
+    permission = ModelChoiceField(queryset=Permission.objects.filter(content_type__model="operation",
+                                                                     content_type__app_label="service_catalog"),
+                                  initial=FormUtils.get_default_permission_for_operation)
+
     class Meta:
         model = Operation
         fields = ["service", "name", "description", "job_template", "type", "process_timeout_second",
-                  "auto_accept", "auto_process", "enabled", "is_admin_operation", "extra_vars", "default_inventory_id",
+                  "auto_accept", "auto_process", "enabled", "extra_vars", "default_inventory_id",
                   "default_limits", "default_tags", "default_skip_tags", "default_credentials_ids", "default_verbosity",
-                  "default_diff_mode", "default_job_type", "validators", "when"]
+                  "default_diff_mode", "default_job_type", "validators", "when", "permission"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
