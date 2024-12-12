@@ -8,14 +8,14 @@ class TestServiceCatalogInstancePermissionsBulkDeleteView(BaseTestRequest, TestP
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:instance_bulk_delete',
-                perm_str='service_catalog.delete_instance',
+                perm_str_list=['service_catalog.delete_instance'],
                 data={
                     'selection': [instance.id for instance in Instance.objects.all()]
 
                 }),
             TestingPostContextView(
                 url='service_catalog:instance_bulk_delete',
-                perm_str='service_catalog.delete_instance',
+                perm_str_list=['service_catalog.delete_instance'],
                 data={
                     'selection': [instance.id for instance in Instance.objects.all()]
 

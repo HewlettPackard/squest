@@ -21,15 +21,15 @@ class TestServiceCatalogAnnouncementPermissionsViews(BaseTestRequest, TestPermis
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:announcement_list',
-                perm_str='service_catalog.list_announcement',
+                perm_str_list=['service_catalog.list_announcement'],
             ),
             TestingGetContextView(
                 url='service_catalog:announcement_create',
-                perm_str='service_catalog.add_announcement',
+                perm_str_list=['service_catalog.add_announcement'],
             ),
             TestingPostContextView(
                 url='service_catalog:announcement_create',
-                perm_str='service_catalog.add_announcement',
+                perm_str_list=['service_catalog.add_announcement'],
                 data={
                     'title': 'My announcement title info',
                     'message': 'My announcement message info',
@@ -40,12 +40,12 @@ class TestServiceCatalogAnnouncementPermissionsViews(BaseTestRequest, TestPermis
             ),
             TestingGetContextView(
                 url='service_catalog:announcement_edit',
-                perm_str='service_catalog.change_announcement',
+                perm_str_list=['service_catalog.change_announcement'],
                 url_kwargs={'pk': self.announcement.id}
             ),
             TestingPostContextView(
                 url='service_catalog:announcement_edit',
-                perm_str='service_catalog.change_announcement',
+                perm_str_list=['service_catalog.change_announcement'],
                 url_kwargs={'pk': self.announcement.id},
                 data={
                     'title': 'My announcement title danger',
@@ -57,12 +57,12 @@ class TestServiceCatalogAnnouncementPermissionsViews(BaseTestRequest, TestPermis
             ),
             TestingGetContextView(
                 url='service_catalog:announcement_delete',
-                perm_str='service_catalog.delete_announcement',
+                perm_str_list=['service_catalog.delete_announcement'],
                 url_kwargs={'pk': self.announcement.id}
             ),
             TestingPostContextView(
                 url='service_catalog:announcement_delete',
-                perm_str='service_catalog.delete_announcement',
+                perm_str_list=['service_catalog.delete_announcement'],
                 url_kwargs={'pk': self.announcement.id}
             )
         ]

@@ -17,11 +17,11 @@ class TestServiceCatalogCustomLinkPermissionsEndpoint(BaseTestRequestAPI, TestPe
         testing_view_list = [
             TestingGetContextView(
                 url='api_customlink_list_create',
-                perm_str='service_catalog.list_customlink',
+                perm_str_list=['service_catalog.list_customlink'],
             ),
             TestingPostContextView(
                 url='api_customlink_list_create',
-                perm_str='service_catalog.add_customlink',
+                perm_str_list=['service_catalog.add_customlink'],
                 data={
                     'name': 'New cusom link',
                     'text': 'new_custom_link',
@@ -30,12 +30,12 @@ class TestServiceCatalogCustomLinkPermissionsEndpoint(BaseTestRequestAPI, TestPe
             ),
             TestingGetContextView(
                 url='api_customlink_details',
-                perm_str='service_catalog.view_customlink',
+                perm_str_list=['service_catalog.view_customlink'],
                 url_kwargs={'pk': self.custom_link.id}
             ),
             TestingPutContextView(
                 url='api_customlink_details',
-                perm_str='service_catalog.change_customlink',
+                perm_str_list=['service_catalog.change_customlink'],
                 data={
                     'name': 'Custom link PUT',
                     'text': 'new_custom_link',
@@ -45,7 +45,7 @@ class TestServiceCatalogCustomLinkPermissionsEndpoint(BaseTestRequestAPI, TestPe
             ),
             TestingPatchContextView(
                 url='api_customlink_details',
-                perm_str='service_catalog.change_customlink',
+                perm_str_list=['service_catalog.change_customlink'],
                 data={
                     'name': 'Custom link PATCH',
                 },
@@ -53,7 +53,7 @@ class TestServiceCatalogCustomLinkPermissionsEndpoint(BaseTestRequestAPI, TestPe
             ),
             TestingDeleteContextView(
                 url='api_customlink_details',
-                perm_str='service_catalog.delete_customlink',
+                perm_str_list=['service_catalog.delete_customlink'],
                 url_kwargs={'pk': self.custom_link.id}
             )
         ]

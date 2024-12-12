@@ -8,11 +8,11 @@ class TestProfilesRolePermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
         testing_view_list = [
             TestingGetContextView(
                 url='api_role_list_create',
-                perm_str='profiles.list_role',
+                perm_str_list=['profiles.list_role'],
             ),
             TestingPostContextView(
                 url='api_role_list_create',
-                perm_str='profiles.add_role',
+                perm_str_list=['profiles.add_role'],
                 data={
                     'name': 'New role',
                     'description': 'The description',
@@ -21,12 +21,12 @@ class TestProfilesRolePermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingGetContextView(
                 url='api_role_details',
-                perm_str='profiles.view_role',
+                perm_str_list=['profiles.view_role'],
                 url_kwargs={'pk': self.organization_admin_role.id}
             ),
             TestingPutContextView(
                 url='api_role_details',
-                perm_str='profiles.change_role',
+                perm_str_list=['profiles.change_role'],
                 data={
                     'name': 'Role put',
                     'description': 'The description',
@@ -37,7 +37,7 @@ class TestProfilesRolePermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingPatchContextView(
                 url='api_role_details',
-                perm_str='profiles.change_role',
+                perm_str_list=['profiles.change_role'],
                 data={
                     'description': "new description patch"
                 },
@@ -45,7 +45,7 @@ class TestProfilesRolePermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingDeleteContextView(
                 url='api_role_details',
-                perm_str='profiles.delete_role',
+                perm_str_list=['profiles.delete_role'],
                 url_kwargs={'pk': self.organization_admin_role.id}
             )
         ]

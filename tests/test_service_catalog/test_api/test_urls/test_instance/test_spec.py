@@ -9,12 +9,12 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
         testing_view_list = [
             TestingGetContextView(
                 url='api_instance_user_spec_details',
-                perm_str='service_catalog.view_instance',
+                perm_str_list=['service_catalog.view_instance'],
                 url_kwargs={'pk': self.test_instance.id}
             ),
             TestingPutContextView(
                 url='api_instance_user_spec_details',
-                perm_str='service_catalog.change_instance',
+                perm_str_list=['service_catalog.change_instance'],
                 data={
                     "key1": "value1",
                     "key2": "value2",
@@ -23,7 +23,7 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingPatchContextView(
                 url='api_instance_user_spec_details',
-                perm_str='service_catalog.change_instance',
+                perm_str_list=['service_catalog.change_instance'],
                 data={
                     'key1': 'value PATCH',
                 },
@@ -36,12 +36,12 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
         testing_view_list = [
             TestingGetContextView(
                 url='api_instance_spec_details',
-                perm_str='service_catalog.view_admin_spec_instance',
+                perm_str_list=['service_catalog.view_admin_spec_instance'],
                 url_kwargs={'pk': self.test_instance.id}
             ),
             TestingPutContextView(
                 url='api_instance_spec_details',
-                perm_str='service_catalog.change_admin_spec_instance',
+                perm_str_list=['service_catalog.change_admin_spec_instance'],
                 data={
                     "key1": "value1",
                     "key2": "value2",
@@ -50,7 +50,7 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingPatchContextView(
                 url='api_instance_spec_details',
-                perm_str='service_catalog.change_admin_spec_instance',
+                perm_str_list=['service_catalog.change_admin_spec_instance'],
                 data={
                     'key1': 'value PATCH',
                 },

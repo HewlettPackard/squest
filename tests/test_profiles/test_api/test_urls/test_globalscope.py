@@ -13,11 +13,11 @@ class TestProfilesGlobalScopePermissionsEndpoint(BaseTestProfileAPI, TestPermiss
         testing_view_list = [
             TestingGetContextView(
                 url='api_globalscope_details',
-                perm_str='profiles.view_globalscope',
+                perm_str_list=['profiles.view_globalscope'],
             ),
             TestingPutContextView(
                 url='api_globalscope_details',
-                perm_str='profiles.change_globalscope',
+                perm_str_list=['profiles.change_globalscope'],
                 data={
                     'roles': [],
                     'global_permissions': []
@@ -25,25 +25,25 @@ class TestProfilesGlobalScopePermissionsEndpoint(BaseTestProfileAPI, TestPermiss
             ),
             TestingPatchContextView(
                 url='api_globalscope_details',
-                perm_str='profiles.change_globalscope',
+                perm_str_list=['profiles.change_globalscope'],
                 data={
                     'global_permissions': []
                 },
             ),
             TestingGetContextView(
                 url='api_globalscope_rbac_create',
-                perm_str='profiles.view_users_globalscope',
+                perm_str_list=['profiles.view_users_globalscope'],
                 url_kwargs={'scope_id': self.global_scope.id}
             ),
             TestingPostContextView(
                 url='api_globalscope_rbac_create',
-                perm_str='profiles.add_users_globalscope',
+                perm_str_list=['profiles.add_users_globalscope'],
                 url_kwargs={'scope_id': self.global_scope.id},
                 data={'users': [self.standard_user.id], 'roles': [self.empty_role.id]}
             ),
             TestingDeleteContextView(
                 url='api_globalscope_rbac_delete',
-                perm_str='profiles.delete_users_globalscope',
+                perm_str_list=['profiles.delete_users_globalscope'],
                 url_kwargs={
                     'scope_id': self.global_scope.id,
                     'user_id': self.standard_user.id,
@@ -52,7 +52,7 @@ class TestProfilesGlobalScopePermissionsEndpoint(BaseTestProfileAPI, TestPermiss
             ),
             TestingDeleteContextView(
                 url='api_globalscope_user_delete',
-                perm_str='profiles.delete_users_globalscope',
+                perm_str_list=['profiles.delete_users_globalscope'],
                 url_kwargs={
                     'scope_id': self.global_scope.id,
                     'user_id': self.standard_user.id,

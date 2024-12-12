@@ -44,12 +44,12 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestAPI, TestPer
             TestingGetContextView(
                 url='api_request_approval_workflow_state_approve',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_reject_approvalstep',
+                perm_str_list=['service_catalog.approve_reject_approvalstep'],
             ),
             TestingPostContextView(
                 url='api_request_approval_workflow_state_approve',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_reject_approvalstep',
+                perm_str_list=['service_catalog.approve_reject_approvalstep'],
                 expected_status_code=200
             )
         ]
@@ -60,12 +60,12 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestAPI, TestPer
             TestingGetContextView(
                 url='api_request_approval_workflow_state_reject',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_reject_approvalstep',
+                perm_str_list=['service_catalog.approve_reject_approvalstep'],
             ),
             TestingPostContextView(
                 url='api_request_approval_workflow_state_reject',
                 url_kwargs={'pk': self.test_request.pk},
-                perm_str='service_catalog.approve_reject_approvalstep',
+                perm_str_list=['service_catalog.approve_reject_approvalstep'],
                 expected_status_code=200
             )
         ]

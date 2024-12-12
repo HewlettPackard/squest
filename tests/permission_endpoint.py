@@ -12,7 +12,7 @@ class TestingContextView:
     expected_status_code = None
     expected_not_allowed_status_code = None
 
-    def __init__(self, url, perm_str, url_kwargs=None, data=None, expected_status_code=None,
+    def __init__(self, url, perm_str_list, url_kwargs=None, data=None, expected_status_code=None,
                  expected_not_allowed_status_code=None, follow=None):
         if expected_not_allowed_status_code is not None:
             self.expected_not_allowed_status_code = expected_not_allowed_status_code
@@ -25,18 +25,22 @@ class TestingContextView:
         except NoReverseMatch:
             raise NoReverseMatch(f'url: {url}, kwargs: {url_kwargs}')
         self.data = {} if data is None else data
-        try:
-            self.permission = Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
-                                                     codename=perm_str.split('.')[1])
-        except Permission.DoesNotExist:
-            raise Permission.DoesNotExist(f'Permission {perm_str} does not exist.')
-        except Permission.MultipleObjectsReturned:
-            raise Permission.MultipleObjectsReturned(
-                Permission.objects.filter(content_type__app_label=perm_str.split('.')[0],
-                                          codename=perm_str.split('.')[1]))
+
+        permission_id = list()
+        for perm_str in perm_str_list:
+            try:
+                permission_id.append(Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
+                                                         codename=perm_str.split('.')[1]).id)
+            except Permission.DoesNotExist:
+                raise Permission.DoesNotExist(f'Permission {perm_str_list} does not exist.')
+            except Permission.MultipleObjectsReturned:
+                raise Permission.MultipleObjectsReturned(
+                    Permission.objects.filter(content_type__app_label=perm_str.split('.')[0],
+                                              codename=perm_str.split('.')[1]))
+        self.permissions = Permission.objects.filter(id__in=permission_id)
 
     def __str__(self):
-        return f"{str(self.__class__)} - {self.url} - {self.permission}"
+        return f"{str(self.__class__)} - {self.url} - {self.permissions}"
 
     def call_url(self, client):
         raise NotImplemented
@@ -110,10 +114,12 @@ class TestPermissionEndpoint(TestCase):
             response = test_context.call_url(self.client)
             self.assertEqual(test_context.get_expected_not_allowed_status_code(self.client), response.status_code,
                              f"{test_context}: expected: {test_context.get_expected_not_allowed_status_code(self.client)}, got: {response.status_code}")
-            self.empty_role.permissions.add(test_context.permission)
+            # for permission in test_context.permissions:
+            self.empty_role.permissions.add(*test_context.permissions)
             response = test_context.call_url(self.client)
             if response.status_code == 400:
                 print(response.content)
             self.assertEqual(test_context.get_expected_status_code(self.client), response.status_code,
                              f"{test_context}: expected: {test_context.get_expected_status_code(self.client)}, got: {response.status_code}")
-            self.empty_role.permissions.remove(test_context.permission)
+            for permission in test_context.permissions:
+                self.empty_role.permissions.remove(permission)

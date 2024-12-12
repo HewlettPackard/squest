@@ -8,11 +8,11 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
         testing_view_list = [
             TestingGetContextView(
                 url='api_resource_list_create',
-                perm_str='resource_tracker_v2.list_resource',
+                perm_str_list=['resource_tracker_v2.list_resource'],
             ),
             TestingPostContextView(
                 url='api_resource_list_create',
-                perm_str='resource_tracker_v2.add_resource',
+                perm_str_list=['resource_tracker_v2.add_resource'],
                 data={
                     'resource_group': self.single_vms.id,
                     'name': 'New Resource',
@@ -30,12 +30,12 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
             ),
             TestingGetContextView(
                 url='api_resource_details',
-                perm_str='resource_tracker_v2.view_resource',
+                perm_str_list=['resource_tracker_v2.view_resource'],
                 url_kwargs={'pk': self.vm1.id}
             ),
             TestingPutContextView(
                 url='api_resource_details',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 data={
                     'resource_group': self.single_vms.id,
                     'name': 'Resource PUT',
@@ -54,7 +54,7 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
             ),
             TestingPatchContextView(
                 url='api_resource_details',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 data={
                     'name': 'Resource PATCH',
                 },
@@ -62,7 +62,7 @@ class TestResourceTrackerV2ResourcePermissionsEndpoint(BaseTestResourceTrackerV2
             ),
             TestingDeleteContextView(
                 url='api_resource_details',
-                perm_str='resource_tracker_v2.delete_resource',
+                perm_str_list=['resource_tracker_v2.delete_resource'],
                 url_kwargs={'pk': self.vm1.id}
             )
         ]

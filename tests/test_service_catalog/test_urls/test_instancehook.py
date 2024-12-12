@@ -16,15 +16,15 @@ class TestServiceCatalogInstanceHookPermissionsViews(BaseTestRequest, TestPermis
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:instancehook_list',
-                perm_str='service_catalog.list_instancehook',
+                perm_str_list=['service_catalog.list_instancehook'],
             ),
             TestingGetContextView(
                 url='service_catalog:instancehook_create',
-                perm_str='service_catalog.add_instancehook',
+                perm_str_list=['service_catalog.add_instancehook'],
             ),
             TestingPostContextView(
                 url='service_catalog:instancehook_create',
-                perm_str='service_catalog.add_instancehook',
+                perm_str_list=['service_catalog.add_instancehook'],
                 data={
                     "name": "New hook",
                     "state": InstanceState.PROVISIONING,
@@ -34,12 +34,12 @@ class TestServiceCatalogInstanceHookPermissionsViews(BaseTestRequest, TestPermis
             ),
             TestingGetContextView(
                 url='service_catalog:instancehook_edit',
-                perm_str='service_catalog.change_instancehook',
+                perm_str_list=['service_catalog.change_instancehook'],
                 url_kwargs={'pk': self.instance_hook.id}
             ),
             TestingPostContextView(
                 url='service_catalog:instancehook_edit',
-                perm_str='service_catalog.change_instancehook',
+                perm_str_list=['service_catalog.change_instancehook'],
                 url_kwargs={'pk': self.instance_hook.id},
                 data={
                     "name": "Hook updated",
@@ -50,12 +50,12 @@ class TestServiceCatalogInstanceHookPermissionsViews(BaseTestRequest, TestPermis
             ),
             TestingGetContextView(
                 url='service_catalog:instancehook_delete',
-                perm_str='service_catalog.delete_instancehook',
+                perm_str_list=['service_catalog.delete_instancehook'],
                 url_kwargs={'pk': self.instance_hook.id}
             ),
             TestingPostContextView(
                 url='service_catalog:instancehook_delete',
-                perm_str='service_catalog.delete_instancehook',
+                perm_str_list=['service_catalog.delete_instancehook'],
                 url_kwargs={'pk': self.instance_hook.id}
             )
         ]

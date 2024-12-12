@@ -13,28 +13,28 @@ class TestServiceCatalogInstancePermissionsStateMachineViews(BaseTestRequest, Te
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:instance_archive',
-                perm_str='service_catalog.archive_instance',
+                perm_str_list=['service_catalog.archive_instance'],
                 url_kwargs={'pk': self.test_instance.id},
                 expected_status_code=302
 
             ),
             TestingPostContextView(
                 url='service_catalog:instance_archive',
-                perm_str='service_catalog.archive_instance',
+                perm_str_list=['service_catalog.archive_instance'],
                 url_kwargs={'pk': self.test_instance.id},
                 expected_not_allowed_status_code=405,
                 expected_status_code=405
             ),
             TestingGetContextView(
                 url='service_catalog:instance_unarchive',
-                perm_str='service_catalog.unarchive_instance',
+                perm_str_list=['service_catalog.unarchive_instance'],
                 url_kwargs={'pk': self.test_instance.id},
                 expected_status_code = 302
 
             ),
             TestingPostContextView(
                 url='service_catalog:instance_archive',
-                perm_str='service_catalog.archive_instance',
+                perm_str_list=['service_catalog.archive_instance'],
                 url_kwargs={'pk': self.test_instance.id},
                 expected_not_allowed_status_code=405,
                 expected_status_code=405

@@ -14,14 +14,14 @@ class TestProfilesOrganizationScopeViews(BaseTestProfile, TestPermissionEndpoint
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:scope_details',
-                perm_str='profiles.view_organization',
+                perm_str_list=['profiles.view_organization'],
                 url_kwargs={'pk': self.organization.id},
                 follow=True
 
             ),
             TestingGetContextView(
                 url='profiles:scope_details',
-                perm_str='profiles.view_team',
+                perm_str_list=['profiles.view_team'],
                 url_kwargs={'pk': self.team.id},
                 follow=True
 

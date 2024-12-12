@@ -7,17 +7,17 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
         testing_view_list = [
             TestingGetContextView(
                 url='resource_tracker_v2:resource_list',
-                perm_str='resource_tracker_v2.list_resource',
+                perm_str_list=['resource_tracker_v2.list_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id}
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resource_create',
-                perm_str='resource_tracker_v2.add_resource',
+                perm_str_list=['resource_tracker_v2.add_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resource_create',
-                perm_str='resource_tracker_v2.add_resource',
+                perm_str_list=['resource_tracker_v2.add_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
                     'name': 'vm3',
@@ -28,12 +28,12 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resource_edit',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resource_edit',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id},
                 data={
                     'name': 'vm updated',
@@ -44,12 +44,12 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resource_move',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resource_move',
-                perm_str='resource_tracker_v2.change_resource',
+                perm_str_list=['resource_tracker_v2.change_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id},
                 data={
                     'resource_group': self.cluster.id
@@ -57,12 +57,12 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resource_delete',
-                perm_str='resource_tracker_v2.delete_resource',
+                perm_str_list=['resource_tracker_v2.delete_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resource_delete',
-                perm_str='resource_tracker_v2.delete_resource',
+                perm_str_list=['resource_tracker_v2.delete_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id, 'pk': self.vm1.id}
             )
         ]
@@ -73,7 +73,7 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
 
             TestingGetContextView(
                 url='resource_tracker_v2:resource_bulk_delete',
-                perm_str='resource_tracker_v2.delete_resource',
+                perm_str_list=['resource_tracker_v2.delete_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
                     'selection': [resource.id for resource in self.single_vms.resources.all()]
@@ -81,7 +81,7 @@ class TestResourceTrackerV2ResourcePermissionsViews(BaseTestResourceTrackerV2, T
                 }),
             TestingPostContextView(
                 url='resource_tracker_v2:resource_bulk_delete',
-                perm_str='resource_tracker_v2.delete_resource',
+                perm_str_list=['resource_tracker_v2.delete_resource'],
                 url_kwargs={'resource_group_id': self.single_vms.id},
                 data={
                     'selection': [resource.id for resource in self.single_vms.resources.all()]

@@ -14,15 +14,15 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:organization_list',
-                perm_str='profiles.list_organization',
+                perm_str_list=['profiles.list_organization'],
             ),
             TestingGetContextView(
                 url='profiles:organization_create',
-                perm_str='profiles.add_organization',
+                perm_str_list=['profiles.add_organization'],
             ),
             TestingPostContextView(
                 url='profiles:organization_create',
-                perm_str='profiles.add_organization',
+                perm_str_list=['profiles.add_organization'],
                 data={
                     'name': 'New organization',
                     'description': 'The description',
@@ -31,17 +31,17 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
             ),
             TestingGetContextView(
                 url='profiles:organization_details',
-                perm_str='profiles.view_organization',
+                perm_str_list=['profiles.view_organization'],
                 url_kwargs={'pk': self.test_quota_scope_org.id}
             ),
             TestingGetContextView(
                 url='profiles:organization_edit',
-                perm_str='profiles.change_organization',
+                perm_str_list=['profiles.change_organization'],
                 url_kwargs={'pk': self.test_quota_scope_org.id}
             ),
             TestingPostContextView(
                 url='profiles:organization_edit',
-                perm_str='profiles.change_organization',
+                perm_str_list=['profiles.change_organization'],
                 url_kwargs={'pk': self.test_quota_scope_org.id},
                 data={
                     'name': 'Organization updated',
@@ -51,18 +51,18 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
             ),
             TestingGetContextView(
                 url='profiles:organization_rbac_create',
-                perm_str='profiles.add_users_organization',
+                perm_str_list=['profiles.add_users_organization'],
                 url_kwargs={'scope_id': self.test_quota_scope_org.id}
             ),
             TestingPostContextView(
                 url='profiles:organization_rbac_create',
-                perm_str='profiles.add_users_organization',
+                perm_str_list=['profiles.add_users_organization'],
                 url_kwargs={'scope_id': self.test_quota_scope_org.id},
                 data={'users': self.standard_user.id, 'roles': self.empty_role.id}
             ),
             TestingPostContextView(
                 url='profiles:organization_rbac_delete',
-                perm_str='profiles.delete_users_organization',
+                perm_str_list=['profiles.delete_users_organization'],
                 url_kwargs={
                     'pk': self.test_quota_scope_org.id,
                     'user_id': self.standard_user.id,
@@ -71,7 +71,7 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
             ),
             TestingGetContextView(
                 url='profiles:organization_rbac_delete',
-                perm_str='profiles.delete_users_organization',
+                perm_str_list=['profiles.delete_users_organization'],
                 url_kwargs={
                     'pk': self.test_quota_scope_org.id,
                     'user_id': self.standard_user.id,
@@ -79,7 +79,7 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
             ),
             TestingPostContextView(
                 url='profiles:organization_rbac_delete',
-                perm_str='profiles.delete_users_organization',
+                perm_str_list=['profiles.delete_users_organization'],
                 url_kwargs={
                     'pk': self.test_quota_scope_org.id,
                     'user_id': self.standard_user.id,
@@ -87,12 +87,12 @@ class TestProfilesOrganizationPermissionsViews(BaseTestProfile, TestPermissionEn
             ),
             TestingGetContextView(
                 url='profiles:organization_delete',
-                perm_str='profiles.delete_organization',
+                perm_str_list=['profiles.delete_organization'],
                 url_kwargs={'pk': self.organization_to_delete.id}
             ),
             TestingPostContextView(
                 url='profiles:organization_delete',
-                perm_str='profiles.delete_organization',
+                perm_str_list=['profiles.delete_organization'],
                 url_kwargs={'pk': self.organization_to_delete.id},
             )
         ]

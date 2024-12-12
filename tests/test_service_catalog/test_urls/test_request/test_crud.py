@@ -8,25 +8,25 @@ class TestServiceCatalogRequestPermissionsCRUDViews(BaseTestRequest, TestPermiss
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_list',
-                perm_str='service_catalog.list_request',
+                perm_str_list=['service_catalog.list_request'],
             ),
             TestingGetContextView(
                 url='service_catalog:request_archived_list',
-                perm_str='service_catalog.list_request',
+                perm_str_list=['service_catalog.list_request'],
             ),
             TestingGetContextView(
                 url='service_catalog:request_details',
-                perm_str='service_catalog.view_request',
+                perm_str_list=['service_catalog.view_request'],
                 url_kwargs={'pk': self.test_request.id}
             ),
             TestingGetContextView(
                 url='service_catalog:request_edit',
-                perm_str='service_catalog.change_request',
+                perm_str_list=['service_catalog.change_request'],
                 url_kwargs={'pk': self.test_request.id}
             ),
             TestingPostContextView(
                 url='service_catalog:request_edit',
-                perm_str='service_catalog.change_request',
+                perm_str_list=['service_catalog.change_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     "fill_in_survey": "{}",
@@ -44,12 +44,12 @@ class TestServiceCatalogRequestPermissionsCRUDViews(BaseTestRequest, TestPermiss
             ),
             TestingGetContextView(
                 url='service_catalog:request_delete',
-                perm_str='service_catalog.delete_request',
+                perm_str_list=['service_catalog.delete_request'],
                 url_kwargs={'pk': self.test_request.id}
             ),
             TestingPostContextView(
                 url='service_catalog:request_delete',
-                perm_str='service_catalog.delete_request',
+                perm_str_list=['service_catalog.delete_request'],
                 url_kwargs={'pk': self.test_request.id},
 
             )
