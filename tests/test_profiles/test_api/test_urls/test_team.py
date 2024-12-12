@@ -19,11 +19,11 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
         testing_view_list = [
             TestingGetContextView(
                 url='api_team_list_create',
-                perm_str='profiles.list_team',
+                perm_str_list=['profiles.list_team'],
             ),
             TestingPostContextView(
                 url='api_team_list_create',
-                perm_str='profiles.add_team',
+                perm_str_list=['profiles.add_team'],
                 data={
                     'name': 'New team',
                     'description': 'The description',
@@ -32,12 +32,12 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingGetContextView(
                 url='api_team_details',
-                perm_str='profiles.view_team',
+                perm_str_list=['profiles.view_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id}
             ),
             TestingPutContextView(
                 url='api_team_details',
-                perm_str='profiles.change_team',
+                perm_str_list=['profiles.change_team'],
                 data={
                     'name': 'Team put',
                     'description': 'The description',
@@ -48,7 +48,7 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingPatchContextView(
                 url='api_team_details',
-                perm_str='profiles.change_team',
+                perm_str_list=['profiles.change_team'],
                 data={
                     'description': "new description patch"
                 },
@@ -56,18 +56,18 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingGetContextView(
                 url='api_team_rbac_create',
-                perm_str='profiles.view_users_team',
+                perm_str_list=['profiles.view_users_team'],
                 url_kwargs={'scope_id': self.test_quota_scope_team.id}
             ),
             TestingPostContextView(
                 url='api_team_rbac_create',
-                perm_str='profiles.add_users_team',
+                perm_str_list=['profiles.add_users_team'],
                 url_kwargs={'scope_id': self.test_quota_scope_team.id},
                 data={'users': [self.standard_user.id], 'roles': [self.empty_role.id]}
             ),
             TestingDeleteContextView(
                 url='api_team_rbac_delete',
-                perm_str='profiles.delete_users_team',
+                perm_str_list=['profiles.delete_users_team'],
                 url_kwargs={
                     'scope_id': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
@@ -76,7 +76,7 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingDeleteContextView(
                 url='api_team_user_delete',
-                perm_str='profiles.delete_users_team',
+                perm_str_list=['profiles.delete_users_team'],
                 url_kwargs={
                     'scope_id': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
@@ -84,7 +84,7 @@ class TestProfilesTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissionEndp
             ),
             TestingDeleteContextView(
                 url='api_team_details',
-                perm_str='profiles.delete_team',
+                perm_str_list=['profiles.delete_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id}
             )
         ]

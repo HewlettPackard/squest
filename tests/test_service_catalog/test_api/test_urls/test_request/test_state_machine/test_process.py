@@ -13,14 +13,14 @@ class TestServiceCatalogRequestProcessPermissionsEndpoint(BaseTestRequestAPI, Te
         testing_view_list = [
             TestingGetContextView(
                 url='api_request_process',
-                perm_str='service_catalog.process_request',
+                perm_str_list=['service_catalog.process_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostContextView(
                 url='api_request_process',
-                perm_str='service_catalog.process_request',
+                perm_str_list=['service_catalog.process_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=200
             )

@@ -16,20 +16,20 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_list',
-                perm_str='service_catalog.list_approvalworkflow',
+                perm_str_list=['service_catalog.list_approvalworkflow'],
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_details',
-                perm_str='service_catalog.view_approvalworkflow',
+                perm_str_list=['service_catalog.view_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_create',
-                perm_str='service_catalog.add_approvalworkflow',
+                perm_str_list=['service_catalog.add_approvalworkflow'],
             ),
             TestingPostContextView(
                 url='service_catalog:approvalworkflow_create',
-                perm_str='service_catalog.add_approvalworkflow',
+                perm_str_list=['service_catalog.add_approvalworkflow'],
                 data={
                     'name': 'New approvalworkflow',
                     'operation': self.update_operation_test.id,
@@ -38,17 +38,17 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_edit',
-                perm_str='service_catalog.change_approvalworkflow',
+                perm_str_list=['service_catalog.change_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_preview',
-                perm_str='service_catalog.view_approvalworkflow',
+                perm_str_list=['service_catalog.view_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id, 'scope_id': self.test_quota_scope.id}
             ),
             TestingPostContextView(
                 url='service_catalog:approvalworkflow_edit',
-                perm_str='service_catalog.change_approvalworkflow',
+                perm_str_list=['service_catalog.change_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id},
                 data={
                     'name': 'Approvalworkflow updated',
@@ -58,22 +58,22 @@ class TestServiceCatalogApprovalWorkflowPermissionsViews(BaseTestRequest, TestPe
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_reset_requests',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingPostContextView(
                 url='service_catalog:approvalworkflow_reset_requests',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingGetContextView(
                 url='service_catalog:approvalworkflow_delete',
-                perm_str='service_catalog.delete_approvalworkflow',
+                perm_str_list=['service_catalog.delete_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingPostContextView(
                 url='service_catalog:approvalworkflow_delete',
-                perm_str='service_catalog.delete_approvalworkflow',
+                perm_str_list=['service_catalog.delete_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             )
         ]

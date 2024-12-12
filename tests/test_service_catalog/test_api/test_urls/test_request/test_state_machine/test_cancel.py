@@ -13,14 +13,14 @@ class TestServiceCatalogRequestCancelPermissionsEndpoint(BaseTestRequestAPI, Tes
         testing_view_list = [
             TestingGetContextView(
                 url='api_request_cancel',
-                perm_str='service_catalog.cancel_request',
+                perm_str_list=['service_catalog.cancel_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostContextView(
                 url='api_request_cancel',
-                perm_str='service_catalog.cancel_request',
+                perm_str_list=['service_catalog.cancel_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=200
             )

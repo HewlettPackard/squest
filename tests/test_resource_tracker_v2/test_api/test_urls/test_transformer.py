@@ -12,11 +12,11 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
         testing_view_list = [
             TestingGetContextView(
                 url='api_transformer_list_create',
-                perm_str='resource_tracker_v2.list_transformer',
+                perm_str_list=['resource_tracker_v2.list_transformer'],
             ),
             TestingPostContextView(
                 url='api_transformer_list_create',
-                perm_str='resource_tracker_v2.add_transformer',
+                perm_str_list=['resource_tracker_v2.add_transformer'],
                 data={
                     'resource_group': self.single_vms.id,
                     'attribute_definition': self.vcpu_attribute.id,
@@ -26,14 +26,14 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
             ),
             TestingGetContextView(
                 url='api_transformer_details',
-                perm_str='resource_tracker_v2.view_transformer',
+                perm_str_list=['resource_tracker_v2.view_transformer'],
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
                 }
             ),
             TestingPutContextView(
                 url='api_transformer_details',
-                perm_str='resource_tracker_v2.change_transformer',
+                perm_str_list=['resource_tracker_v2.change_transformer'],
                 data={
                     'resource_group': self.single_vms.id,
                     'attribute_definition': self.v_memory_attribute.id,
@@ -47,7 +47,7 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
             ),
             TestingPatchContextView(
                 url='api_transformer_details',
-                perm_str='resource_tracker_v2.change_transformer',
+                perm_str_list=['resource_tracker_v2.change_transformer'],
                 data={
                     'factor': 16,
                 },
@@ -57,7 +57,7 @@ class TestResourceTrackerV2TransformerPermissionsEndpoint(BaseTestResourceTracke
             ),
             TestingDeleteContextView(
                 url='api_transformer_details',
-                perm_str='resource_tracker_v2.delete_transformer',
+                perm_str_list=['resource_tracker_v2.delete_transformer'],
                 url_kwargs={
                     'pk': self.v_memory_from_memory_transformer.id,
                 }

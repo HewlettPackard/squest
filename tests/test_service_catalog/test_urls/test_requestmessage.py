@@ -16,12 +16,12 @@ class TestServiceCatalogRequestMessagePermissionsViews(BaseTestRequest, TestPerm
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:requestmessage_create',
-                perm_str='service_catalog.add_requestmessage',
+                perm_str_list=['service_catalog.add_requestmessage'],
                 url_kwargs={'request_id': self.test_request.id}
             ),
             TestingPostContextView(
                 url='service_catalog:requestmessage_create',
-                perm_str='service_catalog.add_requestmessage',
+                perm_str_list=['service_catalog.add_requestmessage'],
                 url_kwargs={'request_id': self.test_request.id},
                 data={
                     'content': 'new message'
@@ -29,12 +29,12 @@ class TestServiceCatalogRequestMessagePermissionsViews(BaseTestRequest, TestPerm
             ),
             TestingGetContextView(
                 url='service_catalog:requestmessage_edit',
-                perm_str='service_catalog.change_requestmessage',
+                perm_str_list=['service_catalog.change_requestmessage'],
                 url_kwargs={'request_id': self.test_request.id, 'pk': self.request_message.id}
             ),
             TestingPostContextView(
                 url='service_catalog:requestmessage_edit',
-                perm_str='service_catalog.change_requestmessage',
+                perm_str_list=['service_catalog.change_requestmessage'],
                 url_kwargs={'request_id': self.test_request.id, 'pk': self.request_message.id},
                 data={
                     'content': 'message updated'

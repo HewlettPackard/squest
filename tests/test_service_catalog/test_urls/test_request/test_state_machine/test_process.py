@@ -13,12 +13,12 @@ class TestServiceCatalogRequestPermissionsProcessView(BaseTestRequest, TestPermi
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_process',
-                perm_str='service_catalog.process_request',
+                perm_str_list=['service_catalog.process_request'],
                 url_kwargs={'pk': self.test_request.id},
             ),
             TestingPostContextView(
                 url='service_catalog:request_process',
-                perm_str='service_catalog.process_request',
+                perm_str_list=['service_catalog.process_request'],
                 url_kwargs={'pk': self.test_request.id},
             )
         ]

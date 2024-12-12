@@ -193,9 +193,9 @@ class AdminRequestViewTest(BaseTestRequest):
         }
         self.client.force_login(user=self.standard_user)
         new_role = Role.objects.create(name="approver_no_processor")
-        perm_str = "service_catalog.accept_request"
-        new_role.permissions.add(Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
-                                                        codename=perm_str.split('.')[1]))
+        perm_str_list = "service_catalog.accept_request"
+        new_role.permissions.add(Permission.objects.get(content_type__app_label=perm_str_list.split('.')[0],
+                                                        codename=perm_str_list.split('.')[1]))
         GlobalScope.load().add_user_in_role(self.standard_user, new_role)
 
         self._accept_request_with_expected_state(expected_request_state=RequestState.SUBMITTED,

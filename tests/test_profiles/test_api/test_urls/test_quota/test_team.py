@@ -17,11 +17,11 @@ class TestProfilesQuotaTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissio
         testing_view_list = [
             TestingGetContextView(
                 url='api_quota_list_create',
-                perm_str='profiles.list_quota',
+                perm_str_list=['profiles.list_quota'],
             ),
             TestingPostContextView(
                 url='api_quota_list_create',
-                perm_str='profiles.add_quota',
+                perm_str_list=['profiles.add_quota'],
                 data={
                     'scope': self.test_quota_scope_team.id,
                     'attribute_definition': self.attribute_test.id,
@@ -30,12 +30,12 @@ class TestProfilesQuotaTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissio
             ),
             TestingGetContextView(
                 url='api_quota_details',
-                perm_str='profiles.view_quota',
+                perm_str_list=['profiles.view_quota'],
                 url_kwargs={'pk': self.test_quota_team.id}
             ),
             TestingPutContextView(
                 url='api_quota_details',
-                perm_str='profiles.change_team_quota',
+                perm_str_list=['profiles.change_team_quota'],
                 data={
                     'scope': self.test_quota_team.scope.id,
                     'attribute_definition': self.cpu_attribute.id,
@@ -45,7 +45,7 @@ class TestProfilesQuotaTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissio
             ),
             TestingPatchContextView(
                 url='api_quota_details',
-                perm_str='profiles.change_team_quota',
+                perm_str_list=['profiles.change_team_quota'],
                 data={
                     'limit': 50
                 },
@@ -53,7 +53,7 @@ class TestProfilesQuotaTeamPermissionsEndpoint(BaseTestProfileAPI, TestPermissio
             ),
             TestingDeleteContextView(
                 url='api_quota_details',
-                perm_str='profiles.delete_quota',
+                perm_str_list=['profiles.delete_quota'],
                 url_kwargs={'pk': self.test_quota_team.id}
             )
         ]

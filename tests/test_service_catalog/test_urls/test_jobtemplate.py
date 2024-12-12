@@ -7,27 +7,27 @@ class TestServiceCatalogJobTemplatePermissionsViews(BaseTestRequest, TestPermiss
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:jobtemplate_list',
-                perm_str='service_catalog.list_jobtemplate',
+                perm_str_list=['service_catalog.list_jobtemplate'],
                 url_kwargs={'tower_id': self.tower_server_test.id},
             ),
             TestingGetContextView(
                 url='service_catalog:jobtemplate_details',
-                perm_str='service_catalog.view_jobtemplate',
+                perm_str_list=['service_catalog.view_jobtemplate'],
                 url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
             ),
             TestingGetContextView(
                 url='service_catalog:job_template_compliancy',
-                perm_str='service_catalog.view_jobtemplate',
+                perm_str_list=['service_catalog.view_jobtemplate'],
                 url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
             ),
             TestingGetContextView(
                 url='service_catalog:jobtemplate_delete',
-                perm_str='service_catalog.delete_jobtemplate',
+                perm_str_list=['service_catalog.delete_jobtemplate'],
                 url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
             ),
             TestingPostContextView(
                 url='service_catalog:jobtemplate_delete',
-                perm_str='service_catalog.delete_jobtemplate',
+                perm_str_list=['service_catalog.delete_jobtemplate'],
                 url_kwargs={'tower_id': self.tower_server_test.id, 'pk': self.job_template_test.id}
             )
         ]

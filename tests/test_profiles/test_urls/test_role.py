@@ -7,20 +7,20 @@ class TestProfilesRolePermissionsViews(BaseTestProfile, TestPermissionEndpoint):
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:role_list',
-                perm_str='profiles.list_role',
+                perm_str_list=['profiles.list_role'],
             ),
             TestingGetContextView(
                 url='profiles:role_details',
-                perm_str='profiles.view_role',
+                perm_str_list=['profiles.view_role'],
                 url_kwargs={'pk': self.organization_admin_role.id}
             ),
             TestingGetContextView(
                 url='profiles:role_create',
-                perm_str='profiles.add_role',
+                perm_str_list=['profiles.add_role'],
             ),
             TestingPostContextView(
                 url='profiles:role_create',
-                perm_str='profiles.add_role',
+                perm_str_list=['profiles.add_role'],
                 data={
                     'name': 'New role',
                     'description': 'The description',
@@ -29,12 +29,12 @@ class TestProfilesRolePermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingGetContextView(
                 url='profiles:role_edit',
-                perm_str='profiles.change_role',
+                perm_str_list=['profiles.change_role'],
                 url_kwargs={'pk': self.organization_admin_role.id}
             ),
             TestingPostContextView(
                 url='profiles:role_edit',
-                perm_str='profiles.change_role',
+                perm_str_list=['profiles.change_role'],
                 url_kwargs={'pk': self.organization_admin_role.id},
                 data={
                     'name': 'Role updated',
@@ -44,12 +44,12 @@ class TestProfilesRolePermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingGetContextView(
                 url='profiles:role_delete',
-                perm_str='profiles.delete_role',
+                perm_str_list=['profiles.delete_role'],
                 url_kwargs={'pk': self.organization_admin_role.id}
             ),
             TestingPostContextView(
                 url='profiles:role_delete',
-                perm_str='profiles.delete_role',
+                perm_str_list=['profiles.delete_role'],
                 url_kwargs={'pk': self.organization_admin_role.id},
 
             )

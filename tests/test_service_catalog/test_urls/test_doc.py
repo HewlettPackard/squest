@@ -13,11 +13,11 @@ class TestServiceCatalogDocPermissionsViews(BaseTestRequest, TestPermissionEndpo
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:doc_list',
-                perm_str='service_catalog.list_doc',
+                perm_str_list=['service_catalog.list_doc'],
             ),
             TestingGetContextView(
                 url='service_catalog:doc_details',
-                perm_str='service_catalog.view_doc',
+                perm_str_list=['service_catalog.view_doc'],
                 url_kwargs={'pk': self.doc.id}
             ),
 

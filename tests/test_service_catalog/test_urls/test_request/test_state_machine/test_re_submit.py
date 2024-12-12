@@ -13,12 +13,12 @@ class TestServiceCatalogRequestPermissionsReSubmitView(BaseTestRequest, TestPerm
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_re_submit',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.test_request.id},
             ),
             TestingPostContextView(
                 url='service_catalog:request_re_submit',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.test_request.id}
             )
         ]

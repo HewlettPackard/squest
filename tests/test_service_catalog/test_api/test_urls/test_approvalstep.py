@@ -26,11 +26,11 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
         testing_view_list = [
             TestingGetContextView(
                 url='api_approvalstep_list_create',
-                perm_str='service_catalog.list_approvalstep',
+                perm_str_list=['service_catalog.list_approvalstep'],
             ),
             TestingPostContextView(
                 url='api_approvalstep_list_create',
-                perm_str='service_catalog.add_approvalstep',
+                perm_str_list=['service_catalog.add_approvalstep'],
                 data={
                     'approval_workflow': self.approval_workflow.id,
                     'name': 'New approval step',
@@ -41,12 +41,12 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingGetContextView(
                 url='api_approvalstep_details',
-                perm_str='service_catalog.view_approvalstep',
+                perm_str_list=['service_catalog.view_approvalstep'],
                 url_kwargs={'pk': self.approval_step.id}
             ),
             TestingPutContextView(
                 url='api_approvalstep_details',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 data={
                     'approval_workflow': self.approval_workflow.id,
                     'name': 'Approval step PUT',
@@ -58,7 +58,7 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingPatchContextView(
                 url='api_approvalstep_details',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 data={
                     'name': 'Approval step PATCH'
                 },
@@ -66,7 +66,7 @@ class TestServiceCatalogApprovalStepPermissionsEndpoint(BaseTestRequestAPI, Test
             ),
             TestingDeleteContextView(
                 url='api_approvalstep_details',
-                perm_str='service_catalog.delete_approvalstep',
+                perm_str_list=['service_catalog.delete_approvalstep'],
                 url_kwargs={'pk': self.approval_step.id}
             )
         ]

@@ -13,15 +13,15 @@ class TestProfilesPermissionPermissionsViews(BaseTestProfile, TestPermissionEndp
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:permission_list',
-                perm_str='profiles.list_permission',
+                perm_str_list=['profiles.list_permission'],
             ),
             TestingGetContextView(
                 url='profiles:permission_create',
-                perm_str='profiles.add_permission',
+                perm_str_list=['profiles.add_permission'],
             ),
             TestingPostContextView(
                 url='profiles:permission_create',
-                perm_str='profiles.add_permission',
+                perm_str_list=['profiles.add_permission'],
                 data={
                     'name': 'New permission',
                     'codename': 'the_code_name',
@@ -30,12 +30,12 @@ class TestProfilesPermissionPermissionsViews(BaseTestProfile, TestPermissionEndp
             ),
             TestingGetContextView(
                 url='profiles:permission_edit',
-                perm_str='profiles.change_permission',
+                perm_str_list=['profiles.change_permission'],
                 url_kwargs={'pk': self.permission_test.id}
             ),
             TestingPostContextView(
                 url='profiles:permission_edit',
-                perm_str='profiles.change_permission',
+                perm_str_list=['profiles.change_permission'],
                 url_kwargs={'pk': self.permission_test.id},
                 data={
                     'name': 'Permission updated',
@@ -45,12 +45,12 @@ class TestProfilesPermissionPermissionsViews(BaseTestProfile, TestPermissionEndp
             ),
             TestingGetContextView(
                 url='profiles:permission_delete',
-                perm_str='profiles.delete_permission',
+                perm_str_list=['profiles.delete_permission'],
                 url_kwargs={'pk': self.permission_test.id}
             ),
             TestingPostContextView(
                 url='profiles:permission_delete',
-                perm_str='profiles.delete_permission',
+                perm_str_list=['profiles.delete_permission'],
                 url_kwargs={'pk': self.permission_test.id},
 
             )

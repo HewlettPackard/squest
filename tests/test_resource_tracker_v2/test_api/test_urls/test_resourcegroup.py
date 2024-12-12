@@ -8,11 +8,11 @@ class TestResourceTrackerV2ResourceGroupPermissionsEndpoint(BaseTestResourceTrac
         testing_view_list = [
             TestingGetContextView(
                 url='api_resourcegroup_list_create',
-                perm_str='resource_tracker_v2.list_resourcegroup',
+                perm_str_list=['resource_tracker_v2.list_resourcegroup'],
             ),
             TestingPostContextView(
                 url='api_resourcegroup_list_create',
-                perm_str='resource_tracker_v2.add_resourcegroup',
+                perm_str_list=['resource_tracker_v2.add_resourcegroup'],
                 data={
                     'name': 'New Resource Group',
                     'tags': ["testTag"]
@@ -20,12 +20,12 @@ class TestResourceTrackerV2ResourceGroupPermissionsEndpoint(BaseTestResourceTrac
             ),
             TestingGetContextView(
                 url='api_resourcegroup_details',
-                perm_str='resource_tracker_v2.view_resourcegroup',
+                perm_str_list=['resource_tracker_v2.view_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id}
             ),
             TestingPutContextView(
                 url='api_resourcegroup_details',
-                perm_str='resource_tracker_v2.change_resourcegroup',
+                perm_str_list=['resource_tracker_v2.change_resourcegroup'],
                 data={
                     'name': 'Resource Group PUT',
                     'tags': ["testTag"]
@@ -34,7 +34,7 @@ class TestResourceTrackerV2ResourceGroupPermissionsEndpoint(BaseTestResourceTrac
             ),
             TestingPatchContextView(
                 url='api_resourcegroup_details',
-                perm_str='resource_tracker_v2.change_resourcegroup',
+                perm_str_list=['resource_tracker_v2.change_resourcegroup'],
                 data={
                     'name': 'Resource Group PATCH',
                 },
@@ -42,7 +42,7 @@ class TestResourceTrackerV2ResourceGroupPermissionsEndpoint(BaseTestResourceTrac
             ),
             TestingDeleteContextView(
                 url='api_resourcegroup_details',
-                perm_str='resource_tracker_v2.delete_resourcegroup',
+                perm_str_list=['resource_tracker_v2.delete_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id}
             )
         ]

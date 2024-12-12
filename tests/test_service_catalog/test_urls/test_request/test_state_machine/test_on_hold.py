@@ -13,12 +13,12 @@ class TestServiceCatalogRequestPermissionsOnHoldView(BaseTestRequest, TestPermis
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_on_hold',
-                perm_str='service_catalog.hold_request',
+                perm_str_list=['service_catalog.hold_request'],
                 url_kwargs={'pk': self.test_request.id},
             ),
             TestingPostContextView(
                 url='service_catalog:request_on_hold',
-                perm_str='service_catalog.hold_request',
+                perm_str_list=['service_catalog.hold_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'content': 'My comment'

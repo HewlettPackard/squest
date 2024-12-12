@@ -7,20 +7,20 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:operation_list',
-                perm_str='service_catalog.list_operation'
+                perm_str_list=['service_catalog.list_operation']
             ),
             TestingGetContextView(
                 url='service_catalog:create_operation_list',
-                perm_str='service_catalog.list_operation',
+                perm_str_list=['service_catalog.list_operation'],
                 url_kwargs={'service_id': self.create_operation_test.service.id}
             ),
             TestingGetContextView(
                 url='service_catalog:operation_create',
-                perm_str='service_catalog.add_operation',
+                perm_str_list=['service_catalog.add_operation'],
             ),
             TestingPostContextView(
                 url='service_catalog:operation_create',
-                perm_str='service_catalog.add_operation',
+                perm_str_list=['service_catalog.add_operation'],
                 data={
                     'service': self.service_test.id,
                     'name': 'New operation',
@@ -32,17 +32,17 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
             ),
             TestingGetContextView(
                 url='service_catalog:operation_details',
-                perm_str='service_catalog.view_operation',
+                perm_str_list=['service_catalog.view_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingGetContextView(
                 url='service_catalog:operation_edit',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPostContextView(
                 url='service_catalog:operation_edit',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.create_operation_test.id},
                 data={
                     'service': self.create_operation_test.service.id,
@@ -55,12 +55,12 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
             ),
             TestingGetContextView(
                 url='service_catalog:operation_edit_survey',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.update_operation_test.id}
             ),
             TestingPostContextView(
                 url='service_catalog:operation_edit_survey',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.update_operation_test.id},
                 data={
                     'form-0-id': self.update_operation_test.tower_survey_fields.get(variable='text_variable').id,
@@ -74,12 +74,12 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
             ),
             TestingGetContextView(
                 url='service_catalog:operation_delete',
-                perm_str='service_catalog.delete_operation',
+                perm_str_list=['service_catalog.delete_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPostContextView(
                 url='service_catalog:operation_delete',
-                perm_str='service_catalog.delete_operation',
+                perm_str_list=['service_catalog.delete_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             )
         ]

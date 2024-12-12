@@ -7,23 +7,23 @@ class TestResourceTrackerV2ResourceGroupPermissionsViews(BaseTestResourceTracker
         testing_view_list = [
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_list',
-                perm_str='resource_tracker_v2.list_resourcegroup',
+                perm_str_list=['resource_tracker_v2.list_resourcegroup'],
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_list_table',
-                perm_str='resource_tracker_v2.list_resourcegroup',
+                perm_str_list=['resource_tracker_v2.list_resourcegroup'],
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resource_tracker_graph',
-                perm_str='resource_tracker_v2.list_resourcegroup',
+                perm_str_list=['resource_tracker_v2.list_resourcegroup'],
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_create',
-                perm_str='resource_tracker_v2.add_resourcegroup',
+                perm_str_list=['resource_tracker_v2.add_resourcegroup'],
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resourcegroup_create',
-                perm_str='resource_tracker_v2.add_resourcegroup',
+                perm_str_list=['resource_tracker_v2.add_resourcegroup'],
                 data={
                     'name': 'New attribute',
                     'description': 'The description',
@@ -31,17 +31,17 @@ class TestResourceTrackerV2ResourceGroupPermissionsViews(BaseTestResourceTracker
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_details',
-                perm_str='resource_tracker_v2.view_resourcegroup',
+                perm_str_list=['resource_tracker_v2.view_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id}
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_edit',
-                perm_str='resource_tracker_v2.change_resourcegroup',
+                perm_str_list=['resource_tracker_v2.change_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resourcegroup_edit',
-                perm_str='resource_tracker_v2.change_resourcegroup',
+                perm_str_list=['resource_tracker_v2.change_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id},
                 data={
                     'name': 'Attribute updated',
@@ -50,12 +50,12 @@ class TestResourceTrackerV2ResourceGroupPermissionsViews(BaseTestResourceTracker
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:resourcegroup_delete',
-                perm_str='resource_tracker_v2.delete_resourcegroup',
+                perm_str_list=['resource_tracker_v2.delete_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:resourcegroup_delete',
-                perm_str='resource_tracker_v2.delete_resourcegroup',
+                perm_str_list=['resource_tracker_v2.delete_resourcegroup'],
                 url_kwargs={'pk': self.cluster.id},
 
             )

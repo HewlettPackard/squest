@@ -15,11 +15,11 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
         testing_view_list = [
             TestingGetContextView(
                 url='api_organization_list_create',
-                perm_str='profiles.list_organization',
+                perm_str_list=['profiles.list_organization'],
             ),
             TestingPostContextView(
                 url='api_organization_list_create',
-                perm_str='profiles.add_organization',
+                perm_str_list=['profiles.add_organization'],
                 data={
                     'name': "test organization",
                     'description': "test description"
@@ -27,12 +27,12 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
             ),
             TestingGetContextView(
                 url='api_organization_details',
-                perm_str='profiles.view_organization',
+                perm_str_list=['profiles.view_organization'],
                 url_kwargs={'pk': self.test_quota_scope_org.id}
             ),
             TestingPutContextView(
                 url='api_organization_details',
-                perm_str='profiles.change_organization',
+                perm_str_list=['profiles.change_organization'],
                 data={
                     'name': "test organization put",
                     'description': "test description put"
@@ -41,7 +41,7 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
             ),
             TestingPatchContextView(
                 url='api_organization_details',
-                perm_str='profiles.change_organization',
+                perm_str_list=['profiles.change_organization'],
                 data={
                     'description': "new description patch"
                 },
@@ -49,18 +49,18 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
             ),
             TestingGetContextView(
                 url='api_team_rbac_create',
-                perm_str='profiles.view_users_organization',
+                perm_str_list=['profiles.view_users_organization'],
                 url_kwargs={'scope_id': self.test_quota_scope_org.id}
             ),
             TestingPostContextView(
                 url='api_organization_rbac_create',
-                perm_str='profiles.add_users_organization',
+                perm_str_list=['profiles.add_users_organization'],
                 url_kwargs={'scope_id': self.test_quota_scope_org.id},
                 data={'users': [self.standard_user.id], 'roles': [self.empty_role.id]}
             ),
             TestingDeleteContextView(
                 url='api_organization_rbac_delete',
-                perm_str='profiles.delete_users_organization',
+                perm_str_list=['profiles.delete_users_organization'],
                 url_kwargs={
                     'scope_id': self.test_quota_scope_org.id,
                     'user_id': self.standard_user.id,
@@ -69,7 +69,7 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
             ),
             TestingDeleteContextView(
                 url='api_organization_user_delete',
-                perm_str='profiles.delete_users_organization',
+                perm_str_list=['profiles.delete_users_organization'],
                 url_kwargs={
                     'scope_id': self.test_quota_scope_org.id,
                     'user_id': self.standard_user.id,
@@ -77,7 +77,7 @@ class TestProfilesOrganizationPermissionsEndpoint(BaseTestProfileAPI, TestPermis
             ),
             TestingDeleteContextView(
                 url='api_organization_details',
-                perm_str='profiles.delete_organization',
+                perm_str_list=['profiles.delete_organization'],
                 url_kwargs={'pk': self.organization_to_delete.id}
             )
         ]

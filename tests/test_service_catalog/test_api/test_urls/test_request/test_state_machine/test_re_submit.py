@@ -13,14 +13,14 @@ class TestServiceCatalogRequestReSubmitPermissionsEndpoint(BaseTestRequestAPI, T
         testing_view_list = [
             TestingGetContextView(
                 url='api_request_re_submit',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPostContextView(
                 url='api_request_re_submit',
-                perm_str='service_catalog.re_submit_request',
+                perm_str_list=['service_catalog.re_submit_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=200
             )

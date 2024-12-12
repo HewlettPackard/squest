@@ -7,20 +7,20 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsViews(BaseTestResourceT
         testing_view_list = [
             TestingGetContextView(
                 url='resource_tracker_v2:attributedefinition_list',
-                perm_str='resource_tracker_v2.list_attributedefinition',
+                perm_str_list=['resource_tracker_v2.list_attributedefinition'],
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:attributedefinition_details',
-                perm_str='resource_tracker_v2.view_attributedefinition',
+                perm_str_list=['resource_tracker_v2.view_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id}
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:attributedefinition_create',
-                perm_str='resource_tracker_v2.add_attributedefinition',
+                perm_str_list=['resource_tracker_v2.add_attributedefinition'],
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:attributedefinition_create',
-                perm_str='resource_tracker_v2.add_attributedefinition',
+                perm_str_list=['resource_tracker_v2.add_attributedefinition'],
                 data={
                     'name': 'New attribute',
                     'description': 'The description',
@@ -28,12 +28,12 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsViews(BaseTestResourceT
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:attributedefinition_edit',
-                perm_str='resource_tracker_v2.change_attributedefinition',
+                perm_str_list=['resource_tracker_v2.change_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:attributedefinition_edit',
-                perm_str='resource_tracker_v2.change_attributedefinition',
+                perm_str_list=['resource_tracker_v2.change_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id},
                 data={
                     'name': 'Attribute updated',
@@ -42,12 +42,12 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsViews(BaseTestResourceT
             ),
             TestingGetContextView(
                 url='resource_tracker_v2:attributedefinition_delete',
-                perm_str='resource_tracker_v2.delete_attributedefinition',
+                perm_str_list=['resource_tracker_v2.delete_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id}
             ),
             TestingPostContextView(
                 url='resource_tracker_v2:attributedefinition_delete',
-                perm_str='resource_tracker_v2.delete_attributedefinition',
+                perm_str_list=['resource_tracker_v2.delete_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id},
 
             )
