@@ -13,7 +13,7 @@ class TestServiceCatalogRequestPermissionsCRUDView(BaseTestRequest, TestPermissi
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_bulk_delete',
-                perm_str='service_catalog.delete_request',
+                perm_str_list=['service_catalog.delete_request'],
                 data={
                     'selection': [request.id for request in Request.objects.all()]
 
@@ -21,7 +21,7 @@ class TestServiceCatalogRequestPermissionsCRUDView(BaseTestRequest, TestPermissi
             ),
             TestingPostContextView(
                 url='service_catalog:request_bulk_delete',
-                perm_str='service_catalog.delete_request',
+                perm_str_list=['service_catalog.delete_request'],
                 data={
                     'selection': [request.id for request in Request.objects.all()]
 

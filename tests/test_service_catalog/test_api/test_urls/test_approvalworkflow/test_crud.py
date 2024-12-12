@@ -17,11 +17,11 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
         testing_view_list = [
             TestingGetContextView(
                 url='api_approvalworkflow_list_create',
-                perm_str='service_catalog.list_approvalworkflow',
+                perm_str_list=['service_catalog.list_approvalworkflow'],
             ),
             TestingPostContextView(
                 url='api_approvalworkflow_list_create',
-                perm_str='service_catalog.add_approvalworkflow',
+                perm_str_list=['service_catalog.add_approvalworkflow'],
                 data={
                     'name': 'New approval workflow',
                     'operation': self.update_operation_test.id,
@@ -30,12 +30,12 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
             ),
             TestingGetContextView(
                 url='api_approvalworkflow_details',
-                perm_str='service_catalog.view_approvalworkflow',
+                perm_str_list=['service_catalog.view_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             ),
             TestingPutContextView(
                 url='api_approvalworkflow_details',
-                perm_str='service_catalog.change_approvalworkflow',
+                perm_str_list=['service_catalog.change_approvalworkflow'],
                 data={
                     'name': 'Approval workflow PUT',
                     'operation': self.create_operation_test.id,
@@ -45,7 +45,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
             ),
             TestingPatchContextView(
                 url='api_approvalworkflow_details',
-                perm_str='service_catalog.change_approvalworkflow',
+                perm_str_list=['service_catalog.change_approvalworkflow'],
                 data={
                     'name': 'Approval workflow PATCH',
                 },
@@ -53,7 +53,7 @@ class TestServiceCatalogApprovalWorkflowPermissionsEndpoint(BaseTestRequestAPI, 
             ),
             TestingDeleteContextView(
                 url='api_approvalworkflow_details',
-                perm_str='service_catalog.delete_approvalworkflow',
+                perm_str_list=['service_catalog.delete_approvalworkflow'],
                 url_kwargs={'pk': self.approval_workflow.id}
             )
         ]

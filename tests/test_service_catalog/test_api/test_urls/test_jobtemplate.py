@@ -9,36 +9,36 @@ class TestServiceCatalogJobTemplatePermissionsEndpoint(BaseTestRequestAPI, TestP
         testing_view_list = [
             TestingGetContextView(
                 url='api_jobtemplate_list',
-                perm_str='service_catalog.list_jobtemplate',
+                perm_str_list=['service_catalog.list_jobtemplate'],
             ),
             TestingPostContextView(
                 url='api_jobtemplate_list',
-                perm_str='service_catalog.add_jobtemplate',
+                perm_str_list=['service_catalog.add_jobtemplate'],
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingGetContextView(
                 url='api_jobtemplate_details',
-                perm_str='service_catalog.view_jobtemplate',
+                perm_str_list=['service_catalog.view_jobtemplate'],
                 url_kwargs={'pk': self.job_template_test.id},
             ),
             TestingPutContextView(
                 url='api_jobtemplate_details',
-                perm_str='service_catalog.change_jobtemplate',
+                perm_str_list=['service_catalog.change_jobtemplate'],
                 url_kwargs={'pk': self.job_template_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingPatchContextView(
                 url='api_jobtemplate_details',
-                perm_str='service_catalog.change_jobtemplate',
+                perm_str_list=['service_catalog.change_jobtemplate'],
                 url_kwargs={'pk': self.job_template_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingDeleteContextView(
                 url='api_jobtemplate_details',
-                perm_str='service_catalog.delete_jobtemplate',
+                perm_str_list=['service_catalog.delete_jobtemplate'],
                 url_kwargs={'pk': self.job_template_test.id},
                 expected_status_code=405,
                 expected_not_allowed_status_code=405

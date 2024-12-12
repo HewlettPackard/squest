@@ -13,12 +13,12 @@ class TestServiceCatalogRequestAcceptPermissionsEndpoint(BaseTestRequestAPI, Tes
         testing_view_list = [
             TestingGetContextView(
                 url='api_request_accept',
-                perm_str='service_catalog.accept_request',
+                perm_str_list=['service_catalog.accept_request'],
                 url_kwargs={'pk': self.test_request.id},
             ),
             TestingPostContextView(
                 url='api_request_accept',
-                perm_str='service_catalog.accept_request',
+                perm_str_list=['service_catalog.accept_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'text_variable': "test text var",

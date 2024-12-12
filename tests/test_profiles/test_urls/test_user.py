@@ -8,11 +8,11 @@ class TestProfilesUserPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             # TODO: to be tested when User has been replaced by SquestUser (list_user permission not defined)
             # TestingGetUIViews(
             #     url='profiles:user_list',
-            #     perm_str='auth.list_user',
+            #     perm_str_list=['auth.list_user'],
             # ),
             TestingGetContextView(
                 url='profiles:user_details',
-                perm_str='auth.view_user',
+                perm_str_list=['auth.view_user'],
                 url_kwargs={'pk': self.standard_user.id}
             )
         ]

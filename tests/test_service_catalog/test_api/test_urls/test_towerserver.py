@@ -8,11 +8,11 @@ class TestServiceCatalogTowerServerPermissionsEndpoint(BaseTestRequestAPI, TestP
         testing_view_list = [
             TestingGetContextView(
                 url='api_towerserver_list_create',
-                perm_str='service_catalog.list_towerserver'
+                perm_str_list=['service_catalog.list_towerserver']
             ),
             TestingPostContextView(
                 url='api_towerserver_list_create',
-                perm_str='service_catalog.add_towerserver',
+                perm_str_list=['service_catalog.add_towerserver'],
                 data={
                     'name': "New Tower Server",
                     'host': "my-tower-domain.com",
@@ -24,24 +24,24 @@ class TestServiceCatalogTowerServerPermissionsEndpoint(BaseTestRequestAPI, TestP
             ),
             TestingPostContextView(
                 url='api_jobtemplate_sync_all',
-                perm_str='service_catalog.sync_towerserver',
+                perm_str_list=['service_catalog.sync_towerserver'],
                 url_kwargs={'tower_server_id': self.tower_server_test.id},
                 expected_status_code=202
             ),
             TestingPostContextView(
                 url='api_jobtemplate_sync',
-                perm_str='service_catalog.sync_towerserver',
+                perm_str_list=['service_catalog.sync_towerserver'],
                 url_kwargs={'tower_server_id': self.tower_server_test.id, 'job_template_id': self.job_template_test.id},
                 expected_status_code=202
             ),
             TestingGetContextView(
                 url='api_towerserver_details',
-                perm_str='service_catalog.view_towerserver',
+                perm_str_list=['service_catalog.view_towerserver'],
                 url_kwargs={'pk': self.tower_server_test.id}
             ),
             TestingPutContextView(
                 url='api_towerserver_details',
-                perm_str='service_catalog.change_towerserver',
+                perm_str_list=['service_catalog.change_towerserver'],
                 data={
                     'name': 'Tower Server PUT',
                     'host': "my-tower-domain2.com",
@@ -54,7 +54,7 @@ class TestServiceCatalogTowerServerPermissionsEndpoint(BaseTestRequestAPI, TestP
             ),
             TestingPatchContextView(
                 url='api_towerserver_details',
-                perm_str='service_catalog.change_towerserver',
+                perm_str_list=['service_catalog.change_towerserver'],
                 data={
                     'name': 'Tower Server PATCH',
                 },
@@ -62,7 +62,7 @@ class TestServiceCatalogTowerServerPermissionsEndpoint(BaseTestRequestAPI, TestP
             ),
             TestingDeleteContextView(
                 url='api_towerserver_details',
-                perm_str='service_catalog.delete_towerserver',
+                perm_str_list=['service_catalog.delete_towerserver'],
                 url_kwargs={'pk': self.tower_server_test.id}
             ),
         ]

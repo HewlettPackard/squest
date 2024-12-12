@@ -9,22 +9,22 @@ class TestServiceCatalogRequestCRUDPermissionsEndpoint(BaseTestRequestAPI, TestP
         testing_view_list = [
             TestingGetContextView(
                 url='api_request_list',
-                perm_str='service_catalog.list_request',
+                perm_str_list=['service_catalog.list_request'],
             ),
             TestingPostContextView(
                 url='api_request_list',
-                perm_str='service_catalog.add_request',
+                perm_str_list=['service_catalog.add_request'],
                 expected_status_code=405,
                 expected_not_allowed_status_code=405
             ),
             TestingGetContextView(
                 url='api_request_details',
-                perm_str='service_catalog.view_request',
+                perm_str_list=['service_catalog.view_request'],
                 url_kwargs={'pk': self.test_request.id}
             ),
             TestingPutContextView(
                 url='api_request_details',
-                perm_str='service_catalog.change_request',
+                perm_str_list=['service_catalog.change_request'],
                 data={
                     'fill_in_survey': dict(),
                     'tower_job_id': 6,
@@ -36,7 +36,7 @@ class TestServiceCatalogRequestCRUDPermissionsEndpoint(BaseTestRequestAPI, TestP
             ),
             TestingPatchContextView(
                 url='api_request_details',
-                perm_str='service_catalog.change_request',
+                perm_str_list=['service_catalog.change_request'],
                 data={
                     'tower_job_id': 8,
                 },
@@ -44,7 +44,7 @@ class TestServiceCatalogRequestCRUDPermissionsEndpoint(BaseTestRequestAPI, TestP
             ),
             TestingDeleteContextView(
                 url='api_request_details',
-                perm_str='service_catalog.delete_request',
+                perm_str_list=['service_catalog.delete_request'],
                 url_kwargs={'pk': self.test_request.id}
             )
         ]

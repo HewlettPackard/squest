@@ -8,11 +8,11 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsEndpoint(BaseTestResour
         testing_view_list = [
             TestingGetContextView(
                 url='api_attributedefinition_list_create',
-                perm_str='resource_tracker_v2.list_attributedefinition',
+                perm_str_list=['resource_tracker_v2.list_attributedefinition'],
             ),
             TestingPostContextView(
                 url='api_attributedefinition_list_create',
-                perm_str='resource_tracker_v2.add_attributedefinition',
+                perm_str_list=['resource_tracker_v2.add_attributedefinition'],
                 data={
                     'name': 'New attribute',
                     'description': 'The description',
@@ -20,12 +20,12 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsEndpoint(BaseTestResour
             ),
             TestingGetContextView(
                 url='api_attributedefinition_details',
-                perm_str='resource_tracker_v2.view_attributedefinition',
+                perm_str_list=['resource_tracker_v2.view_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id}
             ),
             TestingPutContextView(
                 url='api_attributedefinition_details',
-                perm_str='resource_tracker_v2.change_attributedefinition',
+                perm_str_list=['resource_tracker_v2.change_attributedefinition'],
                 data={
                     'name': 'Attribute PUT',
                     'description': 'The description',
@@ -34,7 +34,7 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsEndpoint(BaseTestResour
             ),
             TestingPatchContextView(
                 url='api_attributedefinition_details',
-                perm_str='resource_tracker_v2.change_attributedefinition',
+                perm_str_list=['resource_tracker_v2.change_attributedefinition'],
                 data={
                     'name': 'Attribute PATCH',
                 },
@@ -42,7 +42,7 @@ class TestResourceTrackerV2AttributeDefinitionPermissionsEndpoint(BaseTestResour
             ),
             TestingDeleteContextView(
                 url='api_attributedefinition_details',
-                perm_str='resource_tracker_v2.delete_attributedefinition',
+                perm_str_list=['resource_tracker_v2.delete_attributedefinition'],
                 url_kwargs={'pk': self.core_attribute.id}
             )
         ]

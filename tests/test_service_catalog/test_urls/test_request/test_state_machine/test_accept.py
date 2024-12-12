@@ -14,12 +14,12 @@ class TestServiceCatalogRequestPermissionsAcceptView(BaseTestRequest, TestPermis
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_accept',
-                perm_str='service_catalog.accept_request',
+                perm_str_list=['service_catalog.accept_request'],
                 url_kwargs={'pk': self.test_request.id},
             ),
             TestingPostContextView(
                 url='service_catalog:request_accept',
-                perm_str='service_catalog.accept_request',
+                perm_str_list=['service_catalog.accept_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'text_variable': 'my_var',
@@ -35,14 +35,14 @@ class TestServiceCatalogRequestPermissionsAcceptView(BaseTestRequest, TestPermis
         self.run_permissions_tests(testing_view_list)
 
     def test_accept_and_process_view_with_accept(self):
-        perm_str = "service_catalog.accept_request"
-        accept_perm = Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
-                                             codename=perm_str.split('.')[1])
+        perm_str_list = "service_catalog.accept_request"
+        accept_perm = Permission.objects.get(content_type__app_label=perm_str_list.split('.')[0],
+                                             codename=perm_str_list.split('.')[1])
         self.empty_role.permissions.add(accept_perm)
         testing_view_list = [
             TestingPostContextView(
                 url='service_catalog:request_accept',
-                perm_str='service_catalog.process_request',
+                perm_str_list=['service_catalog.process_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'text_variable': 'my_var',
@@ -59,14 +59,14 @@ class TestServiceCatalogRequestPermissionsAcceptView(BaseTestRequest, TestPermis
         self.run_permissions_tests(testing_view_list)
 
     def test_accept_and_process_view_with_process(self):
-        perm_str = "service_catalog.process_request"
-        accept_perm = Permission.objects.get(content_type__app_label=perm_str.split('.')[0],
-                                             codename=perm_str.split('.')[1])
+        perm_str_list = "service_catalog.process_request"
+        accept_perm = Permission.objects.get(content_type__app_label=perm_str_list.split('.')[0],
+                                             codename=perm_str_list.split('.')[1])
         self.empty_role.permissions.add(accept_perm)
         testing_view_list = [
             TestingPostContextView(
                 url='service_catalog:request_accept',
-                perm_str='service_catalog.accept_request',
+                perm_str_list=['service_catalog.accept_request'],
                 url_kwargs={'pk': self.test_request.id},
                 data={
                     'text_variable': 'my_var',

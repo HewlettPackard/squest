@@ -13,11 +13,11 @@ class TestProfilesPermissionPermissionsEndpoint(BaseTestProfileAPI, TestPermissi
         testing_view_list = [
             TestingGetContextView(
                 url='api_permission_list_create',
-                perm_str='profiles.list_permission',
+                perm_str_list=['profiles.list_permission'],
             ),
             TestingPostContextView(
                 url='api_permission_list_create',
-                perm_str='profiles.add_permission',
+                perm_str_list=['profiles.add_permission'],
                 data={
                     'name': 'New permission',
                     'codename': 'the_code_name',
@@ -26,12 +26,12 @@ class TestProfilesPermissionPermissionsEndpoint(BaseTestProfileAPI, TestPermissi
             ),
             TestingGetContextView(
                 url='api_permission_details',
-                perm_str='profiles.view_permission',
+                perm_str_list=['profiles.view_permission'],
                 url_kwargs={'pk': self.permission_test.id}
             ),
             TestingPutContextView(
                 url='api_permission_details',
-                perm_str='profiles.change_permission',
+                perm_str_list=['profiles.change_permission'],
                 data={
                     'name': 'New permission put',
                     'codename': 'the_code_name_put',
@@ -41,7 +41,7 @@ class TestProfilesPermissionPermissionsEndpoint(BaseTestProfileAPI, TestPermissi
             ),
             TestingPatchContextView(
                 url='api_permission_details',
-                perm_str='profiles.change_permission',
+                perm_str_list=['profiles.change_permission'],
                 data={
                     'name': 'New permission patch',
                 },
@@ -49,7 +49,7 @@ class TestProfilesPermissionPermissionsEndpoint(BaseTestProfileAPI, TestPermissi
             ),
             TestingDeleteContextView(
                 url='api_permission_details',
-                perm_str='profiles.delete_permission',
+                perm_str_list=['profiles.delete_permission'],
                 url_kwargs={'pk': self.permission_test.id}
             )
         ]

@@ -13,16 +13,16 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
         testing_view_list = [
             TestingGetContextView(
                 url='api_operation_list_create',
-                perm_str='service_catalog.list_operation',
+                perm_str_list=['service_catalog.list_operation'],
             ),
             TestingGetContextView(
                 url='api_instance_operation_list',
-                perm_str='service_catalog.list_operation',
+                perm_str_list=['service_catalog.list_operation'],
                 url_kwargs={'instance_id': self.test_instance.id}
             ),
             TestingPostContextView(
                 url='api_operation_list_create',
-                perm_str='service_catalog.add_operation',
+                perm_str_list=['service_catalog.add_operation'],
                 data={
                     'service': self.service_test.id,
                     'name': 'New operation',
@@ -34,12 +34,12 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             ),
             TestingGetContextView(
                 url='api_operation_survey_list_update',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPutContextView(
                 url='api_operation_survey_list_update',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 data=[
                     {'variable': 'text_variable', 'is_customer_field': True, 'default': "text_variable_default"},
                     {'variable': 'multiplechoice_variable', 'is_customer_field': False, 'default': "multiplechoice_variable_default"},
@@ -53,19 +53,19 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             ),
             TestingPatchContextView(
                 url='api_operation_survey_list_update',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 url_kwargs={'pk': self.create_operation_test.id},
                 expected_not_allowed_status_code=405,
                 expected_status_code=405
             ),
             TestingGetContextView(
                 url='api_operation_details',
-                perm_str='service_catalog.view_operation',
+                perm_str_list=['service_catalog.view_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
             TestingPutContextView(
                 url='api_operation_details',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 data={
                     'service': self.service_test.id,
                     'name': 'Operation PUT',
@@ -77,7 +77,7 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             ),
             TestingPatchContextView(
                 url='api_operation_details',
-                perm_str='service_catalog.change_operation',
+                perm_str_list=['service_catalog.change_operation'],
                 data={
                     'name': 'Operation PATCH',
                 },
@@ -85,7 +85,7 @@ class TestServiceCatalogOperationPermissionsEndpoint(BaseTestRequestAPI, TestPer
             ),
             TestingDeleteContextView(
                 url='api_operation_details',
-                perm_str='service_catalog.delete_operation',
+                perm_str_list=['service_catalog.delete_operation'],
                 url_kwargs={'pk': self.create_operation_test.id}
             ),
         ]

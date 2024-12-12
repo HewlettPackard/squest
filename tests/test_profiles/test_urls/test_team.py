@@ -20,11 +20,11 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
         testing_view_list = [
             TestingGetContextView(
                 url='profiles:team_list',
-                perm_str='profiles.list_team',
+                perm_str_list=['profiles.list_team'],
             ),
             TestingPostContextView(
                 url='profiles:team_create',
-                perm_str='profiles.add_team',
+                perm_str_list=['profiles.add_team'],
                 data={
                     'name': 'New team',
                     'description': 'The description',
@@ -35,23 +35,23 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingGetContextView(
                 url='profiles:team_details',
-                perm_str='profiles.view_team',
+                perm_str_list=['profiles.view_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id}
             ),
             TestingGetContextView(
                 url='profiles:team_rbac_create',
-                perm_str='profiles.add_users_team',
+                perm_str_list=['profiles.add_users_team'],
                 url_kwargs={'scope_id': self.test_quota_scope_team.id}
             ),
             TestingPostContextView(
                 url='profiles:team_rbac_create',
-                perm_str='profiles.add_users_team',
+                perm_str_list=['profiles.add_users_team'],
                 url_kwargs={'scope_id': self.test_quota_scope_team.id},
                 data={'users': self.standard_user.id, 'roles': self.empty_role.id}
             ),
             TestingPostContextView(
                 url='profiles:team_rbac_delete',
-                perm_str='profiles.delete_users_team',
+                perm_str_list=['profiles.delete_users_team'],
                 url_kwargs={
                     'pk': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
@@ -60,7 +60,7 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingGetContextView(
                 url='profiles:team_rbac_delete',
-                perm_str='profiles.delete_users_team',
+                perm_str_list=['profiles.delete_users_team'],
                 url_kwargs={
                     'pk': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
@@ -68,7 +68,7 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingPostContextView(
                 url='profiles:team_rbac_delete',
-                perm_str='profiles.delete_users_team',
+                perm_str_list=['profiles.delete_users_team'],
                 url_kwargs={
                     'pk': self.test_quota_scope_team.id,
                     'user_id': self.standard_user.id,
@@ -76,17 +76,17 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingGetContextView(
                 url='profiles:team_delete',
-                perm_str='profiles.delete_team',
+                perm_str_list=['profiles.delete_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id}
             ),
             TestingGetContextView(
                 url='profiles:team_edit',
-                perm_str='profiles.change_team',
+                perm_str_list=['profiles.change_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id}
             ),
             TestingPostContextView(
                 url='profiles:team_edit',
-                perm_str='profiles.change_team',
+                perm_str_list=['profiles.change_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id},
                 data={
                     'name': 'Organization updated',
@@ -97,7 +97,7 @@ class TestProfilesTeamPermissionsViews(BaseTestProfile, TestPermissionEndpoint):
             ),
             TestingPostContextView(
                 url='profiles:team_delete',
-                perm_str='profiles.delete_team',
+                perm_str_list=['profiles.delete_team'],
                 url_kwargs={'pk': self.test_quota_scope_team.id},
             )
         ]

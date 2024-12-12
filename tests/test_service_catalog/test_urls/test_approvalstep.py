@@ -28,12 +28,12 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:approvalstep_create',
-                perm_str='service_catalog.add_approvalstep',
+                perm_str_list=['service_catalog.add_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id},
             ),
             TestingPostContextView(
                 url='service_catalog:approvalstep_create',
-                perm_str='service_catalog.add_approvalstep',
+                perm_str_list=['service_catalog.add_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id},
                 data={
                     'name': 'New approval step',
@@ -45,12 +45,12 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
             ),
             TestingGetContextView(
                 url='service_catalog:approvalstep_edit',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id}
             ),
             TestingPutContextView(
                 url='service_catalog:approvalstep_edit',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id},
                 data={
                     'name': 'Approval step update',
@@ -62,13 +62,13 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
             ),
             TestingGetContextView(
                 url='service_catalog:ajax_approval_step_position_update',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 expected_status_code=405,
                 expected_not_allowed_status_code=405,
             ),
             TestingPostContextView(
                 url='service_catalog:ajax_approval_step_position_update',
-                perm_str='service_catalog.change_approvalstep',
+                perm_str_list=['service_catalog.change_approvalstep'],
                 data={
                     'listStepToUpdate': json.dumps([
                         {
@@ -85,12 +85,12 @@ class TestServiceCatalogPermissionsViews(BaseTestRequest, TestPermissionEndpoint
 
             TestingGetContextView(
                 url='service_catalog:approvalstep_delete',
-                perm_str='service_catalog.delete_approvalstep',
+                perm_str_list=['service_catalog.delete_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id}
             ),
             TestingPostContextView(
                 url='service_catalog:approvalstep_delete',
-                perm_str='service_catalog.delete_approvalstep',
+                perm_str_list=['service_catalog.delete_approvalstep'],
                 url_kwargs={'approval_workflow_id': self.approval_workflow.id, 'pk': self.approval_step.id}
             ),
         ]

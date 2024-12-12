@@ -13,13 +13,13 @@ class TestServiceCatalogRequestPermissionsUnarchiveView(BaseTestRequest, TestPer
         testing_view_list = [
             TestingGetContextView(
                 url='service_catalog:request_unarchive',
-                perm_str='service_catalog.unarchive_request',
+                perm_str_list=['service_catalog.unarchive_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_status_code=302
             ),
             TestingPostContextView(
                 url='service_catalog:request_unarchive',
-                perm_str='service_catalog.unarchive_request',
+                perm_str_list=['service_catalog.unarchive_request'],
                 url_kwargs={'pk': self.test_request.id},
                 expected_not_allowed_status_code=405,
                 expected_status_code=405
