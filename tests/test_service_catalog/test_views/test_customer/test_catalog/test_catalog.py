@@ -1,7 +1,5 @@
-from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from profiles.models import Permission
 from service_catalog.models import Request, Service, RequestMessage, Portfolio, Operation, OperationType
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -12,9 +10,6 @@ class TestCustomerCatalogViews(BaseTestRequest):
         super(TestCustomerCatalogViews, self).setUp()
         self.client.login(username=self.standard_user, password=self.common_password)
 
-        operation_content_type = ContentType.objects.get_for_model(Operation)
-        self.is_admin_perm, _ = Permission.objects.get_or_create(content_type=operation_content_type,
-                                                                 codename="is_admin_operation")
 
     def test_customer_list_service_in_root(self):
         url = reverse('service_catalog:service_catalog_list')
@@ -133,7 +128,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
                                                           service=self.service_test,
                                                           job_template=self.job_template_test,
                                                           process_timeout_second=20,
-                                                          permission=self.is_admin_perm)
+                                                          permission=self.admin_operation)
         # add a second create operation to avoid being redirected directly to the unique operation form
         Operation.objects.create(name="create non admin",
                                  service=self.service_test,
@@ -172,7 +167,7 @@ class TestCustomerCatalogViews(BaseTestRequest):
         Operation.objects.create(name="second create admin",
                                  service=self.service_test,
                                  job_template=self.job_template_test,
-                                 permission=self.is_admin_perm,
+                                 permission=self.admin_operation,
                                  type=OperationType.CREATE,
                                  process_timeout_second=20)
         Operation.objects.create(name="third create non admin",

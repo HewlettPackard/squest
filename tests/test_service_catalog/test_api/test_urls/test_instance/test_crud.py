@@ -1,7 +1,4 @@
-from django.contrib.contenttypes.models import ContentType
-
-from profiles.models import Permission
-from service_catalog.models import CustomLink, InstanceState, Operation
+from service_catalog.models import InstanceState
 from tests.permission_endpoint import TestPermissionEndpoint, TestingGetContextView, TestingPostContextView, \
     TestingPatchContextView, TestingPutContextView, TestingDeleteContextView
 from tests.test_service_catalog.base_test_request import BaseTestRequestAPI
@@ -15,9 +12,7 @@ class TestServiceCatalogInstanceCRUDPermissionsEndpoint(BaseTestRequestAPI, Test
         self.test_instance_2.service = self.update_operation_test_2.service
         self.test_instance.save()
         self.test_instance_2.save()
-        operation_content_type = ContentType.objects.get_for_model(Operation)
-        self.update_operation_test_2.permission, _ = Permission.objects.get_or_create(content_type=operation_content_type,
-                                                                                   codename="is_admin_operation")
+        self.update_operation_test_2.permission = self.admin_operation
         self.update_operation_test_2.save()
 
 

@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, IntegerField, CASCADE, SET_NULL, JSONField, \
-    SET_DEFAULT, Q, PROTECT
+    PROTECT
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -10,7 +10,6 @@ from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.plugin_controller import PluginController
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Permission
-
 from service_catalog.models.job_templates import JobTemplate
 from service_catalog.models.operation_type import OperationType
 from service_catalog.models.services import Service
