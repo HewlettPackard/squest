@@ -1,5 +1,5 @@
-from service_catalog.forms import FormUtils
-from test_service_catalog.base_test_request import BaseTestRequest
+from service_catalog.forms.form_utils import FormUtils
+from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
 class TestPortfolio(BaseTestRequest):

@@ -1,11 +1,8 @@
 import json
 
-from django.contrib.contenttypes.models import ContentType
-
-from profiles.models import Permission
-from service_catalog.models import InstanceState, Operation
-from tests.test_service_catalog.base_test_request import BaseTestRequest
+from service_catalog.models import InstanceState
 from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
+from tests.test_service_catalog.base_test_request import BaseTestRequest
 
 
 class TestServiceCatalogInstancePermissionsCRUDViews(BaseTestRequest, TestPermissionEndpoint):
@@ -17,10 +14,7 @@ class TestServiceCatalogInstancePermissionsCRUDViews(BaseTestRequest, TestPermis
         self.test_instance.save()
         self.test_instance_2.save()
 
-        operation_content_type = ContentType.objects.get_for_model(Operation)
-        self.update_operation_test_2.permission, _ = Permission.objects.get_or_create(
-            content_type=operation_content_type,
-            codename="is_admin_operation")
+        self.update_operation_test_2.permission = self.admin_operation
         self.update_operation_test_2.save()
 
     def test_crud_views(self):

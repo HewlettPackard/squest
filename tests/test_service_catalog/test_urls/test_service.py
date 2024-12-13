@@ -1,17 +1,13 @@
-from django.contrib.contenttypes.models import ContentType
-
 from profiles.models import Permission
-from service_catalog.models import Operation
-from tests.test_service_catalog.base_test_request import BaseTestRequest
-from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
 from service_catalog.forms.form_utils import FormUtils
+from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
+from tests.test_service_catalog.base_test_request import BaseTestRequest
+
 
 class TestServiceCatalogServicePermissionsViews(BaseTestRequest, TestPermissionEndpoint):
     def setUp(self):
         super().setUp()
-        operation_content_type = ContentType.objects.get_for_model(Operation)
-        self.update_operation_test_2.permission, _ = Permission.objects.get_or_create(content_type=operation_content_type,
-                                                                                   codename="is_admin_operation")
+        self.update_operation_test_2.permission = self.admin_operation
         self.update_operation_test_2.save()
     def test_service_views(self):
         testing_view_list = [
@@ -68,7 +64,7 @@ class TestServiceCatalogServicePermissionsViews(BaseTestRequest, TestPermissionE
     def test_request_service_views(self):
         self.empty_role.permissions.add(
             Permission.objects.get(content_type__app_label='profiles', codename='consume_quota_scope'))
-        self.create_operation_test_2.is_admin_operation = True
+        self.create_operation_test_2.permission = self.admin_operation
         self.create_operation_test_2.save()
         testing_view_list = [
             TestingGetContextView(

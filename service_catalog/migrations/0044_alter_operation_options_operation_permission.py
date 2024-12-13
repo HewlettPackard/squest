@@ -16,9 +16,9 @@ def set_perm_to_operations(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     operation_content_type = ContentType.objects.get_for_model(Operation)
 
-    is_admin_operation, _ = Permission.objects.get_or_create(codename="is_admin_operation", content_type=operation_content_type)
+    view_admin_operation, _ = Permission.objects.get_or_create(codename="view_admin_operation", content_type=operation_content_type)
     view_operation, _ = Permission.objects.get_or_create(codename="view_operation", content_type=operation_content_type)
-    Operation.objects.filter(is_admin_operation=True).update(permission=is_admin_operation)
+    Operation.objects.filter(is_admin_operation=True).update(permission=view_admin_operation)
     Operation.objects.filter(is_admin_operation=False).update(permission=view_operation)
 
 
