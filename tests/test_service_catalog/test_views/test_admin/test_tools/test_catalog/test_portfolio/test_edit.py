@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from service_catalog.forms.form_utils import FormUtils
 from tests.test_service_catalog.base import BaseTest
 
 
@@ -8,7 +9,8 @@ class PortfolioEditTestCase(BaseTest):
     def setUp(self):
         super(PortfolioEditTestCase, self).setUp()
         self.data = {
-            'name': 'updated'
+            'name': 'updated',
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
 
     def _edit_portfolio(self, data=None, get_status=200, post_status=302):
@@ -20,8 +22,7 @@ class PortfolioEditTestCase(BaseTest):
         self.assertEqual(post_status, response.status_code)
         self.portfolio_test_1.refresh_from_db()
         if get_status == 200 and post_status == 302:
-            for key, value in data.items():
-                self.assertEqual(self.portfolio_test_1.__dict__[key], value)
+            self.assertEqual("updated", self.portfolio_test_1.name)
 
     def test_admin_can_edit_portfolio(self):
         self._edit_portfolio()

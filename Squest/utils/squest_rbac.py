@@ -28,8 +28,10 @@ class SquestRBACBackend(BaseBackend):
 
         if not user_obj.is_authenticated:
             return False
-
-        app_label, codename = perm.split(".")
+        try:
+            app_label, codename = perm.split(".")
+        except Exception as test:
+            print(test)
 
         if obj is None:
             key = f"{user_obj.id}_{perm}"

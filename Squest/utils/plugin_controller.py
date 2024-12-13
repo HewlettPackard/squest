@@ -40,7 +40,7 @@ class PluginController:
             """
             Returns True if the object is a Script.
             """
-            from service_catalog.forms import SurveyValidator
+            from service_catalog.forms.form_utils import SurveyValidator
             try:
                 return issubclass(obj, SurveyValidator) and obj != SurveyValidator
             except TypeError:
