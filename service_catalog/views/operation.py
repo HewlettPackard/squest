@@ -105,11 +105,11 @@ class CreateOperationListView(SquestListView):
         for permission in all_permission_current_service.all():
             # add allowed operation for all service if the user has the permission
             operation_qs = operation_qs | Operation.get_queryset_for_user_filtered(self.request.user,
-                                                                               permission.permission_str)
+                                                                                   permission.permission_str)
         # restrict to only the selected service
         operation_qs = operation_qs.filter(service=current_service,
-                                       enabled=True,
-                                       type__in=[OperationType.CREATE])
+                                           enabled=True,
+                                           type__in=[OperationType.CREATE])
         return operation_qs
 
     def dispatch(self, request, *args, **kwargs):

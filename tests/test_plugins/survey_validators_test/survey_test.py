@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from profiles.models import Scope
-from service_catalog.forms import SurveyValidator
+from service_catalog.forms.form_utils import SurveyValidator
 from service_catalog.models import Operation, Instance
 
 

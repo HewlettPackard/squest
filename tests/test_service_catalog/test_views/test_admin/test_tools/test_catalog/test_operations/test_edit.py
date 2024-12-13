@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import OperationType
 from tests.test_service_catalog.base import BaseTest
 
@@ -20,7 +21,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": OperationType.DELETE,
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -42,7 +44,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
@@ -64,7 +67,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": OperationType.UPDATE,
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
@@ -86,7 +90,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": OperationType.UPDATE,
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(302, response.status_code)
@@ -105,7 +110,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": OperationType.CREATE,
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
@@ -126,7 +132,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
@@ -171,7 +178,8 @@ class OperationEditTestCase(BaseTest):
             "description": "updated description",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 600
+            "process_timeout_second": 600,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)

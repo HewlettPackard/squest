@@ -1,4 +1,5 @@
-from service_catalog.forms import  ServiceForm
+from service_catalog.forms import ServiceForm
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import OperationType
 from tests.test_service_catalog.base import BaseTest
 
@@ -11,22 +12,27 @@ class TestServiceForm(BaseTest):
             {
                 "name": "new_service",
                 "description": "a new service",
+                "permission": FormUtils.get_default_permission_for_operation(),
             },
             {
                 "name": "new_service_2",
                 "description": "a new service 2",
+                "permission": FormUtils.get_default_permission_for_operation(),
             },
             {
                 "name": "new_service_3",
-                "description": "a new service 3"
+                "description": "a new service 3",
+                "permission": FormUtils.get_default_permission_for_operation(),
             },
             {
                 "name": "new_service_4",
-                "description": "a new service 4"
+                "description": "a new service 4",
+                "permission": -1,
             },
             {
                 "name": "new_service_5",
-                "description": "a new service 5"
+                "description": "a new service 5",
+                "permission": FormUtils.get_default_permission_for_operation(),
             },
         ]
         self.failed_expected = ["new_service_4"]

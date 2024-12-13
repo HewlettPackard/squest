@@ -1,5 +1,6 @@
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 from tests.permission_endpoint import TestingGetContextView, TestingPostContextView, TestPermissionEndpoint
+from service_catalog.forms.form_utils import FormUtils
 
 
 class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissionEndpoint):
@@ -27,7 +28,8 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
                     'description': 'a new operation',
                     'job_template': self.job_template_test.id,
                     'type': 'CREATE',
-                    'process_timeout_second': 60
+                    'process_timeout_second': 60,
+                    "permission": FormUtils.get_default_permission_for_operation(),
                 }
             ),
             TestingGetContextView(
@@ -50,7 +52,8 @@ class TestServiceCatalogOperationPermissionsViews(BaseTestRequest, TestPermissio
                     'description': 'Updated operation description',
                     'job_template': self.job_template_test.id,
                     'type': 'DELETE',
-                    'process_timeout_second': 120
+                    'process_timeout_second': 120,
+                    "permission": FormUtils.get_default_permission_for_operation()
                 }
             ),
             TestingGetContextView(

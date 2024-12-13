@@ -189,7 +189,7 @@ class InstanceDeleteView(SquestDeleteView):
 def instance_request_new_operation(request, instance_id, operation_id):
     instance = get_object_or_404(Instance, id=instance_id)
     operation = get_object_or_404(Operation, id=operation_id)
-    if not request.user.has_perm(operation.permission, instance):
+    if not request.user.has_perm(operation.permission.permission_str, instance):
         raise SquestPermissionDenied(permission=operation.permission)
     if instance.state not in [InstanceState.AVAILABLE]:
         raise PermissionDenied("Instance not available")

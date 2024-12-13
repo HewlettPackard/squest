@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import Service
 from tests.test_service_catalog.base import BaseTest
 
@@ -15,7 +16,8 @@ class ServiceEditTestCase(BaseTest):
         self.data = {
             "name": "service-test-updated",
             "description": "description-of-service-test-updated",
-            "enabled": False
+            "enabled": False,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
 
     def test_admin_can_edit_service(self):

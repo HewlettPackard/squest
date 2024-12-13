@@ -10,7 +10,7 @@ Create Python class that inherit from SurveyValidator with a method `validate_su
 
 ```python
 # plugins/survey_validators/MySurveyValidator.py
-from service_catalog.forms import SurveyValidator
+from service_catalog.forms.form_utils import SurveyValidator
 
 class MyCustomValidatorFoo(SurveyValidator):
     def validate_survey(self):
@@ -75,7 +75,7 @@ This validator will always fail if:
 - It's not the weekend yet
 
 ```python
-from service_catalog.forms import SurveyValidator
+from service_catalog.forms.form_utils import SurveyValidator
 import datetime
 
 class ValidatorForVM(SurveyValidator):

@@ -3,7 +3,7 @@ from django.forms import CharField, ModelChoiceField
 
 from Squest.utils.squest_model_form import SquestModelForm
 from profiles.models import Permission
-from service_catalog.forms import FormUtils
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models.services import Service
 
 
