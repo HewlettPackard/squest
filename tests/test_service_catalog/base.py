@@ -1,4 +1,6 @@
 import tempfile
+
+from django.contrib.contenttypes.models import ContentType
 from django.test.testcases import TransactionTestCase
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -368,6 +370,10 @@ class BaseTestCommon(TransactionTestCase):
             job_template=self.job_template_empty_survey_test,
             process_timeout_second=30
         )
+
+        operation_content_type = ContentType.objects.get_for_model(Operation)
+        self.admin_operation, _ = Permission.objects.get_or_create(
+            content_type=operation_content_type, codename="is_admin_operation")
 
         # ---------------------------------------------------
         # Small job template
