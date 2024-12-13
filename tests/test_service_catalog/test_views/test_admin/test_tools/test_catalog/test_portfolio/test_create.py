@@ -1,4 +1,6 @@
 from django.urls import reverse
+
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import Portfolio
 from tests.test_service_catalog.base import BaseTest
 
@@ -7,7 +9,8 @@ class PortfolioCreateTestCase(BaseTest):
 
     def setUp(self):
         super(PortfolioCreateTestCase, self).setUp()
-        self.data = {'name': 'new portfolio'}
+        self.data = {'name': 'new portfolio',
+                     "permission": FormUtils.get_default_permission_for_operation(),}
 
     def _create_portfolio(self, data=None, parent_portfolio=None, get_status=200, post_status=302):
         data = data if data else self.data

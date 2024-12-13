@@ -1,5 +1,7 @@
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
+from profiles.models import Permission
 from service_catalog.models import Request, Service, RequestMessage, Portfolio, Operation, OperationType
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -9,6 +11,10 @@ class TestCustomerCatalogViews(BaseTestRequest):
     def setUp(self):
         super(TestCustomerCatalogViews, self).setUp()
         self.client.login(username=self.standard_user, password=self.common_password)
+
+        operation_content_type = ContentType.objects.get_for_model(Operation)
+        self.is_admin_perm, _ = Permission.objects.get_or_create(content_type=operation_content_type,
+                                                                 codename="is_admin_operation")
 
     def test_customer_list_service_in_root(self):
         url = reverse('service_catalog:service_catalog_list')
@@ -122,16 +128,16 @@ class TestCustomerCatalogViews(BaseTestRequest):
         self.assertEqual(created_request.comments.first().sender, self.standard_user)
 
     def test_customer_cannot_create_request_on_admin_only_operation(self):
+
         admin_create_operation = Operation.objects.create(name="create admin",
                                                           service=self.service_test,
                                                           job_template=self.job_template_test,
-                                                          is_admin_operation=True,
-                                                          process_timeout_second=20)
+                                                          process_timeout_second=20,
+                                                          permission=self.is_admin_perm)
         # add a second create operation to avoid being redirected directly to the unique operation form
         Operation.objects.create(name="create non admin",
                                  service=self.service_test,
                                  job_template=self.job_template_test,
-                                 is_admin_operation=False,
                                  type=OperationType.CREATE,
                                  process_timeout_second=20)
         self.client.force_login(user=self.standard_user)
@@ -162,16 +168,16 @@ class TestCustomerCatalogViews(BaseTestRequest):
             self.assertEqual(403, response.status_code)
 
     def test_user_cannot_list_admin_create_operation(self):
+
         Operation.objects.create(name="second create admin",
                                  service=self.service_test,
                                  job_template=self.job_template_test,
-                                 is_admin_operation=True,
+                                 permission=self.is_admin_perm,
                                  type=OperationType.CREATE,
                                  process_timeout_second=20)
         Operation.objects.create(name="third create non admin",
                                  service=self.service_test,
                                  job_template=self.job_template_test,
-                                 is_admin_operation=False,
                                  type=OperationType.CREATE,
                                  process_timeout_second=20)
         self.client.force_login(user=self.superuser)

@@ -5,6 +5,7 @@ from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import Service
 from tests.test_service_catalog.base import BaseTest
 
@@ -21,6 +22,7 @@ class ServiceCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "job_template_timeout": 60,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -43,7 +45,8 @@ class ServiceCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "job_template_timeout": 60,
-            "image": image
+            "image": image,
+            "permission": FormUtils.get_default_permission_for_operation()
         }
         number_service_before = Service.objects.all().count()
         response = self.client.post(self.url, data=data, format="multipart")

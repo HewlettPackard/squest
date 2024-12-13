@@ -1,5 +1,5 @@
 from django.urls import reverse
-
+from service_catalog.forms.form_utils import FormUtils
 from service_catalog.models import Operation, OperationType
 from tests.test_service_catalog.base import BaseTest
 
@@ -19,7 +19,8 @@ class OperationCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -36,7 +37,8 @@ class OperationCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "type": "DELETE",
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -53,7 +55,8 @@ class OperationCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "type": "UPDATE",
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -73,7 +76,8 @@ class OperationCreateTestCase(BaseTest):
             "description": "a new create operation",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
         response = self.client.get(self.url)
         self.assertEqual(200, response.status_code)
@@ -91,7 +95,8 @@ class OperationCreateTestCase(BaseTest):
             "description": "a new service",
             "job_template": self.job_template_test.id,
             "type": "CREATE",
-            "process_timeout_second": 60
+            "process_timeout_second": 60,
+            "permission": FormUtils.get_default_permission_for_operation(),
         }
         response = self.client.get(self.url)
         self.assertEqual(302, response.status_code)

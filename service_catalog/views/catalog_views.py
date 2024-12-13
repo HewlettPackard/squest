@@ -12,7 +12,7 @@ class ServiceRequestWizardView(SquestPermissionRequiredMixin, SessionWizardView)
         service_id = self.kwargs['service_id']
         operation_id = self.kwargs['operation_id']
         self.operation = get_object_or_404(Operation, enabled=True, service__enabled=True, id=operation_id, type=OperationType.CREATE, service__id=service_id)
-        return self.operation.permission
+        return self.operation.permission.permission_str
 
 
     def get_context_data(self, form, **kwargs):
