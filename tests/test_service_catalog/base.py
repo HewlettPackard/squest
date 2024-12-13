@@ -373,7 +373,7 @@ class BaseTestCommon(TransactionTestCase):
 
         operation_content_type = ContentType.objects.get_for_model(Operation)
         self.admin_operation, _ = Permission.objects.get_or_create(
-            content_type=operation_content_type, codename="is_admin_operation")
+            content_type=operation_content_type, codename="view_admin_operation")
 
         # ---------------------------------------------------
         # Small job template

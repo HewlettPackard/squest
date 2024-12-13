@@ -1,5 +1,4 @@
 import logging
-from gc import enable
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,7 +25,6 @@ from service_catalog.models.operation_type import OperationType
 from service_catalog.models.operations import Operation
 from service_catalog.models.support import Support
 from service_catalog.tables.instance_tables import InstanceTable
-from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.tables.support_tables import SupportTable
 

@@ -42,7 +42,7 @@ class TestApiOperationRequestCreate(BaseTestRequestAPI):
 
     def test_customer_cannot_create_an_admin_operation(self):
         self.client.force_login(self.standard_user)
-        self.update_operation_test.is_admin_operation = True
+        self.update_operation_test.permission = self.admin_operation
         self.update_operation_test.save()
         request_count = Request.objects.count()
         response = self.client.post(self.url, data=self.data, format='json')

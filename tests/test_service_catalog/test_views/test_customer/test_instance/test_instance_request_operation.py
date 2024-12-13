@@ -1,8 +1,6 @@
-from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from profiles.models import Permission
-from service_catalog.models import Request, RequestMessage, Doc, Operation
+from service_catalog.models import Request, RequestMessage, Doc
 from service_catalog.models.instance import InstanceState
 from tests.test_service_catalog.base_test_request import BaseTestRequest
 
@@ -57,10 +55,7 @@ class TestCustomerInstanceRequestOperation(BaseTestRequest):
 
     def test_customer_cannot_request_admin_operation(self):
         # set an operation to be admin only
-        operation_content_type = ContentType.objects.get_for_model(Operation)
-        self.update_operation_test.permission, _ = Permission.objects.get_or_create(
-            content_type=operation_content_type,
-            codename="is_admin_operation")
+        self.update_operation_test.permission = self.admin_operation
         self.update_operation_test.save()
         args = {
             'instance_id': self.test_instance.id,
