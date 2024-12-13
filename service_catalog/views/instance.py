@@ -106,10 +106,6 @@ class InstanceDetailView(SquestDetailView):
                                        type__in=[OperationType.UPDATE,
                                                  OperationType.DELETE])
 
-        # TODO: service form
-        # TODO: portfolio form
-        # TODO: tests
-
         # filter operation with when condition
         for operation in operations.all():
             if not operation.when_instance_authorized(self.object):

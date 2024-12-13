@@ -115,6 +115,8 @@ class Instance(SquestModel):
     @property
     def docs(self):
         filtered_doc = list()
+        if self.service is None:
+            return filtered_doc
         from service_catalog.api.serializers import InstanceSerializer
         for doc in self.service.docs.all():
             context = {
