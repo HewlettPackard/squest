@@ -40,17 +40,18 @@
                                 <strong class="float-right">{{ object.id }}</strong>
                             </li>
 
+                            {% if object.service %}
                             <li class="list-group-item">
                                 <b>Service</b>
                                 {% has_perm request.user "service_catalog.change_service" object.service as can_edit_service %}
-
-                                {% if can_edit_service %}
-                                    <a href="{% url 'service_catalog:service_edit' object.service.id %}"
-                                       class="float-right">{{ object.service.name }}</a>
-                                {% else %}
-                                    <a class="float-right">{{ object.service.name }}</a>
-                                {% endif %}
+                                    {% if can_edit_service %}
+                                        <a href="{% url 'service_catalog:service_edit' object.service.id %}"
+                                           class="float-right">{{ object.service.name }}</a>
+                                    {% else %}
+                                        <a class="float-right">{{ object.service.name }}</a>
+                                    {% endif %}
                             </li>
+                            {% endif %}
                             <li class="list-group-item">
                                 <b>State</b> <strong
                                     class="float-right text-{{ object.state |map_instance_state }}">{{ object.get_state_display }}</strong>
