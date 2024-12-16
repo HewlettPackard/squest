@@ -28,6 +28,7 @@ Operations of type "update" or "delete" can be then added to manage the lifecycl
 | Default diff mode      | Default `False`. This is equivalent to Ansible's --diff mode in the CLI                                   |
 | Default credential IDs | Comma separated list of credentials ID                                                                    |
 | When                   | Ansible 'when' condition to make operation available to some instance spec condition                      |
+| Permission             | Set a permission required to view the operation. By default set to "view_operation"                       |
 
 ## Job template config
 

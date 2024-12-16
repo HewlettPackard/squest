@@ -15,7 +15,8 @@ class OperationForm(SquestModelForm):
 
     permission = ModelChoiceField(queryset=Permission.objects.filter(content_type__model="operation",
                                                                      content_type__app_label="service_catalog"),
-                                  initial=FormUtils.get_default_permission_for_operation)
+                                  initial=FormUtils.get_default_permission_for_operation,
+                                  help_text=Operation.permission.field.help_text)
 
     class Meta:
         model = Operation
