@@ -1,3 +1,22 @@
+# 2.7.0 2024-12-16
+
+## Breaking changes ⚠
+
+- drop support for docker compose v1
+- SurveyValidator form utils import switched from `from service_catalog.forms import SurveyValidator` to `from service_catalog.forms.form_utils import SurveyValidator`
+
+## Fix 
+
+- Credential id set in operation was not sent to AWX
+
+## Enhancement
+
+- Add support of multiple workers to gunicorn to speedup Squest
+
+## Feature
+
+- Add permission on operation, service and portfolio
+
 # 2.6.1 2024-11-15
 
 ## Fix 
