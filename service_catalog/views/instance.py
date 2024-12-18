@@ -25,6 +25,7 @@ from service_catalog.models.operation_type import OperationType
 from service_catalog.models.operations import Operation
 from service_catalog.models.support import Support
 from service_catalog.tables.instance_tables import InstanceTable
+from service_catalog.tables.operation_tables import OperationTableFromInstanceDetails
 from service_catalog.tables.request_tables import RequestTable
 from service_catalog.tables.support_tables import SupportTable
 
@@ -108,6 +109,10 @@ class InstanceDetailView(SquestDetailView):
         for operation in operations.all():
             if not operation.when_instance_authorized(self.object):
                 operations = operations.exclude(id=operation.id)
+
+        if operations.exists():
+            context['operations_table'] = OperationTableFromInstanceDetails(operations, prefix="operation-")
+            config.configure(context['operations_table'])
 
         # requests
         if self.request.user.has_perm("service_catalog.view_request", self.object):
