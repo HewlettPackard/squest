@@ -1,3 +1,9 @@
+# 2.7.2 2024-12-18
+
+## Fix 
+
+- Operation table was missing from instance details view
+
 # 2.7.0 2024-12-16
 
 ## Breaking changes ⚠
