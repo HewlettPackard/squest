@@ -1,16 +1,11 @@
-- name: Add helm repo for MariaDB operator
-  kubernetes.core.helm_repository:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
-    name: mariadb-operator
-    repo_url: "https://mariadb-operator.github.io/mariadb-operator"
-
 - name: Install MariaDB operator
   kubernetes.core.helm:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: mariadb-operator
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ mariadb_operator_chart_version }}"
-    chart_ref: mariadb-operator/mariadb-operator
+    chart_ref: mariadb-operator
+    chart_repo_url: "https://mariadb-operator.github.io/mariadb-operator"
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
