@@ -7,7 +7,7 @@
     chart_ref: rabbitmq-cluster-operator
     chart_repo_url: "https://charts.bitnami.com/bitnami"
 
-- name: Wait until CRD installed
+- name: Wait until CRD is installed
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
@@ -33,7 +33,7 @@
     state: present
     src: "/tmp/rabbitmq_topology_operator_manifest.yaml"
 
-- name: Wait until CRD installed
+- name: Wait until CRD is installed
   loop:
     - users.rabbitmq.com
     - vhosts.rabbitmq.com
