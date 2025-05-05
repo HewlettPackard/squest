@@ -1,16 +1,11 @@
-- name: Add helm repo for RabbitMQ operator
-  kubernetes.core.helm_repository:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
-    name: bitnami
-    repo_url: "https://charts.bitnami.com/bitnami"
-
 - name: Install RabbitMQ operator
   kubernetes.core.helm:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: rabbitmq-cluster-operator
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ rabbitmq_operator_chart_version }}"
-    chart_ref: bitnami/rabbitmq-cluster-operator
+    chart_ref: rabbitmq-cluster-operator
+    chart_repo_url: "https://charts.bitnami.com/bitnami"
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
