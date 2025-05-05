@@ -1,16 +1,11 @@
-- name: Add helm repo for Prometheus
-  kubernetes.core.helm_repository:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
-    name: prometheus-community
-    repo_url: "https://prometheus-community.github.io/helm-charts"
-
 - name: Install Prometheus operator CRDs
   kubernetes.core.helm:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: prometheus-operator-crds
     release_namespace: kube-system
     chart_version: "{{ prometheus_operator_crds_chart_version }}"
-    chart_ref: prometheus-community/prometheus-operator-crds
+    chart_ref: prometheus-operator-crds
+    chart_repo_url: "https://prometheus-community.github.io/helm-charts"
 
 - name: Wait until CSV installed
   kubernetes.core.k8s_info:
