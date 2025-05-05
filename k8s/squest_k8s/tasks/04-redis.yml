@@ -8,7 +8,7 @@
     chart_ref: redis-operator
     chart_repo_url: "https://ot-container-kit.github.io/helm-charts/"
 
-- name: Wait until CSV installed
+- name: Wait until CRD installed
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
