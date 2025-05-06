@@ -13,7 +13,7 @@
     kind: CustomResourceDefinition
     name: "redisreplications.redis.redis.opstreelabs.in"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -26,7 +26,7 @@
     kind: Deployment
     name: "redis-operator"
     namespace: "redis-operator"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -105,51 +105,51 @@
   delay: 2
   retries: 10
 
-#- name: Deploy Redis cluster
-#  kubernetes.core.k8s:
-#    state: present
-#    namespace: "{{ squest_namespace }}"
-#    definition:
-#      apiVersion: redis.redis.opstreelabs.in/v1beta2
-#      kind: RedisCluster
-#      metadata:
-#        name: redis-cluster
-#      spec:
-#        clusterSize: 3
-#        clusterVersion: v7
-#        podSecurityContext:
-#          runAsUser: 1000
-#          fsGroup: 1000
-#        persistenceEnabled: false
-#        kubernetesConfig:
-#          image: quay.io/opstree/redis:v7.0.12
-#          imagePullPolicy: IfNotPresent
-#          redisSecret:
-#            name: redis-secret
-#            key: password
-#        redisExporter:
-#          enabled: false
-#          image: quay.io/opstree/redis-exporter:v1.44.0
-#        storage:
-#          nodeConfVolume: true
-#          volumeMount:
-#            volume:
-#              - name: data
-#                emptyDir:
-#                  sizeLimit: 1Gi
-#            mountPath:
-#              - mountPath: /data
-#                name: data
-#          volumeClaimTemplate:
-#            spec:
-#              # storageClassName: standard
-#              accessModes: ["ReadWriteOnce"]
-#              resources:
-#                requests:
-#                  storage: 1Gi
-#          nodeConfVolumeClaimTemplate:
-#            spec:
-#              accessModes: ["ReadWriteOnce"]
-#              resources:
-#                requests:
-#                  storage: 1Gi
+# - name: Deploy Redis cluster
+#   kubernetes.core.k8s:
+#     state: present
+#     namespace: "{{ squest_namespace }}"
+#     definition:
+#       apiVersion: redis.redis.opstreelabs.in/v1beta2
+#       kind: RedisCluster
+#       metadata:
+#         name: redis-cluster
+#       spec:
+#         clusterSize: 3
+#         clusterVersion: v7
+#         podSecurityContext:
+#           runAsUser: 1000
+#           fsGroup: 1000
+#         persistenceEnabled: false
+#         kubernetesConfig:
+#           image: quay.io/opstree/redis:v7.0.12
+#           imagePullPolicy: IfNotPresent
+#           redisSecret:
+#             name: redis-secret
+#             key: password
+#         redisExporter:
+#           enabled: false
+#           image: quay.io/opstree/redis-exporter:v1.44.0
+#         storage:
+#           nodeConfVolume: true
+#           volumeMount:
+#             volume:
+#               - name: data
+#                 emptyDir:
+#                   sizeLimit: 1Gi
+#             mountPath:
+#               - mountPath: /data
+#                 name: data
+#           volumeClaimTemplate:
+#             spec:
+#               # storageClassName: standard
+#               accessModes: ["ReadWriteOnce"]
+#               resources:
+#                 requests:
+#                   storage: 1Gi
+#           nodeConfVolumeClaimTemplate:
+#             spec:
+#               accessModes: ["ReadWriteOnce"]
+#               resources:
+#                 requests:
+#                   storage: 1Gi

@@ -25,7 +25,7 @@
         job_name: "backup-{{ ansible_date_time.iso8601_basic_short }}"
 
     - name: Create Job from backup cronjob
-      shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-backup {{ job_name }}"
+      ansible.builtin.command: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-backup {{ job_name }}"
       environment:
         KUBECONFIG: "{{ k8s_kubeconfig_path }}"
       register: register_backup
@@ -39,7 +39,7 @@
         kind: Job
         name: "{{ job_name }}"
         namespace: "{{ squest_namespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 10
         wait_timeout: 120
         wait_condition:
@@ -47,13 +47,14 @@
           status: "True"
 
     - when: squest_django.externalize_backup_via_rsync.enabled
+      name: Block for external backup
       block:
         - name: Generate job name
           ansible.builtin.set_fact:
             job_name: "rsync-backup-{{ ansible_date_time.iso8601_basic_short }}"
 
         - name: Create Job from rsync backup cronjob
-          shell: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-rsync-backup {{ job_name }}"
+          ansible.builtin.command: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-rsync-backup {{ job_name }}"
           environment:
             KUBECONFIG: "{{ k8s_kubeconfig_path }}"
           register: register_backup
@@ -67,7 +68,7 @@
             kind: Job
             name: "{{ job_name }}"
             namespace: "{{ squest_namespace }}"
-            wait: yes
+            wait: true
             wait_sleep: 10
             wait_timeout: 120
             wait_condition:

@@ -52,6 +52,7 @@
                       claimName: squest-backup
 
 - when: squest_django.externalize_backup_via_rsync.enabled
+  name: Block for cronjob
   block:
     - name: Create a secret with the private ssh key
       kubernetes.core.k8s:
@@ -67,7 +68,7 @@
               service: backup
           type: Opaque
           data:
-            ssh.key: "{{ squest_django.externalize_backup_via_rsync.private_ssh_key |b64encode }}"
+            ssh.key: "{{ squest_django.externalize_backup_via_rsync.private_ssh_key | b64encode }}"
 
     - name: Create a cronjob for rsync external copy
       kubernetes.core.k8s:
@@ -96,13 +97,14 @@
                       - name: rsync
                         image: instrumentisto/rsync-ssh:alpine3.18
                         imagePullPolicy: Always
-                        command: ["/bin/sh","-c", "-x"]
+                        command: ["/bin/sh", "-c", "-x"]
                         args:
                           - |
                             rsync \
                             -avz --ignore-existing --delete \
                             -e "ssh -i /root/.ssh/ssh.key -o StrictHostKeyChecking=no" \
-                            /app/backup {{ squest_django.externalize_backup_via_rsync.ssh_user }}@{{ squest_django.externalize_backup_via_rsync.ssh_server }}:{{ squest_django.externalize_backup_via_rsync.remote_path }}
+                            /app/backup \
+                            {{ squest_django.externalize_backup_via_rsync.ssh_user }}@{{ squest_django.externalize_backup_via_rsync.ssh_server }}:{{ squest_django.externalize_backup_via_rsync.remote_path }}
                         volumeMounts:
                           - name: squest-rsync-ssh-key
                             mountPath: /root/.ssh/
@@ -114,5 +116,5 @@
                           claimName: squest-backup
                       - name: squest-rsync-ssh-key
                         secret:
-                          defaultMode: 0600
+                          defaultMode: "0600"
                           secretName: squest-rsync-ssh-key
