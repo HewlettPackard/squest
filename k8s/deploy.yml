@@ -5,5 +5,11 @@
     kubernetes.core.k8s:
       kubeconfig: "{{ k8s_kubeconfig_path }}"
 
+  pre_tasks:
+
+    - when: k8s_kubeconfig_path is undefined
+      name: 'Fail if k8s_kubeconfig_path is not defined'
+      ansible.builtin.fail:
+        msg: 'Please make sure you set k8s_kubeconfig_path'
   roles:
     - role: squest_k8s
