@@ -332,6 +332,7 @@
         name: squest-ingress
         annotations: "{{ squest_django.ingress.annotations }}"
       spec:
+        ingressClassName: "{{ k8s_ingress_class }}"
         rules:
           - host: "{{ squest_django.ingress.host }}"
             http:
