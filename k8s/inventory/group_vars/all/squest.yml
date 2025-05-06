@@ -18,7 +18,6 @@ squest_phpmyadmin:
     enabled: true
     host: "phpmyadmin.{{ k8s_cluster_fqdn }}"
     annotation:
-      kubernetes.io/ingress.class: "nginx"
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   env:
@@ -43,7 +42,6 @@ squest_django:
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
     annotations:
-      kubernetes.io/ingress.class: "nginx"
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 #  ldap:  # extra ldap config
