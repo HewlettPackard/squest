@@ -12,7 +12,7 @@
     kind: CustomResourceDefinition
     name: "rabbitmqclusters.rabbitmq.com"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -40,7 +40,7 @@
     kind: CustomResourceDefinition
     name: "{{ item }}"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:

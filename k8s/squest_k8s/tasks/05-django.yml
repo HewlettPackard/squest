@@ -118,7 +118,7 @@
                     echo $UID
                     echo $USER
                     echo ""
-                    echo "-----------------------------------------------------"                    
+                    echo "-----------------------------------------------------"
                     echo "Wait for required services to start"
                     /wait
                     echo "Applying database migration"
@@ -150,7 +150,7 @@
     kind: Job
     name: "django-migrations"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -175,7 +175,12 @@
 
 - name: Set the path of the ldap config from the user config or use default
   ansible.builtin.set_fact:
-    ldap_config_file_content: "{% if 'ldap' in squest_django  %}{{ squest_django.ldap.ldap_config_file }}{% else %}{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}{% endif %}"
+    ldap_config_file_content: |
+      {% if 'ldap' in squest_django %}
+      {{ squest_django.ldap.ldap_config_file }}
+      {% else %}
+      {{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}
+      {% endif %}
 
 - name: LDAP config
   kubernetes.core.k8s:
@@ -308,9 +313,9 @@
           app: squest
           service: django
         ports:
-        - protocol: TCP
-          port: 8080
-          targetPort: 8080
+          - protocol: TCP
+            port: 8080
+            targetPort: 8080
 
 - when: squest_django.ingress.enabled
   name: Squest ingress
@@ -345,7 +350,7 @@
     kind: Deployment
     name: "django"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:

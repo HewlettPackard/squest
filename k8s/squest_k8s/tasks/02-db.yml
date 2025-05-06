@@ -12,7 +12,7 @@
     kind: CustomResourceDefinition
     name: "mariadbs.mariadb.mmontes.io"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -28,7 +28,7 @@
     kind: Deployment
     name: "{{ item }}"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -48,8 +48,8 @@
           app: squest
           service: mariadb
       data:
-        root-password: "{{ squest_db.root_password |b64encode }}"
-        password: "{{ squest_db.password |b64encode }}"
+        root-password: "{{ squest_db.root_password | b64encode }}"
+        password: "{{ squest_db.password | b64encode }}"
 
 - name: Deploy Maria DB
   kubernetes.core.k8s:
@@ -113,7 +113,7 @@
     kind: "MariaDB"
     name: "mariadb"
     namespace: "{{ squest_namespace }}"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -122,6 +122,7 @@
 
 
 - when: squest_phpmyadmin.enabled
+  name: Block for phpmyadmin deployment
   block:
     - name: Deploy PHPMyAdmin configmap environment
       kubernetes.core.k8s:
