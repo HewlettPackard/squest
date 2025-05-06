@@ -1,5 +1,4 @@
 # Kubernetes
-k8s_kubeconfig_path: "/path/to/kubeconfig"
 k8s_cluster_fqdn: "k8s.domain.local"
 squest_namespace: "squest"
 k8s_storage_class: "thin"
