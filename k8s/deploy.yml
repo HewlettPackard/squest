@@ -11,5 +11,13 @@
       name: 'Fail if k8s_kubeconfig_path is not defined'
       ansible.builtin.fail:
         msg: 'Please make sure you set k8s_kubeconfig_path'
+
+    - when:
+        - ssh_private_key_path is undefined
+        - squest_django.externalize_backup_via_rsync.enabled | bool
+      name: 'Fail if ssh_private_key_path is not defined'
+      ansible.builtin.fail:
+        msg: 'Please make sure you set ssh_private_key_path'
+
   roles:
     - role: squest_k8s
