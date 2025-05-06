@@ -14,6 +14,12 @@
       kubeconfig: "{{ k8s_kubeconfig_path }}"
 
   tasks:
+
+    - when: k8s_kubeconfig_path is undefined
+      name: 'Fail if k8s_kubeconfig_path is not defined'
+      ansible.builtin.fail:
+        msg: 'Please make sure you set k8s_kubeconfig_path'
+
     - name: Generate job name
       ansible.builtin.set_fact:
         job_name: "backup-{{ ansible_date_time.iso8601_basic_short }}"
