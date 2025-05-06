@@ -330,7 +330,11 @@
           app: squest
           service: django
         name: squest-ingress
-        annotations: "{{ squest_django.ingress.annotations }}"
+        annotations:
+          ingress.kubernetes.io/ssl-redirect: "true"
+          {% if k8s_ingress_class == "nginx"%}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          {% endif %}
       spec:
         ingressClassName: "{{ k8s_ingress_class }}"
         rules:
