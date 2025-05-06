@@ -15,7 +15,7 @@
         nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/maintenance.nginx.conf') }}"
         maintenance.html: "{{ lookup('file', playbook_dir + '/../docker/maintenance.html') }}"
       binaryData:
-        squest_logo_v2_300_300.png: "{{ lookup('file', playbook_dir + '/../project-static/squest/img/squest_logo_v2_300_300.png')  |b64encode }}"
+        squest_logo_v2_300_300.png: "{{ lookup('file', playbook_dir + '/../project-static/squest/img/squest_logo_v2_300_300.png') | b64encode }}"
 
 - name: Deploy maintenance static page
   kubernetes.core.k8s:
@@ -85,6 +85,6 @@
           app: squest
           service: maintenance
         ports:
-        - protocol: TCP
-          port: 80
-          targetPort: 80
+          - protocol: TCP
+            port: 80
+            targetPort: 80

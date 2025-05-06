@@ -12,7 +12,7 @@
     kind: CustomResourceDefinition
     name: "prometheuses.monitoring.coreos.com"
     namespace: "default"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -36,7 +36,7 @@
     kind: CustomResourceDefinition
     name: "certificates.cert-manager.io"
     namespace: "default"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:
@@ -49,7 +49,7 @@
     kind: Deployment
     name: "cert-manager"
     namespace: "cert-manager"
-    wait: yes
+    wait: true
     wait_sleep: 10
     wait_timeout: 600
     wait_condition:

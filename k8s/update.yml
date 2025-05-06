@@ -1,6 +1,6 @@
 - name: "Update Squest"
   hosts: localhost
-  gather_facts: False
+  gather_facts: false
   module_defaults:
     kubernetes.core.k8s:
       kubeconfig: "{{ k8s_kubeconfig_path }}"
@@ -86,7 +86,7 @@
                         echo $UID
                         echo $USER
                         echo ""
-                        echo "-----------------------------------------------------"                    
+                        echo "-----------------------------------------------------"
                         echo "Wait for required services to start"
                         /wait
                         echo "Applying database migration"
@@ -147,7 +147,7 @@
         kind: Deployment
         name: "{{ item }}"
         namespace: "{{ squest_namespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 10
         wait_timeout: 600
         wait_condition:
