@@ -12,6 +12,8 @@
   module_defaults:
     kubernetes.core.k8s:
       kubeconfig: "{{ k8s_kubeconfig_path }}"
+    kubernetes.core.k8s_info:
+      kubeconfig: "{{ k8s_kubeconfig_path }}"
 
   tasks:
 
