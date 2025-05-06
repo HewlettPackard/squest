@@ -9,6 +9,9 @@
 - name: "Execute a one shot backup of Squest"
   hosts: localhost
   gather_facts: true
+  module_defaults:
+    kubernetes.core.k8s:
+      kubeconfig: "{{ k8s_kubeconfig_path }}"
 
   tasks:
     - name: Generate job name
@@ -26,7 +29,6 @@
 
     - name: Wait until backup complete
       kubernetes.core.k8s_info:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         api_version: "batch/v1"
         kind: Job
         name: "{{ job_name }}"
@@ -55,7 +57,6 @@
 
         - name: Wait until rsync backup complete
           kubernetes.core.k8s_info:
-            kubeconfig: "{{ k8s_kubeconfig_path }}"
             api_version: "batch/v1"
             kind: Job
             name: "{{ job_name }}"

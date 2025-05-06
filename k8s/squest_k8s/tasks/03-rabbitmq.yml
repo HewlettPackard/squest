@@ -1,6 +1,5 @@
 - name: Install RabbitMQ operator
   kubernetes.core.helm:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: rabbitmq-cluster-operator
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ rabbitmq_operator_chart_version }}"
@@ -9,7 +8,6 @@
 
 - name: Wait until CRD is installed
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "rabbitmqclusters.rabbitmq.com"
@@ -29,7 +27,6 @@
 
 - name: Deploy RabbitMQ messaging-topology-operator
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     src: "/tmp/rabbitmq_topology_operator_manifest.yaml"
 
@@ -39,7 +36,6 @@
     - vhosts.rabbitmq.com
     - rabbitmqclusters.rabbitmq.com
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "{{ item }}"
@@ -53,7 +49,6 @@
 
 - name: RabbitMQ user password secret
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -71,7 +66,6 @@
 
 - name: RabbitMQ user
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -92,7 +86,6 @@
 
 - name: Deploy RabbitMQ cluster
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -135,7 +128,6 @@
 
 - name: RabbitMQ Squest vhost
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -154,7 +146,6 @@
 
 - name: Squest vHost permissions
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:

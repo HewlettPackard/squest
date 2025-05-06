@@ -1,6 +1,5 @@
 - name: Create a dedicated namespace for Squest
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     definition:
       apiVersion: v1

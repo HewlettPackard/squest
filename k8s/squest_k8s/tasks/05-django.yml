@@ -1,6 +1,5 @@
 - name: Create a service account for Squest
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
     state: present
     definition:
@@ -15,7 +14,6 @@
 
 - name: Create a role allowed to get info on jobs
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
     state: present
     definition:
@@ -38,7 +36,6 @@
 
 - name: Link Squest service account to role
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
     state: present
     definition:
@@ -59,7 +56,6 @@
 
 - name: Django env as config map
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
     state: present
     definition:
@@ -78,7 +74,6 @@
     - "django-media"
     - "squest-backup"
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     namespace: "{{ squest_namespace }}"
     state: present
     definition:
@@ -98,7 +93,6 @@
 
 - name: Django database migration job
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -152,7 +146,6 @@
 
 - name: Wait until migration job done
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "batch/v1"
     kind: Job
     name: "django-migrations"
@@ -166,7 +159,6 @@
 
 - name: Nginx config
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -187,7 +179,6 @@
 
 - name: LDAP config
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -203,7 +194,6 @@
 
 - name: Deploy Django app
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -306,7 +296,6 @@
 
 - name: Django service
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -326,7 +315,6 @@
 - when: squest_django.ingress.enabled
   name: Squest ingress
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -353,7 +341,6 @@
 
 - name: Wait until Django deployment available
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apps/v1"
     kind: Deployment
     name: "django"

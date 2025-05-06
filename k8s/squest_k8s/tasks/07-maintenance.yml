@@ -1,6 +1,5 @@
 - name: Nginx maintenance config
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -20,7 +19,6 @@
 
 - name: Deploy maintenance static page
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -75,7 +73,6 @@
 
 - name: Maintenance service
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:

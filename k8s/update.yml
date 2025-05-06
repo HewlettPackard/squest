@@ -1,11 +1,13 @@
 - name: "Update Squest"
   hosts: localhost
   gather_facts: False
+  module_defaults:
+    kubernetes.core.k8s:
+      kubeconfig: "{{ k8s_kubeconfig_path }}"
 
   tasks:
     - name: Update ingress to point to maintenance pod
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: patched
         namespace: "{{ squest_namespace }}"
         definition:
@@ -32,7 +34,6 @@
 
     - name: Update Django env config map
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         namespace: "{{ squest_namespace }}"
         state: patched
         definition:
@@ -47,7 +48,6 @@
 
     - name: Delete migration job
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         namespace: "{{ squest_namespace }}"
         kind: Job
         api_version: batch/v1
@@ -56,7 +56,6 @@
 
     - name: Create back Django database migration job
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         namespace: "{{ squest_namespace }}"
         definition:
@@ -118,7 +117,6 @@
         - celery-worker
         - celery-beat
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         namespace: "{{ squest_namespace }}"
         kind: Deployment
         name: "{{ item }}"
@@ -140,7 +138,6 @@
         - celery-worker
         - celery-beat
       kubernetes.core.k8s_info:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         api_version: "apps/v1"
         kind: Deployment
         name: "{{ item }}"
@@ -154,7 +151,6 @@
 
     - name: Restore ingress
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: patched
         namespace: "{{ squest_namespace }}"
         definition:
