@@ -61,8 +61,8 @@ squest_django:
     crontab: "0 1 * * *"
   externalize_backup_via_rsync:  # rsync backup files into and external server
     enabled: false
-    crontab: "30 1 * * *"
-    private_ssh_key: "{{ lookup('file', ssh_private_key_path) + '\n' }}"
-    ssh_user: "squest_k8s_dev"
-    ssh_server: "remote.server.ssh.net"
-    remote_path: "/backup/squest_k8s_dev/"
+    # crontab: "30 1 * * *"
+    # private_ssh_key: "{{ lookup('file', ssh_private_key_path) + '\n' }}"
+    # ssh_user: "squest_k8s_dev"
+    # ssh_server: "remote.server.ssh.net"
+    # remote_path: "/backup/squest_k8s_dev/"
