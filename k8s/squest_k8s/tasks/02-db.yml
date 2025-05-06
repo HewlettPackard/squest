@@ -1,6 +1,5 @@
 - name: Install MariaDB operator
   kubernetes.core.helm:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: mariadb-operator
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ mariadb_operator_chart_version }}"
@@ -9,7 +8,6 @@
 
 - name: Wait until CRD is installed
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "mariadbs.mariadb.mmontes.io"
@@ -26,7 +24,6 @@
     - mariadb-operator
     - mariadb-operator-webhook
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apps/v1"
     kind: Deployment
     name: "{{ item }}"
@@ -40,7 +37,6 @@
 
 - name: Create a secret for mariadb
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -57,7 +53,6 @@
 
 - name: Deploy Maria DB
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -114,7 +109,6 @@
 
 - name: Wait until MariaDB deployment available
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "mariadb.mmontes.io/v1alpha1"
     kind: "MariaDB"
     name: "mariadb"
@@ -131,7 +125,6 @@
   block:
     - name: Deploy PHPMyAdmin configmap environment
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         definition:
           apiVersion: v1
@@ -146,7 +139,6 @@
 
     - name: PHPMyAdmin deployment
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         definition:
           apiVersion: apps/v1
@@ -181,7 +173,6 @@
 
     - name: PHPMyAdmin service
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         definition:
           apiVersion: v1
@@ -203,7 +194,6 @@
     - when: squest_phpmyadmin is defined and squest_phpmyadmin.ingress is defined and squest_phpmyadmin.ingress.enabled
       name: PHPMyAdmin ingress
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         definition:
           apiVersion: networking.k8s.io/v1
