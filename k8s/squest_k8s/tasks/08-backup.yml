@@ -1,7 +1,6 @@
 - when: squest_django.backup.enabled
   name: Squest backup
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -56,7 +55,6 @@
   block:
     - name: Create a secret with the private ssh key
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         namespace: "{{ squest_namespace }}"
         definition:
@@ -73,7 +71,6 @@
 
     - name: Create a cronjob for rsync external copy
       kubernetes.core.k8s:
-        kubeconfig: "{{ k8s_kubeconfig_path }}"
         state: present
         namespace: "{{ squest_namespace }}"
         definition:

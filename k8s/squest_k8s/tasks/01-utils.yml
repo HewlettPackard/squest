@@ -1,6 +1,5 @@
 - name: Install Prometheus operator CRDs
   kubernetes.core.helm:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: prometheus-operator-crds
     release_namespace: kube-system
     chart_version: "{{ prometheus_operator_crds_chart_version }}"
@@ -9,7 +8,6 @@
 
 - name: Wait until CRD is installed
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "prometheuses.monitoring.coreos.com"
@@ -23,7 +21,6 @@
 
 - name: Install Cert Manager
   kubernetes.core.helm:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: cert-manager
     release_namespace: cert-manager
     create_namespace: true
@@ -35,7 +32,6 @@
 
 - name: Wait until CRD is installed
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "certificates.cert-manager.io"
@@ -49,7 +45,6 @@
 
 - name: Wait until Cert manager deployment available
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apps/v1"
     kind: Deployment
     name: "cert-manager"

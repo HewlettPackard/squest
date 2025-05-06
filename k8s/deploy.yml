@@ -1,6 +1,9 @@
 - name: "Deploy Squest"
   hosts: localhost
   gather_facts: False
+  module_defaults:
+    kubernetes.core.k8s:
+      kubeconfig: "{{ k8s_kubeconfig_path }}"
 
   roles:
     - role: squest_k8s

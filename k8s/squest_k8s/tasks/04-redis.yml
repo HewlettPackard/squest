@@ -1,6 +1,5 @@
 - name: Install Redis operator
   kubernetes.core.helm:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     name: redis-operator
     release_namespace: "redis-operator"
     create_namespace: true
@@ -10,7 +9,6 @@
 
 - name: Wait until CRD is installed
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apiextensions.k8s.io/v1"
     kind: CustomResourceDefinition
     name: "redisreplications.redis.redis.opstreelabs.in"
@@ -24,7 +22,6 @@
 
 - name: Wait until deployment available
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: "apps/v1"
     kind: Deployment
     name: "redis-operator"
@@ -38,7 +35,6 @@
 
 - name: Redis password secret
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -54,7 +50,6 @@
 
 - name: Deploy Redis standalone server
   kubernetes.core.k8s:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: present
     namespace: "{{ squest_namespace }}"
     definition:
@@ -101,7 +96,6 @@
 
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ k8s_kubeconfig_path }}"
     api_version: v1
     kind: StatefulSet
     namespace: "{{ squest_namespace }}"
@@ -113,7 +107,6 @@
 
 #- name: Deploy Redis cluster
 #  kubernetes.core.k8s:
-#    kubeconfig: "{{ k8s_kubeconfig_path }}"
 #    state: present
 #    namespace: "{{ squest_namespace }}"
 #    definition:
