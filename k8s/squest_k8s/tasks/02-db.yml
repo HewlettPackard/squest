@@ -207,6 +207,7 @@
             name: phpmyadmin-ingress
             annotations: "{{ squest_phpmyadmin.ingress.annotation }}"
           spec:
+            ingressClassName: "{{ k8s_ingress_class }}"
             rules:
               - host: "{{ squest_phpmyadmin.ingress.host }}"
                 http:
