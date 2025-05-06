@@ -41,9 +41,6 @@ squest_django:
   ingress:  # default ingress based on nginx controller
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
-    annotations:
-      ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 #  ldap:  # extra ldap config
 #    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
   env:  # squest settings
