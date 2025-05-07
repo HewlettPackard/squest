@@ -17,9 +17,6 @@ squest_phpmyadmin:
   ingress:
     enabled: true
     host: "phpmyadmin.{{ k8s_cluster_fqdn }}"
-    annotation:
-      ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   env:
     TZ: Europe/Paris
     PMA_HOST: mariadb
