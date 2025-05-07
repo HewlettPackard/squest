@@ -205,7 +205,11 @@
               service: phpmyadmin
             namespace: "{{ squest_namespace }}"
             name: phpmyadmin-ingress
-            annotations: "{{ squest_phpmyadmin.ingress.annotation }}"
+            annotations:
+              ingress.kubernetes.io/ssl-redirect: "true"
+              {% if k8s_ingress_class == "nginx"%}
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+              {% endif %}
           spec:
             ingressClassName: "{{ k8s_ingress_class }}"
             rules:
