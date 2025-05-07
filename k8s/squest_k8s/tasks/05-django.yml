@@ -260,7 +260,7 @@
                 volumeMounts:
                   - mountPath: /app/media
                     name: django-media
-                  - mountPath: /app/Squest/ldap_config.py
+                  - mountPath: /app/Squest/
                     name: ldap-config
               - name: nginx
                 image: nginx:1.23.4-alpine
