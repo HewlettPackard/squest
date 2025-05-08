@@ -1,21 +1,28 @@
 # Kubernetes deployment
 
+There are currently two deployment options available:
+
+- Official Ansible-based installation
+- Community-maintained Helm Chart
+
+## Ansible-based Installation 
+
 !!!warning
 
     This deployment is still a beta feature. Feel free to send pull requests to enhance the deployment or give us feedback though Gitter chat or GitHub discutions.
 
-## Pre-requisites
+### Pre-requisites
 
 The Kubernetes deployment is wrapped by Ansible. The code has been tested with Ansible version `2.15.5`.
 
-### Python
+#### Python
 
 Install Python dependencies:
 ```bash
 pip3 install -r k8s/requirements.txt
 ```
 
-### Ansible
+#### Ansible
 
 Install Ansible dependencies:
 
@@ -23,11 +30,11 @@ Install Ansible dependencies:
 ansible-galaxy install -r k8s/requirements.yml
 ```
 
-### Helm
+#### Helm
 
 Operators installation is handled by Helm. Follow [the official documentation](https://helm.sh/docs/intro/install/) to install Helm on your workstation.
 
-## Ansible inventory
+### Ansible inventory
 
 An example inventory file is present in `k8s/inventory/group_vars/all/squest.yml`.
 
@@ -39,7 +46,7 @@ squest_namespace: "squest"
 k8s_storage_class: "thin"
 ```
 
-## Deploy Squest using Ansible
+### Deploy Squest using Ansible
 
 Run the `deploy` playbook against your inventory config file:
 
@@ -64,7 +71,7 @@ ansible-playbook -v -i inventory deploy.yml
 
 ## Configuration
 
-### Squest config
+#### Squest config
 
 The [Squest configuration](../configuration/squest_settings.md) is injected as environment variables. The environment is placed in `squest.yml` as `env` flag like the following:
 ```yaml
@@ -117,3 +124,21 @@ squest_django:
     annotations:
       ingress_key: "ingress_value"
 ```
+
+## Helm-based Installation
+
+### Pre-requisites
+
+Installation is handled by Helm. Follow [the official documentation](https://helm.sh/docs/intro/install/) to install Helm on your workstation.
+
+### Installation
+
+```bash
+helm repo add christianhuth https://charts.christianhuth.de
+helm repo update
+helm install my-release christianhuth/squest
+```
+
+### Configuration
+
+Please check the documentation of the Chart for all available configuration options: [Documentation on ArtifactHub](https://artifacthub.io/packages/helm/christianhuth/squest).
