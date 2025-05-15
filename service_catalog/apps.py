@@ -22,6 +22,18 @@ def create_default_token():
         except User.DoesNotExist:
             pass
 
+def create_default_password():
+    logger.info("create_default_password method called")
+    from django.conf import settings
+    from django.contrib.auth.models import User
+    if settings.DEFAULT_ADMIN_PASSWORD is not None:
+        try:
+            admin_user = User.objects.get(username="admin")
+            admin_user.set_password(settings.DEFAULT_ADMIN_PASSWORD)
+            admin_user.save()
+        except User.DoesNotExist:
+            pass
+
 
 class ServiceCatalogConfig(AppConfig):
     name = 'service_catalog'
@@ -30,3 +42,4 @@ class ServiceCatalogConfig(AppConfig):
         banned_words = ['migrate', 'makemigrations', 'collectstatic', 'insert_default_data']
         if not any(banned_word in sys.argv for banned_word in banned_words):
             create_default_token()
+            create_default_password()
