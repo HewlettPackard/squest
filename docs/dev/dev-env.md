@@ -7,17 +7,16 @@
 Following tools need to be installed on your workstation:
 
 - Docker
-- Docker-compose
 - Python 3.12
 - Python virtualenv
 - [Poetry](https://python-poetry.org/)
-- npm
+- npm (usage of [nvm](https://github.com/nvm-sh/nvm) is highly recommended)
 
 ### System packages
 
 Ubuntu based OS:
 ```bash
-sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev libsasl2-dev python3-dev libldap2-dev libssl-dev libpq-dev
+sudo apt-get install libmysqlclient-dev graphviz default-mysql-client libsqlite3-dev libsasl2-dev python3-dev libldap2-dev libssl-dev libpq-dev pkg-config
 ```
 
 CentOS/RedHat/Fedora
@@ -38,11 +37,11 @@ The development environment is composed of 4 parts:
 
 Run the Docker compose file with only required services to bring up database, message broker and other required system
 ```bash
-docker-compose -f docker-compose.yml  -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
+docker compose -f docker-compose.yml  -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
 ```
 If you use postgreSQL, update docker/environment_variables/squest.env, then run
 ```bash
-docker-compose -f docker-compose.yml  -f psql.docker-composer.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
+docker compose -f docker-compose.yml  -f psql.docker-composer.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
 ```
 
 ### Javascript libraries
