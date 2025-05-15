@@ -152,6 +152,12 @@ set to `False` to disable the password form on the login view
 
 Set an API token that will be linked to the admin user when starting Squest.
 
+### DEFAULT_ADMIN_PASSWORD
+
+**Default:** `None`
+
+Set a default password to the admin user when starting Squest.
+
 ### LOGIN_HELPER_TEXT
 
 **Default:** `None`

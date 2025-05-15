@@ -46,6 +46,7 @@ REDIS_CACHE_PASSWORD = os.environ.get('REDIS_CACHE_PASSWORD', 'redis_secret_pass
 REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
 REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
 DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
+DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', None)
 MAINTENANCE_MODE_ENABLED = str_to_bool(os.environ.get('MAINTENANCE_MODE_ENABLED', False))
 DATE_FORMAT = os.environ.get('DATE_FORMAT', "%d %b, %Y  %H:%M")
 LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
