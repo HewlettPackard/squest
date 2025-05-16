@@ -34,10 +34,6 @@ WORKDIR /app
 # Copy only requirements to cache them in docker layer
 COPY poetry.lock pyproject.toml package.json package-lock.json /app/
 
-# Add the wait script to the image
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
-RUN chmod +x /wait
-
 # Project libraries installation
 RUN cd /app && poetry config virtualenvs.create false && poetry install && npm install
 
