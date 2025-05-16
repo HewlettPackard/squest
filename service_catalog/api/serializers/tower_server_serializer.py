@@ -18,3 +18,8 @@ class TowerServerCreateSerializer(ModelSerializer):
         if value is None or not isinstance(value, dict):
             raise ValidationError("Please enter a valid JSON. Empty value is {} for JSON.")
         return value
+
+    def to_representation(self, tower_server):
+        representation = super().to_representation(tower_server)
+        representation.pop("token")
+        return representation

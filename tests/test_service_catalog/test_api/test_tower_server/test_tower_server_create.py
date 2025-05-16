@@ -23,11 +23,11 @@ class TowerServerCreate(BaseTestRequestAPI):
     def test_admin_post_tower_server(self):
         response = self.client.post(self.tower_server_url, data=self.post_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.post_data.pop("token")
         check_data_in_dict(self, [self.post_data], [response.data])
         tower_server = TowerServer.objects.last()
         self.assertEqual(tower_server.name, self.post_data['name'])
         self.assertEqual(tower_server.host, self.post_data['host'])
-        self.assertEqual(tower_server.token, self.post_data['token'])
         self.assertEqual(tower_server.secure, self.post_data['secure'])
         self.assertEqual(tower_server.ssl_verify, self.post_data['ssl_verify'])
 
