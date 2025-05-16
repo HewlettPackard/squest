@@ -12,7 +12,7 @@
 FROM python:3.12-slim-bullseye
 
 # Set environment variables
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=Squest.settings
 ENV POETRY_VERSION=1.8.0
 ENV RUN_DEPS="git default-libmysqlclient-dev default-mysql-client graphviz curl libldap2-dev libsasl2-dev libpq-dev python3-dev libssl-dev pkg-config npm"
@@ -43,6 +43,7 @@ RUN cd /app && poetry config virtualenvs.create false && poetry install && npm i
 
 # Copy the full project
 COPY . /app/
+COPY ./docker/gitconfig /.config/git/config
 
 # Create media and backup folders
 RUN mkdir -p /app/media /app/backup /app/static
