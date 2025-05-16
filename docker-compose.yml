@@ -1,4 +1,4 @@
-# docker-compose -f docker-compose.yml up
+# docker compose -f docker-compose.yml up
 services:
 
   db:
@@ -7,6 +7,12 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   rabbitmq:
     image: rabbitmq:3.13.2-management
@@ -31,11 +37,16 @@ services:
       - backup:/app/backup
       - ./plugins:/app/plugins
     depends_on:
-      - db
-      - rabbitmq
-      - celery-worker
-      - celery-beat
-      - redis-cache
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      celery-worker:
+        condition: service_started
+      celery-beat:
+        condition: service_started
+      redis-cache:
+        condition: service_started
 
   nginx:
     command: nginx -c /etc/nginx/squest/nginx.conf
