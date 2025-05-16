@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Wait for required services to start"
-/wait
-
 echo "Applying database migration"
 python manage.py migrate --database=${DATABASE:-default}
 
