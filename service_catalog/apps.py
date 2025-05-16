@@ -2,11 +2,12 @@ import logging
 import sys
 
 from django.apps import AppConfig
+from django.db.models.signals import post_migrate
 
 logger = logging.getLogger(__name__)
 
 
-def create_default_token():
+def create_default_token(sender=None, **kwargs):
     logger.info("create_default_token method called")
     from django.conf import settings
     from django.contrib.auth.models import User
@@ -22,7 +23,7 @@ def create_default_token():
         except User.DoesNotExist:
             pass
 
-def create_default_password():
+def create_default_password(sender=None, **kwargs):
     logger.info("create_default_password method called")
     from django.conf import settings
     from django.contrib.auth.models import User
@@ -39,7 +40,6 @@ class ServiceCatalogConfig(AppConfig):
     name = 'service_catalog'
 
     def ready(self):
-        banned_words = ['migrate', 'makemigrations', 'collectstatic', 'insert_default_data']
-        if not any(banned_word in sys.argv for banned_word in banned_words):
-            create_default_token()
-            create_default_password()
+        post_migrate.connect(create_default_token, sender=self)
+        post_migrate.connect(create_default_password, sender=self)
+
