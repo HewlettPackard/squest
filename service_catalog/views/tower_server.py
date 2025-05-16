@@ -12,6 +12,7 @@ from Squest.utils.squest_views import SquestListView, SquestCreateView, SquestDe
 from service_catalog import tasks
 from service_catalog.filters.tower_server_filter import TowerServerFilter
 from service_catalog.forms import TowerServerForm
+from service_catalog.forms.tower_server_update_token_forms import TowerServerUpdateTokenForm
 from service_catalog.models import TowerServer
 from service_catalog.tables.job_template_tables import JobTemplateTable
 from service_catalog.tables.tower_server_tables import TowerServerTable
@@ -55,6 +56,16 @@ class TowerServerDeleteView(SquestDeleteView):
 class TowerServerEditView(SquestUpdateView):
     model = TowerServer
     form_class = TowerServerForm
+    success_url = reverse_lazy("service_catalog:towerserver_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['extra_html_form_bottom'] = "service_catalog/buttons/tower_server_new_token.html"
+        return context
+
+class TowerServerUpdateTokenView(SquestUpdateView):
+    model = TowerServer
+    form_class = TowerServerUpdateTokenForm
     success_url = reverse_lazy("service_catalog:towerserver_list")
 
 

@@ -25,6 +25,8 @@ class TestApiTowerServerPut(BaseTestRequestAPI):
     def test_admin_put_tower_server(self):
         response = self.client.put(self.tower_server_url, data=self.put_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # we don't expect to get the token back
+        self.put_data.pop("token")
         check_data_in_dict(self, [self.put_data], [response.data])
 
     def test_admin_cannot_put_on_tower_server_not_full(self):

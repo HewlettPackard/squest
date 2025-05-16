@@ -29,6 +29,7 @@ class TestApiTowerServerPatch(BaseTestRequestAPI):
         response = self.client.patch(self.tower_server_url, data=self.patch_data,
                                      format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.expected_data.pop("token")
         check_data_in_dict(self, [self.expected_data], [response.data])
 
     def test_customer_cannot_patch_tower_server(self):
