@@ -30,6 +30,12 @@ class TowerServerForm(SquestModelForm):
                                     required=False,
                                     widget=forms.CheckboxInput())
 
+    def __init__(self, *args, **kwargs):
+        super(TowerServerForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            # Since the pk is set this is not a new instance
+            del self.fields['token']
+
     def clean(self):
         cleaned_data = super().clean()
         host = cleaned_data.get("host")

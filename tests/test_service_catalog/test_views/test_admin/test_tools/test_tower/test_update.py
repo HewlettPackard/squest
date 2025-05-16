@@ -15,7 +15,6 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
         self.data = {
             "name": "tower-server-test-updated",
             "host": "https://tower-updated.domain.local",
-            "token": "xxxx-updated"
         }
         self.url = reverse('service_catalog:towerserver_edit', kwargs=self.args)
 
@@ -31,4 +30,16 @@ class AdminTowerUpdateViewsTest(BaseTestTower):
             self.tower_server_test.refresh_from_db()
             self.assertEqual(self.tower_server_test.name, "tower-server-test-updated")
             self.assertEqual(self.tower_server_test.host, "tower-updated.domain.local")
-            self.assertEqual(self.tower_server_test.token, "xxxx-updated")
+
+
+    def test_towerserver_update_token(self):
+        self.url = reverse('service_catalog:towerserver_update_token', kwargs=self.args)
+        self.data = {
+            "name": "tower-server-test-updated",
+            "host": "https://tower-updated.domain.local",
+            "token": "xxxx-updated"
+        }
+        response = self.client.post(self.url, data=self.data)
+        self.assertEqual(302, response.status_code)
+        self.tower_server_test.refresh_from_db()
+        self.assertEqual(self.tower_server_test.token, "xxxx-updated")

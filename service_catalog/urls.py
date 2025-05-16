@@ -112,6 +112,7 @@ urlpatterns = [
     path('tower/<int:pk>/', views.TowerServerDetailView.as_view(), name='towerserver_details'),
     path('tower/<int:pk>/edit/', views.TowerServerEditView.as_view(), name='towerserver_edit'),
     path('tower/<int:pk>/delete/', views.TowerServerDeleteView.as_view(), name='towerserver_delete'),
+    path('tower/<int:pk>/update_token/', views.TowerServerUpdateTokenView.as_view(), name='towerserver_update_token'),
 
     # Synchronize tower server endpoints
     path('tower/<int:tower_id>/sync/', views.towerserver_sync, name='towerserver_sync'),
