@@ -28,6 +28,10 @@ class Doc(SquestModel):
     )
     when = CharField(max_length=2000, blank=True, null=True)
 
+    class Meta(SquestModel.Meta):
+        ordering = ['title']
+        
+
     def __str__(self):
         return self.title
 
