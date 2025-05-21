@@ -8,12 +8,12 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-Django = "4.2.13"
-djangorestframework = "3.15.1"
-mysqlclient = "2.2.4"
-PyYAML = "6.0.1"
-celery = "5.3.6"
-django-celery-results = "2.5.1"
+Django = "^4.0.0"
+djangorestframework = "^3.0.0"
+mysqlclient = "2.2.7"
+PyYAML = "6.0.2"
+celery = "5.5.2"
+django-celery-results = "2.6.0"
 towerlib = "3.15.0"
 Pillow = "10.3.0"
 django-fsm = "2.8.2"
@@ -32,7 +32,7 @@ django-taggit = "5.0.1"
 mike = "2.1.1"
 martor = "^1.6.44"
 django-tempus-dominus = "5.1.2.17"
-gunicorn = "21.2.0"
+gunicorn = "23.0.0"
 django-tables2 = "2.7.0"
 django-dbbackup = "4.1.0"
 django-cleanup = "8.1.0"
@@ -43,13 +43,13 @@ django-cachalot = "2.6.2"
 django-mysql = "4.13.0"
 django-formtools = "2.5.1"
 tablib = "3.6.1"
-setuptools = "69.5.1"
+setuptools = "70.0.0"
 hiredis = "2.3.2"
-psycopg = "3.1.19"
+psycopg = {version = "3.1.19", extras = ["binary"]}
 social-auth-app-django = {extras = ["openidconnect"], version = "5.4.1"}
-python-jose = "3.3.0"
+python-jose = "3.4.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
