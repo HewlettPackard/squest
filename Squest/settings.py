@@ -21,15 +21,23 @@ from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
     get_celery_crontab_parameters_from_crontab_line
 
 # LOAD configuration from the environment
+
+# Django
 SECRET_KEY = os.environ.get('SECRET_KEY', 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-')
 DEBUG = str_to_bool(os.getenv('DEBUG', True))
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8080,http://localhost:8080').split(',')
+GUNICORN_WORKERS = os.environ.get('GUNICORN_WORKERS', '4')
+SQL_DEBUG = str_to_bool(os.environ.get('SQL_DEBUG', False))
+
+# Database
 DB_DATABASE = os.environ.get('DB_DATABASE', 'squest_db')
 DB_USER = os.environ.get('DB_USER', 'squest_user')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'squest_password')
 DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
 DB_PORT = os.environ.get('DB_PORT', '3306')
+
+# Authentication
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 SOCIAL_AUTH_OIDC_ENABLED = str_to_bool(os.environ.get('SOCIAL_AUTH_OIDC_ENABLED', False))
 SOCIAL_AUTH_OIDC_BTN_TEXT = os.environ.get('SOCIAL_AUTH_OIDC_BTN_TEXT', 'OpenID Login')
@@ -37,21 +45,27 @@ SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = os.environ.get('SOCIAL_AUTH_OIDC_OIDC_ENDPOINT'
 SOCIAL_AUTH_OIDC_KEY = os.environ.get('SOCIAL_AUTH_OIDC_KEY', '')
 SOCIAL_AUTH_OIDC_SECRET = os.environ.get('SOCIAL_AUTH_OIDC_SECRET', '')
 PASSWORD_ENABLED = str_to_bool(os.environ.get('PASSWORD_ENABLED', True))
+DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
+DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', None)
+LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
+
+# Backup
 BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
 BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
-DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
-DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
+
+# Redis cache
 REDIS_CACHE_USER = os.environ.get('REDIS_CACHE_USER', 'default')
 REDIS_CACHE_PASSWORD = os.environ.get('REDIS_CACHE_PASSWORD', 'redis_secret_password')
 REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
 REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
-DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
-DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', None)
+
+# Squest app
 MAINTENANCE_MODE_ENABLED = str_to_bool(os.environ.get('MAINTENANCE_MODE_ENABLED', False))
 DATE_FORMAT = os.environ.get('DATE_FORMAT', "%d %b, %Y  %H:%M")
-LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
 IS_DEV_SERVER = str_to_bool(os.environ.get('IS_DEV_SERVER', False))
-SQL_DEBUG = str_to_bool(os.environ.get('SQL_DEBUG', False))
+DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
+DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
+
 # -------------------------------
 # SQUEST CONFIG
 # -------------------------------
@@ -79,6 +93,7 @@ print(f"LDAP_ENABLED: {LDAP_ENABLED}")
 print(f"SOCIAL_AUTH_OIDC_ENABLED: {SOCIAL_AUTH_OIDC_ENABLED}")
 print(f"BACKUP_ENABLED: {BACKUP_ENABLED}")
 print(f"SQL_DEBUG: {SQL_DEBUG}")
+
 
 if BACKUP_ENABLED:
     print(f"BACKUP_CRONTAB: {BACKUP_CRONTAB}")
