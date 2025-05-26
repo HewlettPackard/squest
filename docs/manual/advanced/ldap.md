@@ -31,7 +31,7 @@ print("LDAP config loaded")
 AUTH_LDAP_SERVER_URI = "ldaps://ad.example.com:636"
 AUTH_LDAP_BIND_DN = "CN=my_app,OU=Service_Accounts,DC=example,DC=com"
 AUTH_LDAP_BIND_PASSWORD = os.environ.get('AUTH_LDAP_BIND_PASSWORD', None)
-AUTH_LDAP_USER_SEARCH = LDAPSearch("OU=Service_Accounts,DC=example,DC=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+AUTH_LDAP_USER_SEARCH = LDAPSearch(os.environ.get('AUTH_LDAP_USER_SEARCH', "ou=People,o=domain.com"), ldap.SCOPE_SUBTREE, os.environ.get('AUTH_LDAP_USER_SEARCH_FILTER', "(uid=%(user)s)"))
 LDAP_CA_FILE_PATH = "/usr/local/share/ca-certificates/ldap_ca.crt"  # default path in ldap docker compose file
 AUTH_LDAP_CONNECTION_OPTIONS = {
     ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
