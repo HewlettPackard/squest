@@ -67,7 +67,7 @@ Set to `True` to enable LDAP based authentication.
 
 **Default:** `ldap:port`
 
-Set the LDAP serveur URI and port
+Set the LDAP server URI and port
 
 #### AUTH_LDAP_BIND_DN
 
@@ -85,7 +85,13 @@ Associated to AUTH_LDAP_BIND_DN, password used to authenticate DN
 
 **Default:** `ou=People,o=domain.com`
 
-User search patern
+Base DN for the user search
+
+#### AUTH_LDAP_USER_SEARCH_FILTER
+
+**Default:** `(uid=%(user)s)`
+
+LDAP search filter for the user search
 
 #### AUTH_LDAP_ATTR_FIRSTNAME
 
