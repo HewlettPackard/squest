@@ -51,7 +51,6 @@ Switch to `db` in production when using the docker-compose based deployment.
 
 Database port.
 
-
 ## Authentication
 
 ### LDAP
@@ -142,7 +141,7 @@ set to the OpenID client ID that Squest should be configured to use
 
 set to the OpenID client secret that Squest should be configured to use
 
-### Password
+### Password & token
 
 #### PASSWORD_ENABLED
 
@@ -150,25 +149,26 @@ set to the OpenID client secret that Squest should be configured to use
 
 set to `False` to disable the password form on the login view
 
-### DEFAULT_ADMIN_TOKEN
-
-**Default:** `None`
-
-Set an API token that will be linked to the admin user when starting Squest.
-
-### DEFAULT_ADMIN_PASSWORD
+#### DEFAULT_ADMIN_PASSWORD
 
 **Default:** `None`
 
 Set a default password to the admin user when starting Squest.
 
-### LOGIN_HELPER_TEXT
+#### LOGIN_HELPER_TEXT
 
 **Default:** `None`
 
 Add a custom note into the login page that helps user to know what are the expected credentials. HTML text is supported.
 
 E.G: "Use your corporate email and password".
+
+#### DEFAULT_ADMIN_TOKEN
+
+**Default:** `None`
+
+Set an API token that will be linked to the admin user when starting Squest.
+
 
 ## Squest
 
@@ -189,28 +189,16 @@ This can be used for example to block new requests by end users from the service
 
 Address of the Squest portal instance. Used in email templates and in metadata sent to Red Hat Ansible Automation Platform/AWX job templates.
 
-### SQUEST_EMAIL_HOST
-
-**Default:** `squest@squest.domain.local`
-
-Domain name used as email sender. E.g: "squest@squest.domain.local".
-
 ### SQUEST_ADMINS
 
 **Default:** `''`
 
-A list of all the email who get code error notifications. When DEBUG=False.
+Comma separated list of email who get code error notifications. When DEBUG=False.
 Example:
 
 ```text
 elias.boulharts@mail.com,nicolas.marcq@mail.com
 ```
-
-### SQUEST_EMAIL_NOTIFICATION_ENABLED
-
-**Default:** Based on `DEBUG` value by default
-
-Set to `True` to enable email notifications.
 
 ### IS_DEV_SERVER
 
@@ -224,7 +212,31 @@ Set to `True` to change the navbar and footer color to visually identify a testi
 
 Number of workers used by Gunicorn process in charge of serving client connection. Increase the number of worker threads to serve more clients concurrently
 
+### DOC_IMAGES_CLEANUP_ENABLED
+
+**Default:** `False`
+
+Switch to `True` to enable automatic cleanup of ghost docs images from media folder.
+
+### DOC_IMAGES_CLEANUP_CRONTAB
+
+**Default:** `30 1 * * *`
+
+Crontab line for ghost image cleanup. By default performed every day at 1:30 AM.
+
 ## SMTP
+
+### SQUEST_EMAIL_NOTIFICATION_ENABLED
+
+**Default:** Based on `DEBUG` value by default
+
+Set to `True` to enable email notifications.  
+
+### SQUEST_EMAIL_HOST
+
+**Default:** `squest@squest.domain.local`
+
+Domain name used as email sender. E.g: "squest@squest.domain.local". 
 
 ### EMAIL_HOST
 
@@ -308,21 +320,7 @@ Username for the basic authentication of the metrics page.
 
 Password for the basic authentication of the metrics page.
 
-## Auto cleanup
-
-### DOC_IMAGES_CLEANUP_ENABLED
-
-**Default:** `False`
-
-Switch to `True` to enable automatic cleanup of ghost docs images from media folder.
-
-### DOC_IMAGES_CLEANUP_CRONTAB
-
-**Default:** `30 1 * * *`
-
-Crontab line for ghost image cleanup. By default performed every day at 1:30 AM.
-
-## Production
+## Django
 
 ### SECRET_KEY
 
@@ -335,6 +333,12 @@ Django secret key used for cryptographic signing. [Doc](https://docs.djangoproje
 **Default:** `True`
 
 Django DEBUG mode. Switch to `False` for production.
+
+### SQL_DEBUG
+
+**Default:** `False`
+
+Enables SQL debug logs.
 
 ### ALLOWED_HOSTS
 
@@ -352,13 +356,6 @@ Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/
 !!! note
 
     If you deploy with `http://1.2.3.4:8080`, please add `CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8080,http://localhost:8080,http://1.2.3.4:8080` in your variables.
-
-### CELERY_BROKER_URL
-
-**Default:** `amqp://rabbitmq:rabbitmq@localhost:5672/squest`
-
-RabbitMQ message broker URL. The default value is localhost to match the development configuration.
-Replace `localhost` by `rabbitmq` in production when using the docker-compose based deployment.
 
 ### LANGUAGE_CODE
 
@@ -378,23 +375,14 @@ Time zone of the server that host Squest service. [Doc](https://docs.djangoproje
 
 Change the format of all date in Squest UI. Based on Python [strftime](https://strftime.org/).
 
-## Plugins
+## Celery
 
-### FIELD_VALIDATOR_PATH
+### CELERY_BROKER_URL
 
-!!!warning
+**Default:** `amqp://rabbitmq:rabbitmq@localhost:5672/squest`
 
-    FIELD_VALIDATOR_PATH is now deprecated. Please use [SURVEY_VALIDATOR_PATH](#survey_validator_path) instead.
-
-**Default:** `plugins/field_validators`
-
-Path to form field validation modules.
-
-### SURVEY_VALIDATOR_PATH
-
-**Default:** `plugins/survey_validators`
-
-Path to SurveyValidator modules.
+RabbitMQ message broker URL. The default value is localhost to match the development configuration. 
+Replace `localhost` by `rabbitmq` in production when using the docker-compose based deployment.
 
 ## Redis
 
