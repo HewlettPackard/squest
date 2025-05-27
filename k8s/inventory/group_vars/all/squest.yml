@@ -1,68 +1,166 @@
 # Kubernetes
-k8s_cluster_fqdn: "k8s.domain.local"
+k8s_cluster_fqdn: "k8s.domain.local"  # used to build ingress URL like squest.k8s.domain.local
+k8s_kubeconfig_path: ".kube/kubeconfig"
+squest_create_namespace: true
 squest_namespace: "squest"
+ssh_private_key_path: ""  # used by backup
 k8s_storage_class: "thin"
 
 # DATABASE
 squest_db:
-  database: "squest_db"
-  user: "squest_user"
-  password: "squest_password"
-  root_password: "p@ssw0rd"
-
-# PHPMYADMIN
-squest_phpmyadmin:
-  enabled: true
-  ingress:
-    enabled: true
-    host: "phpmyadmin.{{ k8s_cluster_fqdn }}"
-    annotation:
-      kubernetes.io/ingress.class: "nginx"
-      ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-  env:
-    TZ: Europe/Paris
-    PMA_HOST: mariadb
-    PMA_ARBITRARY: "1"
-    MYSQL_USERNAME: root
-    MYSQL_ROOT_PASSWORD: "{{ squest_db.root_password }}"
+  database: "squest"
+  user: "squest"
+  # password: "squest"   # by default taken from the mariadb secret
+  # existing secret. Need to contain keys: mariadb-root-password and mariadb-password
+  # existing_secret: secret_name
 
 # RABBITMQ
 squest_rabbitmq:
   user: rabbitmq
   password: rabbitmq
+  erlang_cookie: this_is_a_cookie
+  # existing secret. Need to contain keys: rabbitmq-erlang-cookie and rabbitmq-password
+  # existing_secret: secret_name
 
 squest_redis:
   password: redis_secret_password
+#  existing_secret: secret_name
 
 # Django
 squest_django:
   image: "quay.io/hewlettpackardenterprise/squest:latest"
-  ingress:  # default ingress based on nginx controller
+  extra_labels: {}
+  ingress:
     enabled: true
     host: "squest.{{ k8s_cluster_fqdn }}"
+    classname: nginx
     annotations:
-      kubernetes.io/ingress.class: "nginx"
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-#  ldap:  # extra ldap config
-#    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
+  ldap:  # extra ldap config
+    enabled: false
+    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"
   env:  # squest settings
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
-    REDIS_CACHE_HOST: "redis-standalone"
-    DEBUG: "true"
     DB_USER: "{{ squest_db.user }}"
-    DB_PASSWORD: "{{ squest_db.password }}"
-    WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"
+    DB_DATABASE: "{{ squest_db.database }}"
+    REDIS_CACHE_HOST: "redis-master"
+    DEBUG: "false"
+    RABBITMQ_HOST: "rabbitmq"
+    RABBITMQ_VHOST: "squest"
+    RABBITMQ_PORT: "5672"
+
+  # non-mandatory secrets. environment variables set as secret in squest-secret
+  # do not set default secret:  DB_PASSWORD, REDIS_CACHE_PASSWORD and RABBITMQ_PASSWORD
+#  env_secrets:
+#    EMAIL_HOST_PASSWORD: "my-secret-password"
+#    METRICS_AUTHORIZATION_PASSWORD: ""
+#    SECRET_KEY: ""
+#    DEFAULT_ADMIN_TOKEN: ""
+#    DEFAULT_ADMIN_PASSWORD: ""
+#    AUTH_LDAP_BIND_PASSWORD: ""
+  # non mandatory secret can be set via an existing secret created manually
+  # env_secrets_existing_secret: "my-secret-name"
+
   backup: # backup squest db and media to a PVC
     enabled: false
     crontab: "0 1 * * *"
   externalize_backup_via_rsync:  # rsync backup files into and external server
     enabled: false
-    # crontab: "30 1 * * *"
-    # private_ssh_key: "{{ lookup('file', ssh_private_key_path) + '\n' }}"
-    # ssh_user: "squest_k8s_dev"
-    # ssh_server: "remote.server.ssh.net"
-    # remote_path: "/backup/squest_k8s_dev/"
+    crontab: "30 1 * * *"
+    private_ssh_key: "{{ lookup('file', ssh_private_key_path) + '\n' }}"
+    ssh_user: "squest_k8s_dev"
+    ssh_server: "ssh-backup.domain.local"
+    remote_path: "/backup/squest_k8s_dev/"
+
+  pvc:
+    django-static:
+      storage_class_name: "{{ k8s_storage_class }}"
+      size: "1Gi"
+    django-media:
+      storage_class_name: "{{ k8s_storage_class }}"
+      size: "1Gi"
+    squest-backup:
+      storage_class_name: "{{ k8s_storage_class }}"
+      size: "1Gi"
+
+# MariaDB chart https://artifacthub.io/packages/helm/bitnami/mariadb
+mariadb:
+  # -- enable integrated MariaDB™ subchart from Bitnami
+  enabled: true
+  helm_values:
+    auth:
+      # -- The database name to be used when using the integrated MariaDB database.
+      database: squest
+      # -- The password credential to be used when using the integrated MariaDB database.
+      password: squest
+      # -- The root password credential to be used when using the integrated MariaDB database.
+      rootPassword: p@ssw0rd
+      # -- The username credential to be used when using the integrated MariaDB database.
+      username: squest
+
+# PHPMYADMIN Helm chart https://artifacthub.io/packages/helm/bitnami/phpmyadmin
+phpmyadmin:
+  enabled: true
+  helm_values:
+    ingress:
+      enabled: true
+      hostname: "phpmyadmin.{{ k8s_cluster_fqdn }}"
+      ingressClassName: "nginx"
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+# RabbitMQ Bitnmi chart https://artifacthub.io/packages/helm/bitnami/rabbitmq
+rabbitmq:
+  enabled: true
+  helm_values:
+    global:
+      storageClass: "{{ k8s_storage_class }}"
+    auth:
+      username: "{{ squest_rabbitmq.user }}"
+      password: "{{ squest_rabbitmq.password }}"
+    extraSecrets:
+      load-definition:
+        load_definition.json: |
+          {
+            "users": [
+              {
+                "name": "rabbitmq",
+                "password": "rabbitmq",
+                "tags": "administrator"
+              }
+            ],
+            "vhosts": [
+              {
+                "name": "/"
+              },
+              {
+                "name": "squest"
+              }
+            ],
+            "permissions":[
+              {
+                  "user": "rabbitmq",
+                  "vhost": "squest",
+                  "configure": ".*",
+                  "read": ".*",
+                  "write": ".*"
+              }
+            ]
+          }
+    loadDefinition:
+      enabled: true
+      existingSecret: load-definition
+    extraConfiguration: |
+      load_definitions = /app/load_definition.json
+
+# Redis Bitnami chart: https://artifacthub.io/packages/helm/bitnami/redis
+redis:
+  enabled: true
+  helm_values:
+    architecture: standalone
+    auth:
+      password: squest

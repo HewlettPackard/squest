@@ -9,10 +9,6 @@ When using Kubernetes, the configuration need to be placed in the `squest.yml` i
 
 ## Database
 
-### DB_ROOT_PASSWORD
-
-Set the database root/superuser password
-
 ### DATABASE
 
 **Default:** `default`
@@ -375,14 +371,40 @@ Time zone of the server that host Squest service. [Doc](https://docs.djangoproje
 
 Change the format of all date in Squest UI. Based on Python [strftime](https://strftime.org/).
 
-## Celery
+## RabbitMQ
 
-### CELERY_BROKER_URL
+RabbitMQ is used as message broker for asynchronous tasks executed by Squest via the "[Celery](https://docs.celeryq.dev/)" python library.
 
-**Default:** `amqp://rabbitmq:rabbitmq@localhost:5672/squest`
+### RABBITMQ_USER
 
-RabbitMQ message broker URL. The default value is localhost to match the development configuration. 
-Replace `localhost` by `rabbitmq` in production when using the docker-compose based deployment.
+**Default:** rabbitmq
+
+RabbitMQ message broker user.
+
+### RABBITMQ_PASSWORD
+
+**Default:** rabbitmq
+
+RabbitMQ message broker password.
+
+### RABBITMQ_HOST
+
+**Default:** localhost
+
+RabbitMQ message broker host. The default value is `localhost` to match the development configuration. 
+Replace `localhost` by `rabbitmq` in production when using the docker-compose or kubernetes based deployment.
+
+### RABBITMQ_PORT
+
+**Default:** 5672
+
+RabbitMQ message broker port.
+
+### RABBITMQ_VHOST
+
+**Default:** squest
+
+RabbitMQ message broker vhost.
 
 ## Redis
 

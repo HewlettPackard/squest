@@ -317,7 +317,12 @@ LOGGING = {
 # -----------------------------------------
 # CELERY CONFIG
 # -----------------------------------------
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://rabbitmq:rabbitmq@localhost:5672/squest')
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'rabbitmq')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'rabbitmq')
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'localhost')
+RABBITMQ_PORT = os.environ.get('RABBITMQ_PORT', '5672')
+RABBITMQ_VHOST = os.environ.get('RABBITMQ_VHOST', 'squest')
+CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
 print(f"CELERY_BROKER_URL: {CELERY_BROKER_URL}")
 # Add a five-minutes timeout to all Celery tasks.
 CELERY_TASK_ALWAYS_EAGER = TESTING

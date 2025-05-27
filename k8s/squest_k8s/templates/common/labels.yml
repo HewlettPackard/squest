@@ -1,0 +1,5 @@
+{% if squest_django.extra_labels is defined %}
+{% for key, value in squest_django.extra_labels.items() %}
+    {{ key }}: '{{ value }}'
+{% endfor %}
+{% endif %}

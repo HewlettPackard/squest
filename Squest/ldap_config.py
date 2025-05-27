@@ -10,7 +10,7 @@ AUTH_LDAP_SERVER_URI = os.environ.get('AUTH_LDAP_SERVER_URI', None)
 AUTH_LDAP_BIND_DN = os.environ.get('AUTH_LDAP_BIND_DN', None)
 AUTH_LDAP_BIND_PASSWORD = os.environ.get('AUTH_LDAP_BIND_PASSWORD', None)
 AUTH_LDAP_USER_SEARCH = LDAPSearch(os.environ.get('AUTH_LDAP_USER_SEARCH', None), ldap.SCOPE_SUBTREE, os.environ.get('AUTH_LDAP_USER_SEARCH_FILTER', "(uid=%(user)s)"))
-LDAP_CA_FILE_PATH = os.environ.get('LDAP_CA_FILE_PATH', "/usr/local/share/ca-certificates/ldap_ca.crt")
+LDAP_CA_FILE_PATH = os.environ.get('LDAP_CA_FILE_PATH', "/etc/ssl/certs/ca-certificates.crt")
 
 AUTH_LDAP_CONNECTION_OPTIONS = {
     ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
