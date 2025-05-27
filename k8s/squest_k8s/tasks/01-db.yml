@@ -1,0 +1,33 @@
+- when: mariadb.enabled
+  name: Install MariaDB Helm chart
+  kubernetes.core.helm:
+    name: mariadb
+    release_namespace: "{{ squest_namespace }}"
+    chart_version: "{{ mariadb_chart_version }}"
+    chart_ref: oci://registry-1.docker.io/bitnamicharts/mariadb
+    values: "{{ mariadb.helm_values }}"
+
+- when: not mariadb.enabled and squest_db.existing_secret is not defined
+  name: Create a secret for mariadb
+  kubernetes.core.k8s:
+    namespace: "{{ squest_namespace }}"
+    definition:
+      kind: Secret
+      apiVersion: v1
+      metadata:
+        name: "mariadb"
+        labels:
+          app: squest
+          service: mariadb
+      data:
+        mariadb-root-password: "{{ squest_db.root_password | b64encode }}"
+        mariadb-password: "{{ squest_db.password | b64encode }}"
+
+- when: phpmyadmin.enabled
+  name: Install PHPMyAdmin Helm chart
+  kubernetes.core.helm:
+    name: phpmyadmin
+    release_namespace: "{{ squest_namespace }}"
+    chart_version: "{{ phpmyadmin_chart_version }}"
+    chart_ref: oci://registry-1.docker.io/bitnamicharts/phpmyadmin
+    values: "{{ phpmyadmin.helm_values }}"

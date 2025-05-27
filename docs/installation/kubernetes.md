@@ -8,19 +8,19 @@
 
 The Kubernetes deployment is wrapped by Ansible. The code has been tested with Ansible version `2.15.5`.
 
+### Python
+
+Install Python dependencies:
+```bash
+pip3 install -r k8s/requirements.txt
+```
+
 ### Ansible
 
 Install Ansible dependencies:
 
 ```bash
 ansible-galaxy install -r k8s/requirements.yml
-```
-
-### Python
-
-Install Python dependencies:
-```bash
-pip3 install -r k8s/requirements.txt
 ```
 
 ### Helm
@@ -53,7 +53,6 @@ ansible-playbook -v -i inventory deploy.yml
 | Name        | Description                                 |
 |-------------|---------------------------------------------|
 | namespace   | Create the Squest namespace                 |
-| utils       | Install CRD utils (certmanager, Prometheus) |
 | db          | Deploy mariadb CRDs, operator and server    |
 | rabbitmq    | Deploy rabbitmq CRDs, operator and service  |
 | redis       | Deploy redis CRDs, operator and service     |
@@ -63,10 +62,6 @@ ansible-playbook -v -i inventory deploy.yml
 | backup      | Deploy backup cron jobs                     |
 
 
-!!! note
-
-    By default, the deployment uses **nginx ingress controller** to configure the Squest external access on `squest.{{ k8s_cluster_fqdn }}`.
-
 ## Configuration
 
 ### Squest config
@@ -74,27 +69,51 @@ ansible-playbook -v -i inventory deploy.yml
 The [Squest configuration](../configuration/squest_settings.md) is injected as environment variables. The environment is placed in `squest.yml` as `env` flag like the following:
 ```yaml
 squest_django:
-  env:
+  env:  # squest settings
     TZ: "Europe/Paris"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
-    REDIS_CACHE_HOST: "rfrm-redis"
-    DEBUG: "true"
     DB_USER: "{{ squest_db.user }}"
-    DB_PASSWORD: "{{ squest_db.password }}"
-    WAIT_HOSTS: "mariadb:3306,rabbitmq:5672"
+    DB_DATABASE: "{{ squest_db.database }}"
+    REDIS_CACHE_HOST: "redis-master"
+    DEBUG: "false"
+    RABBITMQ_HOST: "rabbitmq"
+    RABBITMQ_PORT: "5672"
+```
+
+Secrets can be injected using the `squest_django.env_secrets` variable or can be created manually by creating a secret named `squest-secrets`.
+```yaml
+squest_django:
+  env_secrets:
+    EMAIL_HOST_PASSWORD: "my-secret-password"
+    METRICS_AUTHORIZATION_PASSWORD: "metrics-password"
+    SECRET_KEY: "django-secret-key"
+    DEFAULT_ADMIN_TOKEN: "XXXXXX----TOKEN----XXXXXX"
+    DEFAULT_ADMIN_PASSWORD: "my-secret-password"
+    AUTH_LDAP_BIND_PASSWORD: "my-secret-password"
+```
+
+### LDAP custom config
+
+LDAP can be configured using environment variable. For very specific use case you may need to inject a custom `ldap_config.py`.
+```yaml
+squest_django:  
+  ldap:  # extra ldap config
+    enabled: true  # this will create a config map for ldap_config.py
+    ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"  # we mount by default the file provided in squest core code
 ```
 
 ### Use your own ingress
 
 By default, the playbook will configure an ingress that point to `squest.{{ k8s_cluster_fqdn }}` based on the [nginx ingress controller](https://docs.nginx.com/nginx-ingress-controller/).
 
-To expose the Squest URL by using your own ingress controller, you can either update `annotations` (when the target controller can be managed by annotations) or disable the default ingress to declare then your ingress rules on your own.
-
-To disable the default ingress configuration, in the `squest.yml` inventory file:
+Update the ingress configuration, in the `squest.yml` inventory file:
 ```yaml
 squest_django:
-  image: "quay.io/hewlettpackardenterprise/squest:latest"
-  ingress:
-    enabled: false
+  ingress:  # default ingress based on nginx controller
+    enabled: true
+    host: "squest.{{ k8s_cluster_fqdn }}"
+    classname: my-ingress-controller-name
+    annotations:
+      ingress_key: "ingress_value"
 ```

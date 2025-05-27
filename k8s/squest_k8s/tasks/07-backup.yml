@@ -19,13 +19,6 @@
               spec:
                 serviceAccountName: squest-sa
                 restartPolicy: Never
-                initContainers:
-                  - name: wait-for-migration
-                    image: ghcr.io/groundnuty/k8s-wait-for:v2.0
-                    imagePullPolicy: Always
-                    args:
-                      - "job"
-                      - "django-migrations"
                 securityContext:
                   fsGroup: 999
                 containers:
@@ -35,14 +28,28 @@
                     command: ['/bin/bash', '-c']
                     args:
                       - |
-                        echo "Wait for required services to start"
-                        /wait
                         echo "Run backup"
                         python manage.py dbbackup --clean
                         python manage.py mediabackup --clean
                     envFrom:
                       - configMapRef:
                           name: django-env
+                    env:
+                      - name: DB_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: mariadb
+                            key: mariadb-password
+                      - name: RABBITMQ_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: rabbitmq
+                            key: rabbitmq-password
+                      - name: REDIS_CACHE_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: redis
+                            key: redis-password
                     volumeMounts:
                       - name: squest-backup
                         mountPath: /app/backup
@@ -89,10 +96,6 @@
                 template:
                   spec:
                     restartPolicy: Never
-                    dnsConfig:
-                      options:
-                        - name: ndots
-                          value: "1"
                     containers:
                       - name: rsync
                         image: instrumentisto/rsync-ssh:alpine3.18
@@ -116,5 +119,5 @@
                           claimName: squest-backup
                       - name: squest-rsync-ssh-key
                         secret:
-                          defaultMode: "0600"
+                          defaultMode: 0600
                           secretName: squest-rsync-ssh-key

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: squest
+    service: "{{ celery_name }}"
+{{ lookup("template", "common/labels.yml") }}
+  name: "{{ celery_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squest
+      service: "{{ celery_name }}"
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: squest
+        service: "{{ celery_name }}"
+    spec:
+      serviceAccountName: squest-sa
+      containers:
+        - name: "{{ celery_name }}"
+          image: "{{ squest_django.image }}"
+          imagePullPolicy: Always
+          command: ['/bin/bash', '-c']
+          args:
+            - |
+              echo "Starting celery {{ celery_cmd_args }}"
+              celery -A service_catalog {{ celery_cmd_args }} -l info
+          envFrom:
+            - configMapRef:
+                name: django-env
+{% if squest_django.env_secrets is defined or squest_django.env_secrets_existing_secret is defined %}
+            - secretRef:
+                name: {{ squest_django.env_secrets_existing_secret | default('squest-secrets') }}
+{% endif %}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb
+                  key: mariadb-password
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-password
+            - name: REDIS_CACHE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: redis-password
+      restartPolicy: Always
