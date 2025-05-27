@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: squest
+    service: django
+{{ lookup("template", "common/labels.yml") }}
+  name: django
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squest
+      service: django
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: squest
+        service: django
+    spec:
+      serviceAccountName: squest-sa
+      securityContext:
+        fsGroup: 999
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "django"  # to match nginx config
+      containers:
+        - name: django
+          image: "{{ squest_django.image }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          command: ['/bin/bash', '-c']
+          args:
+            - |
+              echo "Starting web server"
+              gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
+          envFrom:
+            - configMapRef:
+                name: django-env
+{% if squest_django.env_secrets is defined or squest_django.env_secrets_existing_secret is defined %}
+            - secretRef:
+                name: {{ squest_django.env_secrets_existing_secret | default('squest-secrets') }}
+{% endif %}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb
+                  key: mariadb-password
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-password
+            - name: REDIS_CACHE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: redis-password
+          volumeMounts:
+            - mountPath: /app/media
+              name: django-media
+{% if squest_django.ldap is defined and squest_django.ldap.enabled %}
+            - mountPath: /app/Squest/ldap_config.py
+              subPath: ldap_config.py
+              name: ldap-config
+{% endif %}
+        - name: nginx
+          image: nginx:1.23.4-alpine
+          command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/squest
+              readOnly: true
+            - mountPath: /app/static
+              name: django-static
+              readOnly: true
+            - name: django-media
+              mountPath: /app/media
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: django-media
+          persistentVolumeClaim:
+            claimName: django-media
+        - name: django-static
+          readOnly: true
+          persistentVolumeClaim:
+            claimName: django-static
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+{% if squest_django.ldap is defined and squest_django.ldap.enabled %}
+        - name: ldap-config
+          configMap:
+            name: ldap-config
+            items:
+              - key: ldap_config.py
+                path: ldap_config.py
+{% endif %}

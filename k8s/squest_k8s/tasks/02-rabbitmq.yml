@@ -1,0 +1,24 @@
+- when: rabbitmq.enabled
+  name: Install RabbitMQ Helm chart
+  kubernetes.core.helm:
+    name: rabbitmq
+    release_namespace: "{{ squest_namespace }}"
+    chart_version: "{{ rabbitmq_chart_version }}"
+    chart_ref: oci://registry-1.docker.io/bitnamicharts/rabbitmq
+    values: "{{ rabbitmq.helm_values }}"
+
+- when: not rabbitmq.enabled and squest_rabbitmq.existing_secret is not defined
+  name: Create a secret for rabbitmq
+  kubernetes.core.k8s:
+    namespace: "{{ squest_namespace }}"
+    definition:
+      kind: Secret
+      apiVersion: v1
+      metadata:
+        name: "rabbitmq"
+        labels:
+          app: squest
+          service: rabbitmq
+      data:
+        rabbitmq-erlang-cookie: "{{ squest_rabbitmq.erlang_cookie | b64encode }}"
+        rabbitmq-password: "{{ squest_rabbitmq.password | b64encode }}"

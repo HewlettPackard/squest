@@ -57,7 +57,7 @@
 - name: Django env as config map
   kubernetes.core.k8s:
     namespace: "{{ squest_namespace }}"
-    state: present
+    apply: true
     definition:
       apiVersion: v1
       kind: ConfigMap
@@ -68,11 +68,14 @@
         name: django-env
       data: "{{ squest_django.env }}"
 
+- when: squest_django.env_secrets is defined
+  name: Create generic secrets
+  kubernetes.core.k8s:
+    namespace: "{{ squest_namespace }}"
+    definition: "{{ lookup('template', 'squest_secrets.yaml') | from_yaml }}"
+
 - name: Persistent volume for static, media and backup
-  loop:
-    - "django-static"
-    - "django-media"
-    - "squest-backup"
+  loop: "{{ squest_django.pvc | dict2items }}"
   kubernetes.core.k8s:
     namespace: "{{ squest_namespace }}"
     state: present
@@ -83,13 +86,14 @@
         labels:
           app: squest
           service: django
-        name: "{{ item }}"
+        name: "{{ item.key }}"
       spec:
+        storageClassName: "{{ item.value['storage_class_name'] }}"
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: "{{ item.value['size'] }}"
 
 - name: Django database migration job
   kubernetes.core.k8s:
@@ -117,10 +121,6 @@
                   - |
                     echo $UID
                     echo $USER
-                    echo ""
-                    echo "-----------------------------------------------------"
-                    echo "Wait for required services to start"
-                    /wait
                     echo "Applying database migration"
                     python manage.py migrate --database=${DATABASE:-default}
                     echo ""
@@ -134,6 +134,12 @@
                 envFrom:
                   - configMapRef:
                       name: django-env
+                env:
+                  - name: DB_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: mariadb
+                        key: mariadb-password
                 volumeMounts:
                   - mountPath: /app/static
                     name: django-static
@@ -173,16 +179,8 @@
       data:
         nginx.conf: "{{ lookup('file', playbook_dir + '/../docker/nginx.conf') }}"
 
-- name: Set the path of the ldap config from the user config or use default
-  ansible.builtin.set_fact:
-    ldap_config_file_content: |
-      {% if 'ldap' in squest_django %}
-      {{ squest_django.ldap.ldap_config_file }}
-      {% else %}
-      {{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}
-      {% endif %}
-
-- name: LDAP config
+- when: squest_django.ldap is defined and squest_django.ldap.enabled
+  name: LDAP config
   kubernetes.core.k8s:
     state: present
     namespace: "{{ squest_namespace }}"
@@ -195,109 +193,19 @@
           service: ldap
         name: ldap-config
       data:
-        ldap_config.py: "{{ ldap_config_file_content }}"
+        ldap_config.py: |
+          {% if 'ldap_config_file' in squest_django.ldap %}
+          {{ squest_django.ldap.ldap_config_file }}
+          {% else %}
+          {{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}
+          {% endif %}            
 
 - name: Deploy Django app
   kubernetes.core.k8s:
     state: present
     namespace: "{{ squest_namespace }}"
-    definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        labels:
-          app: squest
-          service: django
-        name: django
-      spec:
-        replicas: 1
-        selector:
-          matchLabels:
-            app: squest
-            service: django
-        strategy:
-          type: Recreate
-        template:
-          metadata:
-            labels:
-              app: squest
-              service: django
-          spec:
-            serviceAccountName: squest-sa
-            securityContext:
-              fsGroup: 999
-            dnsConfig:
-              options:
-                - name: ndots
-                  value: "1"
-            hostAliases:
-              - ip: "127.0.0.1"
-                hostnames:
-                  - "django"  # to match nginx config
-            initContainers:
-              - name: wait-for-migration
-                image: ghcr.io/groundnuty/k8s-wait-for:v2.0
-                imagePullPolicy: Always
-                args:
-                  - "job"
-                  - "django-migrations"
-            containers:
-              - name: django
-                image: "{{ squest_django.image }}"
-                imagePullPolicy: Always
-                ports:
-                  - containerPort: 8000
-                command: ['/bin/bash', '-c']
-                args:
-                  - |
-                    echo "Wait for required services to start"
-                    /wait
-                    echo "Starting web server"
-                    gunicorn --bind 0.0.0.0:8000 --pythonpath /app/squest Squest.wsgi
-                envFrom:
-                  - configMapRef:
-                      name: django-env
-                volumeMounts:
-                  - mountPath: /app/media
-                    name: django-media
-                  - mountPath: /app/Squest/ldap_config.py
-                    name: ldap-config
-              - name: nginx
-                image: nginx:1.23.4-alpine
-                command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
-                ports:
-                  - containerPort: 8080
-                volumeMounts:
-                  - name: nginx-config
-                    mountPath: /etc/nginx/squest
-                    readOnly: true
-                  - mountPath: /app/static
-                    name: django-static
-                    readOnly: true
-                  - name: django-media
-                    mountPath: /app/media
-                    readOnly: true
-            restartPolicy: Always
-            volumes:
-              - name: django-media
-                persistentVolumeClaim:
-                  claimName: django-media
-              - name: django-static
-                readOnly: true
-                persistentVolumeClaim:
-                  claimName: django-static
-              - name: nginx-config
-                configMap:
-                  name: nginx-config
-                  items:
-                    - key: nginx.conf
-                      path: nginx.conf
-              - name: ldap-config
-                configMap:
-                  name: ldap-config
-                  items:
-                    - key: ldap_config.py
-                      path: ldap_config.py
+    apply: true
+    definition: "{{ lookup('template', 'django.deployment.yaml') | from_yaml }}"
 
 - name: Django service
   kubernetes.core.k8s:
@@ -332,6 +240,7 @@
         name: squest-ingress
         annotations: "{{ squest_django.ingress.annotations }}"
       spec:
+        ingressClassName: "{{ squest_django.ingress.classname }}"
         rules:
           - host: "{{ squest_django.ingress.host }}"
             http:

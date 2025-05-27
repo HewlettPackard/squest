@@ -1,4 +1,5 @@
-- name: Create a dedicated namespace for Squest
+- when: squest_create_namespace | bool
+  name: Create a dedicated namespace for Squest
   kubernetes.core.k8s:
     state: present
     definition:
@@ -8,33 +9,33 @@
         name: "{{ squest_namespace }}"
   tags: ["namespace"]
 
-- name: K8S utils
-  ansible.builtin.include_tasks:
-    file: 01-utils.yml
-    apply:
-      tags: ["utils"]
-  tags: ["utils"]
-
 - name: Squest db
   ansible.builtin.include_tasks:
-    file: 02-db.yml
+    file: 01-db.yml
     apply:
       tags: ["db"]
   tags: ["db"]
 
 - name: Squest rabbitmq
   ansible.builtin.include_tasks:
-    file: 03-rabbitmq.yml
+    file: 02-rabbitmq.yml
     apply:
       tags: ["rabbitmq"]
   tags: ["rabbitmq"]
 
 - name: Squest redis
   ansible.builtin.include_tasks:
-    file: 04-redis.yml
+    file: 03-redis.yml
     apply:
       tags: ["redis"]
   tags: ["redis"]
+
+- name: Squest maintenance nginx
+  ansible.builtin.include_tasks:
+    file: 04-maintenance.yml
+    apply:
+      tags: ["maintenance"]
+  tags: ["maintenance"]
 
 - name: Squest Django
   ansible.builtin.include_tasks:
@@ -48,18 +49,11 @@
     file: 06-celery.yml
     apply:
       tags: ["celery"]
-  tags: ["celery"]
-
-- name: Squest maintenance nginx
-  ansible.builtin.include_tasks:
-    file: 07-maintenance.yml
-    apply:
-      tags: ["maintenance"]
-  tags: ["maintenance"]
+  tags: ["celery"]#
 
 - name: Squest backup
   ansible.builtin.include_tasks:
-    file: 08-backup.yml
+    file: 07-backup.yml
     apply:
       tags: ["backup"]
   tags: ["backup"]

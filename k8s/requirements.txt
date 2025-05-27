@@ -1,1 +1,2 @@
 kubernetes==24.2.0
+ansible==11.6.0
