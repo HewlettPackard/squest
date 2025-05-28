@@ -6,10 +6,10 @@ print("LDAP config loaded")
 # -----------------------
 # LDAP auth backend
 # -----------------------
-AUTH_LDAP_SERVER_URI = os.environ.get('AUTH_LDAP_SERVER_URI', "ldap:port")
-AUTH_LDAP_BIND_DN = os.environ.get('AUTH_LDAP_BIND_DN', "cn=service_account_name,ou=Applications,o=domain.com")
+AUTH_LDAP_SERVER_URI = os.environ.get('AUTH_LDAP_SERVER_URI', None)
+AUTH_LDAP_BIND_DN = os.environ.get('AUTH_LDAP_BIND_DN', None)
 AUTH_LDAP_BIND_PASSWORD = os.environ.get('AUTH_LDAP_BIND_PASSWORD', None)
-AUTH_LDAP_USER_SEARCH = LDAPSearch(os.environ.get('AUTH_LDAP_USER_SEARCH', "ou=People,o=domain.com"), ldap.SCOPE_SUBTREE, os.environ.get('AUTH_LDAP_USER_SEARCH_FILTER', "(uid=%(user)s)"))
+AUTH_LDAP_USER_SEARCH = LDAPSearch(os.environ.get('AUTH_LDAP_USER_SEARCH', None), ldap.SCOPE_SUBTREE, os.environ.get('AUTH_LDAP_USER_SEARCH_FILTER', "(uid=%(user)s)"))
 LDAP_CA_FILE_PATH = os.environ.get('LDAP_CA_FILE_PATH', "/usr/local/share/ca-certificates/ldap_ca.crt")
 
 AUTH_LDAP_CONNECTION_OPTIONS = {
