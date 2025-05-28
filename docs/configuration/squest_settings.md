@@ -36,13 +36,13 @@ User used to connect to the `DB_DATABASE` name.
 
 **Default:** `squest_password`
 
-Password of the `DB_USER` username.  
+Password of the `DB_USER` username.
 
 ### DB_HOST
 
 **Default:** `127.0.0.1`
 
-Database host. The default value is localhost to match the development configuration. 
+Database host. The default value is localhost to match the development configuration.
 Switch to `db` in production when using the docker-compose based deployment.
 
 ### DB_PORT
@@ -60,38 +60,37 @@ Database port.
 
 **Default:** `False`
 
-Set to `True` to enable LDAP based authentication.  
-
+Set to `True` to enable LDAP based authentication.
 
 #### AUTH_LDAP_SERVER_URI
 
-**Default:** `ldap:port`
+**Default:** `NONE`
 
-Set the LDAP server URI and port
+Set the URI of your LDAP server, using a protocol prefix (`ldap://` or `ldaps://`) and the server's hostname, e.g. `ldaps://ldap.example.com`.
 
 #### AUTH_LDAP_BIND_DN
 
-**Default:** `cn=service_account_name,ou=Applications,o=domain.com`
+**Default:** `NONE`
 
-Set the LDAP DN to authenticate to the LDAP serveur
+Set the LDAP DN to authenticate to the LDAP server, e.g. `cn=service_account_name,ou=Applications,o=domain.com`.
 
 #### AUTH_LDAP_BIND_PASSWORD
 
 **Default:** `NONE`
 
-Associated to AUTH_LDAP_BIND_DN, password used to authenticate DN
+Associated to AUTH_LDAP_BIND_DN, this sets the password used to authenticate
 
 #### AUTH_LDAP_USER_SEARCH
 
-**Default:** `ou=People,o=domain.com`
+**Default:** `NONE`
 
-Base DN for the user search
+Base DN for the user search, e.g. `ou=People,o=domain.com`
 
 #### AUTH_LDAP_USER_SEARCH_FILTER
 
 **Default:** `(uid=%(user)s)`
 
-LDAP search filter for the user search
+LDAP search filter for the user search. For connections to an Active Directory this is normally set to `(sAMAccountName=%(user)s)`.
 
 #### AUTH_LDAP_ATTR_FIRSTNAME
 
@@ -110,7 +109,6 @@ set the LDAP "last_name" attribute
 **Default:** `mail`
 
 set the LDAP "email" attribute
-
 
 ### OpenID Connect
 
@@ -178,7 +176,7 @@ E.G: "Use your corporate email and password".
 
 **Default:** `False`
 
-When enabled, only administrators can access squest UI and API. 
+When enabled, only administrators can access squest UI and API.
 This can be used for example to block new requests by end users from the service catalog. So an administrator can perform operations against the API like migrating instance specs.
 
 !!! note
@@ -195,7 +193,7 @@ Address of the Squest portal instance. Used in email templates and in metadata s
 
 **Default:** `squest@squest.domain.local`
 
-Domain name used as email sender. E.g: "squest@squest.domain.local". 
+Domain name used as email sender. E.g: "squest@squest.domain.local".
 
 ### SQUEST_ADMINS
 
@@ -212,7 +210,7 @@ elias.boulharts@mail.com,nicolas.marcq@mail.com
 
 **Default:** Based on `DEBUG` value by default
 
-Set to `True` to enable email notifications.  
+Set to `True` to enable email notifications.
 
 ### IS_DEV_SERVER
 
@@ -342,13 +340,13 @@ Django DEBUG mode. Switch to `False` for production.
 
 **Default:** `*`
 
-Comma separated list of allowed FQDN. Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).   
+Comma separated list of allowed FQDN. Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).
 
 ### CSRF_TRUSTED_ORIGINS
 
 **Default:** `http://127.0.0.1:8080,http://localhost:8080`
 
-Comma separated list of trusted origin. 
+Comma separated list of trusted origin.
 Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins).
 
 !!! note
@@ -359,7 +357,7 @@ Refer to the complete [documentation](https://docs.djangoproject.com/en/4.2/ref/
 
 **Default:** `amqp://rabbitmq:rabbitmq@localhost:5672/squest`
 
-RabbitMQ message broker URL. The default value is localhost to match the development configuration. 
+RabbitMQ message broker URL. The default value is localhost to match the development configuration.
 Replace `localhost` by `rabbitmq` in production when using the docker-compose based deployment.
 
 ### LANGUAGE_CODE
