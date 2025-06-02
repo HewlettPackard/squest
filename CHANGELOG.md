@@ -1,3 +1,44 @@
+# 2.8.0 2024-06-02
+
+## Breaking changes ⚠
+
+- Squest settings update. `CELERY_BROKER_URL` replaced by `RABBITMQ_` environment variables. See migration process below
+
+## Fix
+
+- Operation table was missing from instance details view
+- Fix git configuration that was preventing Openshift deployment
+- Fix integrated metrics app startup
+
+## Enhancement
+
+- Refactoring Ansible based deployment for K8S
+- Wait script replaced by native Docker compose health check 
+- Hide token in tower server form when edit
+- Documentation list sorted alphabetically
+- LDAP user search filter configurable using the AUTH_LDAP_USER_SEARCH_FILTER variable
+
+## Feature
+
+- Set default admin password via `DEFAULT_ADMIN_PASSWORD` env variable
+
+## Env migration 
+
+Celery broker URL now configured via `RABBITMQ_` environment variables
+Previous environment config:
+```
+CELERY_BROKER_URL=amqp://rabbitmq:rabbitmq@rabbitmq:5672/squest
+```
+
+Now:
+```
+RABBITMQ_USER=rabbitmq
+RABBITMQ_PASSWORD=rabbitmq
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_VHOST=squest
+```
+
 # 2.7.2 2024-12-18
 
 ## Fix 
