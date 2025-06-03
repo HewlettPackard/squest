@@ -5,6 +5,8 @@ from django_celery_beat.models import PeriodicTask
 from django_celery_beat.models import PeriodicTasks
 from django_celery_beat.schedulers import DatabaseScheduler
 
+from service_catalog.models import Request, RequestState
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,3 +26,8 @@ class DatabaseSchedulerWithCleanup(DatabaseScheduler):
             if num > 0:
                 PeriodicTasks.update_changed()
         super(DatabaseSchedulerWithCleanup, self).setup_schedule()
+
+        # Get all PROCESSING requests
+        logger.info("Re-schedule a check of all PROCESSING requests")
+        for request in Request.objects.filter(state=RequestState.PROCESSING):
+            request.setup_periodic_check_task()
