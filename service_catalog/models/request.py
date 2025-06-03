@@ -280,19 +280,26 @@ class Request(SquestModel):
         self.save()
         if isinstance(tower_job_id, int):
             self.tower_job_id = tower_job_id
-            logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {tower_job_id}")
-            # create a periodic task to check the status until job is complete
-            schedule, created = IntervalSchedule.objects.get_or_create(every=10,
-                                                                       period=IntervalSchedule.SECONDS)
-            self.periodic_task_date_expire = timezone.now() + timedelta(seconds=self.operation.process_timeout_second)
-            self.periodic_task = PeriodicTask.objects.create(
-                interval=schedule,
-                name=f'job_status_check_request_{self.id}',
-                task='service_catalog.tasks.check_tower_job_status_task',
-                args=json.dumps([self.id]))
-            logger.info(
-                f'[Request][process] request \'{self.id}\': periodic task created. '
-                f'Expire in {self.operation.process_timeout_second} seconds')
+            self.setup_periodic_check_task()
+
+    def setup_periodic_check_task(self):
+        """
+        Setup celery beat to check for the completion of the job in AWX
+        """
+        logger.info(f"[Request][process] process started on request '{self.id}'. Tower job id: {self.tower_job_id}")
+        # create a periodic task to check the status until job is complete
+        schedule, created = IntervalSchedule.objects.get_or_create(every=10,
+                                                                   period=IntervalSchedule.SECONDS)
+        self.periodic_task_date_expire = timezone.now() + timedelta(seconds=self.operation.process_timeout_second)
+        self.periodic_task = PeriodicTask.objects.create(
+            interval=schedule,
+            name=f'job_status_check_request_{self.id}',
+            task='service_catalog.tasks.check_tower_job_status_task',
+            args=json.dumps([self.id]))
+        logger.info(
+            f'[Request][process] request \'{self.id}\': periodic task created. '
+            f'Expire in {self.operation.process_timeout_second} seconds')
+        self.save()
 
     @transition(field=state, source=RequestState.PROCESSING, target=RequestState.FAILED)
     def has_failed(self, reason=None):
@@ -334,9 +341,9 @@ class Request(SquestModel):
         date_worker_now = timezone.now()
         if self.periodic_task_date_expire < date_worker_now:
             logger.info("[check_tower_job_status_task] request now expired. deleting the periodic task")
+            self.periodic_task.delete()
             self.has_failed(reason="Operation execution timeout")
             self.save()
-            self.periodic_task.delete()
             return
 
         tower = self.operation.job_template.tower_server.get_tower_instance()
