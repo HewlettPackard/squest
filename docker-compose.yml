@@ -19,6 +19,12 @@ services:
     env_file: docker/environment_variables/rabbitmq.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   redis-cache:
     image: redis:6.2.13-alpine
@@ -40,7 +46,7 @@ services:
       db:
         condition: service_healthy
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
       celery-worker:
         condition: service_started
       celery-beat:
@@ -67,27 +73,27 @@ services:
 
   celery-worker:
     <<: *django
-    env_file:
-      - docker/environment_variables/squest.env
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
     ports: []
-    command: >
-      bash -c "/wait &&
-      celery -A service_catalog worker -l info"
+    command: celery -A service_catalog worker -l info
 
   celery-beat:
     <<: *django
-    env_file:
-      - docker/environment_variables/squest.env
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
     ports: []
-    command: >
-      bash -c "/wait &&
-      celery -A service_catalog beat -l info"
+    command: celery -A service_catalog beat -l info
 
 volumes:
   db_data: {}
