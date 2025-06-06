@@ -1,3 +1,13 @@
+# 2.8.1 2024-06-06
+
+## Fix
+
+- Fix celery startup in compose
+
+## Enhancement
+
+- Celery beat now re-schedule a check of the state of all PROCESSING jobs
+
 # 2.8.0 2024-06-02
 
 ## Breaking changes ⚠
