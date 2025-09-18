@@ -24,6 +24,7 @@ class TowerServer(SquestModel):
     secure = BooleanField(default=True)
     ssl_verify = BooleanField(default=False)
     extra_vars = JSONField(default=dict, blank=True)
+    aap_environment = BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} ({self.host})"
@@ -75,7 +76,7 @@ class TowerServer(SquestModel):
         return f"{protocol}://{self.host}"
 
     def get_tower_instance(self):
-        return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token)
+        return Tower(self.host, None, None, secure=self.secure, ssl_verify=self.ssl_verify, token=self.token, aap_environment=self.aap_environment)
 
     def _update_job_template_from_tower(self, job_template_from_tower):
         from .job_templates import JobTemplate as JobTemplateLocal
