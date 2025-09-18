@@ -30,6 +30,11 @@ class TowerServerForm(SquestModelForm):
                                     required=False,
                                     widget=forms.CheckboxInput())
 
+    aap_environment = forms.BooleanField(label="AAP environment",
+                                initial=False,
+                                required=False,
+                                widget=forms.CheckboxInput())
+
     def __init__(self, *args, **kwargs):
         super(TowerServerForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
@@ -42,9 +47,10 @@ class TowerServerForm(SquestModelForm):
         token = cleaned_data.get("token")
         secure = cleaned_data.get("secure")
         ssl_verify = cleaned_data.get("ssl_verify")
+        aap_environment = cleaned_data.get("aap_environment")
         if host and token:
             try:
-                Tower(host, None, None, secure=secure, ssl_verify=ssl_verify, token=token)
+                Tower(host, None, None, secure=secure, ssl_verify=ssl_verify, token=token, aap_environment=aap_environment)
             except towerlib.towerlibexceptions.AuthFailed:
                 raise ValidationError({"token": "Fail to authenticate with provided token"})
             except requests.exceptions.SSLError:
@@ -70,4 +76,4 @@ class TowerServerForm(SquestModelForm):
 
     class Meta:
         model = TowerServer
-        fields = ["name", "host", "token", "secure", "ssl_verify", "extra_vars"]
+        fields = ["name", "host", "token", "secure", "ssl_verify", "aap_environment", "extra_vars"]
