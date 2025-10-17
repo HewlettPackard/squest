@@ -88,7 +88,8 @@ class HookManager(object):
         elif sender.__name__ == "Request":
             global_hook_set = RequestHook.objects.filter(state=target)
             operation = instance.operation
-            serialized_data = dict(AdminRequestSerializer(instance).data)
+            from service_catalog.api.serializers.request_serializers import AWXRequestSerializer
+            serialized_data = dict(AWXRequestSerializer(instance).data)
             for global_hook in global_hook_set.all():
                 extra_vars = {
                     "squest": {

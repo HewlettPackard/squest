@@ -135,6 +135,34 @@ class Request(SquestModel):
                 full_survey.update(step.fill_in_survey)
         # the admin step always override what has been set in previous steps
         full_survey.update({k: v for k, v in {**self.admin_fill_in_survey}.items() if v is not None})
+
+        # Mask password fields for security (UI/API display)
+        password_fields = []
+        for tower_survey_field in self.operation.tower_survey_fields.filter(type='password'):
+            password_fields.append(tower_survey_field.variable)
+        
+        if password_fields:
+            for password_field in password_fields:
+                if password_field in full_survey and full_survey[password_field]:
+                    full_survey[password_field] = "$encrypted$"
+        
+        return full_survey
+
+    def _get_full_survey_for_awx(self):
+        """
+        Get the full survey without password masking for AWX integration.
+        This method preserves the original password values for proper AWX functionality.
+        """
+        # by default the survey is composed by what the end user provided
+        full_survey = {k: v for k, v in {**self.fill_in_survey}.items() if v is not None}
+        # when an approval workflow is used, we override with the content provided by each step
+        if self.approval_workflow_state is not None:
+            for step in self.approval_workflow_state.approval_step_states.all():
+                full_survey.update(step.fill_in_survey)
+        # the admin step always override what has been set in previous steps
+        full_survey.update({k: v for k, v in {**self.admin_fill_in_survey}.items() if v is not None})
+        
+        # No password masking for AWX - return the real values
         return full_survey
 
     def clean(self):
@@ -218,8 +246,8 @@ class Request(SquestModel):
     def perform_processing(self, inventory_override=None, credentials_override=None, tags_override=None,
                            skip_tags_override=None, limit_override=None, verbosity_override=None,
                            job_type_override=None, diff_mode_override=None):
-        # get the survey with variables set by the end user and admin
-        tower_extra_vars = copy.copy(self.full_survey)
+        # get the survey with variables set by the end user and admin (without password masking for AWX)
+        tower_extra_vars = copy.copy(self._get_full_survey_for_awx())
         # add tower server extra vars
         tower_extra_vars.update(self.operation.job_template.tower_server.extra_vars)
         # add service extra vars
@@ -227,11 +255,11 @@ class Request(SquestModel):
         # add operation extra vars
         tower_extra_vars.update(self.operation.extra_vars)
         # add the current instance to extra vars
-        from service_catalog.api.serializers.request_serializers import AdminRequestSerializer
+        from service_catalog.api.serializers.request_serializers import AWXRequestSerializer
         from django.conf import settings
         tower_extra_vars["squest"] = {
             "squest_host": settings.SQUEST_HOST,
-            "request": AdminRequestSerializer(self).data
+            "request": AWXRequestSerializer(self).data
         }
 
         # load default override from the operation

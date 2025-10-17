@@ -180,3 +180,29 @@ class AdminRequestSerializer(ModelSerializer):
 
     instance = InstanceReadSerializer(read_only=True)
     user = UserSerializerNested(read_only=True)
+
+
+class AWXRequestSerializer(ModelSerializer):
+    """
+    Serializer for AWX integration that preserves original password values.
+    Unlike AdminRequestSerializer, this serializer does not mask passwords
+    and is used internally for AWX communication to maintain full functionality.
+    """
+    class Meta:
+        model = Request
+        exclude = ['periodic_task', 'periodic_task_date_expire', 'failure_message']
+
+    instance = InstanceReadSerializer(read_only=True)
+    user = UserSerializerNested(read_only=True)
+
+    def to_representation(self, instance):
+        """
+        Override to use the unmasked full_survey_for_awx instead of the masked full_survey.
+        This ensures AWX receives the real password values while keeping UI/API secure.
+        """
+        ret = super().to_representation(instance)
+        
+        # Replace the masked full_survey with the unmasked version for AWX
+        ret['full_survey'] = instance._get_full_survey_for_awx()
+        
+        return ret
