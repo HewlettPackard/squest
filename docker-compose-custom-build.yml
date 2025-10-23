@@ -1,0 +1,130 @@
+# Docker Compose per la build personalizzata
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:11.0.2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: squest
+      MYSQL_DATABASE: squest
+      MYSQL_USER: squest
+      MYSQL_PASSWORD: squest
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3.13.2-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: squest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  redis-cache:
+    image: redis:6.2.13-alpine
+    restart: always
+
+  maintenance:
+    image: squest:custom-password-masking
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment: &django-environment
+      DEBUG: "True"
+      DB_HOST: "db"
+      DB_PORT: 3306
+      RABBITMQ_HOST: "rabbitmq"
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: "rabbitmq"
+      RABBITMQ_PASSWORD: "rabbitmq"
+      RABBITMQ_VHOST: "squest"
+      REDIS_CACHE_HOST: "redis-cache"
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        python manage.py insert_default_data
+      "
+
+  django:
+    image: squest:custom-password-masking
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      maintenance:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-environment
+    expose:
+      - "8000"
+
+  celery-worker:
+    image: squest:custom-password-masking
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      maintenance:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-environment
+    command: celery -A Squest worker -l info
+
+  celery-beat:
+    image: squest:custom-password-masking
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      maintenance:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-environment
+    command: celery -A Squest beat -l info
+
+  nginx:
+    image: nginx:1.23.4-alpine
+    restart: always
+    depends_on:
+      - django
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  db_data:

@@ -1,0 +1,20 @@
+# Dockerfile personalizzato per Squest con password masking
+FROM quay.io/hewlettpackardenterprise/squest:2.8.1
+
+# Copia le nostre modifiche nel container
+COPY service_catalog/models/request.py /app/service_catalog/models/request.py
+COPY service_catalog/api/serializers/request_serializers.py /app/service_catalog/api/serializers/request_serializers.py
+COPY templates/service_catalog/request_details/approval.html /app/templates/service_catalog/request_details/approval.html
+
+# Imposta i permessi corretti
+USER root
+RUN chown -R django:django /app/service_catalog/models/request.py \
+    && chown -R django:django /app/service_catalog/api/serializers/request_serializers.py \
+    && chown -R django:django /app/templates/service_catalog/request_details/approval.html
+USER django
+
+# Ricompila i file Python se necessario
+RUN python -m compileall /app/service_catalog/models/request.py /app/service_catalog/api/serializers/request_serializers.py
+
+LABEL version="2.8.1-password-masking-v2"
+LABEL description="Squest with selective password masking for UI security while preserving AWX integration"

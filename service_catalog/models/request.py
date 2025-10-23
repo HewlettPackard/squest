@@ -148,12 +148,32 @@ class Request(SquestModel):
         
         return full_survey
 
+    @property
+    def masked_fill_in_survey(self):
+        """
+        Returns fill_in_survey with password fields masked for UI display
+        """
+        # Start with a copy of the original fill_in_survey
+        masked_survey = self.fill_in_survey.copy()
+        
+        # Mask password fields for security (UI display)
+        password_fields = []
+        for tower_survey_field in self.operation.tower_survey_fields.filter(type='password'):
+            password_fields.append(tower_survey_field.variable)
+        
+        if password_fields:
+            for password_field in password_fields:
+                if password_field in masked_survey and masked_survey[password_field]:
+                    masked_survey[password_field] = "$encrypted$"
+        
+        return masked_survey
+
     def _get_full_survey_for_awx(self):
         """
         Get the full survey without password masking for AWX integration.
         This method preserves the original password values for proper AWX functionality.
         """
-        # by default the survey is composed by what the end user provided
+        # by default the survey is composed by what the end user provided (use original, unmasked data)
         full_survey = {k: v for k, v in {**self.fill_in_survey}.items() if v is not None}
         # when an approval workflow is used, we override with the content provided by each step
         if self.approval_workflow_state is not None:

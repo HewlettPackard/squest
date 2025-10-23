@@ -18,7 +18,7 @@
             <div class="timeline-body">
                 <div class="row overflow-auto">
                     <table>
-                        {% for variable_name, value in object.fill_in_survey.items %}
+                        {% for variable_name, value in object.masked_fill_in_survey.items %}
                             <tr>
                                 <td class="col-sm-2"><b>{{ variable_name }}</b></td>
                                 <td class="col-sm-10">{{ value }}</td>
