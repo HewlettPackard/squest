@@ -1,6 +1,10 @@
 mariadb_chart_version: 20.5.6
+mariadb_chart_ref: oci://registry-1.docker.io/bitnamicharts/mariadb
 phpmyadmin_chart_version: 18.1.8
+phpmyadmin_chart_ref: oci://registry-1.docker.io/bitnamicharts/phpmyadmin
 rabbitmq_chart_version: 16.0.3
+rabbitmq_chart_ref: oci://registry-1.docker.io/bitnamicharts/rabbitmq
 redis_chart_version: 21.1.7
+redis_chart_ref: oci://registry-1.docker.io/bitnamicharts/redis
 
 

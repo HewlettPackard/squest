@@ -4,7 +4,7 @@
     name: redis
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ redis_chart_version }}"
-    chart_ref: oci://registry-1.docker.io/bitnamicharts/redis
+    chart_ref: "{{ redis_chart_ref }}"
     values: "{{ redis.helm_values }}"
 
 - when: not redis.enabled and squest_redis.existing_secret is not defined

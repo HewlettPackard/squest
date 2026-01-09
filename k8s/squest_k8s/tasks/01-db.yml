@@ -4,7 +4,7 @@
     name: mariadb
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ mariadb_chart_version }}"
-    chart_ref: oci://registry-1.docker.io/bitnamicharts/mariadb
+    chart_ref: "{{ mariadb_chart_ref }}"
     values: "{{ mariadb.helm_values }}"
 
 - when: not mariadb.enabled and squest_db.existing_secret is not defined
@@ -29,5 +29,5 @@
     name: phpmyadmin
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ phpmyadmin_chart_version }}"
-    chart_ref: oci://registry-1.docker.io/bitnamicharts/phpmyadmin
+    chart_ref: "{{ phpmyadmin_chart_ref }}"
     values: "{{ phpmyadmin.helm_values }}"
