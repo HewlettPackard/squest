@@ -4,7 +4,7 @@
     name: rabbitmq
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ rabbitmq_chart_version }}"
-    chart_ref: oci://registry-1.docker.io/bitnamicharts/rabbitmq
+    chart_ref: "{{ rabbitmq_chart_ref }}"
     values: "{{ rabbitmq.helm_values }}"
 
 - when: not rabbitmq.enabled and squest_rabbitmq.existing_secret is not defined
