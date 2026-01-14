@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from django.db.models import CharField, TextField, SET_NULL, ForeignKey, ManyToManyField, JSONField
 
+from Squest.utils.ansible_when import AnsibleWhen
 from Squest.utils.squest_model import SquestModel
 from profiles.models import Scope
-from service_catalog.models import Service
+from service_catalog.models import Service, InstanceState, Instance
 
 
 class EmailTemplate(SquestModel):
@@ -43,3 +44,35 @@ class EmailTemplate(SquestModel):
 
     def __str__(self):
         return self.name
+
+    def get_list_concerned_user(self):
+        qs_service = Service.objects.all()
+        if self.services.count() > 0:
+            qs_service = self.services.all()
+
+        instance_states = [item[0] for item in InstanceState.choices]
+        if self.instance_states:
+            instance_states = self.instance_states
+
+        qs_quota_scopes = Scope.objects.all()
+        if self.quota_scopes.count() > 0:
+            qs_quota_scopes = self.quota_scopes.all()
+
+        qs_instance = Instance.objects.filter(service__in=qs_service,
+                                              state__in=instance_states,
+                                              quota_scope__in=qs_quota_scopes)
+
+        if self.when:
+            for instance in qs_instance.all():
+                if not self.when_render(self.when, instance):
+                    qs_instance = qs_instance.exclude(id=instance.id)
+
+        return User.objects.filter(instance__in=qs_instance).distinct()
+
+    @staticmethod
+    def when_render(when, instance):
+        from service_catalog.api.serializers import InstanceSerializer
+        context = {
+            "instance": InstanceSerializer(instance).data
+        }
+        return AnsibleWhen.when_render(context=context, when_string=when)
