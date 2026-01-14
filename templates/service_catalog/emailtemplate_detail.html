@@ -84,6 +84,25 @@
 
                     </div>
                 </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-envelope"></i> Corresponding users
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                {% for user in object.get_list_concerned_user %}
+                                {{ user.email }}<br>
+                                {% empty %}
+                                    <p>No user will receive this email.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </section>
         </div>
     </div>
