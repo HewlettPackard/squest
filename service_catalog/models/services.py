@@ -61,7 +61,10 @@ class Service(SquestModel):
         if self.extra_vars is None or not isinstance(self.extra_vars, dict):
             raise ValidationError({'extra_vars': _("Please enter a valid JSON. Empty value is {} for JSON.")})
 
-    def bulk_set_permission_on_operation(self, target_permission):
+    def bulk_set_permission_on_operation(self, target_permission_id):
+        if target_permission_id == "set_at_operation_level":
+            return
+        target_permission = Permission.objects.get(id=target_permission_id)
         from service_catalog.models import Operation
         logger.debug(f"Bulk edit permission on service {self.name} to permission {target_permission}")
         # check if all permission are already set to the target perm
