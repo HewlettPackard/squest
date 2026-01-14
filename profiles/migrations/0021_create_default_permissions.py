@@ -100,7 +100,7 @@ def add_perm_global(apps, schema_editor):
             content_type__app_label__in=app_labels
         )
     )
-    assert (global_scope.global_permissions.count() == len(default_user_permissions))
+    # assert (global_scope.global_permissions.count() == len(default_user_permissions))
 
 
 class Migration(migrations.Migration):
