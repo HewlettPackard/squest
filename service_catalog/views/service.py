@@ -10,8 +10,8 @@ from service_catalog.tables.service_tables import ServiceTable
 
 def get_breadcrumbs_for_service(service=None):
     breadcrumbs = [
-            {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
-            {'text': 'Service', 'url': reverse('service_catalog:service_list')}
+        {'text': 'Service catalog', 'url': reverse('service_catalog:service_catalog_list')},
+        {'text': 'Service', 'url': reverse('service_catalog:service_list')}
     ]
     if service is not None:
         breadcrumbs.append({'text': service, 'url': service.get_absolute_url()})
@@ -40,7 +40,7 @@ class ServiceListView(SquestListView):
                                                                                    permission.permission_str)
         # restrict to only the selected service
         service_ids = operation_qs.filter(enabled=True,
-                                           type__in=[OperationType.CREATE]).values_list('service__id', flat=True)
+                                          type__in=[OperationType.CREATE]).values_list('service__id', flat=True)
         return Service.objects.filter(id__in=service_ids)
 
 
