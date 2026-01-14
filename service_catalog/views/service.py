@@ -28,10 +28,13 @@ class ServiceListView(SquestListView):
         return context
 
     def get_queryset(self):
-        # get all create and enabled permission for current selected service
+        # if the user is a superuser or has the permission edit on operation, return all services
+        if self.request.user.is_superuser or self.request.user.has_perm("service_catalog.edit_operation"):
+            return Service.objects.all()
+
         all_permission_current_service = Permission.objects.filter(operation__enabled=True,
-                                                                   operation__type__in=[
-                                                                       OperationType.CREATE]).distinct()
+                                                                       operation__type__in=[
+                                                                           OperationType.CREATE]).distinct()
         # Init empty queryset to be returned
         operation_qs = Operation.objects.none()
         for permission in all_permission_current_service.all():
