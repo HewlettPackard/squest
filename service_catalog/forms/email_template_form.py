@@ -31,28 +31,7 @@ class EmailTemplateSendForm(SquestForm):
         self.email_template = kwargs.pop("email_template")
         super(EmailTemplateSendForm, self).__init__(*args, **kwargs)
 
-        qs_service = Service.objects.all()
-        if self.email_template.services.count() > 0:
-            qs_service = self.email_template.services.all()
-
-        instance_states = [item[0] for item in InstanceState.choices]
-        if self.email_template.instance_states:
-            instance_states = self.email_template.instance_states
-
-        qs_quota_scopes = Scope.objects.all()
-        if self.email_template.quota_scopes.count() > 0:
-            qs_quota_scopes = self.email_template.quota_scopes.all()
-
-        qs_instance = Instance.objects.filter(service__in=qs_service,
-                                              state__in=instance_states,
-                                              quota_scope__in=qs_quota_scopes)
-
-        if self.email_template.when:
-            for instance in qs_instance.all():
-                if not self.when_render(self.email_template.when, instance):
-                    qs_instance = qs_instance.exclude(id=instance.id)
-
-        limit_users = User.objects.filter(instance__in=qs_instance).distinct()
+        limit_users = self.email_template.get_list_concerned_user()
 
         self.fields["users"] = TypedMultipleChoiceField(
             label="User emails",
@@ -64,14 +43,6 @@ class EmailTemplateSendForm(SquestForm):
             widget=SelectMultiple(
                 attrs={'class': 'form-control selectpicker', 'data-live-search': 'true'})
         )
-
-    @staticmethod
-    def when_render(when, instance):
-        from service_catalog.api.serializers import InstanceSerializer
-        context = {
-            "instance": InstanceSerializer(instance).data
-        }
-        return AnsibleWhen.when_render(context=context, when_string=when)
 
     def save(self):
         user_id_list = self.cleaned_data.get('users')
