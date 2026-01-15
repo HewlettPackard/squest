@@ -1,11 +1,16 @@
+charts_registry_name: registry-1.docker.io
+charts_repository_name: bitnamicharts
+image_registry_name: docker.io
+image_repository_name: bitnamilegacy
+
 mariadb_chart_version: 20.5.6
-mariadb_chart_ref: oci://registry-1.docker.io/bitnamicharts/mariadb
+mariadb_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name }}/mariadb"
 phpmyadmin_chart_version: 18.1.8
-phpmyadmin_chart_ref: oci://registry-1.docker.io/bitnamicharts/phpmyadmin
+phpmyadmin_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name }}/phpmyadmin"
 rabbitmq_chart_version: 16.0.3
-rabbitmq_chart_ref: oci://registry-1.docker.io/bitnamicharts/rabbitmq
+rabbitmq_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name }}/rabbitmq"
 redis_chart_version: 21.1.7
-redis_chart_ref: oci://registry-1.docker.io/bitnamicharts/redis
+redis_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name }}/redis"
 
 waitfor_image: ghcr.io/groundnuty/k8s-wait-for:v2.0
 nginx_image: nginx:1.23.4-alpine
