@@ -1,4 +1,16 @@
-# 2.8.1 2024-06-06
+# 2.8.2 2026-01-19
+
+## Fix
+
+- permission "OVERWRITTEN BY OPERATION" when saving a service is now accepted by the form
+- admin are now able to see disabled services in service list
+
+## Enhancement
+
+- add aap_environment field to support AAP compatibility
+- Show list of impacted users of an email template
+
+# 2.8.1 2025-06-06
 
 ## Fix
 
@@ -8,7 +20,7 @@
 
 - Celery beat now re-schedule a check of the state of all PROCESSING jobs
 
-# 2.8.0 2024-06-02
+# 2.8.0 2025-06-02
 
 ## Breaking changes ⚠
 

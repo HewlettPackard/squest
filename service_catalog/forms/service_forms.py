@@ -25,7 +25,7 @@ class ServiceForm(SquestModelForm):
             # set permission field. If one operation in the service is not using the default
             all_permission_current_service = Permission.objects.filter(operation__service=self.instance).distinct()
             if all_permission_current_service.count() > 1:
-                set_at_operation_level = ("set_at_operation_level","OVERRIDDEN AT OPERATION LEVEL")
+                set_at_operation_level = ("set_at_operation_level","OVERWRITTEN AT OPERATION LEVEL")
                 self.fields["permission"].choices = list(self.fields['permission'].choices) + [set_at_operation_level]
                 self.fields["permission"].initial = set_at_operation_level
         else:
