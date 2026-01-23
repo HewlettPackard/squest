@@ -12,5 +12,4 @@ rabbitmq_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name 
 redis_chart_version: 21.1.7
 redis_chart_ref: "oci://{{ charts_registry_name }}/{{ charts_repository_name }}/redis"
 
-waitfor_image: ghcr.io/groundnuty/k8s-wait-for:v2.0
 nginx_image: nginx:1.23.4-alpine
