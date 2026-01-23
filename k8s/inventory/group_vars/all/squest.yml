@@ -28,7 +28,7 @@ squest_redis:
 
 # Django
 squest_django:
-  image: "quay.io/hewlettpackardenterprise/squest:latest"
+  image: "{{ django_image }}"
   extra_labels: {}
   ingress:
     enabled: true
