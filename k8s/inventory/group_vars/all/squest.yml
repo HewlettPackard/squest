@@ -91,6 +91,12 @@ mariadb:
   # -- enable integrated MariaDB™ subchart from Bitnami
   enabled: true
   helm_values:
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: "{{ image_registry_name }}"
+      repository: "{{ image_repository_name }}/mariadb"
     auth:
       # -- The database name to be used when using the integrated MariaDB database.
       database: squest
@@ -105,6 +111,12 @@ mariadb:
 phpmyadmin:
   enabled: true
   helm_values:
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: "{{ image_registry_name }}"
+      repository: "{{ image_repository_name }}/phpmyadmin"
     ingress:
       enabled: true
       hostname: "phpmyadmin.{{ k8s_cluster_fqdn }}"
@@ -118,7 +130,12 @@ rabbitmq:
   enabled: true
   helm_values:
     global:
+      security:
+        allowInsecureImages: true
       storageClass: "{{ k8s_storage_class }}"
+    image:
+      registry: "{{ image_registry_name }}"
+      repository: "{{ image_repository_name }}/rabbitmq"
     auth:
       username: "{{ squest_rabbitmq.user }}"
       password: "{{ squest_rabbitmq.password }}"
@@ -161,6 +178,12 @@ rabbitmq:
 redis:
   enabled: true
   helm_values:
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: "{{ image_registry_name }}"
+      repository: "{{ image_repository_name }}/redis"
     architecture: standalone
     auth:
       password: squest
