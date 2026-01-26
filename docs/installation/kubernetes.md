@@ -18,6 +18,7 @@ The Kubernetes deployment is wrapped by Ansible. The code has been tested with A
 #### Python
 
 Install Python dependencies:
+
 ```bash
 pip3 install -r k8s/requirements.txt
 ```
@@ -36,14 +37,14 @@ Operators installation is handled by Helm. Follow [the official documentation](h
 
 ### Ansible inventory
 
-An example inventory file is present in `k8s/inventory/group_vars/all/squest.yml`.
+Defaults variables are defined in `k8s/squest_k8s/defaults/main.yml`. You might override these in your ansible inventory.
 
-For a minimal installation  you need to at least provide information concerning your Kubernetes environment
+For a minimal installation, you need to at least provide information concerning your Kubernetes environment:
 ```yaml
-k8s_kubeconfig_path: "/path/to/kubeconfig"
-k8s_cluster_fqdn: "k8s.domain.local"
-squest_namespace: "squest"
-k8s_storage_class: "thin"
+squest_k8s_kubeconfig_path: "/path/to/kubeconfig"
+squest_k8s_cluster_fqdn: "k8s.domain.local"
+squest_k8s_namespace: "squest"
+squest_k8s_storage_class: "thin"
 ```
 
 ### Deploy Squest using Ansible
@@ -52,7 +53,7 @@ Run the `deploy` playbook against your inventory config file:
 
 ```bash
 cd k8s
-ansible-playbook -v -i inventory deploy.yml
+ansible-playbook -v -i <path_to_your_inventory> deploy.yml
 ```
 
 **Tags:**
@@ -104,7 +105,7 @@ squest_django:
 
 LDAP can be configured using environment variable. For very specific use case you may need to inject a custom `ldap_config.py`.
 ```yaml
-squest_django:  
+squest_django:
   ldap:  # extra ldap config
     enabled: true  # this will create a config map for ldap_config.py
     ldap_config_file: "{{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}"  # we mount by default the file provided in squest core code
