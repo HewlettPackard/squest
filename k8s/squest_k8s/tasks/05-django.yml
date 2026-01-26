@@ -1,6 +1,6 @@
 - name: Create a service account for Squest
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     state: present
     definition:
       kind: ServiceAccount
@@ -14,7 +14,7 @@
 
 - name: Create a role allowed to get info on jobs
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     state: present
     definition:
       kind: Role
@@ -36,7 +36,7 @@
 
 - name: Link Squest service account to role
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     state: present
     definition:
       kind: RoleBinding
@@ -56,7 +56,7 @@
 
 - name: Django env as config map
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     apply: true
     definition:
       apiVersion: v1
@@ -71,13 +71,13 @@
 - when: squest_django.env_secrets is defined
   name: Create generic secrets
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition: "{{ lookup('template', 'squest_secrets.yaml') | from_yaml }}"
 
 - name: Persistent volume for static, media and backup
   loop: "{{ squest_django.pvc | dict2items }}"
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     state: present
     definition:
       apiVersion: v1
@@ -100,7 +100,7 @@
     api_version: v1
     kind: Pod
     name: "mariadb-0"
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     wait: true
     wait_sleep: 5
     wait_timeout: 120
@@ -111,7 +111,7 @@
 - name: Django database migration job
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: batch/v1
       kind: Job
@@ -168,7 +168,7 @@
     api_version: "batch/v1"
     kind: Job
     name: "django-migrations"
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     wait: true
     wait_sleep: 10
     wait_timeout: 600
@@ -179,12 +179,12 @@
 - name: Nginx config
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        namespace: "{{ squest_namespace }}"
+        namespace: "{{ squest_k8s_namespace }}"
         labels:
           app: squest
           service: nginx
@@ -196,7 +196,7 @@
   name: LDAP config
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: v1
       kind: ConfigMap
@@ -211,19 +211,19 @@
           {{ squest_django.ldap.ldap_config_file }}
           {% else %}
           {{ lookup('file', playbook_dir + '/../Squest/ldap_config.py') }}
-          {% endif %}            
+          {% endif %}
 
 - name: Deploy Django app
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     apply: true
     definition: "{{ lookup('template', 'django.deployment.yaml') | from_yaml }}"
 
 - name: Django service
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       kind: Service
       apiVersion: v1
@@ -242,7 +242,7 @@
   name: Squest ingress
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: networking.k8s.io/v1
       kind: Ingress
@@ -271,7 +271,7 @@
     api_version: "apps/v1"
     kind: Deployment
     name: "django"
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     wait: true
     wait_sleep: 10
     wait_timeout: 600
