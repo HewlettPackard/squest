@@ -5,7 +5,7 @@
     release_namespace: "{{ squest_namespace }}"
     chart_version: "{{ rabbitmq_chart_version }}"
     chart_ref: "{{ rabbitmq_chart_ref }}"
-    values: "{{ rabbitmq.helm_values }}"
+    values: "{{ rabbitmq.helm_values | to_nice_json(indent=2) }}"
 
 - when: not rabbitmq.enabled and squest_rabbitmq.existing_secret is not defined
   name: Create a secret for rabbitmq
