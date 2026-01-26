@@ -70,7 +70,7 @@ spec:
               name: ldap-config
 {% endif %}
         - name: nginx
-          image: "{{ nginx_image }}"
+          image: "{{ squest_nginx_image }}"
           command: ["nginx", "-c", "/etc/nginx/squest/nginx.conf"]
           ports:
             - containerPort: 8080
