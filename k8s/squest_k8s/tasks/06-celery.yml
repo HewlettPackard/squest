@@ -1,7 +1,7 @@
 - name: Deploy celery worker
   kubernetes.core.k8s:
     apply: true
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition: "{{ lookup('template', 'celery.deployment.yaml') | from_yaml }}"
   vars:
     celery_name: "celery-worker"
@@ -10,7 +10,7 @@
 - name: Deploy celery beat
   kubernetes.core.k8s:
     apply: true
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition: "{{ lookup('template', 'celery.deployment.yaml') | from_yaml }}"
   vars:
     celery_name: "celery-beat"

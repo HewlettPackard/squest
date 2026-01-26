@@ -2,7 +2,7 @@
   name: Squest backup
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: batch/v1
       kind: CronJob
@@ -64,7 +64,7 @@
     - name: Create a secret with the private ssh key
       kubernetes.core.k8s:
         state: present
-        namespace: "{{ squest_namespace }}"
+        namespace: "{{ squest_k8s_namespace }}"
         definition:
           apiVersion: v1
           kind: Secret
@@ -80,7 +80,7 @@
     - name: Create a cronjob for rsync external copy
       kubernetes.core.k8s:
         state: present
-        namespace: "{{ squest_namespace }}"
+        namespace: "{{ squest_k8s_namespace }}"
         definition:
           apiVersion: batch/v1
           kind: CronJob

@@ -11,25 +11,25 @@
   gather_facts: true
   module_defaults:
     kubernetes.core.k8s:
-      kubeconfig: "{{ k8s_kubeconfig_path }}"
+      kubeconfig: "{{ squest_k8s_kubeconfig_path }}"
     kubernetes.core.k8s_info:
-      kubeconfig: "{{ k8s_kubeconfig_path }}"
+      kubeconfig: "{{ squest_k8s_kubeconfig_path }}"
 
   tasks:
 
-    - when: k8s_kubeconfig_path is undefined
-      name: 'Fail if k8s_kubeconfig_path is not defined'
+    - when: squest_k8s_kubeconfig_path is undefined
+      name: 'Fail if squest_k8s_kubeconfig_path is not defined'
       ansible.builtin.fail:
-        msg: 'Please make sure you set k8s_kubeconfig_path'
+        msg: 'Please make sure you set squest_k8s_kubeconfig_path'
 
     - name: Generate job name
       ansible.builtin.set_fact:
-        job_name: "backup-{{ ansible_date_time.iso8601_basic_short }}"
+        squest_k8s_job_name: "backup-{{ ansible_date_time.iso8601_basic_short }}"
 
     - name: Create Job from backup cronjob
-      ansible.builtin.command: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-backup {{ job_name }}"
+      ansible.builtin.command: "kubectl --namespace {{ squest_k8s_namespace }} create job --from=cronjob/squest-backup {{ squest_k8s_job_name }}"
       environment:
-        KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+        KUBECONFIG: "{{ squest_k8s_kubeconfig_path }}"
       register: register_backup
       failed_when:
         - register_backup.rc != 0
@@ -39,8 +39,8 @@
       kubernetes.core.k8s_info:
         api_version: "batch/v1"
         kind: Job
-        name: "{{ job_name }}"
-        namespace: "{{ squest_namespace }}"
+        name: "{{ squest_k8s_job_name }}"
+        namespace: "{{ squest_k8s_namespace }}"
         wait: true
         wait_sleep: 10
         wait_timeout: 120
@@ -53,12 +53,12 @@
       block:
         - name: Generate job name
           ansible.builtin.set_fact:
-            job_name: "rsync-backup-{{ ansible_date_time.iso8601_basic_short }}"
+            squest_k8s_job_name: "rsync-backup-{{ ansible_date_time.iso8601_basic_short }}"
 
         - name: Create Job from rsync backup cronjob
-          ansible.builtin.command: "kubectl --namespace {{ squest_namespace }} create job --from=cronjob/squest-rsync-backup {{ job_name }}"
+          ansible.builtin.command: "kubectl --namespace {{ squest_k8s_namespace }} create job --from=cronjob/squest-rsync-backup {{ squest_k8s_job_name }}"
           environment:
-            KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+            KUBECONFIG: "{{ squest_k8s_kubeconfig_path }}"
           register: register_backup
           failed_when:
             - register_backup.rc != 0
@@ -68,8 +68,8 @@
           kubernetes.core.k8s_info:
             api_version: "batch/v1"
             kind: Job
-            name: "{{ job_name }}"
-            namespace: "{{ squest_namespace }}"
+            name: "{{ squest_k8s_job_name }}"
+            namespace: "{{ squest_k8s_namespace }}"
             wait: true
             wait_sleep: 10
             wait_timeout: 120

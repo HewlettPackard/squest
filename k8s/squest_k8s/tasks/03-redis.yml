@@ -1,16 +1,16 @@
-- when: redis.enabled
+- when: squest_redis.enabled
   name: Install Redis Helm chart
   kubernetes.core.helm:
     name: redis
-    release_namespace: "{{ squest_namespace }}"
-    chart_version: "{{ redis_chart_version }}"
-    chart_ref: "{{ redis_chart_ref }}"
-    values: "{{ redis.helm_values }}"
+    release_namespace: "{{ squest_k8s_namespace }}"
+    chart_version: "{{ squest_redis_chart_version }}"
+    chart_ref: "{{ squest_redis_chart_ref }}"
+    values: "{{ squest_redis.helm_values }}"
 
-- when: not redis.enabled and squest_redis.existing_secret is not defined
+- when: not squest_redis.enabled and squest_redis.existing_secret is not defined
   name: Create a secret for redis
   kubernetes.core.k8s:
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       kind: Secret
       apiVersion: v1
@@ -20,4 +20,4 @@
           app: squest
           service: redis
       data:
-        redis-password: "{{ squest_redis.password | b64encode }}"
+        redis-password: "{{ squest_redis_secret.password | b64encode }}"

@@ -1,12 +1,12 @@
 - name: Nginx maintenance config
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        namespace: "{{ squest_namespace }}"
+        namespace: "{{ squest_k8s_namespace }}"
         labels:
           app: squest
           service: maintenance
@@ -20,7 +20,7 @@
 - name: Deploy maintenance static page
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -45,7 +45,7 @@
           spec:
             containers:
               - name: nginx
-                image: "{{ nginx_image }}"
+                image: "{{ squest_nginx_image }}"
                 ports:
                   - containerPort: 80
                 volumeMounts:
@@ -74,7 +74,7 @@
 - name: Maintenance service
   kubernetes.core.k8s:
     state: present
-    namespace: "{{ squest_namespace }}"
+    namespace: "{{ squest_k8s_namespace }}"
     definition:
       kind: Service
       apiVersion: v1
