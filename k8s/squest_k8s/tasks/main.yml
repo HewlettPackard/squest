@@ -1,4 +1,4 @@
-- when: squest_create_namespace | bool
+- when: squest_k8s_create_namespace | bool
   name: Create a dedicated namespace for Squest
   kubernetes.core.k8s:
     state: present
@@ -6,7 +6,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ squest_namespace }}"
+        name: "{{ squest_k8s_namespace }}"
   tags: ["namespace"]
 
 - name: Squest db
