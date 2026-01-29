@@ -82,6 +82,33 @@ squest_rabbitmq_secret:
   # existing_secret: secret_name
 
 # RabbitMQ Bitnami chart https://artifacthub.io/packages/helm/bitnami/rabbitmq
+squest_rabbitmq_extra_secrets_load_definitions: |
+  {
+    "users": [
+      {
+        "name": "{{ squest_rabbitmq_secret.user }}",
+        "password": "{{ squest_rabbitmq_secret.password }}",
+        "tags": "administrator"
+      }
+    ],
+    "vhosts": [
+      {
+        "name": "/"
+      },
+      {
+        "name": "squest"
+      }
+    ],
+    "permissions":[
+      {
+          "user": "{{ squest_rabbitmq_secret.user }}",
+          "vhost": "squest",
+          "configure": ".*",
+          "read": ".*",
+          "write": ".*"
+      }
+    ]
+  }
 squest_rabbitmq:
   enabled: true
   helm_values:
@@ -97,6 +124,7 @@ squest_rabbitmq:
       password: "{{ squest_rabbitmq_secret.password }}"
     extraSecrets:
       load-definition:
+        load_definition.json: "{{ squest_rabbitmq_extra_secrets_load_definitions | to_nice_json(indent=2) }}"
         load_definition.json: |
           {
             "users": [
