@@ -125,33 +125,6 @@ squest_rabbitmq:
     extraSecrets:
       load-definition:
         load_definition.json: "{{ squest_rabbitmq_extra_secrets_load_definitions | to_nice_json(indent=2) }}"
-        load_definition.json: |
-          {
-            "users": [
-              {
-                "name": "rabbitmq",
-                "password": "rabbitmq",
-                "tags": "administrator"
-              }
-            ],
-            "vhosts": [
-              {
-                "name": "/"
-              },
-              {
-                "name": "squest"
-              }
-            ],
-            "permissions":[
-              {
-                  "user": "rabbitmq",
-                  "vhost": "squest",
-                  "configure": ".*",
-                  "read": ".*",
-                  "write": ".*"
-              }
-            ]
-          }
     loadDefinition:
       enabled: true
       existingSecret: load-definition
