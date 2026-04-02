@@ -1,3 +1,11 @@
+# 2.8.3 2026-04-02
+
+## Enhancement
+
+- Enhance K8S deployment
+- Support for multiple social providers (full python-social-auth integration)
+- Speed up testing
+
 # 2.8.2 2026-01-19
 
 ## Fix
