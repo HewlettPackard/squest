@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 import os
 import sys
 from pathlib import Path
@@ -17,64 +18,73 @@ from Squest.version import __version__
 
 from celery.schedules import crontab
 
-from service_catalog.utils import str_to_bool, get_mysql_dump_major_version, \
-    get_celery_crontab_parameters_from_crontab_line
+from service_catalog.utils import (
+    str_to_bool,
+    get_mysql_dump_major_version,
+    get_celery_crontab_parameters_from_crontab_line,
+)
 
 # LOAD configuration from the environment
 
 # Django
-SECRET_KEY = os.environ.get('SECRET_KEY', 'sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-')
-DEBUG = str_to_bool(os.getenv('DEBUG', True))
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8080,http://localhost:8080').split(',')
-GUNICORN_WORKERS = os.environ.get('GUNICORN_WORKERS', '4')
-SQL_DEBUG = str_to_bool(os.environ.get('SQL_DEBUG', False))
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "sxuxahnezvrrea2vp97et=q(3xmg6nk4on92+-+#_s!ikurbh-"
+)
+DEBUG = str_to_bool(os.getenv("DEBUG", True))
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8080,http://localhost:8080"
+).split(",")
+GUNICORN_WORKERS = os.environ.get("GUNICORN_WORKERS", "4")
+SQL_DEBUG = str_to_bool(os.environ.get("SQL_DEBUG", False))
 
 # Database
-DB_DATABASE = os.environ.get('DB_DATABASE', 'squest_db')
-DB_USER = os.environ.get('DB_USER', 'squest_user')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', 'squest_password')
-DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
-DB_PORT = os.environ.get('DB_PORT', '3306')
+DB_DATABASE = os.environ.get("DB_DATABASE", "squest_db")
+DB_USER = os.environ.get("DB_USER", "squest_user")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "squest_password")
+DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+DB_PORT = os.environ.get("DB_PORT", "3306")
 
 # Authentication
-LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
+LDAP_ENABLED = str_to_bool(os.environ.get("LDAP_ENABLED", False))
 SOCIAL_AUTH_OIDC_ENABLED = str_to_bool(os.environ.get('SOCIAL_AUTH_OIDC_ENABLED', False))
-SOCIAL_AUTH_OIDC_BTN_TEXT = os.environ.get('SOCIAL_AUTH_OIDC_BTN_TEXT', 'OpenID Login')
-SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = os.environ.get('SOCIAL_AUTH_OIDC_OIDC_ENDPOINT', '')
-SOCIAL_AUTH_OIDC_KEY = os.environ.get('SOCIAL_AUTH_OIDC_KEY', '')
-SOCIAL_AUTH_OIDC_SECRET = os.environ.get('SOCIAL_AUTH_OIDC_SECRET', '')
-PASSWORD_ENABLED = str_to_bool(os.environ.get('PASSWORD_ENABLED', True))
-DEFAULT_ADMIN_TOKEN = os.environ.get('DEFAULT_ADMIN_TOKEN', None)
-DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', None)
-LOGIN_HELPER_TEXT = os.environ.get('LOGIN_HELPER_TEXT', None)
+PASSWORD_ENABLED = str_to_bool(os.environ.get("PASSWORD_ENABLED", True))
+DEFAULT_ADMIN_TOKEN = os.environ.get("DEFAULT_ADMIN_TOKEN", None)
+DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD", None)
+LOGIN_HELPER_TEXT = os.environ.get("LOGIN_HELPER_TEXT", None)
 
 # Backup
-BACKUP_ENABLED = str_to_bool(os.environ.get('BACKUP_ENABLED', False))
-BACKUP_CRONTAB = os.environ.get('BACKUP_CRONTAB', "0 1 * * *")  # every day at 1 AM
+BACKUP_ENABLED = str_to_bool(os.environ.get("BACKUP_ENABLED", False))
+BACKUP_CRONTAB = os.environ.get("BACKUP_CRONTAB", "0 1 * * *")  # every day at 1 AM
 
 # Redis cache
-REDIS_CACHE_USER = os.environ.get('REDIS_CACHE_USER', 'default')
-REDIS_CACHE_PASSWORD = os.environ.get('REDIS_CACHE_PASSWORD', 'redis_secret_password')
-REDIS_CACHE_HOST = os.environ.get('REDIS_CACHE_HOST', '127.0.0.1')
-REDIS_CACHE_PORT = os.environ.get('REDIS_CACHE_PORT', '6379')
+REDIS_CACHE_USER = os.environ.get("REDIS_CACHE_USER", "default")
+REDIS_CACHE_PASSWORD = os.environ.get("REDIS_CACHE_PASSWORD", "redis_secret_password")
+REDIS_CACHE_HOST = os.environ.get("REDIS_CACHE_HOST", "127.0.0.1")
+REDIS_CACHE_PORT = os.environ.get("REDIS_CACHE_PORT", "6379")
 
 # Squest app
-MAINTENANCE_MODE_ENABLED = str_to_bool(os.environ.get('MAINTENANCE_MODE_ENABLED', False))
-DATE_FORMAT = os.environ.get('DATE_FORMAT', "%d %b, %Y  %H:%M")
-IS_DEV_SERVER = str_to_bool(os.environ.get('IS_DEV_SERVER', False))
-DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(os.environ.get('DOC_IMAGES_CLEANUP_ENABLED', False))
-DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get('DOC_IMAGES_CLEANUP', "30 1 * * *")  # every day at 1:30 AM.
+MAINTENANCE_MODE_ENABLED = str_to_bool(
+    os.environ.get("MAINTENANCE_MODE_ENABLED", False)
+)
+DATE_FORMAT = os.environ.get("DATE_FORMAT", "%d %b, %Y  %H:%M")
+IS_DEV_SERVER = str_to_bool(os.environ.get("IS_DEV_SERVER", False))
+DOC_IMAGES_CLEANUP_ENABLED = str_to_bool(
+    os.environ.get("DOC_IMAGES_CLEANUP_ENABLED", False)
+)
+DOC_IMAGES_CLEANUP_CRONTAB = os.environ.get(
+    "DOC_IMAGES_CLEANUP", "30 1 * * *"
+)  # every day at 1:30 AM.
 
 # -------------------------------
 # SQUEST CONFIG
 # -------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-TESTING = sys.argv[1:2] == ['test']
-IS_COLLECTING_STATIC = sys.argv[1:2] == ['collectstatic']
-IS_MAKING_MIGRATION = sys.argv[1:2] == ['makemigrations']
-IS_MIGRATING = sys.argv[1:2] == ['migrate']
-IS_INSERTING_DEFAULT_DATA = sys.argv[1:2] == ['insert_default_data']
+TESTING = sys.argv[1:2] == ["test"]
+IS_COLLECTING_STATIC = sys.argv[1:2] == ["collectstatic"]
+IS_MAKING_MIGRATION = sys.argv[1:2] == ["makemigrations"]
+IS_MIGRATING = sys.argv[1:2] == ["migrate"]
+IS_INSERTING_DEFAULT_DATA = sys.argv[1:2] == ["insert_default_data"]
 IS_GUNICORN_EXECUTION = False
 if "gunicorn" in sys.argv[0]:
     IS_GUNICORN_EXECUTION = True
@@ -103,112 +113,103 @@ if DEBUG:
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'django_celery_results',
-    'django_celery_beat',
-    'tempus_dominus',
-    'django_node_assets',
-    'django_filters',
-    'drf_yasg',
-    'taggit',
-    'martor',
-    'django_tables2',
-    'dbbackup',
-    'service_catalog',
-    'resource_tracker_v2',
-    'profiles',
-    'monitoring',
-    'cachalot',
-    'django_cleanup.apps.CleanupConfig',  # should stay last to override delete method of our model
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "django_celery_results",
+    "django_celery_beat",
+    "tempus_dominus",
+    "django_node_assets",
+    "django_filters",
+    "drf_yasg",
+    "taggit",
+    "martor",
+    "django_tables2",
+    "dbbackup",
+    "service_catalog",
+    "resource_tracker_v2",
+    "profiles",
+    "monitoring",
+    "cachalot",
+    "django_cleanup.apps.CleanupConfig",  # should stay last to override delete method of our model
 ]
-
-if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
-    INSTALLED_APPS += [
-        'social_django'
-    ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Squest.middleware.maintenance.MaintenanceMiddleware'
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "Squest.middleware.maintenance.MaintenanceMiddleware",
 ]
 
-ROOT_URLCONF = 'Squest.urls'
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-TEMPLATES_DIR = str(BASE_DIR) + os.sep + 'templates'
+ROOT_URLCONF = "Squest.urls"
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+TEMPLATES_DIR = str(BASE_DIR) + os.sep + "templates"
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [TEMPLATES_DIR],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
-    TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
-    TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
-
-WSGI_APPLICATION = 'Squest.wsgi.application'
+WSGI_APPLICATION = "Squest.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': "django.db.backends.mysql",
-        'NAME': DB_DATABASE,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {'charset': 'utf8mb4'}
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": DB_DATABASE,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+        "OPTIONS": {"charset": "utf8mb4"},
     },
-    'psql': {
-        'ENGINE': "django.db.backends.postgresql",
-        'NAME': DB_DATABASE,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-    }
+    "psql": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_DATABASE,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+    },
 }
 
-DATABASE_ROUTERS = ['Squest.db_router.DbRouter']
+DATABASE_ROUTERS = ["Squest.db_router.DbRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -224,77 +225,71 @@ if LDAP_ENABLED:
 # do not use LDAP auth when testing
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    'Squest.utils.squest_rbac.SquestRBACBackend',
+    "Squest.utils.squest_rbac.SquestRBACBackend",
 ]
 if LDAP_ENABLED and not TESTING:
     AUTHENTICATION_BACKENDS = (
-        'django.contrib.auth.backends.ModelBackend',
-        'django_auth_ldap.backend.LDAPBackend',
-        'Squest.utils.squest_rbac.SquestRBACBackend',
-    )
-if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
-    AUTHENTICATION_BACKENDS = (
-        'django.contrib.auth.backends.ModelBackend',
-        'social_core.backends.open_id_connect.OpenIdConnectAuth',
-        'Squest.utils.squest_rbac.SquestRBACBackend',
+        "django.contrib.auth.backends.ModelBackend",
+        "django_auth_ldap.backend.LDAPBackend",
+        "Squest.utils.squest_rbac.SquestRBACBackend",
     )
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
-TIME_ZONE = os.environ.get('TIME_ZONE', 'Europe/Paris')
+LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en-us")
+TIME_ZONE = os.environ.get("TIME_ZONE", "Europe/Paris")
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
 
 # -----------------------------------------
 # Static files https://docs.djangoproject.com/en/3.1/howto/static-files/
 # -----------------------------------------
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'project-static')  # project statics
+    os.path.join(BASE_DIR, "project-static")  # project statics
 ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 # -----------------------------------------
 # NODE CONFIG https://github.com/whitespy/django-node-assets
 # -----------------------------------------
 STATICFILES_FINDERS = [
-    'django_node_assets.finders.NodeModulesFinder',
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    "django_node_assets.finders.NodeModulesFinder",
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-NODE_PACKAGE_JSON = os.path.join(BASE_DIR, 'package.json')
-NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
+NODE_PACKAGE_JSON = os.path.join(BASE_DIR, "package.json")
+NODE_MODULES_ROOT = os.path.join(BASE_DIR, "node_modules")
 
 # -----------------------------------------
 # LOGGING CONFIG
 # -----------------------------------------
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
             # 'format': '{pathname}:{lineno} {levelname} {asctime} {module} {message}',
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
         "mail_admins": {
             "level": "ERROR",
@@ -302,51 +297,59 @@ LOGGING = {
             "include_html": True,
         },
     },
-    'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': "DEBUG",
+    "loggers": {
+        "": {
+            "handlers": ["console"],
+            "level": "DEBUG",
         },
-        'graphviz': {
-            'handlers': ['console'],
-            'level': "INFO",
-        }
+        "graphviz": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
     },
 }
 
 # -----------------------------------------
 # CELERY CONFIG
 # -----------------------------------------
-RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'rabbitmq')
-RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'rabbitmq')
-RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'localhost')
-RABBITMQ_PORT = os.environ.get('RABBITMQ_PORT', '5672')
-RABBITMQ_VHOST = os.environ.get('RABBITMQ_VHOST', 'squest')
+RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "rabbitmq")
+RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "rabbitmq")
+RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
+RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
+RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "squest")
 CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
 print(f"CELERY_BROKER_URL: {CELERY_BROKER_URL}")
 # Add a five-minutes timeout to all Celery tasks.
 CELERY_TASK_ALWAYS_EAGER = TESTING
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_BEAT_SCHEDULER = 'service_catalog.celery_beat_scheduler.DatabaseSchedulerWithCleanup'
+CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_BEAT_SCHEDULER = (
+    "service_catalog.celery_beat_scheduler.DatabaseSchedulerWithCleanup"
+)
 CELERY_BEAT_SCHEDULE = {}
 
 # -----------------------------------------
 # Squest email config
 # -----------------------------------------
-ADMINS = [("", element) for element in os.environ.get('SQUEST_ADMINS', '').split(',') if element]
-SQUEST_HOST = os.environ.get('SQUEST_HOST', "http://squest.domain.local")
-SQUEST_EMAIL_HOST = os.environ.get('SQUEST_EMAIL_HOST', "squest@squest.domain.local")
+ADMINS = [
+    ("", element)
+    for element in os.environ.get("SQUEST_ADMINS", "").split(",")
+    if element
+]
+SQUEST_HOST = os.environ.get("SQUEST_HOST", "http://squest.domain.local")
+SQUEST_EMAIL_HOST = os.environ.get("SQUEST_EMAIL_HOST", "squest@squest.domain.local")
 SERVER_EMAIL = SQUEST_EMAIL_HOST
-SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(os.environ.get('SQUEST_EMAIL_NOTIFICATION_ENABLED', False))
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
-EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
-EMAIL_HOST_USER= os.environ.get('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD', None)
-EMAIL_USE_SSL= os.environ.get('EMAIL_USE_SSL', False)
+SQUEST_EMAIL_NOTIFICATION_ENABLED = str_to_bool(
+    os.environ.get("SQUEST_EMAIL_NOTIFICATION_ENABLED", False)
+)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
+EMAIL_PORT = os.environ.get("EMAIL_PORT", 25)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", False)
 
 print(f"ADMINS: {ADMINS}")
 print(f"SQUEST_HOST: {SQUEST_HOST}")
@@ -361,57 +364,67 @@ print(f"EMAIL_USE_SSL: {EMAIL_USE_SSL}")
 # Martor CONFIG https://github.com/agusmakmun/django-markdown-editor
 # -----------------------------------------
 # Choices are: "semantic", "bootstrap"
-MARTOR_THEME = 'bootstrap'
+MARTOR_THEME = "bootstrap"
 
 # Global martor settings
 # Input: string boolean, `true/false`
 MARTOR_ENABLE_CONFIGS = {
-    'emoji': 'true',  # to enable/disable emoji icons.
-    'imgur': 'true',  # to enable/disable imgur/custom uploader.
-    'mention': 'false',  # to enable/disable mention
-    'jquery': 'true',  # to include/revoke jquery (require for admin default django)
-    'living': 'false',  # to enable/disable live updates in preview
-    'spellcheck': 'false',  # to enable/disable spellcheck in form textareas
-    'hljs': 'true',  # to enable/disable hljs highlighting in preview
+    "emoji": "true",  # to enable/disable emoji icons.
+    "imgur": "true",  # to enable/disable imgur/custom uploader.
+    "mention": "false",  # to enable/disable mention
+    "jquery": "true",  # to include/revoke jquery (require for admin default django)
+    "living": "false",  # to enable/disable live updates in preview
+    "spellcheck": "false",  # to enable/disable spellcheck in form textareas
+    "hljs": "true",  # to enable/disable hljs highlighting in preview
 }
 
 # To show the toolbar buttons
 MARTOR_TOOLBAR_BUTTONS = [
-    'bold', 'italic', 'horizontal', 'heading', 'pre-code',
-    'blockquote', 'unordered-list', 'ordered-list',
-    'link', 'image-link', 'image-upload', 'emoji',
-    'direct-mention', 'toggle-maximize', 'help'
+    "bold",
+    "italic",
+    "horizontal",
+    "heading",
+    "pre-code",
+    "blockquote",
+    "unordered-list",
+    "ordered-list",
+    "link",
+    "image-link",
+    "image-upload",
+    "emoji",
+    "direct-mention",
+    "toggle-maximize",
+    "help",
 ]
 
 # To setup the martor editor with title label or not (default is False)
 MARTOR_ENABLE_LABEL = False
 
 # Markdownify
-MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify'  # default
-MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/'  # default
+MARTOR_MARKDOWNIFY_FUNCTION = "martor.utils.markdownify"  # default
+MARTOR_MARKDOWNIFY_URL = "/martor/markdownify/"  # default
 
 # Markdown extensions (default)
 MARTOR_MARKDOWN_EXTENSIONS = [
-    'markdown.extensions.extra',
-    'markdown.extensions.nl2br',
-    'markdown.extensions.smarty',
-    'markdown.extensions.fenced_code',
-
+    "markdown.extensions.extra",
+    "markdown.extensions.nl2br",
+    "markdown.extensions.smarty",
+    "markdown.extensions.fenced_code",
     # Custom markdown extensions.
-    'martor.extensions.urlize',
-    'martor.extensions.del_ins',  # ~~strikethrough~~ and ++underscores++
-    'martor.extensions.mention',  # to parse markdown mention
-    'martor.extensions.emoji',  # to parse markdown emoji
-    'martor.extensions.mdx_video',  # to parse embed/iframe video
-    'martor.extensions.escape_html',  # to handle the XSS vulnerabilities
+    "martor.extensions.urlize",
+    "martor.extensions.del_ins",  # ~~strikethrough~~ and ++underscores++
+    "martor.extensions.mention",  # to parse markdown mention
+    "martor.extensions.emoji",  # to parse markdown emoji
+    "martor.extensions.mdx_video",  # to parse embed/iframe video
+    "martor.extensions.escape_html",  # to handle the XSS vulnerabilities
 ]
 
 # Markdown Extensions Configs
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Markdown urls
-MARTOR_UPLOAD_PATH = 'doc_images/uploads'
-MARTOR_UPLOAD_URL = '/api/uploader/'  # change to local uploader
+MARTOR_UPLOAD_PATH = "doc_images/uploads"
+MARTOR_UPLOAD_URL = "/api/uploader/"  # change to local uploader
 
 # Maximum Upload Image
 # 2.5MB - 2621440
@@ -426,8 +439,12 @@ MAX_IMAGE_UPLOAD_SIZE = 5242880  # 5MB
 
 # Markdown Extensions
 # MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://www.webfx.com/tools/emoji-cheat-sheet/graphics/emojis/'     # from webfx
-MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://github.githubassets.com/images/icons/emoji/'  # default from github
-MARTOR_MARKDOWN_BASE_MENTION_URL = 'https://python.web.id/author/'  # please change this to your domain
+MARTOR_MARKDOWN_BASE_EMOJI_URL = (
+    "https://github.githubassets.com/images/icons/emoji/"  # default from github
+)
+MARTOR_MARKDOWN_BASE_MENTION_URL = (
+    "https://python.web.id/author/"  # please change this to your domain
+)
 
 # If you need to use your own themed "bootstrap" or "semantic ui" dependency
 # replace the values with the file in your static files dir
@@ -438,26 +455,30 @@ MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "jquery/dist/jquery.min.js"  # default None
 if DOC_IMAGES_CLEANUP_ENABLED:
     CELERY_BEAT_SCHEDULE["cleanup_martor"] = {
         "task": "service_catalog.tasks.task_cleanup_ghost_docs_images",
-        "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(DOC_IMAGES_CLEANUP_CRONTAB)),
+        "schedule": crontab(
+            **get_celery_crontab_parameters_from_crontab_line(
+                DOC_IMAGES_CLEANUP_CRONTAB
+            )
+        ),
     }
 
 # -----------------------------------------
 # DJANGO REST FRAMEWORK CONFIG
 # -----------------------------------------
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'Squest.api.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        "Squest.api.authentication.TokenAuthentication",
     ),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100,
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 100,
 }
 
 # -----------------------------------------
 # TLS FORWARDED
 # -----------------------------------------
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # -----------------------------------------
 # DJANGO TABLES2 TEMPLATE
@@ -474,22 +495,24 @@ def backup_filename(databasename, servername, datetime, extension, content_type)
 
 DBBACKUP_FILENAME_TEMPLATE = backup_filename
 DBBACKUP_MEDIA_FILENAME_TEMPLATE = backup_filename
-DBBACKUP_CLEANUP_KEEP = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
-DBBACKUP_CLEANUP_KEEP_MEDIA = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': 'backup'}
+DBBACKUP_CLEANUP_KEEP = int(os.environ.get("DBBACKUP_CLEANUP_KEEP", 5))
+DBBACKUP_CLEANUP_KEEP_MEDIA = int(os.environ.get("DBBACKUP_CLEANUP_KEEP", 5))
+DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
+DBBACKUP_STORAGE_OPTIONS = {"location": "backup"}
 mysqldump_major_version = get_mysql_dump_major_version()
 print(f"mysqldump major version: {mysqldump_major_version}")
 if mysqldump_major_version < 10:
     DBBACKUP_CONNECTORS = {
-        'default': {
-            'DUMP_SUFFIX': '--no-tablespaces --column-statistics=0',
+        "default": {
+            "DUMP_SUFFIX": "--no-tablespaces --column-statistics=0",
         }
     }
 if BACKUP_ENABLED:
     CELERY_BEAT_SCHEDULE["perform_backup"] = {
         "task": "service_catalog.tasks.perform_backup",
-        "schedule": crontab(**get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)),
+        "schedule": crontab(
+            **get_celery_crontab_parameters_from_crontab_line(BACKUP_CRONTAB)
+        ),
     }
 
 # -----------------------------------------
@@ -505,10 +528,16 @@ print(f"SQUEST_VERSION: {__version__} - {SQUEST_COMMIT_SHA6}")
 # -----------------------------------------
 # Metrics
 # -----------------------------------------
-METRICS_ENABLED = str_to_bool(os.environ.get('METRICS_ENABLED', False))
-METRICS_PASSWORD_PROTECTED = str_to_bool(os.environ.get('METRICS_PASSWORD_PROTECTED', True))
-METRICS_AUTHORIZATION_USERNAME = os.environ.get('METRICS_AUTHORIZATION_USERNAME', 'admin')
-METRICS_AUTHORIZATION_PASSWORD = os.environ.get('METRICS_AUTHORIZATION_PASSWORD', 'admin')
+METRICS_ENABLED = str_to_bool(os.environ.get("METRICS_ENABLED", False))
+METRICS_PASSWORD_PROTECTED = str_to_bool(
+    os.environ.get("METRICS_PASSWORD_PROTECTED", True)
+)
+METRICS_AUTHORIZATION_USERNAME = os.environ.get(
+    "METRICS_AUTHORIZATION_USERNAME", "admin"
+)
+METRICS_AUTHORIZATION_PASSWORD = os.environ.get(
+    "METRICS_AUTHORIZATION_PASSWORD", "admin"
+)
 
 # -----------------------------------------
 # Testing settings
@@ -520,12 +549,12 @@ if TESTING:
     DEBUG = False
     TEMPLATE_DEBUG = False
     PASSWORD_HASHERS = [
-        'django.contrib.auth.hashers.MD5PasswordHasher',
+        "django.contrib.auth.hashers.MD5PasswordHasher",
     ]
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
         }
     }
 
@@ -535,24 +564,29 @@ CACHES = {
         "LOCATION": f"redis://{REDIS_CACHE_USER}:{REDIS_CACHE_PASSWORD}@{REDIS_CACHE_HOST}:{REDIS_CACHE_PORT}/0",
     }
 }
-if TESTING or DEBUG or IS_MAKING_MIGRATION or IS_MIGRATING or IS_COLLECTING_STATIC or IS_INSERTING_DEFAULT_DATA:
+if (
+    TESTING
+    or DEBUG
+    or IS_MAKING_MIGRATION
+    or IS_MIGRATING
+    or IS_COLLECTING_STATIC
+    or IS_INSERTING_DEFAULT_DATA
+):
     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         }
     }
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
+    "SECURITY_DEFINITIONS": {
+        "Basic": {"type": "basic"},
+        "Bearer (format: Bearer <token>)": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "bearerFormat": "Bearer",
+            "scheme": "bearer",
         },
-        'Bearer (format: Bearer <token>)': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'bearerFormat': 'Bearer',
-            'scheme': 'bearer'
-        }
     }
 }
 
@@ -566,8 +600,21 @@ SURVEY_VALIDATOR_PATH = "plugins/survey_validators"
 # SQL Debug
 # -----------------------------------------
 if SQL_DEBUG:
-    LOGGING["loggers"]["django.db.backends"] = {
-        "level": "DEBUG"
-    }
+    LOGGING["loggers"]["django.db.backends"] = {"level": "DEBUG"}
 
-print('[Settings] loaded')
+# -----------------------------------------
+# Social Auth
+# -----------------------------------------
+if SOCIAL_AUTH_OIDC_ENABLED and not TESTING:
+    from Squest.social_auth_config import *
+
+    INSTALLED_APPS += ["social_django"]
+
+    TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+        "social_django.context_processors.backends"
+    )
+    TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+        "social_django.context_processors.login_redirect"
+    )
+
+print("[Settings] loaded")

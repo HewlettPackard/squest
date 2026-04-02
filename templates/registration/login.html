@@ -44,7 +44,7 @@
                     {% if openid_active %}
                     <div class="card-footer">
                         <div class="text-center">
-                            <a class="btn" style="background-color: #6ad3c2" href="{% url "social:begin" "oidc" %}" role="button"><strong>{{ openid_btn_text }}</strong></a>
+                            <a class="btn" style="background-color: #6ad3c2" href="{% url "social:begin" social_auth_backend %}" role="button"><strong>{{ openid_btn_text }}</strong></a>
                         </div>
                     </div>
                     {% endif %}

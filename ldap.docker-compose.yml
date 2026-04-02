@@ -4,12 +4,15 @@ services:
   django:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+#      - ./Squest/social_auth_config.py:/app/Squest/social_auth_config.py
       - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
   celery-worker:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+#      - ./Squest/social_auth_config.py:/app/Squest/social_auth_config.py
       - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt
   celery-beat:
     volumes:
       - ./Squest/ldap_config.py:/app/Squest/ldap_config.py
+#      - ./Squest/social_auth_config.py:/app/Squest/social_auth_config.py
       - ./docker/certs/ldap_ca.crt:/usr/local/share/ca-certificates/ldap_ca.crt

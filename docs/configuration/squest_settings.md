@@ -105,37 +105,35 @@ set the LDAP "last_name" attribute
 
 set the LDAP "email" attribute
 
-### OpenID Connect
+### Social Authentication
+
+Squest supports external authentication providers (GitHub Enterprise, OpenID Connect, Google, etc.) through the [python-social-auth](https://python-social-auth.readthedocs.io/) library.
 
 #### SOCIAL_AUTH_OIDC_ENABLED
 
 **Default:** `False`
 
-set to `True` to enable OpenID Connect based authentication
+Set to `True` to enable social authentication. When enabled, Squest loads a dedicated configuration file `Squest/social_auth_config.py` at the end of the main settings.
 
-#### SOCIAL_AUTH_OIDC_BTN_TEXT
+#### Configuring a social auth provider
 
-**Default:** `OpenID Login`
+All social authentication settings are defined in the file `Squest/social_auth_config.py`. This file is only loaded when `SOCIAL_AUTH_OIDC_ENABLED` is `True`.
 
-set the OpenID Connect login button text
+It contains:
 
-#### SOCIAL_AUTH_OIDC_OIDC_ENDPOINT
+- **`SOCIAL_AUTH_OIDC_BTN_TEXT`** - The text displayed on the login button. Default: `"Github enterprise"`.
+- **`SOCIAL_AUTH_SELECTED_BACKEND`** - The backend slug used to build the login URL (e.g. `github-enterprise`, `oidc`, `google-oauth2`). Must match the `name` attribute of the selected `python-social-auth` backend.
+- **Provider-specific settings** - Keys, secrets, URLs, and scopes required by the chosen provider (e.g. `SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY`, `SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET`, `SOCIAL_AUTH_OIDC_KEY`, `SOCIAL_AUTH_OIDC_SECRET`).
+- **`SOCIAL_AUTH_PIPELINE`** - The ordered list of pipeline steps executed during authentication. A custom step can be added to customize user creation (e.g. mapping the OAuth email to the Django username).
+- **`AUTHENTICATION_BACKENDS`** - The list of Django authentication backends. The selected `python-social-auth` backend must be listed here.
 
-**Default:** `None`
+To switch to a different provider (e.g. from GitHub Enterprise to OpenID Connect), edit `Squest/social_auth_config.py`:
 
-set the endpoint to the base url and the remaining configuration will be auto-completed like so: `<SOCIAL_AUTH_OIDC_OIDC_ENDPOINT>/.well-known/openid-configuration`
+1. Update `SOCIAL_AUTH_SELECTED_BACKEND` to match the new backend slug (e.g. `oidc`).
+2. Uncomment/add the provider-specific settings (endpoint, key, secret).
+3. Update `AUTHENTICATION_BACKENDS` to use the corresponding backend class.
 
-#### SOCIAL_AUTH_OIDC_KEY
-
-**Default:** `None`
-
-set to the OpenID client ID that Squest should be configured to use
-
-#### SOCIAL_AUTH_OIDC_SECRET
-
-**Default:** `None`
-
-set to the OpenID client secret that Squest should be configured to use
+Refer to the [python-social-auth documentation](https://python-social-auth.readthedocs.io/en/latest/backends/index.html) for the full list of supported backends and their required settings.
 
 ### Password & token
 
