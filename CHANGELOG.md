@@ -1,4 +1,12 @@
+# 2.8.4 2026-04-09
+
+## Fix
+
+- Fix broken login page when social login is enabled and not configured properly
+
 # 2.8.3 2026-04-02
+
+/!\ Broken release, do not use this version. A fix is available in 2.8.4
 
 ## Enhancement
 
