@@ -341,9 +341,12 @@ class Request(SquestModel):
         date_worker_now = timezone.now()
         if self.periodic_task_date_expire < date_worker_now:
             logger.info("[check_tower_job_status_task] request now expired. deleting the periodic task")
-            self.periodic_task.delete()
+            periodic_task = self.periodic_task
+            self.periodic_task = None
             self.has_failed(reason="Operation execution timeout")
             self.save()
+            if periodic_task is not None:
+                periodic_task.delete()
             return
 
         tower = self.operation.job_template.tower_server.get_tower_instance()
