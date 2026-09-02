@@ -243,14 +243,23 @@ class TestRequest(BaseTestRequest):
             task='service_catalog.tasks.check_tower_job_status_task',
             args=json.dumps([self.test_request.id]))
         self.test_request.save()
+        periodic_task_id = self.test_request.periodic_task.id
 
-        with mock.patch("django_celery_beat.models.PeriodicTask.delete") as mock_periodic_task_delete:
-            self.test_request.check_job_status()
-            self.test_instance.refresh_from_db()
-            self.test_request.refresh_from_db()
-            self.assertEqual(self.test_instance.state, expected_instance_state)
-            self.assertEqual(self.test_request.state, RequestState.FAILED)
-            mock_periodic_task_delete.assert_called()
+        # Note: we deliberately do NOT mock PeriodicTask.delete here. Deleting
+        # the related object clears its pk, and calling self.save() afterwards
+        # used to raise:
+        #   ValueError: save() prohibited to prevent data loss due to unsaved
+        #   related object 'periodic_task'.
+        # This test guards against that regression on the expiration path.
+        self.test_request.check_job_status()
+        self.test_instance.refresh_from_db()
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_instance.state, expected_instance_state)
+        self.assertEqual(self.test_request.state, RequestState.FAILED)
+        self.assertEqual(self.test_request.failure_message, "Operation execution timeout")
+        # The periodic task row is really deleted (no ghost task) and the FK is nulled
+        self.assertFalse(PeriodicTask.objects.filter(id=periodic_task_id).exists())
+        self.assertIsNone(self.test_request.periodic_task)
 
     def test_job_id_none_when_executing(self):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
