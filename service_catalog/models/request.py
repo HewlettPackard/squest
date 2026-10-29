@@ -7,6 +7,7 @@ import requests
 import towerlib
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import JSONField, ForeignKey, CASCADE, SET_NULL, DateTimeField, IntegerField, TextField, \
     OneToOneField, Q, PROTECT
 from django.db.models.signals import post_save, pre_save
@@ -305,11 +306,13 @@ class Request(SquestModel):
     def has_failed(self, reason=None):
         if reason is not None:
             self.failure_message = reason
-        if self.operation.type == OperationType.CREATE:
+        # Older timeout handling could save the instance's failure state before
+        # failing to save the request. Allow that specific mismatch to recover.
+        if self.operation.type == OperationType.CREATE and self.instance.state != InstanceState.PROVISION_FAILED:
             self.instance.provisioning_has_failed()
-        elif self.operation.type == OperationType.UPDATE:
+        elif self.operation.type == OperationType.UPDATE and self.instance.state != InstanceState.UPDATE_FAILED:
             self.instance.update_has_failed()
-        elif self.operation.type == OperationType.DELETE:
+        elif self.operation.type == OperationType.DELETE and self.instance.state != InstanceState.DELETE_FAILED:
             self.instance.delete_has_failed()
         self.instance.save()
 
@@ -330,8 +333,26 @@ class Request(SquestModel):
             self.periodic_task.delete()
         return super(self.__class__, self).delete(*args, **kwargs)
 
+    def _stop_job_status_checks(self):
+        periodic_task = self.periodic_task
+        self.periodic_task = None
+        self.save()
+        if periodic_task is not None:
+            periodic_task.delete()
+
+    @transaction.atomic
     def check_job_status(self):
         from ..mail_utils import send_mail_request_update
+        # Beat can enqueue another check before the previous one finishes. Lock
+        # and reload both rows so a stale worker cannot repeat a transition.
+        Request.objects.select_for_update().only("pk").get(pk=self.pk)
+        self.refresh_from_db()
+        if self.state != RequestState.PROCESSING:
+            if self.periodic_task_id is not None:
+                self._stop_job_status_checks()
+            return
+
+        self.instance = Instance.objects.select_for_update().get(pk=self.instance_id)
         if self.tower_job_id is None:
             logger.warning(
                 f"[Request][check_job_status] no RHAAP/AWX job id for request id {self.id}. Check job status skipped")
@@ -341,12 +362,8 @@ class Request(SquestModel):
         date_worker_now = timezone.now()
         if self.periodic_task_date_expire < date_worker_now:
             logger.info("[check_tower_job_status_task] request now expired. deleting the periodic task")
-            periodic_task = self.periodic_task
-            self.periodic_task = None
             self.has_failed(reason="Operation execution timeout")
-            self.save()
-            if periodic_task is not None:
-                periodic_task.delete()
+            self._stop_job_status_checks()
             return
 
         tower = self.operation.job_template.tower_server.get_tower_instance()
@@ -355,8 +372,6 @@ class Request(SquestModel):
         if job_object.status == "successful":
             logger.info(f"[Request][check_job_status] RHAAP/AWX job status successful for request id {self.id}")
             self.complete()
-            self.save()
-            self.periodic_task.delete()
             if self.operation.type in [OperationType.CREATE, OperationType.UPDATE]:
                 if self.operation.type == OperationType.CREATE:
                     self.instance.date_available = timezone.now()
@@ -365,14 +380,14 @@ class Request(SquestModel):
             elif self.operation.type == OperationType.DELETE:
                 self.instance.deleted()
                 self.instance.save()
+            self._stop_job_status_checks()
             # notify owner and admins that the request is complete
             send_mail_request_update(target_request=self)
 
         if job_object.status in ["canceled", "failed"]:
             error_message = f"RHAAP/AWX job {self.tower_job_id} status is '{job_object.status}'"
             self.has_failed(error_message)
-            self.save()
-            self.periodic_task.delete()
+            self._stop_job_status_checks()
             send_mail_request_update(target_request=self)
 
     def _get_approval_workflow(self):
