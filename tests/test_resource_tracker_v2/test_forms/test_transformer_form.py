@@ -52,7 +52,7 @@ class TransformerFormTests(BaseTestResourceTrackerV2):
     def test_cannot_create_transformer_with_no_target_rg_and_target_attribute(self):
         data = {
             "attribute_definition": self.disk_att.id,
-            "consume_from_attribute_definition": self.cluster.id,
+            "consume_from_attribute_definition": self.three_par_attribute.id,
         }
         form = TransformerForm(data, **self.parameters)
         self.assertFalse(form.is_valid())

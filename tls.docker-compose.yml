@@ -1,9 +1,7 @@
 # docker-compose -f docker-compose.yml -f tls.docker-compose.yml up
-version: '3.7'
-
 services:
   tls:
-    image: caddy:2.6.4-alpine
+    image: caddy:2.11.7-alpine
     depends_on:
       - nginx
     volumes:

@@ -9,7 +9,7 @@
 #-p 8000:8000 \
 #squest
 
-FROM python:3.12-slim-bullseye
+FROM python:3.12-slim-bookworm
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

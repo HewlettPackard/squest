@@ -3,7 +3,7 @@ from django.urls import reverse, NoReverseMatch
 import base64
 
 
-@override_settings(ROOT_URLCONF='squest.monitoring.urls')
+@override_settings(ROOT_URLCONF='monitoring.urls')
 class TestMonitoring(TestCase):
 
     def setUp(self) -> None:
@@ -13,7 +13,7 @@ class TestMonitoring(TestCase):
             self.url = None
 
     @override_settings(METRICS_ENABLED=False)
-    @override_settings(ROOT_URLCONF='squest.Squest.urls')
+    @override_settings(ROOT_URLCONF='Squest.urls')
     def test_monitoring_page_disabled(self):
         response = self.client.get("/metrics/")
         self.assertEqual(404, response.status_code)
