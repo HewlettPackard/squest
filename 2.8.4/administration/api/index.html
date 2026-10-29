@@ -1484,7 +1484,7 @@ A token can have an expiration date to grant temporary access to an external cli
 <p>Usage example with curl
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SQUEST_TOKEN</span><span class="o">=</span>d97ebdbeccf5fc3fba740e8e89048e3d453bd729
 curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span>http://127.0.0.1:8000/api/resource-tracker/resource-group/<span class="w"> </span><span class="se">\</span>
--H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$SQUEST_TOKEN</span><span class="s2">&quot;</span>
+-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$SQUEST_TOKEN</span><span class="s2">"</span>
 </code></pre></div></p>
 <p>Usage example in Ansible URI module:
 <div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get info from squest</span>
@@ -1493,16 +1493,16 @@ curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span
 <span class="w">  </span><span class="nt">gather_facts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">squest_api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://127.0.0.1:8000/api/&quot;</span>
+<span class="w">    </span><span class="nt">squest_api</span><span class="p">:</span><span class="w"> </span><span class="s">"http://127.0.0.1:8000/api/"</span>
 <span class="w">    </span><span class="nt">squest_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">d97ebdbeccf5fc3fba740e8e89048e3d453bd729</span>
-<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">"Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}"</span>
 
 <span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all resource group</span>
 <span class="w">      </span><span class="nt">uri</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_api</span><span class="nv"> </span><span class="s">}}resource-tracker/resource-group/&quot;</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_api</span><span class="nv"> </span><span class="s">}}resource-tracker/resource-group/"</span>
 <span class="w">        </span><span class="nt">headers</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GET</span>
 <span class="w">        </span><span class="nt">status_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
 <span class="w">        </span><span class="nt">body_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>

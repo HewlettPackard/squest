@@ -1567,18 +1567,18 @@ must be after an equal. It is possible to make a filter on several fields which 
 <h2 id="examples">Examples</h2>
 <h3 id="instance-spec-with-string">Instance spec with string</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;vm_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vm001&quot;</span>
+<span class="w">  </span><span class="nt">"vm_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vm001"</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Examples of lookup string that can be used in the filter.</p>
 <div class="highlight"><pre><span></span><code>vm_name=vm001
-vm_name=&#39;vm001&#39;
-vm_name=&quot;vm001&quot;
+vm_name='vm001'
+vm_name="vm001"
 </code></pre></div>
 <h3 id="instance-spec-with-dict">Instance spec with dict</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;openstack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;cluster_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cluster_perf&quot;</span>
+<span class="w">  </span><span class="nt">"openstack"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"cluster_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cluster_perf"</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1587,9 +1587,9 @@ vm_name=&quot;vm001&quot;
 </code></pre></div>
 <h3 id="instance-spec-with-list">Instance spec with list</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;vm_disk&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;disk01&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;disk02&quot;</span>
+<span class="w">  </span><span class="nt">"vm_disk"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"disk01"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"disk02"</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1598,13 +1598,13 @@ vm_name=&quot;vm001&quot;
 </code></pre></div>
 <h3 id="instance-spec-on-two-fields">Instance spec on two fields</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;my_first_field&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;my_second_field&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;my_value1&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;my_value2&quot;</span>
+<span class="w">  </span><span class="nt">"my_first_field"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"my_second_field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">"my_value1"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"my_value2"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;my_integer_field&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="nt">"my_integer_field"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Example of lookup string that can be used in the filter.</p>
@@ -1612,7 +1612,7 @@ vm_name=&quot;vm001&quot;
 </code></pre></div>
 <h3 id="instance-spec-with-regex">Instance spec with regex</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;dns_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my_hostname.domain.example&quot;</span>
+<span class="w">  </span><span class="nt">"dns_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_hostname.domain.example"</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Lookup string example:</p>

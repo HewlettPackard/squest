@@ -1668,17 +1668,17 @@ the volume:
 <p>Output example:
 <div class="highlight"><pre><span></span><code><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;CreatedAt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-09-13T09:42:26+02:00&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;Driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;Labels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;com.docker.compose.project&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;squest&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;com.docker.compose.version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.28.4&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;com.docker.compose.volume&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backup&quot;</span>
+<span class="w">        </span><span class="nt">"CreatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-09-13T09:42:26+02:00"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"Driver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"Labels"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"com.docker.compose.project"</span><span class="p">:</span><span class="w"> </span><span class="s2">"squest"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"com.docker.compose.version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.28.4"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"com.docker.compose.volume"</span><span class="p">:</span><span class="w"> </span><span class="s2">"backup"</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;Mountpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/squest_backup/_data&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;Name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;squest_backup&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;Options&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;Scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span>
+<span class="w">        </span><span class="nt">"Mountpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/volumes/squest_backup/_data"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"squest_backup"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"Options"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"Scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">]</span>
 </code></pre></div></p>
@@ -1707,7 +1707,7 @@ docker-compose<span class="w"> </span><span class="nb">exec</span><span class="w
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">backup</span><span class="p">:</span><span class="w"> </span>
 <span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">crontab</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&quot;</span>
+<span class="w">    </span><span class="nt">crontab</span><span class="p">:</span><span class="w"> </span><span class="s">"0</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*"</span>
 </code></pre></div></p>
 <p>Run the deployment playbook
 <div class="highlight"><pre><span></span><code>ansible-playbook<span class="w"> </span>-v<span class="w"> </span>-i<span class="w"> </span>inventory<span class="w"> </span>deploy.yml<span class="w"> </span>--tags<span class="w"> </span>backup
@@ -1718,11 +1718,11 @@ If you want to push those files into an external ssh server you can use the inte
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">externalize_backup_via_rsync</span><span class="p">:</span><span class="w">  </span><span class="c1"># rsync backup files into and external server</span>
 <span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">crontab</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;30</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&quot;</span>
-<span class="w">    </span><span class="nt">private_ssh_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">lookup(&#39;file&#39;,</span><span class="nv"> </span><span class="s">&#39;/path/to/id_ed25519_squest_k8s_dev&#39;)</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">&#39;\n&#39;</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">    </span><span class="nt">ssh_user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;squest_k8s_dev&quot;</span>
-<span class="w">    </span><span class="nt">ssh_server</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;remote.server.ssh.net&quot;</span>
-<span class="w">    </span><span class="nt">remote_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/backup/squest_k8s_dev/&quot;</span>
+<span class="w">    </span><span class="nt">crontab</span><span class="p">:</span><span class="w"> </span><span class="s">"30</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*"</span>
+<span class="w">    </span><span class="nt">private_ssh_key</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">lookup('file',</span><span class="nv"> </span><span class="s">'/path/to/id_ed25519_squest_k8s_dev')</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">'\n'</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">ssh_user</span><span class="p">:</span><span class="w"> </span><span class="s">"squest_k8s_dev"</span>
+<span class="w">    </span><span class="nt">ssh_server</span><span class="p">:</span><span class="w"> </span><span class="s">"remote.server.ssh.net"</span>
+<span class="w">    </span><span class="nt">remote_path</span><span class="p">:</span><span class="w"> </span><span class="s">"/backup/squest_k8s_dev/"</span>
 </code></pre></div>
 <h3 id="execute-a-backup-manually_1">Execute a backup manually</h3>
 <p>Run the <code>backup.yml</code> playbook

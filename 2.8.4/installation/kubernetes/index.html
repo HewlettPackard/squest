@@ -1782,10 +1782,10 @@
 <h3 id="ansible-inventory">Ansible inventory</h3>
 <p>Defaults variables are defined in <code>k8s/squest_k8s/defaults/main.yml</code>. You might override these in your ansible inventory.</p>
 <p>For a minimal installation, you need to at least provide information concerning your Kubernetes environment:
-<div class="highlight"><pre><span></span><code><span class="nt">squest_k8s_kubeconfig_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/path/to/kubeconfig&quot;</span>
-<span class="nt">squest_k8s_cluster_fqdn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.domain.local&quot;</span>
-<span class="nt">squest_k8s_namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;squest&quot;</span>
-<span class="nt">squest_k8s_storage_class</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;thin&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">squest_k8s_kubeconfig_path</span><span class="p">:</span><span class="w"> </span><span class="s">"/path/to/kubeconfig"</span>
+<span class="nt">squest_k8s_cluster_fqdn</span><span class="p">:</span><span class="w"> </span><span class="s">"k8s.domain.local"</span>
+<span class="nt">squest_k8s_namespace</span><span class="p">:</span><span class="w"> </span><span class="s">"squest"</span>
+<span class="nt">squest_k8s_storage_class</span><span class="p">:</span><span class="w"> </span><span class="s">"thin"</span>
 </code></pre></div></p>
 <h3 id="deploy-squest-using-ansible">Deploy Squest using Ansible</h3>
 <p>Run the <code>deploy</code> playbook against your inventory config file:</p>
@@ -1840,32 +1840,32 @@ ansible-playbook<span class="w"> </span>-v<span class="w"> </span>-i<span class=
 <p>The <a href="../../configuration/squest_settings/">Squest configuration</a> is injected as environment variables. The environment is placed in <code>squest.yml</code> as <code>env</code> flag like the following:
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">env</span><span class="p">:</span><span class="w">  </span><span class="c1"># squest settings</span>
-<span class="w">    </span><span class="nt">TZ</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Europe/Paris&quot;</span>
-<span class="w">    </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mariadb&quot;</span>
-<span class="w">    </span><span class="nt">DB_PORT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3306&quot;</span>
-<span class="w">    </span><span class="nt">DB_USER</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_db.user</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">    </span><span class="nt">DB_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_db.database</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">    </span><span class="nt">REDIS_CACHE_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;redis-master&quot;</span>
-<span class="w">    </span><span class="nt">DEBUG</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span>
-<span class="w">    </span><span class="nt">RABBITMQ_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rabbitmq&quot;</span>
-<span class="w">    </span><span class="nt">RABBITMQ_PORT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5672&quot;</span>
+<span class="w">    </span><span class="nt">TZ</span><span class="p">:</span><span class="w"> </span><span class="s">"Europe/Paris"</span>
+<span class="w">    </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">"mariadb"</span>
+<span class="w">    </span><span class="nt">DB_PORT</span><span class="p">:</span><span class="w"> </span><span class="s">"3306"</span>
+<span class="w">    </span><span class="nt">DB_USER</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_db.user</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">DB_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_db.database</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">REDIS_CACHE_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">"redis-master"</span>
+<span class="w">    </span><span class="nt">DEBUG</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
+<span class="w">    </span><span class="nt">RABBITMQ_HOST</span><span class="p">:</span><span class="w"> </span><span class="s">"rabbitmq"</span>
+<span class="w">    </span><span class="nt">RABBITMQ_PORT</span><span class="p">:</span><span class="w"> </span><span class="s">"5672"</span>
 </code></pre></div></p>
 <p>Secrets can be injected using the <code>squest_django.env_secrets</code> variable or can be created manually by creating a secret named <code>squest-secrets</code>.
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">env_secrets</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">EMAIL_HOST_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-secret-password&quot;</span>
-<span class="w">    </span><span class="nt">METRICS_AUTHORIZATION_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;metrics-password&quot;</span>
-<span class="w">    </span><span class="nt">SECRET_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;django-secret-key&quot;</span>
-<span class="w">    </span><span class="nt">DEFAULT_ADMIN_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;XXXXXX----TOKEN----XXXXXX&quot;</span>
-<span class="w">    </span><span class="nt">DEFAULT_ADMIN_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-secret-password&quot;</span>
-<span class="w">    </span><span class="nt">AUTH_LDAP_BIND_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-secret-password&quot;</span>
+<span class="w">    </span><span class="nt">EMAIL_HOST_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">"my-secret-password"</span>
+<span class="w">    </span><span class="nt">METRICS_AUTHORIZATION_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">"metrics-password"</span>
+<span class="w">    </span><span class="nt">SECRET_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">"django-secret-key"</span>
+<span class="w">    </span><span class="nt">DEFAULT_ADMIN_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="s">"XXXXXX----TOKEN----XXXXXX"</span>
+<span class="w">    </span><span class="nt">DEFAULT_ADMIN_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">"my-secret-password"</span>
+<span class="w">    </span><span class="nt">AUTH_LDAP_BIND_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="s">"my-secret-password"</span>
 </code></pre></div></p>
 <h3 id="ldap-custom-config">LDAP custom config</h3>
 <p>LDAP can be configured using environment variable. For very specific use case you may need to inject a custom <code>ldap_config.py</code>.
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">ldap</span><span class="p">:</span><span class="w">  </span><span class="c1"># extra ldap config</span>
 <span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># this will create a config map for ldap_config.py</span>
-<span class="w">    </span><span class="nt">ldap_config_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">lookup(&#39;file&#39;,</span><span class="nv"> </span><span class="s">playbook_dir</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">&#39;/../Squest/ldap_config.py&#39;)</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w">  </span><span class="c1"># we mount by default the file provided in squest core code</span>
+<span class="w">    </span><span class="nt">ldap_config_file</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">lookup('file',</span><span class="nv"> </span><span class="s">playbook_dir</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">'/../Squest/ldap_config.py')</span><span class="nv"> </span><span class="s">}}"</span><span class="w">  </span><span class="c1"># we mount by default the file provided in squest core code</span>
 </code></pre></div></p>
 <h3 id="use-your-own-ingress">Use your own ingress</h3>
 <p>By default, the playbook will configure an ingress that point to <code>squest.{{ k8s_cluster_fqdn }}</code> based on the <a href="https://docs.nginx.com/nginx-ingress-controller/">nginx ingress controller</a>.</p>
@@ -1873,10 +1873,10 @@ ansible-playbook<span class="w"> </span>-v<span class="w"> </span>-i<span class=
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">ingress</span><span class="p">:</span><span class="w">  </span><span class="c1"># default ingress based on nginx controller</span>
 <span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;squest.{{</span><span class="nv"> </span><span class="s">k8s_cluster_fqdn</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">"squest.{{</span><span class="nv"> </span><span class="s">k8s_cluster_fqdn</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">    </span><span class="nt">classname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-ingress-controller-name</span>
 <span class="w">    </span><span class="nt">annotations</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">ingress_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ingress_value&quot;</span>
+<span class="w">      </span><span class="nt">ingress_key</span><span class="p">:</span><span class="w"> </span><span class="s">"ingress_value"</span>
 </code></pre></div></p>
 <h2 id="helm-based-installation">Helm-based Installation</h2>
 <h3 id="pre-requisites_1">Pre-requisites</h3>

@@ -1668,7 +1668,7 @@ page is used as context.</p>
 <p>Full <code>instance</code> object definition can be retrieved through the <a href="../../../administration/api/">API documentation</a>.</p>
 <p>Instance spec example:
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;key1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span>
+<span class="w">  </span><span class="nt">"key1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value1"</span>
 <span class="p">}</span>
 </code></pre></div></p>
 <p>Button text example:
@@ -1678,12 +1678,12 @@ page is used as context.</p>
 <div class="highlight"><pre><span></span><code>https://external_resource.domain/?name={{ instance.spec.key1 }}
 </code></pre></div></p>
 <p>Rendered button with an instance named "k8S ns test":
-<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://external_resource.domain/?name=value1&quot;</span><span class="p">&gt;</span>Button k8S ns test<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://external_resource.domain/?name=value1"</span><span class="p">&gt;</span>Button k8S ns test<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
 </code></pre></div></p>
 <h3 id="when-condition">When condition</h3>
 <p>The when condition allow to display the button only on certain condition like the "when" flag on Ansible.</p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>spec[&#39;configvar&#39;] == &#39;value&#39; and user_spec[&#39;other&#39;] == &#39;value&#39;
+<div class="highlight"><pre><span></span><code>spec['configvar'] == 'value' and user_spec['other'] == 'value'
 </code></pre></div></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1694,9 +1694,9 @@ page is used as context.</p>
 Like for Ansible, the element is exposed as <code>item</code> in the Jinja template of the button text or URL.</p>
 <p>Instance spec example:
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;my_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;item1&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;item2&quot;</span>
+<span class="w">  </span><span class="nt">"my_list"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"item1"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"item2"</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div></p>
@@ -1710,8 +1710,8 @@ Like for Ansible, the element is exposed as <code>item</code> in the Jinja templ
 <div class="highlight"><pre><span></span><code>https://external_resource.domain/{{ item }}
 </code></pre></div></p>
 <p>Rendered links into the dropdown button:
-<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://external_resource.domain/item1&quot;</span><span class="p">&gt;</span>name: item1<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://external_resource.domain/item2&quot;</span><span class="p">&gt;</span>name: item2<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://external_resource.domain/item1"</span><span class="p">&gt;</span>name: item1<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"https://external_resource.domain/item2"</span><span class="p">&gt;</span>name: item2<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
 </code></pre></div></p>
 <h2 id="email-template">Email template</h2>
 <p>The Email template functionality allows Squest administrators to craft a message intended for future delivery to a selected group of Squest users via email.</p>
@@ -1723,7 +1723,7 @@ Like for Ansible, the element is exposed as <code>item</code> in the Jinja templ
 </div>
 <p>A <em>when condition</em> can be also added to filter instances of the same service to particular criteria based for example on the instance specs.
 Example of <code>when</code> condition:
-<div class="highlight"><pre><span></span><code>instance.user_spec.location == &#39;grenoble&#39;
+<div class="highlight"><pre><span></span><code>instance.user_spec.location == 'grenoble'
 </code></pre></div></p>
 
 

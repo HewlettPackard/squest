@@ -1475,8 +1475,8 @@ We link as well the pending instance(given by <code>squest.instance.id</code>) t
 
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">squest_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xxxxxxxxxxxxxx</span>
-<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">    </span><span class="nt">squest_api</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://127.0.0.1:8000/api/&quot;</span>
+<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">"Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">squest_api</span><span class="p">:</span><span class="w"> </span><span class="s">"http://127.0.0.1:8000/api/"</span>
 <span class="w">    </span><span class="nt">resource_group_vm_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
 <span class="w">    </span><span class="nt">squest</span><span class="p">:</span><span class="w"> </span><span class="c1"># this would be the data sent from squest as extra vars</span>
 <span class="w">      </span><span class="nt">instance</span><span class="p">:</span>
@@ -1485,10 +1485,10 @@ We link as well the pending instance(given by <code>squest.instance.id</code>) t
 <span class="w">        </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROVISIONING</span>
-<span class="w">    </span><span class="nt">vm_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test-vm&quot;</span>
+<span class="w">    </span><span class="nt">vm_name</span><span class="p">:</span><span class="w"> </span><span class="s">"test-vm"</span>
 <span class="w">    </span><span class="nt">vm_vcpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 <span class="w">    </span><span class="nt">vm_memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
-<span class="w">    </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;My</span><span class="nv"> </span><span class="s">description&quot;</span>
+<span class="w">    </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">"My</span><span class="nv"> </span><span class="s">description"</span>
 
 <span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Print info sent by Squest</span>
@@ -1500,21 +1500,21 @@ We link as well the pending instance(given by <code>squest.instance.id</code>) t
 <span class="w">    </span><span class="c1"># -----------------------</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a resource in squest</span>
 <span class="w">      </span><span class="nt">uri</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_api</span><span class="nv"> </span><span class="s">}}resource-tracker/resource/&quot;</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_api</span><span class="nv"> </span><span class="s">}}resource-tracker/resource/"</span>
 <span class="w">        </span><span class="nt">headers</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POST</span>
 <span class="w">        </span><span class="nt">status_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">201</span>
 <span class="w">        </span><span class="nt">body_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
 <span class="w">        </span><span class="nt">body</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">          </span><span class="nt">resource_group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">resource_group_vm_id</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">          </span><span class="nt">service_catalog_instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest[&#39;instance&#39;][&#39;id&#39;]</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">vm_name</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">          </span><span class="nt">resource_group</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">resource_group_vm_id</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">          </span><span class="nt">service_catalog_instance</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest['instance']['id']</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">          </span><span class="nt">resource_attributes</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vCPU&quot;</span>
-<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_vcpu</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Memory&quot;</span>
-<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">vm_memory</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"vCPU"</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">vm_vcpu</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"Memory"</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">vm_memory</span><span class="nv"> </span><span class="s">}}"</span>
 </code></pre></div></p>
 
 

@@ -1534,8 +1534,8 @@ The playbook will:</p>
 
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">squest_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48c67f9c2429f2d3a1ee0e47daa00ffeef4fe744</span>
-<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">    </span><span class="nt">squest_api_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://192.168.58.128:8000/api/&quot;</span>
+<span class="w">    </span><span class="nt">squest_bearer_token</span><span class="p">:</span><span class="w"> </span><span class="s">"Bearer</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">squest_token</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">squest_api_url</span><span class="p">:</span><span class="w"> </span><span class="s">"http://192.168.58.128:8000/api/"</span>
 
 <span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Print the job template survey variable</span>
@@ -1548,21 +1548,21 @@ The playbook will:</p>
 
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a file with the given file_name</span>
 <span class="w">      </span><span class="nt">ansible.builtin.file</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/{{</span><span class="nv"> </span><span class="s">file_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">"/tmp/{{</span><span class="nv"> </span><span class="s">file_name</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
 <span class="w">        </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0644&#39;</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">'0644'</span>
 <span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">touch</span>
 
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update spec of the instance via the squest API</span>
 <span class="w">      </span><span class="nt">uri</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_api_url</span><span class="nv"> </span><span class="s">}}service-catalog/instance/{{</span><span class="nv"> </span><span class="s">squest[&#39;request&#39;][&#39;instance&#39;][&#39;id&#39;]</span><span class="nv"> </span><span class="s">}}/&quot;</span><span class="w"> </span><span class="c1"># do not forget the last slash</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_api_url</span><span class="nv"> </span><span class="s">}}service-catalog/instance/{{</span><span class="nv"> </span><span class="s">squest['request']['instance']['id']</span><span class="nv"> </span><span class="s">}}/"</span><span class="w"> </span><span class="c1"># do not forget the last slash</span>
 <span class="w">        </span><span class="nt">headers</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="nt">Authorization</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">squest_bearer_token</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PATCH</span>
 <span class="w">        </span><span class="nt">body</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">spec</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">file_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">file_name</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">            </span><span class="nt">file_name</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">file_name</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">status_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
 <span class="w">        </span><span class="nt">body_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
 </code></pre></div>
@@ -1604,7 +1604,7 @@ The update playbook can send a new version of the instance to squest at the end 
 <span class="w">        </span><span class="nt">file_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo.conf</span>
 <span class="w">      </span><span class="nt">spoc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UPDATING</span>
-<span class="nt">string_to_place_in_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;this</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">string&quot;</span>
+<span class="nt">string_to_place_in_file</span><span class="p">:</span><span class="w"> </span><span class="s">"this</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">string"</span>
 </code></pre></div></p>
 <p>In the example below, the update job template survey ask for a <code>string_to_place_in_file</code> variable.
 The playbook receive as well all information that help to retrieve the resource to update. In this example the resource is the <code>file_name</code>.
@@ -1624,8 +1624,8 @@ The playbook receive as well all information that help to retrieve the resource 
 
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add content into the file_name given by squest instance spec</span>
 <span class="w">      </span><span class="nt">ansible.builtin.lineinfile </span><span class="p">:</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/{{</span><span class="nv"> </span><span class="s">squest[&#39;request&#39;][&#39;instance&#39;][&#39;spec&#39;][&#39;file_name&#39;]</span><span class="nv"> </span><span class="s">}}&quot;</span>
-<span class="w">        </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">string_to_place_in_file</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">"/tmp/{{</span><span class="nv"> </span><span class="s">squest['request']['instance']['spec']['file_name']</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">        </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">string_to_place_in_file</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="w">        </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
 </code></pre></div></p>
 

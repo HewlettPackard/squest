@@ -1717,11 +1717,11 @@ Update your <code>docker/environment_variables/squest.env</code> to enable metri
 <h2 id="prometheus-config">Prometheus config</h2>
 <p>Here is an example of prometheus configuration you can use to scrape squest metrics
 <div class="highlight"><pre><span></span><code><span class="nt">scrape_configs</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;squest&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">'squest'</span>
 <span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
-<span class="w">    </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/metrics/&#39;</span>
+<span class="w">    </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="s">'/metrics/'</span>
 <span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;squest.domain.local&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'squest.domain.local'</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
 <span class="w">    </span><span class="nt">basic_auth</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
@@ -1732,83 +1732,83 @@ Update your <code>docker/environment_variables/squest.env</code> to enable metri
 <p>Expose the total number of instance per service.</p>
 <p><strong>Labels:</strong> <code>['service']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_instance_per_service_total{service=&quot;Kubernetes&quot;} 5.0
-squest_instance_per_service_total{service=&quot;Openshift&quot;} 11.0
-squest_instance_per_service_total{service=&quot;VMWare&quot;} 14.0
+<div class="highlight"><pre><span></span><code>squest_instance_per_service_total{service="Kubernetes"} 5.0
+squest_instance_per_service_total{service="Openshift"} 11.0
+squest_instance_per_service_total{service="VMWare"} 14.0
 </code></pre></div></p>
 <h3 id="squest_instance_per_state_total">squest_instance_per_state_total</h3>
 <p>Expose the total number of instance per state.</p>
 <p><strong>Labels:</strong> <code>['state']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_instance_per_state_total{state=&quot;AVAILABLE&quot;} 2.0
-squest_instance_per_state_total{state=&quot;PENDING&quot;} 28.0
+<div class="highlight"><pre><span></span><code>squest_instance_per_state_total{state="AVAILABLE"} 2.0
+squest_instance_per_state_total{state="PENDING"} 28.0
 </code></pre></div></p>
 <h3 id="squest_request_per_state_total">squest_request_per_state_total</h3>
 <p>Expose the total number of request per state.</p>
 <p><strong>Labels:</strong> <code>['state']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_request_per_state_total{state=&quot;ACCEPTED&quot;} 4.0
-squest_request_per_state_total{state=&quot;CANCELED&quot;} 3.0
-squest_request_per_state_total{state=&quot;COMPLETE&quot;} 5.0
-squest_request_per_state_total{state=&quot;FAILED&quot;} 4.0
-squest_request_per_state_total{state=&quot;ON_HOLD&quot;} 2.0
-squest_request_per_state_total{state=&quot;PROCESSING&quot;} 3.0
-squest_request_per_state_total{state=&quot;REJECTED&quot;} 5.0
-squest_request_per_state_total{state=&quot;SUBMITTED&quot;} 4.00
+<div class="highlight"><pre><span></span><code>squest_request_per_state_total{state="ACCEPTED"} 4.0
+squest_request_per_state_total{state="CANCELED"} 3.0
+squest_request_per_state_total{state="COMPLETE"} 5.0
+squest_request_per_state_total{state="FAILED"} 4.0
+squest_request_per_state_total{state="ON_HOLD"} 2.0
+squest_request_per_state_total{state="PROCESSING"} 3.0
+squest_request_per_state_total{state="REJECTED"} 5.0
+squest_request_per_state_total{state="SUBMITTED"} 4.00
 </code></pre></div></p>
 <h3 id="squest_instance_total">squest_instance_total</h3>
 <p>Total number of instance in squest</p>
 <p><strong>Labels:</strong> <code>['service', 'state', 'billing_group']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_instance_total{billing_group=&quot;Orchestration&quot;,service=&quot;VMWare&quot;,state=&quot;AVAILABLE&quot;} 1.0
-squest_instance_total{billing_group=&quot;Assurance&quot;,service=&quot;VMWare&quot;,state=&quot;AVAILABLE&quot;} 1.0
-squest_instance_total{billing_group=&quot;Orchestration&quot;,service=&quot;VMWare&quot;,state=&quot;PENDING&quot;} 3.0
-squest_instance_total{billing_group=&quot;5G&quot;,service=&quot;VMWare&quot;,state=&quot;PENDING&quot;} 6.0
-squest_instance_total{billing_group=&quot;Assurance&quot;,service=&quot;VMWare&quot;,state=&quot;PENDING&quot;} 3.0
-squest_instance_total{billing_group=&quot;Assurance&quot;,service=&quot;Openshift&quot;,state=&quot;PENDING&quot;} 3.0
-squest_instance_total{billing_group=&quot;5G&quot;,service=&quot;Openshift&quot;,state=&quot;PENDING&quot;} 3.0
-squest_instance_total{billing_group=&quot;Orchestration&quot;,service=&quot;Openshift&quot;,state=&quot;PENDING&quot;} 4.0
-squest_instance_total{billing_group=&quot;Orchestration&quot;,service=&quot;Kubernetes&quot;,state=&quot;PENDING&quot;} 1.0
-squest_instance_total{billing_group=&quot;5G&quot;,service=&quot;Kubernetes&quot;,state=&quot;PENDING&quot;} 2.0
-squest_instance_total{billing_group=&quot;Assurance&quot;,service=&quot;Kubernetes&quot;,state=&quot;PENDING&quot;} 2.0
-squest_instance_total{billing_group=&quot;None&quot;,service=&quot;Openshift&quot;,state=&quot;PENDING&quot;} 1.0
+<div class="highlight"><pre><span></span><code>squest_instance_total{billing_group="Orchestration",service="VMWare",state="AVAILABLE"} 1.0
+squest_instance_total{billing_group="Assurance",service="VMWare",state="AVAILABLE"} 1.0
+squest_instance_total{billing_group="Orchestration",service="VMWare",state="PENDING"} 3.0
+squest_instance_total{billing_group="5G",service="VMWare",state="PENDING"} 6.0
+squest_instance_total{billing_group="Assurance",service="VMWare",state="PENDING"} 3.0
+squest_instance_total{billing_group="Assurance",service="Openshift",state="PENDING"} 3.0
+squest_instance_total{billing_group="5G",service="Openshift",state="PENDING"} 3.0
+squest_instance_total{billing_group="Orchestration",service="Openshift",state="PENDING"} 4.0
+squest_instance_total{billing_group="Orchestration",service="Kubernetes",state="PENDING"} 1.0
+squest_instance_total{billing_group="5G",service="Kubernetes",state="PENDING"} 2.0
+squest_instance_total{billing_group="Assurance",service="Kubernetes",state="PENDING"} 2.0
+squest_instance_total{billing_group="None",service="Openshift",state="PENDING"} 1.0
 </code></pre></div></p>
 <h3 id="squest_request_total">squest_request_total</h3>
 <p>Total number of request in squest</p>
 <p><strong>Labels:</strong> <code>['service', 'state']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_request_total{service=&quot;VMWare&quot;,state=&quot;COMPLETE&quot;} 3.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;PROCESSING&quot;} 2.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;ACCEPTED&quot;} 2.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;ON_HOLD&quot;} 1.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;REJECTED&quot;} 4.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;SUBMITTED&quot;} 1.0
-squest_request_total{service=&quot;VMWare&quot;,state=&quot;FAILED&quot;} 1.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;REJECTED&quot;} 1.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;CANCELED&quot;} 2.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;FAILED&quot;} 3.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;COMPLETE&quot;} 1.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;SUBMITTED&quot;} 2.0
-squest_request_total{service=&quot;Openshift&quot;,state=&quot;ACCEPTED&quot;} 2.0
-squest_request_total{service=&quot;Kubernetes&quot;,state=&quot;SUBMITTED&quot;} 1.0
-squest_request_total{service=&quot;Kubernetes&quot;,state=&quot;COMPLETE&quot;} 1.0
-squest_request_total{service=&quot;Kubernetes&quot;,state=&quot;CANCELED&quot;} 1.0
-squest_request_total{service=&quot;Kubernetes&quot;,state=&quot;PROCESSING&quot;} 1.0
-squest_request_total{service=&quot;Kubernetes&quot;,state=&quot;ON_HOLD&quot;} 1.0
+<div class="highlight"><pre><span></span><code>squest_request_total{service="VMWare",state="COMPLETE"} 3.0
+squest_request_total{service="VMWare",state="PROCESSING"} 2.0
+squest_request_total{service="VMWare",state="ACCEPTED"} 2.0
+squest_request_total{service="VMWare",state="ON_HOLD"} 1.0
+squest_request_total{service="VMWare",state="REJECTED"} 4.0
+squest_request_total{service="VMWare",state="SUBMITTED"} 1.0
+squest_request_total{service="VMWare",state="FAILED"} 1.0
+squest_request_total{service="Openshift",state="REJECTED"} 1.0
+squest_request_total{service="Openshift",state="CANCELED"} 2.0
+squest_request_total{service="Openshift",state="FAILED"} 3.0
+squest_request_total{service="Openshift",state="COMPLETE"} 1.0
+squest_request_total{service="Openshift",state="SUBMITTED"} 2.0
+squest_request_total{service="Openshift",state="ACCEPTED"} 2.0
+squest_request_total{service="Kubernetes",state="SUBMITTED"} 1.0
+squest_request_total{service="Kubernetes",state="COMPLETE"} 1.0
+squest_request_total{service="Kubernetes",state="CANCELED"} 1.0
+squest_request_total{service="Kubernetes",state="PROCESSING"} 1.0
+squest_request_total{service="Kubernetes",state="ON_HOLD"} 1.0
 </code></pre></div></p>
 <h3 id="squest_support_total">squest_support_total</h3>
 <p>Total number of support</p>
 <p><strong>Labels:</strong> <code>['state']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_support_total{service=&quot;VMWare&quot;,state=&quot;CLOSED&quot;} 2.0
-squest_support_total{service=&quot;VMWare&quot;,state=&quot;OPENED&quot;} 1.0
+<div class="highlight"><pre><span></span><code>squest_support_total{service="VMWare",state="CLOSED"} 2.0
+squest_support_total{service="VMWare",state="OPENED"} 1.0
 </code></pre></div></p>
 <h3 id="squest_user_total">squest_user_total</h3>
 <p>Total number of user</p>
 <p><strong>Labels:</strong> <code>['is_superuser']</code></p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_user_total{is_superuser=&quot;true&quot;} 1.0
-squest_user_total{is_superuser=&quot;false&quot;} 6.0
+<div class="highlight"><pre><span></span><code>squest_user_total{is_superuser="true"} 1.0
+squest_user_total{is_superuser="false"} 6.0
 </code></pre></div></p>
 <h3 id="squest_team_total">squest_team_total</h3>
 <p>Total number of team</p>
@@ -1823,17 +1823,17 @@ squest_user_total{is_superuser=&quot;false&quot;} 6.0
 <h3 id="squest_quota_consumed">squest_quota_consumed</h3>
 <p>Consumption of quota per billing group and attribute</p>
 <p>E.g:
-<div class="highlight"><pre><span></span><code>squest_quota_consumed{billing_group=&quot;5G&quot;,quota_attribute=&quot;CPU&quot;} 22.0
-squest_quota_consumed{billing_group=&quot;5G&quot;,quota_attribute=&quot;Memory&quot;} 45.0
-squest_quota_consumed{billing_group=&quot;Assurance&quot;,quota_attribute=&quot;CPU&quot;} 20.0
-squest_quota_consumed{billing_group=&quot;Assurance&quot;,quota_attribute=&quot;Memory&quot;} 23.0
+<div class="highlight"><pre><span></span><code>squest_quota_consumed{billing_group="5G",quota_attribute="CPU"} 22.0
+squest_quota_consumed{billing_group="5G",quota_attribute="Memory"} 45.0
+squest_quota_consumed{billing_group="Assurance",quota_attribute="CPU"} 20.0
+squest_quota_consumed{billing_group="Assurance",quota_attribute="Memory"} 23.0
 </code></pre></div></p>
 <h3 id="squest_quota_limit">squest_quota_limit</h3>
 <p>Limit of quota per billing group and attribute</p>
-<div class="highlight"><pre><span></span><code>squest_quota_limit{billing_group=&quot;5G&quot;,quota_attribute=&quot;CPU&quot;} 100.0
-squest_quota_limit{billing_group=&quot;5G&quot;,quota_attribute=&quot;Memory&quot;} 50.0
-squest_quota_limit{billing_group=&quot;Assurance&quot;,quota_attribute=&quot;CPU&quot;} 45.0
-squest_quota_limit{billing_group=&quot;Assurance&quot;,quota_attribute=&quot;Memory&quot;} 12.0)
+<div class="highlight"><pre><span></span><code>squest_quota_limit{billing_group="5G",quota_attribute="CPU"} 100.0
+squest_quota_limit{billing_group="5G",quota_attribute="Memory"} 50.0
+squest_quota_limit{billing_group="Assurance",quota_attribute="CPU"} 45.0
+squest_quota_limit{billing_group="Assurance",quota_attribute="Memory"} 12.0)
 </code></pre></div>
 <p>A percentage of consumption can be calculated by using <code>squest_quota_consumed</code> and <code>squest_quota_limit</code>. PromQL example:
 <div class="highlight"><pre><span></span><code>round((squest_quota_consumed / squest_quota_limit) * 100)

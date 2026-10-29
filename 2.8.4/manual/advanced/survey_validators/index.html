@@ -1682,9 +1682,9 @@ Create Python class that inherit from SurveyValidator with a method <code>valida
 type: dict</p>
 <div class="highlight"><pre><span></span><code>&gt;&gt;&gt;<span class="w"> </span>print<span class="o">(</span>self.survey<span class="o">)</span>
 <span class="o">{</span>
-<span class="w">  </span><span class="s2">&quot;request_comment&quot;</span>:<span class="w"> </span><span class="s2">&quot;commentary sent by user&quot;</span>
-<span class="w">  </span><span class="s2">&quot;ram_gb&quot;</span>:<span class="w"> </span><span class="m">8</span>,
-<span class="w">  </span><span class="s2">&quot;vcpu&quot;</span>:<span class="w"> </span><span class="m">4</span>
+<span class="w">  </span><span class="s2">"request_comment"</span>:<span class="w"> </span><span class="s2">"commentary sent by user"</span>
+<span class="w">  </span><span class="s2">"ram_gb"</span>:<span class="w"> </span><span class="m">8</span>,
+<span class="w">  </span><span class="s2">"vcpu"</span>:<span class="w"> </span><span class="m">4</span>
 <span class="o">}</span>
 </code></pre></div>
 <h3 id="user">user</h3>
@@ -1719,12 +1719,12 @@ The real Instance object is created after validation.</p>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ValidatorForVM</span><span class="p">(</span><span class="n">SurveyValidator</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_survey</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">survey</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ram&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">survey</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vcpu&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Forbidden: you cannot use ram=1 and cpu=1&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">survey</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ram"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">survey</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vcpu"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Forbidden: you cannot use ram=1 and cpu=1"</span><span class="p">)</span>
 
         <span class="n">weekday</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span>        
         <span class="k">if</span> <span class="n">weekday</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>            
-            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Sorry it&#39;s not the weekend yet&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Sorry it's not the weekend yet"</span><span class="p">)</span>
 </code></pre></div>
 
 

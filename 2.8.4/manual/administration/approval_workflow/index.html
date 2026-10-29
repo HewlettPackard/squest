@@ -1592,10 +1592,10 @@ This need to be configured into the step <a href="#auto-accept">auto accept cond
 <p>A step can be auto accepted on a condition placed in the "Auto accept condition" of the step configuration.</p>
 <p>The condition is a Jinja string which is evaluated like an Ansible when condition. The available context is the <em>request</em>.</p>
 <p>For example, to validate the step following the name of the instance:
-<div class="highlight"><pre><span></span><code>request.instance.name == &#39;this_is_a_very_good_name&#39;
+<div class="highlight"><pre><span></span><code>request.instance.name == 'this_is_a_very_good_name'
 </code></pre></div></p>
 <p>Or testing a survey field
-<div class="highlight"><pre><span></span><code>request.fill_in_survey[&#39;vCPU&#39;] &lt; 8
+<div class="highlight"><pre><span></span><code>request.fill_in_survey['vCPU'] &lt; 8
 </code></pre></div></p>
 <p>Full <code>request</code> object definition can be retrieved through the <a href="../../../administration/api/">API documentation</a>.</p>
 <p>More example of jinja templating are available in the <a href="../../advanced/jinja/">dedicated documentation section</a>.</p>

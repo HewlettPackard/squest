@@ -1519,15 +1519,15 @@ Validators methods takes a value and raises a ValidationError if it does not mee
 
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_api</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s1">&#39;This field must be an even number.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">serializers</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s1">'This field must be an even number.'</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_ui</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span>
-                <span class="n">_</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(value)s</span><span class="s1"> is not an even number&#39;</span><span class="p">),</span>
-                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
+                <span class="n">_</span><span class="p">(</span><span class="s1">'</span><span class="si">%(value)s</span><span class="s1"> is not an even number'</span><span class="p">),</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
             <span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="c1"># given value cannot be cast into an integer</span>

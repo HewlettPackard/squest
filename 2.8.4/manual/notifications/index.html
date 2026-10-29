@@ -1533,10 +1533,10 @@
 The syntax is the same as the one used in Ansible. The <code>request</code> object is directly usable as context in the condition without JINJA double-curly braces.
 See the <a href="../advanced/jinja/">Jinja documentation</a> for more example.</p>
 <p>E.g with a 'when' based on the survey filled by the user
-<div class="highlight"><pre><span></span><code><span class="n">request</span><span class="o">.</span><span class="n">fill_in_survey</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;grenoble&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">request</span><span class="o">.</span><span class="n">fill_in_survey</span><span class="p">[</span><span class="s1">'location'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'grenoble'</span>
 </code></pre></div></p>
 <p>E.g with instance spec
-<div class="highlight"><pre><span></span><code><span class="n">request</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;spec_key1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;spec_value1&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">request</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">spec</span><span class="p">[</span><span class="s1">'spec_key1'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'spec_value1'</span>
 </code></pre></div></p>
 
 

@@ -1559,24 +1559,24 @@ to know available configuration options.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ldap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">django_auth_ldap.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LDAPSearch</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LDAP config loaded&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"LDAP config loaded"</span><span class="p">)</span>
 <span class="c1"># -----------------------</span>
 <span class="c1"># LDAP auth backend</span>
 <span class="c1"># -----------------------</span>
-<span class="n">AUTH_LDAP_SERVER_URI</span> <span class="o">=</span> <span class="s2">&quot;ldaps://ad.example.com:636&quot;</span>
-<span class="n">AUTH_LDAP_BIND_DN</span> <span class="o">=</span> <span class="s2">&quot;CN=my_app,OU=Service_Accounts,DC=example,DC=com&quot;</span>
-<span class="n">AUTH_LDAP_BIND_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;AUTH_LDAP_BIND_PASSWORD&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">AUTH_LDAP_USER_SEARCH</span> <span class="o">=</span> <span class="n">LDAPSearch</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;AUTH_LDAP_USER_SEARCH&#39;</span><span class="p">,</span> <span class="s2">&quot;ou=People,o=domain.com&quot;</span><span class="p">),</span> <span class="n">ldap</span><span class="o">.</span><span class="n">SCOPE_SUBTREE</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;AUTH_LDAP_USER_SEARCH_FILTER&#39;</span><span class="p">,</span> <span class="s2">&quot;(uid=</span><span class="si">%(user)s</span><span class="s2">)&quot;</span><span class="p">))</span>
-<span class="n">LDAP_CA_FILE_PATH</span> <span class="o">=</span> <span class="s2">&quot;/usr/local/share/ca-certificates/ldap_ca.crt&quot;</span>  <span class="c1"># default path in ldap docker compose file</span>
+<span class="n">AUTH_LDAP_SERVER_URI</span> <span class="o">=</span> <span class="s2">"ldaps://ad.example.com:636"</span>
+<span class="n">AUTH_LDAP_BIND_DN</span> <span class="o">=</span> <span class="s2">"CN=my_app,OU=Service_Accounts,DC=example,DC=com"</span>
+<span class="n">AUTH_LDAP_BIND_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'AUTH_LDAP_BIND_PASSWORD'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">AUTH_LDAP_USER_SEARCH</span> <span class="o">=</span> <span class="n">LDAPSearch</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'AUTH_LDAP_USER_SEARCH'</span><span class="p">,</span> <span class="s2">"ou=People,o=domain.com"</span><span class="p">),</span> <span class="n">ldap</span><span class="o">.</span><span class="n">SCOPE_SUBTREE</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'AUTH_LDAP_USER_SEARCH_FILTER'</span><span class="p">,</span> <span class="s2">"(uid=</span><span class="si">%(user)s</span><span class="s2">)"</span><span class="p">))</span>
+<span class="n">LDAP_CA_FILE_PATH</span> <span class="o">=</span> <span class="s2">"/usr/local/share/ca-certificates/ldap_ca.crt"</span>  <span class="c1"># default path in ldap docker compose file</span>
 <span class="n">AUTH_LDAP_CONNECTION_OPTIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">ldap</span><span class="o">.</span><span class="n">OPT_X_TLS_CACERTFILE</span><span class="p">:</span> <span class="n">LDAP_CA_FILE_PATH</span><span class="p">,</span>
     <span class="n">ldap</span><span class="o">.</span><span class="n">OPT_X_TLS_REQUIRE_CERT</span><span class="p">:</span> <span class="n">ldap</span><span class="o">.</span><span class="n">OPT_X_TLS_ALLOW</span><span class="p">,</span>
     <span class="n">ldap</span><span class="o">.</span><span class="n">OPT_X_TLS_NEWCTX</span><span class="p">:</span> <span class="mi">0</span>
 <span class="p">}</span>
 <span class="n">AUTH_LDAP_USER_ATTR_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;givenName&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;sn&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;uid&quot;</span>
+    <span class="s2">"first_name"</span><span class="p">:</span> <span class="s2">"givenName"</span><span class="p">,</span>
+    <span class="s2">"last_name"</span><span class="p">:</span> <span class="s2">"sn"</span><span class="p">,</span>
+    <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"uid"</span>
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="use-custom-config">Use custom config</h2>
@@ -1603,7 +1603,7 @@ server (if LDAPS is used) in django and celery containers:
 <p>Declare your custom configuration file in the <code>squest_django</code> section of <code>squest.yml</code> inventory:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">squest_django</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">ldap</span><span class="p">:</span><span class="w">  </span><span class="c1"># extra ldap config</span>
-<span class="w">    </span><span class="nt">ldap_config_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">lookup(&#39;file&#39;,</span><span class="nv"> </span><span class="s">playbook_dir</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">&#39;/../Squest/ldap_config.py&#39;)</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">    </span><span class="nt">ldap_config_file</span><span class="p">:</span><span class="w"> </span><span class="s">"{{</span><span class="nv"> </span><span class="s">lookup('file',</span><span class="nv"> </span><span class="s">playbook_dir</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">'/../Squest/ldap_config.py')</span><span class="nv"> </span><span class="s">}}"</span>
 </code></pre></div>
 <p>Push the new configuration
 <div class="highlight"><pre><span></span><code>ansible-playbook -v -i inventory deploy.yml --tags django
