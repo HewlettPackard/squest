@@ -1,8 +1,11 @@
 #!/bin/bash
 set -e
 
-psql <<-EOSQL
-    CREATE USER ${DB_USER} PASSWORD '${DB_PASSWORD}' NOSUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;
-    CREATE DATABASE ${DB_DATABASE} OWNER ${DB_USER};
-    GRANT ALL PRIVILEGES ON `test\_squest\_db` .  * TO '${DB_USER}'@'%';
+psql --username "${POSTGRES_USER:-postgres}" --dbname "${POSTGRES_DB:-postgres}" \
+    --set ON_ERROR_STOP=1 \
+    --set db_user="${DB_USER:-squest_user}" \
+    --set db_password="${DB_PASSWORD:-squest_password}" \
+    --set db_database="${DB_DATABASE:-squest_db}" <<'EOSQL'
+    CREATE USER :"db_user" PASSWORD :'db_password' NOSUPERUSER CREATEDB NOCREATEROLE INHERIT LOGIN;
+    CREATE DATABASE :"db_database" OWNER :"db_user";
 EOSQL

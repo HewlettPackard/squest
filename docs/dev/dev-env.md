@@ -39,10 +39,16 @@ Run the Docker compose file with only required services to bring up database, me
 ```bash
 docker compose -f docker-compose.yml  -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
 ```
-If you use postgreSQL, update docker/environment_variables/squest.env, then run
+For PostgreSQL, use the override below. It sets the database backend and port for
+the application containers automatically (requires Docker Compose 2.24.4+).
+phpMyAdmin is a MySQL/MariaDB tool, so omit it for PostgreSQL.
 ```bash
-docker compose -f docker-compose.yml  -f psql.docker-composer.yml -f dev.docker-compose.yml up db phpmyadmin rabbitmq redis-cache
+docker compose -f docker-compose.yml -f psql.docker-compose.yaml up db rabbitmq redis-cache
 ```
+For a Django process running on the host, set
+`DB_ENGINE=django.db.backends.postgresql` and `DB_PORT=5432`
+in its environment as well. The PostgreSQL override publishes port 5432; add the
+development override if host access to RabbitMQ and Redis is also needed.
 
 ### Javascript libraries
 
