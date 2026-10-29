@@ -30,6 +30,16 @@ Operations of type "update" or "delete" can be then added to manage the lifecycl
 | When                   | Ansible 'when' condition to make operation available to some instance spec condition                      |
 | Permission             | Set a permission required to view the operation. By default set to "view_operation"                       |
 
+### Process timeout
+
+The process timeout defaults to 60 seconds. Set it long enough to cover the expected
+RHAAP/AWX job duration, including time spent waiting to run and polling delays.
+When the timeout is reached, Squest marks the request as failed and stops polling;
+it does not cancel the job in RHAAP/AWX.
+
+The deadline is set when job monitoring starts. Changing the operation's timeout
+does not change the deadline of requests already being processed.
+
 ## Job template config
 
 By default, Squest will execute the selected Job Template with the config as set in RHAAP/AWX.

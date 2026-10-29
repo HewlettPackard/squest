@@ -44,6 +44,7 @@ DB_USER = os.environ.get("DB_USER", "squest_user")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "squest_password")
 DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
 DB_PORT = os.environ.get("DB_PORT", "3306")
+DB_ENGINE = os.environ.get("DB_ENGINE", "django.db.backends.mysql")
 
 # Authentication
 LDAP_ENABLED = str_to_bool(os.environ.get("LDAP_ENABLED", False))
@@ -175,13 +176,15 @@ WSGI_APPLICATION = "Squest.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": DB_ENGINE,
         "NAME": DB_DATABASE,
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
         "HOST": DB_HOST,
         "PORT": DB_PORT,
-        "OPTIONS": {"charset": "utf8mb4"},
+        "OPTIONS": {"charset": "utf8mb4"}
+        if DB_ENGINE == "django.db.backends.mysql"
+        else {},
     },
     "psql": {
         "ENGINE": "django.db.backends.postgresql",
@@ -577,6 +580,7 @@ if (
             "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         }
     }
+if TESTING or DEBUG:
     PASSWORD_HASHERS = [
         "django.contrib.auth.hashers.MD5PasswordHasher",
     ]

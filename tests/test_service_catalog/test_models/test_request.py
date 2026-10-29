@@ -243,14 +243,28 @@ class TestRequest(BaseTestRequest):
             task='service_catalog.tasks.check_tower_job_status_task',
             args=json.dumps([self.test_request.id]))
         self.test_request.save()
+        periodic_task_id = self.test_request.periodic_task.id
+        stale_request = Request.objects.get(pk=self.test_request.pk)
 
-        with mock.patch("django_celery_beat.models.PeriodicTask.delete") as mock_periodic_task_delete:
-            self.test_request.check_job_status()
-            self.test_instance.refresh_from_db()
-            self.test_request.refresh_from_db()
-            self.assertEqual(self.test_instance.state, expected_instance_state)
-            self.assertEqual(self.test_request.state, RequestState.FAILED)
-            mock_periodic_task_delete.assert_called()
+        # Note: we deliberately do NOT mock PeriodicTask.delete here. Deleting
+        # the related object clears its pk, and calling self.save() afterwards
+        # used to raise:
+        #   ValueError: save() prohibited to prevent data loss due to unsaved
+        #   related object 'periodic_task'.
+        # This test guards against that regression on the expiration path.
+        self.test_request.check_job_status()
+        self.test_instance.refresh_from_db()
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_instance.state, expected_instance_state)
+        self.assertEqual(self.test_request.state, RequestState.FAILED)
+        self.assertEqual(self.test_request.failure_message, "Operation execution timeout")
+        # The periodic task row is really deleted (no ghost task) and the FK is nulled
+        self.assertFalse(PeriodicTask.objects.filter(id=periodic_task_id).exists())
+        self.assertIsNone(self.test_request.periodic_task)
+        # A check queued before cleanup may still hold the old request state.
+        stale_request.check_job_status()
+        stale_request.refresh_from_db()
+        self.assertEqual(stale_request.state, RequestState.FAILED)
 
     def test_job_id_none_when_executing(self):
         with mock.patch("service_catalog.models.job_templates.JobTemplate.execute") as mock_job_execute:
@@ -285,6 +299,78 @@ class TestRequest(BaseTestRequest):
         expected_instance_state = InstanceState.DELETE_FAILED
         self._process_timeout_with_expected_state(expected_instance_state)
 
+    def test_process_timeout_recovers_already_failed_provisioning(self):
+        self.test_instance.state = InstanceState.PROVISION_FAILED
+        self.test_instance.save()
+        self._process_timeout_with_expected_state(InstanceState.PROVISION_FAILED)
+
+    def test_process_timeout_recovers_already_failed_update(self):
+        self.test_instance.state = InstanceState.UPDATE_FAILED
+        self.test_instance.save()
+        self.test_request.operation = self.update_operation_test
+        self.test_request.save()
+        self._process_timeout_with_expected_state(InstanceState.UPDATE_FAILED)
+
+    def test_process_timeout_recovers_already_failed_deletion(self):
+        self.test_instance.state = InstanceState.DELETE_FAILED
+        self.test_instance.save()
+        self.test_request.operation = self.delete_operation_test
+        self.test_request.save()
+        self._process_timeout_with_expected_state(InstanceState.DELETE_FAILED)
+
+    def test_process_timeout_recovers_without_periodic_task(self):
+        self._prepare_base_request_for_test()
+        self.test_request.periodic_task.delete()
+        self.test_request.refresh_from_db()
+        self.test_request.state = RequestState.PROCESSING
+        self.test_request.periodic_task_date_expire = timezone.now() - timedelta(seconds=1)
+        self.test_request.save()
+        self.test_instance.state = InstanceState.PROVISION_FAILED
+        self.test_instance.save()
+
+        self.test_request.check_job_status()
+
+        self.test_request.refresh_from_db()
+        self.assertEqual(self.test_request.state, RequestState.FAILED)
+        self.assertEqual(self.test_request.failure_message, "Operation execution timeout")
+        self.assertIsNone(self.test_request.periodic_task_id)
+
+    def test_timeout_cleanup_failure_rolls_back_request_and_instance(self):
+        self._prepare_base_request_for_test()
+        self.test_request.state = RequestState.PROCESSING
+        self.test_request.periodic_task_date_expire = timezone.now() - timedelta(seconds=1)
+        self.test_request.save()
+        self.test_instance.state = InstanceState.PROVISIONING
+        self.test_instance.save()
+        periodic_task_id = self.test_request.periodic_task_id
+
+        with mock.patch.object(PeriodicTask, "delete", side_effect=RuntimeError("cleanup failed")):
+            with self.assertRaisesMessage(RuntimeError, "cleanup failed"):
+                self.test_request.check_job_status()
+
+        self.test_request.refresh_from_db()
+        self.test_instance.refresh_from_db()
+        self.assertEqual(self.test_request.state, RequestState.PROCESSING)
+        self.assertEqual(self.test_instance.state, InstanceState.PROVISIONING)
+        self.assertIsNone(self.test_request.failure_message)
+        self.assertEqual(self.test_request.periodic_task_id, periodic_task_id)
+        self.assertTrue(PeriodicTask.objects.filter(pk=periodic_task_id).exists())
+
+    def test_check_job_status_cleans_up_finished_requests(self):
+        for state in [RequestState.FAILED, RequestState.COMPLETE, RequestState.ARCHIVED]:
+            with self.subTest(state=state):
+                self._prepare_base_request_for_test()
+                self.test_request.state = state
+                self.test_request.save()
+                periodic_task_id = self.test_request.periodic_task_id
+                with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
+                    self.test_request.check_job_status()
+                tower_mock.assert_not_called()
+                self.test_request.refresh_from_db()
+                self.assertEqual(self.test_request.state, state)
+                self.assertIsNone(self.test_request.periodic_task_id)
+                self.assertFalse(PeriodicTask.objects.filter(pk=periodic_task_id).exists())
+
     def test_tower_job_url(self):
         self.test_request.tower_job_id = 1234
         self.assertEqual("https://localhost/#/jobs/playbook/1234/output", self.test_request.tower_job_url)
@@ -299,6 +385,8 @@ class TestRequest(BaseTestRequest):
         self.assertFalse(PeriodicTask.objects.filter(id=periodic_task_test.id).exists())
 
     def test_check_job_status_when_no_tower_job_id_set(self):
+        self.test_request.state = RequestState.PROCESSING
+        self.test_request.save()
         self.assertIsNone(self.test_request.check_job_status())
 
     def _prepare_base_request_for_test(self):
@@ -314,14 +402,17 @@ class TestRequest(BaseTestRequest):
     def _check_request_complete(self, expected_instance_state):
         self.test_request.state = RequestState.PROCESSING
         self.test_request.save()
+        stale_request = Request.objects.get(pk=self.test_request.pk)
         with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
             tower_mock.return_value.get_unified_job_by_id.return_value.status = "successful"
             with mock.patch("service_catalog.mail_utils.send_mail_request_update") as mock_email:
                 self.test_request.check_job_status()
+                stale_request.check_job_status()
                 self.test_request.refresh_from_db()
-                mock_email.assert_called()
+                mock_email.assert_called_once()
                 self.assertEqual(self.test_request.state, RequestState.COMPLETE)
                 self.assertFalse(PeriodicTask.objects.filter(id=self.periodic_task_test.id).exists())
+                self.test_instance.refresh_from_db()
                 self.assertEqual(self.test_instance.state, expected_instance_state)
 
     def test_check_job_status_successful_operation_create(self):
@@ -352,14 +443,17 @@ class TestRequest(BaseTestRequest):
         self.test_request.save()
         self.test_instance.state = InstanceState.PROVISIONING
         self.test_instance.save()
+        stale_request = Request.objects.get(pk=self.test_request.pk)
         with mock.patch("service_catalog.models.tower_server.TowerServer.get_tower_instance") as tower_mock:
             tower_mock.return_value.get_unified_job_by_id.return_value.status = job_status
             with mock.patch("service_catalog.mail_utils.send_mail_request_update") as mock_email:
                 self.test_request.check_job_status()
+                stale_request.check_job_status()
                 self.test_request.refresh_from_db()
-                mock_email.assert_called()
+                mock_email.assert_called_once()
                 self.assertEqual(self.test_request.state, RequestState.FAILED)
                 self.assertFalse(PeriodicTask.objects.filter(id=self.periodic_task_test.id).exists())
+                self.test_instance.refresh_from_db()
                 self.assertEqual(self.test_instance.state, InstanceState.PROVISION_FAILED)
 
     def test_check_job_status_cancel(self):
