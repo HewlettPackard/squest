@@ -79,6 +79,7 @@ The [Squest configuration](../configuration/squest_settings.md) is injected as e
 squest_django:
   env:  # squest settings
     TZ: "Europe/Paris"
+    CSRF_TRUSTED_ORIGINS: "{{ squest_django_csrf_trusted_origins }}"
     DB_HOST: "mariadb"
     DB_PORT: "3306"
     DB_USER: "{{ squest_db.user }}"
@@ -113,18 +114,29 @@ squest_django:
 
 ### Use your own ingress
 
-By default, the playbook will configure an ingress that point to `squest.{{ k8s_cluster_fqdn }}` based on the [nginx ingress controller](https://docs.nginx.com/nginx-ingress-controller/).
+By default, the playbook configures an ingress pointing to `squest.{{ squest_k8s_cluster_fqdn }}` based on the [nginx ingress controller](https://docs.nginx.com/nginx-ingress-controller/). The default `squest_django_csrf_trusted_origins` trusts `https://squest.{{ squest_k8s_cluster_fqdn }}` and is passed to Django as `CSRF_TRUSTED_ORIGINS`.
 
 Update the ingress configuration, in the `squest.yml` inventory file:
 ```yaml
 squest_django:
   ingress:  # default ingress based on nginx controller
     enabled: true
-    host: "squest.{{ k8s_cluster_fqdn }}"
+    host: "squest.{{ squest_k8s_cluster_fqdn }}"
     classname: my-ingress-controller-name
     annotations:
       ingress_key: "ingress_value"
 ```
+
+When using a custom ingress hostname, also override `squest_django_csrf_trusted_origins` to match the externally accessible URL:
+
+```yaml
+squest_django_csrf_trusted_origins: "https://squest.example.com"
+squest_django:
+  ingress:
+    host: "squest.example.com"
+```
+
+Trusted origins must include the scheme (`http://` or `https://`) and any nonstandard port, for example `http://squest.example.com:8080`. To trust multiple origins, use a comma-separated string. See [CSRF_TRUSTED_ORIGINS](../configuration/squest_settings.md#csrf_trusted_origins).
 
 ## Helm-based Installation
 
