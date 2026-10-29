@@ -2,7 +2,7 @@
 services:
 
   db:
-    image: mariadb:11.0.2
+    image: mariadb:11.8.9
     env_file: docker/environment_variables/db.env
     volumes:
       - db_data:/var/lib/mysql
@@ -15,10 +15,11 @@ services:
       retries: 3
 
   rabbitmq:
-    image: rabbitmq:3.13.2-management
+    image: rabbitmq:4.4.0-management
     env_file: docker/environment_variables/rabbitmq.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - ./docker/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       start_period: 10s
@@ -27,7 +28,7 @@ services:
       retries: 3
 
   redis-cache:
-    image: redis:6.2.13-alpine
+    image: redis:8.10.3-alpine
     command:
     - sh
     - -c
@@ -47,25 +48,30 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      celery-worker:
-        condition: service_started
-      celery-beat:
-        condition: service_started
       redis-cache:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=4)"]
+      start_period: 60s
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
   nginx:
     command: nginx -c /etc/nginx/squest/nginx.conf
-    image: nginx:1.23.4-alpine
+    image: nginx:1.30.6-alpine
     depends_on:
-      - django
+      django:
+        condition: service_healthy
+      maintenance:
+        condition: service_started
     volumes:
       - django_media:/app/media:ro
       - django_static:/app/static:ro
       - ./docker/nginx.conf:/etc/nginx/squest/nginx.conf:ro
 
   maintenance:
-    image: nginx:1.23.4-alpine
+    image: nginx:1.30.6-alpine
     volumes:
       - ./docker/maintenance.html:/usr/share/nginx/html/index.html
       - ./docker/maintenance.nginx.conf:/etc/nginx/conf.d/default.conf
@@ -73,7 +79,11 @@ services:
 
   celery-worker:
     <<: *django
+    healthcheck:
+      disable: true
     depends_on:
+      django:
+        condition: service_healthy
       db:
         condition: service_healthy
       rabbitmq:
@@ -85,7 +95,11 @@ services:
 
   celery-beat:
     <<: *django
+    healthcheck:
+      disable: true
     depends_on:
+      django:
+        condition: service_healthy
       db:
         condition: service_healthy
       rabbitmq:

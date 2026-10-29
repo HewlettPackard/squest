@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 echo "Applying database migration"
 python manage.py migrate --database=${DATABASE:-default}

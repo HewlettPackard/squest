@@ -1,24 +1,34 @@
-
 services:
   db:
-    image: postgres:latest
+    image: postgres:18.6
     env_file: docker/environment_variables/db.env
+    environment:
+      DB_DATABASE: ${DB_DATABASE:-squest_db}
+      DB_USER: ${DB_USER:-squest_user}
+      DB_PASSWORD: ${DB_PASSWORD:-squest_password}
     ports:
       - 5432:5432
-    volumes:
-      - db_data:/var/lib/postgresql/data
+    # Replace MariaDB mounts; PostgreSQL 18+ stores versioned data under this path.
+    volumes: !override
+      - psql_data:/var/lib/postgresql
       - "./docker/scripts/psql-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-postgres}"]
 
   django:
-    environment:
-      WAIT_HOSTS: db:5432,rabbitmq:5672
+    environment: &psql-environment
+      DATABASE: default
+      DB_ENGINE: django.db.backends.postgresql
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-squest_db}
+      DB_USER: ${DB_USER:-squest_user}
+      DB_PASSWORD: ${DB_PASSWORD:-squest_password}
 
   celery-worker:
-    environment:
-      WAIT_HOSTS: db:5432,rabbitmq:5672,django:8000
-      WAIT_TIMEOUT: 60
+    environment: *psql-environment
 
   celery-beat:
-    environment:
-      WAIT_HOSTS: db:5432,rabbitmq:5672,django:8000
-      WAIT_TIMEOUT: 60
+    environment: *psql-environment
+
+volumes:
+  psql_data: {}
