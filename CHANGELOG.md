@@ -1,3 +1,15 @@
+# 2.8.5 2026-11-04
+
+## Fix
+
+- fix: Safely delete expired periodic task
+- fix: lock when processing requests
+- fix: squest_k8s_cluster_fqdn Ansible var
+
+## Enhancement
+
+- Bump all Docker image versions
+
 # 2.8.4 2026-04-09
 
 ## Fix
